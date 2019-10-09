@@ -25,7 +25,8 @@ using TShock.Events.Commands;
 
 namespace TShock.Commands {
     /// <summary>
-    /// Represents a service that manages commands. Provides command-related hooks and methods.
+    /// Represents a service that manages commands. Provides command-related hooks and methods, and in a thread-safe
+    /// manner unless specified otherwise.
     /// </summary>
     public interface ICommandService : IService {
         /// <summary>
@@ -39,19 +40,19 @@ namespace TShock.Commands {
         IReadOnlyDictionary<Type, IArgumentParser> Parsers { get; }
 
         /// <summary>
-        /// Gets or sets the event handlers that occur when registering a command. This event can be canceled.
+        /// Gets the event handlers that occur when registering a command. This event can be canceled.
         /// </summary>
-        EventHandlerCollection<CommandRegisterEventArgs>? CommandRegister { get; set; }
+        EventHandlerCollection<CommandRegisterEventArgs> CommandRegister { get; }
 
         /// <summary>
-        /// Gets or sets the event handlers that occur when executing a command. This event can be canceled.
+        /// Gets the event handlers that occur when executing a command. This event can be canceled.
         /// </summary>
-        EventHandlerCollection<CommandExecuteEventArgs>? CommandExecute { get; set; }
+        EventHandlerCollection<CommandExecuteEventArgs> CommandExecute { get; }
 
         /// <summary>
-        /// Gets or sets the event handlers that occur when unregistering a command. This event can be canceled.
+        /// Gets the event handlers that occur when unregistering a command. This event can be canceled.
         /// </summary>
-        EventHandlerCollection<CommandUnregisterEventArgs>? CommandUnregister { get; set; }
+        EventHandlerCollection<CommandUnregisterEventArgs> CommandUnregister { get; }
 
         /// <summary>
         /// Registers and returns the commands defined with the <paramref name="handlerObject"/>'s command handlers.

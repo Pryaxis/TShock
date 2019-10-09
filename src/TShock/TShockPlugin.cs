@@ -76,9 +76,9 @@ namespace TShock {
 
         /// <inheritdoc/>
         protected override void Initialize() {
-            Kernel.ServerCommand += ServerCommandHandler;
+            Kernel.ServerCommand.RegisterHandler(ServerCommandHandler);
 
-            PlayerService.PlayerChat += PlayerChatHandler;
+            PlayerService.PlayerChat.RegisterHandler(PlayerChatHandler);
         }
 
         /// <inheritdoc/>
@@ -87,9 +87,9 @@ namespace TShock {
                 return;
             }
 
-            Kernel.ServerCommand -= ServerCommandHandler;
+            Kernel.ServerCommand.UnregisterHandler(ServerCommandHandler);
 
-            PlayerService.PlayerChat -= PlayerChatHandler;
+            PlayerService.PlayerChat.UnregisterHandler(PlayerChatHandler);
         }
 
         [EventHandler(EventPriority.Lowest)]

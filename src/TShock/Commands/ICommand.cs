@@ -21,7 +21,8 @@ using TShock.Commands.Exceptions;
 
 namespace TShock.Commands {
     /// <summary>
-    /// Represents a command. Commands can be executed by command senders, and provide bits of functionality.
+    /// Represents a command. Commands can be executed by command senders, and provide bits of functionality. This class
+    /// is not thread-safe.
     /// </summary>
     public interface ICommand {
         /// <summary>

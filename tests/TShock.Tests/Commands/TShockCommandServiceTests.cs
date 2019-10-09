@@ -147,12 +147,12 @@ namespace TShock.Commands {
         public void CommandRegister_IsTriggered() {
             var isRun = false;
             var testClass = new TestClass();
-            _commandService.CommandRegister += (sender, args) => {
+            _commandService.CommandRegister.RegisterHandler((sender, args) => {
                 isRun = true;
                 args.Command.HandlerObject.Should().BeSameAs(testClass);
                 args.Command.QualifiedName.Should().BeOneOf(
                     "tshock_tests:test", "tshock_tests:test2", "tshock_tests2:test");
-            };
+            });
 
             _commandService.RegisterCommands(testClass);
 
@@ -162,9 +162,9 @@ namespace TShock.Commands {
         [Fact]
         public void CommandRegister_Canceled() {
             var testClass = new TestClass();
-            _commandService.CommandRegister += (sender, args) => {
+            _commandService.CommandRegister.RegisterHandler((sender, args) => {
                 args.Cancel();
-            };
+            });
 
             _commandService.RegisterCommands(testClass).Should().BeEmpty();
         }
@@ -175,10 +175,10 @@ namespace TShock.Commands {
             var testClass = new TestClass();
             var commands = _commandService.RegisterCommands(testClass).ToList();
             var command = commands[0];
-            _commandService.CommandUnregister += (sender, args) => {
+            _commandService.CommandUnregister.RegisterHandler((sender, args) => {
                 isRun = true;
                 args.Command.Should().BeSameAs(command);
-            };
+            });
 
             _commandService.UnregisterCommand(command);
 
@@ -190,9 +190,9 @@ namespace TShock.Commands {
             var testClass = new TestClass();
             var commands = _commandService.RegisterCommands(testClass).ToList();
             var command = commands[0];
-            _commandService.CommandUnregister += (sender, args) => {
+            _commandService.CommandUnregister.RegisterHandler((sender, args) => {
                 args.Cancel();
-            };
+            });
 
             _commandService.UnregisterCommand(command).Should().BeFalse();
 

@@ -35,6 +35,7 @@ using TShock.Utils.Extensions;
 
 namespace TShock.Commands {
     internal sealed class TShockCommandService : OrionService, ICommandService {
+        private readonly object _lock = new object();
         private readonly Lazy<IPlayerService> _playerService;
 
         private readonly Dictionary<string, ICommand> _commands = new Dictionary<string, ICommand>();
@@ -44,9 +45,15 @@ namespace TShock.Commands {
 
         public IReadOnlyDictionary<string, ICommand> Commands => _commands;
         public IReadOnlyDictionary<Type, IArgumentParser> Parsers => _parsers;
-        public EventHandlerCollection<CommandRegisterEventArgs>? CommandRegister { get; set; }
-        public EventHandlerCollection<CommandExecuteEventArgs>? CommandExecute { get; set; }
-        public EventHandlerCollection<CommandUnregisterEventArgs>? CommandUnregister { get; set; }
+
+        public EventHandlerCollection<CommandRegisterEventArgs> CommandRegister { get; }
+            = new EventHandlerCollection<CommandRegisterEventArgs>();
+
+        public EventHandlerCollection<CommandExecuteEventArgs> CommandExecute { get; }
+            = new EventHandlerCollection<CommandExecuteEventArgs>();
+
+        public EventHandlerCollection<CommandUnregisterEventArgs> CommandUnregister { get; }
+            = new EventHandlerCollection<CommandUnregisterEventArgs>();
 
         private IPlayerService PlayerService => _playerService.Value;
 
@@ -80,23 +87,30 @@ namespace TShock.Commands {
                 return command;
             }
 
-            return handlerObject.GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance)
-                .SelectMany(m => m.GetCustomAttributes<CommandHandlerAttribute>(),
-                    (m, a) => RegisterCommand(new TShockCommand(this, a, handlerObject, m)))
-                .Where(c => c != null).ToList()!;
+            lock (_lock) {
+                return handlerObject.GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance)
+                    .SelectMany(m => m.GetCustomAttributes<CommandHandlerAttribute>(),
+                        (m, a) => RegisterCommand(new TShockCommand(this, a, handlerObject, m)))
+                    .Where(c => c != null).ToList()!;
+            }
         }
 
-        public void RegisterParser<TParse>(IArgumentParser<TParse> parser) =>
-            _parsers[typeof(TParse)] = parser ?? throw new ArgumentNullException(nameof(parser));
+        public void RegisterParser<TParse>(IArgumentParser<TParse> parser) {
+            lock (_lock) {
+                _parsers[typeof(TParse)] = parser ?? throw new ArgumentNullException(nameof(parser));
+            }
+        }
 
         public ICommand FindCommand(string commandName) {
             if (string.IsNullOrEmpty(commandName)) {
                 throw new CommandNotFoundException(Resources.CommandNotFound_MissingCommand);
             }
 
-            var qualifiedName = GetQualifiedName(commandName);
-            Debug.Assert(_commands.ContainsKey(qualifiedName), "commands should contain qualified name");
-            return _commands[qualifiedName];
+            lock (_lock) {
+                var qualifiedName = GetQualifiedName(commandName);
+                Debug.Assert(_commands.ContainsKey(qualifiedName), "commands should contain qualified name");
+                return _commands[qualifiedName];
+            }
         }
 
         public bool UnregisterCommand(ICommand command) {
@@ -110,15 +124,17 @@ namespace TShock.Commands {
                 return false;
             }
 
-            var qualifiedName = command.QualifiedName;
-            if (!_commands.Remove(qualifiedName)) {
-                return false;
-            }
+            lock (_lock) {
+                var qualifiedName = command.QualifiedName;
+                if (!_commands.Remove(qualifiedName)) {
+                    return false;
+                }
 
-            var name = qualifiedName.Substring(qualifiedName.IndexOf(':', StringComparison.Ordinal) + 1);
-            Debug.Assert(_qualifiedNames.ContainsKey(name), "qualified names should contain command name");
-            _qualifiedNames[name].Remove(qualifiedName);
-            return true;
+                var name = qualifiedName.Substring(qualifiedName.IndexOf(':', StringComparison.Ordinal) + 1);
+                Debug.Assert(_qualifiedNames.ContainsKey(name), "qualified names should contain command name");
+                _qualifiedNames[name].Remove(qualifiedName);
+                return true;
+            }
         }
 
         // TODO: write tests for /help, /playing, /me, /roll, /p 
@@ -135,22 +151,27 @@ namespace TShock.Commands {
                     Debug.Assert(_qualifiedNames.ContainsKey(name), "qualified names should contain command name");
                     return _qualifiedNames[name].Count > 1 ? qualifiedName : name;
                 }
-
+                    
                 sender.SendInfoMessage(Resources.Command_Help_Header);
-                sender.SendInfoMessage(string.Join(", ", _commands.Values.Select(c => $"/{FormatCommandName(c)}")));
+                lock (_lock) {
+                    sender.SendInfoMessage(string.Join(", ", _commands.Values.Select(c => $"/{FormatCommandName(c)}")));
+                }
                 return;
             }
 
-            string qualifiedName;
-            try {
-                qualifiedName = GetQualifiedName(command_name);
-            } catch (CommandNotFoundException ex) {
-                sender.SendErrorMessage(ex.Message);
-                return;
-            }
+            ICommand command;
+            lock (_lock) {
+                string qualifiedName;
+                try {
+                    qualifiedName = GetQualifiedName(command_name);
+                } catch (CommandNotFoundException ex) {
+                    sender.SendErrorMessage(ex.Message);
+                    return;
+                }
 
-            Debug.Assert(_commands.ContainsKey(qualifiedName), "commands should contain qualified name");
-            var command = _commands[qualifiedName];
+                Debug.Assert(_commands.ContainsKey(qualifiedName), "commands should contain qualified name");
+                command = _commands[qualifiedName];
+            }
             var usageText = string.Format(CultureInfo.InvariantCulture, command.UsageText, command_name);
             sender.SendInfoMessage($"/{command_name}:\n{command.HelpText}\n{usageText}");
         }

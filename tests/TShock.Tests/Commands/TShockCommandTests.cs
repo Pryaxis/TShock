@@ -179,12 +179,12 @@ namespace TShock.Commands {
             var command = GetCommand(testClass, nameof(TestClass.TestCommand));
             var commandSender = new Mock<ICommandSender>().Object;
             var isRun = false;
-            EventHandlerCollection<CommandExecuteEventArgs> commandExecute = null;
-            commandExecute += (sender, args) => {
+            var commandExecute = new EventHandlerCollection<CommandExecuteEventArgs>();
+            commandExecute.RegisterHandler((sender, args) => {
                 isRun = true;
                 args.Command.Should().Be(command);
                 args.Input.Should().BeEmpty();
-            };
+            });
             _mockCommandService.SetupGet(cs => cs.CommandExecute).Returns(commandExecute);
 
             command.Invoke(commandSender, "");
@@ -198,10 +198,10 @@ namespace TShock.Commands {
             var testClass = new TestClass();
             var command = GetCommand(testClass, nameof(TestClass.TestCommand));
             var commandSender = new Mock<ICommandSender>().Object;
-            EventHandlerCollection<CommandExecuteEventArgs> commandExecute = null;
-            commandExecute += (sender, args) => {
+            var commandExecute = new EventHandlerCollection<CommandExecuteEventArgs>();
+            commandExecute.RegisterHandler((sender, args) => {
                 args.Cancel();
-            };
+            });
             _mockCommandService.SetupGet(cs => cs.CommandExecute).Returns(commandExecute);
 
             command.Invoke(commandSender, "failing input");
