@@ -80,8 +80,8 @@ namespace TShock.Commands {
 
                 var qualifiedName = command.QualifiedName;
                 var name = qualifiedName.Substring(qualifiedName.IndexOf(':', StringComparison.Ordinal) + 1);
-                _qualifiedNames[name] = _qualifiedNames.GetValueOrDefault(name, () => new HashSet<string>());
-                _qualifiedNames[name].Add(qualifiedName);
+                var qualifiedNames = _qualifiedNames.GetValueOrDefault(name, () => new HashSet<string>(), true);
+                qualifiedNames.Add(qualifiedName);
 
                 _commands.Add(qualifiedName, command);
                 return command;

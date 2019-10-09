@@ -23,6 +23,13 @@ using Xunit;
 namespace TShock.Utils.Extensions {
     public class DictionaryExtensionsTests {
         [Fact]
+        public void GetValueOrDefault() {
+            var dictionary = new Dictionary<string, int>();
+
+            dictionary.GetValueOrDefault("test").Should().Be(0);
+        }
+
+        [Fact]
         public void GetValueOrDefault_KeyExists() {
             var dictionary = new Dictionary<string, int> {
                 ["test"] = 10
@@ -39,16 +46,17 @@ namespace TShock.Utils.Extensions {
         }
 
         [Fact]
-        public void GetValueOrDefault_NullDictionary_ThrowsArgumentNullException() {
-            Func<int> func = () => DictionaryExtensions.GetValueOrDefault(null, "", () => 0);
+        public void GetValueOrDefault_Create() {
+            var dictionary = new Dictionary<string, int>();
 
-            func.Should().Throw<ArgumentNullException>();
+            dictionary.GetValueOrDefault("test", () => 50, true).Should().Be(50);
+
+            dictionary["test"].Should().Be(50);
         }
 
         [Fact]
-        public void GetValueOrDefault_NullValueProvider_ThrowsArgumentNullException() {
-            var dictionary = new Dictionary<string, int>();
-            Func<int> func = () => DictionaryExtensions.GetValueOrDefault(dictionary, "", null);
+        public void GetValueOrDefault_NullDictionary_ThrowsArgumentNullException() {
+            Func<int> func = () => DictionaryExtensions.GetValueOrDefault(null, "", () => 0);
 
             func.Should().Throw<ArgumentNullException>();
         }
