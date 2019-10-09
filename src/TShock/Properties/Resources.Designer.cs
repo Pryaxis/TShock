@@ -97,7 +97,7 @@ namespace TShock.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to me:help.
+        ///   Looks up a localized string similar to tshock:me.
         /// </summary>
         internal static string Command_Me {
             get {

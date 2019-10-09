@@ -163,7 +163,7 @@
     <value>Usage: /{0} [command-name]</value>
   </data>
   <data name="Command_Me" xml:space="preserve">
-    <value>me:help</value>
+    <value>tshock:me</value>
   </data>
   <data name="Command_Me_HelpText" xml:space="preserve">
     <value>Sends a message in the third person.</value>
