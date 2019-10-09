@@ -172,21 +172,6 @@ namespace TShock.Commands {
         }
 
         [Fact]
-        public void Invoke_AllowEmpty() {
-            _mockCommandService.Setup(cs => cs.Parsers).Returns(new Dictionary<Type, IArgumentParser> {
-                [typeof(string)] = new StringParser()
-            });
-            var testClass = new TestClass();
-            var command = GetCommand(testClass, nameof(TestClass.TestCommand_AllowEmpty));
-            var commandSender = new Mock<ICommandSender>().Object;
-
-            command.Invoke(commandSender, "");
-
-            testClass.Sender.Should().BeSameAs(commandSender);
-            testClass.String.Should().BeEmpty();
-        }
-
-        [Fact]
         public void Invoke_TriggersCommandExecute() {
             var testClass = new TestClass();
             var command = GetCommand(testClass, nameof(TestClass.TestCommand));
@@ -398,13 +383,6 @@ namespace TShock.Commands {
             public void TestCommand_Params(ICommandSender sender, params int[] ints) {
                 Sender = sender;
                 Ints = ints;
-            }
-
-            [CommandHandler("tshock_tests:allow_empty")]
-            public void TestCommand_AllowEmpty(ICommandSender sender,
-                    [ParseOptions(ParseOptions.AllowEmpty)] string @string) {
-                Sender = sender;
-                String = @string;
             }
 
             [CommandHandler("tshock_tests:exception")]

@@ -66,15 +66,5 @@ namespace TShock.Commands.Parsers {
 
             input.ToString().Should().BeEmpty();
         }
-
-        [Fact]
-        public void Parse_AllowEmpty() {
-            var parser = new StringParser();
-            var input = string.Empty.AsSpan();
-
-            parser.Parse(ref input, new HashSet<string> { ParseOptions.AllowEmpty }).Should().BeEmpty();
-
-            input.ToString().Should().BeEmpty();
-        }
     }
 }

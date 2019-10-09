@@ -32,11 +32,5 @@ namespace TShock.Commands.Parsers {
         /// <returns>A corresponding object.</returns>
         /// <exception cref="CommandParseException">The input could not be parsed properly.</exception>
         object? Parse(ref ReadOnlySpan<char> input, ISet<string>? options = null);
-
-        /// <summary>
-        /// Gets a default object.
-        /// </summary>
-        /// <returns>The default object.</returns>
-        object? GetDefault();
     }
 }

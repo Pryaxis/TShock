@@ -107,17 +107,13 @@ namespace TShock.Commands {
                 }
 
                 var options = parameterInfo.GetCustomAttribute<ParseOptionsAttribute>()?.Options;
-                if (!input.IsEmpty) {
-                    return parser.Parse(ref input, options);
-                }
-
-                if (options?.Contains(ParseOptions.AllowEmpty) != true) {
+                if (input.IsEmpty) {
                     throw new CommandParseException(
                         string.Format(CultureInfo.InvariantCulture, Resources.CommandParse_MissingArg,
                             parameterInfo));
                 }
 
-                return parser.GetDefault();
+                return parser.Parse(ref input, options);
             }
 
             void ParseShortFlags(ref ReadOnlySpan<char> input, int space) {

@@ -36,8 +36,7 @@ namespace TShock.Commands.Logging {
         public string Format(LogEventPropertyValue value) => Visit(default, value);
 
         protected override string VisitScalarValue(Unit _, ScalarValue scalar) =>
-            string.Format(CultureInfo.InvariantCulture, scalar.Value switch
-            {
+            string.Format(CultureInfo.InvariantCulture, scalar.Value switch {
                 null => NullFormat,
                 string _ => StringFormat,
                 bool _ => BooleanFormat,

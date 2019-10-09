@@ -21,8 +21,8 @@ using JetBrains.Annotations;
 
 namespace TShock.Commands {
     /// <summary>
-    /// Specifies that a method is a command handler. This can be applied multiple times to a method to provide
-    /// aliasing.
+    /// Specifies that a method is a command handler. This controls many aspects of the command, and can be applied
+    /// multiple times to provide aliasing.
     /// </summary>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
     [MeansImplicitUse]

@@ -17,7 +17,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 using TShock.Properties;
@@ -87,9 +86,5 @@ namespace TShock.Commands.Parsers {
             input = input[end..];
             return builder.ToString();
         }
-
-        /// <inheritdoc/>
-        [ExcludeFromCodeCoverage]
-        public string GetDefault() => string.Empty;
     }
 }
