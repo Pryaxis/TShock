@@ -26,7 +26,7 @@ namespace TShock.Events.Commands {
     public abstract class CommandEventArgs : EventArgs, ICancelable {
         private ICommand _command;
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public string? CancellationReason { get; set; }
 
         /// <summary>

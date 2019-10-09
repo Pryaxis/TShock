@@ -45,11 +45,11 @@ namespace TShock {
         private readonly Lazy<IPlayerService> _playerService;
         private readonly Lazy<ICommandService> _commandService;
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         [ExcludeFromCodeCoverage]
         public override string Author => "Pryaxis";
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         [ExcludeFromCodeCoverage]
         public override string Name => "TShock";
 
@@ -72,14 +72,14 @@ namespace TShock {
             _commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         protected override void Initialize() {
             Kernel.ServerCommand += ServerCommandHandler;
 
             PlayerService.PlayerChat += PlayerChatHandler;
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         protected override void Dispose(bool disposeManaged) {
             if (!disposeManaged) {
                 return;
