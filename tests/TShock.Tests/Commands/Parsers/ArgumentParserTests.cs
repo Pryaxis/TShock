@@ -27,11 +27,11 @@ namespace TShock.Commands.Parsers {
             IArgumentParser parser = new TestParser();
             var input = "".AsSpan();
 
-            parser.Parse(ref input).Should().NotBeNull().And.BeOfType<TestClass>();
+            parser.Parse(ref input, new HashSet<Attribute>()).Should().NotBeNull().And.BeOfType<TestClass>();
         }
 
         private class TestParser : IArgumentParser<TestClass> {
-            public TestClass Parse(ref ReadOnlySpan<char> input, ISet<string> options = null) => new TestClass();
+            public TestClass Parse(ref ReadOnlySpan<char> input, ISet<Attribute> attributes) => new TestClass();
         }
 
         private class TestClass { }

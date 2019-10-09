@@ -15,14 +15,12 @@
 // You should have received a copy of the GNU General Public License
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace TShock.Commands.Parsers {
+using System;
+
+namespace TShock.Commands.Parsers.Attributes {
     /// <summary>
-    /// Provides parse options. These are strings so that parse options can easily be added by consumers.
+    /// Specifies that a <see langword="string"/> parameter should parse to the rest of the input.
     /// </summary>
-    public static class ParseOptions {
-        /// <summary>
-        /// An option which forces a string to be parsed to the end of the input.
-        /// </summary>
-        public const string ToEndOfInput = nameof(ToEndOfInput);
-    }
+    [AttributeUsage(AttributeTargets.Parameter)]
+    public sealed class RestOfInputAttribute : Attribute { }
 }

@@ -27,6 +27,7 @@ using Orion.Events;
 using Orion.Players;
 using Serilog;
 using TShock.Commands.Parsers;
+using TShock.Commands.Parsers.Attributes;
 using TShock.Events.Commands;
 using TShock.Properties;
 using TShock.Utils.Extensions;
@@ -187,7 +188,7 @@ namespace TShock.Commands {
         }
 
         [CommandHandler("tshock:me")]
-        public void Me(ICommandSender sender, [ParseOptions(ParseOptions.ToEndOfInput)] string text) {
+        public void Me(ICommandSender sender, [RestOfInput] string text) {
             PlayerService.BroadcastMessage(
                 string.Format(CultureInfo.InvariantCulture, Resources.Command_Me, sender.Name, text),
                 new Color(0xc8, 0x64, 0x00));
@@ -204,7 +205,7 @@ namespace TShock.Commands {
         }
 
         [CommandHandler("tshock:p")]
-        public void Party(ICommandSender sender, [ParseOptions(ParseOptions.ToEndOfInput)] string text) {
+        public void Party(ICommandSender sender, [RestOfInput] string text) {
             var player = sender.Player;
             if (player is null) {
                 sender.SendErrorMessage(Resources.Command_Party_NotAPlayer);

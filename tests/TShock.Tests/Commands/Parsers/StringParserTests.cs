@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using FluentAssertions;
+using TShock.Commands.Parsers.Attributes;
 using Xunit;
 
 namespace TShock.Commands.Parsers {
@@ -38,7 +39,7 @@ namespace TShock.Commands.Parsers {
             var parser = new StringParser();
             var input = inputString.AsSpan();
 
-            parser.Parse(ref input).Should().Be(expected);
+            parser.Parse(ref input, new HashSet<Attribute>()).Should().Be(expected);
 
             input.ToString().Should().Be(expectedNextInput);
         }
@@ -50,18 +51,18 @@ namespace TShock.Commands.Parsers {
             var parser = new StringParser();
             Func<string> func = () => {
                 var input = inputString.AsSpan();
-                return parser.Parse(ref input);
+                return parser.Parse(ref input, new HashSet<Attribute>());
             };
 
             func.Should().Throw<CommandParseException>();
         }
 
         [Fact]
-        public void Parse_ToEndOfInput() {
+        public void Parse_RestOfInput() {
             var parser = new StringParser();
             var input = @"blah blah ""test"" blah blah".AsSpan();
 
-            parser.Parse(ref input, new HashSet<string> { ParseOptions.ToEndOfInput })
+            parser.Parse(ref input, new HashSet<Attribute> { new RestOfInputAttribute() })
                 .Should().Be(@"blah blah ""test"" blah blah");
 
             input.ToString().Should().BeEmpty();

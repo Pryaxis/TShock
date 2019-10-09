@@ -19,7 +19,7 @@ using System;
 using FluentAssertions;
 using Xunit;
 
-namespace TShock.Commands.Parsers {
+namespace TShock.Commands.Parsers.Attributes {
     public class FlagAttributeTests {
         [Fact]
         public void Ctor_NullFlag_ThrowsArgumentNullException() {

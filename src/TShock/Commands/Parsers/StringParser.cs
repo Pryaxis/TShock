@@ -18,7 +18,9 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text;
+using TShock.Commands.Parsers.Attributes;
 using TShock.Properties;
 
 namespace TShock.Commands.Parsers {
@@ -27,8 +29,8 @@ namespace TShock.Commands.Parsers {
     /// </summary>
     public sealed class StringParser : IArgumentParser<string> {
         /// <inheritdoc/>
-        public string Parse(ref ReadOnlySpan<char> input, ISet<string>? options = null) {
-            if (options?.Contains(ParseOptions.ToEndOfInput) == true) {
+        public string Parse(ref ReadOnlySpan<char> input, ISet<Attribute> attributes) {
+            if (attributes.Any(a => a is RestOfInputAttribute)) {
                 var result = input.ToString();
                 input = default;
                 return result;

@@ -27,7 +27,7 @@ namespace TShock.Commands.Parsers {
     /// </summary>
     public sealed class Int32Parser : IArgumentParser<int> {
         /// <inheritdoc/>
-        public int Parse(ref ReadOnlySpan<char> input, ISet<string>? options = null) {
+        public int Parse(ref ReadOnlySpan<char> input, ISet<Attribute> attributes) {
             var end = input.IndexOfOrEnd(' ');
             var parse = input[..end];
 

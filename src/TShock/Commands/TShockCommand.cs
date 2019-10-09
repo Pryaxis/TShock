@@ -22,7 +22,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using Orion.Events;
-using TShock.Commands.Parsers;
+using TShock.Commands.Parsers.Attributes;
 using TShock.Events.Commands;
 using TShock.Properties;
 using TShock.Utils.Extensions;
@@ -106,14 +106,14 @@ namespace TShock.Commands {
                             parameterType));
                 }
 
-                var options = parameterInfo.GetCustomAttribute<ParseOptionsAttribute>()?.Options;
+                var attributes = parameterInfo.GetCustomAttributes().ToHashSet();
                 if (input.IsEmpty) {
                     throw new CommandParseException(
                         string.Format(CultureInfo.InvariantCulture, Resources.CommandParse_MissingArg,
                             parameterInfo));
                 }
 
-                return parser.Parse(ref input, options);
+                return parser.Parse(ref input, attributes);
             }
 
             void ParseShortFlags(ref ReadOnlySpan<char> input, int space) {

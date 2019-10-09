@@ -20,46 +20,45 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
-namespace TShock.Commands.Parsers {
+namespace TShock.Commands.Parsers.Attributes {
     /// <summary>
-    /// Specifies the options with which to parse a parameter.
+    /// Specifies that a <see langword="bool"/> parameter should have flag-based parsing.
     /// </summary>
     [AttributeUsage(AttributeTargets.Parameter)]
-    public sealed class ParseOptionsAttribute : Attribute {
+    public sealed class FlagAttribute : Attribute {
         /// <summary>
-        /// Gets the options.
+        /// Gets a read-only view of the flags. Flags with length 1 are treated as short flags.
         /// </summary>
-        public ISet<string> Options { get; }
+        public IReadOnlyCollection<string> Flags { get; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ParseOptionsAttribute"/> class with the specified options.
+        /// Initializes a new instance of the <see cref="FlagAttribute"/> class with the specified flags. Flags with
+        /// length 1 are treated as short flags.
         /// </summary>
-        /// <param name="option">The option.</param>
-        /// <param name="otherOptions">The other options.</param>
+        /// <param name="flag">The flag.</param>
+        /// <param name="alternateFlags">The alternate flags. This may be empty.</param>
         /// <exception cref="ArgumentException">
-        /// <paramref name="otherOptions"/> contains a <see langword="null"/> element.
+        /// <paramref name="alternateFlags"/> contains a <see langword="null"/> element.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="option"/> or <paramref name="otherOptions"/> are <see langword="null"/>.
+        /// <paramref name="flag"/> or <paramref name="alternateFlags"/> are <see langword="null"/>.
         /// </exception>
         [SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters",
             Justification = "strings are not user-facing")]
-        public ParseOptionsAttribute(string option, params string[] otherOptions) {
-            if (option is null) {
-                throw new ArgumentNullException(nameof(option));
+        public FlagAttribute(string flag, params string[] alternateFlags) {
+            if (flag is null) {
+                throw new ArgumentNullException(nameof(flag));
             }
 
-            if (otherOptions is null) {
-                throw new ArgumentNullException(nameof(otherOptions));
+            if (alternateFlags is null) {
+                throw new ArgumentNullException(nameof(alternateFlags));
             }
 
-            if (otherOptions.Any(o => o == null)) {
-                throw new ArgumentException("Array contains null element.", nameof(otherOptions));
+            if (alternateFlags.Any(f => f == null)) {
+                throw new ArgumentException("Array contains null element.", nameof(alternateFlags));
             }
 
-            var optionsSet = new HashSet<string> { option };
-            optionsSet.UnionWith(otherOptions);
-            Options = optionsSet;
+            Flags = new[] { flag }.Concat(alternateFlags).ToList();
         }
     }
 }

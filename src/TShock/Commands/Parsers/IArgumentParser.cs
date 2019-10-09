@@ -25,14 +25,14 @@ namespace TShock.Commands.Parsers {
     /// </summary>
     public interface IArgumentParser {
         /// <summary>
-        /// Parses <paramref name="input"/> and returns a corresponding object. <paramref name="input"/> will be
-        /// consumed as necessary.
+        /// Parses <paramref name="input"/> and returns a corresponding object using the <paramref name="attributes"/>.
+        /// <paramref name="input"/> will be consumed as necessary.
         /// </summary>
         /// <param name="input">The input. This is guaranteed to start with a non-whitespace character.</param>
-        /// <param name="options">The parse options.</param>
+        /// <param name="attributes">The attributes.</param>
         /// <returns>A corresponding object.</returns>
         /// <exception cref="CommandParseException">The input could not be parsed properly.</exception>
-        object? Parse(ref ReadOnlySpan<char> input, ISet<string>? options = null);
+        object? Parse(ref ReadOnlySpan<char> input, ISet<Attribute> attributes);
     }
 
     /// <summary>
@@ -41,16 +41,17 @@ namespace TShock.Commands.Parsers {
     /// <typeparam name="TParse">The parse type.</typeparam>
     public interface IArgumentParser<out TParse> : IArgumentParser {
         /// <summary>
-        /// Parses <paramref name="input"/> and returns a corresponding <typeparamref name="TParse"/> instance.
-        /// <paramref name="input"/> will be consumed as necessary.
+        /// Parses <paramref name="input"/> and returns a corresponding <typeparamref name="TParse"/> instance using the
+        /// <paramref name="attributes"/>. <paramref name="input"/> will be consumed as necessary.
         /// </summary>
         /// <param name="input">The input. This is guaranteed to start with a non-whitespace character.</param>
-        /// <param name="options">The parse options.</param>
+        /// <param name="attributes">The attributes.</param>
         /// <returns>A corresponding <typeparamref name="TParse"/> instance.</returns>
         /// <exception cref="CommandParseException">The input could not be parsed properly.</exception>
-        new TParse Parse(ref ReadOnlySpan<char> input, ISet<string>? options = null);
+        new TParse Parse(ref ReadOnlySpan<char> input, ISet<Attribute> attributes);
 
         [ExcludeFromCodeCoverage]
-        object? IArgumentParser.Parse(ref ReadOnlySpan<char> input, ISet<string>? options) => Parse(ref input, options);
+        object? IArgumentParser.Parse(ref ReadOnlySpan<char> input, ISet<Attribute> attributes) =>
+            Parse(ref input, attributes);
     }
 }

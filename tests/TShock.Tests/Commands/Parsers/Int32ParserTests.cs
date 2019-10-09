@@ -16,6 +16,7 @@
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using FluentAssertions;
 using Xunit;
 
@@ -31,7 +32,7 @@ namespace TShock.Commands.Parsers {
             var parser = new Int32Parser();
             var input = inputString.AsSpan();
 
-            parser.Parse(ref input).Should().Be(expected);
+            parser.Parse(ref input, new HashSet<Attribute>()).Should().Be(expected);
 
             input.ToString().Should().Be(expectedNextInput);
         }
@@ -43,7 +44,7 @@ namespace TShock.Commands.Parsers {
             var parser = new Int32Parser();
             Func<int> func = () => {
                 var input = inputString.AsSpan();
-                return parser.Parse(ref input);
+                return parser.Parse(ref input, new HashSet<Attribute>());
             };
 
             func.Should().Throw<CommandParseException>();
@@ -56,7 +57,7 @@ namespace TShock.Commands.Parsers {
             var parser = new Int32Parser();
             Func<int> func = () => {
                 var input = inputString.AsSpan();
-                return parser.Parse(ref input);
+                return parser.Parse(ref input, new HashSet<Attribute>());
             };
 
             func.Should().Throw<CommandParseException>().WithInnerException<OverflowException>();
@@ -70,7 +71,7 @@ namespace TShock.Commands.Parsers {
             var parser = new Int32Parser();
             Func<int> func = () => {
                 var input = inputString.AsSpan();
-                return parser.Parse(ref input);
+                return parser.Parse(ref input, new HashSet<Attribute>());
             };
             func.Should().Throw<CommandParseException>().WithInnerException<FormatException>();
         }

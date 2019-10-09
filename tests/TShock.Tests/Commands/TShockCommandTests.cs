@@ -23,6 +23,7 @@ using FluentAssertions;
 using Moq;
 using Orion.Events;
 using TShock.Commands.Parsers;
+using TShock.Commands.Parsers.Attributes;
 using TShock.Events.Commands;
 using Xunit;
 
