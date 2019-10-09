@@ -121,7 +121,9 @@ namespace TShock {
                 args.Cancel("tshock: command executing");
 
                 var input = chat.Substring(1);
-                ExecuteCommand(new PlayerCommandSender(args.Player), input);
+                ICommandSender commandSender = args.Player.GetAnnotationOrDefault("tshock:CommandSender",
+                    () => new PlayerCommandSender(args.Player), true);
+                ExecuteCommand(commandSender, input);
             }
         }
 
@@ -139,9 +141,8 @@ namespace TShock {
                 return;
             }
             
-            input = input[space..];
             try {
-                command.Invoke(commandSender, input);
+                command.Invoke(commandSender, input[space..]);
             } catch (CommandParseException ex) {
                 commandSender.SendErrorMessage(ex.Message);
                 commandSender.SendInfoMessage(
