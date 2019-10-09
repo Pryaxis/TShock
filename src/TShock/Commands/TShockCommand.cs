@@ -37,19 +37,23 @@ namespace TShock.Commands {
         private readonly object?[] _parameters;
 
         public string QualifiedName { get; }
+        public string? HelpText { get; }
+        public string? UsageText { get; }
         public object HandlerObject { get; }
         public MethodBase Handler { get; }
 
         // We need to inject ICommandService so that we can trigger its CommandExecute event.
-        public TShockCommand(ICommandService commandService, string qualifiedName, object handlerObject,
+        public TShockCommand(ICommandService commandService, CommandHandlerAttribute attribute, object handlerObject,
                 MethodBase handler) {
             Debug.Assert(commandService != null, "command service should not be null");
-            Debug.Assert(qualifiedName != null, "qualified name should not be null");
+            Debug.Assert(attribute != null, "attribute should not be null");
             Debug.Assert(handlerObject != null, "handler object should not be null");
             Debug.Assert(handler != null, "handler should not be null");
 
             _commandService = commandService;
-            QualifiedName = qualifiedName;
+            QualifiedName = attribute.QualifiedName;
+            HelpText = attribute.HelpText;
+            UsageText = attribute.UsageText;
             HandlerObject = handlerObject;
             Handler = handler;
 

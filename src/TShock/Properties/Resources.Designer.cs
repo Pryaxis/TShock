@@ -70,6 +70,15 @@ namespace TShock.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to tshock:help.
+        /// </summary>
+        internal static string Command_Help {
+            get {
+                return ResourceManager.GetString("Command_Help", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Commands:.
         /// </summary>
         internal static string Command_Help_Header {
@@ -79,11 +88,83 @@ namespace TShock.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to *{0} {1}.
+        ///   Looks up a localized string similar to Shows available commands and provides information about specific commands..
+        /// </summary>
+        internal static string Command_Help_HelpText {
+            get {
+                return ResourceManager.GetString("Command_Help_HelpText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Usage: /help [command-name].
+        /// </summary>
+        internal static string Command_Help_UsageText {
+            get {
+                return ResourceManager.GetString("Command_Help_UsageText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to tshock:me.
         /// </summary>
         internal static string Command_Me {
             get {
                 return ResourceManager.GetString("Command_Me", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sends a message in the third person..
+        /// </summary>
+        internal static string Command_Me_HelpText {
+            get {
+                return ResourceManager.GetString("Command_Me_HelpText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to *{0} {1}.
+        /// </summary>
+        internal static string Command_Me_Message {
+            get {
+                return ResourceManager.GetString("Command_Me_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Usage: /me &lt;text&gt;.
+        /// </summary>
+        internal static string Command_Me_UsageText {
+            get {
+                return ResourceManager.GetString("Command_Me_UsageText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to tshock:p.
+        /// </summary>
+        internal static string Command_P {
+            get {
+                return ResourceManager.GetString("Command_P", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sends a message to your party members..
+        /// </summary>
+        internal static string Command_P_HelpText {
+            get {
+                return ResourceManager.GetString("Command_P_HelpText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Usage: /p &lt;text&gt;.
+        /// </summary>
+        internal static string Command_P_UsageText {
+            get {
+                return ResourceManager.GetString("Command_P_UsageText", resourceCulture);
             }
         }
         
@@ -106,11 +187,29 @@ namespace TShock.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to tshock:playing.
+        /// </summary>
+        internal static string Command_Playing {
+            get {
+                return ResourceManager.GetString("Command_Playing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Players online:.
         /// </summary>
         internal static string Command_Playing_Header {
             get {
                 return ResourceManager.GetString("Command_Playing_Header", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Shows the current players..
+        /// </summary>
+        internal static string Command_Playing_HelpText {
+            get {
+                return ResourceManager.GetString("Command_Playing_HelpText", resourceCulture);
             }
         }
         
@@ -124,11 +223,47 @@ namespace TShock.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to *{0} rolls a {1}.
+        ///   Looks up a localized string similar to Usage: /playing [-i].
+        /// </summary>
+        internal static string Command_Playing_UsageText {
+            get {
+                return ResourceManager.GetString("Command_Playing_UsageText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to tshock:roll.
         /// </summary>
         internal static string Command_Roll {
             get {
                 return ResourceManager.GetString("Command_Roll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rolls a random number from 1 to 100..
+        /// </summary>
+        internal static string Command_Roll_HelpText {
+            get {
+                return ResourceManager.GetString("Command_Roll_HelpText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to *{0} rolls a {1}.
+        /// </summary>
+        internal static string Command_Roll_Message {
+            get {
+                return ResourceManager.GetString("Command_Roll_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Usage: /roll.
+        /// </summary>
+        internal static string Command_Roll_UsageText {
+            get {
+                return ResourceManager.GetString("Command_Roll_UsageText", resourceCulture);
             }
         }
         

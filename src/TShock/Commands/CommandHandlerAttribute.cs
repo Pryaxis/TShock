@@ -18,6 +18,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
+using TShock.Utils;
 
 namespace TShock.Commands {
     /// <summary>
@@ -27,45 +28,74 @@ namespace TShock.Commands {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
     [MeansImplicitUse]
     public sealed class CommandHandlerAttribute : Attribute {
+        private readonly string _qualifiedName;
+        private string? _helpText;
+        private string? _usageText;
+        private Type? _resourceType;
+
         /// <summary>
-        /// Gets the command's qualified name. This includes the command's namespace: e.g., "tshock:kick".
+        /// Gets the qualified name. This includes the namespace: e.g., "tshock:kick".
         /// </summary>
-        public string QualifiedCommandName { get; }
+        public string QualifiedName => GetResourceStringMaybe(_qualifiedName);
+
+        /// <summary>
+        /// Gets or sets the help text. If <see langword="null"/>, then no help text exists. This will show up in the
+        /// /help command.
+        /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
+        [DisallowNull]
+        public string? HelpText {
+            get => GetResourceStringMaybe(_helpText);
+            set => _helpText = value ?? throw new ArgumentNullException(nameof(value));
+        }
+
+        /// <summary>
+        /// Gets or sets the usage text. If <see langword="null"/>, then no usage text exists. This will show up in the
+        /// /help command and when invalid syntax is used.
+        /// </summary>
+        /// <exception cref="ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
+        [DisallowNull]
+        public string? UsageText {
+            get => GetResourceStringMaybe(_usageText);
+            set => _usageText = value ?? throw new ArgumentNullException(nameof(value));
+        }
+
+        /// <summary>
+        /// Gets or sets the resource type to load localizable strings from. If <see langword="null"/>, then no
+        /// localization will occur.
+        /// </summary>
+        public Type? ResourceType {
+            get => _resourceType;
+            set => _resourceType = value ?? throw new ArgumentNullException(nameof(value));
+        }
+
+        [return: NotNullIfNotNull("str")]
+        private string? GetResourceStringMaybe(string? str) {
+            if (str is null) {
+                return null;
+            }
+
+            return _resourceType != null ? ResourceHelper.LoadResource<string>(_resourceType, str) : str;
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandHandlerAttribute"/> class with the specified qualified
-        /// command name.
+        /// name.
         /// </summary>
-        /// <param name="qualifiedCommandName">
-        /// The qualified command name. This includes the namespace: e.g., "tshock:kick".
+        /// <param name="qualifiedName">
+        /// The qualified name. This must include the namespace: e.g., "tshock:kick".
         /// </param>
-        /// <exception cref="ArgumentException">
-        /// <paramref name="qualifiedCommandName"/> is missing the namespace or name, or contains a space.
-        /// </exception>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="qualifiedCommandName"/> is <see langword="null"/>.
+        /// <paramref name="qualifiedName"/> is <see langword="null"/>.
         /// </exception>
         [SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters",
             Justification = "strings are not user-facing")]
-        public CommandHandlerAttribute(string qualifiedCommandName) {
-            if (qualifiedCommandName is null) {
-                throw new ArgumentNullException(nameof(qualifiedCommandName));
+        public CommandHandlerAttribute(string qualifiedName) {
+            if (qualifiedName is null) {
+                throw new ArgumentNullException(nameof(qualifiedName));
             }
 
-            var colon = qualifiedCommandName.IndexOf(':', StringComparison.Ordinal);
-            if (colon <= 0) {
-                throw new ArgumentException("Parameter is missing namespace.", nameof(qualifiedCommandName));
-            }
-
-            if (colon >= qualifiedCommandName.Length - 1) {
-                throw new ArgumentException("Parameter is missing name.", nameof(qualifiedCommandName));
-            }
-
-            if (qualifiedCommandName.IndexOf(' ', StringComparison.Ordinal) >= 0) {
-                throw new ArgumentException("Parameter contains a space.", nameof(qualifiedCommandName));
-            }
-
-            QualifiedCommandName = qualifiedCommandName;
+            _qualifiedName = qualifiedName;
         }
     }
 }

@@ -62,13 +62,11 @@ namespace TShock.Commands {
                 throw new ArgumentNullException(nameof(handlerObject));
             }
 
-            var registeredCommands = new List<ICommand>();
-
-            void RegisterCommand(ICommand command) {
+            ICommand? RegisterCommand(ICommand command) {
                 var args = new CommandRegisterEventArgs(command);
                 CommandRegister?.Invoke(this, args);
                 if (args.IsCanceled()) {
-                    return;
+                    return null;
                 }
 
                 var qualifiedName = command.QualifiedName;
@@ -77,17 +75,13 @@ namespace TShock.Commands {
                 _qualifiedNames[name].Add(qualifiedName);
 
                 _commands.Add(qualifiedName, command);
-                registeredCommands.Add(command);
+                return command;
             }
 
-            foreach (var command in handlerObject.GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance)
-                    .SelectMany(m => m.GetCustomAttributes<CommandHandlerAttribute>(),
-                        (handler, attribute) => (handler, attribute))
-                    .Select(t => new TShockCommand(this, t.attribute.QualifiedCommandName, handlerObject, t.handler))) {
-                RegisterCommand(command);
-            }
-
-            return registeredCommands;
+            return handlerObject.GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance)
+                .SelectMany(m => m.GetCustomAttributes<CommandHandlerAttribute>(),
+                    (m, a) => RegisterCommand(new TShockCommand(this, a, handlerObject, m)))
+                .Where(c => c != null).ToList()!;
         }
 
         public void RegisterParser<TParse>(IArgumentParser<TParse> parser) =>
@@ -155,11 +149,12 @@ namespace TShock.Commands {
             _qualifiedNames[name].Remove(qualifiedName);
             return true;
         }
-
-        [CommandHandler("tshock:help")]
+        
+        [CommandHandler(nameof(Resources.Command_Help),
+            HelpText = nameof(Resources.Command_Help_HelpText),
+            UsageText = nameof(Resources.Command_Help_UsageText),
+            ResourceType = typeof(Resources))]
         public void Help(ICommandSender sender) {
-            sender.SendInfoMessage(Resources.Command_Help_Header);
-
             string FormatCommandName(ICommand command) {
                 var qualifiedName = command.QualifiedName;
                 var name = qualifiedName.Substring(qualifiedName.IndexOf(':', StringComparison.Ordinal) + 1);
@@ -170,8 +165,11 @@ namespace TShock.Commands {
 
             sender.SendInfoMessage(string.Join(", ", _commands.Values.Select(FormatCommandName)));
         }
-
-        [CommandHandler("tshock:playing")]
+        
+        [CommandHandler(nameof(Resources.Command_Playing),
+            HelpText = nameof(Resources.Command_Playing_HelpText),
+            UsageText = nameof(Resources.Command_Playing_UsageText),
+            ResourceType = typeof(Resources))]
         public void Playing(ICommandSender sender, [Flag("i")] bool showIds) {
             var onlinePlayers = PlayerService.Players.Where(p => p.IsActive).ToList();
             if (onlinePlayers.Count == 0) {
@@ -187,25 +185,34 @@ namespace TShock.Commands {
             }
         }
 
-        [CommandHandler("tshock:me")]
+        [CommandHandler(nameof(Resources.Command_Me),
+            HelpText = nameof(Resources.Command_Me_HelpText),
+            UsageText = nameof(Resources.Command_Me_UsageText),
+            ResourceType = typeof(Resources))]
         public void Me(ICommandSender sender, [RestOfInput] string text) {
             PlayerService.BroadcastMessage(
-                string.Format(CultureInfo.InvariantCulture, Resources.Command_Me, sender.Name, text),
+                string.Format(CultureInfo.InvariantCulture, Resources.Command_Me_Message, sender.Name, text),
                 new Color(0xc8, 0x64, 0x00));
             Log.Information("*{Name} {Text}", sender.Name, text);
         }
-
-        [CommandHandler("tshock:roll")]
+        
+        [CommandHandler(nameof(Resources.Command_Roll),
+            HelpText = nameof(Resources.Command_Roll_HelpText),
+            UsageText = nameof(Resources.Command_Roll_UsageText),
+            ResourceType = typeof(Resources))]
         public void Roll(ICommandSender sender) {
             var num = _rand.Next(1, 101);
             PlayerService.BroadcastMessage(
-                string.Format(CultureInfo.InvariantCulture, Resources.Command_Roll, sender.Name, num),
+                string.Format(CultureInfo.InvariantCulture, Resources.Command_Roll_Message, sender.Name, num),
                 new Color(0xff, 0xf0, 0x14));
             Log.Information("*{Name} rolls a {Num}", sender.Name, num);
         }
-
-        [CommandHandler("tshock:p")]
-        public void Party(ICommandSender sender, [RestOfInput] string text) {
+        
+        [CommandHandler(nameof(Resources.Command_P),
+            HelpText = nameof(Resources.Command_P_HelpText),
+            UsageText = nameof(Resources.Command_P_UsageText),
+            ResourceType = typeof(Resources))]
+        public void P(ICommandSender sender, [RestOfInput] string text) {
             var player = sender.Player;
             if (player is null) {
                 sender.SendErrorMessage(Resources.Command_Party_NotAPlayer);

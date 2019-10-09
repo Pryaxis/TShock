@@ -21,29 +21,70 @@ using Xunit;
 
 namespace TShock.Commands {
     public class CommandHandlerAttributeTests {
-        [Theory]
-        [InlineData("test")]
-        [InlineData(":test")]
-        [InlineData("test:")]
-        [InlineData(":")]
-        public void Ctor_InvalidQualifiedCommandName_ThrowsArgumentException(string qualifiedCommandName) {
-            Func<CommandHandlerAttribute> func = () => new CommandHandlerAttribute(qualifiedCommandName);
+        [Fact]
+        public void HelpText_GetWithResourceType() {
+            var attribute = new CommandHandlerAttribute("tshock_test:test") {
+                HelpText = nameof(TestClass.HelpText),
+                ResourceType = typeof(TestClass)
+            };
 
-            func.Should().Throw<ArgumentException>();
+            attribute.HelpText.Should().Be(TestClass.HelpText);
         }
 
         [Fact]
-        public void Ctor_NullQualifiedCommandName_ThrowsArgumentNullException() {
-            Func<CommandHandlerAttribute> func = () => new CommandHandlerAttribute(null);
-
-            func.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void QualifiedCommandName_Get() {
+        public void QualifiedName_Get() {
             var attribute = new CommandHandlerAttribute("tshock_test:test");
 
-            attribute.QualifiedCommandName.Should().Be("tshock_test:test");
+            attribute.QualifiedName.Should().Be("tshock_test:test");
+        }
+
+        [Fact]
+        public void QualifiedName_GetWithResourceType() {
+            var attribute = new CommandHandlerAttribute(nameof(TestClass.QualifiedName)) {
+                ResourceType = typeof(TestClass)
+            };
+
+            attribute.QualifiedName.Should().Be(TestClass.QualifiedName);
+        }
+
+        [Fact]
+        public void HelpText_SetNullValue_ThrowsArgumentNullException() {
+            var attribute = new CommandHandlerAttribute("tshock_test:test");
+            Action action = () => attribute.HelpText = null;
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void UsageText_GetWithResourceType() {
+            var attribute = new CommandHandlerAttribute("tshock_test:test") {
+                UsageText = nameof(TestClass.UsageText),
+                ResourceType = typeof(TestClass)
+            };
+
+            attribute.UsageText.Should().Be(TestClass.UsageText);
+        }
+
+        [Fact]
+        public void UsageText_SetNullValue_ThrowsArgumentNullException() {
+            var attribute = new CommandHandlerAttribute("tshock_test:test");
+            Action action = () => attribute.UsageText = null;
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void ResourceType_SetNullValue_ThrowsArgumentNullException() {
+            var attribute = new CommandHandlerAttribute("tshock_test:test");
+            Action action = () => attribute.ResourceType = null;
+
+            action.Should().Throw<ArgumentNullException>();
+        }
+
+        private class TestClass {
+            public static string QualifiedName => "tshock:qualified_name_test";
+            public static string HelpText => "HelpText test";
+            public static string UsageText => "UsageText test";
         }
     }
 }

@@ -29,6 +29,18 @@ namespace TShock.Commands {
         string QualifiedName { get; }
 
         /// <summary>
+        /// Gets the command's help text. If <see langword="null"/>, then no help text exists. This will show up in the
+        /// /help command.
+        /// </summary>
+        string? HelpText { get; }
+
+        /// <summary>
+        /// Gets the command's usage text. If <see langword="null"/>, then no usage text exists. This will show up in the
+        /// /help command and when invalid syntax is used.
+        /// </summary>
+        string? UsageText { get; }
+
+        /// <summary>
         /// Gets the object associated with the command's handler.
         /// </summary>
         object HandlerObject { get; }
