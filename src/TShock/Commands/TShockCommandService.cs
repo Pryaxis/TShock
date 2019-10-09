@@ -159,6 +159,10 @@ namespace TShock.Commands {
                 return;
             }
 
+            if (command_name.StartsWith('/')) {
+                command_name = command_name.Substring(1);
+            }
+
             ICommand command;
             lock (_lock) {
                 string qualifiedName;
