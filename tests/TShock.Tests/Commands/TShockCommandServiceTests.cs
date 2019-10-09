@@ -88,8 +88,7 @@ namespace TShock.Commands {
             _commandService.RegisterCommands(testClass).ToList();
             var command = _commandService.Commands["tshock_tests:test2"];
 
-            var input = "test2".AsSpan();
-            _commandService.FindCommand(ref input).Should().BeSameAs(command);
+            _commandService.FindCommand("test2").Should().BeSameAs(command);
         }
 
         [Fact]
@@ -98,8 +97,7 @@ namespace TShock.Commands {
             _commandService.RegisterCommands(testClass).ToList();
             var command = _commandService.Commands["tshock_tests:test"];
 
-            var input = "tshock_tests:test".AsSpan();
-            _commandService.FindCommand(ref input).Should().BeSameAs(command);
+            _commandService.FindCommand("tshock_tests:test").Should().BeSameAs(command);
         }
 
         [Theory]
@@ -107,15 +105,12 @@ namespace TShock.Commands {
         [InlineData("test")]
         [InlineData("test3")]
         [InlineData("tshock_tests:test3")]
-        public void FindCommand_InvalidCommand_ThrowsCommandParseException(string inputString) {
+        public void FindCommand_InvalidCommand_ThrowsCommandNotFoundException(string inputString) {
             var testClass = new TestClass();
             _commandService.RegisterCommands(testClass).ToList();
-            Action action = () => {
-                var input = inputString.AsSpan();
-                _commandService.FindCommand(ref input);
-            };
+            Action action = () => _commandService.FindCommand(inputString);
 
-            action.Should().Throw<CommandParseException>();
+            action.Should().Throw<CommandNotFoundException>();
         }
 
         [Fact]

@@ -87,16 +87,12 @@ namespace TShock.Commands {
         public void RegisterParser<TParse>(IArgumentParser<TParse> parser) =>
             _parsers[typeof(TParse)] = parser ?? throw new ArgumentNullException(nameof(parser));
 
-        public ICommand FindCommand(ref ReadOnlySpan<char> input) {
-            input = input.TrimStart();
-            if (input.IsEmpty) {
-                throw new CommandParseException(Resources.CommandParse_MissingCommand);
+        public ICommand FindCommand(string commandName) {
+            if (string.IsNullOrEmpty(commandName)) {
+                throw new CommandNotFoundException(Resources.CommandFind_MissingCommand);
             }
 
-            var space = input.IndexOfOrEnd(' ');
-            var maybeQualifiedName = input[..space].ToString();
-            var qualifiedName = GetQualifiedName(maybeQualifiedName);
-            input = input[space..];
+            var qualifiedName = GetQualifiedName(commandName);
             Debug.Assert(_commands.ContainsKey(qualifiedName), "commands should contain qualified name");
             return _commands[qualifiedName];
         }
@@ -128,14 +124,14 @@ namespace TShock.Commands {
             UsageText = nameof(Resources.Command_Help_UsageText),
             ResourceType = typeof(Resources))]
         public void Help(ICommandSender sender, string? command_name = null) {
-            string FormatCommandName(ICommand command) {
-                var qualifiedName = command.QualifiedName;
-                var name = qualifiedName.Substring(qualifiedName.IndexOf(':', StringComparison.Ordinal) + 1);
-                Debug.Assert(_qualifiedNames.ContainsKey(name), "qualified names should contain command name");
-                return _qualifiedNames[name].Count > 1 ? qualifiedName : name;
-            }
-
             if (command_name is null) {
+                string FormatCommandName(ICommand command) {
+                    var qualifiedName = command.QualifiedName;
+                    var name = qualifiedName.Substring(qualifiedName.IndexOf(':', StringComparison.Ordinal) + 1);
+                    Debug.Assert(_qualifiedNames.ContainsKey(name), "qualified names should contain command name");
+                    return _qualifiedNames[name].Count > 1 ? qualifiedName : name;
+                }
+
                 sender.SendInfoMessage(Resources.Command_Help_Header);
                 sender.SendInfoMessage(string.Join(", ", _commands.Values.Select(c => $"/{FormatCommandName(c)}")));
                 return;
@@ -144,16 +140,15 @@ namespace TShock.Commands {
             string qualifiedName;
             try {
                 qualifiedName = GetQualifiedName(command_name);
-            } catch (CommandParseException ex) {
+            } catch (CommandNotFoundException ex) {
                 sender.SendErrorMessage(ex.Message);
                 return;
             }
 
             Debug.Assert(_commands.ContainsKey(qualifiedName), "commands should contain qualified name");
             var command = _commands[qualifiedName];
-            var commandName = FormatCommandName(command);
-            var usageText = string.Format(CultureInfo.InvariantCulture, command.UsageText, commandName);
-            sender.SendInfoMessage($"/{commandName}:\n{command.HelpText}\n{usageText}");
+            var usageText = string.Format(CultureInfo.InvariantCulture, command.UsageText, command_name);
+            sender.SendInfoMessage($"/{command_name}:\n{command.HelpText}\n{usageText}");
         }
 
         [CommandHandler(nameof(Resources.Command_Playing),
@@ -228,8 +223,8 @@ namespace TShock.Commands {
             var isQualifiedName = maybeQualifiedName.IndexOf(':', StringComparison.Ordinal) >= 0;
             if (isQualifiedName) {
                 if (!_commands.ContainsKey(maybeQualifiedName)) {
-                    throw new CommandParseException(
-                        string.Format(CultureInfo.InvariantCulture, Resources.CommandParse_UnrecognizedCommand,
+                    throw new CommandNotFoundException(
+                        string.Format(CultureInfo.InvariantCulture, Resources.CommandFind_UnrecognizedCommand,
                             maybeQualifiedName));
                 }
 
@@ -238,14 +233,14 @@ namespace TShock.Commands {
 
             var qualifiedNames = _qualifiedNames.GetValueOrDefault(maybeQualifiedName, () => new HashSet<string>());
             if (qualifiedNames.Count == 0) {
-                throw new CommandParseException(
-                    string.Format(CultureInfo.InvariantCulture, Resources.CommandParse_UnrecognizedCommand,
+                throw new CommandNotFoundException(
+                    string.Format(CultureInfo.InvariantCulture, Resources.CommandFind_UnrecognizedCommand,
                         maybeQualifiedName));
             }
 
             if (qualifiedNames.Count > 1) {
-                throw new CommandParseException(
-                    string.Format(CultureInfo.InvariantCulture, Resources.CommandParse_AmbiguousName,
+                throw new CommandNotFoundException(
+                    string.Format(CultureInfo.InvariantCulture, Resources.CommandFind_AmbiguousName,
                         maybeQualifiedName, string.Join(", ", qualifiedNames.Select(n => $"\"/{n}\""))));
             }
 

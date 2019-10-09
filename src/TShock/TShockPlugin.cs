@@ -27,6 +27,7 @@ using Orion.Players;
 using Serilog;
 using TShock.Commands;
 using TShock.Properties;
+using TShock.Utils.Extensions;
 
 namespace TShock {
     /// <summary>
@@ -127,11 +128,23 @@ namespace TShock {
         private void ExecuteCommand(ICommandSender commandSender, ReadOnlySpan<char> input) {
             Log.Information(Resources.Log_ExecutingCommand, commandSender.Name, input.ToString());
 
+            var space = input.IndexOfOrEnd(' ');
+            var commandName = input[..space].ToString();
+            ICommand command;
             try {
-                var command = CommandService.FindCommand(ref input);
+                command = CommandService.FindCommand(commandName);
+            } catch (CommandNotFoundException ex) {
+                commandSender.SendErrorMessage(ex.Message);
+                return;
+            }
+            
+            input = input[space..];
+            try {
                 command.Invoke(commandSender, input);
             } catch (CommandParseException ex) {
                 commandSender.SendErrorMessage(ex.Message);
+                commandSender.SendInfoMessage(
+                    string.Format(CultureInfo.InvariantCulture, command.UsageText, commandName));
             } catch (CommandExecuteException ex) {
                 commandSender.SendErrorMessage(ex.Message);
             }

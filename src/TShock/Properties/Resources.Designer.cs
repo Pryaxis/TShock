@@ -259,20 +259,38 @@ namespace TShock.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &quot;/{0}&quot; is ambiguous and can refer to {1}..
+        /// </summary>
+        internal static string CommandFind_AmbiguousName {
+            get {
+                return ResourceManager.GetString("CommandFind_AmbiguousName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Missing command name. Type /help for a list of commands..
+        /// </summary>
+        internal static string CommandFind_MissingCommand {
+            get {
+                return ResourceManager.GetString("CommandFind_MissingCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Command &quot;/{0}&quot; is not recognized. Type /help for a list of commands..
+        /// </summary>
+        internal static string CommandFind_UnrecognizedCommand {
+            get {
+                return ResourceManager.GetString("CommandFind_UnrecognizedCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Exception occurred while executing command..
         /// </summary>
         internal static string CommandInvoke_Exception {
             get {
                 return ResourceManager.GetString("CommandInvoke_Exception", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &quot;/{0}&quot; is ambiguous and can refer to {1}..
-        /// </summary>
-        internal static string CommandParse_AmbiguousName {
-            get {
-                return ResourceManager.GetString("CommandParse_AmbiguousName", resourceCulture);
             }
         }
         
@@ -295,15 +313,6 @@ namespace TShock.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Missing command name. Type /help for a list of commands..
-        /// </summary>
-        internal static string CommandParse_MissingCommand {
-            get {
-                return ResourceManager.GetString("CommandParse_MissingCommand", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Too many arguments were provided..
         /// </summary>
         internal static string CommandParse_TooManyArgs {
@@ -318,15 +327,6 @@ namespace TShock.Properties {
         internal static string CommandParse_UnrecognizedArgType {
             get {
                 return ResourceManager.GetString("CommandParse_UnrecognizedArgType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Command &quot;/{0}&quot; is not recognized. Type /help for a list of commands..
-        /// </summary>
-        internal static string CommandParse_UnrecognizedCommand {
-            get {
-                return ResourceManager.GetString("CommandParse_UnrecognizedCommand", resourceCulture);
             }
         }
         

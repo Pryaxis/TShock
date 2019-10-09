@@ -117,11 +117,17 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CommandFind_AmbiguousName" xml:space="preserve">
+    <value>"/{0}" is ambiguous and can refer to {1}.</value>
+  </data>
+  <data name="CommandFind_MissingCommand" xml:space="preserve">
+    <value>Missing command name. Type /help for a list of commands.</value>
+  </data>
+  <data name="CommandFind_UnrecognizedCommand" xml:space="preserve">
+    <value>Command "/{0}" is not recognized. Type /help for a list of commands.</value>
+  </data>
   <data name="CommandInvoke_Exception" xml:space="preserve">
     <value>Exception occurred while executing command.</value>
-  </data>
-  <data name="CommandParse_AmbiguousName" xml:space="preserve">
-    <value>"/{0}" is ambiguous and can refer to {1}.</value>
   </data>
   <data name="CommandParse_InvalidHyphenatedArg" xml:space="preserve">
     <value>Invalid hyphenated argument.</value>
@@ -129,17 +135,11 @@
   <data name="CommandParse_MissingArg" xml:space="preserve">
     <value>Missing argument "{0}".</value>
   </data>
-  <data name="CommandParse_MissingCommand" xml:space="preserve">
-    <value>Missing command name. Type /help for a list of commands.</value>
-  </data>
   <data name="CommandParse_TooManyArgs" xml:space="preserve">
     <value>Too many arguments were provided.</value>
   </data>
   <data name="CommandParse_UnrecognizedArgType" xml:space="preserve">
     <value>Argument type "{0}" not recognized.</value>
-  </data>
-  <data name="CommandParse_UnrecognizedCommand" xml:space="preserve">
-    <value>Command "/{0}" is not recognized. Type /help for a list of commands.</value>
   </data>
   <data name="CommandParse_UnrecognizedLongFlag" xml:space="preserve">
     <value>Long flag "--{0}" not recognized.</value>

@@ -73,13 +73,14 @@ namespace TShock.Commands {
         void RegisterParser<TParse>(IArgumentParser<TParse> parser);
 
         /// <summary>
-        /// Finds and returns a command with the <paramref name="input"/>. A command name (possibly qualified) will be
-        /// extracted and tested from the <paramref name="input"/>.
+        /// Finds and returns the command with <paramref name="commandName"/>. The qualified name will be determined and
+        /// used, if necessary.
         /// </summary>
-        /// <param name="input">The input.</param>
+        /// <param name="commandName">The command name.</param>
         /// <returns>The command.</returns>
-        /// <exception cref="CommandParseException">The command does not exist or is ambiguous.</exception>
-        ICommand FindCommand(ref ReadOnlySpan<char> input);
+        /// <exception cref="ArgumentNullException"><paramref name="commandName"/> is <see langword="null"/>.</exception>
+        /// <exception cref="CommandNotFoundException">The command does not exist or is ambiguous.</exception>
+        ICommand FindCommand(string commandName);
 
         /// <summary>
         /// Unregisters the <paramref name="command"/> and returns a value indicating success.
