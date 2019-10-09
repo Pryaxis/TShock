@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using TShock.Commands.Exceptions;
 using TShock.Properties;
 using TShock.Utils.Extensions;
 

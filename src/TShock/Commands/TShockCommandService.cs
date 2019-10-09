@@ -26,6 +26,7 @@ using Orion;
 using Orion.Events;
 using Orion.Players;
 using Serilog;
+using TShock.Commands.Exceptions;
 using TShock.Commands.Parsers;
 using TShock.Commands.Parsers.Attributes;
 using TShock.Events.Commands;

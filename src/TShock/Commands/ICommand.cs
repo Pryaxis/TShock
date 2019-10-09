@@ -17,6 +17,7 @@
 
 using System;
 using System.Reflection;
+using TShock.Commands.Exceptions;
 
 namespace TShock.Commands {
     /// <summary>

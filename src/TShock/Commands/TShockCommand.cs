@@ -22,6 +22,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using Orion.Events;
+using TShock.Commands.Exceptions;
 using TShock.Commands.Parsers.Attributes;
 using TShock.Events.Commands;
 using TShock.Properties;

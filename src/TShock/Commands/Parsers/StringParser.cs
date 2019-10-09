@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using TShock.Commands.Exceptions;
 using TShock.Commands.Parsers.Attributes;
 using TShock.Properties;
 

@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using FluentAssertions;
+using TShock.Commands.Exceptions;
 using Xunit;
 
 namespace TShock.Commands.Parsers {

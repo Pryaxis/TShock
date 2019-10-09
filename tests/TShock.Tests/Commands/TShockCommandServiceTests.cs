@@ -22,6 +22,7 @@ using FluentAssertions;
 using Moq;
 using Orion.Events;
 using Orion.Players;
+using TShock.Commands.Exceptions;
 using TShock.Commands.Parsers;
 using Xunit;
 

@@ -18,29 +18,29 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace TShock.Commands {
+namespace TShock.Commands.Exceptions {
     /// <summary>
-    /// The exception thrown when a command could not be found.
+    /// The exception thrown when a command could not be executed.
     /// </summary>
     [ExcludeFromCodeCoverage]
-    public class CommandNotFoundException : Exception {
+    public class CommandExecuteException : Exception {
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommandNotFoundException"/> class.
+        /// Initializes a new instance of the <see cref="CommandExecuteException"/> class.
         /// </summary>
-        public CommandNotFoundException() { }
+        public CommandExecuteException() { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommandNotFoundException"/> class with the specified message.
+        /// Initializes a new instance of the <see cref="CommandExecuteException"/> class with the specified message.
         /// </summary>
         /// <param name="message">The message.</param>
-        public CommandNotFoundException(string message) : base(message) { }
+        public CommandExecuteException(string message) : base(message) { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommandNotFoundException"/> class with the specified message
+        /// Initializes a new instance of the <see cref="CommandExecuteException"/> class with the specified message
         /// and inner exception.
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="innerException">The inner exception.</param>
-        public CommandNotFoundException(string message, Exception innerException) : base(message, innerException) { }
+        public CommandExecuteException(string message, Exception innerException) : base(message, innerException) { }
     }
 }

@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using TShock.Commands.Exceptions;
 
 namespace TShock.Commands.Parsers {
     /// <summary>

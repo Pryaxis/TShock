@@ -18,29 +18,29 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace TShock.Commands {
+namespace TShock.Commands.Exceptions {
     /// <summary>
-    /// The exception thrown when a command could not be executed.
+    /// The exception thrown when a command input cannot be parsed.
     /// </summary>
     [ExcludeFromCodeCoverage]
-    public class CommandExecuteException : Exception {
+    public class CommandParseException : Exception {
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommandExecuteException"/> class.
+        /// Initializes a new instance of the <see cref="CommandParseException"/> class.
         /// </summary>
-        public CommandExecuteException() { }
+        public CommandParseException() { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommandExecuteException"/> class with the specified message.
+        /// Initializes a new instance of the <see cref="CommandParseException"/> class with the specified message.
         /// </summary>
         /// <param name="message">The message.</param>
-        public CommandExecuteException(string message) : base(message) { }
+        public CommandParseException(string message) : base(message) { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommandExecuteException"/> class with the specified message
-        /// and inner exception.
+        /// Initializes a new instance of the <see cref="CommandParseException"/> class with the specified message and
+        /// inner exception.
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="innerException">The inner exception.</param>
-        public CommandExecuteException(string message, Exception innerException) : base(message, innerException) { }
+        public CommandParseException(string message, Exception innerException) : base(message, innerException) { }
     }
 }

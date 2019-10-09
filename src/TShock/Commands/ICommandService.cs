@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using Orion;
 using Orion.Events;
+using TShock.Commands.Exceptions;
 using TShock.Commands.Parsers;
 using TShock.Events.Commands;
 
