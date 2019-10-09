@@ -97,7 +97,7 @@ namespace TShock.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Usage: /help [command-name].
+        ///   Looks up a localized string similar to Usage: /{0} [command-name].
         /// </summary>
         internal static string Command_Help_UsageText {
             get {
@@ -106,7 +106,7 @@ namespace TShock.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to tshock:me.
+        ///   Looks up a localized string similar to me:help.
         /// </summary>
         internal static string Command_Me {
             get {
@@ -133,7 +133,7 @@ namespace TShock.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Usage: /me &lt;text&gt;.
+        ///   Looks up a localized string similar to Usage: /{0} &lt;text&gt;.
         /// </summary>
         internal static string Command_Me_UsageText {
             get {
@@ -160,7 +160,7 @@ namespace TShock.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Usage: /p &lt;text&gt;.
+        ///   Looks up a localized string similar to Usage: /{0} &lt;text&gt;.
         /// </summary>
         internal static string Command_P_UsageText {
             get {
@@ -223,7 +223,7 @@ namespace TShock.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Usage: /playing [-i].
+        ///   Looks up a localized string similar to Usage: /{0} [-i].
         /// </summary>
         internal static string Command_Playing_UsageText {
             get {
@@ -259,7 +259,7 @@ namespace TShock.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Usage: /roll.
+        ///   Looks up a localized string similar to Usage: /{0}.
         /// </summary>
         internal static string Command_Roll_UsageText {
             get {
@@ -304,7 +304,7 @@ namespace TShock.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Missing command name..
+        ///   Looks up a localized string similar to Missing command name. Type /help for a list of commands..
         /// </summary>
         internal static string CommandParse_MissingCommand {
             get {
@@ -331,7 +331,7 @@ namespace TShock.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &quot;/{0}&quot; is an unrecognized command..
+        ///   Looks up a localized string similar to Command &quot;/{0}&quot; is not recognized. Type /help for a list of commands..
         /// </summary>
         internal static string CommandParse_UnrecognizedCommand {
             get {

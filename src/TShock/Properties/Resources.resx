@@ -130,7 +130,7 @@
     <value>Missing argument "{0}".</value>
   </data>
   <data name="CommandParse_MissingCommand" xml:space="preserve">
-    <value>Missing command name.</value>
+    <value>Missing command name. Type /help for a list of commands.</value>
   </data>
   <data name="CommandParse_TooManyArgs" xml:space="preserve">
     <value>Too many arguments were provided.</value>
@@ -139,7 +139,7 @@
     <value>Argument type "{0}" not recognized.</value>
   </data>
   <data name="CommandParse_UnrecognizedCommand" xml:space="preserve">
-    <value>"/{0}" is an unrecognized command.</value>
+    <value>Command "/{0}" is not recognized. Type /help for a list of commands.</value>
   </data>
   <data name="CommandParse_UnrecognizedLongFlag" xml:space="preserve">
     <value>Long flag "--{0}" not recognized.</value>
@@ -163,10 +163,10 @@
     <value>Shows available commands and provides information about specific commands.</value>
   </data>
   <data name="Command_Help_UsageText" xml:space="preserve">
-    <value>Usage: /help [command-name]</value>
+    <value>Usage: /{0} [command-name]</value>
   </data>
   <data name="Command_Me" xml:space="preserve">
-    <value>tshock:me</value>
+    <value>me:help</value>
   </data>
   <data name="Command_Me_HelpText" xml:space="preserve">
     <value>Sends a message in the third person.</value>
@@ -175,7 +175,7 @@
     <value>*{0} {1}</value>
   </data>
   <data name="Command_Me_UsageText" xml:space="preserve">
-    <value>Usage: /me &lt;text&gt;</value>
+    <value>Usage: /{0} &lt;text&gt;</value>
   </data>
   <data name="Command_P" xml:space="preserve">
     <value>tshock:p</value>
@@ -199,13 +199,13 @@
     <value>No players online.</value>
   </data>
   <data name="Command_Playing_UsageText" xml:space="preserve">
-    <value>Usage: /playing [-i]</value>
+    <value>Usage: /{0} [-i]</value>
   </data>
   <data name="Command_P_HelpText" xml:space="preserve">
     <value>Sends a message to your party members.</value>
   </data>
   <data name="Command_P_UsageText" xml:space="preserve">
-    <value>Usage: /p &lt;text&gt;</value>
+    <value>Usage: /{0} &lt;text&gt;</value>
   </data>
   <data name="Command_Roll" xml:space="preserve">
     <value>tshock:roll</value>
@@ -217,7 +217,7 @@
     <value>*{0} rolls a {1}</value>
   </data>
   <data name="Command_Roll_UsageText" xml:space="preserve">
-    <value>Usage: /roll</value>
+    <value>Usage: /{0}</value>
   </data>
   <data name="EnumParser_InvalidInteger" xml:space="preserve">
     <value>"{0}" is not a valid value.</value>

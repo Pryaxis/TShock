@@ -127,16 +127,8 @@ namespace TShock {
         private void ExecuteCommand(ICommandSender commandSender, ReadOnlySpan<char> input) {
             Log.Information("{Sender} is executing /{Command}", commandSender.Name, input.ToString());
 
-            ICommand command;
             try {
-                command = CommandService.FindCommand(ref input);
-            } catch (CommandParseException ex) {
-                commandSender.SendErrorMessage(
-                    string.Format(CultureInfo.InvariantCulture, Resources.Command_BadCommand, ex.Message));
-                return;
-            }
-
-            try {
+                var command = CommandService.FindCommand(ref input);
                 command.Invoke(commandSender, input);
             } catch (CommandParseException ex) {
                 commandSender.SendErrorMessage(ex.Message);
