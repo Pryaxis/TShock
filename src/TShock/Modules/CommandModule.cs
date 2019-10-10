@@ -44,13 +44,13 @@ namespace TShock.Modules {
         private readonly IPlayerService _playerService;
         private readonly ICommandService _commandService;
 
-        // Map from Terraria command -> canonical command. This is used to unify Terraria and TShock commands.
-        private readonly IDictionary<string, string> _canonicalCommands = new Dictionary<string, string> {
+        // Map from Terraria command -> command. This is used to unify Terraria and TShock commands.
+        private readonly IDictionary<string, string> _terrariaCommandToCommand = new Dictionary<string, string> {
             ["Say"] = string.Empty,
-            ["Emote"] = "/me ",
-            ["Party"] = "/p ",
-            ["Playing"] = "/playing ",
-            ["Roll"] = "/roll "
+            ["Emote"] = Resources.TerrariaCommand_Me,
+            ["Party"] = Resources.TerrariaCommand_P,
+            ["Playing"] = Resources.TerrariaCommand_Playing,
+            ["Roll"] = Resources.TerrariaCommand_Roll
         };
 
         private readonly IDictionary<string, ISet<string>> _nameToQualifiedName
@@ -112,6 +112,39 @@ namespace TShock.Modules {
             }
         }
 
+        // Gets the qualified command name for a possibly-qualified command name.
+        public string GetQualifiedName(string maybeQualifiedName) {
+            if (string.IsNullOrWhiteSpace(maybeQualifiedName)) {
+                throw new CommandNotFoundException(Resources.CommandNotFound_MissingCommand);
+            }
+
+            var isQualifiedName = maybeQualifiedName.IndexOf(':', StringComparison.Ordinal) >= 0;
+            if (isQualifiedName) {
+                if (!_commandService.Commands.ContainsKey(maybeQualifiedName)) {
+                    throw new CommandNotFoundException(
+                        string.Format(CultureInfo.InvariantCulture, Resources.CommandNotFound_UnrecognizedCommand,
+                            maybeQualifiedName));
+                }
+
+                return maybeQualifiedName;
+            }
+
+            var qualifiedNames = _nameToQualifiedName.GetValueOrDefault(maybeQualifiedName, () => new HashSet<string>());
+            if (qualifiedNames.Count == 0) {
+                throw new CommandNotFoundException(
+                    string.Format(CultureInfo.InvariantCulture, Resources.CommandNotFound_UnrecognizedCommand,
+                        maybeQualifiedName));
+            }
+
+            if (qualifiedNames.Count > 1) {
+                throw new CommandNotFoundException(
+                    string.Format(CultureInfo.InvariantCulture, Resources.CommandNotFound_AmbiguousName,
+                        maybeQualifiedName, string.Join(", ", qualifiedNames.Select(n => $"\"/{n}\""))));
+            }
+
+            return qualifiedNames.Single();
+        }
+
         protected override void Dispose(bool disposeManaged) {
             _kernel.ServerCommand.UnregisterHandler(ServerCommandHandler);
             _playerService.PlayerChat.UnregisterHandler(PlayerChatHandler);
@@ -142,7 +175,7 @@ namespace TShock.Modules {
             }
 
             var chatCommand = args.ChatCommand;
-            if (!_canonicalCommands.TryGetValue(chatCommand, out var canonicalCommand)) {
+            if (!_terrariaCommandToCommand.TryGetValue(chatCommand, out var canonicalCommand)) {
                 args.Cancel("tshock: Terraria command is invalid");
                 return;
             }
@@ -175,39 +208,6 @@ namespace TShock.Modules {
             _nameToQualifiedName
                 .GetValueOrDefault(name, () => new HashSet<string>(), true)
                 .Remove(qualifiedName);
-        }
-
-        // Gets the qualified command name for a possibly-qualified command name.
-        private string GetQualifiedName(string maybeQualifiedName) {
-            if (string.IsNullOrEmpty(maybeQualifiedName)) {
-                throw new CommandNotFoundException(Resources.CommandNotFound_MissingCommand);
-            }
-
-            var isQualifiedName = maybeQualifiedName.IndexOf(':', StringComparison.Ordinal) >= 0;
-            if (isQualifiedName) {
-                if (!_commandService.Commands.ContainsKey(maybeQualifiedName)) {
-                    throw new CommandNotFoundException(
-                        string.Format(CultureInfo.InvariantCulture, Resources.CommandNotFound_UnrecognizedCommand,
-                            maybeQualifiedName));
-                }
-
-                return maybeQualifiedName;
-            }
-
-            var qualifiedNames = _nameToQualifiedName.GetValueOrDefault(maybeQualifiedName, () => new HashSet<string>());
-            if (qualifiedNames.Count == 0) {
-                throw new CommandNotFoundException(
-                    string.Format(CultureInfo.InvariantCulture, Resources.CommandNotFound_UnrecognizedCommand,
-                        maybeQualifiedName));
-            }
-
-            if (qualifiedNames.Count > 1) {
-                throw new CommandNotFoundException(
-                    string.Format(CultureInfo.InvariantCulture, Resources.CommandNotFound_AmbiguousName,
-                        maybeQualifiedName, string.Join(", ", qualifiedNames.Select(n => $"\"/{n}\""))));
-            }
-
-            return qualifiedNames.Single();
         }
 
         // =============================================================================================================

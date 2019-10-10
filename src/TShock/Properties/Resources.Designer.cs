@@ -455,5 +455,41 @@ namespace TShock.Properties {
                 return ResourceManager.GetString("StringParser_UnrecognizedEscape", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /me .
+        /// </summary>
+        internal static string TerrariaCommand_Me {
+            get {
+                return ResourceManager.GetString("TerrariaCommand_Me", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /p .
+        /// </summary>
+        internal static string TerrariaCommand_P {
+            get {
+                return ResourceManager.GetString("TerrariaCommand_P", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /playing .
+        /// </summary>
+        internal static string TerrariaCommand_Playing {
+            get {
+                return ResourceManager.GetString("TerrariaCommand_Playing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /roll .
+        /// </summary>
+        internal static string TerrariaCommand_Roll {
+            get {
+                return ResourceManager.GetString("TerrariaCommand_Roll", resourceCulture);
+            }
+        }
     }
 }

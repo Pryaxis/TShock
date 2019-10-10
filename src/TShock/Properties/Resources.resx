@@ -249,4 +249,16 @@
   <data name="StringParser_UnrecognizedEscape" xml:space="preserve">
     <value>Escape character "\{0}" not recognized.</value>
   </data>
+  <data name="TerrariaCommand_Me" xml:space="preserve">
+    <value>/me </value>
+  </data>
+  <data name="TerrariaCommand_P" xml:space="preserve">
+    <value>/p </value>
+  </data>
+  <data name="TerrariaCommand_Playing" xml:space="preserve">
+    <value>/playing </value>
+  </data>
+  <data name="TerrariaCommand_Roll" xml:space="preserve">
+    <value>/roll </value>
+  </data>
 </root>
