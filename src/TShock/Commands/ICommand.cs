@@ -16,7 +16,6 @@
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Reflection;
 using TShock.Commands.Exceptions;
 
 namespace TShock.Commands {
@@ -41,16 +40,6 @@ namespace TShock.Commands {
         /// /help command and when invalid syntax is used.
         /// </summary>
         string? UsageText { get; }
-
-        /// <summary>
-        /// Gets the object associated with the command's handler.
-        /// </summary>
-        object HandlerObject { get; }
-
-        /// <summary>
-        /// Gets the command's handler.
-        /// </summary>
-        MethodBase Handler { get; }
 
         /// <summary>
         /// Invokes the command as a <paramref name="sender"/> with the <paramref name="input"/>.

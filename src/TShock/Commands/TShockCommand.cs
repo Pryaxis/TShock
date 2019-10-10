@@ -31,6 +31,9 @@ using TShock.Utils.Extensions;
 namespace TShock.Commands {
     internal class TShockCommand : ICommand {
         private readonly ICommandService _commandService;
+        private readonly object _handlerObject;
+        private readonly MethodInfo _handler;
+
         private readonly ISet<char> _validShortFlags = new HashSet<char>();
         private readonly ISet<string> _validLongFlags = new HashSet<string>();
         private readonly IDictionary<string, ParameterInfo> _validOptionals = new Dictionary<string, ParameterInfo>();
@@ -41,23 +44,21 @@ namespace TShock.Commands {
         public string QualifiedName { get; }
         public string? HelpText { get; }
         public string? UsageText { get; }
-        public object HandlerObject { get; }
-        public MethodBase Handler { get; }
 
         // We need to inject ICommandService so that we can trigger its CommandExecute event.
         public TShockCommand(ICommandService commandService, CommandHandlerAttribute attribute, object handlerObject,
-                MethodBase handler) {
+                MethodInfo handler) {
             Debug.Assert(commandService != null, "command service should not be null");
             Debug.Assert(attribute != null, "attribute should not be null");
             Debug.Assert(handlerObject != null, "handler object should not be null");
             Debug.Assert(handler != null, "handler should not be null");
 
             _commandService = commandService;
+            _handlerObject = handlerObject;
+            _handler = handler;
             QualifiedName = attribute.QualifiedName;
             HelpText = attribute.HelpText;
             UsageText = attribute.UsageText;
-            HandlerObject = handlerObject;
-            Handler = handler;
 
             // Preprocessing parameters in the constructor allows us to learn the command's flags and optionals.
             void PreprocessParameter(ParameterInfo parameterInfo) {
@@ -84,7 +85,7 @@ namespace TShock.Commands {
 
             _shouldParseHyphenatedArguments =
                 _validShortFlags.Count + _validLongFlags.Count + _validOptionals.Count > 0;
-            _parameterInfos = Handler.GetParameters();
+            _parameterInfos = _handler.GetParameters();
             _parameters = new object?[_parameterInfos.Length];
             foreach (var parameter in _parameterInfos) {
                 PreprocessParameter(parameter);
@@ -269,7 +270,7 @@ namespace TShock.Commands {
             }
 
             try {
-                Handler.Invoke(HandlerObject, _parameters);
+                _handler.Invoke(_handlerObject, _parameters);
             } catch (TargetInvocationException ex) {
                 throw new CommandExecuteException(Resources.CommandExecute_Exception, ex.InnerException);
             }

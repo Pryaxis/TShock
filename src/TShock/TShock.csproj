@@ -60,7 +60,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="echo F|xcopy /y &quot;$(TargetPath)&quot; &quot;$(SolutionDir)..\Orion\src\Orion.Launcher\bin\Debug\netcoreapp3.0\plugins&quot;" />
+    <Exec Command="echo F|xcopy /y &quot;$(TargetPath)&quot; &quot;$(SolutionDir)..\Orion\src\Orion.Launcher\bin\$(ConfigurationName)\netcoreapp3.0\plugins&quot;" />
   </Target>
 
 </Project>
