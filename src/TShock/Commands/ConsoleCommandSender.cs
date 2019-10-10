@@ -36,7 +36,7 @@ namespace TShock.Commands {
         private const LogEventLevel LogLevel = LogEventLevel.Error;
 #endif
         private const string ResetColorString = "\x1b[0m";
-        private const string ColorTagPrefix = "c/";
+        private const string ColorTag = "c/";
 
         /// <summary>
         /// Gets the console-based command sender.
@@ -71,10 +71,10 @@ namespace TShock.Commands {
         /// <inheritdoc/>
         public void SendMessage(string message, Color color) => SendMessageImpl(message, GetColorString(color));
 
-        private static void SendMessageImpl(string messageString, string colorString) {
-            var message = messageString.AsSpan();
-            var output = new StringBuilder(colorString);
+        private static void SendMessageImpl(ReadOnlySpan<char> message, string colorString) {
+            var output = new StringBuilder(message.Length);
             while (true) {
+                output.Append(colorString);
                 var leftBracket = message.IndexOf('[');
                 var rightBracket = leftBracket + 1 + message[(leftBracket + 1)..].IndexOf(']');
                 if (leftBracket < 0 || rightBracket < 0) {
@@ -85,21 +85,20 @@ namespace TShock.Commands {
                 var inside = message[(leftBracket + 1)..rightBracket];
                 message = message[(rightBracket + 1)..];
                 var colon = inside.IndexOf(':');
-                var isValidColorTag = inside.StartsWith(ColorTagPrefix, StringComparison.OrdinalIgnoreCase) &&
-                                      colon > ColorTagPrefix.Length;
+                var isValidColorTag =
+                    inside.StartsWith(ColorTag, StringComparison.OrdinalIgnoreCase) && colon > ColorTag.Length;
                 if (!isValidColorTag) {
                     output.Append('[').Append(inside).Append(']');
                     continue;
                 }
 
-                if (int.TryParse(inside[ColorTagPrefix.Length..colon], NumberStyles.AllowHexSpecifier,
-                                 CultureInfo.InvariantCulture, out var numberColor)) {
+                if (int.TryParse(inside[ColorTag.Length..colon], NumberStyles.AllowHexSpecifier,
+                        CultureInfo.InvariantCulture, out var numberColor)) {
                     var tagColor = new Color((numberColor >> 16) & 255, (numberColor >> 8) & 255, numberColor & 255);
                     output.Append(GetColorString(tagColor));
                 }
 
                 output.Append(inside[(colon + 1)..]);
-                output.Append(colorString);
             }
 
             output.Append(message).Append(ResetColorString);

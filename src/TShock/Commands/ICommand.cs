@@ -60,6 +60,6 @@ namespace TShock.Commands {
         /// <exception cref="ArgumentNullException"><paramref name="sender"/> is <see langword="null"/>.</exception>
         /// <exception cref="CommandExecuteException">The command could not be executed.</exception>
         /// <exception cref="CommandParseException">The command input could not be parsed.</exception>
-        void Invoke(ICommandSender sender, ReadOnlySpan<char> input);
+        void Invoke(ICommandSender sender, string input);
     }
 }

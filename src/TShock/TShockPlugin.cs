@@ -128,11 +128,13 @@ namespace TShock {
         }
 
         // Executes a command. input should not have the leading /.
-        private void ExecuteCommand(ICommandSender commandSender, ReadOnlySpan<char> input) {
-            Log.Information(Resources.Log_ExecutingCommand, commandSender.Name, input.ToString());
+        private void ExecuteCommand(ICommandSender commandSender, string input) {
+            var space = input.IndexOf(' ', StringComparison.Ordinal);
+            if (space < 0) {
+                space = input.Length;
+            }
 
-            var space = input.IndexOfOrEnd(' ');
-            var commandName = input[..space].ToString();
+            var commandName = input.Substring(0, space);
             ICommand command;
             try {
                 command = CommandService.FindCommand(commandName);
@@ -142,7 +144,8 @@ namespace TShock {
             }
             
             try {
-                command.Invoke(commandSender, input[space..]);
+                Log.Information(Resources.Log_ExecutingCommand, commandSender.Name, input);
+                command.Invoke(commandSender, input.Substring(space));
             } catch (CommandParseException ex) {
                 commandSender.SendErrorMessage(ex.Message);
                 commandSender.SendInfoMessage(

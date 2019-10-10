@@ -34,6 +34,7 @@ namespace TShock.Commands {
         private readonly ISet<char> _validShortFlags = new HashSet<char>();
         private readonly ISet<string> _validLongFlags = new HashSet<string>();
         private readonly IDictionary<string, ParameterInfo> _validOptionals = new Dictionary<string, ParameterInfo>();
+        private readonly bool _shouldParseHyphenatedArguments;
         private readonly ParameterInfo[] _parameterInfos;
         private readonly object?[] _parameters;
 
@@ -81,6 +82,8 @@ namespace TShock.Commands {
                 }
             }
 
+            _shouldParseHyphenatedArguments =
+                _validShortFlags.Count + _validLongFlags.Count + _validOptionals.Count > 0;
             _parameterInfos = Handler.GetParameters();
             _parameters = new object?[_parameterInfos.Length];
             foreach (var parameter in _parameterInfos) {
@@ -88,12 +91,12 @@ namespace TShock.Commands {
             }
         }
 
-        public void Invoke(ICommandSender sender, ReadOnlySpan<char> input) {
+        public void Invoke(ICommandSender sender, string input) {
             if (sender is null) {
                 throw new ArgumentNullException(nameof(sender));
             }
 
-            var args = new CommandExecuteEventArgs(this, sender, input.ToString());
+            var args = new CommandExecuteEventArgs(this, sender, input);
             _commandService.CommandExecute?.Invoke(this, args);
             if (args.IsCanceled()) {
                 return;
@@ -251,16 +254,17 @@ namespace TShock.Commands {
                 return ParseArgument(ref input, parameterInfo);
             }
 
-            if (_validShortFlags.Count > 0 || _validLongFlags.Count > 0 || _validOptionals.Count > 0) {
-                ParseHyphenatedArguments(ref input);
+            var inputSpan = args.Input.AsSpan();
+            if (_shouldParseHyphenatedArguments) {
+                ParseHyphenatedArguments(ref inputSpan);
             }
 
             for (var i = 0; i < _parameters.Length; ++i) {
-                _parameters[i] = ParseParameter(_parameterInfos[i], ref input);
+                _parameters[i] = ParseParameter(_parameterInfos[i], ref inputSpan);
             }
 
             // Ensure that we've consumed all of the useful parts of the input.
-            if (!input.IsWhiteSpace()) {
+            if (!inputSpan.IsWhiteSpace()) {
                 throw new CommandParseException(Resources.CommandParse_TooManyArgs);
             }
 
