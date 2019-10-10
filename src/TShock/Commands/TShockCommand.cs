@@ -37,9 +37,6 @@ namespace TShock.Commands {
         private readonly ISet<char> _validShortFlags = new HashSet<char>();
         private readonly ISet<string> _validLongFlags = new HashSet<string>();
         private readonly IDictionary<string, ParameterInfo> _validOptionals = new Dictionary<string, ParameterInfo>();
-        private readonly bool _shouldParseHyphenatedArguments;
-        private readonly ParameterInfo[] _parameterInfos;
-        private readonly object?[] _parameters;
 
         public string QualifiedName { get; }
         public string? HelpText { get; }
@@ -83,12 +80,8 @@ namespace TShock.Commands {
                 }
             }
 
-            _shouldParseHyphenatedArguments =
-                _validShortFlags.Count + _validLongFlags.Count + _validOptionals.Count > 0;
-            _parameterInfos = _handler.GetParameters();
-            _parameters = new object?[_parameterInfos.Length];
-            foreach (var parameter in _parameterInfos) {
-                PreprocessParameter(parameter);
+            foreach (var parameterInfo in _handler.GetParameters()) {
+                PreprocessParameter(parameterInfo);
             }
         }
 
@@ -98,7 +91,7 @@ namespace TShock.Commands {
             }
 
             var args = new CommandExecuteEventArgs(this, sender, input);
-            _commandService.CommandExecute?.Invoke(this, args);
+            _commandService.CommandExecute.Invoke(this, args);
             if (args.IsCanceled()) {
                 return;
             }
@@ -256,12 +249,14 @@ namespace TShock.Commands {
             }
 
             var inputSpan = args.Input.AsSpan();
-            if (_shouldParseHyphenatedArguments) {
+            if (_validShortFlags.Count + _validLongFlags.Count + _validOptionals.Count > 0) {
                 ParseHyphenatedArguments(ref inputSpan);
             }
 
-            for (var i = 0; i < _parameters.Length; ++i) {
-                _parameters[i] = ParseParameter(_parameterInfos[i], ref inputSpan);
+            var parameterInfos = _handler.GetParameters();
+            object?[] parameters = new object?[parameterInfos.Length];
+            for (var i = 0; i < parameters.Length; ++i) {
+                parameters[i] = ParseParameter(parameterInfos[i], ref inputSpan);
             }
 
             // Ensure that we've consumed all of the useful parts of the input.
@@ -270,7 +265,7 @@ namespace TShock.Commands {
             }
 
             try {
-                _handler.Invoke(_handlerObject, _parameters);
+                _handler.Invoke(_handlerObject, parameters);
             } catch (TargetInvocationException ex) {
                 throw new CommandExecuteException(Resources.CommandExecute_Exception, ex.InnerException);
             }

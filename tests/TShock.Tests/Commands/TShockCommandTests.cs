@@ -32,6 +32,15 @@ namespace TShock.Commands {
     public class TShockCommandTests {
         private readonly Mock<ICommandService> _mockCommandService = new Mock<ICommandService>();
 
+        public TShockCommandTests() {
+            _mockCommandService.Setup(cs => cs.Parsers).Returns(new Dictionary<Type, IArgumentParser> {
+                [typeof(int)] = new Int32Parser(),
+                [typeof(string)] = new StringParser()
+            });
+            _mockCommandService.Setup(cs => cs.CommandExecute).Returns(
+                new EventHandlerCollection<CommandExecuteEventArgs>());
+        }
+
         [Fact]
         public void Invoke_Sender() {
             var testClass = new TestClass();
@@ -47,10 +56,6 @@ namespace TShock.Commands {
         [InlineData("1 test", 1, "test")]
         [InlineData(@"-56872 ""test abc\"" def""", -56872, "test abc\" def")]
         public void Invoke_SenderIntString(string input, int expectedInt, string expectedString) {
-            _mockCommandService.Setup(cs => cs.Parsers).Returns(new Dictionary<Type, IArgumentParser> {
-                [typeof(int)] = new Int32Parser(),
-                [typeof(string)] = new StringParser()
-            });
             var testClass = new TestClass();
             var command = GetCommand(testClass, nameof(TestClass.TestCommand_Int_String));
             var commandSender = new Mock<ICommandSender>().Object;
@@ -93,9 +98,6 @@ namespace TShock.Commands {
         [InlineData("--val2=5678 1", 1, 1234, 5678)]
         [InlineData(" --val2=5678     1", 1, 1234, 5678)]
         public void Invoke_Optionals(string input, int expectedRequired, int expectedVal, int expectedVal2) {
-            _mockCommandService.Setup(cs => cs.Parsers).Returns(new Dictionary<Type, IArgumentParser> {
-                [typeof(int)] = new Int32Parser()
-            });
             var testClass = new TestClass();
             var command = GetCommand(testClass, nameof(TestClass.TestCommand_Optionals));
             var commandSender = new Mock<ICommandSender>().Object;
@@ -124,9 +126,6 @@ namespace TShock.Commands {
         [InlineData("--force -r --depth=   100 ", true, true, 100)]
         public void Invoke_FlagsAndOptionals(string input, bool expectedForce, bool expectedRecursive,
                 int expectedDepth) {
-            _mockCommandService.Setup(cs => cs.Parsers).Returns(new Dictionary<Type, IArgumentParser> {
-                [typeof(int)] = new Int32Parser()
-            });
             var testClass = new TestClass();
             var command = GetCommand(testClass, nameof(TestClass.TestCommand_FlagsAndOptionals));
             var commandSender = new Mock<ICommandSender>().Object;
@@ -145,9 +144,6 @@ namespace TShock.Commands {
         [InlineData("1  2", 1, 2)]
         [InlineData("    -1  2   -5", -1, 2, -5)]
         public void Invoke_Params(string input, params int[] expectedInts) {
-            _mockCommandService.Setup(cs => cs.Parsers).Returns(new Dictionary<Type, IArgumentParser> {
-                [typeof(int)] = new Int32Parser()
-            });
             var testClass = new TestClass();
             var command = GetCommand(testClass, nameof(TestClass.TestCommand_Params));
             var commandSender = new Mock<ICommandSender>().Object;
@@ -160,9 +156,6 @@ namespace TShock.Commands {
 
         [Fact]
         public void Invoke_OptionalGetsRenamed() {
-            _mockCommandService.Setup(cs => cs.Parsers).Returns(new Dictionary<Type, IArgumentParser> {
-                [typeof(int)] = new Int32Parser()
-            });
             var testClass = new TestClass();
             var command = GetCommand(testClass, nameof(TestClass.TestCommand_OptionalRename));
             var commandSender = new Mock<ICommandSender>().Object;
@@ -211,10 +204,6 @@ namespace TShock.Commands {
         [InlineData("1 ")]
         [InlineData("-7345734    ")]
         public void Invoke_MissingArg_ThrowsCommandParseException(string input) {
-            _mockCommandService.Setup(cs => cs.Parsers).Returns(new Dictionary<Type, IArgumentParser> {
-                [typeof(int)] = new Int32Parser(),
-                [typeof(string)] = new StringParser()
-            });
             var testClass = new TestClass();
             var command = GetCommand(testClass, nameof(TestClass.TestCommand_Int_String));
             var commandSender = new Mock<ICommandSender>().Object;

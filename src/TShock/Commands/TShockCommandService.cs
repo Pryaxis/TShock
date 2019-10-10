@@ -73,7 +73,7 @@ namespace TShock.Commands {
 
             ICommand? RegisterCommand(ICommand command) {
                 var args = new CommandRegisterEventArgs(command);
-                CommandRegister?.Invoke(this, args);
+                CommandRegister.Invoke(this, args);
                 if (args.IsCanceled()) {
                     return null;
                 }
@@ -119,7 +119,7 @@ namespace TShock.Commands {
             }
 
             var args = new CommandUnregisterEventArgs(command);
-            CommandUnregister?.Invoke(this, args);
+            CommandUnregister.Invoke(this, args);
             if (args.IsCanceled()) {
                 return false;
             }
