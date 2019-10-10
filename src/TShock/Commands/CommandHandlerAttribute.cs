@@ -39,8 +39,8 @@ namespace TShock.Commands {
         public string QualifiedName => GetResourceStringMaybe(_qualifiedName);
 
         /// <summary>
-        /// Gets or sets the help text. If <see langword="null"/>, then no help text exists. This will show up in the
-        /// /help command.
+        /// Gets or sets the help text. This will show up in the /help command. If <see langword="null"/>, then no help
+        /// text exists. 
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
         [DisallowNull]
@@ -50,8 +50,8 @@ namespace TShock.Commands {
         }
 
         /// <summary>
-        /// Gets or sets the usage text. If <see langword="null"/>, then no usage text exists. This will show up in the
-        /// /help command and when invalid syntax is used.
+        /// Gets or sets the usage text. This will show up in the /help command and when invalid syntax is used. If
+        /// <see langword="null"/>, then no usage text exists.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
         [DisallowNull]
@@ -65,6 +65,7 @@ namespace TShock.Commands {
         /// localization will occur.
         /// </summary>
         /// <exception cref="ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
+        [DisallowNull]
         public Type? ResourceType {
             get => _resourceType;
             set => _resourceType = value ?? throw new ArgumentNullException(nameof(value));

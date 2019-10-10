@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Globalization;
@@ -26,53 +25,43 @@ using Unit = System.ValueTuple;
 
 namespace TShock.Commands.Logging {
     internal sealed class PlayerLogValueFormatter : LogEventPropertyValueVisitor<Unit, string> {
-        private const string NullFormat = "[c/33cc99:null]";
-        private const string StringFormat = "[c/d69d85:\"{0}\"]";
-        private const string BooleanFormat = "[c/33cc99:{0}]";
-        private const string CharFormat = "[c/d69d85:'{0}']";
-        private const string NumberFormat = "[c/b5cea8:{0}]";
-        private const string ScalarFormat = "[c/86c691:{0}]";
-        private const string TypeTagFormat = "[c/4ec9b0:{0}] ";
-        
         [Pure]
         public string Format(LogEventPropertyValue value) => Visit(default, value);
 
         [Pure]
         protected override string VisitScalarValue(Unit _, ScalarValue scalar) =>
             string.Format(CultureInfo.InvariantCulture, scalar.Value switch {
-                null => NullFormat,
-                string _ => StringFormat,
-                bool _ => BooleanFormat,
-                char _ => CharFormat,
-                var n when n.GetType().IsPrimitive || n is decimal => NumberFormat,
-                _ => ScalarFormat
+                null => "[c/569cd6:null]",
+                string _ => "[c/d69d85:{0}]",
+                bool _ => "[c/569cd6:{0}]",
+                char _ => "[c/d69d85:'{0}']",
+                var n when n.GetType().IsPrimitive || n is decimal => "[c/b5cea8:{0}]",
+                _ => "[c/86c691:{0}]"
             }, scalar.Value);
-        
+
         [Pure]
         protected override string VisitSequenceValue(Unit _, SequenceValue sequence) =>
-            FormattableString.Invariant($"[{string.Join(", ", sequence.Elements.Select(e => Visit(_, e)))}]");
-        
+            $"[{string.Join(", ", sequence.Elements.Select(e => Visit(_, e)))}]";
+
         [Pure]
         protected override string VisitStructureValue(Unit _, StructureValue structure) =>
             FormatTypeTag(structure.TypeTag) +
-            FormattableString.Invariant(
-                $"{{{string.Join(", ", structure.Properties.Select(FormatStructureElement))}}}");
-        
+            $"{{{string.Join(", ", structure.Properties.Select(FormatStructureElement))}}}";
+
         [Pure]
         protected override string VisitDictionaryValue(Unit _, DictionaryValue dictionary) =>
-            FormattableString.Invariant(
-                $"{{{string.Join(", ", dictionary.Elements.Select(FormatDictionaryElement))}}}");
-        
+            $"{{{string.Join(", ", dictionary.Elements.Select(FormatDictionaryElement))}}}";
+
         [Pure]
         private string FormatTypeTag(string? typeTag) =>
-            typeTag is null ? string.Empty : string.Format(CultureInfo.InvariantCulture, TypeTagFormat, typeTag);
-        
+            typeTag is null ? string.Empty : $"[c/4ec9b0:{typeTag}] ";
+
         [Pure]
         private string FormatStructureElement(LogEventProperty p) =>
-            FormattableString.Invariant($"{p.Name}={Visit(default, p.Value)}");
-        
+            $"{p.Name}={Visit(default, p.Value)}";
+
         [Pure]
         private string FormatDictionaryElement(KeyValuePair<ScalarValue, LogEventPropertyValue> kvp) =>
-            FormattableString.Invariant($"[{Visit(default, kvp.Key)}]={Visit(default, kvp.Value)}");
+            $"[{Visit(default, kvp.Key)}]={Visit(default, kvp.Value)}";
     }
 }

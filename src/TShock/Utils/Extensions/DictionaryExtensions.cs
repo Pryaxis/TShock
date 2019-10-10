@@ -56,7 +56,7 @@ namespace TShock.Utils.Extensions {
             }
 
             var provider = defaultValueProvider ?? (() => default!);
-            return createIfNotExists ? (TValue)(dictionary[key] = provider())! : provider();
+            return createIfNotExists ? (dictionary[key] = provider())! : provider();
         }
     }
 }

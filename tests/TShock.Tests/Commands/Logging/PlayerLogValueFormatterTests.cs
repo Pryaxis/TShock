@@ -33,7 +33,7 @@ namespace TShock.Commands.Logging {
         public void Format_String() {
             var formatter = new PlayerLogValueFormatter();
 
-            formatter.Format(new ScalarValue("test")).Should().MatchRegex(@"\[c/[a-fA-F0-9]{6}:""test""\]");
+            formatter.Format(new ScalarValue("test")).Should().MatchRegex(@"\[c/[a-fA-F0-9]{6}:test\]");
         }
 
         [Fact]
@@ -87,7 +87,7 @@ namespace TShock.Commands.Logging {
 
             formatter.Format(new DictionaryValue(new[] {
                 new KeyValuePair<ScalarValue, LogEventPropertyValue>(new ScalarValue(1), new ScalarValue("test"))
-            })).Should().MatchRegex(@"{\[\[c/[a-fA-F0-9]{6}:1\]\]=\[c/[a-fA-F0-9]{6}:""test""\]}");
+            })).Should().MatchRegex(@"{\[\[c/[a-fA-F0-9]{6}:1\]\]=\[c/[a-fA-F0-9]{6}:test\]}");
         }
     }
 }

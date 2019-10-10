@@ -18,33 +18,21 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using Orion;
-using Orion.Events;
-using Orion.Events.Players;
 using Orion.Events.Server;
 using Orion.Players;
-using Serilog;
 using TShock.Commands;
-using TShock.Commands.Exceptions;
-using TShock.Properties;
+using TShock.Modules;
 
 namespace TShock {
     /// <summary>
     /// Represents the TShock plugin.
     /// </summary>
     public sealed class TShockPlugin : OrionPlugin {
-        // Map from Terraria command -> canonical command. This is used to unify Terraria and TShock commands.
-        private static readonly IDictionary<string, string> _canonicalCommands = new Dictionary<string, string> {
-            ["Say"] = "",
-            ["Emote"] = "/me ",
-            ["Party"] = "/p ",
-            ["Playing"] = "/playing ",
-            ["Roll"] = "/roll "
-        };
-
         private readonly Lazy<IPlayerService> _playerService;
         private readonly Lazy<ICommandService> _commandService;
+
+        private readonly ISet<TShockModule> _modules = new HashSet<TShockModule>();
 
         /// <inheritdoc/>
         [ExcludeFromCodeCoverage]
@@ -53,9 +41,6 @@ namespace TShock {
         /// <inheritdoc/>
         [ExcludeFromCodeCoverage]
         public override string Name => "TShock";
-
-        private IPlayerService PlayerService => _playerService.Value;
-        private ICommandService CommandService => _commandService.Value;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TShockPlugin"/> class with the specified Orion kernel and
@@ -75,9 +60,8 @@ namespace TShock {
 
         /// <inheritdoc/>
         protected override void Initialize() {
-            Kernel.ServerCommand.RegisterHandler(ServerCommandHandler);
-
-            PlayerService.PlayerChat.RegisterHandler(PlayerChatHandler);
+            Kernel.ServerInitialize.RegisterHandler(ServerInitializeHandler);
+            _modules.Add(new CommandModule(Kernel, _playerService.Value, _commandService.Value));
         }
 
         /// <inheritdoc/>
@@ -85,75 +69,16 @@ namespace TShock {
             if (!disposeManaged) {
                 return;
             }
-
-            Kernel.ServerCommand.UnregisterHandler(ServerCommandHandler);
-
-            PlayerService.PlayerChat.UnregisterHandler(PlayerChatHandler);
-        }
-
-        [EventHandler(EventPriority.Lowest)]
-        private void ServerCommandHandler(object sender, ServerCommandEventArgs args) {
-            args.Cancel("tshock: command executing");
-
-            var input = args.Input;
-            if (input.StartsWith('/')) {
-                input = input.Substring(1);
-            }
-
-            ExecuteCommand(ConsoleCommandSender.Instance, input);
-        }
-
-        [EventHandler(EventPriority.Lowest)]
-        private void PlayerChatHandler(object sender, PlayerChatEventArgs args) {
-            if (args.IsCanceled()) {
-                return;
-            }
-
-            var chatCommand = args.ChatCommand;
-            if (!_canonicalCommands.TryGetValue(chatCommand, out var canonicalCommand)) {
-                args.Cancel("tshock: Terraria command is invalid");
-                return;
-            }
-
-            var chat = canonicalCommand + args.ChatText;
-            if (chat.StartsWith('/')) {
-                args.Cancel("tshock: command executing");
-
-                var input = chat.Substring(1);
-                ICommandSender commandSender = args.Player.GetAnnotationOrDefault("tshock:CommandSender",
-                    () => new PlayerCommandSender(args.Player), true);
-                ExecuteCommand(commandSender, input);
+            
+            Kernel.ServerInitialize.UnregisterHandler(ServerInitializeHandler);
+            foreach (var module in _modules) {
+                module.Dispose();
             }
         }
 
-        // Executes a command. input should not have the leading /.
-        private void ExecuteCommand(ICommandSender commandSender, string input) {
-            var space = input.IndexOf(' ', StringComparison.Ordinal);
-            if (space < 0) {
-                space = input.Length;
-            }
-
-            var commandName = input.Substring(0, space);
-            ICommand command;
-            try {
-                command = CommandService.FindCommand(commandName);
-            } catch (CommandNotFoundException ex) {
-                commandSender.SendErrorMessage(ex.Message);
-                return;
-            }
-
-            if (command.ShouldBeLogged) {
-                Log.Information(Resources.Log_ExecutingCommand, commandSender.Name, input);
-            }
-
-            try {
-                command.Invoke(commandSender, input.Substring(space));
-            } catch (CommandParseException ex) {
-                commandSender.SendErrorMessage(ex.Message);
-                commandSender.SendInfoMessage(
-                    string.Format(CultureInfo.InvariantCulture, command.UsageText, commandName));
-            } catch (CommandExecuteException ex) {
-                commandSender.SendErrorMessage(ex.Message);
+        private void ServerInitializeHandler(object sender, ServerInitializeEventArgs args) {
+            foreach (var module in _modules) {
+                module.Initialize();
             }
         }
     }

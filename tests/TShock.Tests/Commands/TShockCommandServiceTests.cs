@@ -21,21 +21,12 @@ using System.Linq;
 using FluentAssertions;
 using Moq;
 using Orion.Events;
-using Orion.Packets.World;
-using Orion.Players;
-using Orion.Utils;
-using TShock.Commands.Exceptions;
 using TShock.Commands.Parsers;
 using Xunit;
 
 namespace TShock.Commands {
     public class TShockCommandServiceTests : IDisposable {
-        private readonly Mock<IPlayerService> _mockPlayerService = new Mock<IPlayerService>();
-        private readonly ICommandService _commandService;
-
-        public TShockCommandServiceTests() {
-            _commandService = new TShockCommandService(new Lazy<IPlayerService>(() => _mockPlayerService.Object));
-        }
+        private readonly ICommandService _commandService = new TShockCommandService();
 
         public void Dispose() => _commandService.Dispose();
 
@@ -82,37 +73,6 @@ namespace TShock.Commands {
             Action action = () => _commandService.RegisterParser<object>(null);
 
             action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public void FindCommand_WithoutNamespace() {
-            var testClass = new TestClass();
-            _commandService.RegisterCommands(testClass).ToList();
-            var command = _commandService.Commands["tshock_tests:test2"];
-
-            _commandService.FindCommand("test2").Should().BeSameAs(command);
-        }
-
-        [Fact]
-        public void FindCommand_WithNamespace() {
-            var testClass = new TestClass();
-            _commandService.RegisterCommands(testClass).ToList();
-            var command = _commandService.Commands["tshock_tests:test"];
-
-            _commandService.FindCommand("tshock_tests:test").Should().BeSameAs(command);
-        }
-
-        [Theory]
-        [InlineData("")]
-        [InlineData("test")]
-        [InlineData("test3")]
-        [InlineData("tshock_tests:test3")]
-        public void FindCommand_InvalidCommand_ThrowsCommandNotFoundException(string inputString) {
-            var testClass = new TestClass();
-            _commandService.RegisterCommands(testClass).ToList();
-            Action action = () => _commandService.FindCommand(inputString);
-
-            action.Should().Throw<CommandNotFoundException>();
         }
 
         [Fact]

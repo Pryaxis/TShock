@@ -254,7 +254,7 @@ namespace TShock.Commands {
             }
 
             var parameterInfos = _handler.GetParameters();
-            object?[] parameters = new object?[parameterInfos.Length];
+            var parameters = new object?[parameterInfos.Length];
             for (var i = 0; i < parameters.Length; ++i) {
                 parameters[i] = ParseParameter(parameterInfos[i], ref inputSpan);
             }

@@ -19,14 +19,13 @@ using System;
 using System.Collections.Generic;
 using Orion;
 using Orion.Events;
-using TShock.Commands.Exceptions;
 using TShock.Commands.Parsers;
 using TShock.Events.Commands;
 
 namespace TShock.Commands {
     /// <summary>
-    /// Represents a service that manages commands. Provides command-related hooks and methods, and in a thread-safe
-    /// manner unless specified otherwise.
+    /// Represents a service that manages commands. Provides command-related hooks and methods. Implementations are not
+    /// required to be thread-safe.
     /// </summary>
     public interface ICommandService : IService {
         /// <summary>
@@ -73,16 +72,6 @@ namespace TShock.Commands {
         /// <param name="parser">The parser.</param>
         /// <exception cref="ArgumentNullException"><paramref name="parser"/> is <see langword="null"/>.</exception>
         void RegisterParser<TParse>(IArgumentParser<TParse> parser);
-
-        /// <summary>
-        /// Finds and returns the command with <paramref name="commandName"/>. The qualified name will be determined and
-        /// used, if necessary.
-        /// </summary>
-        /// <param name="commandName">The command name.</param>
-        /// <returns>The command.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="commandName"/> is <see langword="null"/>.</exception>
-        /// <exception cref="CommandNotFoundException">The command does not exist or is ambiguous.</exception>
-        ICommand FindCommand(string commandName);
 
         /// <summary>
         /// Unregisters the <paramref name="command"/> and returns a value indicating success.

@@ -35,8 +35,6 @@ namespace TShock.Commands {
 #else
         private const LogEventLevel LogLevel = LogEventLevel.Error;
 #endif
-        private const string ResetColorString = "\x1b[0m";
-        private const string ColorTag = "c/";
 
         /// <summary>
         /// Gets the console-based command sender.
@@ -53,8 +51,7 @@ namespace TShock.Commands {
         public IPlayer? Player => null;
 
         [Pure]
-        private static string GetColorString(Color color) =>
-            FormattableString.Invariant($"\x1b[38;2;{color.R};{color.G};{color.B}m");
+        private static string GetColorString(Color color) => $"\x1b[38;2;{color.R};{color.G};{color.B}m";
 
         private ConsoleCommandSender() {
             Log = new LoggerConfiguration()
@@ -85,14 +82,13 @@ namespace TShock.Commands {
                 var inside = message[(leftBracket + 1)..rightBracket];
                 message = message[(rightBracket + 1)..];
                 var colon = inside.IndexOf(':');
-                var isValidColorTag =
-                    inside.StartsWith(ColorTag, StringComparison.OrdinalIgnoreCase) && colon > ColorTag.Length;
+                var isValidColorTag = inside.StartsWith("c/", StringComparison.OrdinalIgnoreCase) && colon > 2;
                 if (!isValidColorTag) {
                     output.Append('[').Append(inside).Append(']');
                     continue;
                 }
 
-                if (int.TryParse(inside[ColorTag.Length..colon], NumberStyles.AllowHexSpecifier,
+                if (int.TryParse(inside[2..colon], NumberStyles.AllowHexSpecifier,
                         CultureInfo.InvariantCulture, out var numberColor)) {
                     var tagColor = new Color((numberColor >> 16) & 255, (numberColor >> 8) & 255, numberColor & 255);
                     output.Append(GetColorString(tagColor));
@@ -101,7 +97,7 @@ namespace TShock.Commands {
                 output.Append(inside[(colon + 1)..]);
             }
 
-            output.Append(message).Append(ResetColorString);
+            output.Append(message).Append("\x1b[0m");
             Console.WriteLine(output);
         }
     }

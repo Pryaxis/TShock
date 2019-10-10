@@ -27,16 +27,6 @@ using Serilog.Parsing;
 
 namespace TShock.Commands.Logging {
     internal sealed class PlayerLogSink : ILogEventSink {
-        private const string LevelVerbose = "[c/c0c0c0:VRB]";
-        private const string LevelDebug = "[c/c0c0c0:DBG]";
-        private const string LevelInformation = "[c/ffffff:INF]";
-        private const string LevelWarning = "[c/ffffaf:WRN]";
-        private const string LevelError = "[c/ff005f:ERR]";
-        private const string LevelFatal = "[c/ff005f:FTL]";
-        private const string LevelUnknown = "[c/ff0000:UNK]";
-
-        private static readonly Color _textColor = new Color(0xda, 0xda, 0xda);
-        private static readonly Color _exceptionColor = new Color(0xda, 0xda, 0xda);
         private static readonly PlayerLogValueFormatter _formatter = new PlayerLogValueFormatter();
 
         private readonly IPlayer _player;
@@ -49,13 +39,13 @@ namespace TShock.Commands.Logging {
 
         public void Emit(LogEvent logEvent) {
             var logLevel = logEvent.Level switch {
-                LogEventLevel.Verbose => LevelVerbose,
-                LogEventLevel.Debug => LevelDebug,
-                LogEventLevel.Information => LevelInformation,
-                LogEventLevel.Warning => LevelWarning,
-                LogEventLevel.Error => LevelError,
-                LogEventLevel.Fatal => LevelFatal,
-                _ => LevelUnknown
+                LogEventLevel.Verbose => "[c/c0c0c0:VRB]",
+                LogEventLevel.Debug => "[c/c0c0c0:DBG]",
+                LogEventLevel.Information => "[c/ffffff:INF]",
+                LogEventLevel.Warning => "[c/ffffaf:WRN]",
+                LogEventLevel.Error => "[c/ff005f:ERR]",
+                LogEventLevel.Fatal => "[c/ff005f:FTL]",
+                _ => "[c/ff0000:UNK]"
             };
 
             var output = new StringBuilder(
@@ -75,13 +65,13 @@ namespace TShock.Commands.Logging {
                 output.Append(_formatter.Format(propertyValue));
             }
 
-            _player.SendMessage(output.ToString(), _textColor);
+            _player.SendMessage(output.ToString(), new Color(0xda, 0xda, 0xda));
 
             if (logEvent.Exception != null) {
                 using var reader = new StringReader(logEvent.Exception.ToString());
                 string line;
                 while ((line = reader.ReadLine()) != null) {
-                    _player.SendMessage(line, _exceptionColor);
+                    _player.SendMessage(line, new Color(0xda, 0xda, 0xda));
                 }
             }
         }
