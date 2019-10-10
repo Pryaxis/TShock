@@ -18,8 +18,30 @@
 using System;
 
 namespace TShock.Modules {
-    internal abstract class TShockModule : IDisposable {
+    /// <summary>
+    /// Represents a module of TShock's functionality.
+    /// </summary>
+    public abstract class TShockModule : IDisposable {
+        /// <summary>
+        /// Disposes the module and any of its managed and unmanaged resources.
+        /// </summary>
+        public void Dispose() {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Initializes the module. Typically, commands should be registered here and event handlers should be
+        /// registered in the constructor.
+        /// </summary>
         public abstract void Initialize();
-        public abstract void Dispose();
+
+        /// <summary>
+        /// Disposes the module and any of its unmanaged resources, optionally including its managed resources.
+        /// </summary>
+        /// <param name="disposeManaged">
+        /// <see langword="true"/> to dispose managed resources, otherwise, <see langword="false"/>.
+        /// </param>
+        protected abstract void Dispose(bool disposeManaged);
     }
 }

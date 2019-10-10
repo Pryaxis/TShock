@@ -36,11 +36,14 @@ using TShock.Properties;
 using TShock.Utils.Extensions;
 
 namespace TShock.Modules {
+    /// <summary>
+    /// Represents TShock's command module. Provides command functionality and core commands.
+    /// </summary>
     internal sealed class CommandModule : TShockModule {
         private readonly OrionKernel _kernel;
         private readonly IPlayerService _playerService;
         private readonly ICommandService _commandService;
-        
+
         // Map from Terraria command -> canonical command. This is used to unify Terraria and TShock commands.
         private readonly IDictionary<string, string> _canonicalCommands = new Dictionary<string, string> {
             ["Say"] = string.Empty,
@@ -63,7 +66,7 @@ namespace TShock.Modules {
             _kernel = kernel;
             _playerService = playerService;
             _commandService = commandService;
-            
+
             _kernel.ServerCommand.RegisterHandler(ServerCommandHandler);
             _playerService.PlayerChat.RegisterHandler(PlayerChatHandler);
             _commandService.CommandRegister.RegisterHandler(CommandRegisterHandler);
@@ -77,68 +80,8 @@ namespace TShock.Modules {
             _commandService.RegisterCommands(this);
         }
 
-        public override void Dispose() {
-            _kernel.ServerCommand.UnregisterHandler(ServerCommandHandler);
-            _playerService.PlayerChat.UnregisterHandler(PlayerChatHandler);
-            _commandService.CommandRegister.UnregisterHandler(CommandRegisterHandler);
-            _commandService.CommandUnregister.UnregisterHandler(CommandUnregisterHandler);
-        }
-
-        [EventHandler(EventPriority.Lowest)]
-        private void ServerCommandHandler(object sender, ServerCommandEventArgs args) {
-            args.Cancel("tshock: command executing");
-
-            var input = args.Input;
-            if (input.StartsWith('/')) {
-                input = input.Substring(1);
-            }
-
-            ExecuteCommand(ConsoleCommandSender.Instance, input);
-        }
-
-        [EventHandler(EventPriority.Lowest)]
-        private void PlayerChatHandler(object sender, PlayerChatEventArgs args) {
-            if (args.IsCanceled()) {
-                return;
-            }
-
-            var chatCommand = args.ChatCommand;
-            if (!_canonicalCommands.TryGetValue(chatCommand, out var canonicalCommand)) {
-                args.Cancel("tshock: Terraria command is invalid");
-                return;
-            }
-
-            var chat = canonicalCommand + args.ChatText;
-            if (chat.StartsWith('/')) {
-                args.Cancel("tshock: command executing");
-
-                ICommandSender commandSender = args.Player.GetAnnotationOrDefault("tshock:CommandSender",
-                    () => new PlayerCommandSender(args.Player), true);
-                var input = chat.Substring(1);
-                ExecuteCommand(commandSender, input);
-            }
-        }
-        
-        [EventHandler(EventPriority.Monitor)]
-        private void CommandRegisterHandler(object sender, CommandRegisterEventArgs args) {
-            var qualifiedName = args.Command.QualifiedName;
-            var name = qualifiedName.Substring(qualifiedName.IndexOf(':', StringComparison.Ordinal) + 1);
-            _nameToQualifiedName
-                .GetValueOrDefault(name, () => new HashSet<string>(), true)
-                .Add(qualifiedName);
-        }
-        
-        [EventHandler(EventPriority.Monitor)]
-        private void CommandUnregisterHandler(object sender, CommandUnregisterEventArgs args) {
-            var qualifiedName = args.Command.QualifiedName;
-            var name = qualifiedName.Substring(qualifiedName.IndexOf(':', StringComparison.Ordinal) + 1);
-            _nameToQualifiedName
-                .GetValueOrDefault(name, () => new HashSet<string>(), true)
-                .Remove(qualifiedName);
-        }
-        
         // Executes a command. input should not have the leading /.
-        private void ExecuteCommand(ICommandSender commandSender, string input) {
+        public void ExecuteCommand(ICommandSender commandSender, string input) {
             var space = input.IndexOf(' ', StringComparison.Ordinal);
             if (space < 0) {
                 space = input.Length;
@@ -168,7 +111,72 @@ namespace TShock.Modules {
                 commandSender.SendErrorMessage(ex.Message);
             }
         }
-        
+
+        protected override void Dispose(bool disposeManaged) {
+            _kernel.ServerCommand.UnregisterHandler(ServerCommandHandler);
+            _playerService.PlayerChat.UnregisterHandler(PlayerChatHandler);
+            _commandService.CommandRegister.UnregisterHandler(CommandRegisterHandler);
+            _commandService.CommandUnregister.UnregisterHandler(CommandUnregisterHandler);
+        }
+
+        [EventHandler(EventPriority.Lowest)]
+        private void ServerCommandHandler(object sender, ServerCommandEventArgs args) {
+            if (args.IsCanceled()) {
+                return;
+            }
+
+            args.Cancel("tshock: command executing");
+
+            var input = args.Input;
+            if (input.StartsWith('/')) {
+                input = input.Substring(1);
+            }
+
+            ExecuteCommand(ConsoleCommandSender.Instance, input);
+        }
+
+        [EventHandler(EventPriority.Lowest)]
+        private void PlayerChatHandler(object sender, PlayerChatEventArgs args) {
+            if (args.IsCanceled()) {
+                return;
+            }
+
+            var chatCommand = args.ChatCommand;
+            if (!_canonicalCommands.TryGetValue(chatCommand, out var canonicalCommand)) {
+                args.Cancel("tshock: Terraria command is invalid");
+                return;
+            }
+
+            var chat = canonicalCommand + args.ChatText;
+            if (chat.StartsWith('/')) {
+                args.Cancel("tshock: command executing");
+
+                ICommandSender commandSender = args.Player.GetAnnotationOrDefault(
+                    "tshock:CommandSender",
+                    () => new PlayerCommandSender(args.Player), true);
+                var input = chat.Substring(1);
+                ExecuteCommand(commandSender, input);
+            }
+        }
+
+        [EventHandler(EventPriority.Monitor)]
+        private void CommandRegisterHandler(object sender, CommandRegisterEventArgs args) {
+            var qualifiedName = args.Command.QualifiedName;
+            var name = qualifiedName.Substring(qualifiedName.IndexOf(':', StringComparison.Ordinal) + 1);
+            _nameToQualifiedName
+                .GetValueOrDefault(name, () => new HashSet<string>(), true)
+                .Add(qualifiedName);
+        }
+
+        [EventHandler(EventPriority.Monitor)]
+        private void CommandUnregisterHandler(object sender, CommandUnregisterEventArgs args) {
+            var qualifiedName = args.Command.QualifiedName;
+            var name = qualifiedName.Substring(qualifiedName.IndexOf(':', StringComparison.Ordinal) + 1);
+            _nameToQualifiedName
+                .GetValueOrDefault(name, () => new HashSet<string>(), true)
+                .Remove(qualifiedName);
+        }
+
         // Gets the qualified command name for a possibly-qualified command name.
         private string GetQualifiedName(string maybeQualifiedName) {
             if (string.IsNullOrEmpty(maybeQualifiedName)) {
@@ -201,7 +209,7 @@ namespace TShock.Modules {
 
             return qualifiedNames.Single();
         }
-        
+
         // =============================================================================================================
         // Core command implementations below:
         //

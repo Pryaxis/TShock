@@ -58,18 +58,27 @@ namespace TShock {
             _commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
         }
 
+        /// <summary>
+        /// Registers the given <paramref name="module"/>.
+        /// </summary>
+        /// <param name="module">The module.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="module"/> is <see langword="null"/>.</exception>
+        public void RegisterModule(TShockModule module) {
+            if (module is null) {
+                throw new ArgumentNullException(nameof(module));
+            }
+
+            _modules.Add(module);
+        }
+
         /// <inheritdoc/>
-        protected override void Initialize() {
+        public override void Initialize() {
             Kernel.ServerInitialize.RegisterHandler(ServerInitializeHandler);
-            _modules.Add(new CommandModule(Kernel, _playerService.Value, _commandService.Value));
+            RegisterModule(new CommandModule(Kernel, _playerService.Value, _commandService.Value));
         }
 
         /// <inheritdoc/>
         protected override void Dispose(bool disposeManaged) {
-            if (!disposeManaged) {
-                return;
-            }
-            
             Kernel.ServerInitialize.UnregisterHandler(ServerInitializeHandler);
             foreach (var module in _modules) {
                 module.Dispose();

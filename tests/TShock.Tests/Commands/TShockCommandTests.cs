@@ -26,6 +26,7 @@ using TShock.Commands.Exceptions;
 using TShock.Commands.Parsers;
 using TShock.Commands.Parsers.Attributes;
 using TShock.Events.Commands;
+using TShock.Properties;
 using Xunit;
 
 namespace TShock.Commands {
@@ -39,6 +40,66 @@ namespace TShock.Commands {
             });
             _mockCommandService.Setup(cs => cs.CommandExecute).Returns(
                 new EventHandlerCollection<CommandExecuteEventArgs>());
+        }
+
+        [Fact]
+        public void QualifiedName_Get() {
+            var attribute = new CommandHandlerAttribute("test");
+            var command = new TShockCommand(
+                _mockCommandService.Object, "",
+                typeof(TShockCommandTests).GetMethod(nameof(QualifiedName_Get)), attribute);
+
+            command.QualifiedName.Should().Be("test");
+        }
+
+        [Fact]
+        public void HelpText_Get() {
+            var attribute = new CommandHandlerAttribute("test") { HelpText = "HelpTest" };
+            var command = new TShockCommand(
+                _mockCommandService.Object, "",
+                typeof(TShockCommandTests).GetMethod(nameof(HelpText_Get)), attribute);
+
+            command.HelpText.Should().Be("HelpTest");
+        }
+
+        [Fact]
+        public void HelpText_GetMissing() {
+            var attribute = new CommandHandlerAttribute("test");
+            var command = new TShockCommand(
+                _mockCommandService.Object, "",
+                typeof(TShockCommandTests).GetMethod(nameof(HelpText_GetMissing)), attribute);
+
+            command.HelpText.Should().Be(Resources.Command_MissingHelpText);
+        }
+
+        [Fact]
+        public void UsageText_Get() {
+            var attribute = new CommandHandlerAttribute("test") { UsageText = "UsageTest" };
+            var command = new TShockCommand(
+                _mockCommandService.Object, "",
+                typeof(TShockCommandTests).GetMethod(nameof(UsageText_Get)), attribute);
+
+            command.UsageText.Should().Be("UsageTest");
+        }
+
+        [Fact]
+        public void UsageText_GetMissing() {
+            var attribute = new CommandHandlerAttribute("test");
+            var command = new TShockCommand(
+                _mockCommandService.Object, "",
+                typeof(TShockCommandTests).GetMethod(nameof(UsageText_GetMissing)), attribute);
+
+            command.UsageText.Should().Be(Resources.Command_MissingUsageText);
+        }
+
+        [Fact]
+        public void ShouldBeLogged_Get() {
+            var attribute = new CommandHandlerAttribute("test") { ShouldBeLogged = false };
+            var command = new TShockCommand(
+                _mockCommandService.Object, "",
+                typeof(TShockCommandTests).GetMethod(nameof(ShouldBeLogged_Get)), attribute);
+
+            command.ShouldBeLogged.Should().Be(false);
         }
 
         [Fact]
@@ -336,9 +397,6 @@ namespace TShock.Commands {
                 Int = @int;
                 String = @string;
             }
-
-            [CommandHandler("tshock_tests:test_no_ptr")]
-            public unsafe void TestCommand_NoPointer(ICommandSender sender, int* x) { }
 
             [CommandHandler("tshock_tests:test_flags")]
             public void TestCommand_Flags(ICommandSender sender, [Flag("x", "xxx")] bool x, [Flag("y", "yyy")] bool y) {

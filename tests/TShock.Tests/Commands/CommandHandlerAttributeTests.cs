@@ -22,6 +22,13 @@ using Xunit;
 namespace TShock.Commands {
     public class CommandHandlerAttributeTests {
         [Fact]
+        public void Ctor_NullQualifiedName_ThrowsArgumentNullException() {
+            Func<CommandHandlerAttribute> func = () => new CommandHandlerAttribute(null);
+
+            func.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
         public void HelpText_GetWithResourceType() {
             var attribute = new CommandHandlerAttribute("tshock_test:test") {
                 HelpText = nameof(TestClass.HelpText),
