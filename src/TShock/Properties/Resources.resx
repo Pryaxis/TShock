@@ -174,14 +174,14 @@
   <data name="Command_Me_UsageText" xml:space="preserve">
     <value>Usage: /{0} &lt;text&gt;</value>
   </data>
+  <data name="Command_MissingHelpText" xml:space="preserve">
+    <value>Missing command help text.</value>
+  </data>
+  <data name="Command_MissingUsageText" xml:space="preserve">
+    <value>Missing command usage text.</value>
+  </data>
   <data name="Command_P" xml:space="preserve">
     <value>tshock:p</value>
-  </data>
-  <data name="Command_Party_NotAPlayer" xml:space="preserve">
-    <value>You must be a player to party chat.</value>
-  </data>
-  <data name="Command_Party_NotInTeam" xml:space="preserve">
-    <value>You are not in a team!</value>
   </data>
   <data name="Command_Playing" xml:space="preserve">
     <value>tshock:playing</value>
@@ -200,6 +200,12 @@
   </data>
   <data name="Command_P_HelpText" xml:space="preserve">
     <value>Sends a message to your party members.</value>
+  </data>
+  <data name="Command_P_NotAPlayer" xml:space="preserve">
+    <value>You must be a player to party chat.</value>
+  </data>
+  <data name="Command_P_NotInTeam" xml:space="preserve">
+    <value>You are not in a team!</value>
   </data>
   <data name="Command_P_UsageText" xml:space="preserve">
     <value>Usage: /{0} &lt;text&gt;</value>

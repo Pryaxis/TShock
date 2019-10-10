@@ -20,8 +20,8 @@ using TShock.Commands.Exceptions;
 
 namespace TShock.Commands {
     /// <summary>
-    /// Represents a command. Commands can be executed by command senders, and provide bits of functionality. This class
-    /// is not thread-safe.
+    /// Represents a command. Commands can be executed by command senders, and provide bits of functionality.
+    /// Implementations are thread-safe.
     /// </summary>
     public interface ICommand {
         /// <summary>
@@ -30,16 +30,20 @@ namespace TShock.Commands {
         string QualifiedName { get; }
 
         /// <summary>
-        /// Gets the command's help text. If <see langword="null"/>, then no help text exists. This will show up in the
-        /// /help command.
+        /// Gets the command's help text. This will show up in the /help command.
         /// </summary>
-        string? HelpText { get; }
+        string HelpText { get; }
 
         /// <summary>
-        /// Gets the command's usage text. If <see langword="null"/>, then no usage text exists. This will show up in the
-        /// /help command and when invalid syntax is used.
+        /// Gets the command's usage text. This will show up in the /help command and when invalid syntax is used.
         /// </summary>
-        string? UsageText { get; }
+        string UsageText { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether the command should be logged. For example, authentication commands should
+        /// not be logged.
+        /// </summary>
+        bool ShouldBeLogged { get; }
 
         /// <summary>
         /// Invokes the command as a <paramref name="sender"/> with the <paramref name="input"/>.

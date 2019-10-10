@@ -308,7 +308,7 @@ namespace TShock.Commands {
         private ICommand GetCommand(TestClass testClass, string methodName) {
             var handler = typeof(TestClass).GetMethod(methodName);
             var attribute = handler.GetCustomAttribute<CommandHandlerAttribute>();
-            return new TShockCommand(_mockCommandService.Object, attribute, testClass, handler);
+            return new TShockCommand(_mockCommandService.Object, testClass, handler, attribute);
         }
 
         [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Testing")]

@@ -28,7 +28,6 @@ using Serilog;
 using TShock.Commands;
 using TShock.Commands.Exceptions;
 using TShock.Properties;
-using TShock.Utils.Extensions;
 
 namespace TShock {
     /// <summary>
@@ -142,9 +141,12 @@ namespace TShock {
                 commandSender.SendErrorMessage(ex.Message);
                 return;
             }
-            
-            try {
+
+            if (command.ShouldBeLogged) {
                 Log.Information(Resources.Log_ExecutingCommand, commandSender.Name, input);
+            }
+
+            try {
                 command.Invoke(commandSender, input.Substring(space));
             } catch (CommandParseException ex) {
                 commandSender.SendErrorMessage(ex.Message);

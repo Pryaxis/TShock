@@ -33,29 +33,29 @@ namespace TShock.Commands {
         private readonly ICommandService _commandService;
         private readonly object _handlerObject;
         private readonly MethodInfo _handler;
+        private readonly CommandHandlerAttribute _attribute;
 
         private readonly ISet<char> _validShortFlags = new HashSet<char>();
         private readonly ISet<string> _validLongFlags = new HashSet<string>();
         private readonly IDictionary<string, ParameterInfo> _validOptionals = new Dictionary<string, ParameterInfo>();
 
-        public string QualifiedName { get; }
-        public string? HelpText { get; }
-        public string? UsageText { get; }
+        public string QualifiedName => _attribute.QualifiedName;
+        public string HelpText => _attribute.HelpText ?? Resources.Command_MissingHelpText;
+        public string UsageText => _attribute.UsageText ?? Resources.Command_MissingUsageText;
+        public bool ShouldBeLogged => _attribute.ShouldBeLogged;
 
         // We need to inject ICommandService so that we can trigger its CommandExecute event.
-        public TShockCommand(ICommandService commandService, CommandHandlerAttribute attribute, object handlerObject,
-                MethodInfo handler) {
+        public TShockCommand(ICommandService commandService, object handlerObject, MethodInfo handler,
+                CommandHandlerAttribute attribute) {
             Debug.Assert(commandService != null, "command service should not be null");
-            Debug.Assert(attribute != null, "attribute should not be null");
             Debug.Assert(handlerObject != null, "handler object should not be null");
             Debug.Assert(handler != null, "handler should not be null");
+            Debug.Assert(attribute != null, "attribute should not be null");
 
             _commandService = commandService;
             _handlerObject = handlerObject;
             _handler = handler;
-            QualifiedName = attribute.QualifiedName;
-            HelpText = attribute.HelpText;
-            UsageText = attribute.UsageText;
+            _attribute = attribute;
 
             // Preprocessing parameters in the constructor allows us to learn the command's flags and optionals.
             void PreprocessParameter(ParameterInfo parameterInfo) {

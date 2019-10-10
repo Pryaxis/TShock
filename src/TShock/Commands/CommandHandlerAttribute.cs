@@ -71,6 +71,12 @@ namespace TShock.Commands {
         }
 
         /// <summary>
+        /// Gets or sets a value indicating whether the command should be logged. For example, authentication commands
+        /// should not be logged.
+        /// </summary>
+        public bool ShouldBeLogged { get; set; } = true;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="CommandHandlerAttribute"/> class with the specified qualified
         /// name.
         /// </summary>

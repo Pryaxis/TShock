@@ -133,6 +133,24 @@ namespace TShock.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Missing command help text..
+        /// </summary>
+        internal static string Command_MissingHelpText {
+            get {
+                return ResourceManager.GetString("Command_MissingHelpText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Missing command usage text..
+        /// </summary>
+        internal static string Command_MissingUsageText {
+            get {
+                return ResourceManager.GetString("Command_MissingUsageText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to tshock:p.
         /// </summary>
         internal static string Command_P {
@@ -151,29 +169,29 @@ namespace TShock.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Usage: /{0} &lt;text&gt;.
-        /// </summary>
-        internal static string Command_P_UsageText {
-            get {
-                return ResourceManager.GetString("Command_P_UsageText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to You must be a player to party chat..
         /// </summary>
-        internal static string Command_Party_NotAPlayer {
+        internal static string Command_P_NotAPlayer {
             get {
-                return ResourceManager.GetString("Command_Party_NotAPlayer", resourceCulture);
+                return ResourceManager.GetString("Command_P_NotAPlayer", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to You are not in a team!.
         /// </summary>
-        internal static string Command_Party_NotInTeam {
+        internal static string Command_P_NotInTeam {
             get {
-                return ResourceManager.GetString("Command_Party_NotInTeam", resourceCulture);
+                return ResourceManager.GetString("Command_P_NotInTeam", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Usage: /{0} &lt;text&gt;.
+        /// </summary>
+        internal static string Command_P_UsageText {
+            get {
+                return ResourceManager.GetString("Command_P_UsageText", resourceCulture);
             }
         }
         

@@ -90,7 +90,7 @@ namespace TShock.Commands {
             lock (_lock) {
                 return handlerObject.GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance)
                     .SelectMany(m => m.GetCustomAttributes<CommandHandlerAttribute>(),
-                        (m, a) => RegisterCommand(new TShockCommand(this, a, handlerObject, m)))
+                        (m, a) => RegisterCommand(new TShockCommand(this, handlerObject, m, a)))
                     .Where(c => c != null).ToList()!;
             }
         }
@@ -151,7 +151,7 @@ namespace TShock.Commands {
                     Debug.Assert(_qualifiedNames.ContainsKey(name), "qualified names should contain command name");
                     return _qualifiedNames[name].Count > 1 ? qualifiedName : name;
                 }
-                    
+
                 sender.SendInfoMessage(Resources.Command_Help_Header);
                 lock (_lock) {
                     sender.SendInfoMessage(string.Join(", ", _commands.Values.Select(c => $"/{FormatCommandName(c)}")));
@@ -229,13 +229,13 @@ namespace TShock.Commands {
         public void P(ICommandSender sender, [RestOfInput] string text) {
             var player = sender.Player;
             if (player is null) {
-                sender.SendErrorMessage(Resources.Command_Party_NotAPlayer);
+                sender.SendErrorMessage(Resources.Command_P_NotAPlayer);
                 return;
             }
 
             var team = player.Team;
             if (team == PlayerTeam.None) {
-                sender.SendErrorMessage(Resources.Command_Party_NotInTeam);
+                sender.SendErrorMessage(Resources.Command_P_NotInTeam);
                 return;
             }
 
