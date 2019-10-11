@@ -20,7 +20,7 @@ using Microsoft.Xna.Framework;
 using Orion.Players;
 using Serilog;
 using Serilog.Events;
-using TShock.Commands.Logging;
+using TShock.Logging;
 
 namespace TShock.Commands {
     /// <summary>
@@ -51,7 +51,7 @@ namespace TShock.Commands {
             Player = player ?? throw new ArgumentNullException(nameof(player));
             Log = new LoggerConfiguration()
                 .MinimumLevel.Is(LogLevel)
-                .WriteTo.Sink(new PlayerLogSink(player))
+                .WriteTo.Player(player)
                 .CreateLogger();
         }
 
