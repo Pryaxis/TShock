@@ -56,7 +56,7 @@ namespace TShock.Commands {
         private ConsoleCommandSender() {
             Log = new LoggerConfiguration()
                 .WriteTo.Console(
-                    outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Properties} {Message:lj}{NewLine}{Exception}",
+                    outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}",
                     theme: AnsiConsoleTheme.Code)
                 .MinimumLevel.Is(LogLevel)
                 .CreateLogger();
