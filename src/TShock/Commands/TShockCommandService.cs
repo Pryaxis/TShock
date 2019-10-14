@@ -17,29 +17,34 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Orion;
 using Orion.Events;
+using Serilog;
 using TShock.Commands.Parsers;
 using TShock.Events.Commands;
 
 namespace TShock.Commands {
+    [Service("tshock-commands")]
     internal sealed class TShockCommandService : OrionService, ICommandService {
         private readonly Dictionary<string, ICommand> _commands = new Dictionary<string, ICommand>();
         private readonly Dictionary<Type, IArgumentParser> _parsers = new Dictionary<Type, IArgumentParser>();
 
         public IReadOnlyDictionary<string, ICommand> Commands => _commands;
         public IReadOnlyDictionary<Type, IArgumentParser> Parsers => _parsers;
-
         public EventHandlerCollection<CommandRegisterEventArgs> CommandRegister { get; }
-            = new EventHandlerCollection<CommandRegisterEventArgs>();
-
         public EventHandlerCollection<CommandExecuteEventArgs> CommandExecute { get; }
-            = new EventHandlerCollection<CommandExecuteEventArgs>();
-
         public EventHandlerCollection<CommandUnregisterEventArgs> CommandUnregister { get; }
-            = new EventHandlerCollection<CommandUnregisterEventArgs>();
+
+        public TShockCommandService(ILogger log) : base(log) {
+            Debug.Assert(log != null, "log should not be null");
+
+            CommandRegister = new EventHandlerCollection<CommandRegisterEventArgs>(log);
+            CommandExecute = new EventHandlerCollection<CommandExecuteEventArgs>(log);
+            CommandUnregister = new EventHandlerCollection<CommandUnregisterEventArgs>(log);
+        }
 
         public IReadOnlyCollection<ICommand> RegisterCommands(object handlerObject) {
             if (handlerObject is null) {

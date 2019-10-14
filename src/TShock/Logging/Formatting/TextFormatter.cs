@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using System.Diagnostics;
 using System.IO;
 using Serilog.Events;
@@ -35,10 +34,6 @@ namespace TShock.Logging.Formatting {
             _text = text;
         }
 
-        /// <inheritdoc/>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="logEvent"/> or <paramref name="output"/> are <see langword="null"/>.
-        /// </exception>
         public void Format(LogEvent logEvent, TextWriter output) {
             Debug.Assert(logEvent != null, "log event should not be null");
             Debug.Assert(output != null, "output should not be null");

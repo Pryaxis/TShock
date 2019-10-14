@@ -152,7 +152,7 @@ namespace TShock.Modules {
             _commandService.CommandUnregister.UnregisterHandler(CommandUnregisterHandler);
         }
 
-        [EventHandler(EventPriority.Lowest)]
+        [EventHandler(EventPriority.Lowest, Name = "tshock")]
         private void ServerCommandHandler(object sender, ServerCommandEventArgs args) {
             if (args.IsCanceled()) {
                 return;
@@ -168,7 +168,7 @@ namespace TShock.Modules {
             ExecuteCommand(ConsoleCommandSender.Instance, input);
         }
 
-        [EventHandler(EventPriority.Lowest)]
+        [EventHandler(EventPriority.Lowest, Name = "tshock")]
         private void PlayerChatHandler(object sender, PlayerChatEventArgs args) {
             if (args.IsCanceled()) {
                 return;
@@ -192,7 +192,7 @@ namespace TShock.Modules {
             }
         }
 
-        [EventHandler(EventPriority.Monitor)]
+        [EventHandler(EventPriority.Monitor, Name = "tshock")]
         private void CommandRegisterHandler(object sender, CommandRegisterEventArgs args) {
             var qualifiedName = args.Command.QualifiedName;
             var name = qualifiedName.Substring(qualifiedName.IndexOf(':', StringComparison.Ordinal) + 1);
@@ -201,7 +201,7 @@ namespace TShock.Modules {
                 .Add(qualifiedName);
         }
 
-        [EventHandler(EventPriority.Monitor)]
+        [EventHandler(EventPriority.Monitor, Name = "tshock")]
         private void CommandUnregisterHandler(object sender, CommandUnregisterEventArgs args) {
             var qualifiedName = args.Command.QualifiedName;
             var name = qualifiedName.Substring(qualifiedName.IndexOf(':', StringComparison.Ordinal) + 1);

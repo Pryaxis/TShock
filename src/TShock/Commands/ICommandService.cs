@@ -27,7 +27,7 @@ namespace TShock.Commands {
     /// Represents a service that manages commands. Provides command-related hooks and methods. Implementations are not
     /// required to be thread-safe.
     /// </summary>
-    public interface ICommandService : IService {
+    public interface ICommandService {
         /// <summary>
         /// Gets a read-only mapping from qualified command names to commands.
         /// </summary>

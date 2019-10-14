@@ -46,7 +46,7 @@ namespace TShock.Logging {
             var writer = new StringWriter();
 
             visitor.Format(new ScalarValue(null), writer);
-            
+
             writer.ToString().Should().Be("[c/000000:null]");
         }
 
@@ -56,7 +56,7 @@ namespace TShock.Logging {
             var writer = new StringWriter();
 
             visitor.Format(new ScalarValue("test"), writer);
-            
+
             writer.ToString().Should().Be("[c/008000:test]");
         }
 
@@ -66,7 +66,7 @@ namespace TShock.Logging {
             var writer = new StringWriter();
 
             visitor.Format(new ScalarValue(true), writer);
-            
+
             writer.ToString().Should().Be("[c/000080:True]");
         }
 
@@ -76,7 +76,7 @@ namespace TShock.Logging {
             var writer = new StringWriter();
 
             visitor.Format(new ScalarValue('t'), writer);
-            
+
             writer.ToString().Should().Be("[c/0000ff:t]");
         }
 
@@ -86,7 +86,7 @@ namespace TShock.Logging {
             var writer = new StringWriter();
 
             visitor.Format(new ScalarValue(-12345), writer);
-            
+
             writer.ToString().Should().Be("[c/ffff00:-12345]");
         }
 
@@ -96,7 +96,7 @@ namespace TShock.Logging {
             var writer = new StringWriter();
 
             visitor.Format(new ScalarValue(new StringBuilder("test")), writer);
-            
+
             writer.ToString().Should().Be("[c/000001:test]");
         }
 
@@ -106,7 +106,7 @@ namespace TShock.Logging {
             var writer = new StringWriter();
 
             visitor.Format(new SequenceValue(new[] { new ScalarValue(1), new ScalarValue(2) }), writer);
-            
+
             writer.ToString().Should().Be("[[c/ffff00:1][c/c0c0c0:, ][c/ffff00:2]]");
         }
 
@@ -116,7 +116,7 @@ namespace TShock.Logging {
             var writer = new StringWriter();
 
             visitor.Format(new SequenceValue(new[] { new ScalarValue(1) }), writer);
-            
+
             writer.ToString().Should().Be("[[c/ffff00:1]]");
         }
 
@@ -126,7 +126,7 @@ namespace TShock.Logging {
             var writer = new StringWriter();
 
             visitor.Format(new StructureValue(new[] { new LogEventProperty("Test", new ScalarValue(1)) }), writer);
-            
+
             writer.ToString().Should().Be("{[c/ff0000:Test][c/c0c0c0:=][c/ffff00:1]}");
         }
 
@@ -139,7 +139,7 @@ namespace TShock.Logging {
                 new LogEventProperty("Test", new ScalarValue(1)),
                 new LogEventProperty("Test2", new ScalarValue(2))
             }), writer);
-            
+
             writer.ToString().Should().Be(
                 "{[c/ff0000:Test][c/c0c0c0:=][c/ffff00:1][c/c0c0c0:, ][c/ff0000:Test2][c/c0c0c0:=][c/ffff00:2]}");
         }
@@ -152,7 +152,7 @@ namespace TShock.Logging {
             visitor.Format(
                 new StructureValue(new[] { new LogEventProperty("Test", new ScalarValue(1)) }, "Type"),
                 writer);
-            
+
             writer.ToString().Should().Be("[c/ff00ff:Type]{[c/ff0000:Test][c/c0c0c0:=][c/ffff00:1]}");
         }
 
@@ -164,7 +164,7 @@ namespace TShock.Logging {
             visitor.Format(new DictionaryValue(new[] {
                 new KeyValuePair<ScalarValue, LogEventPropertyValue>(new ScalarValue(1), new ScalarValue("test"))
             }), writer);
-            
+
             writer.ToString().Should().Be("{[[c/ffff00:1]][c/c0c0c0:=][c/008000:test]}");
         }
 
@@ -177,7 +177,7 @@ namespace TShock.Logging {
                 new KeyValuePair<ScalarValue, LogEventPropertyValue>(new ScalarValue(1), new ScalarValue("test")),
                 new KeyValuePair<ScalarValue, LogEventPropertyValue>(new ScalarValue(2), new ScalarValue("test2"))
             }), writer);
-            
+
             writer.ToString().Should().Be(
                 "{[[c/ffff00:1]][c/c0c0c0:=][c/008000:test][c/c0c0c0:, ][[c/ffff00:2]][c/c0c0c0:=][c/008000:test2]}");
         }

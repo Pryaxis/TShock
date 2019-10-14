@@ -22,6 +22,7 @@ using System.Reflection;
 using FluentAssertions;
 using Moq;
 using Orion.Events;
+using Serilog.Core;
 using TShock.Commands.Exceptions;
 using TShock.Commands.Parsers;
 using TShock.Commands.Parsers.Attributes;
@@ -38,8 +39,9 @@ namespace TShock.Commands {
                 [typeof(int)] = new Int32Parser(),
                 [typeof(string)] = new StringParser()
             });
-            _mockCommandService.Setup(cs => cs.CommandExecute).Returns(
-                new EventHandlerCollection<CommandExecuteEventArgs>());
+            _mockCommandService
+                .Setup(cs => cs.CommandExecute)
+                .Returns(new EventHandlerCollection<CommandExecuteEventArgs>(Logger.None));
         }
 
         [Fact]
@@ -233,7 +235,7 @@ namespace TShock.Commands {
             var command = GetCommand(testClass, nameof(TestClass.TestCommand));
             var commandSender = new Mock<ICommandSender>().Object;
             var isRun = false;
-            var commandExecute = new EventHandlerCollection<CommandExecuteEventArgs>();
+            var commandExecute = new EventHandlerCollection<CommandExecuteEventArgs>(Logger.None);
             commandExecute.RegisterHandler((sender, args) => {
                 isRun = true;
                 args.Command.Should().Be(command);
@@ -252,7 +254,7 @@ namespace TShock.Commands {
             var testClass = new TestClass();
             var command = GetCommand(testClass, nameof(TestClass.TestCommand));
             var commandSender = new Mock<ICommandSender>().Object;
-            var commandExecute = new EventHandlerCollection<CommandExecuteEventArgs>();
+            var commandExecute = new EventHandlerCollection<CommandExecuteEventArgs>(Logger.None);
             commandExecute.RegisterHandler((sender, args) => {
                 args.Cancel();
             });

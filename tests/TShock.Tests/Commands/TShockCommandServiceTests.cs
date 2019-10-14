@@ -21,12 +21,13 @@ using System.Linq;
 using FluentAssertions;
 using Moq;
 using Orion.Events;
+using Serilog.Core;
 using TShock.Commands.Parsers;
 using Xunit;
 
 namespace TShock.Commands {
     public class TShockCommandServiceTests : IDisposable {
-        private readonly ICommandService _commandService = new TShockCommandService();
+        private readonly TShockCommandService _commandService = new TShockCommandService(Logger.None);
 
         public void Dispose() => _commandService.Dispose();
 

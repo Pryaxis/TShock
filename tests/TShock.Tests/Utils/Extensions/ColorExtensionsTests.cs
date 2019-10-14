@@ -15,9 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Orion.  If not, see <https://www.gnu.org/licenses/>.
 
+using System.Collections.Generic;
 using FluentAssertions;
 using Microsoft.Xna.Framework;
-using System.Collections.Generic;
 using Xunit;
 
 namespace TShock.Utils.Extensions {

@@ -16,12 +16,14 @@
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using Orion.Events;
 using TShock.Commands;
 
 namespace TShock.Events.Commands {
     /// <summary>
     /// Provides data for the <see cref="ICommandService.CommandRegister"/> event.
     /// </summary>
+    [EventArgs("command-register")]
     public sealed class CommandRegisterEventArgs : CommandEventArgs {
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandRegisterEventArgs"/> class with the specified command.

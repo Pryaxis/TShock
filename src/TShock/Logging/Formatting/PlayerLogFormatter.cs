@@ -27,6 +27,7 @@ using TShock.Logging.Themes;
 
 namespace TShock.Logging.Formatting {
     internal sealed class PlayerLogFormatter : ITextFormatter {
+        // Cache the MessageTemplateParser because why not?
         private static readonly MessageTemplateParser _templateParser = new MessageTemplateParser();
 
         private readonly IList<ITextFormatter> _formatters = new List<ITextFormatter>();
@@ -35,6 +36,8 @@ namespace TShock.Logging.Formatting {
             Debug.Assert(theme != null, "theme should not be null");
             Debug.Assert(outputTemplate != null, "output template should not be null");
 
+            // The general strategy is to parse the template, and create a list of formatters in the same order as the
+            // properties found within the template. We can then run the formatters in order on each log event.
             var template = _templateParser.Parse(outputTemplate);
             foreach (var token in template.Tokens) {
                 if (token is TextToken textToken) {

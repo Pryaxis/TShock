@@ -38,6 +38,8 @@ namespace TShock.Logging.Themes {
                 [PlayerLogThemeStyle.Scalar] = new Color(0x86, 0xc6, 0x91),
                 [PlayerLogThemeStyle.Identifier] = new Color(0x9c, 0xdc, 0xfe),
                 [PlayerLogThemeStyle.Type] = new Color(0x4e, 0xc9, 0xb0),
+
+                // The below don't really have any analogs, so I made some colors up.
                 [PlayerLogThemeStyle.Timestamp] = new Color(0x86, 0xc6, 0x91),
                 [PlayerLogThemeStyle.Exception] = new Color(0xcc, 0x44, 0x44),
                 [PlayerLogThemeStyle.VerboseLevel] = new Color(0xcc, 0xcc, 0xcc),

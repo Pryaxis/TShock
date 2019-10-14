@@ -19,8 +19,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Orion;
+using Orion.Events;
 using Orion.Events.Server;
 using Orion.Players;
+using Serilog;
 using TShock.Commands;
 using TShock.Modules;
 
@@ -28,30 +30,26 @@ namespace TShock {
     /// <summary>
     /// Represents the TShock plugin.
     /// </summary>
+    [Service("tshock")]
     public sealed class TShockPlugin : OrionPlugin {
         private readonly Lazy<IPlayerService> _playerService;
         private readonly Lazy<ICommandService> _commandService;
 
         private readonly ISet<TShockModule> _modules = new HashSet<TShockModule>();
 
-        /// <inheritdoc/>
-        [ExcludeFromCodeCoverage]
-        public override string Author => "Pryaxis";
-
-        /// <inheritdoc/>
-        [ExcludeFromCodeCoverage]
-        public override string Name => "TShock";
-
         /// <summary>
-        /// Initializes a new instance of the <see cref="TShockPlugin"/> class with the specified Orion kernel and
-        /// services.
+        /// Initializes a new instance of the <see cref="TShockPlugin"/> class with the specified Orion kernel, log,
+        /// and services.
         /// </summary>
         /// <param name="kernel">The Orion kernel.</param>
+        /// <param name="log">The log.</param>
         /// <param name="playerService">The player service.</param>
         /// <param name="commandService">The command service.</param>
-        /// <exception cref="ArgumentNullException">Any of the services are <see langword="null"/>.</exception>
-        public TShockPlugin(OrionKernel kernel, Lazy<IPlayerService> playerService,
-                Lazy<ICommandService> commandService) : base(kernel) {
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="kernel"/>, <paramref name="log"/>, or any of the services are <see langword="null"/>.
+        /// </exception>
+        public TShockPlugin(OrionKernel kernel, ILogger log, Lazy<IPlayerService> playerService,
+                Lazy<ICommandService> commandService) : base(kernel, log) {
             Kernel.Bind<ICommandService>().To<TShockCommandService>();
 
             _playerService = playerService ?? throw new ArgumentNullException(nameof(playerService));
@@ -74,18 +72,29 @@ namespace TShock {
         /// <inheritdoc/>
         public override void Initialize() {
             Kernel.ServerInitialize.RegisterHandler(ServerInitializeHandler);
+
             RegisterModule(new CommandModule(Kernel, _playerService.Value, _commandService.Value));
         }
 
         /// <inheritdoc/>
-        protected override void Dispose(bool disposeManaged) {
-            Kernel.ServerInitialize.UnregisterHandler(ServerInitializeHandler);
+        public override void Dispose() {
             foreach (var module in _modules) {
                 module.Dispose();
             }
+
+            Kernel.ServerInitialize.UnregisterHandler(ServerInitializeHandler);
         }
 
+        [EventHandler(EventPriority.Normal, Name = "tshock")]
         private void ServerInitializeHandler(object sender, ServerInitializeEventArgs args) {
+            // The reason why we want to wait for ServerInitialize to initialize the modules is because we need three
+            // stages of initialization:
+            //
+            // 1) Plugin constructors, which use lazy services.
+            // 2) Plugin Initialize, which can set up service event handlers,
+            // 3) ServerInitialize, which can use any service.
+            //
+            // This way, we can have service rebinding and service event handlers that always run.
             foreach (var module in _modules) {
                 module.Initialize();
             }

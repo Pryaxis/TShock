@@ -42,11 +42,9 @@ namespace TShock.Logging.Formatting {
             Debug.Assert(logEvent != null, "log event should not be null");
             Debug.Assert(output != null, "output should not be null");
 
-            bool IsExcluded(string propertyName) {
-                return _outputTemplate.Tokens
-                    .Concat(logEvent.MessageTemplate.Tokens)
-                    .All(t => !(t is PropertyToken p) || p.PropertyName != propertyName);
-            }
+            bool IsExcluded(string propertyName) => _outputTemplate.Tokens
+                .Concat(logEvent.MessageTemplate.Tokens)
+                .All(t => !(t is PropertyToken p) || p.PropertyName != propertyName);
 
             var properties = logEvent.Properties
                 .Where(kvp => IsExcluded(kvp.Key))

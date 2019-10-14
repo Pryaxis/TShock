@@ -32,7 +32,7 @@ namespace TShock.Logging.Themes {
         /// Represents a separator in, e.g., a sequence or structure.
         /// </summary>
         Separator,
-        
+
         /// <summary>
         /// Represents <see langword="null"/>.
         /// </summary>
@@ -72,7 +72,7 @@ namespace TShock.Logging.Themes {
         /// Represents a structure type.
         /// </summary>
         Type,
-        
+
         /// <summary>
         /// Represents a timestamp.
         /// </summary>

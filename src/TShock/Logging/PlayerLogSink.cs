@@ -42,6 +42,7 @@ namespace TShock.Logging {
             var output = new StringWriter();
             _formatter.Format(logEvent, output);
 
+            // When sending the text, we don't want any newlines if possible. So we strip the ending newline.
             var text = output.ToString();
             if (text.EndsWith('\n')) {
                 text = text[0..^1];

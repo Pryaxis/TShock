@@ -50,7 +50,7 @@ namespace TShock.Logging.Formatting {
         [Fact]
         public void Format_ExistsInOutputTemplate() {
             var formatter = new PropertiesFormatter(_theme,
-                new MessageTemplate(new[] {new PropertyToken("Test2", "{Test2}")}), CultureInfo.InvariantCulture);
+                new MessageTemplate(new[] { new PropertyToken("Test2", "{Test2}") }), CultureInfo.InvariantCulture);
             var writer = new StringWriter();
             var logEvent = new LogEvent(
                 DateTimeOffset.Now, LogEventLevel.Debug, null,
@@ -71,7 +71,7 @@ namespace TShock.Logging.Formatting {
             var writer = new StringWriter();
             var logEvent = new LogEvent(
                 DateTimeOffset.Now, LogEventLevel.Debug, null,
-                new MessageTemplate(new[] {new PropertyToken("Test", "{Test}")}),
+                new MessageTemplate(new[] { new PropertyToken("Test", "{Test}") }),
                 new[] {
                     new LogEventProperty("Test", new ScalarValue(1)),
                     new LogEventProperty("Test2", new ScalarValue(2)),

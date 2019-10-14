@@ -31,8 +31,7 @@ namespace TShock.Modules {
         }
 
         /// <summary>
-        /// Initializes the module. Typically, commands should be registered here and event handlers should be
-        /// registered in the constructor.
+        /// Initializes the module. Typically, commands should be registered here.
         /// </summary>
         public abstract void Initialize();
 

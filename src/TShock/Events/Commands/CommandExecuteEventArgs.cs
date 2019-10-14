@@ -16,12 +16,14 @@
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using Orion.Events;
 using TShock.Commands;
 
 namespace TShock.Events.Commands {
     /// <summary>
     /// Provides data for the <see cref="ICommandService.CommandExecute"/> event.
     /// </summary>
+    [EventArgs("command-execute")]
     public sealed class CommandExecuteEventArgs : CommandEventArgs {
         private string _input;
 

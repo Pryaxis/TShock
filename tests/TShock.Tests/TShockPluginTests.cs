@@ -23,6 +23,7 @@ using Orion.Events;
 using Orion.Events.Players;
 using Orion.Events.Server;
 using Orion.Players;
+using Serilog.Core;
 using TShock.Commands;
 using TShock.Events.Commands;
 using TShock.Modules;
@@ -30,15 +31,42 @@ using Xunit;
 
 namespace TShock {
     public class TShockPluginTests {
-        private readonly OrionKernel _kernel = new OrionKernel();
+        private readonly OrionKernel _kernel = new OrionKernel(Logger.None);
         private readonly TShockPlugin _plugin;
         private readonly Mock<IPlayerService> _mockPlayerService = new Mock<IPlayerService>();
         private readonly Mock<ICommandService> _mockCommandService = new Mock<ICommandService>();
 
         public TShockPluginTests() {
-            _plugin = new TShockPlugin(_kernel,
+            _plugin = new TShockPlugin(_kernel, Logger.None,
                 new Lazy<IPlayerService>(() => _mockPlayerService.Object),
                 new Lazy<ICommandService>(() => _mockCommandService.Object));
+        }
+
+        [Fact]
+        public void Ctor_NullKernel_ThrowsArgumentNullException() {
+            Func<TShockPlugin> func = () => new TShockPlugin(null, Logger.None,
+                new Lazy<IPlayerService>(() => _mockPlayerService.Object),
+                new Lazy<ICommandService>(() => _mockCommandService.Object));
+
+            func.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void Ctor_NullPlayerService_ThrowsArgumentNullException() {
+            Func<TShockPlugin> func = () => new TShockPlugin(_kernel, Logger.None,
+                null,
+                new Lazy<ICommandService>(() => _mockCommandService.Object));
+
+            func.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void Ctor_NullCommandService_ThrowsArgumentNullException() {
+            Func<TShockPlugin> func = () => new TShockPlugin(_kernel, Logger.None,
+                new Lazy<IPlayerService>(() => _mockPlayerService.Object),
+                null);
+
+            func.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -60,13 +88,15 @@ namespace TShock {
 
         [Fact]
         public void ServerInitialize_InitializesModule() {
-            _mockPlayerService.Setup(ps => ps.PlayerChat).Returns(new EventHandlerCollection<PlayerChatEventArgs>());
+            _mockPlayerService
+                .Setup(ps => ps.PlayerChat)
+                .Returns(new EventHandlerCollection<PlayerChatEventArgs>(Logger.None));
             _mockCommandService
                 .Setup(ps => ps.CommandRegister)
-                .Returns(new EventHandlerCollection<CommandRegisterEventArgs>());
+                .Returns(new EventHandlerCollection<CommandRegisterEventArgs>(Logger.None));
             _mockCommandService
                 .Setup(ps => ps.CommandUnregister)
-                .Returns(new EventHandlerCollection<CommandUnregisterEventArgs>());
+                .Returns(new EventHandlerCollection<CommandUnregisterEventArgs>(Logger.None));
             var module = new TestModule();
             _plugin.Initialize();
             _plugin.RegisterModule(module);

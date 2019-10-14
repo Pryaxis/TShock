@@ -16,12 +16,14 @@
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using Orion.Events;
 using TShock.Commands;
 
 namespace TShock.Events.Commands {
     /// <summary>
     /// Provides data for the <see cref="ICommandService.CommandUnregister"/> event.
     /// </summary>
+    [EventArgs("command-unregister")]
     public sealed class CommandUnregisterEventArgs : CommandEventArgs {
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandUnregisterEventArgs"/> class with the specified command.

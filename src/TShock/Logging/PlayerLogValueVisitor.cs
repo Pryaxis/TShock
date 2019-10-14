@@ -40,8 +40,7 @@ namespace TShock.Logging {
             _formatProvider = formatProvider;
         }
 
-        public Unit Format(LogEventPropertyValue value, TextWriter output)
-        {
+        public Unit Format(LogEventPropertyValue value, TextWriter output) {
             Debug.Assert(value != null, "value should not be null");
             Debug.Assert(output != null, "output should not be null");
 
@@ -74,11 +73,11 @@ namespace TShock.Logging {
                 Visit(output, element);
                 includeSeparator = true;
             }
-            
+
             output.Write(_theme.Stylize("]", PlayerLogThemeStyle.Text));
             return default;
         }
-        
+
         protected override Unit VisitStructureValue(TextWriter output, StructureValue structure) {
             var typeTag = structure.TypeTag;
             if (typeTag != null) {
@@ -97,11 +96,11 @@ namespace TShock.Logging {
                 Visit(output, property.Value);
                 includeSeparator = true;
             }
-            
+
             output.Write(_theme.Stylize("}", PlayerLogThemeStyle.Text));
             return default;
         }
-        
+
         protected override Unit VisitDictionaryValue(TextWriter output, DictionaryValue dictionary) {
             var includeSeparator = false;
             output.Write(_theme.Stylize("{", PlayerLogThemeStyle.Text));
@@ -109,7 +108,7 @@ namespace TShock.Logging {
                 if (includeSeparator) {
                     output.Write(_theme.Stylize(", ", PlayerLogThemeStyle.Separator));
                 }
-                
+
                 output.Write(_theme.Stylize("[", PlayerLogThemeStyle.Text));
                 Visit(output, kvp.Key);
                 output.Write(_theme.Stylize("]", PlayerLogThemeStyle.Text));
@@ -117,7 +116,7 @@ namespace TShock.Logging {
                 Visit(output, kvp.Value);
                 includeSeparator = true;
             }
-            
+
             output.Write(_theme.Stylize("}", PlayerLogThemeStyle.Text));
             return default;
         }
