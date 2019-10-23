@@ -22,11 +22,19 @@ using TShock.Commands;
 using Xunit;
 
 namespace TShock.Events.Commands {
-    public class CommandExecuteEventArgsTests {
+    public class CommandExecuteEventTests {
+        [Fact]
+        public void Ctor_NullCommand_ThrowsArgumentNullException() {
+            var sender = new Mock<ICommandSender>().Object;
+            Func<CommandEvent> func = () => new CommandExecuteEvent(null, sender, "");
+
+            func.Should().Throw<ArgumentNullException>();
+        }
+
         [Fact]
         public void Ctor_NullSender_ThrowsArgumentNullException() {
             var command = new Mock<ICommand>().Object;
-            Func<CommandEventArgs> func = () => new CommandExecuteEventArgs(command, null, "");
+            Func<CommandExecuteEvent> func = () => new CommandExecuteEvent(command, null, "");
 
             func.Should().Throw<ArgumentNullException>();
         }
@@ -35,35 +43,35 @@ namespace TShock.Events.Commands {
         public void Ctor_NullInput_ThrowsArgumentNullException() {
             var command = new Mock<ICommand>().Object;
             var sender = new Mock<ICommandSender>().Object;
-            Func<CommandEventArgs> func = () => new CommandExecuteEventArgs(command, sender, null);
+            Func<CommandExecuteEvent> func = () => new CommandExecuteEvent(command, sender, null);
 
             func.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
-        public void Sender_Get_IsCorrect() {
+        public void Sender_Get() {
             var command = new Mock<ICommand>().Object;
             var sender = new Mock<ICommandSender>().Object;
-            var args = new CommandExecuteEventArgs(command, sender, "");
+            var e = new CommandExecuteEvent(command, sender, "");
 
-            args.Sender.Should().BeSameAs(sender);
+            e.Sender.Should().BeSameAs(sender);
         }
 
         [Fact]
-        public void Input_Get_IsCorrect() {
+        public void Input_Get() {
             var command = new Mock<ICommand>().Object;
             var sender = new Mock<ICommandSender>().Object;
-            var args = new CommandExecuteEventArgs(command, sender, "test");
+            var e = new CommandExecuteEvent(command, sender, "test");
 
-            args.Input.Should().Be("test");
+            e.Input.Should().Be("test");
         }
 
         [Fact]
         public void Input_SetNullValue_ThrowsArgumentNullException() {
             var command = new Mock<ICommand>().Object;
             var sender = new Mock<ICommandSender>().Object;
-            var args = new CommandExecuteEventArgs(command, sender, "");
-            Action action = () => args.Input = null;
+            var e = new CommandExecuteEvent(command, sender, "");
+            Action action = () => e.Input = null;
 
             action.Should().Throw<ArgumentNullException>();
         }

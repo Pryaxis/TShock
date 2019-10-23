@@ -16,18 +16,25 @@
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using TShock.Commands;
+using System.IO;
+using System.Linq;
+using FluentAssertions;
+using Serilog.Events;
+using Xunit;
 
-namespace TShock.Events.Commands {
-    /// <summary>
-    /// Provides data for the <see cref="ICommandService.CommandUnregister"/> event.
-    /// </summary>
-    public sealed class CommandUnregisterEventArgs : CommandEventArgs {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CommandUnregisterEventArgs"/> class with the specified command.
-        /// </summary>
-        /// <param name="command">The command.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="command"/> is <c>null</c>.</exception>
-        public CommandUnregisterEventArgs(ICommand command) : base(command) { }
+namespace TShock.Logging.Formatting {
+    public class NewLineFormatterTests {
+        [Fact]
+        public void Format() {
+            var formatter = new NewLineFormatter();
+            var writer = new StringWriter();
+            var logEvent = new LogEvent(
+                DateTimeOffset.Now, LogEventLevel.Debug, null,
+                MessageTemplate.Empty, Enumerable.Empty<LogEventProperty>());
+
+            formatter.Format(logEvent, writer);
+
+            writer.ToString().Should().Be("\n");
+        }
     }
 }

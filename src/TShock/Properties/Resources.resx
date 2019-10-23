@@ -117,4 +117,148 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CommandExecute_Exception" xml:space="preserve">
+    <value>Exception occurred while executing command.</value>
+  </data>
+  <data name="CommandNotFound_AmbiguousName" xml:space="preserve">
+    <value>"/{0}" is ambiguous and can refer to {1}.</value>
+  </data>
+  <data name="CommandNotFound_MissingCommand" xml:space="preserve">
+    <value>Missing command name. Type /help for a list of commands.</value>
+  </data>
+  <data name="CommandNotFound_UnrecognizedCommand" xml:space="preserve">
+    <value>Command "/{0}" is not recognized. Type /help for a list of commands.</value>
+  </data>
+  <data name="CommandParse_InvalidHyphenatedArg" xml:space="preserve">
+    <value>Invalid hyphenated argument.</value>
+  </data>
+  <data name="CommandParse_MissingArg" xml:space="preserve">
+    <value>Missing argument "{0}".</value>
+  </data>
+  <data name="CommandParse_TooManyArgs" xml:space="preserve">
+    <value>Too many arguments were provided.</value>
+  </data>
+  <data name="CommandParse_UnrecognizedArgType" xml:space="preserve">
+    <value>Argument type "{0}" not recognized.</value>
+  </data>
+  <data name="CommandParse_UnrecognizedLongFlag" xml:space="preserve">
+    <value>Long flag "--{0}" not recognized.</value>
+  </data>
+  <data name="CommandParse_UnrecognizedOptional" xml:space="preserve">
+    <value>Optional argument "{0}" not recognized.</value>
+  </data>
+  <data name="CommandParse_UnrecognizedShortFlag" xml:space="preserve">
+    <value>Short flag "-{0}" not recognized.</value>
+  </data>
+  <data name="Command_Help" xml:space="preserve">
+    <value>tshock:help</value>
+  </data>
+  <data name="Command_Help_Header" xml:space="preserve">
+    <value>Commands:</value>
+  </data>
+  <data name="Command_Help_HelpText" xml:space="preserve">
+    <value>Shows available commands and provides information about specific commands.</value>
+  </data>
+  <data name="Command_Help_UsageText" xml:space="preserve">
+    <value>Usage: /{0} [command-name]</value>
+  </data>
+  <data name="Command_Me" xml:space="preserve">
+    <value>tshock:me</value>
+  </data>
+  <data name="Command_Me_HelpText" xml:space="preserve">
+    <value>Sends a message in the third person.</value>
+  </data>
+  <data name="Command_Me_Message" xml:space="preserve">
+    <value>*{0} {1}</value>
+  </data>
+  <data name="Command_Me_UsageText" xml:space="preserve">
+    <value>Usage: /{0} &lt;text&gt;</value>
+  </data>
+  <data name="Command_MissingHelpText" xml:space="preserve">
+    <value>Missing command help text.</value>
+  </data>
+  <data name="Command_MissingUsageText" xml:space="preserve">
+    <value>Missing command usage text.</value>
+  </data>
+  <data name="Command_P" xml:space="preserve">
+    <value>tshock:p</value>
+  </data>
+  <data name="Command_Playing" xml:space="preserve">
+    <value>tshock:playing</value>
+  </data>
+  <data name="Command_Playing_Header" xml:space="preserve">
+    <value>Players online:</value>
+  </data>
+  <data name="Command_Playing_HelpText" xml:space="preserve">
+    <value>Shows the current players.</value>
+  </data>
+  <data name="Command_Playing_NoPlayers" xml:space="preserve">
+    <value>No players online.</value>
+  </data>
+  <data name="Command_Playing_UsageText" xml:space="preserve">
+    <value>Usage: /{0} [-i]</value>
+  </data>
+  <data name="Command_P_HelpText" xml:space="preserve">
+    <value>Sends a message to your party members.</value>
+  </data>
+  <data name="Command_P_NotAPlayer" xml:space="preserve">
+    <value>You must be a player to party chat.</value>
+  </data>
+  <data name="Command_P_NotInTeam" xml:space="preserve">
+    <value>You are not in a team!</value>
+  </data>
+  <data name="Command_P_UsageText" xml:space="preserve">
+    <value>Usage: /{0} &lt;text&gt;</value>
+  </data>
+  <data name="Command_Roll" xml:space="preserve">
+    <value>tshock:roll</value>
+  </data>
+  <data name="Command_Roll_HelpText" xml:space="preserve">
+    <value>Rolls a random number from 1 to 100.</value>
+  </data>
+  <data name="Command_Roll_Message" xml:space="preserve">
+    <value>*{0} rolls a {1}</value>
+  </data>
+  <data name="Command_Roll_UsageText" xml:space="preserve">
+    <value>Usage: /{0}</value>
+  </data>
+  <data name="DoubleParser_InvalidDouble" xml:space="preserve">
+    <value>"{0}" is an invalid number.</value>
+  </data>
+  <data name="Int32Parser_IntegerOutOfRange" xml:space="preserve">
+    <value>"{0}" is a number that is out of range of an integer.</value>
+  </data>
+  <data name="Int32Parser_InvalidInteger" xml:space="preserve">
+    <value>"{0}" is an invalid integer.</value>
+  </data>
+  <data name="Log_Command_Me_Message" xml:space="preserve">
+    <value>*{Name} {Text}</value>
+  </data>
+  <data name="Log_Command_P_Message" xml:space="preserve">
+    <value>&lt;{Player} (to {Team} team)&gt; {Text}</value>
+  </data>
+  <data name="Log_Command_Roll_Message" xml:space="preserve">
+    <value>*{Name} rolls a {Num}</value>
+  </data>
+  <data name="Log_ExecutingCommand" xml:space="preserve">
+    <value>{Sender} is executing command /{Command}</value>
+  </data>
+  <data name="StringParser_InvalidBackslash" xml:space="preserve">
+    <value>Invalid backslash.</value>
+  </data>
+  <data name="StringParser_UnrecognizedEscape" xml:space="preserve">
+    <value>Escape character "\{0}" not recognized.</value>
+  </data>
+  <data name="TerrariaCommand_Me" xml:space="preserve">
+    <value>/me </value>
+  </data>
+  <data name="TerrariaCommand_P" xml:space="preserve">
+    <value>/p </value>
+  </data>
+  <data name="TerrariaCommand_Playing" xml:space="preserve">
+    <value>/playing </value>
+  </data>
+  <data name="TerrariaCommand_Roll" xml:space="preserve">
+    <value>/roll </value>
+  </data>
 </root>

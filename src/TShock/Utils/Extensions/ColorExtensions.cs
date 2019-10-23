@@ -15,25 +15,18 @@
 // You should have received a copy of the GNU General Public License
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using Orion.Events;
-using TShock.Commands;
+using Microsoft.Xna.Framework;
 
-namespace TShock.Events.Commands {
+namespace TShock.Utils.Extensions {
     /// <summary>
-    /// Provides data for command-related events.
+    /// Provides extensions for the <see cref="Color"/> structure.
     /// </summary>
-    public abstract class CommandEventArgs : EventArgs, ICancelable {
-        /// <inheritdoc />
-        public string? CancellationReason { get; set; }
-
+    public static class ColorExtensions {
         /// <summary>
-        /// Gets or sets the command.
+        /// Converts the <paramref name="color"/> to a hex string representation.
         /// </summary>
-        public ICommand Command { get; set; }
-
-        private protected CommandEventArgs(ICommand command) {
-            Command = command ?? throw new ArgumentNullException(nameof(command));
-        }
+        /// <param name="color">The color.</param>
+        /// <returns>The hex string representation.</returns>
+        public static string ToHexString(this Color color) => $"{color.R:x2}{color.G:x2}{color.B:x2}";
     }
 }

@@ -16,42 +16,48 @@
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using System.Reflection;
+using TShock.Commands.Exceptions;
 
 namespace TShock.Commands {
     /// <summary>
-    /// Represents a command.
+    /// Represents a command. Commands can be executed by command senders, and provide bits of functionality.
+    /// Implementations are thread-safe.
     /// </summary>
     public interface ICommand {
         /// <summary>
-        /// Gets the command's name.
+        /// Gets the command's qualified name. This includes the namespace: e.g., <c>tshock:kick</c>
         /// </summary>
-        string Name { get; }
+        /// <value>The command's qualified name.</value>
+        string QualifiedName { get; }
 
         /// <summary>
-        /// Gets the command's sub-names.
+        /// Gets the command's help text. This will show up in the <c>/help</c> command.
         /// </summary>
-        IEnumerable<string> SubNames { get; }
+        /// <value>The command's help text.</value>
+        string HelpText { get; }
 
         /// <summary>
-        /// Gets the object associated with the command's handler. If <c>null</c>, then the command handler is static.
+        /// Gets the command's usage text. This will show up in the <c>/help</c> command and when invalid syntax is
+        /// used.
         /// </summary>
-        object? HandlerObject { get; }
+        /// <value>The command's usage text.</value>
+        string UsageText { get; }
 
         /// <summary>
-        /// Gets the command's handler.
+        /// Gets a value indicating whether the command should be logged.
         /// </summary>
-        MethodBase Handler { get; }
+        /// <value><see langword="true"/> if the command should be logged; otherwise <see langword="false"/>.</value>
+        /// <remarks>This property's value is useful for hiding, e.g., authentication commands.</remarks>
+        bool ShouldBeLogged { get; }
 
         /// <summary>
-        /// Invokes the command as the given sender with the specified input.
+        /// Invokes the command as a <paramref name="sender"/> with the specified <paramref name="input"/>.
         /// </summary>
         /// <param name="sender">The sender.</param>
-        /// <param name="input">The input. This does not include the command's name or sub-names.</param>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="sender"/> or <paramref name="input"/> are <c>null</c>.
-        /// </exception>
+        /// <param name="input">The input. This does not include the command's name.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="sender"/> is <see langword="null"/>.</exception>
+        /// <exception cref="CommandExecuteException">The command could not be executed.</exception>
+        /// <exception cref="CommandParseException">The command input could not be parsed.</exception>
         void Invoke(ICommandSender sender, string input);
     }
 }

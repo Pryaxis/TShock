@@ -16,21 +16,25 @@
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using FluentAssertions;
+using Destructurama.Attributed;
+using Orion.Events;
 using TShock.Commands;
-using Xunit;
 
 namespace TShock.Events.Commands {
-    public class CommandEventArgsTests {
-        [Fact]
-        public void Ctor_NullCommand_ThrowsArgumentNullException() {
-            Func<CommandEventArgs> func = () => new TestCommandEventArgs(null);
+    /// <summary>
+    /// An event that occurs when a command is unregistered. This event can be canceled.
+    /// </summary>
+    [Event("command-unregister")]
+    public sealed class CommandUnregisterEvent : CommandEvent, ICancelable {
+        /// <inheritdoc/>
+        [NotLogged]
+        public string? CancellationReason { get; set; }
 
-            func.Should().Throw<ArgumentNullException>();
-        }
-
-        private class TestCommandEventArgs : CommandEventArgs {
-            public TestCommandEventArgs(ICommand command) : base(command) { }
-        }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CommandUnregisterEvent"/> class with the specified command.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="command"/> is <see langword="null"/>.</exception>
+        public CommandUnregisterEvent(ICommand command) : base(command) { }
     }
 }

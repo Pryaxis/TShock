@@ -16,18 +16,24 @@
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using TShock.Commands;
+using System.Collections.Generic;
+using FluentAssertions;
+using Xunit;
 
-namespace TShock.Events.Commands {
-    /// <summary>
-    /// Provides data for the <see cref="ICommandService.CommandRegister"/> event.
-    /// </summary>
-    public sealed class CommandRegisterEventArgs : CommandEventArgs {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CommandRegisterEventArgs"/> class with the specified command.
-        /// </summary>
-        /// <param name="command">The command.</param>
-        /// <exception cref="ArgumentNullException"><paramref name="command"/> is <c>null</c>.</exception>
-        public CommandRegisterEventArgs(ICommand command) : base(command) { }
+namespace TShock.Commands.Parsers {
+    public class ArgumentParserTests {
+        [Fact]
+        public void Parse_NonGeneric() {
+            IArgumentParser parser = new TestParser();
+            var input = "".AsSpan();
+
+            parser.Parse(ref input, new HashSet<Attribute>()).Should().NotBeNull().And.BeOfType<TestClass>();
+        }
+
+        private class TestParser : IArgumentParser<TestClass> {
+            public TestClass Parse(ref ReadOnlySpan<char> input, ISet<Attribute> attributes) => new TestClass();
+        }
+
+        private class TestClass { }
     }
 }

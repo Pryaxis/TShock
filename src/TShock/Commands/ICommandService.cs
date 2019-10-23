@@ -17,66 +17,53 @@
 
 using System;
 using System.Collections.Generic;
-using Orion;
-using Orion.Events;
-using TShock.Events.Commands;
+using TShock.Commands.Parsers;
 
 namespace TShock.Commands {
     /// <summary>
-    /// Represents a service that manages commands. Provides command-related hooks and methods.
+    /// Represents a service that manages commands. Provides command-related properties and methods.
     /// </summary>
-    public interface ICommandService : IService {
+    public interface ICommandService {
         /// <summary>
-        /// Gets or sets the event handlers that occur when registering a command.
+        /// Gets a read-only mapping from qualified command names to commands.
         /// </summary>
-        EventHandlerCollection<CommandExecuteEventArgs>? CommandRegister { get; set; }
+        /// <value>A read-only mapping from qualified command names to commands.</value>
+        IReadOnlyDictionary<string, ICommand> Commands { get; }
 
         /// <summary>
-        /// Gets or sets the event handlers that occur when executing a command.
+        /// Gets a read-only mapping from types to parsers.
         /// </summary>
-        EventHandlerCollection<CommandExecuteEventArgs>? CommandExecute { get; set; }
+        /// <value>A read-only mapping from types to parsers.</value>
+        IReadOnlyDictionary<Type, IArgumentParser> Parsers { get; }
 
         /// <summary>
-        /// Gets or sets the event handlers that occur when unregistering a command.
+        /// Registers and returns the commands defined with the <paramref name="handlerObject"/>'s command handlers.
+        /// Command handlers are specified using the <see cref="CommandHandlerAttribute"/> attribute.
         /// </summary>
-        EventHandlerCollection<CommandExecuteEventArgs>? CommandUnregister { get; set; }
-
-        /// <summary>
-        /// Registers and returns the commands defined with the given object's command handlers.
-        /// </summary>
-        /// <param name="obj">The object.</param>
+        /// <param name="handlerObject">The object.</param>
         /// <returns>The resulting commands.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="obj"/> is <c>null</c>.</exception>
-        IReadOnlyCollection<ICommand> RegisterCommands(object obj);
-
-        /// <summary>
-        /// Registers and returns the commands defined with the given type's static command handlers.
-        /// </summary>
-        /// <param name="type">The type.</param>
-        /// <returns>The resulting commands.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="type"/> is <c>null</c>.</exception>
-        IReadOnlyCollection<ICommand> RegisterCommands(Type type);
-
-        /// <summary>
-        /// Returns all commands with the given command name and sub-names.
-        /// </summary>
-        /// <param name="commandName">The command name.</param>
-        /// <param name="commandSubNames">The command sub-names.</param>
-        /// <returns>The commands with the given command name.</returns>
-        /// <exception cref="ArgumentException">
-        /// An element of <paramref name="commandSubNames"/> is <c>null</c>.
-        /// </exception>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="commandName"/> or <paramref name="commandSubNames"/> are <c>null</c>.
+        /// <paramref name="handlerObject"/> is <see langword="null"/>.
         /// </exception>
-        IReadOnlyCollection<ICommand> FindCommands(string commandName, params string[] commandSubNames);
+        IReadOnlyCollection<ICommand> RegisterCommands(object handlerObject);
 
         /// <summary>
-        /// Unregisters the given command and returns a value indicating success.
+        /// Registers <paramref name="parser"/> as the parser for <typeparamref name="TParse"/>. This will allow
+        /// <typeparamref name="TParse"/> to be parsed in command handlers.
+        /// </summary>
+        /// <typeparam name="TParse">The parse type.</typeparam>
+        /// <param name="parser">The parser.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="parser"/> is <see langword="null"/>.</exception>
+        void RegisterParser<TParse>(IArgumentParser<TParse> parser);
+
+        /// <summary>
+        /// Unregisters the <paramref name="command"/> and returns a value indicating success.
         /// </summary>
         /// <param name="command">The command.</param>
-        /// <returns>A value indicating whether the command was successfully unregistered.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="command"/> is <c>null</c>.</exception>
+        /// <returns>
+        /// <see langword="true"/> if <paramref name="command"/> was unregistered; otherwise, <see langword="false"/>.
+        /// </returns>
+        /// <exception cref="ArgumentNullException"><paramref name="command"/> is <see langword="null"/>.</exception>
         bool UnregisterCommand(ICommand command);
     }
 }
