@@ -123,8 +123,8 @@ namespace TShock {
             public bool IsDisposed { get; private set; }
             public bool IsInitialized { get; private set; }
 
+            public override void Dispose() => IsDisposed = true;
             public override void Initialize() => IsInitialized = true;
-            protected override void Dispose(bool disposeManaged) => IsDisposed = true;
         }
     }
 }

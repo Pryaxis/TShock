@@ -74,6 +74,8 @@ namespace TShock.Modules {
             _kernel.RegisterHandlers(this, _log);
         }
 
+        public override void Dispose() => _kernel.UnregisterHandlers(this, _log);
+
         public override void Initialize() {
             _commandService.RegisterParser(new Int32Parser());
             _commandService.RegisterParser(new DoubleParser());
@@ -145,8 +147,6 @@ namespace TShock.Modules {
 
             return qualifiedNames.Single();
         }
-
-        protected override void Dispose(bool disposeManaged) => _kernel.UnregisterHandlers(this, _log);
 
         [EventHandler(Name = "tshock")]
         [SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "Implicit usage")]

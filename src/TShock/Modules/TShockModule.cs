@@ -16,31 +16,27 @@
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace TShock.Modules {
     /// <summary>
     /// Represents a module of TShock's functionality.
     /// </summary>
+    [SuppressMessage(
+        "Design", "CA1063:Implement IDisposable Correctly",
+        Justification = "IDisposable pattern makes no sense")]
     public abstract class TShockModule : IDisposable {
         /// <summary>
-        /// Disposes the module and any of its managed and unmanaged resources.
+        /// Disposes the service, releasing any resources associated with it.
         /// </summary>
-        public void Dispose() {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+        [SuppressMessage(
+            "Usage", "CA1816:Dispose methods should call SuppressFinalize",
+            Justification = "IDisposable pattern makes no sense")]
+        public virtual void Dispose() { }
 
         /// <summary>
         /// Initializes the module. Typically, commands should be registered here.
         /// </summary>
         public abstract void Initialize();
-
-        /// <summary>
-        /// Disposes the module and any of its unmanaged resources, optionally including its managed resources.
-        /// </summary>
-        /// <param name="disposeManaged">
-        /// <see langword="true"/> to dispose managed resources, otherwise, <see langword="false"/>.
-        /// </param>
-        protected abstract void Dispose(bool disposeManaged);
     }
 }
