@@ -19,12 +19,10 @@ using System;
 using FluentAssertions;
 using Moq;
 using Orion;
-using Orion.Events.Players;
 using Orion.Events.Server;
 using Orion.Players;
 using Serilog.Core;
 using TShock.Commands;
-using TShock.Events.Commands;
 using TShock.Modules;
 using Xunit;
 

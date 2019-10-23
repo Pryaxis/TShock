@@ -32,7 +32,7 @@ namespace TShock.Events.Commands {
         /// <inheritdoc/>
         [NotLogged]
         public string? CancellationReason { get; set; }
-        
+
         /// <inheritdoc/>
         [NotLogged]
         public bool IsDirty { get; private set; }
