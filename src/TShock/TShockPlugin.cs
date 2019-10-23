@@ -38,17 +38,18 @@ namespace TShock {
         private readonly ISet<TShockModule> _modules = new HashSet<TShockModule>();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TShockPlugin"/> class with the specified Orion kernel, log,
-        /// and services.
+        /// Initializes a new instance of the <see cref="TShockPlugin"/> class with the specified
+        /// <see cref="OrionKernel"/> instance, log, and services.
         /// </summary>
-        /// <param name="kernel">The Orion kernel.</param>
+        /// <param name="kernel">The <see cref="OrionKernel"/> instance.</param>
         /// <param name="log">The log.</param>
         /// <param name="playerService">The player service.</param>
         /// <param name="commandService">The command service.</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="kernel"/>, <paramref name="log"/>, or any of the services are <see langword="null"/>.
         /// </exception>
-        public TShockPlugin(OrionKernel kernel, ILogger log, Lazy<IPlayerService> playerService,
+        public TShockPlugin(
+                OrionKernel kernel, ILogger log, Lazy<IPlayerService> playerService,
                 Lazy<ICommandService> commandService) : base(kernel, log) {
             Kernel.Bind<ICommandService>().To<TShockCommandService>();
 
@@ -71,24 +72,25 @@ namespace TShock {
 
         /// <inheritdoc/>
         public override void Initialize() {
-            Kernel.ServerInitialize.RegisterHandler(ServerInitializeHandler);
-
-            RegisterModule(new CommandModule(Kernel, _playerService.Value, _commandService.Value));
+            Kernel.RegisterHandlers(this, Log);
+            RegisterModule(new CommandModule(Kernel, Log, _playerService.Value, _commandService.Value));
         }
 
         /// <inheritdoc/>
         public override void Dispose() {
+            Kernel.UnregisterHandlers(this, Log);
             foreach (var module in _modules) {
                 module.Dispose();
             }
-
-            Kernel.ServerInitialize.UnregisterHandler(ServerInitializeHandler);
         }
 
-        [EventHandler(EventPriority.Normal, Name = "tshock")]
-        private void ServerInitializeHandler(object sender, ServerInitializeEventArgs args) {
+        [EventHandler]
+        [SuppressMessage("Usage", "CA1801:Review unused parameters:", Justification = "Parameter is required")]
+        [SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "Implicit usage")]
+        [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Parameter is required")]
+        private void OnServerInitialize(ServerInitializeEvent e) {
             // The reason why we want to wait for ServerInitialize to initialize the modules is because we need three
-            // stages of initialization:
+            // three stages of initialization:
             //
             // 1) Plugin constructors, which use lazy services.
             // 2) Plugin Initialize, which can set up service event handlers,

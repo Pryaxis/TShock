@@ -17,41 +17,24 @@
 
 using System;
 using System.Collections.Generic;
-using Orion;
-using Orion.Events;
 using TShock.Commands.Parsers;
-using TShock.Events.Commands;
 
 namespace TShock.Commands {
     /// <summary>
-    /// Represents a service that manages commands. Provides command-related hooks and methods. Implementations are not
-    /// required to be thread-safe.
+    /// Represents a service that manages commands. Provides command-related properties and methods.
     /// </summary>
     public interface ICommandService {
         /// <summary>
         /// Gets a read-only mapping from qualified command names to commands.
         /// </summary>
+        /// <value>A read-only mapping from qualified command names to commands.</value>
         IReadOnlyDictionary<string, ICommand> Commands { get; }
 
         /// <summary>
         /// Gets a read-only mapping from types to parsers.
         /// </summary>
+        /// <value>A read-only mapping from types to parsers.</value>
         IReadOnlyDictionary<Type, IArgumentParser> Parsers { get; }
-
-        /// <summary>
-        /// Gets the event handlers that occur when registering a command. This event can be canceled.
-        /// </summary>
-        EventHandlerCollection<CommandRegisterEventArgs> CommandRegister { get; }
-
-        /// <summary>
-        /// Gets the event handlers that occur when executing a command. This event can be canceled.
-        /// </summary>
-        EventHandlerCollection<CommandExecuteEventArgs> CommandExecute { get; }
-
-        /// <summary>
-        /// Gets the event handlers that occur when unregistering a command. This event can be canceled.
-        /// </summary>
-        EventHandlerCollection<CommandUnregisterEventArgs> CommandUnregister { get; }
 
         /// <summary>
         /// Registers and returns the commands defined with the <paramref name="handlerObject"/>'s command handlers.

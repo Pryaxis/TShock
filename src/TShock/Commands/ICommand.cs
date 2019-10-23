@@ -25,28 +25,33 @@ namespace TShock.Commands {
     /// </summary>
     public interface ICommand {
         /// <summary>
-        /// Gets the command's qualified name. This includes the namespace: e.g., "tshock:kick".
+        /// Gets the command's qualified name. This includes the namespace: e.g., <c>tshock:kick</c>
         /// </summary>
+        /// <value>The command's qualified name.</value>
         string QualifiedName { get; }
 
         /// <summary>
-        /// Gets the command's help text. This will show up in the /help command.
+        /// Gets the command's help text. This will show up in the <c>/help</c> command.
         /// </summary>
+        /// <value>The command's help text.</value>
         string HelpText { get; }
 
         /// <summary>
-        /// Gets the command's usage text. This will show up in the /help command and when invalid syntax is used.
+        /// Gets the command's usage text. This will show up in the <c>/help</c> command and when invalid syntax is
+        /// used.
         /// </summary>
+        /// <value>The command's usage text.</value>
         string UsageText { get; }
 
         /// <summary>
-        /// Gets a value indicating whether the command should be logged. For example, authentication commands should
-        /// not be logged.
+        /// Gets a value indicating whether the command should be logged.
         /// </summary>
+        /// <value><see langword="true"/> if the command should be logged; otherwise <see langword="false"/>.</value>
+        /// <remarks>This property's value is useful for hiding, e.g., authentication commands.</remarks>
         bool ShouldBeLogged { get; }
 
         /// <summary>
-        /// Invokes the command as a <paramref name="sender"/> with the <paramref name="input"/>.
+        /// Invokes the command as a <paramref name="sender"/> with the specified <paramref name="input"/>.
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="input">The input. This does not include the command's name.</param>

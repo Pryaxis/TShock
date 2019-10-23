@@ -20,41 +20,45 @@ using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
 using Moq;
+using Orion;
 using Orion.Events;
 using Serilog.Core;
 using TShock.Commands.Parsers;
+using TShock.Events.Commands;
 using Xunit;
 
 namespace TShock.Commands {
-    public class TShockCommandServiceTests : IDisposable {
-        private readonly TShockCommandService _commandService = new TShockCommandService(Logger.None);
-
-        public void Dispose() => _commandService.Dispose();
-
+    public class TShockCommandServiceTests {
         [Fact]
         public void Commands_Get() {
+            using var kernel = new OrionKernel(Logger.None);
+            using var commandService = new TShockCommandService(kernel, Logger.None);
             var testClass = new TestClass();
 
-            var commands = _commandService.RegisterCommands(testClass).ToList();
+            var commands = commandService.RegisterCommands(testClass).ToList();
 
-            _commandService.Commands.Keys.Should().Contain(
+            commandService.Commands.Keys.Should().Contain(
                 new[] { "tshock_tests:test", "tshock_tests:test2", "tshock_tests2:test" });
-            _commandService.Commands.Values.Should().Contain(commands);
+            commandService.Commands.Values.Should().Contain(commands);
         }
 
         [Fact]
         public void Parsers_Get() {
+            using var kernel = new OrionKernel(Logger.None);
+            using var commandService = new TShockCommandService(kernel, Logger.None);
             var parser = new Mock<IArgumentParser<object>>().Object;
-            _commandService.RegisterParser(parser);
+            commandService.RegisterParser(parser);
 
-            _commandService.Parsers.Should().Contain(new KeyValuePair<Type, IArgumentParser>(typeof(object), parser));
+            commandService.Parsers.Should().Contain(new KeyValuePair<Type, IArgumentParser>(typeof(object), parser));
         }
 
         [Fact]
         public void RegisterCommands() {
+            using var kernel = new OrionKernel(Logger.None);
+            using var commandService = new TShockCommandService(kernel, Logger.None);
             var testClass = new TestClass();
 
-            var commands = _commandService.RegisterCommands(testClass).ToList();
+            var commands = commandService.RegisterCommands(testClass).ToList();
 
             commands.Should().HaveCount(3);
             foreach (var command in commands) {
@@ -64,98 +68,112 @@ namespace TShock.Commands {
 
         [Fact]
         public void RegisterCommands_NullObj_ThrowsArgumentNullException() {
-            Func<IReadOnlyCollection<ICommand>> func = () => _commandService.RegisterCommands(null);
+            using var kernel = new OrionKernel(Logger.None);
+            using var commandService = new TShockCommandService(kernel, Logger.None);
+            Func<IReadOnlyCollection<ICommand>> func = () => commandService.RegisterCommands(null);
 
             func.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
         public void RegisterParser_NullParser_ThrowsArgumentNullException() {
-            Action action = () => _commandService.RegisterParser<object>(null);
+            using var kernel = new OrionKernel(Logger.None);
+            using var commandService = new TShockCommandService(kernel, Logger.None);
+            Action action = () => commandService.RegisterParser<object>(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
         public void UnregisterCommand() {
+            using var kernel = new OrionKernel(Logger.None);
+            using var commandService = new TShockCommandService(kernel, Logger.None);
             var testClass = new TestClass();
-            var commands = _commandService.RegisterCommands(testClass).ToList();
+            var commands = commandService.RegisterCommands(testClass).ToList();
             var command = commands[0];
 
-            _commandService.UnregisterCommand(command).Should().BeTrue();
+            commandService.UnregisterCommand(command).Should().BeTrue();
 
-            _commandService.Commands.Keys.Should().NotContain(command.QualifiedName);
-            _commandService.Commands.Values.Should().NotContain(command);
+            commandService.Commands.Keys.Should().NotContain(command.QualifiedName);
+            commandService.Commands.Values.Should().NotContain(command);
         }
 
         [Fact]
         public void UnregisterCommand_CommandDoesntExist_ReturnsFalse() {
+            using var kernel = new OrionKernel(Logger.None);
+            using var commandService = new TShockCommandService(kernel, Logger.None);
             var mockCommand = new Mock<ICommand>();
             mockCommand.SetupGet(c => c.QualifiedName).Returns("test");
 
-            _commandService.UnregisterCommand(mockCommand.Object).Should().BeFalse();
+            commandService.UnregisterCommand(mockCommand.Object).Should().BeFalse();
         }
 
         [Fact]
         public void UnregisterCommand_NullCommand_ThrowsArgumentNullException() {
-            Func<bool> func = () => _commandService.UnregisterCommand(null);
+            using var kernel = new OrionKernel(Logger.None);
+            using var commandService = new TShockCommandService(kernel, Logger.None);
+            Func<bool> func = () => commandService.UnregisterCommand(null);
 
             func.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
         public void CommandRegister_IsTriggered() {
+            using var kernel = new OrionKernel(Logger.None);
+            using var commandService = new TShockCommandService(kernel, Logger.None);
             var isRun = false;
             var testClass = new TestClass();
-            _commandService.CommandRegister.RegisterHandler((sender, args) => {
+            kernel.RegisterHandler<CommandRegisterEvent>(e => {
                 isRun = true;
-                args.Command.QualifiedName.Should().BeOneOf(
+                e.Command.QualifiedName.Should().BeOneOf(
                     "tshock_tests:test", "tshock_tests:test2", "tshock_tests2:test");
-            });
+            }, Logger.None);
 
-            _commandService.RegisterCommands(testClass);
+            commandService.RegisterCommands(testClass);
 
             isRun.Should().BeTrue();
         }
 
         [Fact]
         public void CommandRegister_Canceled() {
+            using var kernel = new OrionKernel(Logger.None);
+            using var commandService = new TShockCommandService(kernel, Logger.None);
             var testClass = new TestClass();
-            _commandService.CommandRegister.RegisterHandler((sender, args) => {
-                args.Cancel();
-            });
+            kernel.RegisterHandler<CommandRegisterEvent>(e => e.Cancel(), Logger.None);
 
-            _commandService.RegisterCommands(testClass).Should().BeEmpty();
+            commandService.RegisterCommands(testClass).Should().BeEmpty();
         }
 
         [Fact]
         public void CommandUnregister_IsTriggered() {
+            using var kernel = new OrionKernel(Logger.None);
+            using var commandService = new TShockCommandService(kernel, Logger.None);
             var isRun = false;
             var testClass = new TestClass();
-            var commands = _commandService.RegisterCommands(testClass).ToList();
+            var commands = commandService.RegisterCommands(testClass).ToList();
             var command = commands[0];
-            _commandService.CommandUnregister.RegisterHandler((sender, args) => {
+            kernel.RegisterHandler<CommandUnregisterEvent>(e => {
                 isRun = true;
-                args.Command.Should().BeSameAs(command);
-            });
+                e.Command.Should().BeSameAs(command);
+            }, Logger.None);
 
-            _commandService.UnregisterCommand(command);
+            commandService.UnregisterCommand(command);
 
             isRun.Should().BeTrue();
         }
 
         [Fact]
         public void CommandUnregister_Canceled() {
+            using var kernel = new OrionKernel(Logger.None);
+            using var commandService = new TShockCommandService(kernel, Logger.None);
             var testClass = new TestClass();
-            var commands = _commandService.RegisterCommands(testClass).ToList();
+            var commands = commandService.RegisterCommands(testClass).ToList();
             var command = commands[0];
-            _commandService.CommandUnregister.RegisterHandler((sender, args) => {
-                args.Cancel();
-            });
+            kernel.RegisterHandler<CommandUnregisterEvent>(e => e.Cancel(), Logger.None);
 
-            _commandService.UnregisterCommand(command).Should().BeFalse();
+            commandService.UnregisterCommand(command).Should().BeFalse();
 
-            _commandService.Commands.Values.Should().Contain(command);
+            commandService.Commands.Values.Should().Contain(command);
         }
 
         private class TestClass {

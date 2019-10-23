@@ -21,6 +21,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using FluentAssertions;
 using Moq;
+using Orion;
 using Orion.Events;
 using Serilog.Core;
 using TShock.Commands.Exceptions;
@@ -32,23 +33,13 @@ using Xunit;
 
 namespace TShock.Commands {
     public class TShockCommandTests {
-        private readonly Mock<ICommandService> _mockCommandService = new Mock<ICommandService>();
-
-        public TShockCommandTests() {
-            _mockCommandService.Setup(cs => cs.Parsers).Returns(new Dictionary<Type, IArgumentParser> {
-                [typeof(int)] = new Int32Parser(),
-                [typeof(string)] = new StringParser()
-            });
-            _mockCommandService
-                .Setup(cs => cs.CommandExecute)
-                .Returns(new EventHandlerCollection<CommandExecuteEventArgs>(Logger.None));
-        }
-
         [Fact]
         public void QualifiedName_Get() {
+            using var kernel = new OrionKernel(Logger.None);
+            using var commandService = new TShockCommandService(kernel, Logger.None);
             var attribute = new CommandHandlerAttribute("test");
             var command = new TShockCommand(
-                _mockCommandService.Object, "",
+                commandService, "",
                 typeof(TShockCommandTests).GetMethod(nameof(QualifiedName_Get)), attribute);
 
             command.QualifiedName.Should().Be("test");
@@ -56,9 +47,11 @@ namespace TShock.Commands {
 
         [Fact]
         public void HelpText_Get() {
+            using var kernel = new OrionKernel(Logger.None);
+            using var commandService = new TShockCommandService(kernel, Logger.None);
             var attribute = new CommandHandlerAttribute("test") { HelpText = "HelpTest" };
             var command = new TShockCommand(
-                _mockCommandService.Object, "",
+                commandService, "",
                 typeof(TShockCommandTests).GetMethod(nameof(HelpText_Get)), attribute);
 
             command.HelpText.Should().Be("HelpTest");
@@ -66,9 +59,11 @@ namespace TShock.Commands {
 
         [Fact]
         public void HelpText_GetMissing() {
+            using var kernel = new OrionKernel(Logger.None);
+            using var commandService = new TShockCommandService(kernel, Logger.None);
             var attribute = new CommandHandlerAttribute("test");
             var command = new TShockCommand(
-                _mockCommandService.Object, "",
+                commandService, "",
                 typeof(TShockCommandTests).GetMethod(nameof(HelpText_GetMissing)), attribute);
 
             command.HelpText.Should().Be(Resources.Command_MissingHelpText);
@@ -76,9 +71,11 @@ namespace TShock.Commands {
 
         [Fact]
         public void UsageText_Get() {
+            using var kernel = new OrionKernel(Logger.None);
+            using var commandService = new TShockCommandService(kernel, Logger.None);
             var attribute = new CommandHandlerAttribute("test") { UsageText = "UsageTest" };
             var command = new TShockCommand(
-                _mockCommandService.Object, "",
+                commandService, "",
                 typeof(TShockCommandTests).GetMethod(nameof(UsageText_Get)), attribute);
 
             command.UsageText.Should().Be("UsageTest");
@@ -86,9 +83,11 @@ namespace TShock.Commands {
 
         [Fact]
         public void UsageText_GetMissing() {
+            using var kernel = new OrionKernel(Logger.None);
+            using var commandService = new TShockCommandService(kernel, Logger.None);
             var attribute = new CommandHandlerAttribute("test");
             var command = new TShockCommand(
-                _mockCommandService.Object, "",
+                commandService, "",
                 typeof(TShockCommandTests).GetMethod(nameof(UsageText_GetMissing)), attribute);
 
             command.UsageText.Should().Be(Resources.Command_MissingUsageText);
@@ -96,9 +95,11 @@ namespace TShock.Commands {
 
         [Fact]
         public void ShouldBeLogged_Get() {
+            using var kernel = new OrionKernel(Logger.None);
+            using var commandService = new TShockCommandService(kernel, Logger.None);
             var attribute = new CommandHandlerAttribute("test") { ShouldBeLogged = false };
             var command = new TShockCommand(
-                _mockCommandService.Object, "",
+                commandService, "",
                 typeof(TShockCommandTests).GetMethod(nameof(ShouldBeLogged_Get)), attribute);
 
             command.ShouldBeLogged.Should().Be(false);
@@ -106,8 +107,10 @@ namespace TShock.Commands {
 
         [Fact]
         public void Invoke_Sender() {
+            using var kernel = new OrionKernel(Logger.None);
+            using var commandService = new TShockCommandService(kernel, Logger.None);
             var testClass = new TestClass();
-            var command = GetCommand(testClass, nameof(TestClass.TestCommand));
+            var command = GetCommand(commandService, testClass, nameof(TestClass.TestCommand));
             var commandSender = new Mock<ICommandSender>().Object;
 
             command.Invoke(commandSender, "");
@@ -119,8 +122,13 @@ namespace TShock.Commands {
         [InlineData("1 test", 1, "test")]
         [InlineData(@"-56872 ""test abc\"" def""", -56872, "test abc\" def")]
         public void Invoke_SenderIntString(string input, int expectedInt, string expectedString) {
+            using var kernel = new OrionKernel(Logger.None);
+            using var commandService = new TShockCommandService(kernel, Logger.None);
+            commandService.RegisterParser(new Int32Parser());
+            commandService.RegisterParser(new StringParser());
+
             var testClass = new TestClass();
-            var command = GetCommand(testClass, nameof(TestClass.TestCommand_Int_String));
+            var command = GetCommand(commandService, testClass, nameof(TestClass.TestCommand_Int_String));
             var commandSender = new Mock<ICommandSender>().Object;
 
             command.Invoke(commandSender, input);
@@ -140,8 +148,13 @@ namespace TShock.Commands {
         [InlineData("   -x    --yyy", true, true)]
         [InlineData("--xxx --yyy", true, true)]
         public void Invoke_Flags(string input, bool expectedX, bool expectedY) {
+            using var kernel = new OrionKernel(Logger.None);
+            using var commandService = new TShockCommandService(kernel, Logger.None);
+            commandService.RegisterParser(new Int32Parser());
+            commandService.RegisterParser(new StringParser());
+
             var testClass = new TestClass();
-            var command = GetCommand(testClass, nameof(TestClass.TestCommand_Flags));
+            var command = GetCommand(commandService, testClass, nameof(TestClass.TestCommand_Flags));
             var commandSender = new Mock<ICommandSender>().Object;
 
             command.Invoke(commandSender, input);
@@ -161,8 +174,13 @@ namespace TShock.Commands {
         [InlineData("--val2=5678 1", 1, 1234, 5678)]
         [InlineData(" --val2=5678     1", 1, 1234, 5678)]
         public void Invoke_Optionals(string input, int expectedRequired, int expectedVal, int expectedVal2) {
+            using var kernel = new OrionKernel(Logger.None);
+            using var commandService = new TShockCommandService(kernel, Logger.None);
+            commandService.RegisterParser(new Int32Parser());
+            commandService.RegisterParser(new StringParser());
+
             var testClass = new TestClass();
-            var command = GetCommand(testClass, nameof(TestClass.TestCommand_Optionals));
+            var command = GetCommand(commandService, testClass, nameof(TestClass.TestCommand_Optionals));
             var commandSender = new Mock<ICommandSender>().Object;
 
             command.Invoke(commandSender, input);
@@ -187,10 +205,15 @@ namespace TShock.Commands {
         [InlineData("--depth=1 --recursive -f", true, true, 1)]
         [InlineData("--force -r --depth=100 ", true, true, 100)]
         [InlineData("--force -r --depth=   100 ", true, true, 100)]
-        public void Invoke_FlagsAndOptionals(string input, bool expectedForce, bool expectedRecursive,
-                int expectedDepth) {
+        public void Invoke_FlagsAndOptionals(
+                string input, bool expectedForce, bool expectedRecursive, int expectedDepth) {
+            using var kernel = new OrionKernel(Logger.None);
+            using var commandService = new TShockCommandService(kernel, Logger.None);
+            commandService.RegisterParser(new Int32Parser());
+            commandService.RegisterParser(new StringParser());
+
             var testClass = new TestClass();
-            var command = GetCommand(testClass, nameof(TestClass.TestCommand_FlagsAndOptionals));
+            var command = GetCommand(commandService, testClass, nameof(TestClass.TestCommand_FlagsAndOptionals));
             var commandSender = new Mock<ICommandSender>().Object;
 
             command.Invoke(commandSender, input);
@@ -207,8 +230,13 @@ namespace TShock.Commands {
         [InlineData("1  2", 1, 2)]
         [InlineData("    -1  2   -5", -1, 2, -5)]
         public void Invoke_Params(string input, params int[] expectedInts) {
+            using var kernel = new OrionKernel(Logger.None);
+            using var commandService = new TShockCommandService(kernel, Logger.None);
+            commandService.RegisterParser(new Int32Parser());
+            commandService.RegisterParser(new StringParser());
+
             var testClass = new TestClass();
-            var command = GetCommand(testClass, nameof(TestClass.TestCommand_Params));
+            var command = GetCommand(commandService, testClass, nameof(TestClass.TestCommand_Params));
             var commandSender = new Mock<ICommandSender>().Object;
 
             command.Invoke(commandSender, input);
@@ -219,8 +247,13 @@ namespace TShock.Commands {
 
         [Fact]
         public void Invoke_OptionalGetsRenamed() {
+            using var kernel = new OrionKernel(Logger.None);
+            using var commandService = new TShockCommandService(kernel, Logger.None);
+            commandService.RegisterParser(new Int32Parser());
+            commandService.RegisterParser(new StringParser());
+
             var testClass = new TestClass();
-            var command = GetCommand(testClass, nameof(TestClass.TestCommand_OptionalRename));
+            var command = GetCommand(commandService, testClass, nameof(TestClass.TestCommand_OptionalRename));
             var commandSender = new Mock<ICommandSender>().Object;
 
             command.Invoke(commandSender, "--hyphenated-optional-is-long=60");
@@ -231,17 +264,18 @@ namespace TShock.Commands {
 
         [Fact]
         public void Invoke_TriggersCommandExecute() {
+            using var kernel = new OrionKernel(Logger.None);
+            using var commandService = new TShockCommandService(kernel, Logger.None);
             var testClass = new TestClass();
-            var command = GetCommand(testClass, nameof(TestClass.TestCommand));
+            var command = GetCommand(commandService, testClass, nameof(TestClass.TestCommand));
             var commandSender = new Mock<ICommandSender>().Object;
+
             var isRun = false;
-            var commandExecute = new EventHandlerCollection<CommandExecuteEventArgs>(Logger.None);
-            commandExecute.RegisterHandler((sender, args) => {
+            kernel.RegisterHandler<CommandExecuteEvent>(e => {
                 isRun = true;
-                args.Command.Should().Be(command);
-                args.Input.Should().BeEmpty();
-            });
-            _mockCommandService.SetupGet(cs => cs.CommandExecute).Returns(commandExecute);
+                e.Command.Should().Be(command);
+                e.Input.Should().BeEmpty();
+            }, Logger.None);
 
             command.Invoke(commandSender, "");
 
@@ -251,14 +285,12 @@ namespace TShock.Commands {
 
         [Fact]
         public void Invoke_CommandExecuteCanceled_IsCanceled() {
+            using var kernel = new OrionKernel(Logger.None);
+            using var commandService = new TShockCommandService(kernel, Logger.None);
             var testClass = new TestClass();
-            var command = GetCommand(testClass, nameof(TestClass.TestCommand));
+            var command = GetCommand(commandService, testClass, nameof(TestClass.TestCommand));
             var commandSender = new Mock<ICommandSender>().Object;
-            var commandExecute = new EventHandlerCollection<CommandExecuteEventArgs>(Logger.None);
-            commandExecute.RegisterHandler((sender, args) => {
-                args.Cancel();
-            });
-            _mockCommandService.SetupGet(cs => cs.CommandExecute).Returns(commandExecute);
+            kernel.RegisterHandler<CommandExecuteEvent>(e => e.Cancel(), Logger.None);
 
             command.Invoke(commandSender, "failing input");
         }
@@ -267,8 +299,10 @@ namespace TShock.Commands {
         [InlineData("1 ")]
         [InlineData("-7345734    ")]
         public void Invoke_MissingArg_ThrowsCommandParseException(string input) {
+            using var kernel = new OrionKernel(Logger.None);
+            using var commandService = new TShockCommandService(kernel, Logger.None);
             var testClass = new TestClass();
-            var command = GetCommand(testClass, nameof(TestClass.TestCommand_Int_String));
+            var command = GetCommand(commandService, testClass, nameof(TestClass.TestCommand_Int_String));
             var commandSender = new Mock<ICommandSender>().Object;
             Action action = () => command.Invoke(commandSender, input);
 
@@ -279,8 +313,10 @@ namespace TShock.Commands {
         [InlineData("-xyz")]
         [InlineData("-z")]
         public void Invoke_UnexpectedShortFlag_ThrowsCommandParseException(string input) {
+            using var kernel = new OrionKernel(Logger.None);
+            using var commandService = new TShockCommandService(kernel, Logger.None);
             var testClass = new TestClass();
-            var command = GetCommand(testClass, nameof(TestClass.TestCommand_Flags));
+            var command = GetCommand(commandService, testClass, nameof(TestClass.TestCommand_Flags));
             var commandSender = new Mock<ICommandSender>().Object;
             Action action = () => command.Invoke(commandSender, input);
 
@@ -291,8 +327,10 @@ namespace TShock.Commands {
         [InlineData("--this-is-not-ok")]
         [InlineData("--neither-is-this")]
         public void Invoke_UnexpectedLongFlag_ThrowsCommandParseException(string input) {
+            using var kernel = new OrionKernel(Logger.None);
+            using var commandService = new TShockCommandService(kernel, Logger.None);
             var testClass = new TestClass();
-            var command = GetCommand(testClass, nameof(TestClass.TestCommand_Flags));
+            var command = GetCommand(commandService, testClass, nameof(TestClass.TestCommand_Flags));
             var commandSender = new Mock<ICommandSender>().Object;
             Action action = () => command.Invoke(commandSender, input);
 
@@ -303,8 +341,10 @@ namespace TShock.Commands {
         [InlineData("--required=123")]
         [InlineData("--not-ok=test")]
         public void Invoke_UnexpectedOptional_ThrowsCommandParseException(string input) {
+            using var kernel = new OrionKernel(Logger.None);
+            using var commandService = new TShockCommandService(kernel, Logger.None);
             var testClass = new TestClass();
-            var command = GetCommand(testClass, nameof(TestClass.TestCommand_Optionals));
+            var command = GetCommand(commandService, testClass, nameof(TestClass.TestCommand_Optionals));
             var commandSender = new Mock<ICommandSender>().Object;
             Action action = () => command.Invoke(commandSender, input);
 
@@ -318,8 +358,10 @@ namespace TShock.Commands {
         [InlineData("-- ")]
         [InlineData("--= ")]
         public void Invoke_InvalidHyphenatedArgs_ThrowsCommandParseException(string input) {
+            using var kernel = new OrionKernel(Logger.None);
+            using var commandService = new TShockCommandService(kernel, Logger.None);
             var testClass = new TestClass();
-            var command = GetCommand(testClass, nameof(TestClass.TestCommand_FlagsAndOptionals));
+            var command = GetCommand(commandService, testClass, nameof(TestClass.TestCommand_FlagsAndOptionals));
             var commandSender = new Mock<ICommandSender>().Object;
             Action action = () => command.Invoke(commandSender, input);
 
@@ -328,9 +370,10 @@ namespace TShock.Commands {
 
         [Fact]
         public void Invoke_UnexpectedArgType_ThrowsCommandParseException() {
-            _mockCommandService.Setup(cs => cs.Parsers).Returns(new Dictionary<Type, IArgumentParser>());
+            using var kernel = new OrionKernel(Logger.None);
+            using var commandService = new TShockCommandService(kernel, Logger.None);
             var testClass = new TestClass();
-            var command = GetCommand(testClass, nameof(TestClass.TestCommand_NoTestClass));
+            var command = GetCommand(commandService, testClass, nameof(TestClass.TestCommand_NoTestClass));
             var commandSender = new Mock<ICommandSender>().Object;
             Action action = () => command.Invoke(commandSender, "");
 
@@ -341,8 +384,10 @@ namespace TShock.Commands {
         [InlineData("a")]
         [InlineData("bcd")]
         public void Invoke_TooManyArguments_ThrowsCommandParseException(string input) {
+            using var kernel = new OrionKernel(Logger.None);
+            using var commandService = new TShockCommandService(kernel, Logger.None);
             var testClass = new TestClass();
-            var command = GetCommand(testClass, nameof(TestClass.TestCommand));
+            var command = GetCommand(commandService, testClass, nameof(TestClass.TestCommand));
             var commandSender = new Mock<ICommandSender>().Object;
             Action action = () => command.Invoke(commandSender, input);
 
@@ -351,8 +396,10 @@ namespace TShock.Commands {
 
         [Fact]
         public void Invoke_ThrowsException_ThrowsCommandException() {
+            using var kernel = new OrionKernel(Logger.None);
+            using var commandService = new TShockCommandService(kernel, Logger.None);
             var testClass = new TestClass();
-            var command = GetCommand(testClass, nameof(TestClass.TestCommand_Exception));
+            var command = GetCommand(commandService, testClass, nameof(TestClass.TestCommand_Exception));
             var commandSender = new Mock<ICommandSender>().Object;
             Action action = () => command.Invoke(commandSender, "");
 
@@ -361,17 +408,19 @@ namespace TShock.Commands {
 
         [Fact]
         public void Invoke_NullSender_ThrowsArgumentNullException() {
+            using var kernel = new OrionKernel(Logger.None);
+            using var commandService = new TShockCommandService(kernel, Logger.None);
             var testClass = new TestClass();
-            var command = GetCommand(testClass, nameof(TestClass.TestCommand));
+            var command = GetCommand(commandService, testClass, nameof(TestClass.TestCommand));
             Action action = () => command.Invoke(null, "");
 
             action.Should().Throw<ArgumentNullException>();
         }
 
-        private ICommand GetCommand(TestClass testClass, string methodName) {
+        private ICommand GetCommand(TShockCommandService commandService, TestClass testClass, string methodName) {
             var handler = typeof(TestClass).GetMethod(methodName);
             var attribute = handler.GetCustomAttribute<CommandHandlerAttribute>();
-            return new TShockCommand(_mockCommandService.Object, testClass, handler, attribute);
+            return new TShockCommand(commandService, testClass, handler, attribute);
         }
 
         [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Testing")]
@@ -416,8 +465,9 @@ namespace TShock.Commands {
             }
 
             [CommandHandler("tshock_tests:test_flags_and_optionals")]
-            public void TestCommand_FlagsAndOptionals(ICommandSender sender, [Flag("f", "force")] bool force,
-                    [Flag("r", "recursive")] bool recursive, int depth = 10) {
+            public void TestCommand_FlagsAndOptionals(
+                    ICommandSender sender, [Flag("f", "force")] bool force, [Flag("r", "recursive")] bool recursive,
+                    int depth = 10) {
                 Sender = sender;
                 Force = force;
                 Recursive = recursive;

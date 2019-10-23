@@ -16,6 +16,7 @@
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using Destructurama;
 using Microsoft.Xna.Framework;
 using Orion.Players;
 using Serilog;
@@ -50,6 +51,7 @@ namespace TShock.Commands {
         public PlayerCommandSender(IPlayer player) {
             Player = player ?? throw new ArgumentNullException(nameof(player));
             Log = new LoggerConfiguration()
+                .Destructure.UsingAttributes()
                 .MinimumLevel.Is(LogLevel)
                 .WriteTo.Player(player)
                 .CreateLogger();

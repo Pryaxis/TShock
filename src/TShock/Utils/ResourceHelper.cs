@@ -37,7 +37,8 @@ namespace TShock.Utils {
         /// <exception cref="ArgumentNullException">
         /// <paramref name="resourceType"/> or <paramref name="name"/> are <see langword="null"/>.
         /// </exception>
-        [SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters",
+        [SuppressMessage(
+            "Globalization", "CA1303:Do not pass literals as localized parameters",
             Justification = "strings are not user-facing")]
         public static T LoadResource<T>(Type resourceType, string name) {
             if (resourceType is null) {

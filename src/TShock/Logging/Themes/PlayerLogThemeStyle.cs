@@ -21,7 +21,9 @@ namespace TShock.Logging.Themes {
     /// <summary>
     /// Specifies an entity styled by a player log theme.
     /// </summary>
-    [SuppressMessage("Naming", "CA1720:Identifier contains type name", Justification = "ignored")]
+    [SuppressMessage(
+        "Naming", "CA1720:Identifier contains type name",
+        Justification = "String is only a keyword in Visual Basic")]
     public enum PlayerLogThemeStyle {
         /// <summary>
         /// Represents text.

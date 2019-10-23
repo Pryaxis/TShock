@@ -16,20 +16,25 @@
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using Destructurama.Attributed;
 using Orion.Events;
 using TShock.Commands;
 
 namespace TShock.Events.Commands {
     /// <summary>
-    /// Provides data for the <see cref="ICommandService.CommandRegister"/> event.
+    /// An event that occurs when a command is unregistered. This event can be canceled.
     /// </summary>
-    [EventArgs("command-register")]
-    public sealed class CommandRegisterEventArgs : CommandEventArgs {
+    [Event("command-unregister")]
+    public sealed class CommandUnregisterEvent : CommandEvent, ICancelable {
+        /// <inheritdoc/>
+        [NotLogged]
+        public string? CancellationReason { get; set; }
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommandRegisterEventArgs"/> class with the specified command.
+        /// Initializes a new instance of the <see cref="CommandUnregisterEvent"/> class with the specified command.
         /// </summary>
         /// <param name="command">The command.</param>
         /// <exception cref="ArgumentNullException"><paramref name="command"/> is <see langword="null"/>.</exception>
-        public CommandRegisterEventArgs(ICommand command) : base(command) { }
+        public CommandUnregisterEvent(ICommand command) : base(command) { }
     }
 }

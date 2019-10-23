@@ -21,36 +21,28 @@ using TShock.Commands;
 
 namespace TShock.Events.Commands {
     /// <summary>
-    /// Provides data for the <see cref="ICommandService.CommandExecute"/> event.
+    /// Represents a command-related event.
     /// </summary>
-    [EventArgs("command-execute")]
-    public sealed class CommandExecuteEventArgs : CommandEventArgs {
-        private string _input;
+    public abstract class CommandEvent : Event {
+        private ICommand _command;
 
         /// <summary>
-        /// Gets the command sender.
+        /// Gets or sets the command.
         /// </summary>
-        public ICommandSender Sender { get; }
-
-        /// <summary>
-        /// Gets or sets the input. This does not include the command's name.
-        /// </summary>
+        /// <value>The command.</value>
         /// <exception cref="ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
-        public string Input {
-            get => _input;
-            set => _input = value ?? throw new ArgumentNullException(nameof(value));
+        public ICommand Command {
+            get => _command;
+            set => _command = value ?? throw new ArgumentNullException(nameof(value));
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommandExecuteEventArgs"/> class with the specified command,
-        /// command sender, and input.
+        /// Initializes a new instance of the <see cref="CommandEvent"/> class with the specified command.
         /// </summary>
         /// <param name="command">The command.</param>
-        /// <param name="sender">The command sender.</param>
-        /// <param name="input">The input. This does not include the command's name.</param>
-        public CommandExecuteEventArgs(ICommand command, ICommandSender sender, string input) : base(command) {
-            Sender = sender ?? throw new ArgumentNullException(nameof(sender));
-            _input = input ?? throw new ArgumentNullException(nameof(input));
+        /// <exception cref="ArgumentNullException"><paramref name="command"/> is <see langword="null"/>.</exception>
+        protected CommandEvent(ICommand command) {
+            _command = command ?? throw new ArgumentNullException(nameof(command));
         }
     }
 }

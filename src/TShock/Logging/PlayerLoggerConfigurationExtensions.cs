@@ -32,7 +32,7 @@ namespace TShock.Logging {
         private const string DefaultOutputTemplate = "[{Timestamp:HH:mm:ss} {Level}] {Message}{NewLine}{Exception}";
 
         /// <summary>
-        /// Writes log events to the given <paramref name="player"/>.
+        /// Writes log events to the given <paramref name="player"/> with optional settings.
         /// </summary>
         /// <param name="configuration">The logger sink configuration.</param>
         /// <param name="player">The player.</param>

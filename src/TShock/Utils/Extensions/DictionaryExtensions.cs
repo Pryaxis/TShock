@@ -45,8 +45,9 @@ namespace TShock.Utils.Extensions {
         /// <exception cref="ArgumentNullException">
         /// <paramref name="dictionary"/> or <paramref name="defaultValueProvider"/> are <see langword="null"/>.
         /// </exception>
-        public static TValue GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key,
-                Func<TValue>? defaultValueProvider = null, bool createIfNotExists = false) {
+        public static TValue GetValueOrDefault<TKey, TValue>(
+                this IDictionary<TKey, TValue> dictionary, TKey key, Func<TValue>? defaultValueProvider = null,
+                bool createIfNotExists = false) {
             if (dictionary is null) {
                 throw new ArgumentNullException(nameof(dictionary));
             }

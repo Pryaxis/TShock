@@ -26,8 +26,8 @@ namespace TShock.Commands.Parsers {
     /// </summary>
     public interface IArgumentParser {
         /// <summary>
-        /// Parses <paramref name="input"/> and returns a corresponding object using the <paramref name="attributes"/>.
-        /// <paramref name="input"/> will be consumed as necessary.
+        /// Parses the <paramref name="input"/> and returns a corresponding object using the specified
+        /// <paramref name="attributes"/>. <paramref name="input"/> will be consumed as necessary.
         /// </summary>
         /// <param name="input">The input. This is guaranteed to start with a non-whitespace character.</param>
         /// <param name="attributes">The attributes.</param>
@@ -42,8 +42,8 @@ namespace TShock.Commands.Parsers {
     /// <typeparam name="TParse">The parse type.</typeparam>
     public interface IArgumentParser<out TParse> : IArgumentParser {
         /// <summary>
-        /// Parses <paramref name="input"/> and returns a corresponding <typeparamref name="TParse"/> instance using the
-        /// <paramref name="attributes"/>. <paramref name="input"/> will be consumed as necessary.
+        /// Parses the <paramref name="input"/> and returns a corresponding <typeparamref name="TParse"/> instance using
+        /// the specified <paramref name="attributes"/>. <paramref name="input"/> will be consumed as necessary.
         /// </summary>
         /// <param name="input">The input. This is guaranteed to start with a non-whitespace character.</param>
         /// <param name="attributes">The attributes.</param>

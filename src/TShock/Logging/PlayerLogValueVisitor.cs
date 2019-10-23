@@ -25,9 +25,11 @@ using TShock.Logging.Themes;
 using Unit = System.ValueTuple;
 
 namespace TShock.Logging {
-    [SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters",
+    [SuppressMessage(
+        "Globalization", "CA1303:Do not pass literals as localized parameters",
         Justification = "symbols should not be localized")]
-    [SuppressMessage("Design", "CA1062:Validate arguments of public methods",
+    [SuppressMessage(
+        "Design", "CA1062:Validate arguments of public methods",
         Justification = "validation has already occurred")]
     internal sealed class PlayerLogValueVisitor : LogEventPropertyValueVisitor<TextWriter, Unit> {
         private readonly PlayerLogTheme _theme;

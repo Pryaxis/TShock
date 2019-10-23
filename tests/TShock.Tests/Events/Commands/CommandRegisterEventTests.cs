@@ -16,30 +16,19 @@
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using Orion.Events;
+using FluentAssertions;
+using Moq;
 using TShock.Commands;
+using Xunit;
 
 namespace TShock.Events.Commands {
-    /// <summary>
-    /// Provides data for command-related events.
-    /// </summary>
-    public abstract class CommandEventArgs : EventArgs, ICancelable {
-        private ICommand _command;
+    public class CommandRegisterEventTests {
+        [Fact]
+        public void Ctor_NullCommand_ThrowsArgumentNullException() {
+            var sender = new Mock<ICommandSender>().Object;
+            Func<CommandRegisterEvent> func = () => new CommandRegisterEvent(null);
 
-        /// <inheritdoc/>
-        public string? CancellationReason { get; set; }
-
-        /// <summary>
-        /// Gets or sets the command.
-        /// </summary>
-        /// <exception cref="ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
-        public ICommand Command {
-            get => _command;
-            set => _command = value ?? throw new ArgumentNullException(nameof(value));
-        }
-
-        private protected CommandEventArgs(ICommand command) {
-            _command = command ?? throw new ArgumentNullException(nameof(command));
+            func.Should().Throw<ArgumentNullException>();
         }
     }
 }

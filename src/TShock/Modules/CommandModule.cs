@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using Microsoft.Xna.Framework;
@@ -41,10 +42,10 @@ namespace TShock.Modules {
     /// </summary>
     internal sealed class CommandModule : TShockModule {
         private readonly OrionKernel _kernel;
+        private readonly ILogger _log;
         private readonly IPlayerService _playerService;
         private readonly ICommandService _commandService;
 
-        // Map from Terraria command -> command. This is used to unify Terraria and TShock commands.
         private readonly IDictionary<string, string> _terrariaCommandToCommand = new Dictionary<string, string> {
             ["Say"] = string.Empty,
             ["Emote"] = Resources.TerrariaCommand_Me,
@@ -58,19 +59,19 @@ namespace TShock.Modules {
 
         private readonly Random _rand = new Random();
 
-        public CommandModule(OrionKernel kernel, IPlayerService playerService, ICommandService commandService) {
+        public CommandModule(
+                OrionKernel kernel, ILogger log, IPlayerService playerService, ICommandService commandService) {
             Debug.Assert(kernel != null, "kernel should not be null");
+            Debug.Assert(log != null, "log should not be null");
             Debug.Assert(playerService != null, "player service should not be null");
             Debug.Assert(commandService != null, "command service should not be null");
 
             _kernel = kernel;
+            _log = log;
             _playerService = playerService;
             _commandService = commandService;
-
-            _kernel.ServerCommand.RegisterHandler(ServerCommandHandler);
-            _playerService.PlayerChat.RegisterHandler(PlayerChatHandler);
-            _commandService.CommandRegister.RegisterHandler(CommandRegisterHandler);
-            _commandService.CommandUnregister.RegisterHandler(CommandUnregisterHandler);
+            
+            _kernel.RegisterHandlers(this, _log);
         }
 
         public override void Initialize() {
@@ -146,21 +147,19 @@ namespace TShock.Modules {
         }
 
         protected override void Dispose(bool disposeManaged) {
-            _kernel.ServerCommand.UnregisterHandler(ServerCommandHandler);
-            _playerService.PlayerChat.UnregisterHandler(PlayerChatHandler);
-            _commandService.CommandRegister.UnregisterHandler(CommandRegisterHandler);
-            _commandService.CommandUnregister.UnregisterHandler(CommandUnregisterHandler);
+            _kernel.UnregisterHandlers(this, _log);
         }
 
-        [EventHandler(EventPriority.Lowest, Name = "tshock")]
-        private void ServerCommandHandler(object sender, ServerCommandEventArgs args) {
-            if (args.IsCanceled()) {
+        [EventHandler(Name = "tshock")]
+        [SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "Implicit usage")]
+        private void ServerCommandHandler(ServerCommandEvent e) {
+            if (e.IsCanceled()) {
                 return;
             }
 
-            args.Cancel("tshock: command executing");
+            e.Cancel("tshock: command executing");
 
-            var input = args.Input;
+            var input = e.Input;
             if (input.StartsWith('/')) {
                 input = input.Substring(1);
             }
@@ -168,33 +167,35 @@ namespace TShock.Modules {
             ExecuteCommand(ConsoleCommandSender.Instance, input);
         }
 
-        [EventHandler(EventPriority.Lowest, Name = "tshock")]
-        private void PlayerChatHandler(object sender, PlayerChatEventArgs args) {
-            if (args.IsCanceled()) {
+        [EventHandler(Name = "tshock")]
+        [SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "Implicit usage")]
+        private void PlayerChatHandler(PlayerChatEvent e) {
+            if (e.IsCanceled()) {
                 return;
             }
 
-            var chatCommand = args.ChatCommand;
+            var chatCommand = e.Command;
             if (!_terrariaCommandToCommand.TryGetValue(chatCommand, out var canonicalCommand)) {
-                args.Cancel("tshock: Terraria command is invalid");
+                e.Cancel("tshock: Terraria command is invalid");
                 return;
             }
 
-            var chat = canonicalCommand + args.ChatText;
+            var chat = canonicalCommand + e.Text;
             if (chat.StartsWith('/')) {
-                args.Cancel("tshock: command executing");
+                e.Cancel("tshock: command executing");
 
-                ICommandSender commandSender = args.Player.GetAnnotationOrDefault(
+                ICommandSender commandSender = e.Player.GetAnnotationOrDefault(
                     "tshock:CommandSender",
-                    () => new PlayerCommandSender(args.Player), true);
+                    () => new PlayerCommandSender(e.Player), true);
                 var input = chat.Substring(1);
                 ExecuteCommand(commandSender, input);
             }
         }
 
         [EventHandler(EventPriority.Monitor, Name = "tshock")]
-        private void CommandRegisterHandler(object sender, CommandRegisterEventArgs args) {
-            var qualifiedName = args.Command.QualifiedName;
+        [SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "Implicit usage")]
+        private void CommandRegisterHandler(CommandRegisterEvent e) {
+            var qualifiedName = e.Command.QualifiedName;
             var name = qualifiedName.Substring(qualifiedName.IndexOf(':', StringComparison.Ordinal) + 1);
             _nameToQualifiedName
                 .GetValueOrDefault(name, () => new HashSet<string>(), true)
@@ -202,8 +203,9 @@ namespace TShock.Modules {
         }
 
         [EventHandler(EventPriority.Monitor, Name = "tshock")]
-        private void CommandUnregisterHandler(object sender, CommandUnregisterEventArgs args) {
-            var qualifiedName = args.Command.QualifiedName;
+        [SuppressMessage("Code Quality", "IDE0051:Remove unused private members", Justification = "Implicit usage")]
+        private void CommandUnregisterHandler(CommandUnregisterEvent e) {
+            var qualifiedName = e.Command.QualifiedName;
             var name = qualifiedName.Substring(qualifiedName.IndexOf(':', StringComparison.Ordinal) + 1);
             _nameToQualifiedName
                 .GetValueOrDefault(name, () => new HashSet<string>(), true)

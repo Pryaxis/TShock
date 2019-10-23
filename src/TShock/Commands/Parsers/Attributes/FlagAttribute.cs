@@ -29,6 +29,7 @@ namespace TShock.Commands.Parsers.Attributes {
         /// <summary>
         /// Gets a read-only view of the flags. Flags with length 1 are treated as short flags.
         /// </summary>
+        /// <value>A read-only view of the flags.</value>
         public IReadOnlyCollection<string> Flags { get; }
 
         /// <summary>

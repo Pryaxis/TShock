@@ -22,10 +22,10 @@ using TShock.Commands;
 using Xunit;
 
 namespace TShock.Events.Commands {
-    public class CommandEventArgsTests {
+    public class CommandEventTests {
         [Fact]
         public void Ctor_NullCommand_ThrowsArgumentNullException() {
-            Func<CommandEventArgs> func = () => new TestCommandEventArgs(null);
+            Func<CommandEvent> func = () => new TestCommandEvent(null);
 
             func.Should().Throw<ArgumentNullException>();
         }
@@ -33,22 +33,22 @@ namespace TShock.Events.Commands {
         [Fact]
         public void Command_Get() {
             var command = new Mock<ICommand>().Object;
-            var args = new TestCommandEventArgs(command);
+            var e = new TestCommandEvent(command);
 
-            args.Command.Should().BeSameAs(command);
+            e.Command.Should().BeSameAs(command);
         }
 
         [Fact]
         public void Command_SetNullValue_ThrowsArgumentNullException() {
             var command = new Mock<ICommand>().Object;
-            var args = new TestCommandEventArgs(command);
-            Action action = () => args.Command = null;
+            var e = new TestCommandEvent(command);
+            Action action = () => e.Command = null;
 
             action.Should().Throw<ArgumentNullException>();
         }
 
-        private class TestCommandEventArgs : CommandEventArgs {
-            public TestCommandEventArgs(ICommand command) : base(command) { }
+        private class TestCommandEvent : CommandEvent {
+            public TestCommandEvent(ICommand command) : base(command) { }
         }
     }
 }

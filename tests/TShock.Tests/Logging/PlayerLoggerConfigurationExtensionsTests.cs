@@ -40,7 +40,7 @@ namespace TShock.Logging {
 
             logger.Error("FAIL");
 
-            mockPlayer.Verify(p => p.SendPacket(It.Is<ChatPacket>(cp => cp.ChatText.Contains("[c/123456:FAIL]"))));
+            mockPlayer.Verify(p => p.SendPacket(It.Is<ChatPacket>(cp => cp.Text.Contains("[c/123456:FAIL]"))));
         }
 
         [Fact]
@@ -52,7 +52,7 @@ namespace TShock.Logging {
 
             logger.Error("FAIL");
 
-            mockPlayer.Verify(p => p.SendPacket(It.Is<ChatPacket>(cp => cp.ChatText.Contains("[c/dcdcdc:FAIL]"))));
+            mockPlayer.Verify(p => p.SendPacket(It.Is<ChatPacket>(cp => cp.Text.Contains("[c/dcdcdc:FAIL]"))));
         }
 
         [Fact]

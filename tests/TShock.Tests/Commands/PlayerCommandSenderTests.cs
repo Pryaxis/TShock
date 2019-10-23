@@ -60,7 +60,7 @@ namespace TShock.Commands {
             _sender.SendMessage("test");
 
             _mockPlayer.Verify(p => p.SendPacket(
-                It.Is<ChatPacket>(cp => cp.ChatColor == Color.White && cp.ChatText == "test")));
+                It.Is<ChatPacket>(cp => cp.Color == Color.White && cp.Text == "test")));
             _mockPlayer.VerifyNoOtherCalls();
         }
 
@@ -69,7 +69,7 @@ namespace TShock.Commands {
             _sender.SendMessage("test", Color.Orange);
 
             _mockPlayer.Verify(p => p.SendPacket(
-                It.Is<ChatPacket>(cp => cp.ChatColor == Color.Orange && cp.ChatText == "test")));
+                It.Is<ChatPacket>(cp => cp.Color == Color.Orange && cp.Text == "test")));
             _mockPlayer.VerifyNoOtherCalls();
         }
     }

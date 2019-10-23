@@ -18,6 +18,7 @@
 using System;
 using System.Globalization;
 using System.Text;
+using Destructurama;
 using JetBrains.Annotations;
 using Microsoft.Xna.Framework;
 using Orion.Players;
@@ -39,6 +40,7 @@ namespace TShock.Commands {
         /// <summary>
         /// Gets the console-based command sender.
         /// </summary>
+        /// <value>The console-based command sender.</value>
         public static ConsoleCommandSender Instance { get; } = new ConsoleCommandSender();
 
         /// <inheritdoc/>
@@ -55,8 +57,9 @@ namespace TShock.Commands {
 
         private ConsoleCommandSender() {
             Log = new LoggerConfiguration()
+                .Destructure.UsingAttributes()
                 .WriteTo.Console(
-                    outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}",
+                    outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:l}{NewLine}{Exception}",
                     theme: AnsiConsoleTheme.Code)
                 .MinimumLevel.Is(LogLevel)
                 .CreateLogger();

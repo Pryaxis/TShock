@@ -19,7 +19,6 @@ using System;
 using FluentAssertions;
 using Moq;
 using Orion;
-using Orion.Events;
 using Orion.Events.Players;
 using Orion.Events.Server;
 using Orion.Players;
@@ -31,39 +30,46 @@ using Xunit;
 
 namespace TShock {
     public class TShockPluginTests {
-        private readonly OrionKernel _kernel = new OrionKernel(Logger.None);
-        private readonly TShockPlugin _plugin;
-        private readonly Mock<IPlayerService> _mockPlayerService = new Mock<IPlayerService>();
-        private readonly Mock<ICommandService> _mockCommandService = new Mock<ICommandService>();
-
-        public TShockPluginTests() {
-            _plugin = new TShockPlugin(_kernel, Logger.None,
-                new Lazy<IPlayerService>(() => _mockPlayerService.Object),
-                new Lazy<ICommandService>(() => _mockCommandService.Object));
-        }
-
         [Fact]
         public void Ctor_NullKernel_ThrowsArgumentNullException() {
+            using var kernel = new OrionKernel(Logger.None);
+            var mockPlayerService = new Mock<IPlayerService>();
+            var mockCommandService = new Mock<ICommandService>();
+            using var plugin = new TShockPlugin(kernel, Logger.None,
+                new Lazy<IPlayerService>(() => mockPlayerService.Object),
+                new Lazy<ICommandService>(() => mockCommandService.Object));
             Func<TShockPlugin> func = () => new TShockPlugin(null, Logger.None,
-                new Lazy<IPlayerService>(() => _mockPlayerService.Object),
-                new Lazy<ICommandService>(() => _mockCommandService.Object));
+                new Lazy<IPlayerService>(() => mockPlayerService.Object),
+                new Lazy<ICommandService>(() => mockCommandService.Object));
 
             func.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
         public void Ctor_NullPlayerService_ThrowsArgumentNullException() {
-            Func<TShockPlugin> func = () => new TShockPlugin(_kernel, Logger.None,
+            using var kernel = new OrionKernel(Logger.None);
+            var mockPlayerService = new Mock<IPlayerService>();
+            var mockCommandService = new Mock<ICommandService>();
+            using var plugin = new TShockPlugin(kernel, Logger.None,
+                new Lazy<IPlayerService>(() => mockPlayerService.Object),
+                new Lazy<ICommandService>(() => mockCommandService.Object));
+            Func<TShockPlugin> func = () => new TShockPlugin(kernel, Logger.None,
                 null,
-                new Lazy<ICommandService>(() => _mockCommandService.Object));
+                new Lazy<ICommandService>(() => mockCommandService.Object));
 
             func.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
         public void Ctor_NullCommandService_ThrowsArgumentNullException() {
-            Func<TShockPlugin> func = () => new TShockPlugin(_kernel, Logger.None,
-                new Lazy<IPlayerService>(() => _mockPlayerService.Object),
+            using var kernel = new OrionKernel(Logger.None);
+            var mockPlayerService = new Mock<IPlayerService>();
+            var mockCommandService = new Mock<ICommandService>();
+            using var plugin = new TShockPlugin(kernel, Logger.None,
+                new Lazy<IPlayerService>(() => mockPlayerService.Object),
+                new Lazy<ICommandService>(() => mockCommandService.Object));
+            Func<TShockPlugin> func = () => new TShockPlugin(kernel, Logger.None,
+                new Lazy<IPlayerService>(() => mockPlayerService.Object),
                 null);
 
             func.Should().Throw<ArgumentNullException>();
@@ -71,37 +77,46 @@ namespace TShock {
 
         [Fact]
         public void RegisterModule_NullModule_ThrowsArgumentNullException() {
-            Action action = () => _plugin.RegisterModule(null);
+            using var kernel = new OrionKernel(Logger.None);
+            var mockPlayerService = new Mock<IPlayerService>();
+            var mockCommandService = new Mock<ICommandService>();
+            using var plugin = new TShockPlugin(kernel, Logger.None,
+                new Lazy<IPlayerService>(() => mockPlayerService.Object),
+                new Lazy<ICommandService>(() => mockCommandService.Object));
+            Action action = () => plugin.RegisterModule(null);
 
             action.Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
         public void Dispose_DisposesModule() {
+            using var kernel = new OrionKernel(Logger.None);
+            var mockPlayerService = new Mock<IPlayerService>();
+            var mockCommandService = new Mock<ICommandService>();
+            using var plugin = new TShockPlugin(kernel, Logger.None,
+                new Lazy<IPlayerService>(() => mockPlayerService.Object),
+                new Lazy<ICommandService>(() => mockCommandService.Object));
             var module = new TestModule();
-            _plugin.RegisterModule(module);
+            plugin.RegisterModule(module);
 
-            _plugin.Dispose();
+            plugin.Dispose();
 
             module.IsDisposed.Should().BeTrue();
         }
 
         [Fact]
         public void ServerInitialize_InitializesModule() {
-            _mockPlayerService
-                .Setup(ps => ps.PlayerChat)
-                .Returns(new EventHandlerCollection<PlayerChatEventArgs>(Logger.None));
-            _mockCommandService
-                .Setup(ps => ps.CommandRegister)
-                .Returns(new EventHandlerCollection<CommandRegisterEventArgs>(Logger.None));
-            _mockCommandService
-                .Setup(ps => ps.CommandUnregister)
-                .Returns(new EventHandlerCollection<CommandUnregisterEventArgs>(Logger.None));
+            using var kernel = new OrionKernel(Logger.None);
+            var mockPlayerService = new Mock<IPlayerService>();
+            var mockCommandService = new Mock<ICommandService>();
+            using var plugin = new TShockPlugin(kernel, Logger.None,
+                new Lazy<IPlayerService>(() => mockPlayerService.Object),
+                new Lazy<ICommandService>(() => mockCommandService.Object));
             var module = new TestModule();
-            _plugin.Initialize();
-            _plugin.RegisterModule(module);
+            plugin.Initialize();
+            plugin.RegisterModule(module);
 
-            _kernel.ServerInitialize.Invoke(this, new ServerInitializeEventArgs());
+            kernel.RaiseEvent(new ServerInitializeEvent(), Logger.None);
 
             module.IsInitialized.Should().BeTrue();
         }

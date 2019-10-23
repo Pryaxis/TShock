@@ -29,19 +29,22 @@ namespace TShock.Commands {
     [MeansImplicitUse]
     public sealed class CommandHandlerAttribute : Attribute {
         private readonly string _qualifiedName;
+
         private string? _helpText;
         private string? _usageText;
         private Type? _resourceType;
 
         /// <summary>
-        /// Gets the qualified name. This includes the namespace: e.g., "tshock:kick".
+        /// Gets the qualified name. This includes the namespace: e.g., <c>tshock:kick</c>.
         /// </summary>
+        /// <value>The qualified name.</value>
         public string QualifiedName => GetResourceStringMaybe(_qualifiedName);
 
         /// <summary>
         /// Gets or sets the help text. This will show up in the /help command. If <see langword="null"/>, then no help
         /// text exists. 
         /// </summary>
+        /// <value>The help text.</value>
         /// <exception cref="ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
         [DisallowNull]
         public string? HelpText {
@@ -53,6 +56,7 @@ namespace TShock.Commands {
         /// Gets or sets the usage text. This will show up in the /help command and when invalid syntax is used. If
         /// <see langword="null"/>, then no usage text exists.
         /// </summary>
+        /// <value>The usage text.</value>
         /// <exception cref="ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
         [DisallowNull]
         public string? UsageText {
@@ -64,6 +68,7 @@ namespace TShock.Commands {
         /// Gets or sets the resource type to load localizable strings from. If <see langword="null"/>, then no
         /// localization will occur.
         /// </summary>
+        /// <value>The resource type to load localizable strings from.</value>
         /// <exception cref="ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
         [DisallowNull]
         public Type? ResourceType {
@@ -72,9 +77,10 @@ namespace TShock.Commands {
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the command should be logged. For example, authentication commands
-        /// should not be logged.
+        /// Gets or sets a value indicating whether the command should be logged.
         /// </summary>
+        /// <value><see langword="true"/> if the command should be logged; otherwise, <see langword="false"/>.</value>
+        /// <remarks>This property's value is useful for hiding, e.g., authentication commands.</remarks>
         public bool ShouldBeLogged { get; set; } = true;
 
         /// <summary>
@@ -82,13 +88,11 @@ namespace TShock.Commands {
         /// name.
         /// </summary>
         /// <param name="qualifiedName">
-        /// The qualified name. This must include the namespace: e.g., "tshock:kick".
+        /// The qualified name. This includes the namespace: e.g., <c>tshock:kick</c>.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="qualifiedName"/> is <see langword="null"/>.
         /// </exception>
-        [SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters",
-            Justification = "strings are not user-facing")]
         public CommandHandlerAttribute(string qualifiedName) {
             if (qualifiedName is null) {
                 throw new ArgumentNullException(nameof(qualifiedName));

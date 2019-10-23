@@ -28,16 +28,27 @@ namespace TShock.Commands {
         /// <summary>
         /// Gets the sender's name.
         /// </summary>
+        /// <value>The sender's name.</value>
         string Name { get; }
 
         /// <summary>
         /// Gets the sender's log.
         /// </summary>
+        /// <value>The sender's log.</value>
+        /// <remarks>
+        /// This property's value can be used to log information to the sender. For example, you can pass debugging or
+        /// error messages and they will be formatted appropriately.
+        /// </remarks>
         ILogger Log { get; }
 
         /// <summary>
         /// Gets the sender's player. If <see langword="null"/>, then there is no associated player.
         /// </summary>
+        /// <value>The sender's player.</value>
+        /// <remarks>
+        /// This property's value can be used to modify the command sender's state. For example, you can heal or kill
+        /// the player.
+        /// </remarks>
         IPlayer? Player { get; }
 
         /// <summary>

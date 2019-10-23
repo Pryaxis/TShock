@@ -26,6 +26,7 @@ namespace TShock.Logging.Themes {
         /// <summary>
         /// Gets a theme that uses Visual Studio's colors wherever possible.
         /// </summary>
+        /// <value>A theme that uses Visual Studio's colors wherever possible.</value>
         public static PlayerLogTheme VisualStudio { get; } =
             new PlayerLogTheme(new Dictionary<PlayerLogThemeStyle, Color> {
                 [PlayerLogThemeStyle.Text] = new Color(0xdc, 0xdc, 0xdc),

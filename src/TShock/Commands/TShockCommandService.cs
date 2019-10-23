@@ -27,23 +27,15 @@ using TShock.Commands.Parsers;
 using TShock.Events.Commands;
 
 namespace TShock.Commands {
-    [Service("tshock-commands")]
     internal sealed class TShockCommandService : OrionService, ICommandService {
         private readonly Dictionary<string, ICommand> _commands = new Dictionary<string, ICommand>();
         private readonly Dictionary<Type, IArgumentParser> _parsers = new Dictionary<Type, IArgumentParser>();
 
         public IReadOnlyDictionary<string, ICommand> Commands => _commands;
         public IReadOnlyDictionary<Type, IArgumentParser> Parsers => _parsers;
-        public EventHandlerCollection<CommandRegisterEventArgs> CommandRegister { get; }
-        public EventHandlerCollection<CommandExecuteEventArgs> CommandExecute { get; }
-        public EventHandlerCollection<CommandUnregisterEventArgs> CommandUnregister { get; }
 
-        public TShockCommandService(ILogger log) : base(log) {
+        public TShockCommandService(OrionKernel kernel, ILogger log) : base(kernel, log) {
             Debug.Assert(log != null, "log should not be null");
-
-            CommandRegister = new EventHandlerCollection<CommandRegisterEventArgs>(log);
-            CommandExecute = new EventHandlerCollection<CommandExecuteEventArgs>(log);
-            CommandUnregister = new EventHandlerCollection<CommandUnregisterEventArgs>(log);
         }
 
         public IReadOnlyCollection<ICommand> RegisterCommands(object handlerObject) {
@@ -52,9 +44,9 @@ namespace TShock.Commands {
             }
 
             ICommand? RegisterCommand(ICommand command) {
-                var args = new CommandRegisterEventArgs(command);
-                CommandRegister.Invoke(this, args);
-                if (args.IsCanceled()) {
+                var e = new CommandRegisterEvent(command);
+                Kernel.RaiseEvent(e, Log);
+                if (e.IsCanceled()) {
                     return null;
                 }
 
@@ -76,9 +68,9 @@ namespace TShock.Commands {
                 throw new ArgumentNullException(nameof(command));
             }
 
-            var args = new CommandUnregisterEventArgs(command);
-            CommandUnregister.Invoke(this, args);
-            return !args.IsCanceled() && _commands.Remove(command.QualifiedName);
+            var e = new CommandUnregisterEvent(command);
+            Kernel.RaiseEvent(e, Log);
+            return !e.IsCanceled() && _commands.Remove(command.QualifiedName);
         }
     }
 }

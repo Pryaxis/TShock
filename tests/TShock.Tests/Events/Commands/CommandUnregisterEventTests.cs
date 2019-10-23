@@ -15,20 +15,20 @@
 // You should have received a copy of the GNU General Public License
 // along with TShock.  If not, see <https://www.gnu.org/licenses/>.
 
-using System.Collections.Generic;
+using System;
 using FluentAssertions;
-using Microsoft.Xna.Framework;
+using Moq;
+using TShock.Commands;
 using Xunit;
 
-namespace TShock.Utils.Extensions {
-    public class ColorExtensionsTests {
-        public static readonly IEnumerable<object[]> ToHexStringData = new List<object[]> {
-            new object[] { new Color(0xf3, 0x20, 0x00), "f32000" },
-            new object[] { new Color(0x01, 0x02, 0x03), "010203" }
-        };
+namespace TShock.Events.Commands {
+    public class CommandUnregisterEventTests {
+        [Fact]
+        public void Ctor_NullCommand_ThrowsArgumentNullException() {
+            var sender = new Mock<ICommandSender>().Object;
+            Func<CommandUnregisterEvent> func = () => new CommandUnregisterEvent(null);
 
-        [Theory]
-        [MemberData(nameof(ToHexStringData))]
-        public void ToHexString(Color color, string expected) => color.ToHexString().Should().Be(expected);
+            func.Should().Throw<ArgumentNullException>();
+        }
     }
 }

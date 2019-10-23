@@ -42,7 +42,7 @@ namespace TShock.Logging {
                 MessageTemplate.Empty, Enumerable.Empty<LogEventProperty>()));
 
             mockPlayer.Verify(p => p.SendPacket(
-                It.Is<ChatPacket>(cp => cp.ChatColor == Color.White && cp.ChatText == "TEST")));
+                It.Is<ChatPacket>(cp => cp.Color == Color.White && cp.Text == "TEST")));
         }
 
         [Fact]
@@ -59,7 +59,7 @@ namespace TShock.Logging {
                 MessageTemplate.Empty, Enumerable.Empty<LogEventProperty>()));
 
             mockPlayer.Verify(p => p.SendPacket(
-                It.Is<ChatPacket>(cp => cp.ChatColor == Color.White && cp.ChatText == "TEST")));
+                It.Is<ChatPacket>(cp => cp.Color == Color.White && cp.Text == "TEST")));
         }
     }
 }

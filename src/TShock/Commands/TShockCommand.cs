@@ -30,7 +30,7 @@ using TShock.Utils.Extensions;
 
 namespace TShock.Commands {
     internal class TShockCommand : ICommand {
-        private readonly ICommandService _commandService;
+        private readonly TShockCommandService _commandService;
         private readonly object _handlerObject;
         private readonly MethodInfo _handler;
         private readonly CommandHandlerAttribute _attribute;
@@ -44,8 +44,9 @@ namespace TShock.Commands {
         public string UsageText => _attribute.UsageText ?? Resources.Command_MissingUsageText;
         public bool ShouldBeLogged => _attribute.ShouldBeLogged;
 
-        // We need to inject ICommandService so that we can trigger its CommandExecute event.
-        public TShockCommand(ICommandService commandService, object handlerObject, MethodInfo handler,
+        // We need to inject TShockCommandService so that we can raise a CommandExecuteEvent.
+        public TShockCommand(
+                TShockCommandService commandService, object handlerObject, MethodInfo handler,
                 CommandHandlerAttribute attribute) {
             Debug.Assert(commandService != null, "command service should not be null");
             Debug.Assert(handlerObject != null, "handler object should not be null");
@@ -90,9 +91,9 @@ namespace TShock.Commands {
                 throw new ArgumentNullException(nameof(sender));
             }
 
-            var args = new CommandExecuteEventArgs(this, sender, input);
-            _commandService.CommandExecute.Invoke(this, args);
-            if (args.IsCanceled()) {
+            var e = new CommandExecuteEvent(this, sender, input);
+            _commandService.Kernel.RaiseEvent(e, _commandService.Log);
+            if (e.IsCanceled()) {
                 return;
             }
 
@@ -169,12 +170,10 @@ namespace TShock.Commands {
                 optionals[optional] = ParseArgument(ref input, parameterInfo);
             }
 
-            /*
-             * Parse all hyphenated arguments:
-             * 1) Short flags are single-character flags and use one hyphen: "-f".
-             * 2) Long flags are string flags and use two hyphens: "--force".
-             * 3) Optionals specify values with two hyphens: "--depth=10".
-             */
+            // Parse all hyphenated arguments:
+            // 1) Short flags are single-character flags and use one hyphen: "-f".
+            // 2) Long flags are string flags and use two hyphens: "--force".
+            // 3) Optionals specify values with two hyphens: "--depth=10".
             void ParseHyphenatedArguments(ref ReadOnlySpan<char> input) {
                 input = input.TrimStart();
                 while (input.StartsWith("-")) {
@@ -194,13 +193,11 @@ namespace TShock.Commands {
                 }
             }
 
-            /*
-             * Parse a parameter:
-             * 1) If the parameter is an ICommandSender, then inject sender.
-             * 2) If the parameter is a bool and is marked with FlagAttribute, then inject the flag.
-             * 3) If the parameter is optional, then inject the optional or else the default value.
-             * 4) Otherwise, we parse the argument directly.
-             */
+            // Parse a parameter:
+            // 1) If the parameter is an ICommandSender, then inject sender.
+            // 2) If the parameter is a bool and is marked with FlagAttribute, then inject the flag.
+            // 3) If the parameter is optional, then inject the optional or else the default value.
+            // 4) Otherwise, we parse the argument directly.
             object? ParseParameter(ParameterInfo parameterInfo, ref ReadOnlySpan<char> input) {
                 var parameterType = parameterInfo.ParameterType;
                 if (parameterType == typeof(ICommandSender)) {
@@ -248,7 +245,7 @@ namespace TShock.Commands {
                 return ParseArgument(ref input, parameterInfo);
             }
 
-            var inputSpan = args.Input.AsSpan();
+            var inputSpan = e.Input.AsSpan();
             if (_validShortFlags.Count + _validLongFlags.Count + _validOptionals.Count > 0) {
                 ParseHyphenatedArguments(ref inputSpan);
             }
