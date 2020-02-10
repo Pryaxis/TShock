@@ -1,11 +1,11 @@
 <p align="center">
   <img src="https://tshock.co/newlogo.png" alt="TShock for Terraria"><br />
-  <a href="https://travis-ci.org/Pryaxis/TShock"><img src="https://travis-ci.org/Pryaxis/TShock.svg?branch=general-devel" alt="Build Status"></a><a href="https://ci.appveyor.com/project/hakusaro/tshock"><img src="https://ci.appveyor.com/api/projects/status/chhe61q227lqdlg1?svg=true" alt="AppVeyor Build Status"></a><a href="https://github.com/Pryaxis/TShock/actions"><img src="https://github.com/Pryaxis/TShock/workflows/Build%20Server/badge.svg" alt="GitHub Actions Build Status"></a><a href="#contributors"><img src="https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square" alt="All contributors"></a><br />
+  <a href="https://ci.appveyor.com/project/hakusaro/tshock"><img src="https://ci.appveyor.com/api/projects/status/chhe61q227lqdlg1?svg=true" alt="AppVeyor Build Status"></a><a href="https://github.com/Pryaxis/TShock/actions"><img src="https://github.com/Pryaxis/TShock/workflows/Build%20Server/badge.svg" alt="GitHub Actions Build Status"></a><a href="#contributors"><img src="https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square" alt="All contributors"></a><br />
 </p>
 
 TShock is a toolbox for Terraria servers and communities. That toolbox is jam packed with anti-cheat tools, server-side characters, groups, permissions, item bans, tons of commands, and limitless potential. It's one of a kind.
 
-* Download: [Stable](https://github.com/TShock/TShock/releases) or [Experimental](https://travis.tshock.co/).
+* Download: [Stable](https://github.com/TShock/TShock/releases) or [Experimental](#experimental-downloads).
 * Read [the documentation](https://tshock.readme.io/) to quickly get up to speed.
 * Join [Discord](https://discord.gg/Cav9nYX) for quick questions and answers
 * Join [Telegram](https://t.me/pryaxis) for in-depth support, conversation, and some swell Australian company.
@@ -16,6 +16,7 @@ TShock is a toolbox for Terraria servers and communities. That toolbox is jam pa
 ## Table of Contents
 
   * [New to TShock?](#new-to-tshock)
+  * [Experimental Downloads](#experimental-downloads)
   * [Developer's Guide](#developers-guide)
     * [Background](#background)
     * [Building](#building)
@@ -63,6 +64,16 @@ _These instructions assume Windows. If you're setting up on Linux or macOS, plea
 1. Turn off the setup system with `/setup` and your server is setup for initial use. TShock also created several files inside a new `tshock` folder. These files include `config.json` (our big configuration file), `sscconfig.json` (the server side characters configuration file), and `tshock.sqlite`. Don't lose your `tshock.sqlite` or you'll have to re-setup TShock.
 
 1. You can now [customize your configuration](https://tshock.readme.io/docs/config-settings), build groups, ban items, and install more plugins.
+
+## Experimental Downloads
+
+To download experimental versions of TShock, you have two real options: AppVeyor builds or GitHub builds. You can also get archived Travis CI builds. Fair warning though: experimental versions of TShock are point-in-time releases that are not technically supported by us. If you have to report an issue, please make it clear which commit or branch you downloaded your build from, which service, and the build number if applicable.
+
+On [AppVeyor](https://ci.appveyor.com/project/hakusaro/tshock/), click on history, find the build you want, click on the commit message, and then click on the artifacts tab. You can download either the debug or the release build. AppVeyor only keeps builds back 6 months though.
+
+On [GitHub](https://github.com/Pryaxis/TShock/), click on the actions tab, then click on "build server" on the commit or branch you want. If it was successful, you can download "TShockRelease" under the artifacts section to get that build artifact.
+
+For old builds from Travis CI, you can still get them (for now) from us directly, on [our Travis CI artifact mirror](https://travis.tshock.co/). Please note that these builds should be considered legacy and for archival purposes only. If you need them in the long term, please raise an issue explaining why before they are removed.
 
 ## Developer's Guide
 
