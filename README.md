@@ -71,7 +71,7 @@ To download experimental versions of TShock, you have two real options: AppVeyor
 
 On [AppVeyor](https://ci.appveyor.com/project/hakusaro/tshock/), click on history, find the build you want, click on the commit message, and then click on the artifacts tab. You can download either the debug or the release build. AppVeyor only keeps builds back 6 months though.
 
-On [GitHub](https://github.com/Pryaxis/TShock/), click on the actions tab, then click on "build server" on the commit or branch you want. If it was successful, you can download "TShockRelease" under the artifacts section to get that build artifact.
+On [GitHub](https://github.com/Pryaxis/TShock/), click on the actions tab, then click on "build server" on the commit or branch you want. If it was successful, you can download either the experimental release or debug artifacts.
 
 For old builds from Travis CI, you can still get them (for now) from us directly, on [our Travis CI artifact mirror](https://travis.tshock.co/). Please note that these builds should be considered legacy and for archival purposes only. If you need them in the long term, please raise an issue explaining why before they are removed.
 
