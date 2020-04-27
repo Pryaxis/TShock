@@ -1,6 +1,16 @@
 <p align="center">
   <img src="https://tshock.co/newlogo.png" alt="TShock for Terraria"><br />
-  <a href="https://ci.appveyor.com/project/hakusaro/tshock"><img src="https://ci.appveyor.com/api/projects/status/chhe61q227lqdlg1?svg=true" alt="AppVeyor Build Status"></a><a href="https://github.com/Pryaxis/TShock/actions"><img src="https://github.com/Pryaxis/TShock/workflows/Build%20Server/badge.svg" alt="GitHub Actions Build Status"></a><a href="#contributors"><img src="https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square" alt="All contributors"></a><br />
+  <a href="https://ci.appveyor.com/project/hakusaro/tshock">
+    <img src="https://ci.appveyor.com/api/projects/status/chhe61q227lqdlg1?svg=true" alt="AppVeyor Build Status">
+  </a>
+  <a href="https://github.com/Pryaxis/TShock/actions">
+    <img src="https://github.com/Pryaxis/TShock/workflows/Build%20Server/badge.svg" alt="GitHub Actions Build Status">
+  </a>
+  <a href="#contributors">
+    <img src="https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square" alt="All contributors">
+  </a>
+  <br/><br/>
+  <a href="https://github.com/Pryaxis/TShock/blob/general-devel/README_cn.md">查看中文版</a>
 </p>
 
 TShock is a toolbox for Terraria servers and communities. That toolbox is jam packed with anti-cheat tools, server-side characters, groups, permissions, item bans, tons of commands, and limitless potential. It's one of a kind.
