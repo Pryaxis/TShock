@@ -36,11 +36,22 @@
         "code",
         "infra"
       ]
+    },
+    {
+      "login": "AxeelAnder",
+      "name": "Axeel",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/25691207?v=4",
+      "profile": "https://github.com/AxeelAnder",
+      "contributions": [
+        "doc",
+        "projectManagement"
+      ]
     }
   ],
   "contributorsPerLine": 7,
   "projectName": "TShock",
   "projectOwner": "Pryaxis",
   "repoType": "github",
-  "repoHost": "https://github.com"
+  "repoHost": "https://github.com",
+  "skipCi": true
 }
