@@ -1,6 +1,6 @@
 '''
 TShock, a server mod for Terraria
-Copyright (C) 2011-2018 Pryaxis & TShock Contributors
+Copyright (C) 2011-2019 Pryaxis & TShock Contributors
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

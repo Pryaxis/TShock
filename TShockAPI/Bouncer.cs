@@ -1,6 +1,6 @@
 /*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2018 Pryaxis & TShock Contributors
+Copyright (C) 2011-2019 Pryaxis & TShock Contributors
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -781,7 +781,7 @@ namespace TShockAPI
 
 			if (TShock.ProjectileBans.ProjectileIsBanned(type, args.Player))
 			{
-				args.Player.Disable("Player does not have permission to create that projectile.", DisableFlags.WriteToLogAndConsole);
+				args.Player.Disable(String.Format("Player does not have permission to create projectile {0}.", type), DisableFlags.WriteToLogAndConsole);
 				args.Player.SendErrorMessage("You do not have permission to create that projectile.");
 				args.Player.RemoveProjectile(ident, owner);
 				args.Handled = true;
@@ -1867,9 +1867,10 @@ namespace TShockAPI
 			{ BuffID.BoneJavelin, 900 },
 			{ BuffID.StardustMinionBleed, 900 },
 			{ BuffID.DryadsWardDebuff, 120 },
-			{ BuffID.Daybreak, 300 },
 			{ BuffID.BetsysCurse, 600 },
-			{ BuffID.Oiled, 540 }
+			{ BuffID.Oiled, 540 },
+			{ BuffID.Confused, 450 }, // Brain of Confusion Internal Item ID: 3223
+			{ BuffID.Daybreak, 300 } // Solar Eruption Item ID: 3473, Daybreak Item ID: 3543
 		};
 		
 		/// <summary>

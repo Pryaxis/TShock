@@ -1,5 +1,5 @@
 ''' TShock, a server mod for Terraria
-Copyright (C) 2011-2018 Pryaxis & TShock Contributors
+Copyright (C) 2011-2019 Pryaxis & TShock Contributors
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -23,11 +23,11 @@ extensions = {'.cs', '.py'}
 path = "./"
 pattern = "/\*\s?\n?TShock, a server mod for Terraria(\n|.)*\*/"
 pypattern = "'''\s?\n?TShock, a server mod for Terraria(\n|.)*'''"
-year = "2018"
+year = "2019"
 filename = "./README.md"
 text = "/*\n\
 TShock, a server mod for Terraria\n\
-Copyright (C) 2011-2018 Pryaxis & TShock Contributors\n\
+Copyright (C) 2011-2019 Pryaxis & TShock Contributors\n\
 \n\
 This program is free software: you can redistribute it and/or modify\n\
 it under the terms of the GNU General Public License as published by\n\
