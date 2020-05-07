@@ -1776,13 +1776,25 @@ namespace TShockAPI
 
 						var tile = Main.tile[realx, realy];
 						var newtile = tiles[x, y];
+						TileObjectData tileObjectData;
+
+						//Check if TileObjectData exists for the tile
+						if (newtile.Type < TileObjectData._data.Count && (tileObjectData = TileObjectData._data[newtile.Type]) != null)
+						{
+							if (HandleTileObjectInTileSquare(args.Player, tileObjectData, size, ref x, ref y, tileX, tileY, tiles))
+							{
+								continue;
+							}
+							changed = true;
+						}
+
 						if (TShock.CheckTilePermission(args.Player, realx, realy) ||
 							TShock.CheckRangePermission(args.Player, realx, realy))
 						{
 							continue;
 						}
 
-						// Fixes the Flower Boots not creating flowers issue
+						//Allows flower boots to create flowers. For whatever reason the flowers are created by sending a 1x1 tile square packet.
 						if (size == 1 && args.Player.Accessories.Any(i => i.active && i.netID == ItemID.FlowerBoots))
 						{
 							if (Main.tile[realx, realy + 1].type == TileID.Grass && (newtile.Type == TileID.Plants || newtile.Type == TileID.Plants2))
@@ -1819,7 +1831,7 @@ namespace TShockAPI
 							changed = true;
 						}
 						// Sensors
-						if(newtile.Type == TileID.LogicSensor && !Main.tile[realx, realy].active())
+						if (newtile.Type == TileID.LogicSensor && !Main.tile[realx, realy].active())
 						{
 							Main.tile[realx, realy].type = newtile.Type;
 							Main.tile[realx, realy].frameX = newtile.FrameX;
@@ -1890,6 +1902,88 @@ namespace TShockAPI
 				args.Player.SendTileSquare(tileX, tileY, size);
 			}
 			return true;
+		}
+
+		/// <summary>
+		/// Iterates over every block in a multi-tile object and checks permissions against each. If any tile fails, the square around the object is reverted
+		/// </summary>
+		/// <param name="player"></param>
+		/// <param name="tileObjectData"></param>
+		/// <param name="size"></param>
+		/// <param name="netX"></param>
+		/// <param name="netY"></param>
+		/// <param name="tileX"></param>
+		/// <param name="tileY"></param>
+		/// <param name="tiles"></param>
+		private static bool HandleTileObjectInTileSquare(TSPlayer player, TileObjectData tileObjectData, int size, ref int netX, ref int netY, int tileX, int tileY, NetTile[,] tiles)
+		{
+			if (tileObjectData.Width > 1 || tileObjectData.Height > 1)
+			{
+				//Tile squares smaller than the object being placed should be rejected
+				if (size < tileObjectData.Width || size < tileObjectData.Height)
+				{
+					player.SendTileSquare(tileX, tileY, size);
+					return true;
+				}
+
+				//Loop through once to check permissions
+				for (int x = netX; x < netX + tileObjectData.Width; x++)
+				{
+					for (int y = netY; y < netY + tileObjectData.Height; y++)
+					{
+						if (TShock.CheckTilePermission(player, tileX + x, tileY + y))
+						{
+							//If the permission check for any tile fails, revert a square that covers the entire multi-tile object.
+							//This square should have sides equal to the larger or the objects width or height
+							TSPlayer.All.SendTileSquare(tileX, tileY, Math.Max(tileObjectData.Width, tileObjectData.Height));
+							return true;
+						}
+					}
+				}
+
+				ushort tileId = 0;
+
+				//Loop again to make adjustments
+				for (int x = netX; x < netX + tileObjectData.Width; x++)
+				{
+					for (int y = netY; y < netY + tileObjectData.Height; y++)
+					{
+						NetTile tile = tiles[x, y];
+						tileId = tile.Type;
+
+						if (tile.FrameImportant)
+						{
+							Main.tile[tileX + x, tileY + y].frameX = tile.FrameX;
+							Main.tile[tileX + x, tileY + y].frameY = tile.FrameY;
+						}
+
+						Main.tile[tileX + x, tileY + y].type = tile.Type;
+						Main.tile[tileX + x, tileY + y].active(tile.Active);
+					}
+				}
+
+				//ItemFrames, TargetDummies, and LogicSensors have special placing logic
+				switch (tileId)
+				{
+					case TileID.ItemFrame:
+						TileEntity.PlaceEntityNet(tileX, tileY, TileEntityID.ItemFrame);
+						break;
+
+					case TileID.TargetDummy:
+						TileEntity.PlaceEntityNet(tileX, tileY, TileEntityID.TrainingDummy);
+						break;
+
+					case TileID.LogicSensor:
+						TileEntity.PlaceEntityNet(tileX, tileY, TileEntityID.LogicSensor);
+						break;
+				}
+
+				//Increment netX and netY so that these indexes are skipped in the HandleTileSquare method
+				netX += tileObjectData.Width;
+				netY += tileObjectData.Height;
+			}
+
+			return false;
 		}
 
 		public enum EditAction
@@ -2309,6 +2403,7 @@ namespace TShockAPI
 			short type = args.Data.ReadInt16();
 			short style = args.Data.ReadInt16();
 			byte alternate = args.Data.ReadInt8();
+			sbyte random = (sbyte)args.Data.ReadInt8();
 			bool direction = args.Data.ReadBoolean();
 
 			if (type < 0 || type >= Main.maxTileSets)
@@ -4231,11 +4326,34 @@ namespace TShockAPI
 			var y = args.Data.ReadInt16();
 			var type = args.Data.ReadByte();
 
-			if (TShock.TileBans.TileIsBanned((short)TileID.LogicSensor, args.Player))
+			switch (type)
 			{
-				args.Player.SendTileSquare(x, y, 1);
-				args.Player.SendErrorMessage("You do not have permission to place Logic Sensors.");
-				return true;
+				case TileEntityID.LogicSensor:
+					if (TShock.TileBans.TileIsBanned((short)TileID.LogicSensor, args.Player))
+					{
+						args.Player.SendTileSquare(x, y, 1);
+						args.Player.SendErrorMessage("You do not have permission to place Logic Sensors.");
+						return true;
+					}
+					break;
+
+				case TileEntityID.ItemFrame:
+					if (TShock.TileBans.TileIsBanned((short)TileID.ItemFrame, args.Player))
+					{
+						args.Player.SendTileSquare(x, y, 2);
+						args.Player.SendErrorMessage("You do not have permission to place Item Frames.");
+						return true;
+					}
+					break;
+
+				case TileEntityID.TrainingDummy:
+					if (TShock.TileBans.TileIsBanned((short)TileID.TargetDummy, args.Player))
+					{
+						args.Player.SendTileSquare(x, y, 2);
+						args.Player.SendErrorMessage("You do not have permission to place Target Dummies.");
+						return true;
+					}
+					break;
 			}
 
 			if (TShock.CheckIgnores(args.Player))
@@ -4252,6 +4370,8 @@ namespace TShockAPI
 			{
 				return true;
 			}
+
+			TileEntity.PlaceEntityNet(x, y, type);
 
 			return false;
 		}
