@@ -1267,7 +1267,7 @@ namespace TShockAPI
 					{ PacketTypes.NpcTeleportPortal, HandleNpcTeleportPortal },
 					{ PacketTypes.KillPortal, HandleKillPortal },
 					{ PacketTypes.PlaceTileEntity, HandlePlaceTileEntity },
-					{ PacketTypes.PlaceItemFrame, HandlePlaceItemFrame },
+					{ PacketTypes.PlaceItemFrame, HandlePlaceItemInItemFrame },
 					{ PacketTypes.SyncExtraValue, HandleSyncExtraValue },
 					{ PacketTypes.LoadNetModule, HandleLoadNetModule },
 					{ PacketTypes.ToggleParty, HandleToggleParty },
@@ -2180,6 +2180,12 @@ namespace TShockAPI
 						args.Player.SendErrorMessage("You do not have permission to place this tile.");
 						return true;
 					}
+				}
+
+				if (action == EditAction.KillTile && Main.tile[tileX, tileY].type == TileID.ItemFrame)
+				{
+					WorldGen.KillTile(tileX, tileY, true);
+					return true;
 				}
 
 				if (action == EditAction.KillTile && !Main.tileCut[tile.type] && !breakableTiles.Contains(tile.type))
@@ -4376,7 +4382,7 @@ namespace TShockAPI
 			return false;
 		}
 
-		private static bool HandlePlaceItemFrame(GetDataHandlerArgs args)
+		private static bool HandlePlaceItemInItemFrame(GetDataHandlerArgs args)
 		{
 			var x = args.Data.ReadInt16();
 			var y = args.Data.ReadInt16();
@@ -4403,11 +4409,21 @@ namespace TShockAPI
 				return true;
 			}
 
+			//This prevents clients from duping on a laggy server. However it also eats their item, so we should probably refund that safely.
 			if (itemFrame.item?.netID == args.TPlayer.inventory[args.TPlayer.selectedItem]?.netID)
 			{
 				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, NetworkText.Empty, itemFrame.ID, 0, 1);
+
+				if (args.TPlayer.inventory[args.TPlayer.selectedItem] != null)
+				{
+					Item item = args.TPlayer.inventory[args.TPlayer.selectedItem];
+					args.Player.GiveItemCheck(item.netID, item.Name, args.TPlayer.width, args.TPlayer.height, 1, item.prefix);
+				}
+
 				return true;
 			}
+
+
 
 			return false;
 		}
