@@ -4,6 +4,9 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 ## Upcoming Changes
 
+## TShock 4.3.27
+* Fixed a number of bugs relating to Tile Entities (Item Frames, Target Dummies, Logic Sensors)
+
 ## TShock 4.3.26
 * Removed the stat tracking system. (@hakusaro)
 * Updated SQLite binaries. (@hakusaro)
