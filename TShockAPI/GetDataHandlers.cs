@@ -1926,24 +1926,15 @@ namespace TShockAPI
 					return true;
 				}
 
-				//Loop through once to check permissions
-				for (int x = netX; x < netX + tileObjectData.Width; x++)
+				if (TShock.CheckTileObjectPermission(player, tileX, tileY, netX, netY, tileObjectData.Width, tileObjectData.Height))
 				{
-					for (int y = netY; y < netY + tileObjectData.Height; y++)
-					{
-						if (TShock.CheckTilePermission(player, tileX + x, tileY + y))
-						{
-							//If the permission check for any tile fails, revert a square that covers the entire multi-tile object.
-							//This square should have sides equal to the larger or the objects width or height
-							TSPlayer.All.SendTileSquare(tileX, tileY, Math.Max(tileObjectData.Width, tileObjectData.Height));
-							return true;
-						}
-					}
+					//If the permission check for any tile fails, revert a square that covers the entire multi-tile object.
+					//This square should have sides equal to the larger or the objects width or height
+					TSPlayer.All.SendTileSquare(tileX, tileY, Math.Max(tileObjectData.Width, tileObjectData.Height));
+					return true;
 				}
 
 				ushort tileId = 0;
-
-				//Loop again to make adjustments
 				for (int x = netX; x < netX + tileObjectData.Width; x++)
 				{
 					for (int y = netY; y < netY + tileObjectData.Height; y++)
@@ -2182,9 +2173,24 @@ namespace TShockAPI
 					}
 				}
 
+				//If the tile being modified is a multi-block tile or special tile with extra data, run permission checks against all tiles in the block
+				TileObjectData tileObjectData;
+				if (tile.type < TileObjectData._data.Count && (tileObjectData = TileObjectData._data[tile.type]) != null)
+				{
+					//Retrieve the tile entity being modified
+					TileEntity entity = TileEntity.ByPosition[new Point16(tileX, tileY)];
+					//If any block in the entity fails a permission check, revert a square that covers the entire entity
+					if (TShock.CheckTileObjectPermission(args.Player, entity.Position.X, entity.Position.Y, 0, 0, tileObjectData.Width, tileObjectData.Height))
+					{
+						args.Player.SendTileSquare(entity.Position.X, entity.Position.Y, Math.Max(tileObjectData.Width, tileObjectData.Height));
+						return true;
+					}
+				}
+
+				//Item frames have their own special handling in WorldGen that enables them to drop items
 				if (action == EditAction.KillTile && Main.tile[tileX, tileY].type == TileID.ItemFrame)
 				{
-					WorldGen.KillTile(tileX, tileY, true);
+					WorldGen.KillTile(tileX, tileY, editData == 1); //If editData == 1, the tile 'fails' to be destroyed, but the item in it is dropped
 					return true;
 				}
 

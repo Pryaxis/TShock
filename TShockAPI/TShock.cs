@@ -1816,7 +1816,7 @@ namespace TShockAPI
 				{
 					foreach (Point p in player.IceTiles)
 					{
-						if (p.X == tileX && p.Y == tileY && (Main.tile[p.X, p.Y].type == 0 || Main.tile[p.X, p.Y].type == 127))
+						if (p.X == tileX && p.Y == tileY && (Main.tile[p.X, p.Y].type == 0 || Main.tile[p.X, p.Y].type == TileID.MagicalIceBlock))
 						{
 							player.IceTiles.Remove(p);
 							return false;
@@ -1831,7 +1831,7 @@ namespace TShockAPI
 					return true;
 				}
 
-				if (TShock.Config.AllowIce && actionType == GetDataHandlers.EditAction.PlaceTile && tileType == 127)
+				if (TShock.Config.AllowIce && actionType == GetDataHandlers.EditAction.PlaceTile && tileType == TileID.MagicalIceBlock)
 				{
 					player.IceTiles.Add(new Point(tileX, tileY));
 					return false;
@@ -1950,6 +1950,37 @@ namespace TShockAPI
 					}
 				}
 			}
+			return false;
+		}
+
+
+
+		/// <summary>
+		/// Determines if a player may edit all tiles of a tile object that spans multiple blocks
+		/// </summary>
+		/// <param name="player"></param>
+		/// <param name="tileX"></param>
+		/// <param name="tileY"></param>
+		/// <param name="offsetX"></param>
+		/// <param name="offsetY"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <returns>True if the player should not be allowed to place the tile object</returns>
+		public static bool CheckTileObjectPermission(TSPlayer player, int tileX, int tileY, int offsetX, int offsetY, int width, int height)
+		{
+			//if (newtile.Type < TileObjectData._data.Count && (tileObjectData = TileObjectData._data[newtile.Type]) != null)
+
+			for (int x = offsetX; x < offsetX + width; x++)
+			{
+				for (int y = offsetY; y < offsetY + height; y++)
+				{
+					if (CheckTilePermission(player, tileX + x, tileY + y))
+					{
+						return true;
+					}
+				}
+			}
+
 			return false;
 		}
 
