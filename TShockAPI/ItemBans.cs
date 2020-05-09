@@ -73,28 +73,72 @@ namespace TShockAPI
     /// <param name="args">The standard event arguments.</param>
     internal void OnSecondlyUpdate(EventArgs args)
     {
-      DisableFlags flags = TShock.Config.DisableSecondUpdateLogs ? DisableFlags.WriteToConsole : DisableFlags.WriteToLogAndConsole;
+      DisableFlags disableFlags = TShock.Config.DisableSecondUpdateLogs ? DisableFlags.WriteToConsole : DisableFlags.WriteToLogAndConsole;
 
       foreach (TSPlayer player in TShock.Players)
       {
-        // SSC inventory/held item check (logged out)
-        if (Main.ServerSideCharacter && !player.IsLoggedIn)
+        if (player == null || !player.Active)
         {
-          if (player.IsBeingDisabled())
-          {
-            player.Disable(flags: flags);
-          }
-          else if (DataModel.ItemIsBanned(EnglishLanguage.GetItemNameById(player.TPlayer.inventory[player.TPlayer.selectedItem].netID), player))
-          {
-            player.Disable($"holding banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].Name}", flags);
-            player.SendErrorMessage($"You are holding a banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].Name}");
-          }
           continue;
         }
 
-        // Normal item ban check
-        if (!Main.ServerSideCharacter || (Main.ServerSideCharacter || player.IsLoggedIn))
+        // Untaint now, re-taint if they fail the check.
+        UnTaint(player);
+
+        // Held item check / typical check that we do for item bans
+        if (DataModel.ItemIsBanned(EnglishLanguage.GetItemNameById(player.TPlayer.inventory[player.TPlayer.selectedItem].netID), player))
         {
+          string itemName = player.TPlayer.inventory[player.TPlayer.selectedItem].Name;
+          player.Disable($"holding banned item: {itemName}", disableFlags);
+          SendCorrectiveMessage(player, itemName);
+        }
+
+        // If SSC isn't enabled OR if SSC is enabled and the player is logged in
+        // In a case like this, we do the full check.
+        if (!Main.ServerSideCharacter || (Main.ServerSideCharacter && player.IsLoggedIn))
+        {
+          // The Terraria inventory is composed of a multicultural set of arrays
+          // with various different contents and beliefs
+
+          // Armor ban checks
+          foreach (Item item in player.TPlayer.armor)
+          {
+            if (DataModel.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), player))
+            {
+              Taint(player);
+              SendCorrectiveMessage(player, item.Name);
+            }
+          }
+
+          // Dye ban checks
+          foreach (Item item in player.TPlayer.dye)
+          {
+            if (DataModel.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), player))
+            {
+              Taint(player);
+              SendCorrectiveMessage(player, item.Name);
+            }
+          }
+
+          // Misc equip ban checks
+          foreach (Item item in player.TPlayer.miscEquips)
+          {
+            if (DataModel.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), player))
+            {
+              Taint(player);
+              SendCorrectiveMessage(player, item.Name);
+            }
+          }
+
+          // Misc dye ban checks
+          foreach (Item item in player.TPlayer.miscDyes)
+          {
+            if (DataModel.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), player))
+            {
+              Taint(player);
+              SendCorrectiveMessage(player, item.Name);
+            }
+          }
         }
       }
 
@@ -104,5 +148,25 @@ namespace TShockAPI
       LastTimelyRun = DateTime.UtcNow;
     }
 
+    private void UnTaint(TSPlayer player)
+    {
+      player.IsDisabledForBannedWearable = false;
+    }
+
+    private void Taint(TSPlayer player)
+    {
+      // Arbitrarily does things to the player
+      player.SetBuff(BuffID.Frozen, 330, true);
+      player.SetBuff(BuffID.Stoned, 330, true);
+      player.SetBuff(BuffID.Webbed, 330, true);
+
+      // Marks them as a target for future disables
+      player.IsDisabledForBannedWearable = true;
+    }
+
+    private void SendCorrectiveMessage(TSPlayer player, string itemName)
+    {
+      player.SendErrorMessage("{0} is banned! Remove it!", itemName);
+    }
   }
 }

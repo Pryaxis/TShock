@@ -81,8 +81,8 @@ namespace TShockAPI
 		/// <summary>Bans - Static reference to the ban manager for accessing bans & related functions.</summary>
 		public static BanManager Bans;
 		/// <summary>Warps - Static reference to the warp manager for accessing the warp system.</summary>
-		public static WarpManager Warps;
-		/// <summary>Regions - Static reference to the region manager for accessing the region system.</summary>
+		public static WarpManager Warps
+;		/// <summary>Regions - Static reference to the region manager for accessing the region system.</summary>
 		public static RegionManager Regions;
 		/// <summary>Backups - Static reference to the backup manager for accessing the backup system.</summary>
 		public static BackupManager Backups;
@@ -1066,73 +1066,10 @@ namespace TShockAPI
 						{
 							player.IsDisabledForStackDetection = player.HasHackedItemStacks(shouldWarnPlayer: true);
 						}
-						string check = "none";
-						// Please don't remove this for the time being; without it, players wearing banned equipment will only get debuffed once
-						foreach (Item item in player.TPlayer.armor)
-						{
-							if (Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), player))
-							{
-								player.SetBuff(BuffID.Frozen, 330, true);
-								player.SetBuff(BuffID.Stoned, 330, true);
-								player.SetBuff(BuffID.Webbed, 330, true);
-								check = "Remove armor/accessory " + item.Name;
-
-								player.SendErrorMessage("You are wearing banned equipment. {0}", check);
-								break;
-							}
-						}
-						foreach (Item item in player.TPlayer.dye)
-						{
-							if (Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), player))
-							{
-								player.SetBuff(BuffID.Frozen, 330, true);
-								player.SetBuff(BuffID.Stoned, 330, true);
-								player.SetBuff(BuffID.Webbed, 330, true);
-								check = "Remove dye " + item.Name;
-
-								player.SendErrorMessage("You are wearing banned equipment. {0}", check);
-								break;
-							}
-						}
-						foreach (Item item in player.TPlayer.miscEquips)
-						{
-							if (Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), player))
-							{
-								player.SetBuff(BuffID.Frozen, 330, true);
-								player.SetBuff(BuffID.Stoned, 330, true);
-								player.SetBuff(BuffID.Webbed, 330, true);
-								check = "Remove misc equip " + item.Name;
-
-								player.SendErrorMessage("You are wearing banned equipment. {0}", check);
-								break;
-							}
-						}
-						foreach (Item item in player.TPlayer.miscDyes)
-						{
-							if (Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), player))
-							{
-								player.SetBuff(BuffID.Frozen, 330, true);
-								player.SetBuff(BuffID.Stoned, 330, true);
-								player.SetBuff(BuffID.Webbed, 330, true);
-								check = "Remove misc dye " + item.Name;
-
-								player.SendErrorMessage("You are wearing banned equipment. {0}", check);
-								break;
-							}
-						}
-						if (check != "none")
-							player.IsDisabledForBannedWearable = true;
-						else
-							player.IsDisabledForBannedWearable = false;
 
 						if (player.IsBeingDisabled())
 						{
 							player.Disable(flags: flags);
-						}
-						else if (Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(player.TPlayer.inventory[player.TPlayer.selectedItem].netID), player))
-						{
-							player.Disable($"holding banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].Name}", flags);
-							player.SendErrorMessage($"You are holding a banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].Name}");
 						}
 					}
 				}
