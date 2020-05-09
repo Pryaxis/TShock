@@ -85,7 +85,7 @@ namespace TShockAPI
         // Untaint now, re-taint if they fail the check.
         UnTaint(player);
 
-        // Held item check / typical check that we do for item bans
+        // No matter the player type, we do a check when a player is holding an item that's banned.
         if (DataModel.ItemIsBanned(EnglishLanguage.GetItemNameById(player.TPlayer.inventory[player.TPlayer.selectedItem].netID), player))
         {
           string itemName = player.TPlayer.inventory[player.TPlayer.selectedItem].Name;
@@ -94,7 +94,7 @@ namespace TShockAPI
         }
 
         // If SSC isn't enabled OR if SSC is enabled and the player is logged in
-        // In a case like this, we do the full check.
+        // In a case like this, we do the full check too.
         if (!Main.ServerSideCharacter || (Main.ServerSideCharacter && player.IsLoggedIn))
         {
           // The Terraria inventory is composed of a multicultural set of arrays
