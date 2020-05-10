@@ -767,7 +767,7 @@ namespace TShockAPI
 			PlayerSpawn.Invoke(null, args);
 			return args.Handled;
 		}
-		
+
 		/// <summary>
 		/// For use in a ChestItemChange event
 		/// </summary>
@@ -816,7 +816,7 @@ namespace TShockAPI
 			ChestItemChange.Invoke(null, args);
 			return args.Handled;
 		}
-		
+
 		/// <summary>
 		/// For use with a ChestOpen event
 		/// </summary>
@@ -2415,7 +2415,7 @@ namespace TShockAPI
 
 			Item item = new Item();
 			item.netDefaults(type);
-			if (stacks > item.maxStack || TShock.Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), args.Player))
+			if (stacks > item.maxStack)
 			{
 				return true;
 			}
