@@ -81,8 +81,8 @@ namespace TShockAPI
 		/// <summary>Bans - Static reference to the ban manager for accessing bans & related functions.</summary>
 		public static BanManager Bans;
 		/// <summary>Warps - Static reference to the warp manager for accessing the warp system.</summary>
-		public static WarpManager Warps
-;		/// <summary>Regions - Static reference to the region manager for accessing the region system.</summary>
+		public static WarpManager Warps;
+		/// <summary>Regions - Static reference to the region manager for accessing the region system.</summary>
 		public static RegionManager Regions;
 		/// <summary>Backups - Static reference to the backup manager for accessing the backup system.</summary>
 		public static BackupManager Backups;
