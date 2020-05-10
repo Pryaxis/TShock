@@ -344,7 +344,7 @@ namespace TShockAPI
 			PlayerUpdate.Invoke(null, args);
 			return args.Handled;
 		}
-		
+
 		/// <summary>
 		/// For use in a PlayerHP event
 		/// </summary>
@@ -2054,15 +2054,6 @@ namespace TShockAPI
 
 			if (control[5])
 			{
-				// ItemBan system
-				string itemName = args.TPlayer.inventory[item].Name;
-				if (TShock.Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(args.TPlayer.inventory[item].netID), args.Player))
-				{
-					control[5] = false;
-					args.Player.Disable("using a banned item ({0})".SFormat(itemName), DisableFlags.WriteToLogAndConsole);
-					args.Player.SendErrorMessage("You cannot use {0} on this server. Your actions are being ignored.", itemName);
-				}
-
 				// Reimplementation of normal Terraria stuff?
 				if (args.TPlayer.inventory[item].Name == "Mana Crystal" && args.Player.TPlayer.statManaMax <= 180)
 				{

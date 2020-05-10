@@ -57,6 +57,7 @@ namespace TShockAPI
       Plugin = plugin;
 
       ServerApi.Hooks.GameUpdate.Register(plugin, OnGameUpdate);
+      GetDataHandlers.PlayerUpdate += OnPlayerUpdate;
     }
 
     /// <summary>Called on the game update loop (the XNA tickrate).</summary>
@@ -146,6 +147,34 @@ namespace TShockAPI
       // We do this at the end so that the task can't re-execute faster than we expected.
       // (If we did this at the start of the method, the method execution would count towards the timer.)
       LastTimelyRun = DateTime.UtcNow;
+    }
+
+    internal void OnPlayerUpdate(object sender, PlayerUpdateEventArgs args)
+    {
+      DisableFlags disableFlags = TShock.Config.DisableSecondUpdateLogs ? DisableFlags.WriteToConsole : DisableFlags.WriteToLogAndConsole;
+      bool useItem = ((BitsByte) args.Control)[5];
+      TSPlayer player = args.Player;
+      string itemName = player.TPlayer.inventory[args.Item].Name;
+
+      if (!useItem)
+      {
+        args.Handled = false;
+      }
+
+      if (DataModel.ItemIsBanned(EnglishLanguage.GetItemNameById(player.TPlayer.inventory[args.Item].netID), args.Player))
+      {
+        player.TPlayer.controlUseItem = false;
+        player.Disable($"holding banned item: {itemName}", disableFlags);
+
+        SendCorrectiveMessage(player, itemName);
+
+        player.TPlayer.Update(player.TPlayer.whoAmI);
+        NetMessage.SendData((int)PacketTypes.PlayerUpdate, -1, player.Index, NetworkText.Empty, player.Index);
+
+        args.Handled = true;
+      }
+
+      args.Handled = false;
     }
 
     private void UnTaint(TSPlayer player)
