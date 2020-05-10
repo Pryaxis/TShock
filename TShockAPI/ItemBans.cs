@@ -58,7 +58,6 @@ namespace TShockAPI
 
 			ServerApi.Hooks.GameUpdate.Register(plugin, OnGameUpdate);
 			GetDataHandlers.PlayerUpdate += OnPlayerUpdate;
-			GetDataHandlers.ChestItemChange += OnChestItemChange;
 		}
 
 		/// <summary>Called on the game update loop (the XNA tickrate).</summary>
@@ -172,24 +171,6 @@ namespace TShockAPI
 				player.TPlayer.Update(player.TPlayer.whoAmI);
 				NetMessage.SendData((int)PacketTypes.PlayerUpdate, -1, player.Index, NetworkText.Empty, player.Index);
 
-				args.Handled = true;
-			}
-
-			args.Handled = false;
-		}
-
-		internal void OnChestItemChange(object sender, ChestItemEventArgs args)
-		{
-			Item item = new Item();
-			item.netDefaults(args.Type);
-
-			Console.WriteLine("Chest!");
-			Console.WriteLine("Name: {0}, Chest ID: {1}, Slot: {2}, Stacks: {3}, Prefix: {4}, Type: {5}", item.Name, args.ID, args.Slot, args.Stacks, args.Prefix, args.Type);
-
-			if (DataModel.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), args.Player))
-			{
-				Console.WriteLine("Handling event");
-				SendCorrectiveMessage(args.Player, item.Name);
 				args.Handled = true;
 			}
 
