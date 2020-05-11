@@ -157,11 +157,6 @@ namespace TShockAPI
 			TSPlayer player = args.Player;
 			string itemName = player.TPlayer.inventory[args.Item].Name;
 
-			if (!useItem)
-			{
-				args.Handled = false;
-			}
-
 			if (DataModel.ItemIsBanned(EnglishLanguage.GetItemNameById(player.TPlayer.inventory[args.Item].netID), args.Player))
 			{
 				player.TPlayer.controlUseItem = false;
@@ -173,9 +168,11 @@ namespace TShockAPI
 				NetMessage.SendData((int)PacketTypes.PlayerUpdate, -1, player.Index, NetworkText.Empty, player.Index);
 
 				args.Handled = true;
+				return;
 			}
 
 			args.Handled = false;
+			return;
 		}
 
 		internal void OnChestItemChange(object sender, ChestItemEventArgs args)
@@ -183,17 +180,16 @@ namespace TShockAPI
 			Item item = new Item();
 			item.netDefaults(args.Type);
 
-			Console.WriteLine("Chest!");
-			Console.WriteLine("Name: {0}, Chest ID: {1}, Slot: {2}, Stacks: {3}, Prefix: {4}, Type: {5}", item.Name, args.ID, args.Slot, args.Stacks, args.Prefix, args.Type);
 
 			if (DataModel.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), args.Player))
 			{
-				Console.WriteLine("Handling event");
 				SendCorrectiveMessage(args.Player, item.Name);
 				args.Handled = true;
+				return;
 			}
 
 			args.Handled = false;
+			return;
 		}
 
 		private void UnTaint(TSPlayer player)
