@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SQLite;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -28,7 +29,6 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using MaxMind;
-using Mono.Data.Sqlite;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using Rests;
@@ -44,6 +44,7 @@ using Microsoft.Xna.Framework;
 using TShockAPI.Sockets;
 using TShockAPI.CLI;
 using TShockAPI.Localization;
+using TraceLevel = System.Diagnostics.TraceLevel;
 
 namespace TShockAPI
 {
@@ -262,7 +263,7 @@ namespace TShockAPI
 				if (Config.StorageType.ToLower() == "sqlite")
 				{
 					string sql = Path.Combine(SavePath, "tshock.sqlite");
-					DB = new SqliteConnection(string.Format("uri=file://{0},Version=3", sql));
+					DB = new SQLiteConnection(string.Format("uri=file://{0}", sql));
 				}
 				else if (Config.StorageType.ToLower() == "mysql")
 				{
