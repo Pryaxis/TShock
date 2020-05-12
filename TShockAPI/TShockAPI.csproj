@@ -1,15 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net472;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>net48;netcoreapp3.1</TargetFrameworks>
     <LangVersion>8</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Company>Pryaxis &amp; TShock Contributors</Company>
     <Copyright>Copyright © Pryaxis &amp; TShock Contributors 2011-2019</Copyright>
     <AssemblyVersion>4.3.26</AssemblyVersion>
     <FileVersion>4.3.26</FileVersion>
-    <PluginDir>$(SolutionDir)/TerrariaServerAPI/TerrariaServerAPI/bin/$(Configuration)/$(TargetFramework)/ServerPlugins</PluginDir>
     <IsDotNetFramework Condition=" !$(TargetFramework.StartsWith(netcoreapp)) ">true</IsDotNetFramework>
     <IsDotNetCore Condition=" $(TargetFramework.StartsWith(netcoreapp)) ">true</IsDotNetCore>
+    <PluginDir Condition=" '$(IsDotNetCore)' == 'true' ">$(SolutionDir)/TerrariaServerAPI/TerrariaServerAPI/bin/$(Configuration)/$(TargetFramework)/ServerPlugins</PluginDir>
+    <PluginDir Condition=" '$(IsDotNetFramework)' == 'true' ">$(SolutionDir)/TerrariaServerAPI/TerrariaServerAPI/bin/$(Configuration)/$(TargetFramework)/ServerPlugins</PluginDir>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\TerrariaServerAPI\TerrariaServerAPI\TerrariaServerAPI.csproj" />
@@ -34,7 +35,18 @@
   </ItemGroup>
   <ItemGroup>
     <ReferenceBinaries Include="$(OutDir)/*.dll" />
-    <ReferenceBinaries Include="$(OutDir)/*/*.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <EntityDeploy Remove="bin\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="bin\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Remove="bin\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="bin\**" />
   </ItemGroup>
   <Target Name="Copy" AfterTargets="Build">
     <MakeDir Directories="$(PluginDir)" />
@@ -42,7 +54,9 @@
     <Copy SourceFiles="$(OutDir)/TShockAPI.pdb" DestinationFolder="$(PluginDir)" />
     <Copy SourceFiles="$(OutDir)/HttpServer.dll" DestinationFolder="$(PluginDir)" />
     <Copy SourceFiles="$(OutDir)/TShockAPI.deps.json" DestinationFolder="$(PluginDir)" Condition=" '$(IsDotNetCore)' == 'true' " />
-    <Copy SourceFiles="@(ReferenceBinaries)" DestinationFiles="@(ReferenceBinaries->'$(PluginDir)\%(RecursiveDir)%(Filename)%(Extension)')" Condition=" '$(IsDotNetFramework)' == 'true' " />
+    <Copy SourceFiles="$(OutDir)/x86/SQLite.Interop.dll" DestinationFolder="$(PluginDir)/../x86" Condition=" '$(IsDotNetFramework)' == 'true' " />
+    <Copy SourceFiles="$(OutDir)/x64/SQLite.Interop.dll" DestinationFolder="$(PluginDir)/../x64" Condition=" '$(IsDotNetFramework)' == 'true' " />
+    <Copy SourceFiles="@(ReferenceBinaries)" DestinationFiles="@(ReferenceBinaries->'$(PluginDir)/%(RecursiveDir)%(Filename)%(Extension)')" Condition=" '$(IsDotNetFramework)' == 'true' " />
   </Target>
 </Project>
 
