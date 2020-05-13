@@ -757,7 +757,7 @@ namespace TShockAPI
 				return;
 			}
 		}
-		
+
 		/// <summary>Bouncer's projectile trigger hook stops world damaging projectiles from destroying the world.</summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">The packet arguments that the event has.</param>
@@ -803,8 +803,28 @@ namespace TShockAPI
 				return;
 			}
 
-			bool hasPermission = args.Player.HasProjectilePermission(index, type);
-			if (!TShock.Config.IgnoreProjUpdate && !hasPermission && !args.Player.HasPermission(Permissions.ignoreprojectiledetection))
+			// Main.projHostile contains projectiles that can harm players
+			// without PvP enabled and belong to enemy mobs, so they shouldn't be
+			// possible for players to create. (Source: Ijwu, QuiCM)
+			Projectile tempProjectile = new Projectile();
+			tempProjectile.SetDefaults(type);
+
+			if (Main.projHostile[type])
+			{
+				args.Player.RemoveProjectile(ident, owner);
+				args.Handled = true;
+				return;
+			}
+
+			// Tombstones should never be permitted by players
+			if (type == ProjectileID.Tombstone)
+			{
+				args.Player.RemoveProjectile(ident, owner);
+				args.Handled = true;
+				return;
+			}
+
+			if (!TShock.Config.IgnoreProjUpdate && !args.Player.HasPermission(Permissions.ignoreprojectiledetection))
 			{
 				if (type == ProjectileID.BlowupSmokeMoonlord
 					|| type == ProjectileID.PhantasmalEye
@@ -856,8 +876,7 @@ namespace TShockAPI
 				}
 			}
 
-			if (hasPermission &&
-				(type == ProjectileID.Bomb
+			if ((type == ProjectileID.Bomb
 				|| type == ProjectileID.Dynamite
 				|| type == ProjectileID.StickyBomb
 				|| type == ProjectileID.StickyDynamite))
@@ -866,7 +885,7 @@ namespace TShockAPI
 				args.Player.RecentFuse = 10;
 			}
 		}
-		
+
 		/// <summary>Handles the NPC Strike event for Bouncer.</summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">The packet arguments that the event has.</param>

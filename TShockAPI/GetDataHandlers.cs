@@ -2355,12 +2355,24 @@ namespace TShockAPI
 				return true;
 			}
 
-			var type = Main.projectile[index].type;
+			short type = (short) Main.projectile[index].type;
 
 			// TODO: This needs to be moved somewhere else.
-			if (!args.Player.HasProjectilePermission(index, type) && type != 102 && type != 100 && !TShock.Config.IgnoreProjKill)
+
+			if (type == ProjectileID.Tombstone)
 			{
-				args.Player.Disable("Does not have projectile permission to kill projectile.", DisableFlags.WriteToLogAndConsole);
+				args.Player.RemoveProjectile(ident, owner);
+				return true;
+			}
+
+			if (TShock.ProjectileBans.ProjectileIsBanned(type, args.Player) && !TShock.Config.IgnoreProjKill)
+			{
+				// According to 2012 deathmax, this is a workaround to fix skeletron prime issues
+				// https://github.com/Pryaxis/TShock/commit/a5aa9231239926f361b7246651e32144bbf28dda
+				if (type == ProjectileID.Bomb || type == ProjectileID.DeathLaser)
+				{
+					return false;
+				}
 				args.Player.RemoveProjectile(ident, owner);
 				return true;
 			}

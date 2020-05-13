@@ -1,4 +1,4 @@
-﻿/*
+/*
 TShock, a server mod for Terraria
 Copyright (C) 2011-2019 Pryaxis & TShock Contributors
 
@@ -3274,7 +3274,31 @@ namespace TShockAPI
 						}
 						else
 						{
-							TShock.Itembans.AddNewBan(EnglishLanguage.GetItemNameById(items[0].type));
+							// Yes this is required because of localization
+							// User may have passed in localized name but itembans works on English names
+							string nameForStorage = EnglishLanguage.GetItemNameById(items[0].type);
+							TShock.Itembans.AddNewBan(nameForStorage);
+
+							// It was decided in Telegram that we would continue to ban
+							// projectiles based on whether or not their associated item was
+							// banned. However, it was also decided that we'd change the way
+							// this worked: in particular, we'd make it so that the item ban
+							// system just adds things to the projectile ban system at the
+							// command layer instead of inferring the state of projectile
+							// bans based on the state of the item ban system.
+
+							if (nameForStorage == "Dirt Rod")
+							{
+								TShock.ProjectileBans.AddNewBan(ProjectileID.DirtBall);
+							}
+
+							if (nameForStorage == "Sandgun")
+							{
+								TShock.ProjectileBans.AddNewBan(ProjectileID.SandBallGun);
+								TShock.ProjectileBans.AddNewBan(ProjectileID.EbonsandBallGun);
+								TShock.ProjectileBans.AddNewBan(ProjectileID.PearlSandBallGun);
+							}
+
 							args.Player.SendSuccessMessage("Banned " + items[0].Name + ".");
 						}
 					}
