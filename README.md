@@ -113,8 +113,7 @@ You need to get the source code. Using git, [clone this repository](https://help
 
 The next set of instructions are the technical details to setup both the Terraria Server API and TShock. More importantly, the Terraria API steps here are written under the assumption that you are building TShock primarily. Before you start, you need to **initialize the git submodules** and then **update them**. You need to use the following commands to do this.
 
-          $ git submodule init
-          $ git submodule update
+          $ git submodule update --init
 
 If you're using [GitHub Desktop](https://desktop.github.com), you need to perform additional steps. After cloning the TShock repository, go to the `Repository` menu and select `Open in Command Prompt`. If you don't have Git (not GitHub Desktop) installed, you can follow the prompts to to install Git for your command line. Once Git is installed, use this same process to get to the command prompt. Then, run the above commands. 
 
@@ -133,10 +132,6 @@ On Windows, you need to install [Visual Studio Community Edition](https://www.vi
 1. Hit the "Start" button in Visual Studio to run the `TShock Mintaka Bootstrapper`.
 
 1. Watch the output window and make sure that a non-zero number of modifications ran. When it completes, you have successfully bootstrapped `TShock Mintaka`.
-
-1. Set the `TerrariaServerAPI` project as the StartUp project.
-
-1. Build the solution in either debug or release mode, depending on your preference.
 
 1. Close `TShock.4.OTAPI.sln` in Visual Studio. 
 
