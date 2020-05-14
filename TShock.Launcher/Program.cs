@@ -16,6 +16,13 @@ namespace TShock.Launcher
 	{
 		static void Main(string[] args)
 		{
+			AppDomain.CurrentDomain.AssemblyResolve += (sender, eventArgs) =>
+			{
+				if (eventArgs.Name.StartsWith("TerrariaServer,"))
+					return typeof(ServerApi).Assembly;
+				return null;
+			};
+
 			SetupLogManager();
 
 			ServerApi.PluginLoader = new PluginLoader(args.Any(a => a == "-ignoreversion"));
