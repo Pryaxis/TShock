@@ -28,20 +28,20 @@ jobs:
         run: dotnet build -f netcoreapp3.1 -c Debug ./TShock.Launcher/TShock.Launcher.csproj
       - name: Build TShock Release
         run: dotnet build -f netcoreapp3.1 -c Release ./TShock.Launcher/TShock.Launcher.csproj
-        
-      - name: Publish Debug any
-        run: dotnet publish -f netcoreapp3.1 -c Debug ./TShock.Launcher/TShock.Launcher.csproj
-      - uses: actions/upload-artifact@master
-        with:
-          name: ExperimentalTShock(any-debug)
-          path: TShock.Launcher/bin/Debug/netcoreapp3.1/
-      - name: Publish Release any
-        run: dotnet publish -f netcoreapp3.1 -c Release ./TShock.Launcher/TShock.Launcher.csproj
-      - uses: actions/upload-artifact@master
-        with:
-          name: ExperimentalTShock(any-release)
-          path: TShock.Launcher/bin/Release/netcoreapp3.1/
 
+      - name: Publish Debug win-x64
+        run: dotnet publish -f netcoreapp3.1 -c Debug -r win-x64 --self-contained true ./TShock.Launcher/TShock.Launcher.csproj
+      - uses: actions/upload-artifact@master
+        with:
+          name: ExperimentalTShock(win-x64-debug)
+          path: TShock.Launcher/bin/Debug/netcoreapp3.1/win-x64/publish
+      - name: Publish Release win-x64
+        run: dotnet publish -f netcoreapp3.1 -c Release -r win-x64 --self-contained true ./TShock.Launcher/TShock.Launcher.csproj
+      - uses: actions/upload-artifact@master
+        with:
+          name: ExperimentalTShock(win-x64-release)
+          path: TShock.Launcher/bin/Release/netcoreapp3.1/win-x64/publish/
+          
       - name: Publish Debug linux-x64
         run: dotnet publish -f netcoreapp3.1 -c Debug -r linux-x64 --self-contained true ./TShock.Launcher/TShock.Launcher.csproj
       - uses: actions/upload-artifact@master
@@ -53,4 +53,30 @@ jobs:
       - uses: actions/upload-artifact@master
         with:
           name: ExperimentalTShock(linux-x64-release)
-          path: TShock.Launcher/bin/Release/netcoreapp3.1/linux-x64/publish
+          path: TShock.Launcher/bin/Release/netcoreapp3.1/linux-x64/publish/
+
+      - name: Publish Debug osx-x64
+        run: dotnet publish -f netcoreapp3.1 -c Debug -r osx-x64 --self-contained true ./TShock.Launcher/TShock.Launcher.csproj
+      - uses: actions/upload-artifact@master
+        with:
+          name: ExperimentalTShock(osx-x64-debug)
+          path: TShock.Launcher/bin/Debug/netcoreapp3.1/osx-x64/publish/
+      - name: Publish Release osx-x64
+        run: dotnet publish -f netcoreapp3.1 -c Release -r osx-x64 --self-contained true ./TShock.Launcher/TShock.Launcher.csproj
+      - uses: actions/upload-artifact@master
+        with:
+          name: ExperimentalTShock(osx-x64-release)
+          path: TShock.Launcher/bin/Release/netcoreapp3.1/osx-x64/publish/
+
+      - name: Publish Debug linux-arm
+        run: dotnet publish -f netcoreapp3.1 -c Debug -r linux-arm --self-contained true ./TShock.Launcher/TShock.Launcher.csproj
+      - uses: actions/upload-artifact@master
+        with:
+          name: ExperimentalTShock(linux-arm-debug)
+          path: TShock.Launcher/bin/Debug/netcoreapp3.1/linux-arm/publish/
+      - name: Publish Release linux-arm
+        run: dotnet publish -f netcoreapp3.1 -c Release -r linux-arm --self-contained true ./TShock.Launcher/TShock.Launcher.csproj
+      - uses: actions/upload-artifact@master
+        with:
+          name: ExperimentalTShock(linux-arm-release)
+          path: TShock.Launcher/bin/Release/netcoreapp3.1/linux-arm/publish/
