@@ -832,7 +832,6 @@ namespace TShockAPI
 			ConfigFile.DumpDescriptions();
 			Permissions.DumpDescriptions();
 			ServerSideCharacters.ServerSideConfig.DumpDescriptions();
-			RestManager.DumpDescriptions();
 			DumpBuffs("BuffList.txt");
 			DumpItems("Items-1_0.txt", 1, 235);
 			DumpItems("Items-1_1.txt", 235, 604);
@@ -853,7 +852,7 @@ namespace TShockAPI
 			for(int i = 0; i < Main.recipe.Length; i++)
 				Main.recipe[i] = new Recipe();
 		}
-		
+
 		/// <summary>Dumps a matrix of all permissions & all groups in Markdown table format.</summary>
 		/// <param name="path">The save destination.</param>
 		internal void DumpPermissionMatrix(string path)

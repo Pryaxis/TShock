@@ -23,7 +23,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
-using Rests;
 
 namespace TShockAPI
 {
@@ -212,18 +211,6 @@ namespace TShockAPI
 		/// <summary>Whether or not to announce a player's geographic location on join, based on their IP.</summary>
 		[Description("Whether or not to announce a player's geographic location on join, based on their IP.")]
 		public bool EnableGeoIP;
-
-		/// <summary>Whether or not to require token authentication to use the public REST API endpoints.</summary>
-		[Description("Whether or not to require token authentication to use the public REST API endpoints.")]
-		public bool EnableTokenEndpointAuthentication;
-
-		/// <summary>Enable or disable the REST API.</summary>
-		[Description("Enable or disable the REST API.")]
-		public bool RestApiEnabled;
-
-		/// <summary>The port used by the REST API.</summary>
-		[Description("The port used by the REST API.")]
-		public int RestApiPort = 7878;
 
 		/// <summary>Disables tombstone dropping during death for all players.</summary>
 		[Description("Disables tombstone dropping during death for all players.")]
@@ -425,17 +412,9 @@ namespace TShockAPI
 		[Description("The RGB values used for the color of broadcast messages.\n#.#.# = Red/Blue/Green\nMax value: 255")]
 		public int[] BroadcastRGB = { 127, 255, 212 };
 
-		/// <summary>A dictionary of REST tokens that external applications may use to make queries to your server.</summary>
-		[Description("A dictionary of REST tokens that external applications may use to make queries to your server.")]
-		public Dictionary<string, SecureRest.TokenData> ApplicationRestTokens = new Dictionary<string, SecureRest.TokenData>();
-
 		/// <summary>The number of reserved slots past your max server slots that can be joined by reserved players.</summary>
 		[Description("The number of reserved slots past your max server slots that can be joined by reserved players.")]
 		public int ReservedSlots = 20;
-
-		/// <summary>Whether or not to log REST API connections.</summary>
-		[Description("Whether or not to log REST API connections.")]
-		public bool LogRest = false;
 
 		/// <summary>The number of seconds a player must wait before being respawned.</summary>
 		[Description("The number of seconds a player must wait before being respawned.")]
@@ -507,14 +486,6 @@ namespace TShockAPI
 		/// <summary>The minimum password length for new user accounts. Can never be lower than 4.</summary>
 		[Description("The minimum password length for new user accounts. Can never be lower than 4.")]
 		public int MinimumPasswordLength = 4;
-
-		/// <summary>The maximum REST requests in the bucket before denying requests. Minimum value is 5.</summary>
-		[Description("The maximum REST requests in the bucket before denying requests. Minimum value is 5.")]
-		public int RESTMaximumRequestsPerInterval = 5;
-
-		/// <summary>How often in minutes the REST requests bucket is decreased by one. Minimum value is 1 minute.</summary>
-		[Description("How often in minutes the REST requests bucket is decreased by one. Minimum value is 1 minute.")]
-		public int RESTRequestBucketDecreaseIntervalMinutes = 1;
 
 		/// <summary>Whether or not to show backup auto save messages.</summary>
 		[Description("Whether or not to show backup auto save messages.")]

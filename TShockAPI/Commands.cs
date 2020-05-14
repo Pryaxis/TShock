@@ -592,10 +592,6 @@ namespace TShockAPI
 			{
 				HelpText = "Replies to a PM sent to you."
 			});
-			add(new Command(Rests.RestPermissions.restmanage, ManageRest, "rest")
-			{
-				HelpText = "Manages the REST API."
-			});
 			add(new Command(Permissions.slap, Slap, "slap")
 			{
 				HelpText = "Slaps a player, dealing damage."
@@ -1317,7 +1313,7 @@ namespace TShockAPI
 							args.Player.SendMultipleMatchError(players.Select(p => p.Name));
 							return;
 						}
-						
+
 						UserAccount offlineUserAccount = TShock.UserAccounts.GetUserAccountByName(args.Parameters[1]);
 
 						// Storage variable to determine if the command executor is the server console
@@ -1338,8 +1334,8 @@ namespace TShockAPI
 							if (args.Parameters[2] != "0")
 							{
 								parsedOkay = TShock.Utils.TryParseTime(args.Parameters[2], out banLengthInSeconds);
-							} 
-							else 
+							}
+							else
 							{
 								parsedOkay = true;
 							}
@@ -1409,8 +1405,8 @@ namespace TShockAPI
 									args.Player.SendErrorMessage("Note: An account named with this IP address also exists.");
 									args.Player.SendErrorMessage("Note: It will also be banned.");
 								}
-							} 
-							else 
+							}
+							else
 							{
 								// Apparently there is no way to not IP ban someone
 								// This means that where we would normally just ban a "character name" here
@@ -1435,7 +1431,7 @@ namespace TShockAPI
 							// This needs to be fixed in a future implementation.
 							targetGeneralizedName = offlineUserAccount.Name;
 
-							if (TShock.Groups.GetGroupByName(offlineUserAccount.Group).HasPermission(Permissions.immunetoban) && 
+							if (TShock.Groups.GetGroupByName(offlineUserAccount.Group).HasPermission(Permissions.immunetoban) &&
 								!callerIsServerConsole)
 							{
 								args.Player.SendErrorMessage("Permission denied. Target {0} is immune to ban.", targetGeneralizedName);
@@ -1450,7 +1446,7 @@ namespace TShockAPI
 
 							string lastIP = JsonConvert.DeserializeObject<List<string>>(offlineUserAccount.KnownIps).Last();
 
-							success = 
+							success =
 								TShock.Bans.AddBan(lastIP,
 									"", offlineUserAccount.UUID, offlineUserAccount.Name, banReason, false, args.Player.Account.Name,
 									banLengthInSeconds == 0 ? "" : DateTime.UtcNow.AddSeconds(banLengthInSeconds).ToString("s"));
@@ -1917,59 +1913,6 @@ namespace TShockAPI
 			{
 				//swallow the exception
 				return;
-			}
-		}
-
-		private static void ManageRest(CommandArgs args)
-		{
-			string subCommand = "help";
-			if (args.Parameters.Count > 0)
-				subCommand = args.Parameters[0];
-
-			switch (subCommand.ToLower())
-			{
-				case "listusers":
-					{
-						int pageNumber;
-						if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out pageNumber))
-							return;
-
-						Dictionary<string, int> restUsersTokens = new Dictionary<string, int>();
-						foreach (Rests.SecureRest.TokenData tokenData in TShock.RestApi.Tokens.Values)
-						{
-							if (restUsersTokens.ContainsKey(tokenData.Username))
-								restUsersTokens[tokenData.Username]++;
-							else
-								restUsersTokens.Add(tokenData.Username, 1);
-						}
-
-						List<string> restUsers = new List<string>(
-							restUsersTokens.Select(ut => string.Format("{0} ({1} tokens)", ut.Key, ut.Value)));
-
-						PaginationTools.SendPage(
-							args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(restUsers), new PaginationTools.Settings
-							{
-								NothingToDisplayString = "There are currently no active REST users.",
-								HeaderFormat = "Active REST Users ({0}/{1}):",
-								FooterFormat = "Type {0}rest listusers {{0}} for more.".SFormat(Specifier)
-							}
-						);
-
-						break;
-					}
-				case "destroytokens":
-					{
-						TShock.RestApi.Tokens.Clear();
-						args.Player.SendSuccessMessage("All REST tokens have been destroyed.");
-						break;
-					}
-				default:
-					{
-						args.Player.SendInfoMessage("Available REST Sub-Commands:");
-						args.Player.SendMessage("listusers - Lists all REST users and their current active tokens.", Color.White);
-						args.Player.SendMessage("destroytokens - Destroys all current REST tokens.", Color.White);
-						break;
-					}
 			}
 		}
 
@@ -4623,7 +4566,7 @@ namespace TShockAPI
 								args.Player.SendErrorMessage("Region \"{0}\" already exists.", newName);
 								break;
 							}
-							
+
 							if(TShock.Regions.RenameRegion(oldName, newName))
 							{
 								args.Player.SendInfoMessage("Region renamed successfully!");
