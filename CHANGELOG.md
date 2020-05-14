@@ -97,6 +97,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Add PlayerZone data handler and bouncer (@AxeelAnder)
 * Update sqlite binaries to 32bit 3.27.2 for Windows (@hakusaro)
 * Fix banned armour checks not clearing properly (thanks @tysonstrange)
+* Added warning message on invalid group comand (@hakusaro, thanks to IcyPhoenix, nuLLzy & Cy on Discord)
 
 ## TShock 4.3.25
 * Fixed a critical exploit in the Terraria protocol that could cause massive unpreventable world corruption as well as a number of other problems. Thanks to @bartico6 for reporting. Fixed by the efforts of @QuiCM, @hakusaro, and tips in the right directioon from @bartico6.
