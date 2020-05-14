@@ -44,7 +44,7 @@ namespace TShock.Launcher
 			consoleTarget.UseDefaultRowHighlightingRules = true;
 			consoleTarget.Layout = Layout.FromMethod(logEvent =>
 			{
-				return $"[{logEvent.LoggerName}]{logEvent.Message}";
+				return $"[{logEvent.LoggerName}]{logEvent.FormattedMessage}";
 			});
 			// Rules for mapping loggers to targets
 			config.AddRule(LogLevel.Info, LogLevel.Fatal, consoleTarget);
