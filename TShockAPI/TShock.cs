@@ -41,6 +41,7 @@ using TShockAPI.Hooks;
 using TShockAPI.ServerSideCharacters;
 using Terraria.Utilities;
 using Microsoft.Xna.Framework;
+using NLog;
 using TShockAPI.Sockets;
 using TShockAPI.CLI;
 using TShockAPI.Localization;
@@ -73,6 +74,8 @@ namespace TShockAPI
 		private static string LogPath = LogPathDefault;
 		/// <summary>LogClear - Determines whether or not the log file should be cleared on initialization.</summary>
 		private static bool LogClear;
+
+		private Logger Logger = LogManager.GetLogger("TShock");
 
 		/// <summary>Will be set to true once Utils.StopServer() is called.</summary>
 		public static bool ShuttingDown;
@@ -243,7 +246,7 @@ namespace TShockAPI
 					logPathSetupWarning =
 						"Could not apply the given log path / log format, defaults will be used. Exception details:\n" + ex;
 
-					ServerApi.LogWriter.PluginWriteLine(this, logPathSetupWarning, TraceLevel.Error);
+					Logger.Error(logPathSetupWarning);
 
 					// Problem with the log path or format use the default
 					logFilename = Path.Combine(LogPathDefault, now.ToString(LogFormatDefault) + ".log");
@@ -282,7 +285,7 @@ namespace TShockAPI
 					}
 					catch (MySqlException ex)
 					{
-						ServerApi.LogWriter.PluginWriteLine(this, ex.ToString(), TraceLevel.Error);
+						Logger.Error(ex.ToString());
 						throw new Exception("MySql not setup correctly");
 					}
 				}
@@ -678,7 +681,7 @@ namespace TShockAPI
 						SavePath = path ?? "tshock";
 						if (path != null)
 						{
-							ServerApi.LogWriter.PluginWriteLine(this, "Config path has been set to " + path, TraceLevel.Info);
+							Logger.Info($"Config path has been set to {path}");
 						}
 					})
 
@@ -688,7 +691,7 @@ namespace TShockAPI
 						if (path != null)
 						{
 							Main.WorldPath = path;
-							ServerApi.LogWriter.PluginWriteLine(this, "World path has been set to " + path, TraceLevel.Info);
+							Logger.Info($"World path has been set to {path}");
 						}
 					})
 
@@ -698,7 +701,7 @@ namespace TShockAPI
 						if (path != null)
 						{
 							LogPath = path;
-							ServerApi.LogWriter.PluginWriteLine(this, "Log path has been set to " + path, TraceLevel.Info);
+							Logger.Info($"Log path has been set to {path}");
 						}
 					})
 
@@ -711,7 +714,7 @@ namespace TShockAPI
 					{
 						if (!string.IsNullOrWhiteSpace(cfg))
 						{
-							ServerApi.LogWriter.PluginWriteLine(this, string.Format("Loading dedicated config file: {0}", cfg), TraceLevel.Verbose);
+							Logger.Debug($"Loading dedicated config file: {cfg}");
 							Main.instance.LoadDedConfig(cfg);
 						}
 					})
@@ -722,7 +725,7 @@ namespace TShockAPI
 						if (int.TryParse(p, out port))
 						{
 							Netplay.ListenPort = port;
-							ServerApi.LogWriter.PluginWriteLine(this, string.Format("Listening on port {0}.", port), TraceLevel.Verbose);
+							Logger.Debug($"Listening on port {port}.");
 						}
 					})
 
@@ -731,7 +734,7 @@ namespace TShockAPI
 						if (!string.IsNullOrWhiteSpace(world))
 						{
 							Main.instance.SetWorldName(world);
-							ServerApi.LogWriter.PluginWriteLine(this, string.Format("World name will be overridden by: {0}", world), TraceLevel.Verbose);
+							Logger.Debug($"World name will be overridden by: {world}");
 						}
 					})
 
@@ -741,7 +744,7 @@ namespace TShockAPI
 						if (IPAddress.TryParse(ip, out addr))
 						{
 							Netplay.ServerIP = addr;
-							ServerApi.LogWriter.PluginWriteLine(this, string.Format("Listening on IP {0}.", addr), TraceLevel.Verbose);
+							Logger.Debug($"Listening on IP {addr}.");
 						}
 						else
 						{

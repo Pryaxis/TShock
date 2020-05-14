@@ -21,7 +21,7 @@ namespace TShock.Launcher
 
 		public static bool IgnoreVersion { get; set; }
 
-		private static Logger Log = LogManager.GetCurrentClassLogger();
+		private static Logger Log = LogManager.GetLogger("PluginLoader");
 
 		private readonly Dictionary<string, Assembly> loadedAssemblies = new Dictionary<string, Assembly>();
 
