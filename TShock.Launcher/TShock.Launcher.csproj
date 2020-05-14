@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net462;netcoreapp3.1</TargetFrameworks>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>TerrariaServer</AssemblyName>
+    <IsDotNetFramework Condition=" !$(TargetFramework.StartsWith(netcoreapp)) ">true</IsDotNetFramework>
+    <IsDotNetCore Condition=" $(TargetFramework.StartsWith(netcoreapp)) ">true</IsDotNetCore>
+    <RuntimeIdentifiers>win-x64;linux-x64;osx-x64;linux-arm;linux-arm64;linux-musl-x64</RuntimeIdentifiers>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TerrariaServerAPI\TerrariaServerAPI\TerrariaServerAPI.csproj" />
+    <ProjectReference Include="..\TShockAPI\TShockAPI.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="OTAPI, Version=1.3.5.3, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\TerrariaServerAPI\TShock.Modifications.Bootstrapper\bin\$(Configuration)\Output\OTAPI.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <HintPath>..\TerrariaServerAPI\prebuilt\System.Windows.Forms.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
