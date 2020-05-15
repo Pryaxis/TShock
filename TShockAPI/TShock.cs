@@ -281,7 +281,7 @@ namespace TShockAPI
 								Config.MySqlDbName,
 								Config.MySqlUsername,
 								Config.MySqlPassword
-								);
+							);
 					}
 					catch (MySqlException ex)
 					{
@@ -305,6 +305,7 @@ namespace TShockAPI
 						"TShock was improperly shut down. Please use the exit command in the future to prevent this.");
 					File.Delete(Path.Combine(SavePath, "tshock.pid"));
 				}
+
 				File.WriteAllText(Path.Combine(SavePath, "tshock.pid"),
 					Process.GetCurrentProcess().Id.ToString(CultureInfo.InvariantCulture));
 
