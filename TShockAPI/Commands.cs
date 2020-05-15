@@ -1225,7 +1225,7 @@ namespace TShockAPI
 				if (account != null)
 				{
 					DateTime LastSeen;
-					string Timezone = TimeZone.CurrentTimeZone.GetUtcOffset(DateTime.Now).Hours.ToString("+#;-#");
+					string Timezone = TimeZoneInfo.Utc.GetUtcOffset(DateTime.Now).Hours.ToString("+#;-#");
 
 					if (DateTime.TryParse(account.LastAccessed, out LastSeen))
 					{
@@ -1317,7 +1317,7 @@ namespace TShockAPI
 							args.Player.SendMultipleMatchError(players.Select(p => p.Name));
 							return;
 						}
-						
+
 						UserAccount offlineUserAccount = TShock.UserAccounts.GetUserAccountByName(args.Parameters[1]);
 
 						// Storage variable to determine if the command executor is the server console
@@ -1338,8 +1338,8 @@ namespace TShockAPI
 							if (args.Parameters[2] != "0")
 							{
 								parsedOkay = TShock.Utils.TryParseTime(args.Parameters[2], out banLengthInSeconds);
-							} 
-							else 
+							}
+							else
 							{
 								parsedOkay = true;
 							}
@@ -1409,8 +1409,8 @@ namespace TShockAPI
 									args.Player.SendErrorMessage("Note: An account named with this IP address also exists.");
 									args.Player.SendErrorMessage("Note: It will also be banned.");
 								}
-							} 
-							else 
+							}
+							else
 							{
 								// Apparently there is no way to not IP ban someone
 								// This means that where we would normally just ban a "character name" here
@@ -1435,7 +1435,7 @@ namespace TShockAPI
 							// This needs to be fixed in a future implementation.
 							targetGeneralizedName = offlineUserAccount.Name;
 
-							if (TShock.Groups.GetGroupByName(offlineUserAccount.Group).HasPermission(Permissions.immunetoban) && 
+							if (TShock.Groups.GetGroupByName(offlineUserAccount.Group).HasPermission(Permissions.immunetoban) &&
 								!callerIsServerConsole)
 							{
 								args.Player.SendErrorMessage("Permission denied. Target {0} is immune to ban.", targetGeneralizedName);
@@ -1450,7 +1450,7 @@ namespace TShockAPI
 
 							string lastIP = JsonConvert.DeserializeObject<List<string>>(offlineUserAccount.KnownIps).Last();
 
-							success = 
+							success =
 								TShock.Bans.AddBan(lastIP,
 									"", offlineUserAccount.UUID, offlineUserAccount.Name, banReason, false, args.Player.Account.Name,
 									banLengthInSeconds == 0 ? "" : DateTime.UtcNow.AddSeconds(banLengthInSeconds).ToString("s"));
@@ -1911,12 +1911,11 @@ namespace TShockAPI
 			args.Player.SendInfoMessage("An update check has been queued.");
 			try
 			{
-				TShock.UpdateManager.UpdateCheckAsync(null);
+				TShock.UpdateManager.UpdateCheckAsync(null).Start();
 			}
 			catch (Exception)
 			{
 				//swallow the exception
-				return;
 			}
 		}
 
@@ -4623,7 +4622,7 @@ namespace TShockAPI
 								args.Player.SendErrorMessage("Region \"{0}\" already exists.", newName);
 								break;
 							}
-							
+
 							if(TShock.Regions.RenameRegion(oldName, newName))
 							{
 								args.Player.SendInfoMessage("Region renamed successfully!");

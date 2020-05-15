@@ -1234,7 +1234,7 @@ namespace TShockAPI
 			}
 		}
 
-		/// <summary>Sends a tile square at a location with a given size. 	
+		/// <summary>Sends a tile square at a location with a given size.
 		/// Typically used to revert changes by Bouncer through sending the
 		/// "old" version of modified data back to a client.
 		/// Prevents desync issues.
@@ -1463,7 +1463,7 @@ namespace TShockAPI
 		public void SendFileTextAsMessage(string file)
 		{
 			string foo = "";
-			bool containsOldFormat = false;
+			// bool containsOldFormat = false;
 			using (var tr = new StreamReader(file))
 			{
 				Color lineColor;
@@ -1643,7 +1643,7 @@ namespace TShockAPI
 		public void SendMultipleMatchError(IEnumerable<object> matches)
 		{
 			SendErrorMessage("More than one match found: ");
-			
+
 			var lines = PaginationTools.BuildLinesFromTerms(matches.ToArray());
 			lines.ForEach(SendInfoMessage);
 
