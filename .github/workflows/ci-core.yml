@@ -33,13 +33,13 @@ jobs:
         run: dotnet publish -f netcoreapp3.1 -c Debug ./TShock.Launcher/TShock.Launcher.csproj
       - uses: actions/upload-artifact@master
         with:
-          name: ExperimentalTShock(any)
+          name: ExperimentalTShock(any-debug)
           path: TShock.Launcher/bin/Debug/netcoreapp3.1/publish
       - name: Publish Release any
         run: dotnet publish -f netcoreapp3.1 -c Release ./TShock.Launcher/TShock.Launcher.csproj
       - uses: actions/upload-artifact@master
         with:
-          name: ExperimentalTShock(any)
+          name: ExperimentalTShock(any-release)
           path: TShock.Launcher/bin/Release/netcoreapp3.1/publish/
           
       - name: Publish Debug win-x64
