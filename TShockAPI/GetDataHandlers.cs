@@ -344,7 +344,7 @@ namespace TShockAPI
 			PlayerUpdate.Invoke(null, args);
 			return args.Handled;
 		}
-		
+
 		/// <summary>
 		/// For use in a PlayerHP event
 		/// </summary>
@@ -767,7 +767,7 @@ namespace TShockAPI
 			PlayerSpawn.Invoke(null, args);
 			return args.Handled;
 		}
-		
+
 		/// <summary>
 		/// For use in a ChestItemChange event
 		/// </summary>
@@ -816,7 +816,7 @@ namespace TShockAPI
 			ChestItemChange.Invoke(null, args);
 			return args.Handled;
 		}
-		
+
 		/// <summary>
 		/// For use with a ChestOpen event
 		/// </summary>
@@ -2054,15 +2054,6 @@ namespace TShockAPI
 
 			if (control[5])
 			{
-				// ItemBan system
-				string itemName = args.TPlayer.inventory[item].Name;
-				if (TShock.Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(args.TPlayer.inventory[item].netID), args.Player))
-				{
-					control[5] = false;
-					args.Player.Disable("using a banned item ({0})".SFormat(itemName), DisableFlags.WriteToLogAndConsole);
-					args.Player.SendErrorMessage("You cannot use {0} on this server. Your actions are being ignored.", itemName);
-				}
-
 				// Reimplementation of normal Terraria stuff?
 				if (args.TPlayer.inventory[item].Name == "Mana Crystal" && args.Player.TPlayer.statManaMax <= 180)
 				{
@@ -2364,12 +2355,24 @@ namespace TShockAPI
 				return true;
 			}
 
-			var type = Main.projectile[index].type;
+			short type = (short) Main.projectile[index].type;
 
 			// TODO: This needs to be moved somewhere else.
-			if (!args.Player.HasProjectilePermission(index, type) && type != 102 && type != 100 && !TShock.Config.IgnoreProjKill)
+
+			if (type == ProjectileID.Tombstone)
 			{
-				args.Player.Disable("Does not have projectile permission to kill projectile.", DisableFlags.WriteToLogAndConsole);
+				args.Player.RemoveProjectile(ident, owner);
+				return true;
+			}
+
+			if (TShock.ProjectileBans.ProjectileIsBanned(type, args.Player) && !TShock.Config.IgnoreProjKill)
+			{
+				// According to 2012 deathmax, this is a workaround to fix skeletron prime issues
+				// https://github.com/Pryaxis/TShock/commit/a5aa9231239926f361b7246651e32144bbf28dda
+				if (type == ProjectileID.Bomb || type == ProjectileID.DeathLaser)
+				{
+					return false;
+				}
 				args.Player.RemoveProjectile(ident, owner);
 				return true;
 			}
@@ -2424,7 +2427,7 @@ namespace TShockAPI
 
 			Item item = new Item();
 			item.netDefaults(type);
-			if (stacks > item.maxStack || TShock.Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), args.Player))
+			if (stacks > item.maxStack)
 			{
 				return true;
 			}

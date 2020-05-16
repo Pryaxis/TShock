@@ -134,6 +134,9 @@ namespace TShockAPI
 		/// <summary>The TShock anti-cheat/anti-exploit system.</summary>
 		internal Bouncer Bouncer;
 
+		/// <summary>The TShock item ban system.</summary>
+		internal ItemBans ItemBans;
+
 		/// <summary>
 		/// TShock's Region subsystem.
 		/// </summary>
@@ -325,6 +328,7 @@ namespace TShockAPI
 				RestManager.RegisterRestfulCommands();
 				Bouncer = new Bouncer();
 				RegionSystem = new RegionHandler(Regions);
+				ItemBans = new ItemBans(this, DB);
 
 				var geoippath = "GeoIP.dat";
 				if (Config.EnableGeoIP && File.Exists(geoippath))
@@ -1056,91 +1060,16 @@ namespace TShockAPI
 						player.Spawn();
 					}
 
-					if (Main.ServerSideCharacter && !player.IsLoggedIn)
-					{
-						if (player.IsBeingDisabled())
-						{
-							player.Disable(flags: flags);
-						}
-						else if (Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(player.TPlayer.inventory[player.TPlayer.selectedItem].netID), player))
-						{
-							player.Disable($"holding banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].Name}", flags);
-							player.SendErrorMessage($"You are holding a banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].Name}");
-						}
-					}
-					else if (!Main.ServerSideCharacter || (Main.ServerSideCharacter && player.IsLoggedIn))
+					if (!Main.ServerSideCharacter || (Main.ServerSideCharacter && player.IsLoggedIn))
 					{
 						if (!player.HasPermission(Permissions.ignorestackhackdetection))
 						{
 							player.IsDisabledForStackDetection = player.HasHackedItemStacks(shouldWarnPlayer: true);
 						}
-						string check = "none";
-						// Please don't remove this for the time being; without it, players wearing banned equipment will only get debuffed once
-						foreach (Item item in player.TPlayer.armor)
-						{
-							if (Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), player))
-							{
-								player.SetBuff(BuffID.Frozen, 330, true);
-								player.SetBuff(BuffID.Stoned, 330, true);
-								player.SetBuff(BuffID.Webbed, 330, true);
-								check = "Remove armor/accessory " + item.Name;
-
-								player.SendErrorMessage("You are wearing banned equipment. {0}", check);
-								break;
-							}
-						}
-						foreach (Item item in player.TPlayer.dye)
-						{
-							if (Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), player))
-							{
-								player.SetBuff(BuffID.Frozen, 330, true);
-								player.SetBuff(BuffID.Stoned, 330, true);
-								player.SetBuff(BuffID.Webbed, 330, true);
-								check = "Remove dye " + item.Name;
-
-								player.SendErrorMessage("You are wearing banned equipment. {0}", check);
-								break;
-							}
-						}
-						foreach (Item item in player.TPlayer.miscEquips)
-						{
-							if (Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), player))
-							{
-								player.SetBuff(BuffID.Frozen, 330, true);
-								player.SetBuff(BuffID.Stoned, 330, true);
-								player.SetBuff(BuffID.Webbed, 330, true);
-								check = "Remove misc equip " + item.Name;
-
-								player.SendErrorMessage("You are wearing banned equipment. {0}", check);
-								break;
-							}
-						}
-						foreach (Item item in player.TPlayer.miscDyes)
-						{
-							if (Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), player))
-							{
-								player.SetBuff(BuffID.Frozen, 330, true);
-								player.SetBuff(BuffID.Stoned, 330, true);
-								player.SetBuff(BuffID.Webbed, 330, true);
-								check = "Remove misc dye " + item.Name;
-
-								player.SendErrorMessage("You are wearing banned equipment. {0}", check);
-								break;
-							}
-						}
-						if (check != "none")
-							player.IsDisabledForBannedWearable = true;
-						else
-							player.IsDisabledForBannedWearable = false;
 
 						if (player.IsBeingDisabled())
 						{
 							player.Disable(flags: flags);
-						}
-						else if (Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(player.TPlayer.inventory[player.TPlayer.selectedItem].netID), player))
-						{
-							player.Disable($"holding banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].Name}", flags);
-							player.SendErrorMessage($"You are holding a banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].Name}");
 						}
 					}
 				}

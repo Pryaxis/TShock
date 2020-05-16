@@ -41,7 +41,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Added `GetDataHandlers.PlaceObject` hook. (@hakusaro)
 * `GetDataHandlers.KillMe` now sends a `TSPlayer` and a `PlayerDeathReason`. (@hakusaro)
 * Added `GetDataHandlers.ProjectileKill` hook. (@hakusaro)
-* Removed `TShock.CheckProjectilePermission` and replaced it with `TSPlayer.HasProjectilePermission` and `TSPlayer.LacksProjectilePermission` respectively. (@hakusaro)
+* Removed `TShock.CheckProjectilePermission`. (@hakusaro)
 * Added `TSPlayer` object to `GetDataHandlers.LiquidSetEventArgs`. (@hakusaro)
 * Removed `TShock.StartInvasion` for public use (moved to Utils and marked internal). (@hakusaro)
 * Fixed invasions started by TShock not reporting size correctly and probably not working at all. (@hakusaro)
@@ -90,7 +90,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * `Utils.TryParseTime` can now take spaces (e.g., `3d 5h 2m 3s`) (@QuiCM)
 * Enabled banning unregistered users (@QuiCM)
 * Added filtering and validation on packet 96 (Teleport player through portal) (@QuiCM)
-* Update tracker now uses TLS (@pandabear41) 
+* Update tracker now uses TLS (@pandabear41)
 * When deleting an user account, any player logged in to that account is now logged out properly (@Enerdy)
 * Add NPCAddBuff data handler and bouncer (@AxeelAnder)
 * Improved config file documentation (@Enerdy)
@@ -98,6 +98,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Update sqlite binaries to 32bit 3.27.2 for Windows (@hakusaro)
 * Fix banned armour checks not clearing properly (thanks @tysonstrange)
 * Added warning message on invalid group comand (@hakusaro, thanks to IcyPhoenix, nuLLzy & Cy on Discord)
+* Moved item bans subsystem to isolated file/contained mini-plugin & reorganized codebase accordingly. (@hakusaro)
 
 ## TShock 4.3.25
 * Fixed a critical exploit in the Terraria protocol that could cause massive unpreventable world corruption as well as a number of other problems. Thanks to @bartico6 for reporting. Fixed by the efforts of @QuiCM, @hakusaro, and tips in the right directioon from @bartico6.

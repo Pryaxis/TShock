@@ -39,7 +39,6 @@
     <DocumentationFile>bin\Debug\TShockAPI.XML</DocumentationFile>
     <PlatformTarget>x86</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
-    <!-- <NoWarn>1591</NoWarn> -->
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -133,6 +132,7 @@
     <Compile Include="Permissions.cs" />
     <Compile Include="DB\RememberedPosManager.cs" />
     <Compile Include="Bouncer.cs" />
+    <Compile Include="ItemBans.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
