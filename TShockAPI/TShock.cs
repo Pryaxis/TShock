@@ -123,7 +123,7 @@ namespace TShockAPI
 		/// <summary>UpdateManager - Static reference to the update checker, which checks for updates and notifies server admins of updates.</summary>
 		public static UpdateManager UpdateManager;
 		/// <summary>Log - Static reference to the log system, which outputs to either SQL or a text file, depending on user config.</summary>
-		public static ILog Log;
+		public new static ILog Log;
 		/// <summary>instance - Static reference to the TerrariaPlugin instance.</summary>
 		public static TerrariaPlugin instance;
 		/// <summary>
@@ -146,7 +146,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Called after TShock is initialized. Useful for plugins that needs hooks before tshock but also depend on tshock being loaded.
 		/// </summary>
-		public static event Action Initialized;
+		public static event Action AfterInitializedCallback;
 
 		/// <summary>Version - The version required by the TerrariaAPI to be passed back for checking & loading the plugin.</summary>
 		/// <value>value - The version number specified in the Assembly, based on the VersionNum variable set in this class.</value>
@@ -374,8 +374,8 @@ namespace TShockAPI
 				Log.ConsoleInfo("AutoSave " + (Config.AutoSave ? "Enabled" : "Disabled"));
 				Log.ConsoleInfo("Backups " + (Backups.Interval > 0 ? "Enabled" : "Disabled"));
 
-				if (Initialized != null)
-					Initialized();
+				if (AfterInitializedCallback != null)
+					AfterInitializedCallback();
 
 				Log.ConsoleInfo("Welcome to TShock for Terraria!");
 				Log.ConsoleInfo("TShock comes with no warranty & is free software.");
