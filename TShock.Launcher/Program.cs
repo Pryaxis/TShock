@@ -25,7 +25,8 @@ namespace TShock.Launcher
 
 			SetupLogManager();
 
-			ServerApi.PluginLoader = new PluginLoader(args.Any(a => a == "-ignoreversion"));
+			ServerApi.PluginManager.RegisterPluginLoader(
+				new TShockPluginLoader("ServerPlugins", args.Any(a => a == "-ignoreversion")));
 
 			Launch.Start(args);
 		}
@@ -36,7 +37,7 @@ namespace TShock.Launcher
 			var config = new LoggingConfiguration();
 
 			// Targets where to log to: File and Console
-			var logfile = new FileTarget("logfile") { FileName = "ServerLog.txt" };
+			var logfile = new FileTarget("logfile") { FileName = "logs/log.txt" };
 			logfile.ArchiveEvery = FileArchivePeriod.Day;
 			logfile.ArchiveNumbering = ArchiveNumberingMode.Date;
 

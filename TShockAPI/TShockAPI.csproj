@@ -15,9 +15,6 @@
     <Reference Include="HttpServer, Version=2.0.0.0, Culture=neutral, PublicKeyToken=5684c2c737cd4271">
       <HintPath>..\prebuilts\HttpServer.dll</HintPath>
     </Reference>
-    <Reference Include="OTAPI, Version=1.3.5.3, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\TerrariaServerAPI\TShock.Modifications.Bootstrapper\bin\$(Configuration)\Output\OTAPI.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Core" Version="1.6.0" />
@@ -25,7 +22,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="10.0.1" />
     <PackageReference Include="NLog" Version="4.7.0" />
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.112" />
-<!--    <PackageReference Include="SQLite" Version="3.13.0" />-->
+    <PackageReference Include="SQLite" Version="3.13.0" />
     <PackageReference Include="System.Diagnostics.TraceSource" Version="4.3.0" />
     <PackageReference Include="System.Security.Cryptography.Algorithms" Version="4.3.1" />
     <PackageReference Include="System.Net.NameResolution" Version="4.3.0" />
