@@ -806,9 +806,6 @@ namespace TShockAPI
 			// Main.projHostile contains projectiles that can harm players
 			// without PvP enabled and belong to enemy mobs, so they shouldn't be
 			// possible for players to create. (Source: Ijwu, QuiCM)
-			Projectile tempProjectile = new Projectile();
-			tempProjectile.SetDefaults(type);
-
 			if (Main.projHostile[type])
 			{
 				args.Player.RemoveProjectile(ident, owner);
