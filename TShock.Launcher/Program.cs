@@ -23,36 +23,10 @@ namespace TShock.Launcher
 				return null;
 			};
 
-			SetupLogManager();
-
 			ServerApi.PluginManager.RegisterPluginLoader(
 				new TShockPluginLoader("ServerPlugins", args.Any(a => a == "-ignoreversion")));
 
 			Launch.Start(args);
-		}
-
-		static void SetupLogManager()
-		{
-			//TODO: Make logger configurable
-			var config = new LoggingConfiguration();
-
-			// Targets where to log to: File and Console
-			var logfile = new FileTarget("logfile") { FileName = "logs/log.txt" };
-			logfile.ArchiveEvery = FileArchivePeriod.Day;
-			logfile.ArchiveNumbering = ArchiveNumberingMode.Date;
-
-			var consoleTarget = new ColoredConsoleTarget();
-			consoleTarget.UseDefaultRowHighlightingRules = true;
-			consoleTarget.Layout = Layout.FromMethod(logEvent =>
-			{
-				return $"[{logEvent.LoggerName}]{logEvent.FormattedMessage}";
-			});
-			// Rules for mapping loggers to targets
-			config.AddRule(LogLevel.Info, LogLevel.Fatal, consoleTarget);
-			config.AddRule(LogLevel.Debug, LogLevel.Fatal, logfile);
-
-			// Apply config
-			LogManager.Configuration = config;
 		}
 	}
 }
