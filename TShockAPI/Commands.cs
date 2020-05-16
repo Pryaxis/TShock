@@ -3239,6 +3239,9 @@ namespace TShockAPI
 					}
 					#endregion
 					return;
+				default:
+					args.Player.SendErrorMessage("Invalid subcommand! Type {0}group help for more information on valid commands.", Specifier);
+				return;
 			}
 		}
 		#endregion Group Management
