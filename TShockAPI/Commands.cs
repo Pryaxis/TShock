@@ -1,4 +1,4 @@
-/*
+﻿/*
 TShock, a server mod for Terraria
 Copyright (C) 2011-2019 Pryaxis & TShock Contributors
 
@@ -3276,8 +3276,8 @@ namespace TShockAPI
 						{
 							// Yes this is required because of localization
 							// User may have passed in localized name but itembans works on English names
-							string nameForStorage = EnglishLanguage.GetItemNameById(items[0].type);
-							TShock.Itembans.AddNewBan(nameForStorage);
+							string englishNameForStorage = EnglishLanguage.GetItemNameById(items[0].type);
+							TShock.Itembans.AddNewBan(englishNameForStorage);
 
 							// It was decided in Telegram that we would continue to ban
 							// projectiles based on whether or not their associated item was
@@ -3287,18 +3287,19 @@ namespace TShockAPI
 							// command layer instead of inferring the state of projectile
 							// bans based on the state of the item ban system.
 
-							if (nameForStorage == "Dirt Rod")
+							if (items[0].type == ItemID.DirtRod)
 							{
 								TShock.ProjectileBans.AddNewBan(ProjectileID.DirtBall);
 							}
 
-							if (nameForStorage == "Sandgun")
+							if (items[0].type == ItemID.Sandgun)
 							{
 								TShock.ProjectileBans.AddNewBan(ProjectileID.SandBallGun);
 								TShock.ProjectileBans.AddNewBan(ProjectileID.EbonsandBallGun);
 								TShock.ProjectileBans.AddNewBan(ProjectileID.PearlSandBallGun);
 							}
 
+							// This returns the localized name to the player, not the item as it was stored.
 							args.Player.SendSuccessMessage("Banned " + items[0].Name + ".");
 						}
 					}
