@@ -307,25 +307,44 @@ namespace TShockAPI
 			/// </summary>
 			public byte Control { get; set; }
 			/// <summary>
-			/// Selected item
+			/// Pulley update (BitFlags)
 			/// </summary>
-			public byte Item { get; set; }
+			public byte Pulley { get; set; }
 			/// <summary>
-			/// Position of the player
+			/// Misc (BitFlags) Check tshock.readme.io 
+			/// </summary>
+			public byte Misc { get; set; }
+			/// <summary>
+			/// (BitFlags) Wether or not the player is sleeping.
+			/// </summary>
+			public byte Sleeping { get; set; }
+			/// <summary>
+			/// The selected item in player's hand.
+			/// </summary>
+			public byte SelectedItem { get; set; }
+			/// <summary>
+			/// Position of the player.
 			/// </summary>
 			public Vector2 Position { get; set; }
 			/// <summary>
-			/// Velocity of the player
+			/// Velocity of the player.
 			/// </summary>
 			public Vector2 Velocity { get; set; }
-			/// <summary>Pulley update (BitFlags)</summary>
-			public byte Pulley { get; set; }
+			/// <summary>
+			/// Original poisition of the player when using Potion of Return.
+			/// </summary>
+			public Vector2? OriginalPos { get; set; }
+			/// <summary>
+			/// Home Position of the player for Potion of Return.
+			/// </summary>
+			public Vector2? HomePos { get; set; }
+
 		}
 		/// <summary>
 		/// PlayerUpdate - When the player sends it's updated information to the server
 		/// </summary>
 		public static HandlerList<PlayerUpdateEventArgs> PlayerUpdate = new HandlerList<PlayerUpdateEventArgs>();
-		private static bool OnPlayerUpdate(TSPlayer player, MemoryStream data, byte plr, byte control, byte item, Vector2 position, Vector2 velocity, byte pulley)
+		private static bool OnPlayerUpdate(TSPlayer player, MemoryStream data, byte plr, byte control, byte pulley, byte misc, byte sleeping, byte selectedItem, Vector2 position, Vector2 velocity, Vector2? originalPos, Vector2? homePos)
 		{
 			if (PlayerUpdate == null)
 				return false;
@@ -336,10 +355,14 @@ namespace TShockAPI
 				Data = data,
 				PlayerId = plr,
 				Control = control,
-				Item = item,
+				Pulley = pulley,
+				Misc = misc,
+				Sleeping = sleeping,
+				SelectedItem = selectedItem,
 				Position = position,
 				Velocity = velocity,
-				Pulley = pulley
+				OriginalPos = originalPos,
+				HomePos = homePos
 			};
 			PlayerUpdate.Invoke(null, args);
 			return args.Handled;
@@ -746,12 +769,21 @@ namespace TShockAPI
 			/// Y location of the player's spawn
 			/// </summary>
 			public int SpawnY { get; set; }
+			/// <summary>
+			/// Value of the timer countdown before the player can respawn alive.
+			/// If > 0, then player is still dead.
+			/// </summary>
+			public int RespawnTimer { get; set; }
+			/// <summary>
+			/// Context of where the player is spawning from.
+			/// </summary>
+			public PlayerSpawnContext SpawnContext { get; set; }
 		}
 		/// <summary>
 		/// PlayerSpawn - When a player spawns
 		/// </summary>
 		public static HandlerList<SpawnEventArgs> PlayerSpawn = new HandlerList<SpawnEventArgs>();
-		private static bool OnPlayerSpawn(TSPlayer player, MemoryStream data, byte pid, int spawnX, int spawnY)
+		private static bool OnPlayerSpawn(TSPlayer player, MemoryStream data, byte pid, int spawnX, int spawnY, int respawnTimer, PlayerSpawnContext spawnContext)
 		{
 			if (PlayerSpawn == null)
 				return false;
@@ -763,6 +795,8 @@ namespace TShockAPI
 				PlayerId = pid,
 				SpawnX = spawnX,
 				SpawnY = spawnY,
+				RespawnTimer = respawnTimer,
+				SpawnContext = spawnContext
 			};
 			PlayerSpawn.Invoke(null, args);
 			return args.Handled;
@@ -2006,11 +2040,13 @@ namespace TShockAPI
 
 		private static bool HandleSpawn(GetDataHandlerArgs args)
 		{
-			var player = args.Data.ReadInt8();
-			var spawnx = args.Data.ReadInt16();
-			var spawny = args.Data.ReadInt16();
+			byte player = args.Data.ReadInt8();
+			short spawnx = args.Data.ReadInt16();
+			short spawny = args.Data.ReadInt16();
+			int respawnTimer = args.Data.ReadInt32();
+			PlayerSpawnContext context = (PlayerSpawnContext)args.Data.ReadByte();
 
-			if (OnPlayerSpawn(args.Player, args.Data, player, spawnx, spawny))
+			if (OnPlayerSpawn(args.Player, args.Data, player, spawnx, spawny, respawnTimer, context))
 				return true;
 
 			if ((Main.ServerSideCharacter) && (args.Player.sX > 0) && (args.Player.sY > 0) && (args.TPlayer.SpawnX > 0) && ((args.TPlayer.SpawnX != args.Player.sX) && (args.TPlayer.SpawnY != args.Player.sY)))
@@ -2029,7 +2065,10 @@ namespace TShockAPI
 					args.Player.Teleport(args.Player.sX * 16, (args.Player.sY * 16) - 48);
 			}
 
-			args.Player.Dead = false;
+			if (respawnTimer > 0)
+				args.Player.Dead = true;
+			else 
+				args.Player.Dead = false;
 			return false;
 		}
 
@@ -2040,34 +2079,45 @@ namespace TShockAPI
 				return true;
 			}
 
-			byte plr = args.Data.ReadInt8();
-			BitsByte control = args.Data.ReadInt8();
-			BitsByte pulley = args.Data.ReadInt8();
-			byte item = args.Data.ReadInt8();
-			var pos = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
-			var vel = Vector2.Zero;
-			if (pulley[2])
-				vel = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
+			byte playerID = args.Data.ReadInt8();
+			BitsByte control = (BitsByte)args.Data.ReadByte();
+			BitsByte pulley = (BitsByte)args.Data.ReadByte();
+			BitsByte misc = (BitsByte)args.Data.ReadByte();
+			BitsByte sleeping = (BitsByte)args.Data.ReadByte();
+			byte selectedItem = args.Data.ReadInt8();
+			Vector2 position = args.Data.ReadVector2();
 
-			if (OnPlayerUpdate(args.Player, args.Data, plr, control, item, pos, vel, pulley))
+			Vector2 velocity = Vector2.Zero;
+			if (pulley[2]) // if UpdateVelocity
+				velocity = args.Data.ReadVector2();
+
+			Vector2? originalPosition = new Vector2?();
+			Vector2? homePosition = Vector2.Zero;
+			if (misc[6]) // if UsedPotionofReturn
+			{
+				originalPosition = new Vector2?(args.Data.ReadVector2());
+				homePosition = new Vector2?(args.Data.ReadVector2());
+			}
+
+			if (OnPlayerUpdate(args.Player, args.Data, playerID, control, pulley, misc, sleeping, selectedItem, position, velocity, originalPosition, homePosition))
 				return true;
 
 			if (control[5])
 			{
 				// Reimplementation of normal Terraria stuff?
-				if (args.TPlayer.inventory[item].Name == "Mana Crystal" && args.Player.TPlayer.statManaMax <= 180)
+				if (args.TPlayer.inventory[selectedItem].Name == "Mana Crystal" && args.Player.TPlayer.statManaMax <= 180)
 				{
 					args.Player.TPlayer.statMana += 20;
 					args.Player.TPlayer.statManaMax += 20;
 					args.Player.PlayerData.maxMana += 20;
 				}
-				else if (args.TPlayer.inventory[item].Name == "Life Crystal" && args.Player.TPlayer.statLifeMax <= 380)
+				else if (args.TPlayer.inventory[selectedItem].Name == "Life Crystal" && args.Player.TPlayer.statLifeMax <= 380)
 				{
 					args.TPlayer.statLife += 20;
 					args.TPlayer.statLifeMax += 20;
 					args.Player.PlayerData.maxHealth += 20;
 				}
-				else if (args.TPlayer.inventory[item].Name == "Life Fruit" && args.Player.TPlayer.statLifeMax >= 400 && args.Player.TPlayer.statLifeMax <= 495)
+				else if (args.TPlayer.inventory[selectedItem].Name == "Life Fruit" && args.Player.TPlayer.statLifeMax >= 400 && args.Player.TPlayer.statLifeMax <= 495)
 				{
 					args.TPlayer.statLife += 5;
 					args.TPlayer.statLifeMax += 5;
@@ -2076,11 +2126,11 @@ namespace TShockAPI
 			}
 
 			// Where we rebuild sync data for Terraria?
-			args.TPlayer.selectedItem = item;
-			args.TPlayer.position = pos;
+			args.TPlayer.selectedItem = selectedItem;
+			args.TPlayer.position = position;
 			args.TPlayer.oldVelocity = args.TPlayer.velocity;
-			args.TPlayer.velocity = vel;
-			args.TPlayer.fallStart = (int)(pos.Y / 16f);
+			args.TPlayer.velocity = velocity;
+			args.TPlayer.fallStart = (int)(position.Y / 16f);
 			args.TPlayer.controlUp = false;
 			args.TPlayer.controlDown = false;
 			args.TPlayer.controlLeft = false;

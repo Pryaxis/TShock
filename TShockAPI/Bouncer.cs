@@ -99,7 +99,7 @@ namespace TShockAPI
 			byte plr = args.PlayerId;
 			BitsByte control = args.Control;
 			BitsByte pulley = args.Pulley;
-			byte item = args.Item;
+			byte item = args.SelectedItem ;
 			var pos = args.Position;
 			var vel = args.Velocity;
 
