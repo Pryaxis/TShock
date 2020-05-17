@@ -59,6 +59,7 @@ namespace TShockAPI
 			ServerApi.Hooks.GameUpdate.Register(plugin, OnGameUpdate);
 			GetDataHandlers.PlayerUpdate += OnPlayerUpdate;
 			GetDataHandlers.ChestItemChange += OnChestItemChange;
+			GetDataHandlers.TileEdit += OnTileEdit;
 		}
 
 		/// <summary>Called on the game update loop (the XNA tickrate).</summary>
@@ -190,6 +191,27 @@ namespace TShockAPI
 
 			args.Handled = false;
 			return;
+		}
+
+		internal void OnTileEdit(object sender, TileEditEventArgs args)
+		{
+			if (args.Action == EditAction.PlaceTile || args.Action == EditAction.PlaceWall)
+			{
+				if (args.Player.TPlayer.autoActuator && DataModel.ItemIsBanned("Actuator", args.Player))
+				{
+					args.Player.SendTileSquare(args.X, args.Y, 1);
+					args.Player.SendErrorMessage("You do not have permission to place actuators.");
+					args.Handled = true;
+					return;
+				}
+
+				if (DataModel.ItemIsBanned(EnglishLanguage.GetItemNameById(args.Player.SelectedItem.netID), args.Player))
+				{
+					args.Player.SendTileSquare(args.X, args.Y, 4);
+					args.Handled = true;
+					return;
+				}
+			}
 		}
 
 		private void UnTaint(TSPlayer player)
