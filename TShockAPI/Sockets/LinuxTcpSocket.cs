@@ -167,7 +167,7 @@ namespace TShockAPI.Sockets
 
 		private void ListenLoop(object unused)
 		{
-			while (this._isListening && !Netplay.disconnect)
+			while (this._isListening && !Netplay.Disconnect)
 			{
 				try
 				{

@@ -1203,7 +1203,7 @@ namespace TShockAPI
 			if (args.Handled)
 				return;
 
-			if (!Config.AllowCrimsonCreep && (args.Type == TileID.Dirt || args.Type == TileID.FleshWeeds
+			if (!Config.AllowCrimsonCreep && (args.Type == TileID.Dirt || args.Type == TileID.CrimsonGrass
 				|| TileID.Sets.Crimson[args.Type]))
 			{
 				args.Handled = true;
@@ -2210,7 +2210,7 @@ namespace TShockAPI
 				file.ServerPassword = _cliPassword;
 			}
 
-			Netplay.spamCheck = false;
+			Netplay.SpamCheck = false;
 		}
 	}
 }

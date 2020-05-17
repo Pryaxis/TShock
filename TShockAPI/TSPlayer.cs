@@ -902,7 +902,7 @@ namespace TShockAPI
 			Main.item[itemid].wet = Collision.WetCollision(Main.item[itemid].position, Main.item[itemid].width,
 															 Main.item[itemid].height);
 			Main.item[itemid].stack = stack;
-			Main.item[itemid].owner = Index;
+			Main.item[itemid].playerIndexTheItemIsReservedFor = Index;
 			Main.item[itemid].prefix = (byte) prefix;
 			Main.item[itemid].noGrabDelay = 1;
 			Main.item[itemid].velocity = Main.player[this.Index].velocity;

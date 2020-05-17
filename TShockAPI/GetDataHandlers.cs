@@ -1439,8 +1439,8 @@ namespace TShockAPI
 			string name = args.Data.ReadString();
 			byte hairDye = args.Data.ReadInt8();
 
-			BitsByte hideVisual = args.Data.ReadInt8();
-			BitsByte hideVisual2 = args.Data.ReadInt8();
+			BitsByte hideVisibleAccessory = args.Data.ReadInt8();
+			BitsByte hideVisibleAccessory2 = args.Data.ReadInt8();
 			BitsByte hideMisc = args.Data.ReadInt8();
 
 			Color hairColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
@@ -1488,11 +1488,11 @@ namespace TShockAPI
 				args.Player.TPlayer.shirtColor = shirtColor;
 				args.Player.TPlayer.underShirtColor = underShirtColor;
 				args.Player.TPlayer.shoeColor = shoeColor;
-				args.Player.TPlayer.hideVisual = new bool[10];
+				args.Player.TPlayer.hideVisibleAccessory = new bool[10];
 				for (int i = 0; i < 8; i++)
-					args.Player.TPlayer.hideVisual[i] = hideVisual[i];
+					args.Player.TPlayer.hideVisibleAccessory[i] = hideVisibleAccessory[i];
 				for (int i = 8; i < 10; i++)
-					args.Player.TPlayer.hideVisual[i] = hideVisual2[i];
+					args.Player.TPlayer.hideVisibleAccessory[i] = hideVisibleAccessory2[i];
 				args.Player.TPlayer.hideMisc = hideMisc;
 				args.Player.TPlayer.extraAccessory = extraSlot;
 				NetMessage.SendData((int)PacketTypes.PlayerInfo, -1, args.Player.Index, NetworkText.FromLiteral(args.Player.Name), args.Player.Index);
@@ -1928,7 +1928,7 @@ namespace TShockAPI
 			TileID.Candles,
 			TileID.CorruptGrass,
 			TileID.Dirt,
-			TileID.FleshGrass,
+			TileID.CrimsonGrass,
 			TileID.Grass,
 			TileID.HallowedGrass,
 			TileID.MagicalIceBlock,

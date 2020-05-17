@@ -2109,7 +2109,12 @@ namespace TShockAPI
 
 		private static void ToggleExpert(CommandArgs args)
 		{
-			Main.expertMode = !Main.expertMode;
+			const int NormalMode = 0;
+			const int ExpertMode = 1;
+			if (Main.GameMode != ExpertMode)
+				Main.GameMode = ExpertMode;
+			else if (Main.GameMode == ExpertMode)
+				Main.GameMode = NormalMode;
 			TSPlayer.All.SendData(PacketTypes.WorldInfo);
 			args.Player.SendSuccessMessage("Expert mode is now {0}.", Main.expertMode ? "on" : "off");
 		}
@@ -2239,7 +2244,7 @@ namespace TShockAPI
 					return;
 				case "wof":
 				case "wall of flesh":
-					if (Main.wof >= 0)
+					if (Main.wofNPCIndex >= 0)
 					{
 						args.Player.SendErrorMessage("There is already a Wall of Flesh!");
 						return;
@@ -2312,7 +2317,7 @@ namespace TShockAPI
 				}
 				else if (npc.type == 113)
 				{
-					if (Main.wof >= 0 || (args.Player.Y / 16f < (Main.maxTilesY - 205)))
+					if (Main.wofNPCIndex >= 0 || (args.Player.Y / 16f < (Main.maxTilesY - 205)))
 					{
 						args.Player.SendErrorMessage("Can't spawn Wall of Flesh!");
 						return;
@@ -4060,9 +4065,8 @@ namespace TShockAPI
 				return;
 			}
 
-			Main.windSpeed = speed;
-			Main.windSpeedSet = speed;
-			Main.windSpeedSpeed = 0f;
+			Main.windSpeedCurrent = speed;
+			Main.windSpeedTarget = 0f;
 			TSPlayer.All.SendData(PacketTypes.WorldInfo);
 			TSPlayer.All.SendInfoMessage("{0} changed the wind speed to {1}.", args.Player.Name, speed);
 		}

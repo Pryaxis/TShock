@@ -344,7 +344,7 @@ namespace TShockAPI
 			var found = new List<Item>();
 			Item item = new Item();
 			string nameLower = name.ToLowerInvariant();
-			var checkEnglish = Language.ActiveCulture != GameCulture.English;
+			var checkEnglish = Language.ActiveCulture != GameCulture.FromCultureName(GameCulture.CultureName.English); ;
 
 			for (int i = 1; i < Main.maxItemTypes; i++)
 			{
@@ -577,7 +577,7 @@ namespace TShockAPI
 			TShock.Utils.Broadcast(reason, Color.Red);
 
 			// Disconnect after kick as that signifies server is exiting and could cause a race
-			Netplay.disconnect = true;
+			Netplay.Disconnect = true;
 		}
 
 		/// <summary>

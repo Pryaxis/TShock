@@ -44,7 +44,7 @@ namespace TShockAPI
 		public Color? shoeColor;
 		public Color? skinColor;
 		public Color? eyeColor;
-		public bool[] hideVisuals;
+		public bool[] hideVisibleAccessorys;
 		public int questsCompleted;
 
 		public PlayerData(TSPlayer player)
@@ -107,7 +107,7 @@ namespace TShockAPI
 			this.shirtColor = player.TPlayer.shirtColor;
 			this.underShirtColor = player.TPlayer.underShirtColor;
 			this.shoeColor = player.TPlayer.shoeColor;
-			this.hideVisuals = player.TPlayer.hideVisual;
+			this.hideVisibleAccessorys = player.TPlayer.hideVisibleAccessory;
 			this.skinColor = player.TPlayer.skinColor;
 			this.eyeColor = player.TPlayer.eyeColor;
 			this.questsCompleted = player.TPlayer.anglerQuestsFinished;
@@ -221,10 +221,10 @@ namespace TShockAPI
 			if (this.eyeColor != null)
 				player.TPlayer.eyeColor = this.eyeColor.Value;
 
-			if (this.hideVisuals != null)
-				player.TPlayer.hideVisual = this.hideVisuals;
+			if (this.hideVisibleAccessorys != null)
+				player.TPlayer.hideVisibleAccessory = this.hideVisibleAccessorys;
 			else
-				player.TPlayer.hideVisual = new bool[player.TPlayer.hideVisual.Length];
+				player.TPlayer.hideVisibleAccessory = new bool[player.TPlayer.hideVisibleAccessory.Length];
 
 			for (int i = 0; i < NetItem.MaxInventory; i++)
 			{
