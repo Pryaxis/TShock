@@ -297,15 +297,7 @@ namespace TShockAPI
 						return;
 					}
 
-					// Using the actuation accessory can lead to actuator hacking
-					if (TShock.Itembans.ItemIsBanned("Actuator", args.Player) && args.Player.TPlayer.autoActuator)
-					{
-						args.Player.SendTileSquare(tileX, tileY, 1);
-						args.Player.SendErrorMessage("You do not have permission to place actuators.");
-						args.Handled = true;
-						return;
-					}
-					if (TShock.Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(selectedItem.netID), args.Player) || editData >= (action == EditAction.PlaceTile ? Main.maxTileSets : Main.maxWallTypes))
+					if (editData >= (action == EditAction.PlaceTile ? Main.maxTileSets : Main.maxWallTypes))
 					{
 						args.Player.SendTileSquare(tileX, tileY, 4);
 						args.Handled = true;
