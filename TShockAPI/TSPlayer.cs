@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2017 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2019 Pryaxis & TShock Contributors
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@ using TShockAPI.DB;
 using TShockAPI.Hooks;
 using TShockAPI.Net;
 using Timer = System.Timers.Timer;
+using System.Linq;
 
 namespace TShockAPI
 {
@@ -72,6 +73,43 @@ namespace TShockAPI
 		/// This player represents all the players.
 		/// </summary>
 		public static readonly TSPlayer All = new TSPlayer("All");
+
+		/// <summary>
+		/// Finds a TSPlayer based on name or ID
+		/// </summary>
+		/// <param name="plr">Player name or ID</param>
+		/// <returns>A list of matching players</returns>
+		public static List<TSPlayer> FindByNameOrID(string plr)
+		{
+			var found = new List<TSPlayer>();
+			// Avoid errors caused by null search
+			if (plr == null)
+				return found;
+
+			byte plrID;
+			if (byte.TryParse(plr, out plrID) && plrID < Main.maxPlayers)
+			{
+				TSPlayer player = TShock.Players[plrID];
+				if (player != null && player.Active)
+				{
+					return new List<TSPlayer> { player };
+				}
+			}
+
+			string plrLower = plr.ToLower();
+			foreach (TSPlayer player in TShock.Players)
+			{
+				if (player != null)
+				{
+					// Must be an EXACT match
+					if (player.Name == plr)
+						return new List<TSPlayer> { player };
+					if (player.Name.ToLower().StartsWith(plrLower))
+						found.Add(player);
+				}
+			}
+			return found;
+		}
 
 		/// <summary>
 		/// The amount of tiles that the player has killed in the last second.
@@ -190,8 +228,6 @@ namespace TShockAPI
 		/// </summary>
 		public DateTime LastThreat { get; set; }
 
-		public bool InitSpawn;
-
 		/// <summary>
 		/// Whether the player should see logs.
 		/// </summary>
@@ -218,10 +254,10 @@ namespace TShockAPI
 		public Vector2 LastNetPosition = Vector2.Zero;
 
 		/// <summary>
-		/// User object associated with the player.
+		/// UserAccount object associated with the player.
 		/// Set when the player logs in.
 		/// </summary>
-		public User User { get; set; }
+		public UserAccount Account { get; set; }
 
 		/// <summary>
 		/// Whether the player performed a valid login attempt (i.e. entered valid user name and password) but is still blocked
@@ -277,13 +313,244 @@ namespace TShockAPI
 
 		private string CacheIP;
 
-		public string IgnoreActionsForInventory = "none";
+		/// <summary>Determines if the player is disabled by the SSC subsystem for not being logged in.</summary>
+		public bool IsDisabledForSSC = false;
 
-		public string IgnoreActionsForCheating = "none";
+		/// <summary>Determines if the player is disabled by Bouncer for having hacked item stacks.</summary>
+		public bool IsDisabledForStackDetection = false;
 
-		public string IgnoreActionsForDisabledArmor = "none";
+		/// <summary>Determines if the player is disabled by the item bans system for having banned wearables on the server.</summary>
+		public bool IsDisabledForBannedWearable = false;
 
-		public bool IgnoreActionsForClearingTrashCan;
+		/// <summary>Determines if the player is disabled for not clearing their trash. A re-login is the only way to reset this.</summary>
+		public bool IsDisabledPendingTrashRemoval;
+
+		/// <summary>Checks to see if active throttling is happening on events by Bouncer. Rejects repeated events by malicious clients in a short window.</summary>
+		/// <returns>If the player is currently being throttled by Bouncer, or not.</returns>
+		public bool IsBouncerThrottled()
+		{
+			return (DateTime.UtcNow - LastThreat).TotalMilliseconds < 5000;
+		}
+
+		/// <summary>Easy check if a player has any of IsDisabledForSSC, IsDisabledForStackDetection, IsDisabledForBannedWearable, or IsDisabledPendingTrashRemoval set. Or if they're not logged in and a login is required.</summary>
+		/// <returns>If any of the checks that warrant disabling are set on this player. If true, Disable() is repeatedly called on them.</returns>
+		public bool IsBeingDisabled()
+		{
+			return IsDisabledForSSC
+			|| IsDisabledForStackDetection
+			|| IsDisabledForBannedWearable
+			|| IsDisabledPendingTrashRemoval
+			|| !IsLoggedIn && TShock.Config.RequireLogin;
+		}
+
+		/// <summary>Checks to see if a player has hacked item stacks in their inventory, and messages them as it checks.</summary>
+		/// <param name="shouldWarnPlayer">If the check should send a message to the player with the results of the check.</param>
+		/// <returns>True if any stacks don't conform.</returns>
+		public bool HasHackedItemStacks(bool shouldWarnPlayer = false)
+		{
+			// Iterates through each inventory location a player has.
+			// This section is sub divided into number ranges for what each range of slots corresponds to.
+			bool check = false;
+
+			Item[] inventory = TPlayer.inventory;
+			Item[] armor = TPlayer.armor;
+			Item[] dye = TPlayer.dye;
+			Item[] miscEquips = TPlayer.miscEquips;
+			Item[] miscDyes = TPlayer.miscDyes;
+			Item[] piggy = TPlayer.bank.item;
+			Item[] safe = TPlayer.bank2.item;
+			Item[] forge = TPlayer.bank3.item;
+			Item trash = TPlayer.trashItem;
+			for (int i = 0; i < NetItem.MaxInventory; i++)
+			{
+				if (i < NetItem.InventoryIndex.Item2)
+				{
+					// From above: this is slots 0-58 in the inventory.
+					// 0-58
+					Item item = new Item();
+					if (inventory[i] != null && inventory[i].netID != 0)
+					{
+						item.netDefaults(inventory[i].netID);
+						item.Prefix(inventory[i].prefix);
+						item.AffixName();
+						if (inventory[i].stack > item.maxStack || inventory[i].stack < 0)
+						{
+							check = true;
+							if (shouldWarnPlayer)
+							{
+								SendErrorMessage("Stack cheat detected. Remove item {0} ({1}) and then rejoin.", item.Name, inventory[i].stack);
+							}
+						}
+					}
+				}
+				else if (i < NetItem.ArmorIndex.Item2)
+				{
+					// 59-78
+					var index = i - NetItem.ArmorIndex.Item1;
+					Item item = new Item();
+					if (armor[index] != null && armor[index].netID != 0)
+					{
+						item.netDefaults(armor[index].netID);
+						item.Prefix(armor[index].prefix);
+						item.AffixName();
+						if (armor[index].stack > item.maxStack || armor[index].stack < 0)
+						{
+							check = true;
+							if (shouldWarnPlayer)
+							{
+								SendErrorMessage("Stack cheat detected. Remove armor {0} ({1}) and then rejoin.", item.Name, armor[index].stack);
+							}
+						}
+					}
+				}
+				else if (i < NetItem.DyeIndex.Item2)
+				{
+					// 79-88
+					var index = i - NetItem.DyeIndex.Item1;
+					Item item = new Item();
+					if (dye[index] != null && dye[index].netID != 0)
+					{
+						item.netDefaults(dye[index].netID);
+						item.Prefix(dye[index].prefix);
+						item.AffixName();
+						if (dye[index].stack > item.maxStack || dye[index].stack < 0)
+						{
+							check = true;
+							if (shouldWarnPlayer)
+							{
+								SendErrorMessage("Stack cheat detected. Remove dye {0} ({1}) and then rejoin.", item.Name, dye[index].stack);
+							}
+						}
+					}
+				}
+				else if (i < NetItem.MiscEquipIndex.Item2)
+				{
+					// 89-93
+					var index = i - NetItem.MiscEquipIndex.Item1;
+					Item item = new Item();
+					if (miscEquips[index] != null && miscEquips[index].netID != 0)
+					{
+						item.netDefaults(miscEquips[index].netID);
+						item.Prefix(miscEquips[index].prefix);
+						item.AffixName();
+						if (miscEquips[index].stack > item.maxStack || miscEquips[index].stack < 0)
+						{
+							check = true;
+							if (shouldWarnPlayer)
+							{
+								SendErrorMessage("Stack cheat detected. Remove item {0} ({1}) and then rejoin.", item.Name, miscEquips[index].stack);
+							}
+						}
+					}
+				}
+				else if (i < NetItem.MiscDyeIndex.Item2)
+				{
+					// 93-98
+					var index = i - NetItem.MiscDyeIndex.Item1;
+					Item item = new Item();
+					if (miscDyes[index] != null && miscDyes[index].netID != 0)
+					{
+						item.netDefaults(miscDyes[index].netID);
+						item.Prefix(miscDyes[index].prefix);
+						item.AffixName();
+						if (miscDyes[index].stack > item.maxStack || miscDyes[index].stack < 0)
+						{
+							check = true;
+							if (shouldWarnPlayer)
+							{
+								SendErrorMessage("Stack cheat detected. Remove item dye {0} ({1}) and then rejoin.", item.Name, miscDyes[index].stack);
+							}
+						}
+					}
+				}
+				else if (i < NetItem.PiggyIndex.Item2)
+				{
+					// 98-138
+					var index = i - NetItem.PiggyIndex.Item1;
+					Item item = new Item();
+					if (piggy[index] != null && piggy[index].netID != 0)
+					{
+						item.netDefaults(piggy[index].netID);
+						item.Prefix(piggy[index].prefix);
+						item.AffixName();
+
+						if (piggy[index].stack > item.maxStack || piggy[index].stack < 0)
+						{
+							check = true;
+							if (shouldWarnPlayer)
+							{
+								SendErrorMessage("Stack cheat detected. Remove piggy-bank item {0} ({1}) and then rejoin.", item.Name, piggy[index].stack);
+							}
+						}
+					}
+				}
+				else if (i < NetItem.SafeIndex.Item2)
+				{
+					// 138-178
+					var index = i - NetItem.SafeIndex.Item1;
+					Item item = new Item();
+					if (safe[index] != null && safe[index].netID != 0)
+					{
+						item.netDefaults(safe[index].netID);
+						item.Prefix(safe[index].prefix);
+						item.AffixName();
+
+						if (safe[index].stack > item.maxStack || safe[index].stack < 0)
+						{
+							check = true;
+							if (shouldWarnPlayer)
+							{
+								SendErrorMessage("Stack cheat detected. Remove safe item {0} ({1}) and then rejoin.", item.Name, safe[index].stack);
+							}
+						}
+					}
+				}
+				else if (i < NetItem.TrashIndex.Item2)
+				{
+					// 179-219
+					Item item = new Item();
+					if (trash != null && trash.netID != 0)
+					{
+						item.netDefaults(trash.netID);
+						item.Prefix(trash.prefix);
+						item.AffixName();
+
+						if (trash.stack > item.maxStack)
+						{
+							check = true;
+							if (shouldWarnPlayer)
+							{
+								SendErrorMessage("Stack cheat detected. Remove trash item {0} ({1}) and then rejoin.", item.Name, trash.stack);
+							}
+						}
+					}
+				}
+				else
+				{
+					// 220
+					var index = i - NetItem.ForgeIndex.Item1;
+					Item item = new Item();
+					if (forge[index] != null && forge[index].netID != 0)
+					{
+						item.netDefaults(forge[index].netID);
+						item.Prefix(forge[index].prefix);
+						item.AffixName();
+
+						if (forge[index].stack > item.maxStack || forge[index].stack < 0)
+						{
+							check = true;
+							if (shouldWarnPlayer)
+							{
+								SendErrorMessage("Stack cheat detected. Remove Defender's Forge item {0} ({1}) and then rejoin.", item.Name, forge[index].stack);
+							}
+						}
+					}
+
+				}
+			}
+
+			return check;
+		}
 
 		/// <summary>
 		/// The player's server side inventory data.
@@ -299,30 +566,147 @@ namespace TShockAPI
 
 		public bool SilentJoinInProgress;
 
+		/// <summary>Checks if a player is in range of a given tile if range checks are enabled.</summary>
+		/// <param name="x"> The x coordinate of the tile.</param>
+		/// <param name="y">The y coordinate of the tile.</param>
+		/// <param name="range">The range to check for.</param>
+		/// <returns>True if the player is in range of a tile or if range checks are off. False if not.</returns>
+		public bool IsInRange(int x, int y, int range = 32)
+		{
+			if (TShock.Config.RangeChecks && ((Math.Abs(TileX - x) > range) || (Math.Abs(TileY - y) > range)))
+			{
+				return false;
+			}
+			return true;
+		}
+
+		private enum BuildPermissionFailPoint
+		{
+			GeneralBuild,
+			SpawnProtect,
+			Regions
+		}
+
+		/// <summary>Determines if the player can build on a given point.</summary>
+		/// <param name="x">The x coordinate they want to build at.</param>
+		/// <param name="y">The y coordinate they want to paint at.</param>
+		/// <returns>True if the player can build at the given point from build, spawn, and region protection.</returns>
+		public bool HasBuildPermission(int x, int y, bool shouldWarnPlayer = true)
+		{
+			BuildPermissionFailPoint failure = BuildPermissionFailPoint.GeneralBuild;
+			// The goal is to short circuit on easy stuff as much as possible.
+			// Don't compute permissions unless needed, and don't compute taxing stuff unless needed.
+
+			// If the player has bypass on build protection or building is enabled; continue
+			// (General build protection takes precedence over spawn protection)
+			if (!TShock.Config.DisableBuild || HasPermission(Permissions.antibuild))
+			{
+				failure = BuildPermissionFailPoint.SpawnProtect;
+				// If they have spawn protect bypass, or it isn't spawn, or it isn't in spawn; continue
+				// (If they have spawn protect bypass, we don't care if it's spawn or not)
+				if (!TShock.Config.SpawnProtection || HasPermission(Permissions.editspawn) || !Utils.IsInSpawn(x, y))
+				{
+					failure = BuildPermissionFailPoint.Regions;
+					// If they have build permission in this region, then they're allowed to continue
+					if (TShock.Regions.CanBuild(x, y, this))
+					{
+						return true;
+					}
+				}
+			}
+			// If they lack build permission, they end up here.
+			// If they have build permission but lack the ability to edit spawn and it's spawn, they end up here.
+			// If they have build, it isn't spawn, or they can edit spawn, but they fail the region check, they end up here.
+
+			// If they shouldn't be warned, exit early.
+			if (!shouldWarnPlayer)
+				return false;
+
+			// Space out warnings by 2 seconds so that they don't get spammed.
+			if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - lastPermissionWarning) < 2000)
+			{
+				return false;
+			}
+
+			// If they should be warned, warn them.
+			switch (failure)
+			{
+				case BuildPermissionFailPoint.GeneralBuild:
+					SendErrorMessage("You lack permission to build on this server.");
+					break;
+				case BuildPermissionFailPoint.SpawnProtect:
+					SendErrorMessage("You lack permission to build in the spawn point.");
+					break;
+				case BuildPermissionFailPoint.Regions:
+					SendErrorMessage("You lack permission to build in this region.");
+					break;
+			}
+
+			// Set the last warning time to now.
+			lastPermissionWarning = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+
+			return false;
+		}
+
+		/// <summary>Determines if the player can paint on a given point. Checks general build permissions, then paint.</summary>
+		/// <param name="x">The x coordinate they want to paint at.</param>
+		/// <param name="y">The y coordinate they want to paint at.</param>
+		/// <returns>True if they can paint.</returns>
+		public bool HasPaintPermission(int x, int y)
+		{
+			return HasBuildPermission(x, y) || HasPermission(Permissions.canpaint);
+		}
+
+		/// <summary>Checks if a player can place ice, and if they can, tracks ice placements and removals.</summary>
+		/// <param name="x">The x coordinate of the suspected ice block.</param>
+		/// <param name="y">The y coordinate of the suspected ice block.</param>
+		/// <param name="tileType">The tile type of the suspected ice block.</param>
+		/// <param name="editAction">The EditAction on the suspected ice block.</param>
+		/// <returns>True if a player successfully places an ice tile or removes one of their past ice tiles.</returns>
+		public bool HasModifiedIceSuccessfully(int x, int y, short tileType, GetDataHandlers.EditAction editAction)
+		{
+			// The goal is to short circuit ASAP.
+			// A subsequent call to HasBuildPermission can figure this out if not explicitly ice.
+			if (!TShock.Config.AllowIce)
+			{
+				return false;
+			}
+
+			// They've placed some ice. Horrible!
+			if (editAction == GetDataHandlers.EditAction.PlaceTile && tileType == TileID.MagicalIceBlock)
+			{
+				IceTiles.Add(new Point(x, y));
+				return true;
+			}
+
+			// The edit wasn't an add, so we check to see if the position matches any of the known ice tiles
+			if (editAction == GetDataHandlers.EditAction.KillTile)
+			{
+				foreach (Point p in IceTiles)
+				{
+					// If they're trying to kill ice or dirt, and the tile was in the list, we allow it.
+					if (p.X == x && p.Y == y && (Main.tile[p.X, p.Y].type == TileID.Dirt || Main.tile[p.X, p.Y].type == TileID.MagicalIceBlock))
+					{
+						IceTiles.Remove(p);
+						return true;
+					}
+				}
+			}
+
+			// Only a small number of cases let this happen.
+			return false;
+		}
+
 		/// <summary>
 		/// A list of points where ice tiles have been placed.
 		/// </summary>
 		public List<Point> IceTiles;
 
 		/// <summary>
-		/// Unused, can be removed.
+		/// The last time the player was warned for build permissions.
+		/// In MS, defaults to 1 (so it will warn on the first attempt).
 		/// </summary>
-		public long RPm = 1;
-
-		/// <summary>
-		/// World protection message cool down.
-		/// </summary>
-		public long WPm = 1;
-
-		/// <summary>
-		/// Spawn protection message cool down.
-		/// </summary>
-		public long SPm = 1;
-
-		/// <summary>
-		/// Permission to build message cool down.
-		/// </summary>
-		public long BPm = 1;
+		public long lastPermissionWarning = 1;
 
 		/// <summary>
 		/// The time in ms when the player has logged in.
@@ -375,7 +759,7 @@ namespace TShockAPI
 			get
 			{
 				return RealPlayer
-					&& (Netplay.Clients[Index] != null && Netplay.Clients[Index].IsActive && !Netplay.Clients[Index].PendingTermination);
+				       && (Netplay.Clients[Index] != null && Netplay.Clients[Index].IsActive && !Netplay.Clients[Index].PendingTermination);
 			}
 		}
 
@@ -413,10 +797,10 @@ namespace TShockAPI
 			{
 				if (string.IsNullOrEmpty(CacheIP))
 					return
-				CacheIP = RealPlayer ? (Netplay.Clients[Index].Socket.IsConnected()
-						? TShock.Utils.GetRealIP(Netplay.Clients[Index].Socket.GetRemoteAddress().ToString())
-						: "")
-					: "";
+						CacheIP = RealPlayer ? (Netplay.Clients[Index].Socket.IsConnected()
+								? TShock.Utils.GetRealIP(Netplay.Clients[Index].Socket.GetRemoteAddress().ToString())
+								: "")
+							: "";
 				else
 					return CacheIP;
 			}
@@ -448,7 +832,7 @@ namespace TShockAPI
 			{
 				if (HasPermission(Permissions.bypassssc))
 				{
-					TShock.Log.ConsoleInfo("Skipping SSC Backup for " + User.Name); // Debug Code
+					TShock.Log.ConsoleInfo("Skipping SSC Backup for " + Account.Name); // Debug Code
 					return true;
 				}
 				PlayerData.CopyCharacter(this);
@@ -522,7 +906,7 @@ namespace TShockAPI
 		/// </summary>
 		public float X
 		{
-			get { return RealPlayer ? TPlayer.position.X : Main.spawnTileX*16; }
+			get { return RealPlayer ? TPlayer.position.X : Main.spawnTileX * 16; }
 		}
 
 		/// <summary>
@@ -530,7 +914,7 @@ namespace TShockAPI
 		/// </summary>
 		public float Y
 		{
-			get { return RealPlayer ? TPlayer.position.Y : Main.spawnTileY*16; }
+			get { return RealPlayer ? TPlayer.position.Y : Main.spawnTileY * 16; }
 		}
 
 		/// <summary>
@@ -538,7 +922,7 @@ namespace TShockAPI
 		/// </summary>
 		public int TileX
 		{
-			get { return (int) (X/16); }
+			get { return (int)(X / 16); }
 		}
 
 		/// <summary>
@@ -546,13 +930,8 @@ namespace TShockAPI
 		/// </summary>
 		public int TileY
 		{
-			get { return (int) (Y/16); }
+			get { return (int)(Y / 16); }
 		}
-
-		/// <summary>
-		/// Unused.
-		/// </summary>
-		public bool TpLock;
 
 		/// <summary>
 		/// Checks if the player has any inventory slots available.
@@ -646,8 +1025,8 @@ namespace TShockAPI
 			PlayerHooks.OnPlayerLogout(this);
 			if (Main.ServerSideCharacter)
 			{
-				IgnoreActionsForInventory = $"Server side characters is enabled! Please {Commands.Specifier}register or {Commands.Specifier}login to play!";
-				if (!IgnoreActionsForClearingTrashCan && (!Dead || TPlayer.difficulty != 2))
+				IsDisabledForSSC = true;
+				if (!IsDisabledPendingTrashRemoval && (!Dead || TPlayer.difficulty != 2))
 				{
 					PlayerData.CopyCharacter(this);
 					TShock.CharacterDB.InsertPlayerData(this);
@@ -661,7 +1040,7 @@ namespace TShockAPI
 			{
 				tempGroupTimer.Stop();
 			}
-			User = null;
+			Account = null;
 			IsLoggedIn = false;
 		}
 
@@ -688,7 +1067,7 @@ namespace TShockAPI
 			TilesDestroyed = new Dictionary<Vector2, ITile>();
 			TilesCreated = new Dictionary<Vector2, ITile>();
 			Index = -1;
-			FakePlayer = new Player {name = playerName, whoAmI = -1};
+			FakePlayer = new Player { name = playerName, whoAmI = -1 };
 			Group = Group.DefaultGroup;
 			AwaitingResponse = new Dictionary<string, Action<object>>();
 		}
@@ -744,7 +1123,7 @@ namespace TShockAPI
 				y = 992;
 			}
 
-			SendTileSquare((int) (x/16), (int) (y/16), 15);
+			SendTileSquare((int)(x / 16), (int)(y / 16), 15);
 			TPlayer.Teleport(new Vector2(x, y), style);
 			NetMessage.SendData((int)PacketTypes.Teleport, -1, -1, NetworkText.Empty, 0, TPlayer.whoAmI, x, y, style);
 			return true;
@@ -784,11 +1163,11 @@ namespace TShockAPI
 			using (var ms = new MemoryStream())
 			{
 				var msg = new SpawnMsg
-							{
-								PlayerIndex = (byte) Index,
-								TileX = (short)tilex,
-								TileY = (short)tiley
-							};
+				{
+					PlayerIndex = (byte)Index,
+					TileX = (short)tilex,
+					TileY = (short)tiley
+				};
 				msg.PackFull(ms);
 				SendRawData(ms.ToArray());
 			}
@@ -804,20 +1183,29 @@ namespace TShockAPI
 			using (var ms = new MemoryStream())
 			{
 				var msg = new ProjectileRemoveMsg
-							{
-								Index = (short) index,
-								Owner = (byte) owner
-							};
+				{
+					Index = (short)index,
+					Owner = (byte)owner
+				};
 				msg.PackFull(ms);
 				SendRawData(ms.ToArray());
 			}
 		}
 
+		/// <summary>Sends a tile square at a location with a given size. 	
+		/// Typically used to revert changes by Bouncer through sending the
+		/// "old" version of modified data back to a client.
+		/// Prevents desync issues.
+		/// </summary>
+		/// <param name="x">The x coordinate to send.</param>
+		/// <param name="y">The y coordinate to send.</param>
+		/// <param name="size">The size square set of tiles to send.</param>
+		/// <returns>Status if the tile square was sent successfully (i.e. no exceptions).</returns>
 		public virtual bool SendTileSquare(int x, int y, int size = 10)
 		{
 			try
 			{
-				int num = (size - 1)/2;
+				int num = (size - 1) / 2;
 				int m_x = 0;
 				int m_y = 0;
 
@@ -866,48 +1254,31 @@ namespace TShockAPI
 		/// <summary>
 		/// Gives an item to the player. Includes banned item spawn prevention to check if the player can spawn the item.
 		/// </summary>
-		/// <param name="type"></param>
-		/// <param name="name"></param>
-		/// <param name="width"></param>
-		/// <param name="height"></param>
-		/// <param name="stack"></param>
-		/// <param name="prefix"></param>
+		/// <param name="type">The item ID.</param>
+		/// <param name="name">The item name.</param>
+		/// <param name="stack">The item stack.</param>
+		/// <param name="prefix">The item prefix.</param>
 		/// <returns>True or false, depending if the item passed the check or not.</returns>
-		public bool GiveItemCheck(int type, string name, int width, int height, int stack, int prefix = 0)
+		public bool GiveItemCheck(int type, string name, int stack, int prefix = 0)
 		{
 			if ((TShock.Itembans.ItemIsBanned(name) && TShock.Config.PreventBannedItemSpawn) &&
-				(TShock.Itembans.ItemIsBanned(name, this) || !TShock.Config.AllowAllowedGroupsToSpawnBannedItems))
-					return false;
+			    (TShock.Itembans.ItemIsBanned(name, this) || !TShock.Config.AllowAllowedGroupsToSpawnBannedItems))
+				return false;
 
-			GiveItem(type, name, width, height, stack, prefix);
+			GiveItem(type, stack, prefix);
 			return true;
 		}
 
 		/// <summary>
 		/// Gives an item to the player.
 		/// </summary>
-		/// <param name="type">The item's netID.</param>
-		/// <param name="name">The tiem's name.</param>
-		/// <param name="width">The item's width.</param>
-		/// <param name="height">The item's height.</param>
-		/// <param name="stack">The item's stack.</param>
-		/// <param name="prefix">The item's prefix.</param>
-		public virtual void GiveItem(int type, string name, int width, int height, int stack, int prefix = 0)
+		/// <param name="type">The item ID.</param>
+		/// <param name="stack">The item stack.</param>
+		/// <param name="prefix">The item prefix.</param>
+		public virtual void GiveItem(int type, int stack, int prefix = 0)
 		{
-			int itemid = Item.NewItem((int) X, (int) Y, width, height, type, stack, true, prefix, true);
-
-			// This is for special pickaxe/hammers/swords etc
-			Main.item[itemid].netDefaults(type);
-			// The set default overrides the wet and stack set by NewItem
-			Main.item[itemid].wet = Collision.WetCollision(Main.item[itemid].position, Main.item[itemid].width,
-															 Main.item[itemid].height);
-			Main.item[itemid].stack = stack;
-			Main.item[itemid].owner = Index;
-			Main.item[itemid].prefix = (byte) prefix;
-			Main.item[itemid].noGrabDelay = 1;
-			Main.item[itemid].velocity = Main.player[this.Index].velocity;
-			NetMessage.SendData((int)PacketTypes.ItemDrop, -1, -1, NetworkText.Empty, itemid, 0f, 0f, 0f);
-			NetMessage.SendData((int)PacketTypes.ItemOwner, -1, -1, NetworkText.Empty, itemid, 0f, 0f, 0f);
+			int itemIndex = Item.NewItem((int)X, (int)Y, TPlayer.width, TPlayer.height, type, stack, true, prefix, true);
+			SendData(PacketTypes.ItemDrop, "", itemIndex);
 		}
 
 		/// <summary>
@@ -1044,6 +1415,43 @@ namespace TShockAPI
 		}
 
 		/// <summary>
+		/// Sends the text of a given file to the player. Replacement of %map% and %players% if in the file.
+		/// </summary>
+		/// <param name="file">Filename relative to <see cref="TShock.SavePath"></see></param>
+		public void SendFileTextAsMessage(string file)
+		{
+			string foo = "";
+			bool containsOldFormat = false;
+			using (var tr = new StreamReader(file))
+			{
+				Color lineColor;
+				while ((foo = tr.ReadLine()) != null)
+				{
+					lineColor = Color.White;
+					if (string.IsNullOrWhiteSpace(foo))
+					{
+						continue;
+					}
+
+					var players = new List<string>();
+
+					foreach (TSPlayer ply in TShock.Players)
+					{
+						if (ply != null && ply.Active)
+						{
+							players.Add(ply.Name);
+						}
+					}
+
+					foo = foo.Replace("%map%", (TShock.Config.UseServerName ? TShock.Config.ServerName : Main.worldName));
+					foo = foo.Replace("%players%", String.Join(",", players));
+
+					SendMessage(foo, lineColor);
+				}
+			}
+		}
+
+		/// <summary>
 		/// Wounds the player with the given damage.
 		/// </summary>
 		/// <param name="damage">The amount of damage the player will take.</param>
@@ -1068,7 +1476,6 @@ namespace TShockAPI
 		{
 			Main.player[Index].team = team;
 			NetMessage.SendData((int)PacketTypes.PlayerTeam, -1, -1, NetworkText.Empty, Index);
-			NetMessage.SendData((int)PacketTypes.PlayerTeam, -1, Index, NetworkText.Empty, Index);
 		}
 
 		private DateTime LastDisableNotification = DateTime.UtcNow;
@@ -1128,6 +1535,79 @@ namespace TShockAPI
 			LogStackFrame();
 		}
 
+		/// <summary>
+		/// Disconnects this player from the server with a reason.
+		/// </summary>
+		/// <param name="reason">The reason to display to the user and to the server on kick.</param>
+		/// <param name="force">If the kick should happen regardless of immunity to kick permissions.</param>
+		/// <param name="silent">If no message should be broadcasted to the server.</param>
+		/// <param name="adminUserName">The originator of the kick, for display purposes.</param>
+		/// <param name="saveSSI">If the player's server side character should be saved on kick.</param>
+		public bool Kick(string reason, bool force = false, bool silent = false, string adminUserName = null, bool saveSSI = false)
+		{
+			if (!ConnectionAlive)
+				return true;
+			if (force || !HasPermission(Permissions.immunetokick))
+			{
+				SilentKickInProgress = silent;
+				if (IsLoggedIn && saveSSI)
+					SaveServerCharacter();
+				Disconnect(string.Format("Kicked: {0}", reason));
+				TShock.Log.ConsoleInfo(string.Format("Kicked {0} for : '{1}'", Name, reason));
+				string verb = force ? "force " : "";
+				if (!silent)
+				{
+					if (string.IsNullOrWhiteSpace(adminUserName))
+						TShock.Utils.Broadcast(string.Format("{0} was {1}kicked for '{2}'", Name, verb, reason.ToLower()), Color.Green);
+					else
+						TShock.Utils.Broadcast(string.Format("{0} {1}kicked {2} for '{3}'", adminUserName, verb, Name, reason.ToLower()), Color.Green);
+				}
+				return true;
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Bans and disconnects the player from the server.
+		/// </summary>
+		/// <param name="reason">The reason to be displayed to the server.</param>
+		/// <param name="force">If the ban should bypass immunity to ban checks.</param>
+		/// <param name="adminUserName">The player who initiated the ban.</param>
+		public bool Ban(string reason, bool force = false, string adminUserName = null)
+		{
+			if (!ConnectionAlive)
+				return true;
+			if (force || !HasPermission(Permissions.immunetoban))
+			{
+				string ip = IP;
+				string uuid = UUID;
+				TShock.Bans.AddBan(ip, Name, uuid, "", reason, false, adminUserName);
+				Disconnect(string.Format("Banned: {0}", reason));
+				string verb = force ? "force " : "";
+				if (string.IsNullOrWhiteSpace(adminUserName))
+					TSPlayer.All.SendInfoMessage("{0} was {1}banned for '{2}'.", Name, verb, reason);
+				else
+					TSPlayer.All.SendInfoMessage("{0} {1}banned {2} for '{3}'.", adminUserName, verb, Name, reason);
+				return true;
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Sends the player an error message stating that more than one match was found
+		/// appending a csv list of the matches.
+		/// </summary>
+		/// <param name="matches">An enumerable list with the matches</param>
+		public void SendMultipleMatchError(IEnumerable<object> matches)
+		{
+			SendErrorMessage("More than one match found: ");
+			
+			var lines = PaginationTools.BuildLinesFromTerms(matches.ToArray());
+			lines.ForEach(SendInfoMessage);
+
+			SendErrorMessage("Use \"my query\" for items with spaces.");
+		}
+
 		[Conditional("DEBUG")]
 		private void LogStackFrame()
 		{
@@ -1144,7 +1624,7 @@ namespace TShockAPI
 		/// <param name="time">The</param>
 		public virtual void Whoopie(object time)
 		{
-			var time2 = (int) time;
+			var time2 = (int)time;
 			var launch = DateTime.UtcNow;
 			var startname = Name;
 			SendInfoMessage("You are now being annoyed.");
@@ -1186,7 +1666,7 @@ namespace TShockAPI
 			if (RealPlayer && !ConnectionAlive)
 				return;
 
-			NetMessage.SendData((int) msgType, Index, -1, NetworkText.FromLiteral(text), number, number2, number3, number4, number5);
+			NetMessage.SendData((int)msgType, Index, -1, NetworkText.FromLiteral(text), number, number2, number3, number4, number5);
 		}
 
 		/// <summary>
@@ -1205,7 +1685,7 @@ namespace TShockAPI
 			if (RealPlayer && !ConnectionAlive)
 				return;
 
-			NetMessage.SendData((int) msgType, Index, -1, NetworkText.FromFormattable(text), ply, number2, number3, number4, number5);
+			NetMessage.SendData((int)msgType, Index, -1, NetworkText.FromFormattable(text), ply, number2, number3, number4, number5);
 		}
 
 		/// <summary>
@@ -1225,9 +1705,9 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="name">The string representing the command i.e "yes" == /yes</param>
 		/// <param name="callback">The method that will be executed on confirmation ie user accepts</param>
-		public void AddResponse( string name, Action<object> callback)
+		public void AddResponse(string name, Action<object> callback)
 		{
-			if( AwaitingResponse.ContainsKey(name))
+			if (AwaitingResponse.ContainsKey(name))
 			{
 				AwaitingResponse.Remove(name);
 			}
@@ -1245,13 +1725,47 @@ namespace TShockAPI
 		/// <returns>True if the player has that permission.</returns>
 		public bool HasPermission(string permission)
 		{
-			if (PlayerHooks.OnPlayerPermission(this, permission))
-				return true;
+			PermissionHookResult hookResult = PlayerHooks.OnPlayerPermission(this, permission);
+
+			if (hookResult != PermissionHookResult.Unhandled)
+				return hookResult == PermissionHookResult.Granted;
 
 			if (tempGroup != null)
 				return tempGroup.HasPermission(permission);
 			else
 				return Group.HasPermission(permission);
+		}
+
+		/// <summary>
+		/// Checks to see if a player has permission to use the specific banned item.
+		/// Fires the <see cref="PlayerHooks.OnPlayerItembanPermission"/> hook which may be handled to override item ban permission checks.
+		/// </summary>
+		/// <param name="bannedItem">The <see cref="ItemBan" /> to check.</param>
+		/// <returns>True if the player has permission to use the banned item.</returns>
+		public bool HasPermission(ItemBan bannedItem)
+		{
+			return TShock.Itembans.ItemIsBanned(bannedItem.Name, this);
+		}
+
+		/// <summary>
+		/// Checks to see if a player has permission to use the specific banned projectile.
+		/// Fires the <see cref="PlayerHooks.OnPlayerProjbanPermission"/> hook which may be handled to override projectile ban permission checks.
+		/// </summary>
+		/// <param name="bannedProj">The <see cref="ProjectileBan" /> to check.</param>
+		/// <returns>True if the player has permission to use the banned projectile.</returns>
+		public bool HasPermission(ProjectileBan bannedProj)
+		{
+			return TShock.ProjectileBans.ProjectileIsBanned(bannedProj.ID, this);
+		}
+		/// <summary>
+		/// Checks to see if a player has permission to use the specific banned tile.
+		/// Fires the <see cref="PlayerHooks.OnPlayerTilebanPermission"/> hook which may be handled to override tile ban permission checks.
+		/// </summary>
+		/// <param name="bannedTile">The <see cref="TileBan" /> to check.</param>
+		/// <returns>True if the player has permission to use the banned tile.</returns>
+		public bool HasPermission(TileBan bannedTile)
+		{
+			return TShock.TileBans.TileIsBanned(bannedTile.ID, this);
 		}
 	}
 
@@ -1259,7 +1773,7 @@ namespace TShockAPI
 	{
 		internal List<string> CommandOutput = new List<string>();
 
-		public TSRestPlayer(string playerName, Group playerGroup): base(playerName)
+		public TSRestPlayer(string playerName, Group playerGroup) : base(playerName)
 		{
 			Group = playerGroup;
 			AwaitingResponse = new Dictionary<string, Action<object>>();

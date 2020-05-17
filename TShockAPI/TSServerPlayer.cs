@@ -1,6 +1,6 @@
 /*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2017 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2019 Pryaxis & TShock Contributors
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ namespace TShockAPI
 			: base("Server")
 		{
 			Group = new SuperAdminGroup();
-			User = new User { Name = AccountName };
+			Account = new UserAccount { Name = AccountName };
 		}
 
 		public override void SendErrorMessage(string msg)
@@ -152,12 +152,7 @@ namespace TShockAPI
 				int spawnTileY;
 				TShock.Utils.GetRandomClearTileWithInRange(startTileX, startTileY, tileXRange, tileYRange, out spawnTileX,
 															 out spawnTileY);
-				int npcid = NPC.NewNPC(spawnTileX * 16, spawnTileY * 16, type, 0);
-
-				// TODO: If special slimes break look at the git blame for this spot
-				// It's probably because I removed something that didn't work
-				Main.npc[npcid].SetDefaults(type);
-				
+				NPC.NewNPC(spawnTileX * 16, spawnTileY * 16, type);
 			}
 		}
 

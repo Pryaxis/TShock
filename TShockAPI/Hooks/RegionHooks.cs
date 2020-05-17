@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2017 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2019 Pryaxis & TShock Contributors
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -109,6 +109,30 @@ namespace TShockAPI.Hooks
 				return;
 
 			RegionDeleted(new RegionDeletedEventArgs(region));
+		}
+		
+		public class RegionRenamedEventArgs
+		{
+			public Region Region { get; private set; }
+			public string OldName { get; private set; }
+			public string NewName { get; private set; }
+
+			public RegionRenamedEventArgs(Region region, string oldName, string newName)
+			{
+				Region = region;
+				OldName = oldName;
+				NewName = newName;
+			}
+		}
+
+		public delegate void RegionRenamedD(RegionRenamedEventArgs args);
+		public static event RegionRenamedD RegionRenamed;
+		public static void OnRegionRenamed(Region region, string oldName, string newName)
+		{
+			if (RegionRenamed == null)
+				return;
+
+			RegionRenamed(new RegionRenamedEventArgs(region, oldName, newName));
 		}
 	}
 }

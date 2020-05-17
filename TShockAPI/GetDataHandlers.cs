@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2017 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2019 Pryaxis & TShock Contributors
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -58,22 +58,337 @@ namespace TShockAPI
 		}
 	}
 
+	/// <summary>
+	/// A custom HandledEventArgs that contains TShock's TSPlayer for the triggering uesr and the Terraria MP data stream.
+	/// Differentiated by GetDataHandlerArgs because it can be handled and responds to being handled.
+	/// </summary>
+	public class GetDataHandledEventArgs : HandledEventArgs
+	{
+		/// <summary>The TSPlayer that triggered the event.</summary>
+		public TSPlayer Player { get; set; }
+
+		/// <summary>The raw MP packet data associated with the event.</summary>
+		public MemoryStream Data { get; set; }
+	}
+
 	public static class GetDataHandlers
 	{
 		private static Dictionary<PacketTypes, GetDataHandlerDelegate> GetDataHandlerDelegates;
+
 		public static int[] WhitelistBuffMaxTime;
+
+		public static void InitGetDataHandler()
+		{
+			#region Blacklists
+
+			WhitelistBuffMaxTime = new int[Main.maxBuffTypes];
+			WhitelistBuffMaxTime[20] = 600;
+			WhitelistBuffMaxTime[0x18] = 1200;
+			WhitelistBuffMaxTime[0x1f] = 120;
+			WhitelistBuffMaxTime[0x27] = 420;
+
+			#endregion Blacklists
+
+			GetDataHandlerDelegates = new Dictionary<PacketTypes, GetDataHandlerDelegate>
+				{
+					{ PacketTypes.PlayerInfo, HandlePlayerInfo },
+					{ PacketTypes.PlayerSlot, HandlePlayerSlot },
+					{ PacketTypes.ContinueConnecting2, HandleConnecting },
+					{ PacketTypes.TileGetSection, HandleGetSection },
+					{ PacketTypes.PlayerSpawn, HandleSpawn },
+					{ PacketTypes.PlayerUpdate, HandlePlayerUpdate },
+					{ PacketTypes.PlayerHp, HandlePlayerHp },
+					{ PacketTypes.Tile, HandleTile },
+					{ PacketTypes.DoorUse, HandleDoorUse },
+					{ PacketTypes.TileSendSquare, HandleSendTileSquare },
+					{ PacketTypes.ItemDrop, HandleItemDrop },
+					{ PacketTypes.ItemOwner, HandleItemOwner },
+					{ PacketTypes.ProjectileNew, HandleProjectileNew },
+					{ PacketTypes.NpcStrike, HandleNpcStrike },
+					{ PacketTypes.ProjectileDestroy, HandleProjectileKill },
+					{ PacketTypes.TogglePvp, HandleTogglePvp },
+					{ PacketTypes.ChestGetContents, HandleChestOpen },
+					{ PacketTypes.ChestItem, HandleChestItem },
+					{ PacketTypes.ChestOpen, HandleChestActive },
+					{ PacketTypes.PlaceChest, HandlePlaceChest },
+					{ PacketTypes.Zones, HandlePlayerZone },
+					{ PacketTypes.PasswordSend, HandlePassword },
+					{ PacketTypes.PlayerAnimation, HandlePlayerAnimation },
+					{ PacketTypes.PlayerMana, HandlePlayerMana },
+					{ PacketTypes.PlayerTeam, HandlePlayerTeam },
+					{ PacketTypes.SignNew, HandleSign },
+					{ PacketTypes.LiquidSet, HandleLiquidSet },
+					{ PacketTypes.PlayerBuff, HandlePlayerBuffList },
+					{ PacketTypes.NpcSpecial, HandleSpecial },
+					{ PacketTypes.NpcAddBuff, HandleNPCAddBuff },
+					{ PacketTypes.PlayerAddBuff, HandlePlayerAddBuff },
+					{ PacketTypes.UpdateNPCHome, UpdateNPCHome },
+					{ PacketTypes.SpawnBossorInvasion, HandleSpawnBoss },
+					{ PacketTypes.PaintTile, HandlePaintTile },
+					{ PacketTypes.PaintWall, HandlePaintWall },
+					{ PacketTypes.Teleport, HandleTeleport },
+					{ PacketTypes.PlayerHealOther, HandleHealOther },
+					{ PacketTypes.CatchNPC, HandleCatchNpc },
+					{ PacketTypes.CompleteAnglerQuest, HandleCompleteAnglerQuest },
+					{ PacketTypes.NumberOfAnglerQuestsCompleted, HandleNumberOfAnglerQuestsCompleted },
+					{ PacketTypes.PlaceObject, HandlePlaceObject },
+					{ PacketTypes.LoadNetModule, HandleLoadNetModule },
+					{ PacketTypes.PlaceTileEntity, HandlePlaceTileEntity },
+					{ PacketTypes.PlaceItemFrame, HandlePlaceItemFrame },
+					{ PacketTypes.UpdateItemDrop, HandleItemDrop },
+					{ PacketTypes.SyncExtraValue, HandleSyncExtraValue },
+					{ PacketTypes.KillPortal, HandleKillPortal },
+					{ PacketTypes.PlayerTeleportPortal, HandlePlayerPortalTeleport },
+					{ PacketTypes.NpcTeleportPortal, HandleNpcTeleportPortal },
+					{ PacketTypes.GemLockToggle, HandleGemLockToggle },
+					{ PacketTypes.MassWireOperation, HandleMassWireOperation },
+					{ PacketTypes.ToggleParty, HandleToggleParty },
+					{ PacketTypes.CrystalInvasionStart, HandleOldOnesArmy },
+					{ PacketTypes.PlayerHurtV2, HandlePlayerDamageV2 },
+					{ PacketTypes.PlayerDeathV2, HandlePlayerKillMeV2 }
+				};
+		}
+
+		public static bool HandlerGetData(PacketTypes type, TSPlayer player, MemoryStream data)
+		{
+			GetDataHandlerDelegate handler;
+			if (GetDataHandlerDelegates.TryGetValue(type, out handler))
+			{
+				try
+				{
+					return handler(new GetDataHandlerArgs(player, data));
+				}
+				catch (Exception ex)
+				{
+					TShock.Log.Error(ex.ToString());
+					return true;
+				}
+			}
+			return false;
+		}
+
 		#region Events
 
+		public class PlayerInfoEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// The Terraria playerID of the player
+			/// </summary>
+			public byte PlayerId { get; set; }
+			/// <summary>
+			/// Hair color
+			/// </summary>
+			public byte Hair { get; set; }
+			/// <summary>
+			/// Clothing style. 0-3 are for male characters, and 4-7 are for female characters.
+			/// </summary>
+			public int Style { get; set; }
+			/// <summary>
+			/// Character difficulty
+			/// </summary>
+			public byte Difficulty { get; set; }
+			/// <summary>
+			/// Player/character name
+			/// </summary>
+			public string Name { get; set; }
+		}
+		/// <summary>
+		/// PlayerInfo - called at a PlayerInfo event
+		/// If this is cancelled, the server will kick the player. If this should be changed in the future, let someone know.
+		/// </summary>
+		public static HandlerList<PlayerInfoEventArgs> PlayerInfo = new HandlerList<PlayerInfoEventArgs>();
+		private static bool OnPlayerInfo(TSPlayer player, MemoryStream data, byte _plrid, byte _hair, int _style, byte _difficulty, string _name)
+		{
+			if (PlayerInfo == null)
+				return false;
+
+			var args = new PlayerInfoEventArgs
+			{
+				Player = player,
+				Data = data,
+				PlayerId = _plrid,
+				Hair = _hair,
+				Style = _style,
+				Difficulty = _difficulty,
+				Name = _name,
+			};
+			PlayerInfo.Invoke(null, args);
+			return args.Handled;
+		}
+		
+		/// <summary>
+		/// For use in a PlayerSlot event
+		/// </summary>
+		public class PlayerSlotEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// The Terraria playerID
+			/// </summary>
+			public byte PlayerId { get; set; }
+			/// <summary>
+			/// The slot edited
+			/// </summary>
+			public byte Slot { get; set; }
+			/// <summary>
+			/// The stack edited
+			/// </summary>
+			public short Stack { get; set; }
+			/// <summary>
+			/// The item prefix
+			/// </summary>
+			public byte Prefix { get; set; }
+			/// <summary>
+			/// Item type
+			/// </summary>
+			public short Type { get; set; }
+		}
+		/// <summary>
+		/// PlayerSlot - called at a PlayerSlot event
+		/// </summary>
+		public static HandlerList<PlayerSlotEventArgs> PlayerSlot = new HandlerList<PlayerSlotEventArgs>();
+		private static bool OnPlayerSlot(TSPlayer player, MemoryStream data, byte _plr, byte _slot, short _stack, byte _prefix, short _type)
+		{
+			if (PlayerSlot == null)
+				return false;
+
+			var args = new PlayerSlotEventArgs
+			{
+				Player = player,
+				Data = data,
+				PlayerId = _plr,
+				Slot = _slot,
+				Stack = _stack,
+				Prefix = _prefix,
+				Type = _type
+			};
+			PlayerSlot.Invoke(null, args);
+			return args.Handled;
+		}
+		
+		/// <summary>The arguments to a GetSection packet.</summary>
+		public class GetSectionEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>The X position requested. Or -1 for spawn.</summary>
+			public int X { get; set; }
+
+			/// <summary>The Y position requested. Or -1 for spawn.</summary>
+			public int Y { get; set; }
+		}
+		/// <summary>The hook for a GetSection event.</summary>
+		public static HandlerList<GetSectionEventArgs> GetSection = new HandlerList<GetSectionEventArgs>();
+		private static bool OnGetSection(TSPlayer player, MemoryStream data, int x, int y)
+		{
+			if (GetSection == null)
+				return false;
+
+			var args = new GetSectionEventArgs
+			{
+				Player = player,
+				Data = data,
+				X = x,
+				Y = y,
+			};
+
+			GetSection.Invoke(null, args);
+			return args.Handled;
+		}
+		
+		/// <summary>
+		/// For use in a PlayerUpdate event
+		/// </summary>
+		public class PlayerUpdateEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// The Terraria playerID of the player
+			/// </summary>
+			public byte PlayerId { get; set; }
+			/// <summary>
+			/// Control direction (BitFlags)
+			/// </summary>
+			public byte Control { get; set; }
+			/// <summary>
+			/// Selected item
+			/// </summary>
+			public byte Item { get; set; }
+			/// <summary>
+			/// Position of the player
+			/// </summary>
+			public Vector2 Position { get; set; }
+			/// <summary>
+			/// Velocity of the player
+			/// </summary>
+			public Vector2 Velocity { get; set; }
+			/// <summary>Pulley update (BitFlags)</summary>
+			public byte Pulley { get; set; }
+		}
+		/// <summary>
+		/// PlayerUpdate - When the player sends it's updated information to the server
+		/// </summary>
+		public static HandlerList<PlayerUpdateEventArgs> PlayerUpdate = new HandlerList<PlayerUpdateEventArgs>();
+		private static bool OnPlayerUpdate(TSPlayer player, MemoryStream data, byte plr, byte control, byte item, Vector2 position, Vector2 velocity, byte pulley)
+		{
+			if (PlayerUpdate == null)
+				return false;
+
+			var args = new PlayerUpdateEventArgs
+			{
+				Player = player,
+				Data = data,
+				PlayerId = plr,
+				Control = control,
+				Item = item,
+				Position = position,
+				Velocity = velocity,
+				Pulley = pulley
+			};
+			PlayerUpdate.Invoke(null, args);
+			return args.Handled;
+		}
+
+		/// <summary>
+		/// For use in a PlayerHP event
+		/// </summary>
+		public class PlayerHPEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// The Terraria playerID of the player
+			/// </summary>
+			public byte PlayerId { get; set; }
+			/// <summary>
+			/// Current HP
+			/// </summary>
+			public short Current { get; set; }
+			/// <summary>
+			/// Maximum HP
+			/// </summary>
+			public short Max { get; set; }
+		}
+		/// <summary>
+		/// PlayerHP - called at a PlayerHP event
+		/// </summary>
+		public static HandlerList<PlayerHPEventArgs> PlayerHP = new HandlerList<PlayerHPEventArgs>();
+		private static bool OnPlayerHP(TSPlayer player, MemoryStream data, byte _plr, short _cur, short _max)
+		{
+			if (PlayerHP == null)
+				return false;
+
+			var args = new PlayerHPEventArgs
+			{
+				Player = player,
+				Data = data,
+				PlayerId = _plr,
+				Current = _cur,
+				Max = _max,
+			};
+			PlayerHP.Invoke(null, args);
+			return args.Handled;
+		}
+		
 		/// <summary>
 		/// Used when a TileEdit event is called.
 		/// </summary>
-		public class TileEditEventArgs : HandledEventArgs
+		public class TileEditEventArgs : GetDataHandledEventArgs
 		{
-			/// <summary>
-			/// The TSPlayer who made the tile edit
-			/// </summary>
-			public TSPlayer Player { get; set; }
-
 			/// <summary>
 			/// The tile coordinate on the X plane
 			/// </summary>
@@ -104,12 +419,11 @@ namespace TShockAPI
 			/// </summary>
 			public byte Style { get; set; }
 		}
-
 		/// <summary>
 		/// TileEdit - called when a tile is placed or destroyed
 		/// </summary>
-		public static HandlerList<TileEditEventArgs> TileEdit;
-		private static bool OnTileEdit(TSPlayer ply, int x, int y, EditAction action, EditType editDetail, short editData, byte style)
+		public static HandlerList<TileEditEventArgs> TileEdit = new HandlerList<TileEditEventArgs>();
+		private static bool OnTileEdit(TSPlayer ply, MemoryStream data, int x, int y, EditAction action, EditType editDetail, short editData, byte style)
 		{
 			if (TileEdit == null)
 				return false;
@@ -117,6 +431,7 @@ namespace TShockAPI
 			var args = new TileEditEventArgs
 			{
 				Player = ply,
+				Data = data,
 				X = x,
 				Y = y,
 				Action = action,
@@ -127,452 +442,113 @@ namespace TShockAPI
 			TileEdit.Invoke(null, args);
 			return args.Handled;
 		}
-		/// <summary>
-		/// For use in a TogglePvp event
-		/// </summary>
-		public class TogglePvpEventArgs : HandledEventArgs
-		{
-			/// <summary>
-			/// The Terraria player ID of the player
-			/// </summary>
-			public byte PlayerId { get; set; }
-			/// <summary>
-			/// Enable/disable pvp?
-			/// </summary>
-			public bool Pvp { get; set; }
-		}
-		/// <summary>
-		/// TogglePvp - called when a player toggles pvp
-		/// </summary>
-		public static HandlerList<TogglePvpEventArgs> TogglePvp;
-		private static bool OnPvpToggled(byte _id, bool _pvp)
-		{
-			if (TogglePvp == null)
-				return false;
-
-			var args = new TogglePvpEventArgs
-			{
-				PlayerId = _id,
-				Pvp = _pvp,
-			};
-			TogglePvp.Invoke(null, args);
-			return args.Handled;
-		}
-
-		/// <summary>
-		/// For use in a PlayerTeam event
-		/// </summary>
-		public class PlayerTeamEventArgs : HandledEventArgs
-		{
-			/// <summary>
-			/// The Terraria player ID of the player
-			/// </summary>
-			public byte PlayerId { get; set; }
-			/// <summary>
-			/// Enable/disable pvp?
-			/// </summary>
-			public byte Team { get; set; }
-		}
-		/// <summary>
-		/// TogglePvp - called when a player toggles pvp
-		/// </summary>
-		public static HandlerList<PlayerTeamEventArgs> PlayerTeam;
-		private static bool OnPlayerTeam(byte _id, byte _team)
-		{
-			if (PlayerTeam == null)
-				return false;
-
-			var args = new PlayerTeamEventArgs
-			{
-				PlayerId = _id,
-				Team = _team,
-			};
-			PlayerTeam.Invoke(null, args);
-			return args.Handled;
-		}
-
-		/// <summary>
-		/// For use in a PlayerSlot event
-		/// </summary>
-		public class PlayerSlotEventArgs : HandledEventArgs
-		{
-			/// <summary>
-			/// The Terraria playerID
-			/// </summary>
-			public byte PlayerId { get; set; }
-			/// <summary>
-			/// The slot edited
-			/// </summary>
-			public byte Slot { get; set; }
-			/// <summary>
-			/// The stack edited
-			/// </summary>
-			public short Stack { get; set; }
-			/// <summary>
-			/// The item prefix
-			/// </summary>
-			public byte Prefix { get; set; }
-			/// <summary>
-			/// Item type
-			/// </summary>
-			public short Type { get; set; }
-		}
-		/// <summary>
-		/// PlayerSlot - called at a PlayerSlot event
-		/// </summary>
-		public static HandlerList<PlayerSlotEventArgs> PlayerSlot;
-		private static bool OnPlayerSlot(byte _plr, byte _slot, short _stack, byte _prefix, short _type)
-		{
-			if (PlayerSlot == null)
-				return false;
-
-			var args = new PlayerSlotEventArgs
-			{
-				PlayerId = _plr,
-				Slot = _slot,
-				Stack = _stack,
-				Prefix = _prefix,
-				Type = _type
-			};
-			PlayerSlot.Invoke(null, args);
-			return args.Handled;
-		}
-
-		/// <summary>
-		/// For use in a PlayerHP event
-		/// </summary>
-		public class PlayerHPEventArgs : HandledEventArgs
-		{
-			/// <summary>
-			/// The Terraria playerID of the player
-			/// </summary>
-			public byte PlayerId { get; set; }
-			/// <summary>
-			/// Current HP
-			/// </summary>
-			public short Current { get; set; }
-			/// <summary>
-			/// Maximum HP
-			/// </summary>
-			public short Max { get; set; }
-		}
-		/// <summary>
-		/// PlayerHP - called at a PlayerHP event
-		/// </summary>
-		public static HandlerList<PlayerHPEventArgs> PlayerHP;
-
-		private static bool OnPlayerHP(byte _plr, short _cur, short _max)
-		{
-			if (PlayerHP == null)
-				return false;
-
-			var args = new PlayerHPEventArgs
-			{
-				PlayerId = _plr,
-				Current = _cur,
-				Max = _max,
-			};
-			PlayerHP.Invoke(null, args);
-			return args.Handled;
-		}
-
-		/// <summary>
-		/// For use in a PlayerMana event
-		/// </summary>
-		public class PlayerManaEventArgs : HandledEventArgs
-		{
-			public byte PlayerId { get; set; }
-			public short Current { get; set; }
-			public short Max { get; set; }
-		}
-		/// <summary>
-		/// PlayerMana - called at a PlayerMana event
-		/// </summary>
-		public static HandlerList<PlayerManaEventArgs> PlayerMana;
-
-		private static bool OnPlayerMana(byte _plr, short _cur, short _max)
-		{
-			if (PlayerMana == null)
-				return false;
-
-			var args = new PlayerManaEventArgs
-			{
-				PlayerId = _plr,
-				Current = _cur,
-				Max = _max,
-			};
-			PlayerMana.Invoke(null, args);
-			return args.Handled;
-		}
-
-		public class PlayerInfoEventArgs : HandledEventArgs
-		{
-			/// <summary>
-			/// The Terraria playerID of the player
-			/// </summary>
-			public byte PlayerId { get; set; }
-			/// <summary>
-			/// Hair color
-			/// </summary>
-			public byte Hair { get; set; }
-			/// <summary>
-			/// Clothing style. 0-3 are for male characters, and 4-7 are for female characters.
-			/// </summary>
-			public int Style { get; set; }
-			/// <summary>
-			/// Character difficulty
-			/// </summary>
-			public byte Difficulty { get; set; }
-			/// <summary>
-			/// Player/character name
-			/// </summary>
-			public string Name { get; set; }
-		}
-		/// <summary>
-		/// PlayerInfo - called at a PlayerInfo event
-		/// If this is cancelled, the server will ForceKick the player. If this should be changed in the future, let someone know.
-		/// </summary>
-		public static HandlerList<PlayerInfoEventArgs> PlayerInfo;
-
-		private static bool OnPlayerInfo(byte _plrid, byte _hair, int _style, byte _difficulty, string _name)
-		{
-			if (PlayerInfo == null)
-				return false;
-
-			var args = new PlayerInfoEventArgs
-			{
-				PlayerId = _plrid,
-				Hair = _hair,
-				Style = _style,
-				Difficulty = _difficulty,
-				Name = _name,
-			};
-			PlayerInfo.Invoke(null, args);
-			return args.Handled;
-		}
-
-		/// <summary>
-		/// For use in a TileKill event
-		/// </summary>
-		public class TileKillEventArgs : HandledEventArgs
-		{
-			/// <summary>
-			/// The X coordinate that is being killed
-			/// </summary>
-			public int TileX { get; set; }
-			/// <summary>
-			/// The Y coordinate that is being killed
-			/// </summary>
-			public int TileY { get; set; }
-		}
-		/// <summary>
-		/// TileKill - When a tile is removed from the world
-		/// </summary>
-		public static HandlerList<TileKillEventArgs> TileKill;
-
-		private static bool OnTileKill(int tilex, int tiley)
-		{
-			if (TileKill == null)
-				return false;
-
-			var args = new TileKillEventArgs
-			{
-				TileX = tilex,
-				TileY = tiley,
-			};
-			TileKill.Invoke(null, args);
-			return args.Handled;
-		}
-
-		/// <summary>
-		/// For use in a KillMe event
-		/// </summary>
-		public class KillMeEventArgs : HandledEventArgs
-		{
-			/// <summary>
-			/// The Terraria playerID of the player
-			/// </summary>
-			public byte PlayerId { get; set; }
-			/// <summary>
-			/// The direction the damage is coming from (?)
-			/// </summary>
-			public byte Direction { get; set; }
-			/// <summary>
-			/// Amount of damage delt
-			/// </summary>
-			public short Damage { get; set; }
-			/// <summary>
-			/// Player's current pvp setting
-			/// </summary>
-			public bool Pvp { get; set; }
-		}
-		/// <summary>
-		/// KillMe - Terraria's crappy way of handling damage from players
-		/// </summary>
-		public static HandlerList<KillMeEventArgs> KillMe;
-
-		private static bool OnKillMe(byte plr, byte direction, short damage, bool pvp)
-		{
-			if (KillMe == null)
-				return false;
-
-			var args = new KillMeEventArgs
-			{
-				PlayerId = plr,
-				Direction = direction,
-				Damage = damage,
-				Pvp = pvp,
-			};
-			KillMe.Invoke(null, args);
-			return args.Handled;
-		}
-
-		/// <summary>
-		/// For use in a PlayerUpdate event
-		/// </summary>
-		public class PlayerUpdateEventArgs : HandledEventArgs
-		{
-			/// <summary>
-			/// The Terraria playerID of the player
-			/// </summary>
-			public byte PlayerId { get; set; }
-			/// <summary>
-			/// ???
-			/// </summary>
-			public byte Control { get; set; }
-			/// <summary>
-			/// Current item?
-			/// </summary>
-			public byte Item { get; set; }
-			/// <summary>
-			/// Position of the player
-			/// </summary>
-			public Vector2 Position { get; set; }
-			/// <summary>
-			/// Velocity of the player
-			/// </summary>
-			public Vector2 Velocity { get; set; }
-
-			public byte Pulley { get; set; }
-		}
-		/// <summary>
-		/// PlayerUpdate - When the player sends it's updated information to the server
-		/// </summary>
-		public static HandlerList<PlayerUpdateEventArgs> PlayerUpdate;
-
-		private static bool OnPlayerUpdate(byte player, byte control, byte item, Vector2 position, Vector2 velocity, byte pulley)
-		{
-			if (PlayerUpdate == null)
-				return false;
-
-			var args = new PlayerUpdateEventArgs
-			{
-				PlayerId = player,
-				Control = control,
-				Item = item,
-				Position = position,
-				Velocity = velocity,
-				Pulley = pulley
-			};
-			PlayerUpdate.Invoke(null, args);
-			return args.Handled;
-		}
-		public static bool TSCheckNoclip(Vector2 Position, int Width, int Height)
-		{
-			int num = (int)(Position.X / 16f);
-			int num2 = (int)((Position.X + (float)Width) / 16f);
-			int num3 = (int)(Position.Y / 16f);
-			int num4 = (int)((Position.Y + (float)Height) / 16f);
-			if (num < 0)
-			{
-				num = 0;
-			}
-			if (num2 > Main.maxTilesX)
-			{
-				num2 = Main.maxTilesX;
-			}
-			if (num3 < 0)
-			{
-				num3 = 0;
-			}
-			if (num4 > Main.maxTilesY)
-			{
-				num4 = Main.maxTilesY;
-			}
-			for (int c = num; c < num2; c++)
-			{
-				for (int d = num3; d < num4; d++)
-				{
-					if (Main.tile[c, d].liquid != 0)
-						return false;
-				}
-			}
-			for (int i = num; i < num2; i++)
-			{
-				for (int j = num3; j < num4; j++)
-				{
-					if (Main.tile[i, j] == null || Main.tileSand[Main.tile[i, j].type]
-						|| !TShock.Utils.TileSolid(i, j) || !TShock.Utils.TileSolid(i + 1, j) || !TShock.Utils.TileSolid(i - 1, j)
-						|| !TShock.Utils.TileSolid(i, j + 1) || !TShock.Utils.TileSolid(i + 1, j + 1) || !TShock.Utils.TileSolid(i - 1, j + 1)
-						|| !TShock.Utils.TileSolid(i, j - 1) || !TShock.Utils.TileSolid(i + 1, j - 1) || !TShock.Utils.TileSolid(i - 1, j - 1)
-						|| Main.tileSolidTop[(int)Main.tile[i, j].type])
-					{
-						continue;
-					}
-
-					Vector2 vector;
-					vector.X = (float)(i * 16);
-					vector.Y = (float)(j * 16);
-					if (Position.X + (float)Width > vector.X && Position.X < vector.X + 16f && Position.Y + (float)Height > vector.Y && Position.Y < vector.Y + 16f)
-					{
-						return true;
-					}
-				}
-			}
-			return false;
-		}
-
+		
 		/// <summary>
 		/// For use in a SendTileSquare event
 		/// </summary>
-		public class SendTileSquareEventArgs : HandledEventArgs
+		public class SendTileSquareEventArgs : GetDataHandledEventArgs
 		{
 			/// <summary>
 			/// Size of the area
 			/// </summary>
 			public short Size { get; set; }
+
 			/// <summary>
 			/// A corner of the section
 			/// </summary>
 			public int TileX { get; set; }
+
 			/// <summary>
 			/// A corner of the section
 			/// </summary>
 			public int TileY { get; set; }
 		}
 		/// <summary>
-		/// SendTileSquare - When the player sends a tile square
+		/// When the player sends a tile square
 		/// </summary>
-		public static HandlerList<SendTileSquareEventArgs> SendTileSquare;
-
-		private static bool OnSendTileSquare(short size, int tilex, int tiley)
+		public static HandlerList<SendTileSquareEventArgs> SendTileSquare = new HandlerList<SendTileSquareEventArgs>();
+		private static bool OnSendTileSquare(TSPlayer player, MemoryStream data, short size, int tilex, int tiley)
 		{
 			if (SendTileSquare == null)
 				return false;
 
 			var args = new SendTileSquareEventArgs
 			{
+				Player = player,
+				Data = data,
 				Size = size,
 				TileX = tilex,
 				TileY = tiley,
 			};
+
 			SendTileSquare.Invoke(null, args);
 			return args.Handled;
 		}
+		
+		/// <summary>
+		/// For use in an ItemDrop event
+		/// </summary>
+		public class ItemDropEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// ID of the item.
+			/// If below 400 and NetID(Type) is 0 Then Set Null. If ItemID is 400 Then New Item
+			/// </summary>
+			public short ID { get; set; }
+			/// <summary>
+			/// Position of the item
+			/// </summary>
+			public Vector2 Position { get; set; }
+			/// <summary>
+			/// Velocity at which the item is deployed
+			/// </summary>
+			public Vector2 Velocity { get; set; }
+			/// <summary>
+			/// Stacks
+			/// </summary>
+			public short Stacks { get; set; }
+			/// <summary>
+			/// Prefix of the item
+			/// </summary>
+			public byte Prefix { get; set; }
+			/// <summary>
+			/// No Delay on pickup
+			/// </summary>
+			public bool NoDelay { get; set; }
+			/// <summary>
+			/// Item type
+			/// </summary>
+			public short Type { get; set; }
+		}
+		/// <summary>
+		/// ItemDrop - Called when an item is dropped
+		/// </summary>
+		public static HandlerList<ItemDropEventArgs> ItemDrop = new HandlerList<ItemDropEventArgs>();
+		private static bool OnItemDrop(TSPlayer player, MemoryStream data, short id, Vector2 pos, Vector2 vel, short stacks, byte prefix, bool noDelay, short type)
+		{
+			if (ItemDrop == null)
+				return false;
+
+			var args = new ItemDropEventArgs
+			{
+				Player = player,
+				Data = data,
+				ID = id,
+				Position = pos,
+				Velocity = vel,
+				Stacks = stacks,
+				Prefix = prefix,
+				NoDelay = noDelay,
+				Type = type,
+			};
+			ItemDrop.Invoke(null, args);
+			return args.Handled;
+		}
+		
 		/// <summary>
 		/// For use in a NewProjectile event
 		/// </summary>
-		public class NewProjectileEventArgs : HandledEventArgs
+		public class NewProjectileEventArgs : GetDataHandledEventArgs
 		{
 			/// <summary>
 			/// ???
@@ -610,15 +586,15 @@ namespace TShockAPI
 		/// <summary>
 		/// NewProjectile - Called when a client creates a new projectile
 		/// </summary>
-		public static HandlerList<NewProjectileEventArgs> NewProjectile;
-
-		private static bool OnNewProjectile(short ident, Vector2 pos, Vector2 vel, float knockback, short dmg, byte owner, short type, int index)
+		public static HandlerList<NewProjectileEventArgs> NewProjectile = new HandlerList<NewProjectileEventArgs>();
+		private static bool OnNewProjectile(MemoryStream data, short ident, Vector2 pos, Vector2 vel, float knockback, short dmg, byte owner, short type, int index, TSPlayer player)
 		{
 			if (NewProjectile == null)
 				return false;
 
 			var args = new NewProjectileEventArgs
 			{
+				Data = data,
 				Identity = ident,
 				Position = pos,
 				Velocity = vel,
@@ -627,412 +603,16 @@ namespace TShockAPI
 				Owner = owner,
 				Type = type,
 				Index = index,
+				Player = player,
 			};
 			NewProjectile.Invoke(null, args);
 			return args.Handled;
 		}
-
-		/// <summary>
-		/// For use in a LiquidSet event
-		/// </summary>
-		public class LiquidSetEventArgs : HandledEventArgs
-		{
-			/// <summary>
-			/// X location of the tile
-			/// </summary>
-			public int TileX { get; set; }
-			/// <summary>
-			/// Y location of the tile
-			/// </summary>
-			public int TileY { get; set; }
-			/// <summary>
-			/// Amount of liquid
-			/// </summary>
-			public byte Amount { get; set; }
-			/// <summary>
-			/// Type of Liquid: 0=water, 1=lave, 2=honey
-			/// </summary>
-			public byte Type { get; set; }
-		}
-		/// <summary>
-		/// LiquidSet - When ever a liquid is set
-		/// </summary>
-		public static HandlerList<LiquidSetEventArgs> LiquidSet;
-
-		private static bool OnLiquidSet(int tilex, int tiley, byte amount, byte type)
-		{
-			if (LiquidSet == null)
-				return false;
-
-			var args = new LiquidSetEventArgs
-			{
-				TileX = tilex,
-				TileY = tiley,
-				Amount = amount,
-				Type = type,
-			};
-			LiquidSet.Invoke(null, args);
-			return args.Handled;
-		}
-		/// <summary>
-		/// For use in a PlayerSpawn event
-		/// </summary>
-		public class SpawnEventArgs : HandledEventArgs
-		{
-			/// <summary>
-			/// The Terraria playerID of the player
-			/// </summary>
-			public byte Player { get; set; }
-			/// <summary>
-			/// X location of the player's spawn
-			/// </summary>
-			public int SpawnX { get; set; }
-			/// <summary>
-			/// Y location of the player's spawn
-			/// </summary>
-			public int SpawnY { get; set; }
-		}
-		/// <summary>
-		/// PlayerSpawn - When a player spawns
-		/// </summary>
-		public static HandlerList<SpawnEventArgs> PlayerSpawn;
-
-		private static bool OnPlayerSpawn(byte player, int spawnX, int spawnY)
-		{
-			if (PlayerSpawn == null)
-				return false;
-
-			var args = new SpawnEventArgs
-			{
-				Player = player,
-				SpawnX = spawnX,
-				SpawnY = spawnY,
-			};
-			PlayerSpawn.Invoke(null, args);
-			return args.Handled;
-		}
-		/// <summary>
-		/// For use with a ChestOpen event
-		/// </summary>
-		public class ChestOpenEventArgs : HandledEventArgs
-		{
-			/// <summary>
-			/// X location of said chest
-			/// </summary>
-			public int X { get; set; }
-			/// <summary>
-			/// Y location of said chest
-			/// </summary>
-			public int Y { get; set; }
-
-			/// <summary>
-			/// The player opening the chest
-			/// </summary>
-			public TSPlayer Player { get; set; }
-		}
-		/// <summary>
-		/// ChestOpen - Called when any chest is opened
-		/// </summary>
-		public static HandlerList<ChestOpenEventArgs> ChestOpen;
-
-		private static bool OnChestOpen(int x, int y, TSPlayer player)
-		{
-			if (ChestOpen == null)
-				return false;
-
-			var args = new ChestOpenEventArgs
-			{
-				X = x,
-				Y = y,
-				Player = player,
-			};
-			ChestOpen.Invoke(null, args);
-			return args.Handled;
-		}
-
-		/// <summary>
-		/// For use in a ChestItemChange event
-		/// </summary>
-		public class ChestItemEventArgs : HandledEventArgs
-		{
-			/// <summary>
-			/// ChestID
-			/// </summary>
-			public short ID { get; set; }
-			/// <summary>
-			/// Slot of the item
-			/// </summary>
-			public byte Slot { get; set; }
-			/// <summary>
-			/// How many?
-			/// </summary>
-			public short Stacks { get; set; }
-			/// <summary>
-			/// Item prefix
-			/// </summary>
-			public byte Prefix { get; set; }
-			/// <summary>
-			/// Item type
-			/// </summary>
-			public short Type { get; set; }
-		}
-		/// <summary>
-		/// ChestItemChange - Called when an item in a chest changes
-		/// </summary>
-		public static HandlerList<ChestItemEventArgs> ChestItemChange;
-
-		private static bool OnChestItemChange(short id, byte slot, short stacks, byte prefix, short type)
-		{
-			if (ChestItemChange == null)
-				return false;
-
-			var args = new ChestItemEventArgs
-			{
-				ID = id,
-				Slot = slot,
-				Stacks = stacks,
-				Prefix = prefix,
-				Type = type,
-			};
-			ChestItemChange.Invoke(null, args);
-			return args.Handled;
-		}
-
-		/// <summary>
-		/// For use in a Sign event
-		/// </summary>
-		public class SignEventArgs : HandledEventArgs
-		{
-			/// <summary>
-			/// The Terraria playerID of the player
-			/// </summary>
-			public short ID { get; set; }
-			/// <summary>
-			/// X location of the sign
-			/// </summary>
-			public int X { get; set; }
-			/// <summary>
-			/// Y location of the sign
-			/// </summary>
-			public int Y { get; set; }
-		}
-		/// <summary>
-		/// Sign - Called when a sign is changed
-		/// </summary>
-		public static HandlerList<SignEventArgs> Sign;
-
-		private static bool OnSignEvent(short id, int x, int y)
-		{
-			if (Sign == null)
-				return false;
-
-			var args = new SignEventArgs
-			{
-				ID = id,
-				X = x,
-				Y = y,
-			};
-			Sign.Invoke(null, args);
-			return args.Handled;
-		}
-
-		/// <summary>
-		/// For use in a NPCHome event
-		/// </summary>
-		public class NPCHomeChangeEventArgs : HandledEventArgs
-		{
-			/// <summary>
-			/// The Terraria playerID of the player
-			/// </summary>
-			public short ID { get; set; }
-			/// <summary>
-			/// X location of the NPC home change
-			/// </summary>
-			public short X { get; set; }
-			/// <summary>
-			/// Y location of the NPC home change
-			/// </summary>
-			public short Y { get; set; }
-			/// <summary>
-			/// ByteBool homeless
-			/// </summary>
-			public byte Homeless { get; set; }
-		}
-		/// <summary>
-		/// NPCHome - Called when an NPC's home is changed
-		/// </summary>
-		public static HandlerList<NPCHomeChangeEventArgs> NPCHome;
-
-		private static bool OnUpdateNPCHome(short id, short x, short y, byte homeless)
-		{
-			if (NPCHome == null)
-				return false;
-
-			var args = new NPCHomeChangeEventArgs
-			{
-				ID = id,
-				X = x,
-				Y = y,
-				Homeless = homeless,
-			};
-			NPCHome.Invoke(null, args);
-			return args.Handled;
-		}
-
-		/// <summary>
-		/// For use in a PlayerBuff event
-		/// </summary>
-		public class PlayerBuffEventArgs : HandledEventArgs
-		{
-			/// <summary>
-			/// The Terraria playerID of the player
-			/// </summary>
-			public byte ID { get; set; }
-			/// <summary>
-			/// Buff Type
-			/// </summary>
-			public byte Type { get; set; }
-			/// <summary>
-			/// Time the buff lasts
-			/// </summary>
-			public short Time { get; set; }
-		}
-		/// <summary>
-		/// PlayerBuff - Called when a player is buffed
-		/// </summary>
-		public static HandlerList<PlayerBuffEventArgs> PlayerBuff;
-
-		private static bool OnPlayerBuff(byte id, byte type, short time)
-		{
-			if (PlayerBuff == null)
-				return false;
-
-			var args = new PlayerBuffEventArgs
-			{
-				ID = id,
-				Type = type,
-				Time = time,
-			};
-			PlayerBuff.Invoke(null, args);
-			return args.Handled;
-		}
-
-		/// <summary>
-		/// For use in an ItemDrop event
-		/// </summary>
-		public class ItemDropEventArgs : HandledEventArgs
-		{
-			/// <summary>
-			/// The player who sent message
-			/// </summary>
-			public TSPlayer Player { get; set; }
-			/// <summary>
-			/// ID of the item.
-			/// If below 400 and NetID(Type) is 0 Then Set Null. If ItemID is 400 Then New Item
-			/// </summary>
-			public short ID { get; set; }
-			/// <summary>
-			/// Position of the item
-			/// </summary>
-			public Vector2 Position { get; set; }
-			/// <summary>
-			/// Velocity at which the item is deployed
-			/// </summary>
-			public Vector2 Velocity { get; set; }
-			/// <summary>
-			/// Stacks
-			/// </summary>
-			public short Stacks { get; set; }
-			/// <summary>
-			/// Prefix of the item
-			/// </summary>
-			public byte Prefix { get; set; }
-			/// <summary>
-			/// No Delay on pickup
-			/// </summary>
-			public bool NoDelay { get; set; }
-			/// <summary>
-			/// Item type
-			/// </summary>
-			public short Type { get; set; }
-		}
-		/// <summary>
-		/// ItemDrop - Called when an item is dropped
-		/// </summary>
-		public static HandlerList<ItemDropEventArgs> ItemDrop;
-
-		private static bool OnItemDrop(TSPlayer player, short id, Vector2 pos, Vector2 vel, short stacks, byte prefix, bool noDelay, short type)
-		{
-			if (ItemDrop == null)
-				return false;
-
-			var args = new ItemDropEventArgs
-			{
-				Player = player,
-				ID = id,
-				Position = pos,
-				Velocity = vel,
-				Stacks = stacks,
-				Prefix = prefix,
-				NoDelay = noDelay,
-				Type = type,
-			};
-			ItemDrop.Invoke(null, args);
-			return args.Handled;
-		}
-
-		/// <summary>
-		/// For use in a PlayerDamage event
-		/// </summary>
-		public class PlayerDamageEventArgs : HandledEventArgs
-		{
-			/// <summary>
-			/// The Terraria playerID of the player
-			/// </summary>
-			public byte ID { get; set; }
-			/// <summary>
-			/// The direction the damage is occuring from
-			/// </summary>
-			public byte Direction { get; set; }
-			/// <summary>
-			/// Amount of damage
-			/// </summary>
-			public short Damage { get; set; }
-			/// <summary>
-			/// If the player has PVP on
-			/// </summary>
-			public bool PVP { get; set; }
-			/// <summary>
-			/// Is the damage critical?
-			/// </summary>
-			public bool Critical { get; set; }
-		}
-		/// <summary>
-		/// PlayerDamage - Called when a player is damaged
-		/// </summary>
-		public static HandlerList<PlayerDamageEventArgs> PlayerDamage;
-
-		private static bool OnPlayerDamage(byte id, byte dir, short dmg, bool pvp, bool crit)
-		{
-			if (PlayerDamage == null)
-				return false;
-
-			var args = new PlayerDamageEventArgs
-			{
-				ID = id,
-				Direction = dir,
-				Damage = dmg,
-				PVP = pvp,
-				Critical = crit,
-			};
-			PlayerDamage.Invoke(null, args);
-			return args.Handled;
-		}
-
+		
 		/// <summary>
 		/// For use with a NPCStrike event
 		/// </summary>
-		public class NPCStrikeEventArgs : HandledEventArgs
+		public class NPCStrikeEventArgs : GetDataHandledEventArgs
 		{
 			/// <summary>
 			/// ???
@@ -1058,15 +638,16 @@ namespace TShockAPI
 		/// <summary>
 		/// NPCStrike - Called when an NPC is attacked
 		/// </summary>
-		public static HandlerList<NPCStrikeEventArgs> NPCStrike;
-
-		private static bool OnNPCStrike(short id, byte dir, short dmg, float knockback, byte crit)
+		public static HandlerList<NPCStrikeEventArgs> NPCStrike = new HandlerList<NPCStrikeEventArgs>();
+		private static bool OnNPCStrike(TSPlayer player, MemoryStream data, short id, byte dir, short dmg, float knockback, byte crit)
 		{
 			if (NPCStrike == null)
 				return false;
 
 			var args = new NPCStrikeEventArgs
 			{
+				Player = player,
+				Data = data,
 				ID = id,
 				Direction = dir,
 				Damage = dmg,
@@ -1076,11 +657,488 @@ namespace TShockAPI
 			NPCStrike.Invoke(null, args);
 			return args.Handled;
 		}
+		
+		/// <summary>The arguments to the ProjectileKill packet.</summary>
+		public class ProjectileKillEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>The projectile's identity...?</summary>
+			public int ProjectileIdentity;
+			/// <summary>The the player index of the projectile's owner (Main.players).</summary>
+			public byte ProjectileOwner;
+			/// <summary>The index of the projectile in Main.projectile.</summary>
+			public int ProjectileIndex;
+		}
+		/// <summary>The event fired when a projectile kill packet is received.</summary>
+		public static HandlerList<ProjectileKillEventArgs> ProjectileKill = new HandlerList<ProjectileKillEventArgs>();
+		/// <summary>Fires the ProjectileKill event.</summary>
+		/// <param name="player">The TSPlayer that caused the event.</param>
+		/// <param name="data">The MemoryStream containing the raw event data.</param>
+		/// <param name="identity">The projectile identity (from the packet).</param>
+		/// <param name="owner">The projectile's owner (from the packet).</param>
+		/// <param name="index">The projectile's index (from Main.projectiles).</param>
+		/// <returns>bool</returns>
+		private static bool OnProjectileKill(TSPlayer player, MemoryStream data, int identity, byte owner, int index)
+		{
+			if (ProjectileKill == null)
+				return false;
+
+			var args = new ProjectileKillEventArgs
+			{
+				Player = player,
+				Data = data,
+				ProjectileIdentity = identity,
+				ProjectileOwner = owner,
+				ProjectileIndex = index,
+			};
+
+			ProjectileKill.Invoke(null, args);
+			return args.Handled;
+		}
+		
+		/// <summary>
+		/// For use in a TogglePvp event
+		/// </summary>
+		public class TogglePvpEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// The Terraria player ID of the player
+			/// </summary>
+			public byte PlayerId { get; set; }
+			/// <summary>
+			/// Enable/disable pvp?
+			/// </summary>
+			public bool Pvp { get; set; }
+		}
+		/// <summary>
+		/// TogglePvp - called when a player toggles pvp
+		/// </summary>
+		public static HandlerList<TogglePvpEventArgs> TogglePvp = new HandlerList<TogglePvpEventArgs>();
+		private static bool OnPvpToggled(TSPlayer player, MemoryStream data, byte _id, bool _pvp)
+		{
+			if (TogglePvp == null)
+				return false;
+
+			var args = new TogglePvpEventArgs
+			{
+				Player = player,
+				Data = data,
+				PlayerId = _id,
+				Pvp = _pvp,
+			};
+			TogglePvp.Invoke(null, args);
+			return args.Handled;
+		}
+		
+		/// <summary>
+		/// For use in a PlayerSpawn event
+		/// </summary>
+		public class SpawnEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// The Terraria playerID of the player
+			/// </summary>
+			public byte PlayerId { get; set; }
+			/// <summary>
+			/// X location of the player's spawn
+			/// </summary>
+			public int SpawnX { get; set; }
+			/// <summary>
+			/// Y location of the player's spawn
+			/// </summary>
+			public int SpawnY { get; set; }
+		}
+		/// <summary>
+		/// PlayerSpawn - When a player spawns
+		/// </summary>
+		public static HandlerList<SpawnEventArgs> PlayerSpawn = new HandlerList<SpawnEventArgs>();
+		private static bool OnPlayerSpawn(TSPlayer player, MemoryStream data, byte pid, int spawnX, int spawnY)
+		{
+			if (PlayerSpawn == null)
+				return false;
+
+			var args = new SpawnEventArgs
+			{
+				Player = player,
+				Data = data,
+				PlayerId = pid,
+				SpawnX = spawnX,
+				SpawnY = spawnY,
+			};
+			PlayerSpawn.Invoke(null, args);
+			return args.Handled;
+		}
+
+		/// <summary>
+		/// For use in a ChestItemChange event
+		/// </summary>
+		public class ChestItemEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// ChestID
+			/// </summary>
+			public short ID { get; set; }
+			/// <summary>
+			/// Slot of the item
+			/// </summary>
+			public byte Slot { get; set; }
+			/// <summary>
+			/// How many?
+			/// </summary>
+			public short Stacks { get; set; }
+			/// <summary>
+			/// Item prefix
+			/// </summary>
+			public byte Prefix { get; set; }
+			/// <summary>
+			/// Item type
+			/// </summary>
+			public short Type { get; set; }
+		}
+		/// <summary>
+		/// ChestItemChange - Called when an item in a chest changes
+		/// </summary>
+		public static HandlerList<ChestItemEventArgs> ChestItemChange = new HandlerList<ChestItemEventArgs>();
+		private static bool OnChestItemChange(TSPlayer player, MemoryStream data, short id, byte slot, short stacks, byte prefix, short type)
+		{
+			if (ChestItemChange == null)
+				return false;
+
+			var args = new ChestItemEventArgs
+			{
+				Player = player,
+				Data = data,
+				ID = id,
+				Slot = slot,
+				Stacks = stacks,
+				Prefix = prefix,
+				Type = type,
+			};
+			ChestItemChange.Invoke(null, args);
+			return args.Handled;
+		}
+
+		/// <summary>
+		/// For use with a ChestOpen event
+		/// </summary>
+		public class ChestOpenEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// X location of said chest
+			/// </summary>
+			public int X { get; set; }
+			/// <summary>
+			/// Y location of said chest
+			/// </summary>
+			public int Y { get; set; }
+		}
+		/// <summary>
+		/// ChestOpen - Called when any chest is opened
+		/// </summary>
+		public static HandlerList<ChestOpenEventArgs> ChestOpen = new HandlerList<ChestOpenEventArgs>();
+		private static bool OnChestOpen(MemoryStream data, int x, int y, TSPlayer player)
+		{
+			if (ChestOpen == null)
+				return false;
+
+			var args = new ChestOpenEventArgs
+			{
+				Data = data,
+				X = x,
+				Y = y,
+				Player = player,
+			};
+			ChestOpen.Invoke(null, args);
+			return args.Handled;
+		}
+		
+		/// <summary>
+		/// For use in a PlaceChest event
+		/// </summary>
+		public class PlaceChestEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>What the packet is doing (see MP packet docs).</summary>
+			public int Flag { get; set; }
+			/// <summary>
+			/// The X coordinate
+			/// </summary>
+			public int TileX { get; set; }
+			/// <summary>
+			/// The Y coordinate
+			/// </summary>
+			public int TileY { get; set; }
+		}
+		/// <summary>
+		/// When a chest is added or removed from the world.
+		/// </summary>
+		public static HandlerList<PlaceChestEventArgs> PlaceChest = new HandlerList<PlaceChestEventArgs>();
+		private static bool OnPlaceChest(TSPlayer player, MemoryStream data, int flag, int tilex, int tiley)
+		{
+			if (PlaceChest == null)
+				return false;
+
+			var args = new PlaceChestEventArgs
+			{
+				Player = player,
+				Data = data,
+				Flag = flag,
+				TileX = tilex,
+				TileY = tiley,
+			};
+			PlaceChest.Invoke(null, args);
+			return args.Handled;
+		}
+		
+		/// <summary>
+		/// For use in a PlayerZone event
+		/// </summary>
+		public class PlayerZoneEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// The Terraria playerID of the player
+			/// </summary>
+			public byte PlayerId { get; set; }
+			/// <summary>
+			/// 0 = Dungeon, 1 = Corruption,2 =Holy, 3 = Meteor, 4 = Jungle, 5 = Snow, 6 = Crimson, 7 = Water Candle
+			/// </summary>
+			public BitsByte Zone1 { get; set; }
+			/// <summary>
+			/// 0 = Peace Candle, 1 = Solar Tower, 2 = Vortex Tower, 3 = Nebula Tower, 4 = Stardust Tower, 5 = Desert, 6 = Glowshroom, 7 = Underground Desert
+			/// </summary>
+			public BitsByte Zone2 { get; set; }
+			/// <summary>
+			/// 0 = Overworld, 1 = Dirt Layer, 2 = Rock Layer, 3 = Underworld, 4 = Beach, 5 = Rain, 6 = Sandstorm
+			/// </summary>
+			public BitsByte Zone3 { get; set; }
+			/// <summary>
+			/// 0 = Old One's Army
+			/// </summary>
+			public BitsByte Zone4 { get; set; }
+		}
+		/// <summary>
+		/// PlayerZone - When the player sends it's zone/biome information to the server
+		/// </summary>
+		public static HandlerList<PlayerZoneEventArgs> PlayerZone = new HandlerList<PlayerZoneEventArgs>();
+		private static bool OnPlayerZone(TSPlayer player, MemoryStream data, byte plr, BitsByte zone1, BitsByte zone2, BitsByte zone3, BitsByte zone4)
+		{
+			if (PlayerZone == null)
+				return false;
+
+			var args = new PlayerZoneEventArgs
+			{
+				Player = player,
+				Data = data,
+				PlayerId = plr,
+				Zone1 = zone1,
+				Zone2 = zone2,
+				Zone3 = zone3,
+				Zone4 = zone4
+			};
+			PlayerZone.Invoke(null, args);
+			return args.Handled;
+		}
+		
+		/// <summary>
+		/// For use with a PlayerAnimation event
+		/// </summary>
+		public class PlayerAnimationEventArgs : GetDataHandledEventArgs { }
+		/// <summary>
+		/// PlayerAnimation - Called when a player animates
+		/// </summary>
+		public static HandlerList<PlayerAnimationEventArgs> PlayerAnimation = new HandlerList<PlayerAnimationEventArgs>();
+		private static bool OnPlayerAnimation(TSPlayer player, MemoryStream data)
+		{
+			if (PlayerAnimation == null)
+				return false;
+
+			var args = new PlayerAnimationEventArgs
+			{
+				Player = player,
+				Data = data,
+			};
+			PlayerAnimation.Invoke(null, args);
+			return args.Handled;
+		}
+		
+		/// <summary>
+		/// For use in a PlayerMana event
+		/// </summary>
+		public class PlayerManaEventArgs : GetDataHandledEventArgs
+		{
+			public byte PlayerId { get; set; }
+			public short Current { get; set; }
+			public short Max { get; set; }
+		}
+		/// <summary>
+		/// PlayerMana - called at a PlayerMana event
+		/// </summary>
+		public static HandlerList<PlayerManaEventArgs> PlayerMana = new HandlerList<PlayerManaEventArgs>();
+		private static bool OnPlayerMana(TSPlayer player, MemoryStream data, byte _plr, short _cur, short _max)
+		{
+			if (PlayerMana == null)
+				return false;
+
+			var args = new PlayerManaEventArgs
+			{
+				Player = player,
+				Data = data,
+				PlayerId = _plr,
+				Current = _cur,
+				Max = _max,
+			};
+			PlayerMana.Invoke(null, args);
+			return args.Handled;
+		}
+		
+		/// <summary>
+		/// For use in a PlayerTeam event
+		/// </summary>
+		public class PlayerTeamEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// The Terraria player ID of the player
+			/// </summary>
+			public byte PlayerId { get; set; }
+			/// <summary>
+			/// Enable/disable pvp?
+			/// </summary>
+			public byte Team { get; set; }
+		}
+		/// <summary>
+		/// TogglePvp - called when a player toggles pvp
+		/// </summary>
+		public static HandlerList<PlayerTeamEventArgs> PlayerTeam = new HandlerList<PlayerTeamEventArgs>();
+		private static bool OnPlayerTeam(TSPlayer player, MemoryStream data, byte _id, byte _team)
+		{
+			if (PlayerTeam == null)
+				return false;
+
+			var args = new PlayerTeamEventArgs
+			{
+				Player = player,
+				Data = data,
+				PlayerId = _id,
+				Team = _team,
+			};
+			PlayerTeam.Invoke(null, args);
+			return args.Handled;
+		}
+		
+		/// <summary>
+		/// For use in a Sign event
+		/// </summary>
+		public class SignEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// The Terraria playerID of the player
+			/// </summary>
+			public short ID { get; set; }
+			/// <summary>
+			/// X location of the sign
+			/// </summary>
+			public int X { get; set; }
+			/// <summary>
+			/// Y location of the sign
+			/// </summary>
+			public int Y { get; set; }
+		}
+		/// <summary>
+		/// Sign - Called when a sign is changed
+		/// </summary>
+		public static HandlerList<SignEventArgs> Sign = new HandlerList<SignEventArgs>();
+		private static bool OnSignEvent(TSPlayer player, MemoryStream data, short id, int x, int y)
+		{
+			if (Sign == null)
+				return false;
+
+			var args = new SignEventArgs
+			{
+				Player = player,
+				Data = data,
+				ID = id,
+				X = x,
+				Y = y,
+			};
+			Sign.Invoke(null, args);
+			return args.Handled;
+		}
+		
+		/// <summary>
+		/// For use in a LiquidSet event
+		/// </summary>
+		public class LiquidSetEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// X location of the tile
+			/// </summary>
+			public int TileX { get; set; }
+			/// <summary>
+			/// Y location of the tile
+			/// </summary>
+			public int TileY { get; set; }
+			/// <summary>
+			/// Amount of liquid
+			/// </summary>
+			public byte Amount { get; set; }
+			/// <summary>
+			/// Type of Liquid: 0=water, 1=lave, 2=honey
+			/// </summary>
+			public byte Type { get; set; }
+		}
+		/// <summary>
+		/// LiquidSet - When ever a liquid is set
+		/// </summary>
+		public static HandlerList<LiquidSetEventArgs> LiquidSet = new HandlerList<LiquidSetEventArgs>();
+		private static bool OnLiquidSet(TSPlayer player, MemoryStream data, int tilex, int tiley, byte amount, byte type)
+		{
+			if (LiquidSet == null)
+				return false;
+
+			var args = new LiquidSetEventArgs
+			{
+				Player = player,
+				Data = data,
+				TileX = tilex,
+				TileY = tiley,
+				Amount = amount,
+				Type = type,
+			};
+			LiquidSet.Invoke(null, args);
+			return args.Handled;
+		}
+		
+		/// <summary>
+		/// For use in a PlayerBuffUpdate event
+		/// </summary>
+		public class PlayerBuffUpdateEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// The Terraria playerID of the player
+			/// </summary>
+			public byte ID { get; set; }
+		}
+		/// <summary>
+		/// PlayerBuffUpdate - Called when a player updates buffs
+		/// </summary>
+		public static HandlerList<PlayerBuffUpdateEventArgs> PlayerBuffUpdate = new HandlerList<PlayerBuffUpdateEventArgs>();
+		private static bool OnPlayerBuffUpdate(TSPlayer player, MemoryStream data, byte id)
+		{
+			if (PlayerBuffUpdate == null)
+				return false;
+
+			var args = new PlayerBuffUpdateEventArgs
+			{
+				Player = player,
+				Data = data,
+				ID = id,
+			};
+			PlayerBuffUpdate.Invoke(null, args);
+			return args.Handled;
+		}
 
 		/// <summary>
 		/// For use with a NPCSpecial event
 		/// </summary>
-		public class NPCSpecialEventArgs : HandledEventArgs
+		public class NPCSpecialEventArgs : GetDataHandledEventArgs
 		{
 			/// <summary>
 			/// ???
@@ -1094,15 +1152,16 @@ namespace TShockAPI
 		/// <summary>
 		/// NPCSpecial - Called at some point
 		/// </summary>
-		public static HandlerList<NPCSpecialEventArgs> NPCSpecial;
-
-		private static bool OnNPCSpecial(byte id, byte type)
+		public static HandlerList<NPCSpecialEventArgs> NPCSpecial = new HandlerList<NPCSpecialEventArgs>();
+		private static bool OnNPCSpecial(TSPlayer player, MemoryStream data, byte id, byte type)
 		{
 			if (NPCSpecial == null)
 				return false;
 
 			var args = new NPCSpecialEventArgs
 			{
+				Player = player,
+				Data = data,
 				ID = id,
 				Type = type,
 			};
@@ -1111,59 +1170,209 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// For use with a PlayerAnimation event
+		/// For use in a NPCAddBuff event
 		/// </summary>
-		public class PlayerAnimationEventArgs : HandledEventArgs
+		public class NPCAddBuffEventArgs : GetDataHandledEventArgs
 		{
+			/// <summary>
+			/// The ID of the npc
+			/// </summary>
+			public short ID { get; set; }
+			/// <summary>
+			/// Buff Type
+			/// </summary>
+			public byte Type { get; set; }
+			/// <summary>
+			/// Time the buff lasts
+			/// </summary>
+			public short Time { get; set; }
 		}
-
 		/// <summary>
-		/// PlayerAnimation - Called when a player animates
+		/// NPCAddBuff - Called when a npc is buffed
 		/// </summary>
-		public static HandlerList<PlayerAnimationEventArgs> PlayerAnimation;
-
-		private static bool OnPlayerAnimation()
+		public static HandlerList<NPCAddBuffEventArgs> NPCAddBuff = new HandlerList<NPCAddBuffEventArgs>();
+		private static bool OnNPCAddBuff(TSPlayer player, MemoryStream data, short id, byte type, short time)
 		{
-			if (PlayerAnimation == null)
+			if (NPCAddBuff == null)
 				return false;
 
-			var args = new PlayerAnimationEventArgs { };
-			PlayerAnimation.Invoke(null, args);
+			var args = new NPCAddBuffEventArgs
+			{
+				Player = player,
+				Data = data,
+				ID = id,
+				Type = type,
+				Time = time
+			};
+			NPCAddBuff.Invoke(null, args);
 			return args.Handled;
 		}
-
+		
 		/// <summary>
-		/// For use in a PlayerBuffUpdate event
+		/// For use in a PlayerBuff event
 		/// </summary>
-		public class PlayerBuffUpdateEventArgs : HandledEventArgs
+		public class PlayerBuffEventArgs : GetDataHandledEventArgs
 		{
 			/// <summary>
 			/// The Terraria playerID of the player
 			/// </summary>
 			public byte ID { get; set; }
+			/// <summary>
+			/// Buff Type
+			/// </summary>
+			public byte Type { get; set; }
+			/// <summary>
+			/// Time the buff lasts
+			/// </summary>
+			public int Time { get; set; }
 		}
 		/// <summary>
-		/// PlayerBuffUpdate - Called when a player updates buffs
+		/// PlayerBuff - Called when a player is buffed
 		/// </summary>
-		public static HandlerList<PlayerBuffUpdateEventArgs> PlayerBuffUpdate;
-
-		private static bool OnPlayerBuffUpdate(byte id)
+		public static HandlerList<PlayerBuffEventArgs> PlayerBuff = new HandlerList<PlayerBuffEventArgs>();
+		private static bool OnPlayerBuff(TSPlayer player, MemoryStream data, byte id, byte type, int time)
 		{
-			if (PlayerBuffUpdate == null)
+			if (PlayerBuff == null)
 				return false;
 
-			var args = new PlayerBuffUpdateEventArgs
+			var args = new PlayerBuffEventArgs
 			{
+				Player = player,
+				Data = data,
 				ID = id,
+				Type = type,
+				Time = time
 			};
-			PlayerBuffUpdate.Invoke(null, args);
+			PlayerBuff.Invoke(null, args);
+			return args.Handled;
+		}
+		
+		/// <summary>
+		/// For use in a NPCHome event
+		/// </summary>
+		public class NPCHomeChangeEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// The Terraria playerID of the player
+			/// </summary>
+			public short ID { get; set; }
+			/// <summary>
+			/// X location of the NPC home change
+			/// </summary>
+			public short X { get; set; }
+			/// <summary>
+			/// Y location of the NPC home change
+			/// </summary>
+			public short Y { get; set; }
+			/// <summary>
+			/// ByteBool homeless
+			/// </summary>
+			public byte Homeless { get; set; }
+		}
+		/// <summary>
+		/// NPCHome - Called when an NPC's home is changed
+		/// </summary>
+		public static HandlerList<NPCHomeChangeEventArgs> NPCHome = new HandlerList<NPCHomeChangeEventArgs>();
+		private static bool OnUpdateNPCHome(TSPlayer player, MemoryStream data, short id, short x, short y, byte homeless)
+		{
+			if (NPCHome == null)
+				return false;
+
+			var args = new NPCHomeChangeEventArgs
+			{
+				Player = player,
+				Data = data,
+				ID = id,
+				X = x,
+				Y = y,
+				Homeless = homeless,
+			};
+			NPCHome.Invoke(null, args);
+			return args.Handled;
+		}
+
+		/// <summary>
+		/// For use with a PaintTile event
+		/// </summary>
+		public class PaintTileEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// X Location
+			/// </summary>
+			public Int32 X { get; set; }
+			/// <summary>
+			/// Y Location
+			/// </summary>
+			public Int32 Y { get; set; }
+			/// <summary>
+			/// Type
+			/// </summary>
+			public byte type { get; set; }
+		}
+		/// <summary>
+		/// NPCStrike - Called when an NPC is attacked
+		/// </summary>
+		public static HandlerList<PaintTileEventArgs> PaintTile = new HandlerList<PaintTileEventArgs>();
+		private static bool OnPaintTile(TSPlayer player, MemoryStream data, Int32 x, Int32 y, byte t)
+		{
+			if (PaintTile == null)
+				return false;
+
+			var args = new PaintTileEventArgs
+			{
+				Player = player,
+				Data = data,
+				X = x,
+				Y = y,
+				type = t
+			};
+			PaintTile.Invoke(null, args);
+			return args.Handled;
+		}
+
+		/// <summary>
+		/// For use with a PaintWall event
+		/// </summary>
+		public class PaintWallEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// X Location
+			/// </summary>
+			public Int32 X { get; set; }
+			/// <summary>
+			/// Y Location
+			/// </summary>
+			public Int32 Y { get; set; }
+			/// <summary>
+			/// Type
+			/// </summary>
+			public byte type { get; set; }
+		}
+		/// <summary>
+		/// Called When a wall is painted
+		/// </summary>
+		public static HandlerList<PaintWallEventArgs> PaintWall = new HandlerList<PaintWallEventArgs>();
+		private static bool OnPaintWall(TSPlayer player, MemoryStream data, Int32 x, Int32 y, byte t)
+		{
+			if (PaintWall == null)
+				return false;
+
+			var args = new PaintWallEventArgs
+			{
+				Player = player,
+				Data = data,
+				X = x,
+				Y = y,
+				type = t
+			};
+			PaintWall.Invoke(null, args);
 			return args.Handled;
 		}
 
 		/// <summary>
 		/// For use with a NPCStrike event
 		/// </summary>
-		public class TeleportEventArgs : HandledEventArgs
+		public class TeleportEventArgs : GetDataHandledEventArgs
 		{
 			/// <summary>
 			/// ???
@@ -1189,15 +1398,16 @@ namespace TShockAPI
 		/// <summary>
 		/// NPCStrike - Called when an NPC is attacked
 		/// </summary>
-		public static HandlerList<TeleportEventArgs> Teleport;
-
-		private static bool OnTeleport(Int16 id, byte f, float x, float y)
+		public static HandlerList<TeleportEventArgs> Teleport = new HandlerList<TeleportEventArgs>();
+		private static bool OnTeleport(TSPlayer player, MemoryStream data, Int16 id, byte f, float x, float y)
 		{
 			if (Teleport == null)
 				return false;
 
 			var args = new TeleportEventArgs
 			{
+				Player = player,
+				Data = data,
 				ID = id,
 				Flag = f,
 				X = x,
@@ -1207,229 +1417,374 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		/// <summary>The event args object for the HealOtherPlayer event</summary>
+		public class HealOtherPlayerEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>The Terraria player index of the target player</summary>
+			public byte TargetPlayerIndex { get; set; }
+
+			/// <summary>The amount to heal by</summary>
+			public short Amount { get; set; }
+		}
+		/// <summary>When a player heals another player</summary>
+		public static HandlerList<HealOtherPlayerEventArgs> HealOtherPlayer = new HandlerList<HealOtherPlayerEventArgs>();
+		private static bool OnHealOtherPlayer(TSPlayer player, MemoryStream data, byte targetPlayerIndex, short amount)
+		{
+			if (HealOtherPlayer == null)
+				return false;
+
+			var args = new HealOtherPlayerEventArgs
+			{
+				Player = player,
+				Data = data,
+				TargetPlayerIndex = targetPlayerIndex,
+				Amount = amount,
+			};
+
+			HealOtherPlayer.Invoke(null, args);
+			return args.Handled;
+		}
+
+		/// <summary>The arguments to the PlaceObject hook.</summary>
+		public class PlaceObjectEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>The X location where the object was placed.</summary>
+			public short X { get; set; }
+
+			/// <summary>The Y location where the object was placed.</summary>
+			public short Y { get; set; }
+
+			/// <summary>The type of object that was placed.</summary>
+			public short Type { get; set; }
+
+			/// <summary>The style of the object was placed.</summary>
+			public short Style { get; set; }
+
+			/// <summary>Alternate variation of the object placed.</summary>
+			public byte Alternate { get; set; }
+
+			/// <summary>The direction the object was placed.</summary>
+			public bool Direction { get; set; }
+		}
+		/// <summary>Fired when an object is placed in the world.</summary>
+		public static HandlerList<PlaceObjectEventArgs> PlaceObject = new HandlerList<PlaceObjectEventArgs>();
+		private static bool OnPlaceObject(TSPlayer player, MemoryStream data, short x, short y, short type, short style, byte alternate, bool direction)
+		{
+			if (PlaceObject == null)
+				return false;
+
+			var args = new PlaceObjectEventArgs
+			{
+				Player = player,
+				Data = data,
+				X = x,
+				Y = y,
+				Type = type,
+				Style = style,
+				Alternate = alternate,
+				Direction = direction
+			};
+
+			PlaceObject.Invoke(null, args);
+			return args.Handled;
+		}
+		
+		/// <summary>For use in a PlaceTileEntity event.</summary>
+		public class PlaceTileEntityEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>The X coordinate of the event.</summary>
+			public short X { get; set; }
+
+			/// <summary>The Y coordinate of the event.</summary>
+			public short Y { get; set; }
+
+			/// <summary>The Type of event.</summary>
+			public byte Type { get; set; }
+		}
+		/// <summary>Fired when a PlaceTileEntity event occurs.</summary>
+		public static HandlerList<PlaceTileEntityEventArgs> PlaceTileEntity = new HandlerList<PlaceTileEntityEventArgs>();
+		private static bool OnPlaceTileEntity(TSPlayer player, MemoryStream data, short x, short y, byte type)
+		{
+			if (PlaceTileEntity == null)
+				return false;
+
+			var args = new PlaceTileEntityEventArgs
+			{
+				Player = player,
+				Data = data,
+				X = x,
+				Y = y,
+				Type = type
+			};
+
+			PlaceTileEntity.Invoke(null, args);
+			return args.Handled;
+		}
+
+		/// <summary>The arguments to the PlaceItemFrame event.</summary>
+		public class PlaceItemFrameEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>The X coordinate of the item frame.</summary>
+			public short X { get; set; }
+
+			/// <summary>The Y coordinate of the item frame.</summary>
+			public short Y { get; set; }
+
+			/// <summary>The ItemID of the item frame.</summary>
+			public short ItemID { get; set; }
+
+			/// <summary>The prefix.</summary>
+			public byte Prefix { get; set; }
+
+			/// <summary>The stack.</summary>
+			public short Stack { get; set; }
+
+			/// <summary>The ItemFrame object associated with this event.</summary>
+			public TEItemFrame ItemFrame { get; set; }
+		}
+		/// <summary>Fired when an ItemFrame is placed.</summary>
+		public static HandlerList<PlaceItemFrameEventArgs> PlaceItemFrame = new HandlerList<PlaceItemFrameEventArgs>();
+		private static bool OnPlaceItemFrame(TSPlayer player, MemoryStream data, short x, short y, short itemID, byte prefix, short stack, TEItemFrame itemFrame)
+		{
+			if (PlaceItemFrame == null)
+				return false;
+
+			var args = new PlaceItemFrameEventArgs
+			{
+				Player = player,
+				Data = data,
+				X = x,
+				Y = y,
+				ItemID = itemID,
+				Prefix = prefix,
+				Stack = stack,
+				ItemFrame = itemFrame,
+			};
+
+			PlaceItemFrame.Invoke(null, args);
+			return args.Handled;
+		}
+
+		/// <summary>The event args object for the PortalTeleport event</summary>
+		public class TeleportThroughPortalEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>The Terraria player index of the target player</summary>
+			public byte TargetPlayerIndex { get; set; }
+
+			/// <summary>
+			/// The position the target player will be at after going through the portal
+			/// </summary>
+			public Vector2 NewPosition { get; set; }
+
+			/// <summary>
+			/// The velocity the target player will have after going through the portal
+			/// </summary>
+			public Vector2 NewVelocity { get; set; }
+
+			/// <summary>
+			/// Index of the portal's color (for use with <see cref="Terraria.GameContent.PortalHelper.GetPortalColor(int)"/>)
+			/// </summary>
+			public int PortalColorIndex { get; set; }
+		}
+		/// <summary>When a player passes through a portal</summary>
+		public static HandlerList<TeleportThroughPortalEventArgs> PortalTeleport = new HandlerList<TeleportThroughPortalEventArgs>();
+		private static bool OnPlayerTeleportThroughPortal(TSPlayer sender, byte targetPlayerIndex, MemoryStream data, Vector2 position, Vector2 velocity, int colorIndex)
+		{
+			TeleportThroughPortalEventArgs args = new TeleportThroughPortalEventArgs
+			{
+				TargetPlayerIndex = targetPlayerIndex,
+				Data = data,
+				Player = sender,
+				NewPosition = position,
+				NewVelocity = velocity,
+				PortalColorIndex = colorIndex
+			};
+
+			PortalTeleport.Invoke(null, args);
+
+			return args.Handled;
+		}
+
+		/// <summary>
+		/// For use with a ToggleGemLock event
+		/// </summary>
+		public class GemLockToggleEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// X Location
+			/// </summary>
+			public short X { get; set; }
+			/// <summary>
+			/// Y Location
+			/// </summary>
+			public short Y { get; set; }
+			/// <summary>
+			/// On status
+			/// </summary>
+			public bool On { get; set; }
+		}
+		/// <summary>
+		/// GemLockToggle - Called when a gem lock is switched
+		/// </summary>
+		public static HandlerList<GemLockToggleEventArgs> GemLockToggle = new HandlerList<GemLockToggleEventArgs>();
+		private static bool OnGemLockToggle(TSPlayer player, MemoryStream data, short x, short y, bool on)
+		{
+			if (GemLockToggle == null)
+				return false;
+
+			var args = new GemLockToggleEventArgs
+			{
+				Player = player,
+				Data = data,
+				X = x,
+				Y = y,
+				On = on
+			};
+			GemLockToggle.Invoke(null, args);
+			return args.Handled;
+		}
+
+		/// <summary>The arguments to the MassWireOperation event.</summary>
+		public class MassWireOperationEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>The start X point in the operation.</summary>
+			public short StartX { get; set; }
+
+			/// <summary>The start Y point in the operation.</summary>
+			public short StartY { get; set; }
+
+			/// <summary>The end X point in the operation.</summary>
+			public short EndX { get; set; }
+
+			/// <summary>The end Y point in the operation.</summary>
+			public short EndY { get; set; }
+
+			/// <summary>ToolMode</summary>
+			public byte ToolMode { get; set; }
+		}
+		/// <summary>Fired on a mass wire edit operation.</summary>
+		public static HandlerList<MassWireOperationEventArgs> MassWireOperation = new HandlerList<MassWireOperationEventArgs>();
+		private static bool OnMassWireOperation(TSPlayer player, MemoryStream data, short startX, short startY, short endX, short endY, byte toolMode)
+		{
+			if (MassWireOperation == null)
+				return false;
+
+			var args = new MassWireOperationEventArgs
+			{
+				Player = player,
+				Data = data,
+				StartX = startX,
+				StartY = startY,
+				EndX = endX,
+				EndY = endY,
+				ToolMode = toolMode,
+			};
+
+			MassWireOperation.Invoke(null, args);
+			return args.Handled;
+		}
+
+		/// <summary>
+		/// For use in a PlayerDamage event
+		/// </summary>
+		public class PlayerDamageEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// The Terraria playerID of the player
+			/// </summary>
+			public byte ID { get; set; }
+			/// <summary>
+			/// The direction the damage is occuring from
+			/// </summary>
+			public byte Direction { get; set; }
+			/// <summary>
+			/// Amount of damage
+			/// </summary>
+			public short Damage { get; set; }
+			/// <summary>
+			/// If the player has PVP on
+			/// </summary>
+			public bool PVP { get; set; }
+			/// <summary>
+			/// Is the damage critical?
+			/// </summary>
+			public bool Critical { get; set; }
+			/// <summary>The reason the player took damage and/or died.</summary>
+			public PlayerDeathReason PlayerDeathReason { get; set; }
+		}
+		/// <summary>
+		/// PlayerDamage - Called when a player is damaged
+		/// </summary>
+		public static HandlerList<PlayerDamageEventArgs> PlayerDamage = new HandlerList<PlayerDamageEventArgs>();
+		private static bool OnPlayerDamage(TSPlayer player, MemoryStream data, byte id, byte dir, short dmg, bool pvp, bool crit, PlayerDeathReason playerDeathReason)
+		{
+			if (PlayerDamage == null)
+				return false;
+
+			var args = new PlayerDamageEventArgs
+			{
+				Player = player,
+				Data = data,
+				ID = id,
+				Direction = dir,
+				Damage = dmg,
+				PVP = pvp,
+				Critical = crit,
+				PlayerDeathReason = playerDeathReason,
+			};
+			PlayerDamage.Invoke(null, args);
+			return args.Handled;
+		}
+
+		/// <summary>
+		/// For use in a KillMe event
+		/// </summary>
+		public class KillMeEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// The Terraria playerID of the player
+			/// </summary>
+			public byte PlayerId { get; set; }
+			/// <summary>
+			/// The direction the damage is coming from (?)
+			/// </summary>
+			public byte Direction { get; set; }
+			/// <summary>
+			/// Amount of damage delt
+			/// </summary>
+			public short Damage { get; set; }
+			/// <summary>
+			/// Player's current pvp setting
+			/// </summary>
+			public bool Pvp { get; set; }
+			/// <summary>The reason the player died.</summary>
+			public PlayerDeathReason PlayerDeathReason { get; set; }
+		}
+		/// <summary>
+		/// KillMe - Terraria's crappy way of handling damage from players
+		/// </summary>
+		public static HandlerList<KillMeEventArgs> KillMe = new HandlerList<KillMeEventArgs>();
+		private static bool OnKillMe(TSPlayer player, MemoryStream data, byte plr, byte direction, short damage, bool pvp, PlayerDeathReason playerDeathReason)
+		{
+			if (KillMe == null)
+				return false;
+
+			var args = new KillMeEventArgs
+			{
+				Player = player,
+				Data = data,
+				PlayerId = plr,
+				Direction = direction,
+				Damage = damage,
+				Pvp = pvp,
+				PlayerDeathReason = playerDeathReason,
+			};
+			KillMe.Invoke(null, args);
+			return args.Handled;
+		}
+
 		#endregion
-		public static void InitGetDataHandler()
-		{
-			#region Blacklists
-
-			WhitelistBuffMaxTime = new int[Main.maxBuffTypes];
-			WhitelistBuffMaxTime[20] = 600;
-			WhitelistBuffMaxTime[0x18] = 1200;
-			WhitelistBuffMaxTime[0x1f] = 120;
-			WhitelistBuffMaxTime[0x27] = 420;
-
-			#endregion Blacklists
-
-			GetDataHandlerDelegates = new Dictionary<PacketTypes, GetDataHandlerDelegate>
-				{
-					{ PacketTypes.PlayerInfo, HandlePlayerInfo },
-					{ PacketTypes.PlayerUpdate, HandlePlayerUpdate },
-					{ PacketTypes.Tile, HandleTile },
-					{ PacketTypes.PlaceObject, HandlePlaceObject },
-					{ PacketTypes.TileSendSquare, HandleSendTileSquare },
-					{ PacketTypes.ProjectileNew, HandleProjectileNew },
-					{ PacketTypes.TogglePvp, HandleTogglePvp },
-					{ PacketTypes.PlayerTeam, HandlePlayerTeam },
-					{ PacketTypes.PlaceChest, HandlePlaceChest },
-					{ PacketTypes.LiquidSet, HandleLiquidSet },
-					{ PacketTypes.PlayerSpawn, HandleSpawn },
-					{ PacketTypes.ChestGetContents, HandleChestOpen },
-					{ PacketTypes.ChestOpen, HandleChestActive },
-					{ PacketTypes.ChestItem, HandleChestItem },
-					{ PacketTypes.SignNew, HandleSign },
-					{ PacketTypes.PlayerSlot, HandlePlayerSlot },
-					{ PacketTypes.TileGetSection, HandleGetSection },
-					{ PacketTypes.UpdateNPCHome, UpdateNPCHome },
-					{ PacketTypes.PlayerAddBuff, HandlePlayerAddBuff },
-					{ PacketTypes.ItemDrop, HandleItemDrop },
-					{ PacketTypes.UpdateItemDrop, HandleItemDrop },
-					{ PacketTypes.ItemOwner, HandleItemOwner },
-					{ PacketTypes.PlayerHp, HandlePlayerHp },
-					{ PacketTypes.PlayerMana, HandlePlayerMana },
-					{ PacketTypes.NpcItemStrike, HandleNpcItemStrike },
-					{ PacketTypes.NpcStrike, HandleNpcStrike },
-					{ PacketTypes.NpcSpecial, HandleSpecial },
-					{ PacketTypes.PlayerAnimation, HandlePlayerAnimation },
-					{ PacketTypes.PlayerBuff, HandlePlayerBuffList },
-					{ PacketTypes.PasswordSend, HandlePassword },
-					{ PacketTypes.ContinueConnecting2, HandleConnecting },
-					{ PacketTypes.ProjectileDestroy, HandleProjectileKill },
-					{ PacketTypes.SpawnBossorInvasion, HandleSpawnBoss },
-					{ PacketTypes.Teleport, HandleTeleport },
-					{ PacketTypes.PaintTile, HandlePaintTile },
-					{ PacketTypes.PaintWall, HandlePaintWall },
-					{ PacketTypes.DoorUse, HandleDoorUse },
-					{ PacketTypes.CompleteAnglerQuest, HandleCompleteAnglerQuest },
-					{ PacketTypes.NumberOfAnglerQuestsCompleted, HandleNumberOfAnglerQuestsCompleted },
-					{ PacketTypes.MassWireOperation, HandleMassWireOperation },
-					{ PacketTypes.GemLockToggle, HandleGemLockToggle },
-					{ PacketTypes.CatchNPC, HandleCatchNpc },
-					{ PacketTypes.NpcTeleportPortal, HandleNpcTeleportPortal },
-					{ PacketTypes.KillPortal, HandleKillPortal },
-					{ PacketTypes.PlaceTileEntity, HandlePlaceTileEntity },
-					{ PacketTypes.PlaceItemFrame, HandlePlaceItemFrame },
-					{ PacketTypes.SyncExtraValue, HandleSyncExtraValue },
-					{ PacketTypes.LoadNetModule, HandleLoadNetModule },
-					{ PacketTypes.ToggleParty, HandleToggleParty },
-					{ PacketTypes.PlayerHealOther, HandleHealOther },
-					{ PacketTypes.CrystalInvasionStart, HandleOldOnesArmy },
-					{ PacketTypes.PlayerHurtV2, HandlePlayerDamageV2 },
-					{ PacketTypes.PlayerDeathV2, HandlePlayerKillMeV2 }
-				};
-		}
-
-		public static bool HandlerGetData(PacketTypes type, TSPlayer player, MemoryStream data)
-		{
-			GetDataHandlerDelegate handler;
-			if (GetDataHandlerDelegates.TryGetValue(type, out handler))
-			{
-				try
-				{
-					return handler(new GetDataHandlerArgs(player, data));
-				}
-				catch (Exception ex)
-				{
-					TShock.Log.Error(ex.ToString());
-					return true;
-				}
-			}
-			return false;
-		}
-
-		private static bool HandleHealOther(GetDataHandlerArgs args)
-		{
-			byte plr = args.Data.ReadInt8();
-			short amount = args.Data.ReadInt16();
-
-			if (amount <= 0 || Main.player[plr] == null || !Main.player[plr].active)
-			{
-				return true;
-			}
-
-			if (amount > TShock.Config.MaxDamage * 0.2)
-			{
-				args.Player.Disable("HealOtherPlayer cheat attempt!", DisableFlags.WriteToLogAndConsole);
-				return true;
-			}
-
-			if (args.Player.HealOtherThreshold > TShock.Config.HealOtherThreshold)
-			{
-				args.Player.Disable("Reached HealOtherPlayer threshold.", DisableFlags.WriteToLogAndConsole);
-				return true;
-			}
-
-			if (TShock.CheckIgnores(args.Player) || (DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
-			{
-				return true;
-			}
-
-			args.Player.HealOtherThreshold++;
-			return false;
-		}
-
-		private static bool HandlePlayerSlot(GetDataHandlerArgs args)
-		{
-			byte plr = args.Data.ReadInt8();
-			byte slot = args.Data.ReadInt8();
-			short stack = args.Data.ReadInt16();
-			byte prefix = args.Data.ReadInt8();
-			short type = args.Data.ReadInt16();
-
-			// Players send a slot update packet for each inventory slot right after they've joined.
-			bool bypassTrashCanCheck = false;
-			if (plr == args.Player.Index && !args.Player.HasSentInventory && slot == NetItem.MaxInventory)
-			{
-				args.Player.HasSentInventory = true;
-				bypassTrashCanCheck = true;
-			}
-
-			if (OnPlayerSlot(plr, slot, stack, prefix, type) || plr != args.Player.Index || slot < 0 ||
-				slot > NetItem.MaxInventory)
-				return true;
-			if (args.Player.IgnoreSSCPackets)
-			{
-				args.Player.SendData(PacketTypes.PlayerSlot, "", args.Player.Index, slot, prefix);
-				return true;
-			}
-
-			// Garabage? Or will it cause some internal initialization or whatever?
-			var item = new Item();
-			item.netDefaults(type);
-			item.Prefix(prefix);
-
-			if (args.Player.IsLoggedIn)
-			{
-				args.Player.PlayerData.StoreSlot(slot, type, prefix, stack);
-			}
-			else if (Main.ServerSideCharacter && TShock.Config.DisableLoginBeforeJoin && !bypassTrashCanCheck &&
-				args.Player.HasSentInventory && !args.Player.HasPermission(Permissions.bypassssc))
-			{
-				// The player might have moved an item to their trash can before they performed a single login attempt yet.
-				args.Player.IgnoreActionsForClearingTrashCan = true;
-			}
-
-			if (slot == 58) //this is the hand
-			{
-				item.stack = stack;
-				args.Player.ItemInHand = item;
-			}
-
-			return false;
-		}
-
-		public static bool HandlePlayerHp(GetDataHandlerArgs args)
-		{
-			var plr = args.Data.ReadInt8();
-			var cur = args.Data.ReadInt16();
-			var max = args.Data.ReadInt16();
-
-			if (OnPlayerHP(plr, cur, max) || cur <= 0 || max <= 0 || args.Player.IgnoreSSCPackets)
-				return true;
-
-			if (max > TShock.Config.MaxHP && !args.Player.HasPermission(Permissions.ignorehp))
-			{
-				args.Player.Disable("Maximum HP beyond limit", DisableFlags.WriteToLogAndConsole);
-				return true;
-			}
-
-			if (args.Player.IsLoggedIn)
-			{
-				args.Player.TPlayer.statLife = cur;
-				args.Player.TPlayer.statLifeMax = max;
-				args.Player.PlayerData.maxHealth = max;
-			}
-
-			if (args.Player.GodMode && (cur < max))
-			{
-				args.Player.Heal(args.TPlayer.statLifeMax2);
-			}
-			return false;
-		}
-
-		private static bool HandlePlayerMana(GetDataHandlerArgs args)
-		{
-			var plr = args.Data.ReadInt8();
-			var cur = args.Data.ReadInt16();
-			var max = args.Data.ReadInt16();
-
-			if (OnPlayerMana(plr, cur, max) || cur < 0 || max < 0 || args.Player.IgnoreSSCPackets)
-				return true;
-
-			if (max > TShock.Config.MaxMP && !args.Player.HasPermission(Permissions.ignoremp))
-			{
-				args.Player.Disable("Maximum MP beyond limit", DisableFlags.WriteToLogAndConsole);
-				return true;
-			}
-
-			if (args.Player.IsLoggedIn)
-			{
-				args.Player.TPlayer.statMana = cur;
-				args.Player.TPlayer.statManaMax = max;
-				args.Player.PlayerData.maxMana = max;
-			}
-			return false;
-		}
-
+		
 		private static bool HandlePlayerInfo(GetDataHandlerArgs args)
 		{
 			byte playerid = args.Data.ReadInt8();
@@ -1464,15 +1819,15 @@ namespace TShockAPI
 
 			bool extraSlot = extra[2];
 
-			if (OnPlayerInfo(playerid, hair, skinVariant, difficulty, name))
+			if (OnPlayerInfo(args.Player, args.Data, playerid, hair, skinVariant, difficulty, name))
 			{
-				TShock.Utils.ForceKick(args.Player, "A plugin cancelled the event.", true);
+				args.Player.Kick("A plugin on this server stopped your login.", true, true);
 				return true;
 			}
 
 			if (name.Trim().Length == 0)
 			{
-				TShock.Utils.ForceKick(args.Player, "Empty Name.", true);
+				args.Player.Kick("You have been Bounced.", true, true);
 				return true;
 			}
 			if (args.Player.ReceivedInfo)
@@ -1500,12 +1855,12 @@ namespace TShockAPI
 			}
 			if (TShock.Config.MediumcoreOnly && difficulty < 1)
 			{
-				TShock.Utils.ForceKick(args.Player, "Server is set to mediumcore and above characters only!", true);
+				args.Player.Kick("You need to join with a mediumcore player or higher.", true, true);
 				return true;
 			}
 			if (TShock.Config.HardcoreOnly && difficulty < 2)
 			{
-				TShock.Utils.ForceKick(args.Player, "Server is set to hardcore characters only!", true);
+				args.Player.Kick("You need to join with a hardcore player.", true, true);
 				return true;
 			}
 			args.Player.Difficulty = difficulty;
@@ -1515,29 +1870,81 @@ namespace TShockAPI
 			return false;
 		}
 
+		private static bool HandlePlayerSlot(GetDataHandlerArgs args)
+		{
+			byte plr = args.Data.ReadInt8();
+			byte slot = args.Data.ReadInt8();
+			short stack = args.Data.ReadInt16();
+			byte prefix = args.Data.ReadInt8();
+			short type = args.Data.ReadInt16();
+
+			// Players send a slot update packet for each inventory slot right after they've joined.
+			bool bypassTrashCanCheck = false;
+			if (plr == args.Player.Index && !args.Player.HasSentInventory && slot == NetItem.MaxInventory)
+			{
+				args.Player.HasSentInventory = true;
+				bypassTrashCanCheck = true;
+			}
+
+			if (OnPlayerSlot(args.Player, args.Data, plr, slot, stack, prefix, type) || plr != args.Player.Index || slot < 0 ||
+			    slot > NetItem.MaxInventory)
+				return true;
+			if (args.Player.IgnoreSSCPackets)
+			{
+				args.Player.SendData(PacketTypes.PlayerSlot, "", args.Player.Index, slot, prefix);
+				return true;
+			}
+
+			// Garabage? Or will it cause some internal initialization or whatever?
+			var item = new Item();
+			item.netDefaults(type);
+			item.Prefix(prefix);
+
+			if (args.Player.IsLoggedIn)
+			{
+				args.Player.PlayerData.StoreSlot(slot, type, prefix, stack);
+			}
+			else if (Main.ServerSideCharacter && TShock.Config.DisableLoginBeforeJoin && !bypassTrashCanCheck &&
+			         args.Player.HasSentInventory && !args.Player.HasPermission(Permissions.bypassssc))
+			{
+				// The player might have moved an item to their trash can before they performed a single login attempt yet.
+				args.Player.IsDisabledPendingTrashRemoval = true;
+			}
+
+			if (slot == 58) //this is the hand
+			{
+				item.stack = stack;
+				args.Player.ItemInHand = item;
+			}
+
+			return false;
+		}
+
 		private static bool HandleConnecting(GetDataHandlerArgs args)
 		{
-			var user = TShock.Users.GetUserByName(args.Player.Name);
+			var account = TShock.UserAccounts.GetUserAccountByName(args.Player.Name);
 			args.Player.DataWhenJoined = new PlayerData(args.Player);
 			args.Player.DataWhenJoined.CopyCharacter(args.Player);
+			args.Player.PlayerData = new PlayerData(args.Player);
+			args.Player.PlayerData.CopyCharacter(args.Player);
 
-			if (user != null && !TShock.Config.DisableUUIDLogin)
+			if (account != null && !TShock.Config.DisableUUIDLogin)
 			{
-				if (user.UUID == args.Player.UUID)
+				if (account.UUID == args.Player.UUID)
 				{
 					if (args.Player.State == 1)
 						args.Player.State = 2;
 					NetMessage.SendData((int)PacketTypes.WorldInfo, args.Player.Index);
 
-					args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, user.ID);
+					args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, account.ID);
 
-					var group = TShock.Utils.GetGroup(user.Group);
+					var group = TShock.Groups.GetGroupByName(account.Group);
 
 					args.Player.Group = group;
 					args.Player.tempGroup = null;
-					args.Player.User = user;
+					args.Player.Account = account;
 					args.Player.IsLoggedIn = true;
-					args.Player.IgnoreActionsForInventory = "none";
+					args.Player.IsDisabledForSSC = false;
 
 					if (Main.ServerSideCharacter)
 					{
@@ -1551,18 +1958,18 @@ namespace TShockAPI
 					args.Player.LoginFailsBySsi = false;
 
 					if (args.Player.HasPermission(Permissions.ignorestackhackdetection))
-						args.Player.IgnoreActionsForCheating = "none";
+						args.Player.IsDisabledForStackDetection = false;
 
 					if (args.Player.HasPermission(Permissions.usebanneditem))
-						args.Player.IgnoreActionsForDisabledArmor = "none";
+						args.Player.IsDisabledForBannedWearable = false;
 
-					args.Player.SendSuccessMessage("Authenticated as " + user.Name + " successfully.");
+					args.Player.SendSuccessMessage("Authenticated as " + account.Name + " successfully.");
 					TShock.Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user " + args.Player.Name + ".");
 					Hooks.PlayerHooks.OnPlayerPostLogin(args.Player);
 					return true;
 				}
 			}
-			else if (user != null && !TShock.Config.DisableLoginBeforeJoin)
+			else if (account != null && !TShock.Config.DisableLoginBeforeJoin)
 			{
 				args.Player.RequiresPassword = true;
 				NetMessage.SendData((int)PacketTypes.PasswordRequired, args.Player.Index);
@@ -1580,936 +1987,49 @@ namespace TShockAPI
 			NetMessage.SendData((int)PacketTypes.WorldInfo, args.Player.Index);
 			return true;
 		}
-
-		private static bool HandlePassword(GetDataHandlerArgs args)
-		{
-			if (!args.Player.RequiresPassword)
-				return true;
-
-			string password = args.Data.ReadString();
-
-			if (Hooks.PlayerHooks.OnPlayerPreLogin(args.Player, args.Player.Name, password))
-				return true;
-
-			var user = TShock.Users.GetUserByName(args.Player.Name);
-			if (user != null && !TShock.Config.DisableLoginBeforeJoin)
-			{
-				if (user.VerifyPassword(password))
-				{
-					args.Player.RequiresPassword = false;
-					args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, user.ID);
-
-					if (args.Player.State == 1)
-						args.Player.State = 2;
-					NetMessage.SendData((int)PacketTypes.WorldInfo, args.Player.Index);
-
-					var group = TShock.Utils.GetGroup(user.Group);
-
-					args.Player.Group = group;
-					args.Player.tempGroup = null;
-					args.Player.User = user;
-					args.Player.IsLoggedIn = true;
-					args.Player.IgnoreActionsForInventory = "none";
-
-					if (Main.ServerSideCharacter)
-					{
-						if (args.Player.HasPermission(Permissions.bypassssc))
-						{
-							args.Player.PlayerData.CopyCharacter(args.Player);
-							TShock.CharacterDB.InsertPlayerData(args.Player);
-						}
-						args.Player.PlayerData.RestoreCharacter(args.Player);
-					}
-					args.Player.LoginFailsBySsi = false;
-
-					if (args.Player.HasPermission(Permissions.ignorestackhackdetection))
-						args.Player.IgnoreActionsForCheating = "none";
-
-					if (args.Player.HasPermission(Permissions.usebanneditem))
-						args.Player.IgnoreActionsForDisabledArmor = "none";
-
-
-					args.Player.SendMessage("Authenticated as " + args.Player.Name + " successfully.", Color.LimeGreen);
-					TShock.Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user " + args.Player.Name + ".");
-					TShock.Users.SetUserUUID(user, args.Player.UUID);
-					Hooks.PlayerHooks.OnPlayerPostLogin(args.Player);
-					return true;
-				}
-				TShock.Utils.ForceKick(args.Player, "Invalid user account password.", true);
-				return true;
-			}
-			if (!string.IsNullOrEmpty(TShock.Config.ServerPassword))
-			{
-				if (TShock.Config.ServerPassword == password)
-				{
-					args.Player.RequiresPassword = false;
-					if (args.Player.State == 1)
-						args.Player.State = 2;
-					NetMessage.SendData((int)PacketTypes.WorldInfo, args.Player.Index);
-					return true;
-				}
-				TShock.Utils.ForceKick(args.Player, "Incorrect server password", true);
-				return true;
-			}
-
-			TShock.Utils.ForceKick(args.Player, "Bad password attempt", true);
-			return true;
-		}
-
+		
 		private static bool HandleGetSection(GetDataHandlerArgs args)
 		{
-			if (args.Player.RequestedSection)
+			if (OnGetSection(args.Player, args.Data, args.Data.ReadInt32(), args.Data.ReadInt32()))
 				return true;
-			args.Player.RequestedSection = true;
-			if (String.IsNullOrEmpty(args.Player.Name))
-			{
-				TShock.Utils.ForceKick(args.Player, "Blank name.", true);
-				return true;
-			}
 
-			if (!args.Player.HasPermission(Permissions.ignorestackhackdetection))
+			if (TShock.Utils.GetActivePlayerCount() + 1 > TShock.Config.MaxSlots &&
+			    !args.Player.HasPermission(Permissions.reservedslot))
 			{
-				TShock.HackedInventory(args.Player);
-			}
-
-			if (TShock.Utils.ActivePlayers() + 1 > TShock.Config.MaxSlots &&
-				!args.Player.HasPermission(Permissions.reservedslot))
-			{
-				TShock.Utils.ForceKick(args.Player, TShock.Config.ServerFullReason, true);
+				args.Player.Kick(TShock.Config.ServerFullReason, true, true);
 				return true;
 			}
 
 			NetMessage.SendData((int)PacketTypes.TimeSet, -1, -1, NetworkText.Empty, Main.dayTime ? 1 : 0, (int)Main.time, Main.sunModY, Main.moonModY);
 			return false;
 		}
-
-		/// <summary>
-		/// Tile IDs that can be oriented:
-		/// Cannon,
-		/// Chairs,
-		/// Beds,
-		/// Bathtubs,
-		/// Statues,
-		/// Mannequin,
-		/// Traps,
-		/// MusicBoxes,
-		/// ChristmasTree,
-		/// WaterFountain,
-		/// Womannequin,
-		/// MinecartTrack,
-		/// WeaponsRack,
-		/// LunarMonolith,
-		/// TargetDummy,
-		/// Campfire
-		/// </summary>
-		private static int[] orientableTiles = new int[]
+		
+		private static bool HandleSpawn(GetDataHandlerArgs args)
 		{
-			TileID.Cannon,
-			TileID.Chairs,
-			TileID.Beds,
-			TileID.Bathtubs,
-			TileID.Statues,
-			TileID.Mannequin,
-			TileID.Traps,
-			TileID.MusicBoxes,
-			TileID.ChristmasTree,
-			TileID.WaterFountain,
-			TileID.Womannequin,
-			TileID.MinecartTrack,
-			TileID.WeaponsRack,
-			TileID.ItemFrame,
-			TileID.LunarMonolith,
-			TileID.TargetDummy,
-			TileID.Campfire
-		};
+			var player = args.Data.ReadInt8();
+			var spawnx = args.Data.ReadInt16();
+			var spawny = args.Data.ReadInt16();
 
-		private static bool HandleSendTileSquare(GetDataHandlerArgs args)
-		{
-			var size = args.Data.ReadInt16();
-			var tileX = args.Data.ReadInt16();
-			var tileY = args.Data.ReadInt16();
-
-			if (args.Player.HasPermission(Permissions.allowclientsideworldedit))
-				return false;
-
-			if (OnSendTileSquare(size, tileX, tileY))
+			if (OnPlayerSpawn(args.Player, args.Data, player, spawnx, spawny))
 				return true;
 
-			if (size > 5)
-				return true;
-
-			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
+			if ((Main.ServerSideCharacter) && (args.Player.sX > 0) && (args.Player.sY > 0) && (args.TPlayer.SpawnX > 0) && ((args.TPlayer.SpawnX != args.Player.sX) && (args.TPlayer.SpawnY != args.Player.sY)))
 			{
-				args.Player.SendTileSquare(tileX, tileY, size);
-				return true;
+
+				args.Player.sX = args.TPlayer.SpawnX;
+				args.Player.sY = args.TPlayer.SpawnY;
+
+				if (((Main.tile[args.Player.sX, args.Player.sY - 1].active() && Main.tile[args.Player.sX, args.Player.sY - 1].type == 79)) && (WorldGen.StartRoomCheck(args.Player.sX, args.Player.sY - 1)))
+					args.Player.Teleport(args.Player.sX * 16, (args.Player.sY * 16) - 48);
 			}
 
-			if (TShock.CheckIgnores(args.Player))
+			else if ((Main.ServerSideCharacter) && (args.Player.sX > 0) && (args.Player.sY > 0))
 			{
-				args.Player.SendTileSquare(tileX, tileY, size);
-				return true;
+				if (((Main.tile[args.Player.sX, args.Player.sY - 1].active() && Main.tile[args.Player.sX, args.Player.sY - 1].type == 79)) && (WorldGen.StartRoomCheck(args.Player.sX, args.Player.sY - 1)))
+					args.Player.Teleport(args.Player.sX * 16, (args.Player.sY * 16) - 48);
 			}
 
-			try
-			{
-				var tiles = new NetTile[size, size];
-				for (int x = 0; x < size; x++)
-				{
-					for (int y = 0; y < size; y++)
-					{
-						tiles[x, y] = new NetTile(args.Data);
-					}
-				}
-
-				bool changed = false;
-				for (int x = 0; x < size; x++)
-				{
-					int realx = tileX + x;
-					if (realx < 0 || realx >= Main.maxTilesX)
-						continue;
-
-					for (int y = 0; y < size; y++)
-					{
-						int realy = tileY + y;
-						if (realy < 0 || realy >= Main.maxTilesY)
-							continue;
-
-						var tile = Main.tile[realx, realy];
-						var newtile = tiles[x, y];
-						if (TShock.CheckTilePermission(args.Player, realx, realy) ||
-							TShock.CheckRangePermission(args.Player, realx, realy))
-						{
-							continue;
-						}
-
-						// Fixes the Flower Boots not creating flowers issue
-						if (size == 1 && args.Player.Accessories.Any(i => i.active && i.netID == ItemID.FlowerBoots))
-						{
-							if (Main.tile[realx, realy + 1].type == TileID.Grass && (newtile.Type == TileID.Plants || newtile.Type == TileID.Plants2))
-							{
-								return false;
-							}
-
-							if (Main.tile[realx, realy + 1].type == TileID.HallowedGrass && (newtile.Type == TileID.HallowedPlants || newtile.Type == TileID.HallowedPlants2))
-							{
-								return false;
-							}
-
-							if (Main.tile[realx, realy + 1].type == TileID.JungleGrass && newtile.Type == TileID.JunglePlants2)
-							{
-								return false;
-							}
-						}
-
-						// Junction Box
-						if (tile.type == TileID.WirePipe)
-							return false;
-
-						// Orientable tiles
-						if (tile.type == newtile.Type && orientableTiles.Contains(tile.type))
-						{
-							Main.tile[realx, realy].frameX = newtile.FrameX;
-							Main.tile[realx, realy].frameY = newtile.FrameY;
-							changed = true;
-						}
-						// Landmine
-						if (tile.type == TileID.LandMine && !newtile.Active)
-						{
-							Main.tile[realx, realy].active(false);
-							changed = true;
-						}
-						// Sensors
-						if(newtile.Type == TileID.LogicSensor && !Main.tile[realx, realy].active())
-						{
-							Main.tile[realx, realy].type = newtile.Type;
-							Main.tile[realx, realy].frameX = newtile.FrameX;
-							Main.tile[realx, realy].frameY = newtile.FrameY;
-							Main.tile[realx, realy].active(true);
-							changed = true;
-						}
-
-						if (tile.active() && newtile.Active && tile.type != newtile.Type)
-						{
-							// Grass <-> Grass
-							if ((TileID.Sets.Conversion.Grass[tile.type] && TileID.Sets.Conversion.Grass[newtile.Type]) ||
-								// Dirt <-> Dirt
-								((tile.type == 0 || tile.type == 59) &&
-								(newtile.Type == 0 || newtile.Type == 59)) ||
-								// Ice <-> Ice
-								(TileID.Sets.Conversion.Ice[tile.type] && TileID.Sets.Conversion.Ice[newtile.Type]) ||
-								// Stone <-> Stone
-								((TileID.Sets.Conversion.Stone[tile.type] || Main.tileMoss[tile.type]) &&
-								(TileID.Sets.Conversion.Stone[newtile.Type] || Main.tileMoss[newtile.Type])) ||
-								// Sand <-> Sand
-								(TileID.Sets.Conversion.Sand[tile.type] && TileID.Sets.Conversion.Sand[newtile.Type]) ||
-								// Sandstone <-> Sandstone
-								(TileID.Sets.Conversion.Sandstone[tile.type] && TileID.Sets.Conversion.Sandstone[newtile.Type]) ||
-								// Hardened Sand <-> Hardened Sand
-								(TileID.Sets.Conversion.HardenedSand[tile.type] && TileID.Sets.Conversion.HardenedSand[newtile.Type]))
-							{
-								Main.tile[realx, realy].type = newtile.Type;
-								changed = true;
-							}
-						}
-						// Stone wall <-> Stone wall
-						if (((tile.wall == 1 || tile.wall == 3 || tile.wall == 28 || tile.wall == 83) &&
-							(newtile.Wall == 1 || newtile.Wall == 3 || newtile.Wall == 28 || newtile.Wall == 83)) ||
-							// Leaf wall <-> Leaf wall
-							(((tile.wall >= 63 && tile.wall <= 70) || tile.wall == 81) &&
-							((newtile.Wall >= 63 && newtile.Wall <= 70) || newtile.Wall == 81)))
-						{
-							Main.tile[realx, realy].wall = newtile.Wall;
-							changed = true;
-						}
-
-						if ((tile.type == TileID.TrapdoorClosed && (newtile.Type == TileID.TrapdoorOpen || !newtile.Active)) ||
-							(tile.type == TileID.TrapdoorOpen && (newtile.Type == TileID.TrapdoorClosed || !newtile.Active)) ||
-							(!tile.active() && newtile.Active && (newtile.Type == TileID.TrapdoorOpen||newtile.Type == TileID.TrapdoorClosed)))
-						{
-							Main.tile[realx, realy].type = newtile.Type;
-							Main.tile[realx, realy].frameX = newtile.FrameX;
-							Main.tile[realx, realy].frameY = newtile.FrameY;
-							Main.tile[realx, realy].active(newtile.Active);
-							changed = true;
-						}
-					}
-				}
-
-				if (changed)
-				{
-					TSPlayer.All.SendTileSquare(tileX, tileY, size + 1);
-					WorldGen.RangeFrame(tileX, tileY, tileX + size, tileY + size);
-				}
-				else
-				{
-					args.Player.SendTileSquare(tileX, tileY, size);
-				}
-			}
-			catch
-			{
-				args.Player.SendTileSquare(tileX, tileY, size);
-			}
-			return true;
-		}
-
-		public enum EditAction
-		{
-			KillTile = 0,
-			PlaceTile,
-			KillWall,
-			PlaceWall,
-			KillTileNoItem,
-			PlaceWire,
-			KillWire,
-			PoundTile,
-			PlaceActuator,
-			KillActuator,
-			PlaceWire2,
-			KillWire2,
-			PlaceWire3,
-			KillWire3,
-			SlopeTile
-		}
-		public enum EditType
-		{
-			Fail = 0,
-			Type,
-			Slope,
-		}
-
-		/// <summary>
-		/// Tiles that can be broken without any pickaxes/etc.
-		/// </summary>
-		private static int[] breakableTiles = new int[]
-		{
-			TileID.Books,
-			TileID.Bottles,
-			TileID.BreakableIce,
-			TileID.Candles,
-			TileID.CorruptGrass,
-			TileID.Dirt,
-			TileID.FleshGrass,
-			TileID.Grass,
-			TileID.HallowedGrass,
-			TileID.MagicalIceBlock,
-			TileID.Mannequin,
-			TileID.Torches,
-			TileID.WaterCandle,
-			TileID.Womannequin,
-		};
-		/// <summary>
-		/// The maximum place styles for each tile.
-		/// </summary>
-		public static Dictionary<int, int> MaxPlaceStyles = new Dictionary<int, int>();
-		/// <summary>
-		/// These projectiles create tiles on death.
-		/// </summary>
-		private static Dictionary<int, int> projectileCreatesTile = new Dictionary<int, int>
-		{
-			{ ProjectileID.DirtBall, TileID.Dirt },
-			{ ProjectileID.SandBallGun, TileID.Sand },
-			{ ProjectileID.EbonsandBallGun, TileID.Ebonsand },
-			{ ProjectileID.PearlSandBallGun, TileID.Pearlsand },
-			{ ProjectileID.CrimsandBallGun, TileID.Crimsand },
-		};
-
-		private static Dictionary<int, int> ropeCoilPlacements = new Dictionary<int, int>
-		{
-			{ItemID.RopeCoil, TileID.Rope},
-			{ItemID.SilkRopeCoil, TileID.SilkRope},
-			{ItemID.VineRopeCoil, TileID.VineRope},
-			{ItemID.WebRopeCoil, TileID.WebRope}
-		};
-
-		/// <summary>
-		/// Extra place style limits for strange hardcoded values in Terraria
-		/// </summary>
-		private static Dictionary<int, int> ExtraneousPlaceStyles = new Dictionary<int, int>
-		{
-			{TileID.MinecartTrack, 3}
-		};
-
-		private static bool HandleTile(GetDataHandlerArgs args)
-		{
-			EditAction action = (EditAction)args.Data.ReadInt8();
-			var tileX = args.Data.ReadInt16();
-			var tileY = args.Data.ReadInt16();
-
-			try
-			{
-				var editData = args.Data.ReadInt16();
-				EditType type = (action == EditAction.KillTile || action == EditAction.KillWall ||
-								 action == EditAction.KillTileNoItem)
-								? EditType.Fail
-								: (action == EditAction.PlaceTile || action == EditAction.PlaceWall)
-									? EditType.Type
-									: EditType.Slope;
-
-				var style = args.Data.ReadInt8();
-
-				if (editData < 0)
-				{
-					args.Player.SendTileSquare(tileX, tileY, 4);
-					return true;
-				}
-
-				if (OnTileEdit(args.Player, tileX, tileY, action, type, editData, style))
-					return true;
-				if (!TShock.Utils.TilePlacementValid(tileX, tileY))
-					return true;
-				if (action == EditAction.KillTile && Main.tile[tileX, tileY].type == TileID.MagicalIceBlock)
-					return false;
-				if (args.Player.Dead && TShock.Config.PreventDeadModification)
-					return true;
-
-				if (args.Player.AwaitingName)
-				{
-					Debug.Assert(args.Player.AwaitingNameParameters != null);
-
-					bool includeUnprotected = false;
-					bool includeZIndexes = false;
-					bool persistentMode = false;
-					foreach (string parameter in args.Player.AwaitingNameParameters)
-					{
-						if (parameter.Equals("-u", StringComparison.InvariantCultureIgnoreCase))
-							includeUnprotected = true;
-						if (parameter.Equals("-z", StringComparison.InvariantCultureIgnoreCase))
-							includeZIndexes = true;
-						if (parameter.Equals("-p", StringComparison.InvariantCultureIgnoreCase))
-							persistentMode = true;
-					}
-
-					List<string> outputRegions = new List<string>();
-					foreach (Region region in TShock.Regions.Regions.OrderBy(r => r.Z).Reverse())
-					{
-						if (!includeUnprotected && !region.DisableBuild)
-							continue;
-						if (tileX < region.Area.Left || tileX > region.Area.Right)
-							continue;
-						if (tileY < region.Area.Top || tileY > region.Area.Bottom)
-							continue;
-
-						string format = "{1}";
-						if (includeZIndexes)
-							format = "{1} (z:{0})";
-
-						outputRegions.Add(string.Format(format, region.Z, region.Name));
-					}
-
-					if (outputRegions.Count == 0)
-					{
-						if (includeUnprotected)
-							args.Player.SendInfoMessage("There are no regions at this point.");
-						else
-							args.Player.SendInfoMessage("There are no regions at this point or they are not protected.");
-					}
-					else
-					{
-						if (includeUnprotected)
-							args.Player.SendSuccessMessage("Regions at this point:");
-						else
-							args.Player.SendSuccessMessage("Protected regions at this point:");
-
-						foreach (string line in PaginationTools.BuildLinesFromTerms(outputRegions))
-							args.Player.SendMessage(line, Color.White);
-					}
-
-					if (!persistentMode)
-					{
-						args.Player.AwaitingName = false;
-						args.Player.AwaitingNameParameters = null;
-					}
-
-					args.Player.SendTileSquare(tileX, tileY, 4);
-					return true;
-				}
-
-				if (args.Player.AwaitingTempPoint > 0)
-				{
-					args.Player.TempPoints[args.Player.AwaitingTempPoint - 1].X = tileX;
-					args.Player.TempPoints[args.Player.AwaitingTempPoint - 1].Y = tileY;
-					args.Player.SendInfoMessage("Set temp point {0}.", args.Player.AwaitingTempPoint);
-					args.Player.SendTileSquare(tileX, tileY, 4);
-					args.Player.AwaitingTempPoint = 0;
-					return true;
-				}
-
-				Item selectedItem = args.Player.SelectedItem;
-				int lastKilledProj = args.Player.LastKilledProjectile;
-				ITile tile = Main.tile[tileX, tileY];
-
-				if (action == EditAction.PlaceTile)
-				{
-					if (TShock.TileBans.TileIsBanned(editData, args.Player))
-					{
-						args.Player.SendTileSquare(tileX, tileY, 1);
-						args.Player.SendErrorMessage("You do not have permission to place this tile.");
-						return true;
-					}
-				}
-
-				if (action == EditAction.KillTile && !Main.tileCut[tile.type] && !breakableTiles.Contains(tile.type))
-				{
-					//TPlayer.mount.Type 8 => Drill Containment Unit.
-
-					// If the tile is an axe tile and they aren't selecting an axe, they're hacking.
-					if (Main.tileAxe[tile.type] && ((args.Player.TPlayer.mount.Type != 8 && selectedItem.axe == 0) && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0))
-					{
-						args.Player.SendTileSquare(tileX, tileY, 4);
-						return true;
-					}
-					// If the tile is a hammer tile and they aren't selecting a hammer, they're hacking.
-					else if (Main.tileHammer[tile.type] && ((args.Player.TPlayer.mount.Type != 8 && selectedItem.hammer == 0) && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0))
-					{
-						args.Player.SendTileSquare(tileX, tileY, 4);
-						return true;
-					}
-					// If the tile is a pickaxe tile and they aren't selecting a pickaxe, they're hacking.
-					else if ((!Main.tileAxe[tile.type] && !Main.tileHammer[tile.type]) && tile.wall == 0 && ((args.TPlayer.mount.Type != 8 && selectedItem.pick == 0) && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0))
-					{
-						args.Player.SendTileSquare(tileX, tileY, 4);
-						return true;
-					}
-				}
-				else if (action == EditAction.KillWall)
-				{
-					// If they aren't selecting a hammer, they could be hacking.
-					if (selectedItem.hammer == 0 && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0 && selectedItem.createWall == 0)
-					{
-						args.Player.SendTileSquare(tileX, tileY, 1);
-						return true;
-					}
-				}
-				else if (action == EditAction.PlaceTile && (projectileCreatesTile.ContainsKey(lastKilledProj) && editData == projectileCreatesTile[lastKilledProj]))
-				{
-					args.Player.LastKilledProjectile = 0;
-				}
-				else if (action == EditAction.PlaceTile || action == EditAction.PlaceWall)
-				{
-					if ((action == EditAction.PlaceTile && TShock.Config.PreventInvalidPlaceStyle) &&
-						(MaxPlaceStyles.ContainsKey(editData) && style > MaxPlaceStyles[editData]) &&
-						(ExtraneousPlaceStyles.ContainsKey(editData) && style > ExtraneousPlaceStyles[editData]))
-					{
-						args.Player.SendTileSquare(tileX, tileY, 4);
-						return true;
-					}
-
-					// If they aren't selecting the item which creates the tile or wall, they're hacking.
-					if (!(selectedItem.netID == ItemID.IceRod && editData == TileID.MagicalIceBlock) &&
-						(editData != (action == EditAction.PlaceTile ? selectedItem.createTile : selectedItem.createWall) &&
-						!(ropeCoilPlacements.ContainsKey(selectedItem.netID) && editData == ropeCoilPlacements[selectedItem.netID])))
-					{
-						args.Player.SendTileSquare(tileX, tileY, 4);
-						return true;
-					}
-
-					// Using the actuation accessory can lead to actuator hacking
-					if (TShock.Itembans.ItemIsBanned("Actuator", args.Player) && args.Player.TPlayer.autoActuator)
-					{
-						args.Player.SendTileSquare(tileX, tileY, 1);
-						args.Player.SendErrorMessage("You do not have permission to place actuators.");
-						return true;
-					}
-					if (TShock.Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(selectedItem.netID), args.Player) || editData >= (action == EditAction.PlaceTile ? Main.maxTileSets : Main.maxWallTypes))
-					{
-						args.Player.SendTileSquare(tileX, tileY, 4);
-						return true;
-					}
-					if (action == EditAction.PlaceTile && (editData == 29 || editData == 97) && Main.ServerSideCharacter)
-					{
-						args.Player.SendErrorMessage("You cannot place this tile because server side characters are enabled.");
-						args.Player.SendTileSquare(tileX, tileY, 3);
-						return true;
-					}
-					if (action == EditAction.PlaceTile && (editData == TileID.Containers || editData == TileID.Containers2))
-					{
-						if (TShock.Utils.MaxChests())
-						{
-							args.Player.SendErrorMessage("The world's chest limit has been reached - unable to place more.");
-							args.Player.SendTileSquare(tileX, tileY, 3);
-							return true;
-						}
-						if ((TShock.Utils.TilePlacementValid(tileX, tileY + 1) && Main.tile[tileX, tileY + 1].type == TileID.Boulder) ||
-							(TShock.Utils.TilePlacementValid(tileX + 1, tileY + 1) && Main.tile[tileX + 1, tileY + 1].type == TileID.Boulder))
-						{
-							args.Player.SendTileSquare(tileX, tileY, 3);
-							return true;
-						}
-					}
-				}
-				else if (action == EditAction.PlaceWire || action == EditAction.PlaceWire2 || action == EditAction.PlaceWire3)
-				{
-					// If they aren't selecting a wrench, they're hacking.
-					// WireKite = The Grand Design
-					if (selectedItem.type != ItemID.Wrench
-						&& selectedItem.type != ItemID.BlueWrench
-						&& selectedItem.type != ItemID.GreenWrench
-						&& selectedItem.type != ItemID.YellowWrench
-						&& selectedItem.type != ItemID.MulticolorWrench
-						&& selectedItem.type != ItemID.WireKite)
-					{
-						args.Player.SendTileSquare(tileX, tileY, 1);
-						return true;
-					}
-				}
-				else if (action == EditAction.KillActuator || action == EditAction.KillWire ||
-					action == EditAction.KillWire2 || action == EditAction.KillWire3)
-				{
-					// If they aren't selecting the wire cutter, they're hacking.
-					if (selectedItem.type != ItemID.WireCutter
-						&& selectedItem.type != ItemID.WireKite
-						&& selectedItem.type != ItemID.MulticolorWrench)
-					{
-						args.Player.SendTileSquare(tileX, tileY, 1);
-						return true;
-					}
-				}
-				else if (action == EditAction.PlaceActuator)
-				{
-					// If they aren't selecting the actuator and don't have the Presserator equipped, they're hacking.
-					if (selectedItem.type != ItemID.Actuator && !args.Player.TPlayer.autoActuator)
-					{
-						args.Player.SendTileSquare(tileX, tileY, 1);
-						return true;
-					}
-				}
-				if (TShock.Config.AllowCutTilesAndBreakables && Main.tileCut[tile.type])
-				{
-					if (action == EditAction.KillWall)
-					{
-						args.Player.SendTileSquare(tileX, tileY, 1);
-						return true;
-					}
-					return false;
-				}
-
-				if (TShock.CheckIgnores(args.Player))
-				{
-					args.Player.SendTileSquare(tileX, tileY, 4);
-					return true;
-				}
-
-				if (TShock.CheckTilePermission(args.Player, tileX, tileY, editData, action))
-				{
-					args.Player.SendTileSquare(tileX, tileY, 4);
-					return true;
-				}
-
-				if (TShock.CheckRangePermission(args.Player, tileX, tileY))
-				{
-					if (action == EditAction.PlaceTile && (editData == TileID.Rope || editData == TileID.SilkRope || editData == TileID.VineRope || editData == TileID.WebRope))
-					{
-						return false;
-					}
-
-					if (action == EditAction.KillTile || action == EditAction.KillWall && ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0)
-					{
-						return false;
-					}
-
-					args.Player.SendTileSquare(tileX, tileY, 4);
-					return true;
-				}
-
-				if (args.Player.TileKillThreshold >= TShock.Config.TileKillThreshold)
-				{
-					args.Player.Disable("Reached TileKill threshold.", DisableFlags.WriteToLogAndConsole);
-					args.Player.SendTileSquare(tileX, tileY, 4);
-					return true;
-				}
-
-				if (args.Player.TilePlaceThreshold >= TShock.Config.TilePlaceThreshold)
-				{
-					args.Player.Disable("Reached TilePlace threshold.", DisableFlags.WriteToLogAndConsole);
-					args.Player.SendTileSquare(tileX, tileY, 4);
-					return true;
-				}
-
-				if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
-				{
-					args.Player.SendTileSquare(tileX, tileY, 4);
-					return true;
-				}
-
-				if ((action == EditAction.PlaceTile || action == EditAction.PlaceWall) && !args.Player.HasPermission(Permissions.ignoreplacetiledetection))
-				{
-					args.Player.TilePlaceThreshold++;
-					var coords = new Vector2(tileX, tileY);
-					lock (args.Player.TilesCreated)
-						if (!args.Player.TilesCreated.ContainsKey(coords))
-							args.Player.TilesCreated.Add(coords, Main.tile[tileX, tileY]);
-				}
-
-				if ((action == EditAction.KillTile || action == EditAction.KillTileNoItem || action == EditAction.KillWall) && Main.tileSolid[Main.tile[tileX, tileY].type] &&
-					!args.Player.HasPermission(Permissions.ignorekilltiledetection))
-				{
-					args.Player.TileKillThreshold++;
-					var coords = new Vector2(tileX, tileY);
-					lock (args.Player.TilesDestroyed)
-						if (!args.Player.TilesDestroyed.ContainsKey(coords))
-							args.Player.TilesDestroyed.Add(coords, Main.tile[tileX, tileY]);
-				}
-				return false;
-			}
-			catch
-			{
-				args.Player.SendTileSquare(tileX, tileY, 4);
-				return true;
-			}
-		}
-
-
-		/// <summary>
-		/// Handle PlaceObject event
-		/// </summary>
-		private static bool HandlePlaceObject(GetDataHandlerArgs args)
-		{
-			short x = args.Data.ReadInt16();
-			short y = args.Data.ReadInt16();
-			short type = args.Data.ReadInt16();
-			short style = args.Data.ReadInt16();
-			byte alternate = args.Data.ReadInt8();
-			bool direction = args.Data.ReadBoolean();
-
-			if (type < 0 || type >= Main.maxTileSets)
-				return true;
-
-			if (x < 0 || x >= Main.maxTilesX)
-				return true;
-
-			if (y < 0 || y >= Main.maxTilesY)
-				return true;
-
-			//style 52 and 53 are used by ItemID.Fake_newchest1 and ItemID.Fake_newchest2
-			//These two items cause localised lag and rendering issues
-			if (type == TileID.FakeContainers && (style == 52 || style == 53))
-			{
-				args.Player.SendTileSquare(x, y, 4);
-				return true;
-			}
-
-			if (TShock.TileBans.TileIsBanned(type, args.Player))
-			{
-				args.Player.SendTileSquare(x, y, 1);
-				args.Player.SendErrorMessage("You do not have permission to place this tile.");
-				return true;
-			}
-
-			if (!TShock.Utils.TilePlacementValid(x, y))
-				return true;
-			if (args.Player.Dead && TShock.Config.PreventDeadModification)
-				return true;
-
-			if (TShock.CheckIgnores(args.Player))
-			{
-				args.Player.SendTileSquare(x, y, 4);
-				return true;
-			}
-
-			TileObjectData tileData = TileObjectData.GetTileData(type, style, 0);
-			if (tileData == null)
-				return true;
-
-			x -= tileData.Origin.X;
-			y -= tileData.Origin.Y;
-
-			for (int i = x; i < x + tileData.Width; i++)
-			{
-				for (int j = y; j < y + tileData.Height; j++)
-				{
-					if (TShock.CheckTilePermission(args.Player, i, j, type, EditAction.PlaceTile))
-					{
-						args.Player.SendTileSquare(i, j, 4);
-						return true;
-					}
-				}
-			}
-
-			// Ignore rope placement range
-			if ((type != TileID.Rope
-					|| type != TileID.SilkRope
-					|| type != TileID.VineRope
-					|| type != TileID.WebRope)
-					&& TShock.CheckRangePermission(args.Player, x, y))
-			{
-				args.Player.SendTileSquare(x, y, 4);
-				return true;
-			}
-
-			if (args.Player.TilePlaceThreshold >= TShock.Config.TilePlaceThreshold)
-			{
-				args.Player.Disable("Reached TilePlace threshold.", DisableFlags.WriteToLogAndConsole);
-				args.Player.SendTileSquare(x, y, 4);
-				return true;
-			}
-
-			if (!args.Player.HasPermission(Permissions.ignoreplacetiledetection))
-			{
-				args.Player.TilePlaceThreshold++;
-				var coords = new Vector2(x, y);
-				lock (args.Player.TilesCreated)
-					if (!args.Player.TilesCreated.ContainsKey(coords))
-						args.Player.TilesCreated.Add(coords, Main.tile[x, y]);
-			}
-
-			return false;
-		}
-
-		/// <summary>
-		/// For use with a PaintTile event
-		/// </summary>
-		public class PaintTileEventArgs : HandledEventArgs
-		{
-			/// <summary>
-			/// X Location
-			/// </summary>
-			public Int32 X { get; set; }
-			/// <summary>
-			/// Y Location
-			/// </summary>
-			public Int32 Y { get; set; }
-			/// <summary>
-			/// Type
-			/// </summary>
-			public byte type { get; set; }
-		}
-		/// <summary>
-		/// NPCStrike - Called when an NPC is attacked
-		/// </summary>
-		public static HandlerList<PaintTileEventArgs> PaintTile;
-
-		private static bool OnPaintTile(Int32 x, Int32 y, byte t)
-		{
-			if (PaintTile == null)
-				return false;
-
-			var args = new PaintTileEventArgs
-			{
-				X = x,
-				Y = y,
-				type = t
-			};
-			PaintTile.Invoke(null, args);
-			return args.Handled;
-		}
-
-
-		/// <summary>
-		/// For use with a PaintWall event
-		/// </summary>
-		public class PaintWallEventArgs : HandledEventArgs
-		{
-			/// <summary>
-			/// X Location
-			/// </summary>
-			public Int32 X { get; set; }
-			/// <summary>
-			/// Y Location
-			/// </summary>
-			public Int32 Y { get; set; }
-			/// <summary>
-			/// Type
-			/// </summary>
-			public byte type { get; set; }
-		}
-		/// <summary>
-		/// Called When a wall is painted
-		/// </summary>
-		public static HandlerList<PaintWallEventArgs> PaintWall;
-
-		private static bool OnPaintWall(Int32 x, Int32 y, byte t)
-		{
-			if (PaintWall == null)
-				return false;
-
-			var args = new PaintWallEventArgs
-			{
-				X = x,
-				Y = y,
-				type = t
-			};
-			PaintWall.Invoke(null, args);
-			return args.Handled;
-		}
-
-		private static bool HandleTogglePvp(GetDataHandlerArgs args)
-		{
-			byte id = args.Data.ReadInt8();
-			bool pvp = args.Data.ReadBoolean();
-			if (OnPvpToggled(id, pvp))
-				return true;
-
-			if (id != args.Player.Index)
-				return true;
-
-			string pvpMode = TShock.Config.PvPMode.ToLowerInvariant();
-			if (pvpMode == "disabled" || pvpMode == "always" || (DateTime.UtcNow - args.Player.LastPvPTeamChange).TotalSeconds < 5)
-			{
-				args.Player.SendData(PacketTypes.TogglePvp, "", id);
-				return true;
-			}
-
-			args.Player.LastPvPTeamChange = DateTime.UtcNow;
-			return false;
-		}
-
-		private static bool HandlePlayerTeam(GetDataHandlerArgs args)
-		{
-			byte id = args.Data.ReadInt8();
-			byte team = args.Data.ReadInt8();
-			if (OnPlayerTeam(id, team))
-				return true;
-
-			if (id != args.Player.Index)
-				return true;
-
-			if ((DateTime.UtcNow - args.Player.LastPvPTeamChange).TotalSeconds < 5)
-			{
-				args.Player.SendData(PacketTypes.PlayerTeam, "", id);
-				return true;
-			}
-
-			args.Player.LastPvPTeamChange = DateTime.UtcNow;
+			args.Player.Dead = false;
 			return false;
 		}
 
@@ -2517,7 +2037,7 @@ namespace TShockAPI
 		{
 			if (args.Player == null || args.TPlayer == null || args.Data == null)
 			{
-				return false;
+				return true;
 			}
 
 			byte plr = args.Data.ReadInt8();
@@ -2529,94 +2049,12 @@ namespace TShockAPI
 			if (pulley[2])
 				vel = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
 
-			if (OnPlayerUpdate(plr, control, item, pos, vel, pulley))
+			if (OnPlayerUpdate(args.Player, args.Data, plr, control, item, pos, vel, pulley))
 				return true;
-
-			if (pos.X < 0 || pos.Y < 0 || pos.X >= Main.maxTilesX * 16 - 16 || pos.Y >= Main.maxTilesY * 16 - 16)
-			{
-				return true;
-			}
-
-			if (item < 0 || item >= args.TPlayer.inventory.Length)
-			{
-				return true;
-			}
-
-			if (args.Player.LastNetPosition == Vector2.Zero)
-			{
-				return true;
-			}
-
-			if (!pos.Equals(args.Player.LastNetPosition))
-			{
-				float distance = Vector2.Distance(new Vector2(pos.X / 16f, pos.Y / 16f),
-													new Vector2(args.Player.LastNetPosition.X / 16f, args.Player.LastNetPosition.Y / 16f));
-				if (TShock.CheckIgnores(args.Player))
-				{
-					if (distance > TShock.Config.MaxRangeForDisabled)
-					{
-						if (args.Player.IgnoreActionsForCheating != "none")
-						{
-							args.Player.SendErrorMessage("Disabled for cheating: " + args.Player.IgnoreActionsForCheating);
-						}
-						else if (args.Player.IgnoreActionsForDisabledArmor != "none")
-						{
-							args.Player.SendErrorMessage("Disabled for banned armor: " + args.Player.IgnoreActionsForDisabledArmor);
-						}
-						else if (args.Player.IgnoreActionsForInventory != "none")
-						{
-							args.Player.SendErrorMessage("Disabled for Server Side Inventory: " + args.Player.IgnoreActionsForInventory);
-						}
-						else if (TShock.Config.RequireLogin && !args.Player.IsLoggedIn)
-						{
-							args.Player.SendErrorMessage("Please /register or /login to play!");
-						}
-						else if (args.Player.IgnoreActionsForClearingTrashCan)
-						{
-							args.Player.SendErrorMessage("You need to rejoin to ensure your trash can is cleared!");
-						}
-						var lastTileX = args.Player.LastNetPosition.X;
-						var lastTileY = args.Player.LastNetPosition.Y - 48;
-						if (!args.Player.Teleport(lastTileX, lastTileY))
-						{
-							args.Player.Spawn();
-						}
-						return true;
-					}
-					return true;
-				}
-
-				if (args.Player.Dead)
-				{
-					return true;
-				}
-
-				if (!args.Player.HasPermission(Permissions.ignorenoclipdetection) &&
-					TSCheckNoclip(pos, args.TPlayer.width, args.TPlayer.height - (args.TPlayer.mount.Active ? args.Player.TPlayer.mount.HeightBoost : 0)) && !TShock.Config.IgnoreNoClip
-					&& !args.TPlayer.tongued)
-				{
-					var lastTileX = args.Player.LastNetPosition.X;
-					var lastTileY = args.Player.LastNetPosition.Y;
-					if (!args.Player.Teleport(lastTileX, lastTileY))
-					{
-						args.Player.SendErrorMessage("You got stuck in a solid object, Sent to spawn point.");
-						args.Player.Spawn();
-					}
-					return true;
-				}
-				args.Player.LastNetPosition = pos;
-			}
 
 			if (control[5])
 			{
-				string itemName = args.TPlayer.inventory[item].Name;
-				if (TShock.Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(args.TPlayer.inventory[item].netID), args.Player))
-				{
-					control[5] = false;
-					args.Player.Disable("using a banned item ({0})".SFormat(itemName), DisableFlags.WriteToLogAndConsole);
-					args.Player.SendErrorMessage("You cannot use {0} on this server. Your actions are being ignored.", itemName);
-				}
-
+				// Reimplementation of normal Terraria stuff?
 				if (args.TPlayer.inventory[item].Name == "Mana Crystal" && args.Player.TPlayer.statManaMax <= 180)
 				{
 					args.Player.TPlayer.statMana += 20;
@@ -2637,6 +2075,7 @@ namespace TShockAPI
 				}
 			}
 
+			// Where we rebuild sync data for Terraria?
 			args.TPlayer.selectedItem = item;
 			args.TPlayer.position = pos;
 			args.TPlayer.oldVelocity = args.TPlayer.velocity;
@@ -2655,6 +2094,8 @@ namespace TShockAPI
 
 			if (pulley[3])
 				args.TPlayer.vortexStealthActive = true;
+			else
+				args.TPlayer.vortexStealthActive = false;
 
 			args.TPlayer.gravDir = pulley[4] ? 1f : -1f;
 
@@ -2693,7 +2134,6 @@ namespace TShockAPI
 				args.TPlayer.direction = -1;
 			}
 
-
 			if (args.Player.Confused && Main.ServerSideCharacter && args.Player.IsLoggedIn)
 			{
 				if (args.TPlayer.controlUp)
@@ -2718,7 +2158,6 @@ namespace TShockAPI
 					args.TPlayer.controlLeft = true;
 				}
 
-
 				args.TPlayer.Update(args.TPlayer.whoAmI);
 				NetMessage.SendData((int)PacketTypes.PlayerUpdate, -1, -1, NetworkText.Empty, args.Player.Index);
 				return true;
@@ -2726,6 +2165,132 @@ namespace TShockAPI
 
 			NetMessage.SendData((int)PacketTypes.PlayerUpdate, -1, args.Player.Index, NetworkText.Empty, args.Player.Index);
 			return true;
+		}
+
+		private static bool HandlePlayerHp(GetDataHandlerArgs args)
+		{
+			var plr = args.Data.ReadInt8();
+			var cur = args.Data.ReadInt16();
+			var max = args.Data.ReadInt16();
+
+			if (OnPlayerHP(args.Player, args.Data, plr, cur, max) || cur <= 0 || max <= 0 || args.Player.IgnoreSSCPackets)
+				return true;
+
+			if (max > TShock.Config.MaxHP && !args.Player.HasPermission(Permissions.ignorehp))
+			{
+				args.Player.Disable("Maximum HP beyond limit", DisableFlags.WriteToLogAndConsole);
+				return true;
+			}
+
+			if (args.Player.IsLoggedIn)
+			{
+				args.Player.TPlayer.statLife = cur;
+				args.Player.TPlayer.statLifeMax = max;
+				args.Player.PlayerData.maxHealth = max;
+			}
+
+			if (args.Player.GodMode && (cur < max))
+			{
+				args.Player.Heal(args.TPlayer.statLifeMax2);
+			}
+			return false;
+		}
+
+		private static bool HandleTile(GetDataHandlerArgs args)
+		{
+			EditAction action = (EditAction)args.Data.ReadInt8();
+			var tileX = args.Data.ReadInt16();
+			var tileY = args.Data.ReadInt16();
+			var editData = args.Data.ReadInt16();
+			EditType type = (action == EditAction.KillTile || action == EditAction.KillWall ||
+			                 action == EditAction.KillTileNoItem)
+				? EditType.Fail
+				: (action == EditAction.PlaceTile || action == EditAction.PlaceWall)
+					? EditType.Type
+					: EditType.Slope;
+
+			var style = args.Data.ReadInt8();
+
+			if (OnTileEdit(args.Player, args.Data, tileX, tileY, action, type, editData, style))
+				return true;
+
+			return false;
+		}
+
+		private static bool HandleDoorUse(GetDataHandlerArgs args)
+		{
+			byte type = (byte)args.Data.ReadByte();
+			short x = args.Data.ReadInt16();
+			short y = args.Data.ReadInt16();
+			args.Data.ReadByte(); //Ignore direction
+
+			if (x >= Main.maxTilesX || y >= Main.maxTilesY || x < 0 || y < 0) // Check for out of range
+			{
+				return true;
+			}
+
+			if (type < 0 || type > 5)
+			{
+				return true;
+			}
+
+			ushort tileType = Main.tile[x, y].type;
+
+			if (tileType != TileID.ClosedDoor && tileType != TileID.OpenDoor
+			                                  && tileType != TileID.TallGateClosed && tileType != TileID.TallGateOpen
+			                                  && tileType != TileID.TrapdoorClosed && tileType != TileID.TrapdoorOpen)
+			{
+				return true;
+			}
+
+			return false;
+		}
+
+		private static bool HandleSendTileSquare(GetDataHandlerArgs args)
+		{
+			var player = args.Player;
+			var size = args.Data.ReadInt16();
+			var tileX = args.Data.ReadInt16();
+			var tileY = args.Data.ReadInt16();
+			var data = args.Data;
+
+			if (OnSendTileSquare(player, data, size, tileX, tileY))
+				return true;
+
+			return false;
+		}
+
+		private static bool HandleItemDrop(GetDataHandlerArgs args)
+		{
+			var id = args.Data.ReadInt16();
+			var pos = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
+			var vel = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
+			var stacks = args.Data.ReadInt16();
+			var prefix = args.Data.ReadInt8();
+			var noDelay = args.Data.ReadInt8() == 1;
+			var type = args.Data.ReadInt16();
+
+			if (OnItemDrop(args.Player, args.Data, id, pos, vel, stacks, prefix, noDelay, type))
+				return true;
+
+			return false;
+		}
+
+		private static bool HandleItemOwner(GetDataHandlerArgs args)
+		{
+			var id = args.Data.ReadInt16();
+			var owner = args.Data.ReadInt8();
+
+			if (id < 0 || id > 400)
+				return true;
+
+			if (id == 400 && owner == 255)
+			{
+				args.Player.IgnoreSSCPackets = false;
+				return true;
+			}
+
+			return false;
 		}
 
 		private static bool HandleProjectileNew(GetDataHandlerArgs args)
@@ -2749,98 +2314,30 @@ namespace TShockAPI
 					ai[i] = 0f;
 			}
 
-
 			var index = TShock.Utils.SearchProjectile(ident, owner);
 
-			if (OnNewProjectile(ident, pos, vel, knockback, dmg, owner, type, index))
+			if (OnNewProjectile(args.Data, ident, pos, vel, knockback, dmg, owner, type, index, args.Player))
 				return true;
 
-			if (index > Main.maxProjectiles || index < 0)
-			{
-				args.Player.RemoveProjectile(ident, owner);
+			return false;
+		}
+
+		private static bool HandleNpcStrike(GetDataHandlerArgs args)
+		{
+			var id = args.Data.ReadInt16();
+			var dmg = args.Data.ReadInt16();
+			var knockback = args.Data.ReadSingle();
+			var direction = (byte)(args.Data.ReadInt8() - 1);
+			var crit = args.Data.ReadInt8();
+
+			if (OnNPCStrike(args.Player, args.Data, id, direction, dmg, knockback, crit))
 				return true;
-			}
 
-			if (TShock.ProjectileBans.ProjectileIsBanned(type, args.Player))
+			if (Main.npc[id].townNPC && !args.Player.HasPermission(Permissions.hurttownnpc))
 			{
-				args.Player.Disable("Player does not have permission to create that projectile.", DisableFlags.WriteToLogAndConsole);
-				args.Player.SendErrorMessage("You do not have permission to create that projectile.");
-				args.Player.RemoveProjectile(ident, owner);
+				args.Player.SendErrorMessage("You do not have permission to hurt this NPC.");
+				args.Player.SendData(PacketTypes.NpcUpdate, "", id);
 				return true;
-			}
-
-			if (dmg > TShock.Config.MaxProjDamage && !args.Player.HasPermission(Permissions.ignoredamagecap))
-			{
-				args.Player.Disable(String.Format("Projectile damage is higher than {0}.", TShock.Config.MaxProjDamage), DisableFlags.WriteToLogAndConsole);
-				args.Player.RemoveProjectile(ident, owner);
-				return true;
-			}
-
-			if (TShock.CheckIgnores(args.Player))
-			{
-				args.Player.RemoveProjectile(ident, owner);
-				return true;
-			}
-
-			bool hasPermission = !TShock.CheckProjectilePermission(args.Player, index, type);
-			if (!TShock.Config.IgnoreProjUpdate && !hasPermission && !args.Player.HasPermission(Permissions.ignoreprojectiledetection))
-			{
-				if (type == ProjectileID.BlowupSmokeMoonlord
-					|| type == ProjectileID.PhantasmalEye
-					|| type == ProjectileID.CultistBossIceMist
-					|| (type >= ProjectileID.MoonlordBullet && type <= ProjectileID.MoonlordTurretLaser)
-					|| type == ProjectileID.DeathLaser || type == ProjectileID.Landmine
-					|| type == ProjectileID.BulletDeadeye || type == ProjectileID.BoulderStaffOfEarth
-					|| (type > ProjectileID.ConfettiMelee && type < ProjectileID.SpiritHeal)
-					|| (type >= ProjectileID.FlamingWood && type <= ProjectileID.GreekFire3)
-					|| (type >= ProjectileID.PineNeedleHostile && type <= ProjectileID.Spike)
-					|| (type >= ProjectileID.MartianTurretBolt && type <= ProjectileID.RayGunnerLaser)
-					|| type == ProjectileID.CultistBossLightningOrb)
-				{
-					TShock.Log.Debug("Certain projectiles have been ignored for cheat detection.");
-				}
-				else
-				{
-					args.Player.Disable(String.Format("Does not have projectile permission to update projectile. ({0})", type), DisableFlags.WriteToLogAndConsole);
-					args.Player.RemoveProjectile(ident, owner);
-				}
-				return true;
-			}
-
-			if (args.Player.ProjectileThreshold >= TShock.Config.ProjectileThreshold)
-			{
-				args.Player.Disable("Reached projectile update threshold.", DisableFlags.WriteToLogAndConsole);
-				args.Player.RemoveProjectile(ident, owner);
-				return true;
-			}
-
-			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
-			{
-				args.Player.RemoveProjectile(ident, owner);
-				return true;
-			}
-
-			if (!args.Player.HasPermission(Permissions.ignoreprojectiledetection))
-			{
-				if (type == ProjectileID.CrystalShard && TShock.Config.ProjIgnoreShrapnel) // Ignore crystal shards
-				{
-					TShock.Log.Debug("Ignoring shrapnel per config..");
-				}
-				else if (!Main.projectile[index].active)
-				{
-					args.Player.ProjectileThreshold++; // Creating new projectile
-				}
-			}
-
-			if (hasPermission &&
-				(type == ProjectileID.Bomb
-				|| type == ProjectileID.Dynamite
-				|| type == ProjectileID.StickyBomb
-				|| type == ProjectileID.StickyDynamite))
-			{
-				//  Denotes that the player has recently set a fuse - used for cheat detection.
-				args.Player.RecentFuse = 10;
-				//return true;
 			}
 
 			return false;
@@ -2853,28 +2350,29 @@ namespace TShockAPI
 			owner = (byte)args.Player.Index;
 			var index = TShock.Utils.SearchProjectile(ident, owner);
 
-			if (index > Main.maxProjectiles || index < 0)
+			if (OnProjectileKill(args.Player, args.Data, ident, owner, index))
 			{
-				return false;
+				return true;
 			}
 
-			var type = Main.projectile[index].type;
+			short type = (short) Main.projectile[index].type;
 
-			if (TShock.CheckIgnores(args.Player))
+			// TODO: This needs to be moved somewhere else.
+
+			if (type == ProjectileID.Tombstone)
 			{
 				args.Player.RemoveProjectile(ident, owner);
 				return true;
 			}
 
-			if (TShock.CheckProjectilePermission(args.Player, index, type) && type != 102 && type != 100 && !TShock.Config.IgnoreProjKill)
+			if (TShock.ProjectileBans.ProjectileIsBanned(type, args.Player) && !TShock.Config.IgnoreProjKill)
 			{
-				args.Player.Disable("Does not have projectile permission to kill projectile.", DisableFlags.WriteToLogAndConsole);
-				args.Player.RemoveProjectile(ident, owner);
-				return true;
-			}
-
-			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
-			{
+				// According to 2012 deathmax, this is a workaround to fix skeletron prime issues
+				// https://github.com/Pryaxis/TShock/commit/a5aa9231239926f361b7246651e32144bbf28dda
+				if (type == ProjectileID.Bomb || type == ProjectileID.DeathLaser)
+				{
+					return false;
+				}
 				args.Player.RemoveProjectile(ident, owner);
 				return true;
 			}
@@ -2884,300 +2382,24 @@ namespace TShockAPI
 			return false;
 		}
 
-		private static bool HandlePlayerKillMeV2(GetDataHandlerArgs args)
+		private static bool HandleTogglePvp(GetDataHandlerArgs args)
 		{
-			var id = args.Data.ReadInt8();
-			PlayerDeathReason playerDeathReason = PlayerDeathReason.FromReader(new BinaryReader(args.Data));
-			var dmg = args.Data.ReadInt16();
-			var direction = (byte)(args.Data.ReadInt8() - 1);
-			BitsByte bits = (BitsByte)args.Data.ReadByte();
-			bool pvp = bits[0];
-			if (dmg > 20000) //Abnormal values have the potential to cause infinite loops in the server.
-			{
-				TShock.Utils.ForceKick(args.Player, "Crash Exploit Attempt", true);
-				TShock.Log.ConsoleError("Death Exploit Attempt: Damage {0}", dmg);
-				return false;
-			}
+			byte id = args.Data.ReadInt8();
+			bool pvp = args.Data.ReadBoolean();
+			if (OnPvpToggled(args.Player, args.Data, id, pvp))
+				return true;
 
-			if (id >= Main.maxPlayers)
+			if (id != args.Player.Index)
+				return true;
+
+			string pvpMode = TShock.Config.PvPMode.ToLowerInvariant();
+			if (pvpMode == "disabled" || pvpMode == "always" || (DateTime.UtcNow - args.Player.LastPvPTeamChange).TotalSeconds < 5)
 			{
+				args.Player.SendData(PacketTypes.TogglePvp, "", id);
 				return true;
 			}
 
-			if (OnKillMe(id, direction, dmg, pvp))
-				return true;
-
-			if (playerDeathReason.GetDeathText(TShock.Players[id].Name).ToString().Length > 500)
-			{
-				TShock.Utils.Kick(TShock.Players[id], "Crash attempt", true);
-				return true;
-			}
-
-			args.Player.Dead = true;
-			args.Player.RespawnTimer = TShock.Config.RespawnSeconds;
-
-			foreach (NPC npc in Main.npc)
-			{
-				if (npc.active && (npc.boss || npc.type == 13 || npc.type == 14 || npc.type == 15) &&
-					Math.Abs(args.TPlayer.Center.X - npc.Center.X) + Math.Abs(args.TPlayer.Center.Y - npc.Center.Y) < 4000f)
-				{
-					args.Player.RespawnTimer = TShock.Config.RespawnBossSeconds;
-					break;
-				}
-			}
-
-			if (args.TPlayer.difficulty == 2 && (TShock.Config.KickOnHardcoreDeath || TShock.Config.BanOnHardcoreDeath))
-			{
-				if (TShock.Config.BanOnHardcoreDeath)
-				{
-					if (!TShock.Utils.Ban(args.Player, TShock.Config.HardcoreBanReason, false, "hardcore-death"))
-						TShock.Utils.ForceKick(args.Player, "Death results in a ban, but you are immune to bans.", true);
-				}
-				else
-				{
-					TShock.Utils.ForceKick(args.Player, TShock.Config.HardcoreKickReason, true, false);
-				}
-			}
-
-			if (args.TPlayer.difficulty == 2 && Main.ServerSideCharacter && args.Player.IsLoggedIn)
-			{
-				if (TShock.CharacterDB.RemovePlayer(args.Player.User.ID))
-				{
-					TShock.CharacterDB.SeedInitialData(args.Player.User);
-				}
-			}
-
-			//Attempt to resolve issue where player's slected items sometime fail to stop rendering when they die (eg chainsaws)
-			NetMessage.SendData((int)PacketTypes.PlayerUpdate, -1, args.Player.Index, NetworkText.Empty, args.Player.Index);
-			return false;
-		}
-
-		private static bool HandleLiquidSet(GetDataHandlerArgs args)
-		{
-			int tileX = args.Data.ReadInt16();
-			int tileY = args.Data.ReadInt16();
-			byte amount = args.Data.ReadInt8();
-			byte type = args.Data.ReadInt8();
-
-			if (OnLiquidSet(tileX, tileY, amount, type))
-				return true;
-
-			if (!TShock.Utils.TilePlacementValid(tileX, tileY) || (args.Player.Dead && TShock.Config.PreventDeadModification))
-				return true;
-
-			if (TShock.CheckIgnores(args.Player))
-			{
-				args.Player.SendTileSquare(tileX, tileY, 1);
-				return true;
-			}
-
-			if (args.Player.TileLiquidThreshold >= TShock.Config.TileLiquidThreshold)
-			{
-				args.Player.Disable("Reached TileLiquid threshold.", DisableFlags.WriteToLogAndConsole);
-				args.Player.SendTileSquare(tileX, tileY, 1);
-				return true;
-			}
-
-			if (!args.Player.HasPermission(Permissions.ignoreliquidsetdetection))
-			{
-				args.Player.TileLiquidThreshold++;
-			}
-			if (amount != 0)
-			{
-				int bucket = -1;
-				if (args.TPlayer.inventory[args.TPlayer.selectedItem].type == 205)
-				{
-					bucket = 0;
-				}
-				else if (args.TPlayer.inventory[args.TPlayer.selectedItem].type == 206)
-				{
-					bucket = 1;
-				}
-				else if (args.TPlayer.inventory[args.TPlayer.selectedItem].type == 207)
-				{
-					bucket = 2;
-				}
-				else if (args.TPlayer.inventory[args.TPlayer.selectedItem].type == 1128)
-				{
-					bucket = 3;
-				}
-				else if (args.TPlayer.inventory[args.TPlayer.selectedItem].type == 3031 ||
-					args.TPlayer.inventory[args.TPlayer.selectedItem].type == 3032)
-				{
-					bucket = 4;
-				}
-
-				if (type == 1 && !(bucket == 2 || bucket == 0))
-				{
-					args.Player.SendErrorMessage("You do not have permission to perform this action.");
-					args.Player.Disable("Spreading lava without holding a lava bucket", DisableFlags.WriteToLogAndConsole);
-					args.Player.SendTileSquare(tileX, tileY, 1);
-					return true;
-				}
-
-				if (type == 1 && TShock.Itembans.ItemIsBanned("Lava Bucket", args.Player))
-				{
-					args.Player.SendErrorMessage("You do not have permission to perform this action.");
-					args.Player.Disable("Using banned lava bucket without permissions", DisableFlags.WriteToLogAndConsole);
-					args.Player.SendTileSquare(tileX, tileY, 1);
-					return true;
-				}
-
-				if (type == 0 && !(bucket == 1 || bucket == 0 || bucket == 4))
-				{
-					args.Player.SendErrorMessage("You do not have permission to perform this action.");
-					args.Player.Disable("Spreading water without holding a water bucket", DisableFlags.WriteToLogAndConsole);
-					args.Player.SendTileSquare(tileX, tileY, 1);
-					return true;
-				}
-
-				if (type == 0 && TShock.Itembans.ItemIsBanned("Water Bucket", args.Player))
-				{
-					args.Player.SendErrorMessage("You do not have permission to perform this action.");
-					args.Player.Disable("Using banned water bucket without permissions", DisableFlags.WriteToLogAndConsole);
-					args.Player.SendTileSquare(tileX, tileY, 1);
-					return true;
-				}
-
-				if (type == 2 && !(bucket == 3 || bucket == 0))
-				{
-					args.Player.SendErrorMessage("You do not have permission to perform this action.");
-					args.Player.Disable("Spreading honey without holding a honey bucket", DisableFlags.WriteToLogAndConsole);
-					args.Player.SendTileSquare(tileX, tileY, 1);
-					return true;
-				}
-
-				if (type == 2 && TShock.Itembans.ItemIsBanned("Honey Bucket", args.Player))
-				{
-					args.Player.SendErrorMessage("You do not have permission to perform this action.");
-					args.Player.Disable("Using banned honey bucket without permissions", DisableFlags.WriteToLogAndConsole);
-					args.Player.SendTileSquare(tileX, tileY, 1);
-					return true;
-				}
-			}
-
-			if (TShock.CheckTilePermission(args.Player, tileX, tileY))
-			{
-				args.Player.SendTileSquare(tileX, tileY, 1);
-				return true;
-			}
-
-			if (TShock.CheckRangePermission(args.Player, tileX, tileY, 16))
-			{
-				args.Player.SendTileSquare(tileX, tileY, 1);
-				return true;
-			}
-
-			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
-			{
-				args.Player.SendTileSquare(tileX, tileY, 1);
-				return true;
-			}
-
-			return false;
-		}
-
-		private static bool HandlePlaceChest(GetDataHandlerArgs args)
-		{
-			int flag = args.Data.ReadByte();
-			int tileX = args.Data.ReadInt16();
-			int tileY = args.Data.ReadInt16();
-			args.Data.ReadInt16(); // Ignore style
-
-			if (OnTileKill(tileX, tileY))
-				return true;
-			if (!TShock.Utils.TilePlacementValid(tileX, tileY) || (args.Player.Dead && TShock.Config.PreventDeadModification))
-				return true;
-
-			if (TShock.CheckIgnores(args.Player))
-			{
-				args.Player.SendTileSquare(tileX, tileY, 3);
-				return true;
-			}
-
-			if (flag != 0 && flag != 4 // if no container or container2 placement
-				&& Main.tile[tileX, tileY].type != TileID.Containers
-				&& Main.tile[tileX, tileY].type != TileID.Dressers
-				&& Main.tile[tileX, tileY].type != TileID.Containers2
-				&& (!TShock.Utils.MaxChests() && Main.tile[tileX, tileY].type != TileID.Dirt)) //Chest
-			{
-				args.Player.SendTileSquare(tileX, tileY, 3);
-				return true;
-			}
-
-			if (flag == 2) //place dresser
-			{
-				if ((TShock.Utils.TilePlacementValid(tileX, tileY + 1) && Main.tile[tileX, tileY + 1].type == TileID.Teleporter) ||
-					(TShock.Utils.TilePlacementValid(tileX + 1, tileY + 1) && Main.tile[tileX + 1, tileY + 1].type == TileID.Teleporter))
-				{
-					//Prevent a dresser from being placed on a teleporter, as this can cause client and server crashes.
-					args.Player.SendTileSquare(tileX, tileY, 3);
-					return true;
-				}
-			}
-
-			if (TShock.CheckTilePermission(args.Player, tileX, tileY))
-			{
-				args.Player.SendTileSquare(tileX, tileY, 3);
-				return true;
-			}
-
-			if (TShock.CheckRangePermission(args.Player, tileX, tileY))
-			{
-				args.Player.SendTileSquare(tileX, tileY, 3);
-				return true;
-			}
-			return false;
-		}
-
-		private static bool HandleSpawn(GetDataHandlerArgs args)
-		{
-			var player = args.Data.ReadInt8();
-			var spawnx = args.Data.ReadInt16();
-			var spawny = args.Data.ReadInt16();
-
-			if (OnPlayerSpawn(player, spawnx, spawny))
-				return true;
-
-			if (args.Player.InitSpawn && args.TPlayer.inventory[args.TPlayer.selectedItem].type != 50)
-			{
-				if (args.TPlayer.difficulty == 1 && (TShock.Config.KickOnMediumcoreDeath || TShock.Config.BanOnMediumcoreDeath))
-				{
-					if (args.TPlayer.selectedItem != 50)
-					{
-						if (TShock.Config.BanOnMediumcoreDeath)
-						{
-							if (!TShock.Utils.Ban(args.Player, TShock.Config.MediumcoreBanReason, false, "mediumcore-death"))
-								TShock.Utils.ForceKick(args.Player, "Death results in a ban, but you are immune to bans.", true);
-						}
-						else
-						{
-							TShock.Utils.ForceKick(args.Player, TShock.Config.MediumcoreKickReason, true, false);
-						}
-						return true;
-					}
-				}
-			}
-			else
-				args.Player.InitSpawn = true;
-
-			if ((Main.ServerSideCharacter) && (args.Player.sX > 0) && (args.Player.sY > 0) && (args.TPlayer.SpawnX > 0) && ((args.TPlayer.SpawnX != args.Player.sX) && (args.TPlayer.SpawnY != args.Player.sY)))
-			{
-
-				args.Player.sX = args.TPlayer.SpawnX;
-				args.Player.sY = args.TPlayer.SpawnY;
-
-				if (((Main.tile[args.Player.sX, args.Player.sY - 1].active() && Main.tile[args.Player.sX, args.Player.sY - 1].type == 79)) && (WorldGen.StartRoomCheck(args.Player.sX, args.Player.sY - 1)))
-					args.Player.Teleport(args.Player.sX * 16, (args.Player.sY * 16) - 48);
-			}
-
-			else if ((Main.ServerSideCharacter) && (args.Player.sX > 0) && (args.Player.sY > 0))
-			{
-				if (((Main.tile[args.Player.sX, args.Player.sY - 1].active() && Main.tile[args.Player.sX, args.Player.sY - 1].type == 79)) && (WorldGen.StartRoomCheck(args.Player.sX, args.Player.sY - 1)))
-					args.Player.Teleport(args.Player.sX * 16, (args.Player.sY * 16) - 48);
-			}
-
-			args.Player.Dead = false;
+			args.Player.LastPvPTeamChange = DateTime.UtcNow;
 			return false;
 		}
 
@@ -3186,26 +2408,29 @@ namespace TShockAPI
 			var x = args.Data.ReadInt16();
 			var y = args.Data.ReadInt16();
 
-			if (OnChestOpen(x, y, args.Player))
+			if (OnChestOpen(args.Data, x, y, args.Player))
 				return true;
 
-			if (TShock.CheckIgnores(args.Player))
+			return false;
+		}
+
+		private static bool HandleChestItem(GetDataHandlerArgs args)
+		{
+			var id = args.Data.ReadInt16();
+			var slot = args.Data.ReadInt8();
+			var stacks = args.Data.ReadInt16();
+			var prefix = args.Data.ReadInt8();
+			var type = args.Data.ReadInt16();
+
+			if (OnChestItemChange(args.Player, args.Data, id, slot, stacks, prefix, type))
+				return true;
+
+			Item item = new Item();
+			item.netDefaults(type);
+			if (stacks > item.maxStack)
 			{
 				return true;
 			}
-
-			if (TShock.CheckRangePermission(args.Player, x, y))
-			{
-				return true;
-			}
-
-			if (TShock.CheckTilePermission(args.Player, x, y) && TShock.Config.RegionProtectChests)
-			{
-				return true;
-			}
-
-			int id = Chest.FindChest(x, y);
-			args.Player.ActiveChest = id;
 
 			return false;
 		}
@@ -3226,7 +2451,7 @@ namespace TShockAPI
 
 			args.Player.ActiveChest = id;
 
-			if (TShock.CheckTilePermission(args.Player, x, y) && TShock.Config.RegionProtectChests)
+			if (!args.Player.HasBuildPermission(x, y) && TShock.Config.RegionProtectChests)
 			{
 				args.Player.SendData(PacketTypes.ChestOpen, "", -1);
 				return true;
@@ -3235,45 +2460,163 @@ namespace TShockAPI
 			return false;
 		}
 
-		private static bool HandleChestItem(GetDataHandlerArgs args)
+		private static bool HandlePlaceChest(GetDataHandlerArgs args)
 		{
-			var id = args.Data.ReadInt16();
-			var slot = args.Data.ReadInt8();
-			var stacks = args.Data.ReadInt16();
-			var prefix = args.Data.ReadInt8();
-			var type = args.Data.ReadInt16();
+			int flag = args.Data.ReadByte();
+			int tileX = args.Data.ReadInt16();
+			int tileY = args.Data.ReadInt16();
+			args.Data.ReadInt16(); // Ignore style
 
-			if (OnChestItemChange(id, slot, stacks, prefix, type))
+			if (OnPlaceChest(args.Player, args.Data, flag, tileX, tileY))
 				return true;
 
-			if (args.TPlayer.chest != id)
-			{
-				return false;
-			}
+			return false;
+		}
 
-			if (TShock.CheckIgnores(args.Player))
+		private static bool HandlePlayerZone(GetDataHandlerArgs args)
+		{
+			if (args.Player == null || args.TPlayer == null || args.Data == null)
 			{
-				args.Player.SendData(PacketTypes.ChestItem, "", id, slot);
 				return true;
 			}
 
-			Item item = new Item();
-			item.netDefaults(type);
-			if (stacks > item.maxStack || TShock.Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), args.Player))
+			var plr = args.Data.ReadInt8();
+			BitsByte zone1 = args.Data.ReadInt8();
+			BitsByte zone2 = args.Data.ReadInt8();
+			BitsByte zone3 = args.Data.ReadInt8();
+			BitsByte zone4 = args.Data.ReadInt8();
+
+			if (OnPlayerZone(args.Player, args.Data, plr, zone1, zone2, zone3, zone4))
+				return true;
+
+			return false;
+		}
+
+		private static bool HandlePassword(GetDataHandlerArgs args)
+		{
+			if (!args.Player.RequiresPassword)
+				return true;
+
+			string password = args.Data.ReadString();
+
+			if (Hooks.PlayerHooks.OnPlayerPreLogin(args.Player, args.Player.Name, password))
+				return true;
+
+			var account = TShock.UserAccounts.GetUserAccountByName(args.Player.Name);
+			if (account != null && !TShock.Config.DisableLoginBeforeJoin)
 			{
-				return false;
+				if (account.VerifyPassword(password))
+				{
+					args.Player.RequiresPassword = false;
+					args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, account.ID);
+
+					if (args.Player.State == 1)
+						args.Player.State = 2;
+					NetMessage.SendData((int)PacketTypes.WorldInfo, args.Player.Index);
+
+					var group = TShock.Groups.GetGroupByName(account.Group);
+
+					args.Player.Group = group;
+					args.Player.tempGroup = null;
+					args.Player.Account = account;
+					args.Player.IsLoggedIn = true;
+					args.Player.IsDisabledForSSC = false;
+
+					if (Main.ServerSideCharacter)
+					{
+						if (args.Player.HasPermission(Permissions.bypassssc))
+						{
+							args.Player.PlayerData.CopyCharacter(args.Player);
+							TShock.CharacterDB.InsertPlayerData(args.Player);
+						}
+						args.Player.PlayerData.RestoreCharacter(args.Player);
+					}
+					args.Player.LoginFailsBySsi = false;
+
+					if (args.Player.HasPermission(Permissions.ignorestackhackdetection))
+						args.Player.IsDisabledForStackDetection = false;
+
+					if (args.Player.HasPermission(Permissions.usebanneditem))
+						args.Player.IsDisabledForBannedWearable = false;
+
+
+					args.Player.SendMessage("Authenticated as " + args.Player.Name + " successfully.", Color.LimeGreen);
+					TShock.Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user " + args.Player.Name + ".");
+					TShock.UserAccounts.SetUserAccountUUID(account, args.Player.UUID);
+					Hooks.PlayerHooks.OnPlayerPostLogin(args.Player);
+					return true;
+				}
+				args.Player.Kick("Your password did not match this character's password.", true, true);
+				return true;
 			}
 
-			if (TShock.CheckTilePermission(args.Player, Main.chest[id].x, Main.chest[id].y) && TShock.Config.RegionProtectChests)
+			if (!string.IsNullOrEmpty(TShock.Config.ServerPassword))
 			{
-				return false;
+				if (TShock.Config.ServerPassword == password)
+				{
+					args.Player.RequiresPassword = false;
+					if (args.Player.State == 1)
+						args.Player.State = 2;
+					NetMessage.SendData((int)PacketTypes.WorldInfo, args.Player.Index);
+					return true;
+				}
+				args.Player.Kick("Invalid server password.", true, true);
+				return true;
 			}
 
-			if (TShock.CheckRangePermission(args.Player, Main.chest[id].x, Main.chest[id].y))
+			args.Player.Kick("You have been Bounced.", true, true);
+			return true;
+		}
+
+		private static bool HandlePlayerAnimation(GetDataHandlerArgs args)
+		{
+			if (OnPlayerAnimation(args.Player, args.Data))
+				return true;
+
+			return false;
+		}
+
+		private static bool HandlePlayerMana(GetDataHandlerArgs args)
+		{
+			var plr = args.Data.ReadInt8();
+			var cur = args.Data.ReadInt16();
+			var max = args.Data.ReadInt16();
+
+			if (OnPlayerMana(args.Player, args.Data, plr, cur, max) || cur < 0 || max < 0 || args.Player.IgnoreSSCPackets)
+				return true;
+
+			if (max > TShock.Config.MaxMP && !args.Player.HasPermission(Permissions.ignoremp))
 			{
-				return false;
+				args.Player.Disable("Maximum MP beyond limit", DisableFlags.WriteToLogAndConsole);
+				return true;
 			}
 
+			if (args.Player.IsLoggedIn)
+			{
+				args.Player.TPlayer.statMana = cur;
+				args.Player.TPlayer.statManaMax = max;
+				args.Player.PlayerData.maxMana = max;
+			}
+			return false;
+		}
+
+		private static bool HandlePlayerTeam(GetDataHandlerArgs args)
+		{
+			byte id = args.Data.ReadInt8();
+			byte team = args.Data.ReadInt8();
+			if (OnPlayerTeam(args.Player, args.Data, id, team))
+				return true;
+
+			if (id != args.Player.Index)
+				return true;
+
+			if ((DateTime.UtcNow - args.Player.LastPvPTeamChange).TotalSeconds < 5)
+			{
+				args.Player.SendData(PacketTypes.PlayerTeam, "", id);
+				return true;
+			}
+
+			args.Player.LastPvPTeamChange = DateTime.UtcNow;
 			return false;
 		}
 
@@ -3284,16 +2627,16 @@ namespace TShockAPI
 			var y = args.Data.ReadInt16();
 			args.Data.ReadString(); // Ignore sign text
 
-			if (OnSignEvent(id, x, y))
+			if (OnSignEvent(args.Player, args.Data, id, x, y))
 				return true;
 
-			if (TShock.CheckTilePermission(args.Player, x, y))
+			if (!args.Player.HasBuildPermission(x, y))
 			{
 				args.Player.SendData(PacketTypes.SignNew, "", id);
 				return true;
 			}
 
-			if (TShock.CheckRangePermission(args.Player, x, y))
+			if (!args.Player.IsInRange(x, y))
 			{
 				args.Player.SendData(PacketTypes.SignNew, "", id);
 				return true;
@@ -3301,412 +2644,15 @@ namespace TShockAPI
 			return false;
 		}
 
-		private static bool UpdateNPCHome(GetDataHandlerArgs args)
+		private static bool HandleLiquidSet(GetDataHandlerArgs args)
 		{
-			var id = args.Data.ReadInt16();
-			var x = args.Data.ReadInt16();
-			var y = args.Data.ReadInt16();
-			var homeless = args.Data.ReadInt8();
+			int tileX = args.Data.ReadInt16();
+			int tileY = args.Data.ReadInt16();
+			byte amount = args.Data.ReadInt8();
+			byte type = args.Data.ReadInt8();
 
-			if (OnUpdateNPCHome(id, x, y, homeless))
+			if (OnLiquidSet(args.Player, args.Data, tileX, tileY, amount, type))
 				return true;
-
-			if (!args.Player.HasPermission(Permissions.movenpc))
-			{
-				args.Player.SendErrorMessage("You do not have permission to relocate NPCs.");
-				args.Player.SendData(PacketTypes.UpdateNPCHome, "", id, Main.npc[id].homeTileX, Main.npc[id].homeTileY,
-									 Convert.ToByte(Main.npc[id].homeless));
-				return true;
-			}
-
-			if (TShock.CheckTilePermission(args.Player, x, y))
-			{
-				args.Player.SendErrorMessage("You do not have access to modify this area.");
-				args.Player.SendData(PacketTypes.UpdateNPCHome, "", id, Main.npc[id].homeTileX, Main.npc[id].homeTileY,
-									 Convert.ToByte(Main.npc[id].homeless));
-				return true;
-			}
-
-			//removed until NPC Home packet actually sends their home coords.
-			/*if (TShock.CheckRangePermission(args.Player, x, y))
-			{
-				args.Player.SendData(PacketTypes.UpdateNPCHome, "", id, Main.npc[id].homeTileX, Main.npc[id].homeTileY,
-									 Convert.ToByte(Main.npc[id].homeless));
-				return true;
-			}*/
-			return false;
-		}
-
-		private static bool HandlePlayerAddBuff(GetDataHandlerArgs args)
-		{
-			var id = args.Data.ReadInt8();
-			var type = args.Data.ReadInt8();
-			var time = args.Data.ReadInt16();
-
-			if (OnPlayerBuff(id, type, time))
-				return true;
-
-			if (TShock.Players[id] == null)
-				return false;
-
-			if (TShock.CheckIgnores(args.Player))
-			{
-				args.Player.SendData(PacketTypes.PlayerAddBuff, "", id);
-				return true;
-			}
-
-			if (id >= Main.maxPlayers)
-			{
-				args.Player.SendData(PacketTypes.PlayerAddBuff, "", id);
-				return true;
-			}
-
-			if (!TShock.Players[id].TPlayer.hostile || !Main.pvpBuff[type])
-			{
-				args.Player.SendData(PacketTypes.PlayerAddBuff, "", id);
-				return true;
-			}
-			if (TShock.CheckRangePermission(args.Player, TShock.Players[id].TileX, TShock.Players[id].TileY, 50))
-			{
-				args.Player.SendData(PacketTypes.PlayerAddBuff, "", id);
-				return true;
-			}
-			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
-			{
-				args.Player.SendData(PacketTypes.PlayerAddBuff, "", id);
-				return true;
-			}
-
-			if (WhitelistBuffMaxTime[type] > 0 && time <= WhitelistBuffMaxTime[type])
-			{
-				return false;
-			}
-
-			args.Player.SendData(PacketTypes.PlayerAddBuff, "", id);
-			return true;
-		}
-
-		private static bool HandleItemDrop(GetDataHandlerArgs args)
-		{
-			var id = args.Data.ReadInt16();
-			var pos = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
-			var vel = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
-			var stacks = args.Data.ReadInt16();
-			var prefix = args.Data.ReadInt8();
-			var noDelay = args.Data.ReadInt8() == 1;
-			var type = args.Data.ReadInt16();
-
-			if (OnItemDrop(args.Player, id, pos, vel, stacks, prefix, noDelay, type))
-				return true;
-
-			// player is attempting to crash clients
-			if (type < -48 || type >= Main.maxItemTypes)
-			{
-				// Causes item duplications. Will be re added later if necessary
-				//args.Player.SendData(PacketTypes.ItemDrop, "", id);
-				return true;
-			}
-
-			if (prefix > PrefixID.Count) //make sure the prefix is a legit value
-			{
-				args.Player.SendData(PacketTypes.ItemDrop, "", id);
-				return true;
-			}
-
-			if (type == 0) //Item removed, let client do this to prevent item duplication client side (but only if it passed the range check)
-			{
-				if (TShock.CheckRangePermission(args.Player, (int)(Main.item[id].position.X / 16f), (int)(Main.item[id].position.Y / 16f)))
-				{
-					// Causes item duplications. Will be re added if necessary
-					//args.Player.SendData(PacketTypes.ItemDrop, "", id);
-					return true;
-				}
-
-				return false;
-			}
-
-			if (TShock.CheckRangePermission(args.Player, (int)(pos.X / 16f), (int)(pos.Y / 16f)))
-			{
-				args.Player.SendData(PacketTypes.ItemDrop, "", id);
-				return true;
-			}
-
-			if (Main.item[id].active && Main.item[id].netID != type) //stop the client from changing the item type of a drop but only if the client isn't picking up the item
-			{
-				args.Player.SendData(PacketTypes.ItemDrop, "", id);
-				return true;
-			}
-
-			Item item = new Item();
-			item.netDefaults(type);
-			if ((stacks > item.maxStack || stacks <= 0) || (TShock.Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), args.Player) && !args.Player.HasPermission(Permissions.allowdroppingbanneditems)))
-			{
-				args.Player.SendData(PacketTypes.ItemDrop, "", id);
-				return true;
-			}
-			if ((Main.ServerSideCharacter) && (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond - args.Player.LoginMS < TShock.ServerSideCharacterConfig.LogonDiscardThreshold))
-			{
-				//Player is probably trying to sneak items onto the server in their hands!!!
-				TShock.Log.ConsoleInfo("Player {0} tried to sneak {1} onto the server!", args.Player.Name, item.Name);
-				args.Player.SendData(PacketTypes.ItemDrop, "", id);
-				return true;
-
-			}
-			if (TShock.CheckIgnores(args.Player))
-			{
-				args.Player.SendData(PacketTypes.ItemDrop, "", id);
-				return true;
-			}
-
-			return false;
-		}
-
-		private static bool HandleItemOwner(GetDataHandlerArgs args)
-		{
-			var id = args.Data.ReadInt16();
-			var owner = args.Data.ReadInt8();
-
-			if (id < 0 || id > 400)
-				return true;
-
-			if (id == 400 && owner == 255)
-			{
-				args.Player.IgnoreSSCPackets = false;
-				return true;
-			}
-
-			return false;
-		}
-
-		private static bool HandlePlayerDamageV2(GetDataHandlerArgs args)
-		{
-			var id = args.Data.ReadInt8();
-			PlayerDeathReason playerDeathReason = PlayerDeathReason.FromReader(new BinaryReader(args.Data));
-			var dmg = args.Data.ReadInt16();
-			var direction = (byte)(args.Data.ReadInt8() - 1);
-			var bits = (BitsByte)(args.Data.ReadByte());
-			var crit = bits[0];
-			var pvp = bits[1];
-
-			if (OnPlayerDamage(id, direction, dmg, pvp, crit))
-				return true;
-
-			if (id >= Main.maxPlayers || TShock.Players[id] == null)
-			{
-				return true;
-			}
-
-			if (dmg > TShock.Config.MaxDamage && !args.Player.HasPermission(Permissions.ignoredamagecap) && id != args.Player.Index)
-			{
-				if (TShock.Config.KickOnDamageThresholdBroken)
-				{
-					TShock.Utils.Kick(args.Player, string.Format("Player damage exceeded {0}.", TShock.Config.MaxDamage));
-					return true;
-				}
-				else
-				{
-					args.Player.Disable(String.Format("Player damage exceeded {0}.", TShock.Config.MaxDamage), DisableFlags.WriteToLogAndConsole);
-				}
-				return true;
-			}
-
-			if (!TShock.Players[id].TPlayer.hostile && pvp && id != args.Player.Index)
-			{
-				args.Player.SendData(PacketTypes.PlayerHp, "", id);
-				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
-				return true;
-			}
-
-			if (TShock.CheckIgnores(args.Player))
-			{
-				return true;
-			}
-
-			if (TShock.CheckRangePermission(args.Player, TShock.Players[id].TileX, TShock.Players[id].TileY, 100))
-			{
-				return true;
-			}
-
-			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
-			{
-				return true;
-			}
-
-			if (TShock.Players[id].GodMode)
-			{
-				TShock.Players[id].Heal(args.TPlayer.statLifeMax);
-			}
-
-			return false;
-		}
-
-		private static bool HandleNpcItemStrike(GetDataHandlerArgs args)
-		{
-			var npcId = args.Data.ReadInt16();
-
-			if (npcId < 0 || npcId > Main.npc.Length)
-			{
-				//Need a valid npc
-				return true;
-			}
-
-			if (Main.npc[npcId] == null || Main.npc[npcId].active == false)
-			{
-				//Only allow striking valid NPCs
-				return true;
-			}
-
-			var item = args.Player.SelectedItem ?? args.Player.ItemInHand;
-			if (item == null)
-			{
-				//Shouldn't be able to strike an NPC without holding an item
-				return true;
-			}
-
-			var direction = args.TPlayer.direction;
-			var dmg = item.damage;
-			var knockback = item.knockBack;
-
-			//Clients can spoof item damage and it won't be reflected on the server. There's no point checking item damage unless this is changed
-
-			if (OnNPCStrike(npcId, (byte)direction, (short)item.damage, item.knockBack, 0))
-			{
-				return true;
-			}
-
-			if (TShock.CheckIgnores(args.Player))
-			{
-				args.Player.SendData(PacketTypes.NpcUpdate, "", npcId);
-				return true;
-			}
-
-			if (Main.npc[npcId].townNPC && !args.Player.HasPermission(Permissions.hurttownnpc))
-			{
-				args.Player.SendErrorMessage("You do not have permission to hurt this NPC.");
-				args.Player.SendData(PacketTypes.NpcUpdate, "", npcId);
-				return true;
-			}
-
-			if (TShock.Config.RangeChecks &&
-				TShock.CheckRangePermission(args.Player, (int)(Main.npc[npcId].position.X / 16f), (int)(Main.npc[npcId].position.Y / 16f), 128))
-			{
-				args.Player.SendData(PacketTypes.NpcUpdate, "", npcId);
-				return true;
-			}
-
-			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
-			{
-				args.Player.SendData(PacketTypes.NpcUpdate, "", npcId);
-				return true;
-			}
-
-			return false;
-		}
-
-		private static bool HandleNpcStrike(GetDataHandlerArgs args)
-		{
-			var id = args.Data.ReadInt16();
-			var dmg = args.Data.ReadInt16();
-			var knockback = args.Data.ReadSingle();
-			var direction = (byte)(args.Data.ReadInt8() - 1);
-			var crit = args.Data.ReadInt8();
-
-			if (OnNPCStrike(id, direction, dmg, knockback, crit))
-				return true;
-
-			if (Main.npc[id] == null)
-				return true;
-
-			if (dmg > TShock.Config.MaxDamage && !args.Player.HasPermission(Permissions.ignoredamagecap))
-			{
-				if (TShock.Config.KickOnDamageThresholdBroken)
-				{
-					TShock.Utils.Kick(args.Player, string.Format("NPC damage exceeded {0}.", TShock.Config.MaxDamage));
-					return true;
-				}
-				else
-				{
-					args.Player.Disable(String.Format("NPC damage exceeded {0}.", TShock.Config.MaxDamage), DisableFlags.WriteToLogAndConsole);
-				}
-				args.Player.SendData(PacketTypes.NpcUpdate, "", id);
-				return true;
-			}
-
-			if (TShock.CheckIgnores(args.Player))
-			{
-				args.Player.SendData(PacketTypes.NpcUpdate, "", id);
-				return true;
-			}
-
-			if (Main.npc[id].townNPC && !args.Player.HasPermission(Permissions.hurttownnpc))
-			{
-				args.Player.SendErrorMessage("You do not have permission to hurt this NPC.");
-				args.Player.SendData(PacketTypes.NpcUpdate, "", id);
-				return true;
-			}
-
-			if (TShock.Config.RangeChecks &&
-				TShock.CheckRangePermission(args.Player, (int)(Main.npc[id].position.X / 16f), (int)(Main.npc[id].position.Y / 16f), 128))
-			{
-				args.Player.SendData(PacketTypes.NpcUpdate, "", id);
-				return true;
-			}
-
-			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
-			{
-				args.Player.SendData(PacketTypes.NpcUpdate, "", id);
-				return true;
-			}
-
-			return false;
-		}
-
-		private static bool HandleSpecial(GetDataHandlerArgs args)
-		{
-			var id = args.Data.ReadInt8();
-			var type = args.Data.ReadInt8();
-
-			if (OnNPCSpecial(id, type))
-				return true;
-
-			if (type == 1 && TShock.Config.DisableDungeonGuardian)
-			{
-				args.Player.SendMessage("The Dungeon Guardian returned you to your spawn point", Color.Purple);
-				args.Player.Spawn();
-				return true;
-			}
-
-			if (type == 3 & !args.Player.HasPermission(Permissions.usesundial))
-			{
-				args.Player.SendErrorMessage("You do not have permission to use the Enchanted Sundial!");
-				return true;
-			}
-
-			if (type == 4 && (id < 0 || id > Main.npc.Length))
-			{
-				//Type == 4 -> 'BigMimicSpawnSmoke'. This access Main.npc without any bounds checking on Terraria's side.
-				return true;
-			}
-
-			return false;
-		}
-
-		private static bool HandlePlayerAnimation(GetDataHandlerArgs args)
-		{
-			if (OnPlayerAnimation())
-				return true;
-
-			if (TShock.CheckIgnores(args.Player))
-			{
-				args.Player.SendData(PacketTypes.PlayerAnimation, "", args.Player.Index);
-				return true;
-			}
-
-			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
-			{
-				args.Player.SendData(PacketTypes.PlayerAnimation, "", args.Player.Index);
-				return true;
-			}
 
 			return false;
 		}
@@ -3715,22 +2661,12 @@ namespace TShockAPI
 		{
 			var id = args.Data.ReadInt8();
 
-			if (OnPlayerBuffUpdate(id))
+			if (OnPlayerBuffUpdate(args.Player, args.Data, id))
 				return true;
 
 			for (int i = 0; i < Terraria.Player.maxBuffs; i++)
 			{
 				var buff = args.Data.ReadInt8();
-
-				/*if (TShock.Itembans.ItemBans.Any(s =>
-				{
-					Item item = new Item();
-					item.SetDefaults(s.Name);
-					return item.buffType == buff;
-				}))
-				{
-					buff = 0;
-				}*/
 
 				if (buff == 10 && TShock.Config.DisableInvisPvP && args.TPlayer.hostile)
 					buff = 0;
@@ -3754,9 +2690,78 @@ namespace TShockAPI
 			return true;
 		}
 
+		private static bool HandleSpecial(GetDataHandlerArgs args)
+		{
+			var id = args.Data.ReadInt8();
+			var type = args.Data.ReadInt8();
+
+			if (OnNPCSpecial(args.Player, args.Data, id, type))
+				return true;
+
+			if (type == 1 && TShock.Config.DisableDungeonGuardian)
+			{
+				args.Player.SendMessage("The Dungeon Guardian returned you to your spawn point", Color.Purple);
+				args.Player.Spawn();
+				return true;
+			}
+
+			if (type == 3 & !args.Player.HasPermission(Permissions.usesundial))
+			{
+				args.Player.SendErrorMessage("You do not have permission to use the Enchanted Sundial!");
+				return true;
+			}
+
+			return false;
+		}
+
+		private static bool HandleNPCAddBuff(GetDataHandlerArgs args)
+		{
+			var id = args.Data.ReadInt16();
+			var type = args.Data.ReadInt8();
+			var time = args.Data.ReadInt16();
+
+			if (OnNPCAddBuff(args.Player, args.Data, id, type, time))
+				return true;
+
+			return false;
+		}
+
+		private static bool HandlePlayerAddBuff(GetDataHandlerArgs args)
+		{
+			var id = args.Data.ReadInt8();
+			var type = args.Data.ReadInt8();
+			var time = args.Data.ReadInt32();
+
+			if (OnPlayerBuff(args.Player, args.Data, id, type, time))
+				return true;
+
+			args.Player.SendData(PacketTypes.PlayerAddBuff, "", id);
+			return true;
+		}
+
+		private static bool UpdateNPCHome(GetDataHandlerArgs args)
+		{
+			var id = args.Data.ReadInt16();
+			var x = args.Data.ReadInt16();
+			var y = args.Data.ReadInt16();
+			var homeless = args.Data.ReadInt8();
+
+			if (OnUpdateNPCHome(args.Player, args.Data, id, x, y, homeless))
+				return true;
+
+			if (!args.Player.HasPermission(Permissions.movenpc))
+			{
+				args.Player.SendErrorMessage("You do not have permission to relocate NPCs.");
+				args.Player.SendData(PacketTypes.UpdateNPCHome, "", id, Main.npc[id].homeTileX, Main.npc[id].homeTileY,
+					Convert.ToByte(Main.npc[id].homeless));
+				return true;
+			}
+			return false;
+		}
+
 		private static bool HandleSpawnBoss(GetDataHandlerArgs args)
 		{
-			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
+			if (args.Player.IsBouncerThrottled())
 			{
 				return true;
 			}
@@ -3872,7 +2877,7 @@ namespace TShockAPI
 			{
 				return true;
 			}
-			if (OnPaintTile(x, y, t))
+			if (OnPaintTile(args.Player, args.Data, x, y, t))
 			{
 				return true;
 			}
@@ -3891,9 +2896,9 @@ namespace TShockAPI
 				return true;
 			}
 
-			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000 ||
-				TShock.CheckTilePermission(args.Player, x, y, true) ||
-				TShock.CheckRangePermission(args.Player, x, y))
+			if (args.Player.IsBouncerThrottled() ||
+				!args.Player.HasPaintPermission(x, y) ||
+				!args.Player.IsInRange(x, y))
 			{
 				args.Player.SendData(PacketTypes.PaintTile, "", x, y, Main.tile[x, y].color());
 				return true;
@@ -3916,7 +2921,7 @@ namespace TShockAPI
 			{
 				return true;
 			}
-			if (OnPaintWall(x, y, t))
+			if (OnPaintWall(args.Player, args.Data, x, y, t))
 			{
 				return true;
 			}
@@ -3935,9 +2940,9 @@ namespace TShockAPI
 				return true;
 			}
 
-			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000 ||
-				TShock.CheckTilePermission(args.Player, x, y, true) ||
-				TShock.CheckRangePermission(args.Player, x, y))
+			if (args.Player.IsBouncerThrottled() ||
+				!args.Player.HasPaintPermission(x, y) ||
+				!args.Player.IsInRange(x, y))
 			{
 				args.Player.SendData(PacketTypes.PaintWall, "", x, y, Main.tile[x, y].wallColor());
 				return true;
@@ -3957,7 +2962,7 @@ namespace TShockAPI
 			var x = args.Data.ReadSingle();
 			var y = args.Data.ReadSingle();
 
-			if (OnTeleport(id, flag, x, y))
+			if (OnTeleport(args.Player, args.Data, id, flag, x, y))
 				return true;
 
 			int type = 0;
@@ -4014,29 +3019,26 @@ namespace TShockAPI
 			return false;
 		}
 
-		private static bool HandleDoorUse(GetDataHandlerArgs args)
+		private static bool HandleHealOther(GetDataHandlerArgs args)
 		{
-			byte type = (byte)args.Data.ReadByte();
-			short x = args.Data.ReadInt16();
-			short y = args.Data.ReadInt16();
-			args.Data.ReadByte(); //Ignore direction
+			byte plr = args.Data.ReadInt8();
+			short amount = args.Data.ReadInt16();
 
-			if (x >= Main.maxTilesX || y >= Main.maxTilesY || x < 0 || y < 0) // Check for out of range
-			{
+			if (OnHealOtherPlayer(args.Player, args.Data, plr, amount))
 				return true;
-			}
 
-			if (type < 0 || type > 5)
+			return false;
+		}
+
+		private static bool HandleCatchNpc(GetDataHandlerArgs args)
+		{
+			var npcID = args.Data.ReadInt16();
+			var who = args.Data.ReadByte();
+
+			if (Main.npc[npcID]?.catchItem == 0)
 			{
-				return true;
-			}
-
-			ushort tileType = Main.tile[x, y].type;
-
-			if (tileType != TileID.ClosedDoor && tileType != TileID.OpenDoor
-				&& tileType != TileID.TallGateClosed && tileType != TileID.TallGateOpen
-				&& tileType != TileID.TrapdoorClosed && tileType != TileID.TrapdoorOpen)
-			{
+				Main.npc[npcID].active = true;
+				NetMessage.SendData((int)PacketTypes.NpcUpdate, -1, -1, NetworkText.Empty, npcID);
 				return true;
 			}
 
@@ -4056,134 +3058,124 @@ namespace TShockAPI
 			return true;
 		}
 
-		private static bool HandleMassWireOperation(GetDataHandlerArgs args)
+		private static bool HandlePlaceObject(GetDataHandlerArgs args)
 		{
-			short startX = args.Data.ReadInt16();
-			short startY = args.Data.ReadInt16();
-			short endX = args.Data.ReadInt16();
-			short endY = args.Data.ReadInt16();
-			args.Data.ReadByte(); // Ignore toolmode
+			short x = args.Data.ReadInt16();
+			short y = args.Data.ReadInt16();
+			short type = args.Data.ReadInt16();
+			short style = args.Data.ReadInt16();
+			byte alternate = args.Data.ReadInt8();
+			bool direction = args.Data.ReadBoolean();
 
-			List<Point> points = Utils.Instance.GetMassWireOperationRange(
-				new Point(startX, startY),
-				new Point(endX, endY),
-				args.Player.TPlayer.direction == 1);
-
-			int x;
-			int y;
-			foreach (Point p in points)
-			{
-				/* Perform similar checks to TileKill
-				 * The server-side nature of this packet removes the need to use SendTileSquare
-				 * Range checks are currently ignored here as the items that send this seem to have infinite range */
-
-				x = p.X;
-				y = p.Y;
-
-				if (!TShock.Utils.TilePlacementValid(x, y) || (args.Player.Dead && TShock.Config.PreventDeadModification))
-					return true;
-
-				if (TShock.CheckIgnores(args.Player))
-					return true;
-
-				if (TShock.CheckTilePermission(args.Player, x, y))
-					return true;
-			}
+			if (OnPlaceObject(args.Player, args.Data, x, y, type, style, alternate, direction))
+				return true;
 
 			return false;
 		}
 
-		/// <summary>
-		/// For use with a ToggleGemLock event
-		/// </summary>
-		public class GemLockToggleEventArgs : HandledEventArgs
+		private static bool HandleLoadNetModule(GetDataHandlerArgs args)
 		{
-			/// <summary>
-			/// X Location
-			/// </summary>
-			public Int32 X { get; set; }
-			/// <summary>
-			/// Y Location
-			/// </summary>
-			public Int32 Y { get; set; }
-			/// <summary>
-			/// On status
-			/// </summary>
-			public bool On { get; set; }
+			// Since this packet is never actually sent to us, every attempt at sending it can be considered as a liquid exploit attempt
+			return true;
 		}
 
-		/// <summary>
-		/// GemLockToggle - Called when a gem lock is switched
-		/// </summary>
-		public static HandlerList<GemLockToggleEventArgs> GemLockToggle;
-
-		private static bool OnGemLockToggle(Int32 x, Int32 y, bool on)
+		private static bool HandlePlaceTileEntity(GetDataHandlerArgs args)
 		{
-			if (GemLockToggle == null)
-				return false;
+			var x = args.Data.ReadInt16();
+			var y = args.Data.ReadInt16();
+			var type = (byte)args.Data.ReadByte();
 
-			var args = new GemLockToggleEventArgs
-			{
-				X = x,
-				Y = y,
-				On = on
-			};
-			GemLockToggle.Invoke(null, args);
-			return args.Handled;
-		}
-
-		private static bool HandleGemLockToggle(GetDataHandlerArgs args)
-		{
-			var x = (int)args.Data.ReadInt16();
-			var y = (int)args.Data.ReadInt16();
-			var on = args.Data.ReadBoolean();
-
-			if (x < 0 || y < 0 || x >= Main.maxTilesX || y >= Main.maxTilesY)
+			if (OnPlaceTileEntity(args.Player, args.Data, x, y, type))
 			{
 				return true;
 			}
 
-			if (OnGemLockToggle(x, y, on))
-			{
-				return true;
-			}
+			// ItemBan subsystem
 
-			if (!TShock.Config.RegionProtectGemLocks)
+			if (TShock.TileBans.TileIsBanned((short)TileID.LogicSensor, args.Player))
 			{
-				return false;
-			}
-
-			if (!TShock.Utils.TilePlacementValid(x, y) || (args.Player.Dead && TShock.Config.PreventDeadModification))
-			{
-				return true;
-			}
-
-			if (TShock.CheckIgnores(args.Player))
-			{
-				return true;
-			}
-
-			if (TShock.CheckTilePermission(args.Player, x, y))
-			{
+				args.Player.SendTileSquare(x, y, 1);
+				args.Player.SendErrorMessage("You do not have permission to place Logic Sensors.");
 				return true;
 			}
 
 			return false;
 		}
 
-		private static bool HandleCatchNpc(GetDataHandlerArgs args)
+		private static bool HandlePlaceItemFrame(GetDataHandlerArgs args)
 		{
-			var npcID = args.Data.ReadInt16();
-			var who = args.Data.ReadByte();
+			var x = args.Data.ReadInt16();
+			var y = args.Data.ReadInt16();
+			var itemID = args.Data.ReadInt16();
+			var prefix = args.Data.ReadInt8();
+			var stack = args.Data.ReadInt16();
+			var itemFrame = (TEItemFrame)TileEntity.ByID[TEItemFrame.Find(x, y)];
 
-			if (Main.npc[npcID]?.catchItem == 0)
+			if (OnPlaceItemFrame(args.Player, args.Data, x, y, itemID, prefix, stack, itemFrame))
 			{
-				Main.npc[npcID].active = true;
-				NetMessage.SendData((int)PacketTypes.NpcUpdate, -1, -1, NetworkText.Empty, npcID);
 				return true;
 			}
 
 			return false;
+		}
+		
+		private static bool HandleSyncExtraValue(GetDataHandlerArgs args)
+		{
+			var npcIndex = args.Data.ReadInt16();
+			var extraValue = args.Data.ReadSingle();
+			var position = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
+
+			if (position.X < 0 || position.X >= Main.maxTilesX || position.Y < 0 || position.Y >= Main.maxTilesY)
+			{
+				return true;
+			}
+
+			if (!Main.expertMode)
+			{
+				return true;
+			}
+
+			if (!args.Player.IsInRange((int)position.X, (int)position.Y))
+			{
+				return true;
+			}
+
+			return false;
+		}
+		
+		private static bool HandleKillPortal(GetDataHandlerArgs args)
+		{
+			short projectileIndex = args.Data.ReadInt16();
+
+			Projectile projectile = Main.projectile[projectileIndex];
+			if (projectile != null && projectile.active)
+			{
+				if (projectile.owner != args.TPlayer.whoAmI)
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		private static bool HandlePlayerPortalTeleport(GetDataHandlerArgs args)
+		{
+			byte plr = args.Data.ReadInt8();
+			short portalColorIndex = args.Data.ReadInt16();
+			float newPositionX = args.Data.ReadSingle();
+			float newPositionY = args.Data.ReadSingle();
+			float newVelocityX = args.Data.ReadSingle();
+			float newVelocityY = args.Data.ReadSingle();
+
+			return OnPlayerTeleportThroughPortal(
+				args.Player,
+				plr,
+				args.Data,
+				new Vector2(newPositionX, newPositionY),
+				new Vector2(newVelocityX, newVelocityY),
+				portalColorIndex
+			);
 		}
 
 		private static bool HandleNpcTeleportPortal(GetDataHandlerArgs args)
@@ -4209,46 +3201,13 @@ namespace TShockAPI
 			return false;
 		}
 
-		private static bool HandleKillPortal(GetDataHandlerArgs args)
-		{
-			short projectileIndex = args.Data.ReadInt16();
-
-			Projectile projectile = Main.projectile[projectileIndex];
-			if (projectile != null && projectile.active)
-			{
-				if (projectile.owner != args.TPlayer.whoAmI)
-				{
-					return true;
-				}
-			}
-
-			return false;
-		}
-
-		private static bool HandlePlaceTileEntity(GetDataHandlerArgs args)
+		private static bool HandleGemLockToggle(GetDataHandlerArgs args)
 		{
 			var x = args.Data.ReadInt16();
 			var y = args.Data.ReadInt16();
-			var type = args.Data.ReadByte();
+			var on = args.Data.ReadBoolean();
 
-			if (TShock.TileBans.TileIsBanned((short)TileID.LogicSensor, args.Player))
-			{
-				args.Player.SendTileSquare(x, y, 1);
-				args.Player.SendErrorMessage("You do not have permission to place Logic Sensors.");
-				return true;
-			}
-
-			if (TShock.CheckIgnores(args.Player))
-			{
-				return true;
-			}
-
-			if (TShock.CheckTilePermission(args.Player, x, y))
-			{
-				return true;
-			}
-
-			if (TShock.CheckRangePermission(args.Player, x, y))
+			if (OnGemLockToggle(args.Player, args.Data, x, y, on))
 			{
 				return true;
 			}
@@ -4256,70 +3215,18 @@ namespace TShockAPI
 			return false;
 		}
 
-		private static bool HandlePlaceItemFrame(GetDataHandlerArgs args)
+		private static bool HandleMassWireOperation(GetDataHandlerArgs args)
 		{
-			var x = args.Data.ReadInt16();
-			var y = args.Data.ReadInt16();
-			var itemID = args.Data.ReadInt16();
-			var prefix = args.Data.ReadInt8();
-			var stack = args.Data.ReadInt16();
-			var itemFrame = (TEItemFrame)TileEntity.ByID[TEItemFrame.Find(x, y)];
+			short startX = args.Data.ReadInt16();
+			short startY = args.Data.ReadInt16();
+			short endX = args.Data.ReadInt16();
+			short endY = args.Data.ReadInt16();
+			byte toolMode = (byte)args.Data.ReadByte();
 
-			if (TShock.CheckIgnores(args.Player))
-			{
-				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, NetworkText.Empty, itemFrame.ID, 0, 1);
+			if (OnMassWireOperation(args.Player, args.Data, startX, startY, endX, endY, toolMode))
 				return true;
-			}
-
-			if (TShock.CheckTilePermission(args.Player, x, y))
-			{
-				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, NetworkText.Empty, itemFrame.ID, 0, 1);
-				return true;
-			}
-
-			if (TShock.CheckRangePermission(args.Player, x, y))
-			{
-				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, NetworkText.Empty, itemFrame.ID, 0, 1);
-				return true;
-			}
-
-			if (itemFrame.item?.netID == args.TPlayer.inventory[args.TPlayer.selectedItem]?.netID)
-			{
-				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, NetworkText.Empty, itemFrame.ID, 0, 1);
-				return true;
-			}
 
 			return false;
-		}
-
-		private static bool HandleSyncExtraValue(GetDataHandlerArgs args)
-		{
-			var npcIndex = args.Data.ReadInt16();
-			var extraValue = args.Data.ReadSingle();
-			var position = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
-
-			if (position.X < 0 || position.X >= Main.maxTilesX || position.Y < 0 || position.Y >= Main.maxTilesY)
-			{
-				return true;
-			}
-
-			if (!Main.expertMode)
-			{
-				return true;
-			}
-
-			if (TShock.CheckRangePermission(args.Player, (int)position.X, (int)position.Y))
-			{
-				return true;
-			}
-
-			return false;
-		}
-
-		private static bool HandleLoadNetModule(GetDataHandlerArgs args)
-		{
-			// Since this packet is never actually sent to us, every attempt at sending it can be considered as a liquid exploit attempt
-			return true;
 		}
 
 		private static bool HandleToggleParty(GetDataHandlerArgs args)
@@ -4335,7 +3242,7 @@ namespace TShockAPI
 
 		private static bool HandleOldOnesArmy(GetDataHandlerArgs args)
 		{
-			if ((DateTime.UtcNow - args.Player.LastThreat).TotalMilliseconds < 5000)
+			if (args.Player.IsBouncerThrottled())
 			{
 				return true;
 			}
@@ -4352,5 +3259,166 @@ namespace TShockAPI
 				TShock.Utils.Broadcast(string.Format("{0} started the Old One's Army event!", args.Player.Name), 175, 75, 255);
 			return false;
 		}
+
+		private static bool HandlePlayerDamageV2(GetDataHandlerArgs args)
+		{
+			var id = args.Data.ReadInt8();
+			PlayerDeathReason playerDeathReason = PlayerDeathReason.FromReader(new BinaryReader(args.Data));
+			var dmg = args.Data.ReadInt16();
+			var direction = (byte)(args.Data.ReadInt8() - 1);
+			var bits = (BitsByte)(args.Data.ReadByte());
+			var crit = bits[0];
+			var pvp = bits[1];
+
+			if (OnPlayerDamage(args.Player, args.Data, id, direction, dmg, pvp, crit, playerDeathReason))
+				return true;
+
+			if (TShock.Players[id].GodMode)
+			{
+				TShock.Players[id].Heal(args.TPlayer.statLifeMax);
+			}
+
+			return false;
+		}
+
+		private static bool HandlePlayerKillMeV2(GetDataHandlerArgs args)
+		{
+			var id = args.Data.ReadInt8();
+			PlayerDeathReason playerDeathReason = PlayerDeathReason.FromReader(new BinaryReader(args.Data));
+			var dmg = args.Data.ReadInt16();
+			var direction = (byte)(args.Data.ReadInt8() - 1);
+			BitsByte bits = (BitsByte)args.Data.ReadByte();
+			bool pvp = bits[0];
+
+			if (OnKillMe(args.Player, args.Data, id, direction, dmg, pvp, playerDeathReason))
+				return true;
+
+			args.Player.Dead = true;
+			args.Player.RespawnTimer = TShock.Config.RespawnSeconds;
+
+			foreach (NPC npc in Main.npc)
+			{
+				if (npc.active && (npc.boss || npc.type == 13 || npc.type == 14 || npc.type == 15) &&
+					Math.Abs(args.TPlayer.Center.X - npc.Center.X) + Math.Abs(args.TPlayer.Center.Y - npc.Center.Y) < 4000f)
+				{
+					args.Player.RespawnTimer = TShock.Config.RespawnBossSeconds;
+					break;
+				}
+			}
+
+			// Handle kicks/bans on mediumcore/hardcore deaths.
+			if (args.TPlayer.difficulty != 0) // Player is not softcore
+			{
+				bool mediumcore = args.TPlayer.difficulty == 1;
+				bool shouldBan = mediumcore ? TShock.Config.BanOnMediumcoreDeath : TShock.Config.BanOnHardcoreDeath;
+				bool shouldKick = mediumcore ? TShock.Config.KickOnMediumcoreDeath : TShock.Config.KickOnHardcoreDeath;
+				string banReason = mediumcore ? TShock.Config.MediumcoreBanReason : TShock.Config.HardcoreBanReason;
+				string kickReason = mediumcore ? TShock.Config.MediumcoreKickReason : TShock.Config.HardcoreKickReason;
+
+				if (shouldBan)
+				{
+					if (!args.Player.Ban(banReason, false, "TShock"))
+						args.Player.Kick("You died! Normally, you'd be banned.", true, true);
+				}
+				else if (shouldKick)
+				{
+					args.Player.Kick(kickReason, true, true, null, false);
+				}
+			}
+
+			if (args.TPlayer.difficulty == 2 && Main.ServerSideCharacter && args.Player.IsLoggedIn)
+			{
+				if (TShock.CharacterDB.RemovePlayer(args.Player.Account.ID))
+				{
+					args.Player.SendErrorMessage("You have fallen in hardcore mode, and your items have been lost forever.");
+					TShock.CharacterDB.SeedInitialData(args.Player.Account);
+				}
+			}
+
+			return false;
+		}
+
+
+		public enum EditAction
+		{
+			KillTile = 0,
+			PlaceTile,
+			KillWall,
+			PlaceWall,
+			KillTileNoItem,
+			PlaceWire,
+			KillWire,
+			PoundTile,
+			PlaceActuator,
+			KillActuator,
+			PlaceWire2,
+			KillWire2,
+			PlaceWire3,
+			KillWire3,
+			SlopeTile,
+			FrameTrack,
+			PlaceWire4,
+			KillWire4
+		}
+		public enum EditType
+		{
+			Fail = 0,
+			Type,
+			Slope,
+		}
+
+		/// <summary>
+		/// The maximum place styles for each tile.
+		/// </summary>
+		public static Dictionary<int, int> MaxPlaceStyles = new Dictionary<int, int>();
+
+		/// <summary>
+		/// Tiles that can be broken without any pickaxes/etc.
+		/// </summary>
+		internal static int[] breakableTiles = new int[]
+		{
+			TileID.Books,
+			TileID.Bottles,
+			TileID.BreakableIce,
+			TileID.Candles,
+			TileID.CorruptGrass,
+			TileID.Dirt,
+			TileID.FleshGrass,
+			TileID.Grass,
+			TileID.HallowedGrass,
+			TileID.MagicalIceBlock,
+			TileID.Mannequin,
+			TileID.Torches,
+			TileID.WaterCandle,
+			TileID.Womannequin,
+		};
+
+		/// <summary>
+		/// These projectiles create tiles on death.
+		/// </summary>
+		internal static Dictionary<int, int> projectileCreatesTile = new Dictionary<int, int>
+		{
+			{ ProjectileID.DirtBall, TileID.Dirt },
+			{ ProjectileID.SandBallGun, TileID.Sand },
+			{ ProjectileID.EbonsandBallGun, TileID.Ebonsand },
+			{ ProjectileID.PearlSandBallGun, TileID.Pearlsand },
+			{ ProjectileID.CrimsandBallGun, TileID.Crimsand },
+		};
+
+		internal static Dictionary<int, int> ropeCoilPlacements = new Dictionary<int, int>
+		{
+			{ItemID.RopeCoil, TileID.Rope},
+			{ItemID.SilkRopeCoil, TileID.SilkRope},
+			{ItemID.VineRopeCoil, TileID.VineRope},
+			{ItemID.WebRopeCoil, TileID.WebRope}
+		};
+
+		/// <summary>
+		/// Extra place style limits for strange hardcoded values in Terraria
+		/// </summary>
+		internal static Dictionary<int, int> ExtraneousPlaceStyles = new Dictionary<int, int>
+		{
+			{TileID.MinecartTrack, 3}
+		};
 	}
 }

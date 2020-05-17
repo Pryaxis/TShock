@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2017 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2019 Pryaxis & TShock Contributors
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -26,6 +26,9 @@ using Microsoft.Xna.Framework;
 
 namespace TShockAPI.DB
 {
+	/// <summary>
+	/// Represents the Region database manager.
+	/// </summary>
 	public class RegionManager
 	{
 		/// <summary>
@@ -401,7 +404,41 @@ namespace TShockAPI.DB
 			}
 			return false;
 		}
+		
+		/// <summary>
+		/// Renames a region
+		/// </summary>
+		/// <param name="oldName">Name of the region to rename</param>
+		/// <param name="newName">New name of the region</param>
+		/// <returns>true if renamed successfully, false otherwise</returns>
+		public bool RenameRegion(string oldName, string newName)
+		{
+			Region region = null;
+			string worldID = Main.worldID.ToString();
 
+			bool result = false;
+
+			try
+			{
+				int q = database.Query("UPDATE Regions SET RegionName = @0 WHERE RegionName = @1 AND WorldID = @2",
+																					newName, oldName, worldID);
+
+				if (q > 0)
+				{
+					region = Regions.First(r => r.Name == oldName && r.WorldID == worldID);
+					region.Name = newName;
+					Hooks.RegionHooks.OnRegionRenamed(region, oldName, newName);
+					result = true;
+				}
+			}
+			catch (Exception ex)
+			{
+				TShock.Log.Error(ex.ToString());
+			}
+
+			return result;
+		}
+		
 		/// <summary>
 		/// Removes an allowed user from a region
 		/// </summary>
@@ -413,7 +450,7 @@ namespace TShockAPI.DB
 			Region r = GetRegionByName(regionName);
 			if (r != null)
 			{
-				if (!r.RemoveID(TShock.Users.GetUserID(userName)))
+				if (!r.RemoveID(TShock.UserAccounts.GetUserAccountID(userName)))
 				{
 					return false;
 				}
@@ -445,7 +482,7 @@ namespace TShockAPI.DB
 						mergedIDs = reader.Get<string>("UserIds");
 				}
 
-				string userIdToAdd = Convert.ToString(TShock.Users.GetUserID(userName));
+				string userIdToAdd = Convert.ToString(TShock.UserAccounts.GetUserAccountID(userName));
 				string[] ids = mergedIDs.Split(',');
 				// Is the user already allowed to the region?
 				if (ids.Contains(userIdToAdd))
@@ -754,7 +791,7 @@ namespace TShockAPI.DB
 				return false;
 			}
 
-			return ply.HasPermission(Permissions.editregion) || AllowedIDs.Contains(ply.User.ID) || AllowedGroups.Contains(ply.Group.Name) || Owner == ply.User.Name;
+			return ply.HasPermission(Permissions.editregion) || AllowedIDs.Contains(ply.Account.ID) || AllowedGroups.Contains(ply.Group.Name) || Owner == ply.Account.Name;
 		}
 
 		/// <summary>

@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2017 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2019 Pryaxis & TShock Contributors
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -23,8 +23,12 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
+// Since the permission nodes have annotations that say what they are, we don't need XML comments.
+#pragma warning disable 1591
+
 namespace TShockAPI
 {
+	/// <summary>Contains the permission nodes used in TShock.</summary>
 	public static class Permissions
 	{
 		// tshock.account nodes
@@ -125,8 +129,8 @@ namespace TShockAPI
 		[Description("User can reload the configurations file.")]
 		public static readonly string cfgreload = "tshock.cfg.reload";
 
-		[Description("User can download updates to plugins that are currently running.")]
-		public static readonly string updateplugins = "tshock.cfg.updateplugins";
+		[Description("User can create reference files of Terraria IDs and the permission matrix in the server folder.")]
+		public static readonly string createdumps = "tshock.cfg.createdumps";
 
 		// tshock.ignore nodes
 
@@ -144,9 +148,6 @@ namespace TShockAPI
 
 		[Description("Prevents you from being disabled by paint abuse detection.")]
 		public static readonly string ignorepaintdetection = "tshock.ignore.paint";
-
-		[Description("Prevents you from being reverted by no clip detection.")]
-		public static readonly string ignorenoclipdetection = "tshock.ignore.noclip";
 
 		[Description("Prevents you from being disabled by stack hack detection.")]
 		public static readonly string ignorestackhackdetection = "tshock.ignore.itemstack";
@@ -220,6 +221,9 @@ namespace TShockAPI
 
 		[Description("Meant for super admins only.")]
 		public static readonly string user = "tshock.superadmin.user";
+
+		[Description("Allows a user to elevate to superadmin for 10 minutes.")]
+		public static readonly string su = "tshock.su";
 
 		// tshock.tp nodes
 
@@ -397,6 +401,7 @@ namespace TShockAPI
 
 		[Description("Player can see advanced information about any user account.")]
 		public static readonly string advaccountinfo = "tshock.accountinfo.details";
+
 		/// <summary>
 		/// Lists all commands associated with a given permission
 		/// </summary>
@@ -443,21 +448,6 @@ namespace TShockAPI
 			}
 
 			File.WriteAllText("PermissionsDescriptions.txt", sb.ToString());
-		}
-	}
-
-	[AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
-	public sealed class TodoAttribute : Attribute
-	{
-		public string Info { get; private set; }
-
-		public TodoAttribute(string info)
-		{
-			Info = info;
-		}
-
-		public TodoAttribute()
-		{
 		}
 	}
 }

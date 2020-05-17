@@ -1,6 +1,6 @@
 /*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2017 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2019 Pryaxis & TShock Contributors
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ namespace TShockAPI
 		/// <summary>VersionNum - The version number the TerrariaAPI will return back to the API. We just use the Assembly info.</summary>
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
 		/// <summary>VersionCodename - The version codename is displayed when the server starts. Inspired by software codenames conventions.</summary>
-		public static readonly string VersionCodename = "Mintaka";
+		public static readonly string VersionCodename = "Zombie";
 
 		/// <summary>SavePath - This is the path TShock saves its data in. This path is relative to the TerrariaServer.exe (not in ServerPlugins).</summary>
 		public static string SavePath = "tshock";
@@ -72,11 +72,6 @@ namespace TShockAPI
 		private static string LogPath = LogPathDefault;
 		/// <summary>LogClear - Determines whether or not the log file should be cleared on initialization.</summary>
 		private static bool LogClear;
-
-		/// <summary>
-		/// Set by the command line, disables the '/restart' command.
-		/// </summary>
-		internal static bool NoRestart;
 
 		/// <summary>Will be set to true once Utils.StopServer() is called.</summary>
 		public static bool ShuttingDown;
@@ -94,7 +89,7 @@ namespace TShockAPI
 		/// <summary>Groups - Static reference to the group manager for accessing the group system.</summary>
 		public static GroupManager Groups;
 		/// <summary>Users - Static reference to the user manager for accessing the user database system.</summary>
-		public static UserManager Users;
+		public static UserAccountManager UserAccounts;
 		/// <summary>Itembans - Static reference to the item ban system.</summary>
 		public static ItemManager Itembans;
 		/// <summary>ProjectileBans - Static reference to the projectile ban system.</summary>
@@ -135,6 +130,17 @@ namespace TShockAPI
 		/// Used for implementing REST Tokens prior to the REST system starting up.
 		/// </summary>
 		public static Dictionary<string, SecureRest.TokenData> RESTStartupTokens = new Dictionary<string, SecureRest.TokenData>();
+
+		/// <summary>The TShock anti-cheat/anti-exploit system.</summary>
+		internal Bouncer Bouncer;
+
+		/// <summary>The TShock item ban system.</summary>
+		internal ItemBans ItemBans;
+
+		/// <summary>
+		/// TShock's Region subsystem.
+		/// </summary>
+		internal RegionHandler RegionSystem;
 
 		/// <summary>
 		/// Called after TShock is initialized. Useful for plugins that needs hooks before tshock but also depend on tshock being loaded.
@@ -310,7 +316,7 @@ namespace TShockAPI
 				Bans = new BanManager(DB);
 				Warps = new WarpManager(DB);
 				Regions = new RegionManager(DB);
-				Users = new UserManager(DB);
+				UserAccounts = new UserAccountManager(DB);
 				Groups = new GroupManager(DB);
 				Itembans = new ItemManager(DB);
 				ProjectileBans = new ProjectileManagager(DB);
@@ -320,6 +326,9 @@ namespace TShockAPI
 				RestApi = new SecureRest(Netplay.ServerIP, Config.RestApiPort);
 				RestManager = new RestManager(RestApi);
 				RestManager.RegisterRestfulCommands();
+				Bouncer = new Bouncer();
+				RegionSystem = new RegionHandler(Regions);
+				ItemBans = new ItemBans(this, DB);
 
 				var geoippath = "GeoIP.dat";
 				if (Config.EnableGeoIP && File.Exists(geoippath))
@@ -347,6 +356,7 @@ namespace TShockAPI
 				ServerApi.Hooks.WorldHalloweenCheck.Register(this, OnHalloweenCheck);
 				ServerApi.Hooks.NetNameCollision.Register(this, NetHooks_NameCollision);
 				ServerApi.Hooks.ItemForceIntoChest.Register(this, OnItemForceIntoChest);
+				ServerApi.Hooks.WorldGrassSpread.Register(this, OnWorldGrassSpread);
 				Hooks.PlayerHooks.PlayerPreLogin += OnPlayerPreLogin;
 				Hooks.PlayerHooks.PlayerPostLogin += OnPlayerLogin;
 				Hooks.AccountHooks.AccountDelete += OnAccountDelete;
@@ -366,7 +376,10 @@ namespace TShockAPI
 				if (Initialized != null)
 					Initialized();
 
-				Log.ConsoleInfo("Welcome to TShock for Terraria. Initialization complete.");
+				Log.ConsoleInfo("Welcome to TShock for Terraria!");
+				Log.ConsoleInfo("TShock comes with no warranty & is free software.");
+				Log.ConsoleInfo("You can modify & distribute it under the terms of the GNU GPLv3.");
+
 			}
 			catch (Exception ex)
 			{
@@ -380,7 +393,7 @@ namespace TShockAPI
 		{
 			foreach (TSPlayer player in TShock.Players)
 			{
-				player.User = null;
+				player.Account = null;
 			}
 		}
 
@@ -417,6 +430,7 @@ namespace TShockAPI
 				ServerApi.Hooks.WorldHalloweenCheck.Deregister(this, OnHalloweenCheck);
 				ServerApi.Hooks.NetNameCollision.Deregister(this, NetHooks_NameCollision);
 				ServerApi.Hooks.ItemForceIntoChest.Deregister(this, OnItemForceIntoChest);
+				ServerApi.Hooks.WorldGrassSpread.Deregister(this, OnWorldGrassSpread);
 				TShockAPI.Hooks.PlayerHooks.PlayerPostLogin -= OnPlayerLogin;
 
 				if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
@@ -426,6 +440,8 @@ namespace TShockAPI
 
 				RestApi.Dispose();
 				Log.Dispose();
+
+				RegionSystem.Dispose();
 			}
 			base.Dispose(disposing);
 		}
@@ -435,9 +451,9 @@ namespace TShockAPI
 		private void OnPlayerLogin(PlayerPostLoginEventArgs args)
 		{
 			List<String> KnownIps = new List<string>();
-			if (!string.IsNullOrWhiteSpace(args.Player.User.KnownIps))
+			if (!string.IsNullOrWhiteSpace(args.Player.Account.KnownIps))
 			{
-				KnownIps = JsonConvert.DeserializeObject<List<String>>(args.Player.User.KnownIps);
+				KnownIps = JsonConvert.DeserializeObject<List<String>>(args.Player.Account.KnownIps);
 			}
 
 			if (KnownIps.Count == 0)
@@ -458,22 +474,44 @@ namespace TShockAPI
 				}
 			}
 
-			args.Player.User.KnownIps = JsonConvert.SerializeObject(KnownIps, Formatting.Indented);
-			Users.UpdateLogin(args.Player.User);
+			args.Player.Account.KnownIps = JsonConvert.SerializeObject(KnownIps, Formatting.Indented);
+			UserAccounts.UpdateLogin(args.Player.Account);
+
+			Ban potentialBan = Bans.GetBanByAccountName(args.Player.Account.Name);
+
+			if (potentialBan != null)
+			{
+				// A user just signed in successfully despite being banned by account name.
+				// We should fix the ban database so that all of their ban info is up to date.
+				Bans.AddBan(args.Player.IP, args.Player.Name, args.Player.UUID, args.Player.Account.Name,
+					potentialBan.Reason, false, potentialBan.BanningUser, potentialBan.Expiration);
+
+				// And then get rid of them.
+				if (potentialBan.Expiration == "")
+				{
+					args.Player.Kick(String.Format("Permanently banned by {0} for {1}", potentialBan.BanningUser
+						,potentialBan.Reason), true, true);
+				}
+				else
+				{
+					args.Player.Kick(String.Format("Still banned by {0} for {1}", potentialBan.BanningUser,
+						potentialBan.Reason), true, true);
+				}
+			}
 		}
 
 		/// <summary>OnAccountDelete - Internal hook fired on account delete.</summary>
 		/// <param name="args">args - The AccountDeleteEventArgs object.</param>
 		private void OnAccountDelete(Hooks.AccountDeleteEventArgs args)
 		{
-			CharacterDB.RemovePlayer(args.User.ID);
+			CharacterDB.RemovePlayer(args.Account.ID);
 		}
 
 		/// <summary>OnAccountCreate - Internal hook fired on account creation.</summary>
 		/// <param name="args">args - The AccountCreateEventArgs object.</param>
 		private void OnAccountCreate(Hooks.AccountCreateEventArgs args)
 		{
-			CharacterDB.SeedInitialData(Users.GetUser(args.User));
+			CharacterDB.SeedInitialData(UserAccounts.GetUserAccount(args.Account));
 		}
 
 		/// <summary>OnPlayerPreLogin - Internal hook fired when on player pre login.</summary>
@@ -488,6 +526,11 @@ namespace TShockAPI
 		/// <param name="args">args - The NameCollisionEventArgs object.</param>
 		private void NetHooks_NameCollision(NameCollisionEventArgs args)
 		{
+			if (args.Handled)
+			{
+				return;
+			}
+
 			string ip = Utils.GetRealIP(Netplay.Clients[args.Who].Socket.GetRemoteAddress().ToString());
 
 			var player = Players.First(p => p != null && p.Name == args.Name && p.Index != args.Who);
@@ -501,7 +544,7 @@ namespace TShockAPI
 				}
 				if (player.IsLoggedIn)
 				{
-					var ips = JsonConvert.DeserializeObject<List<string>>(player.User.KnownIps);
+					var ips = JsonConvert.DeserializeObject<List<string>>(player.Account.KnownIps);
 					if (ips.Contains(ip))
 					{
 						Netplay.Clients[player.Index].PendingTermination = true;
@@ -541,7 +584,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (CheckRangePermission(tsplr, args.Chest.x, args.Chest.y))
+				if (!tsplr.IsInRange(args.Chest.x, args.Chest.y))
 				{
 					args.Handled = true;
 					return;
@@ -722,24 +765,9 @@ namespace TShockAPI
 				//Flags without arguments
 				.AddFlag("-logclear", () => LogClear = true)
 				.AddFlag("-autoshutdown", () => Main.instance.EnableAutoShutdown())
-				.AddFlag("-dump", () => Utils.Dump())
-				.AddFlag("--no-restart", () => NoRestart = true);
+				.AddFlag("-dump", () => Utils.Dump());
 
 			CliParser.ParseFromSource(parms);
-
-			/*"-connperip": Todo - Requires an OTAPI modification
-			{
-				int limit;
-				if (int.TryParse(parms[++i], out limit))
-				{
-					//Netplay.MaxConnections = limit;
-					//ServerApi.LogWriter.PluginWriteLine(this, string.Format(
-					//	"Connections per IP have been limited to {0} connections.", limit), TraceLevel.Verbose);
-					ServerApi.LogWriter.PluginWriteLine(this, "\"-connperip\" is not supported in this version of TShock.", TraceLevel.Verbose);
-				}
-				else
-					ServerApi.LogWriter.PluginWriteLine(this, "Invalid value given for command line argument \"-connperip\".", TraceLevel.Warning);
-			}*/
 		}
 
 		/// <summary>HandleCommandLinePostConfigLoad - Handles additional command line options after the config file is read.</summary>
@@ -800,15 +828,15 @@ namespace TShockAPI
 			CliParser.ParseFromSource(parms);
 		}
 
-		/// <summary>AuthToken - The auth token used by the /auth system to grant temporary superadmin access to new admins.</summary>
-		public static int AuthToken = -1;
+		/// <summary>SetupToken - The auth token used by the setup system to grant temporary superadmin access to new admins.</summary>
+		public static int SetupToken = -1;
 		private string _cliPassword = null;
 
 		/// <summary>OnPostInit - Fired when the server loads a map, to perform world specific operations.</summary>
 		/// <param name="args">args - The EventArgs object.</param>
 		private void OnPostInit(EventArgs args)
 		{
-			SetConsoleTitle(false);
+			Utils.SetConsoleTitle(false);
 
 			//This is to prevent a bug where a CLI-defined password causes packets to be
 			//sent in an unexpected order, resulting in clients being unable to connect
@@ -820,51 +848,49 @@ namespace TShockAPI
 				Config.ServerPassword = _cliPassword;
 			}
 
-			// Disable the auth system if "auth.lck" is present or a superadmin exists
-			if (File.Exists(Path.Combine(SavePath, "auth.lck")) || Users.GetUsers().Exists(u => u.Group == new SuperAdminGroup().Name))
+			// Disable the auth system if "setup.lock" is present or a user account already exists
+			if (File.Exists(Path.Combine(SavePath, "setup.lock")) || (UserAccounts.GetUserAccounts().Count() > 0))
 			{
-				AuthToken = 0;
+				SetupToken = 0;
 
-				if (File.Exists(Path.Combine(SavePath, "authcode.txt")))
+				if (File.Exists(Path.Combine(SavePath, "setup-code.txt")))
 				{
-					Log.ConsoleInfo("A superadmin account has been detected in the user database, but authcode.txt is still present.");
-					Log.ConsoleInfo("TShock will now disable the auth system and remove authcode.txt as it is no longer needed.");
-					File.Delete(Path.Combine(SavePath, "authcode.txt"));
+					Log.ConsoleInfo("A superadmin account has been detected in the user database, but setup-code.txt is still present.");
+					Log.ConsoleInfo("TShock will now disable the initial setup system and remove setup-code.txt as it is no longer needed.");
+					File.Delete(Path.Combine(SavePath, "setup-code.txt"));
 				}
 
-				if (!File.Exists(Path.Combine(SavePath, "auth.lck")))
+				if (!File.Exists(Path.Combine(SavePath, "setup.lock")))
 				{
 					// This avoids unnecessary database work, which can get ridiculously high on old servers as all users need to be fetched
-					File.Create(Path.Combine(SavePath, "auth.lck"));
+					File.Create(Path.Combine(SavePath, "setup.lock"));
 				}
 			}
-			else if (!File.Exists(Path.Combine(SavePath, "authcode.txt")))
+			else if (!File.Exists(Path.Combine(SavePath, "setup-code.txt")))
 			{
 				var r = new Random((int)DateTime.Now.ToBinary());
-				AuthToken = r.Next(100000, 10000000);
+				SetupToken = r.Next(100000, 10000000);
 				Console.ForegroundColor = ConsoleColor.Yellow;
-				Console.WriteLine("TShock Notice: To become SuperAdmin, join the game and type {0}auth {1}", Commands.Specifier, AuthToken);
-				Console.WriteLine("This token will display until disabled by verification. ({0}auth)", Commands.Specifier);
+				Console.WriteLine("To setup the server, join the game and type {0}setup {1}", Commands.Specifier, SetupToken);
+				Console.WriteLine("This token will display until disabled by verification. ({0}setup)", Commands.Specifier);
 				Console.ResetColor();
-				File.WriteAllText(Path.Combine(SavePath, "authcode.txt"), AuthToken.ToString());
+				File.WriteAllText(Path.Combine(SavePath, "setup-code.txt"), SetupToken.ToString());
 			}
 			else
 			{
-				AuthToken = Convert.ToInt32(File.ReadAllText(Path.Combine(SavePath, "authcode.txt")));
+				SetupToken = Convert.ToInt32(File.ReadAllText(Path.Combine(SavePath, "setup-code.txt")));
 				Console.ForegroundColor = ConsoleColor.Yellow;
-				Console.WriteLine("TShock Notice: authcode.txt is still present, and the AuthToken located in that file will be used.");
-				Console.WriteLine("To become superadmin, join the game and type {0}auth {1}", Commands.Specifier, AuthToken);
-				Console.WriteLine("This token will display until disabled by verification. ({0}auth)", Commands.Specifier);
+				Console.WriteLine("TShock Notice: setup-code.txt is still present, and the code located in that file will be used.");
+				Console.WriteLine("To setup the server, join the game and type {0}setup {1}", Commands.Specifier, SetupToken);
+				Console.WriteLine("This token will display until disabled by verification. ({0}setup)", Commands.Specifier);
 				Console.ResetColor();
 			}
 
 			Regions.Reload();
 			Warps.ReloadWarps();
 
-			ComputeMaxStyles();
-			FixChestStacks();
-
-			Utils.UpgradeMotD();
+			Utils.ComputeMaxStyles();
+			Utils.FixChestStacks();
 
 			if (Config.UseServerName)
 			{
@@ -872,45 +898,6 @@ namespace TShockAPI
 			}
 
 			UpdateManager = new UpdateManager();
-		}
-
-		/// <summary>ComputeMaxStyles - Computes the max styles...</summary>
-		private void ComputeMaxStyles()
-		{
-			var item = new Item();
-			for (int i = 0; i < Main.maxItemTypes; i++)
-			{
-				item.netDefaults(i);
-				if (item.placeStyle > 0)
-				{
-					if (GetDataHandlers.MaxPlaceStyles.ContainsKey(item.createTile))
-					{
-						if (item.placeStyle > GetDataHandlers.MaxPlaceStyles[item.createTile])
-							GetDataHandlers.MaxPlaceStyles[item.createTile] = item.placeStyle;
-					}
-					else
-						GetDataHandlers.MaxPlaceStyles.Add(item.createTile, item.placeStyle);
-				}
-			}
-		}
-
-		/// <summary>FixChestStacks - Verifies that each stack in each chest is valid and not over the max stack count.</summary>
-		private void FixChestStacks()
-		{
-			if (Config.IgnoreChestStacksOnLoad)
-				return;
-
-			foreach (Chest chest in Main.chest)
-			{
-				if (chest != null)
-				{
-					foreach (Item item in chest.item)
-					{
-						if (item != null && item.stack > item.maxStack)
-							item.stack = item.maxStack;
-					}
-				}
-			}
 		}
 
 		/// <summary>LastCheck - Used to keep track of the last check for basically all time based checks.</summary>
@@ -937,7 +924,7 @@ namespace TShockAPI
 				foreach (TSPlayer player in Players)
 				{
 					// prevent null point exceptions
-					if (player != null && player.IsLoggedIn && !player.IgnoreActionsForClearingTrashCan)
+					if (player != null && player.IsLoggedIn && !player.IsDisabledPendingTrashRemoval)
 					{
 
 						CharacterDB.InsertPlayerData(player);
@@ -1073,127 +1060,21 @@ namespace TShockAPI
 						player.Spawn();
 					}
 
-					if (Main.ServerSideCharacter && !player.IsLoggedIn)
+					if (!Main.ServerSideCharacter || (Main.ServerSideCharacter && player.IsLoggedIn))
 					{
-						if (CheckIgnores(player))
+						if (!player.HasPermission(Permissions.ignorestackhackdetection))
+						{
+							player.IsDisabledForStackDetection = player.HasHackedItemStacks(shouldWarnPlayer: true);
+						}
+
+						if (player.IsBeingDisabled())
 						{
 							player.Disable(flags: flags);
-						}
-						else if (Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(player.TPlayer.inventory[player.TPlayer.selectedItem].netID), player))
-						{
-							player.Disable($"holding banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].Name}", flags);
-							player.SendErrorMessage($"You are holding a banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].Name}");
-						}
-					}
-					else if (!Main.ServerSideCharacter || (Main.ServerSideCharacter && player.IsLoggedIn))
-					{
-						string check = "none";
-						foreach (Item item in player.TPlayer.inventory)
-						{
-							if (!player.HasPermission(Permissions.ignorestackhackdetection) && (item.stack > item.maxStack || item.stack < 0) &&
-								item.type != 0)
-							{
-								check = "Remove item " + item.Name + " (" + item.stack + ") exceeds max stack of " + item.maxStack;
-								player.SendErrorMessage(check);
-								break;
-							}
-						}
-						player.IgnoreActionsForCheating = check;
-						check = "none";
-						// Please don't remove this for the time being; without it, players wearing banned equipment will only get debuffed once
-						foreach (Item item in player.TPlayer.armor)
-						{
-							if (Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), player))
-							{
-								player.SetBuff(BuffID.Frozen, 330, true);
-								player.SetBuff(BuffID.Stoned, 330, true);
-								player.SetBuff(BuffID.Webbed, 330, true);
-								check = "Remove armor/accessory " + item.Name;
-
-								player.SendErrorMessage("You are wearing banned equipment. {0}", check);
-								break;
-							}
-						}
-						foreach (Item item in player.TPlayer.dye)
-						{
-							if (Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), player))
-							{
-								player.SetBuff(BuffID.Frozen, 330, true);
-								player.SetBuff(BuffID.Stoned, 330, true);
-								player.SetBuff(BuffID.Webbed, 330, true);
-								check = "Remove dye " + item.Name;
-
-								player.SendErrorMessage("You are wearing banned equipment. {0}", check);
-								break;
-							}
-						}
-						foreach (Item item in player.TPlayer.miscEquips)
-						{
-							if (Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), player))
-							{
-								player.SetBuff(BuffID.Frozen, 330, true);
-								player.SetBuff(BuffID.Stoned, 330, true);
-								player.SetBuff(BuffID.Webbed, 330, true);
-								check = "Remove misc equip " + item.Name;
-
-								player.SendErrorMessage("You are wearing banned equipment. {0}", check);
-								break;
-							}
-						}
-						foreach (Item item in player.TPlayer.miscDyes)
-						{
-							if (Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), player))
-							{
-								player.SetBuff(BuffID.Frozen, 330, true);
-								player.SetBuff(BuffID.Stoned, 330, true);
-								player.SetBuff(BuffID.Webbed, 330, true);
-								check = "Remove misc dye " + item.Name;
-
-								player.SendErrorMessage("You are wearing banned equipment. {0}", check);
-								break;
-							}
-						}
-						player.IgnoreActionsForDisabledArmor = check;
-
-						if (CheckIgnores(player))
-						{
-							player.Disable(flags: flags);
-						}
-						else if (Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(player.TPlayer.inventory[player.TPlayer.selectedItem].netID), player))
-						{
-							player.Disable($"holding banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].Name}", flags);
-							player.SendErrorMessage($"You are holding a banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].Name}");
-						}
-					}
-
-					var oldRegion = player.CurrentRegion;
-					player.CurrentRegion = Regions.GetTopRegion(Regions.InAreaRegion(player.TileX, player.TileY));
-
-					if (oldRegion != player.CurrentRegion)
-					{
-						if (oldRegion != null)
-						{
-							RegionHooks.OnRegionLeft(player, oldRegion);
-						}
-
-						if (player.CurrentRegion != null)
-						{
-							RegionHooks.OnRegionEntered(player, player.CurrentRegion);
 						}
 					}
 				}
 			}
-			SetConsoleTitle(false);
-		}
-
-		/// <summary>SetConsoleTitle - Updates the console title with some pertinent information.</summary>
-		/// <param name="empty">empty - True/false if the server is empty; determines if we should use Utils.ActivePlayers() for player count or 0.</param>
-		private void SetConsoleTitle(bool empty)
-		{
-			Console.Title = string.Format("{0}{1}/{2} on {3} @ {4}:{5} (TShock for Terraria v{6})",
-					!string.IsNullOrWhiteSpace(Config.ServerName) ? Config.ServerName + " - " : "",
-					empty ? 0 : Utils.ActivePlayers(),
-					Config.MaxSlots, Main.worldName, Netplay.ServerIP.ToString(), Netplay.ListenPort, Version);
+			Utils.SetConsoleTitle(false);
 		}
 
 		/// <summary>OnHardUpdate - Fired when a hardmode tile update event happens.</summary>
@@ -1203,24 +1084,50 @@ namespace TShockAPI
 			if (args.Handled)
 				return;
 
-			if (!Config.AllowCrimsonCreep && (args.Type == TileID.Dirt || args.Type == TileID.FleshWeeds
-				|| TileID.Sets.Crimson[args.Type]))
+			if (!OnCreep(args.Type))
 			{
 				args.Handled = true;
+			}
+		}
+
+		/// <summary>OnWorldGrassSpread - Fired when grass is attempting to spread.</summary>
+		/// <param name="args">args - The GrassSpreadEventArgs object.</param>
+		private void OnWorldGrassSpread(GrassSpreadEventArgs args)
+		{
+			if (args.Handled)
 				return;
+
+			if(!OnCreep(args.Grass))
+			{
+				args.Handled = true;
+			}
+		}
+
+		/// <summary>
+		/// Checks if the tile type is allowed to creep
+		/// </summary>
+		/// <param name="tileType">Tile id</param>
+		/// <returns>True if allowed, otherwise false</returns>
+		private bool OnCreep(int tileType)
+		{
+			if (!Config.AllowCrimsonCreep && (tileType == TileID.Dirt || tileType == TileID.FleshWeeds
+				|| TileID.Sets.Crimson[tileType]))
+			{
+				return false;
 			}
 
-			if (!Config.AllowCorruptionCreep && (args.Type == TileID.Dirt || args.Type == TileID.CorruptThorns
-				|| TileID.Sets.Corrupt[args.Type]))
+			if (!Config.AllowCorruptionCreep && (tileType == TileID.Dirt || tileType == TileID.CorruptThorns
+				|| TileID.Sets.Corrupt[tileType]))
 			{
-				args.Handled = true;
-				return;
+				return false;
 			}
 
-			if (!Config.AllowHallowCreep && (TileID.Sets.Hallow[args.Type]))
+			if (!Config.AllowHallowCreep && (TileID.Sets.Hallow[tileType]))
 			{
-				args.Handled = true;
+				return false;
 			}
+
+			return true;
 		}
 
 		/// <summary>OnStatueSpawn - Fired when a statue spawns.</summary>
@@ -1250,16 +1157,16 @@ namespace TShockAPI
 
 			var player = new TSPlayer(args.Who);
 
-			if (Utils.ActivePlayers() + 1 > Config.MaxSlots + Config.ReservedSlots)
+			if (Utils.GetActivePlayerCount() + 1 > Config.MaxSlots + Config.ReservedSlots)
 			{
-				Utils.ForceKick(player, Config.ServerFullNoReservedReason, true, false);
+				player.Kick(Config.ServerFullNoReservedReason, true, true, null, false);
 				args.Handled = true;
 				return;
 			}
 
 			if (!FileTools.OnWhitelist(player.IP))
 			{
-				Utils.ForceKick(player, Config.WhitelistKickReason, true, false);
+				player.Kick(Config.WhitelistKickReason, true, true, null, false);
 				args.Handled = true;
 				return;
 			}
@@ -1272,7 +1179,7 @@ namespace TShockAPI
 				{
 					if (Config.KickProxyUsers)
 					{
-						Utils.ForceKick(player, "Proxies are not allowed.", true, false);
+						player.Kick("Connecting via a proxy is not allowed.", true, true, null, false);
 						args.Handled = true;
 						return;
 					}
@@ -1294,7 +1201,7 @@ namespace TShockAPI
 
 			if (Config.KickEmptyUUID && String.IsNullOrWhiteSpace(player.UUID))
 			{
-				Utils.ForceKick(player, "Your client did not send a UUID, this server is not configured to accept such a client.", true);
+				player.Kick("Your client sent a blank UUID. Configure it to send one or use a different client.", true, true, null, false);
 				args.Handled = true;
 				return;
 			}
@@ -1319,12 +1226,12 @@ namespace TShockAPI
 
 			if (ban != null)
 			{
-				if (!Utils.HasBanExpired(ban))
+				if (!Bans.RemoveBanIfExpired(ban))
 				{
 					DateTime exp;
 					if (!DateTime.TryParse(ban.Expiration, out exp))
 					{
-						player.Disconnect("You are banned forever: " + ban.Reason);
+						player.Disconnect("Permanently banned for: " + ban.Reason);
 					}
 					else
 					{
@@ -1372,15 +1279,20 @@ namespace TShockAPI
 			}
 
 			var tsplr = Players[args.Who];
+			if (tsplr == null)
+			{
+				return;
+			}
+
 			Players[args.Who] = null;
 
-			if (tsplr != null && tsplr.ReceivedInfo)
+			if (tsplr.ReceivedInfo)
 			{
 				if (!tsplr.SilentKickInProgress && tsplr.State >= 3)
 					Utils.Broadcast(tsplr.Name + " has left.", Color.Yellow);
 				Log.Info("{0} disconnected.", tsplr.Name);
 
-				if (tsplr.IsLoggedIn && !tsplr.IgnoreActionsForClearingTrashCan && Main.ServerSideCharacter && (!tsplr.Dead || tsplr.TPlayer.difficulty != 2))
+				if (tsplr.IsLoggedIn && !tsplr.IsDisabledPendingTrashRemoval && Main.ServerSideCharacter && (!tsplr.Dead || tsplr.TPlayer.difficulty != 2))
 				{
 					tsplr.PlayerData.CopyCharacter(tsplr);
 					CharacterDB.InsertPlayerData(tsplr);
@@ -1398,17 +1310,17 @@ namespace TShockAPI
 			}
 
 			// Fire the OnPlayerLogout hook too, if the player was logged in and they have a TSPlayer object.
-			if (tsplr != null && tsplr.IsLoggedIn)
+			if (tsplr.IsLoggedIn)
 			{
 				Hooks.PlayerHooks.OnPlayerLogout(tsplr);
 			}
 
 			// The last player will leave after this hook is executed.
-			if (Utils.ActivePlayers() == 1)
+			if (Utils.GetActivePlayerCount() == 1)
 			{
 				if (Config.SaveWorldOnLastPlayerExit)
 					SaveManager.Instance.SaveWorld();
-				SetConsoleTitle(true);
+				Utils.SetConsoleTitle(true);
 			}
 		}
 
@@ -1428,7 +1340,7 @@ namespace TShockAPI
 
 			if (args.Text.Length > 500)
 			{
-				Utils.Kick(tsplr, "Crash attempt via long chat packet.", true);
+				tsplr.Kick("Crash attempt via long chat packet.", true);
 				args.Handled = true;
 				return;
 			}
@@ -1625,7 +1537,7 @@ namespace TShockAPI
 			if (Config.EnableGeoIP && TShock.Geo != null)
 			{
 				Log.Info("{0} ({1}) from '{2}' group from '{3}' joined. ({4}/{5})", player.Name, player.IP,
-									   player.Group.Name, player.Country, TShock.Utils.ActivePlayers(),
+									   player.Group.Name, player.Country, TShock.Utils.GetActivePlayerCount(),
 									   TShock.Config.MaxSlots);
 				if (!player.SilentJoinInProgress)
 					Utils.Broadcast(string.Format("{0} ({1}) has joined.", player.Name, player.Country), Color.Yellow);
@@ -1633,7 +1545,7 @@ namespace TShockAPI
 			else
 			{
 				Log.Info("{0} ({1}) from '{2}' group joined. ({3}/{4})", player.Name, player.IP,
-									   player.Group.Name, TShock.Utils.ActivePlayers(), TShock.Config.MaxSlots);
+									   player.Group.Name, TShock.Utils.GetActivePlayerCount(), TShock.Config.MaxSlots);
 				if (!player.SilentJoinInProgress)
 					Utils.Broadcast(player.Name + " has joined.", Color.Yellow);
 			}
@@ -1641,7 +1553,7 @@ namespace TShockAPI
 			if (Config.DisplayIPToAdmins)
 				Utils.SendLogs(string.Format("{0} has joined. IP: {1}", player.Name, player.IP), Color.Blue);
 
-			Utils.ShowFileToUser(player, FileTools.MotdPath);
+			player.SendFileTextAsMessage(FileTools.MotdPath);
 
 			string pvpMode = Config.PvPMode.ToLowerInvariant();
 			if (pvpMode == "always")
@@ -1655,8 +1567,8 @@ namespace TShockAPI
 			{
 				if (Main.ServerSideCharacter)
 				{
-					player.SendErrorMessage(
-						player.IgnoreActionsForInventory = String.Format("Server side characters is enabled! Please {0}register or {0}login to play!", Commands.Specifier));
+					player.IsDisabledForSSC = true;
+					player.SendErrorMessage(String.Format("Server side characters is enabled! Please {0}register or {0}login to play!", Commands.Specifier));
 					player.LoginHarassed = true;
 				}
 				else if (Config.RequireLogin)
@@ -1728,459 +1640,6 @@ namespace TShockAPI
 				e.Handled = true;
 		}
 
-
-		/// <summary>StartInvasion - Starts an invasion on the server.</summary>
-		/// <param name="type">type - The invasion type id.</param>
-		//TODO: Why is this in TShock's main class?
-		public static void StartInvasion(int type)
-		{
-			int invasionSize = 0;
-
-			if (Config.InfiniteInvasion)
-			{
-				invasionSize = 20000000;
-			}
-			else
-			{
-				invasionSize = 100 + (Config.InvasionMultiplier * Utils.ActivePlayers());
-			}
-
-			// Note: This is a workaround to previously providing the size as a parameter in StartInvasion
-			Main.invasionSize = invasionSize;
-
-			Main.StartInvasion(type);
-		}
-
-		/// <summary>CheckProjectilePermission - Checks if a projectile is banned.</summary>
-		/// <param name="player">player - The TSPlayer object that created the projectile.</param>
-		/// <param name="index">index - The projectile index.</param>
-		/// <param name="type">type - The projectile type.</param>
-		/// <returns>bool - True if the player does not have permission to use a projectile.</returns>
-		public static bool CheckProjectilePermission(TSPlayer player, int index, int type)
-		{
-			if (type == 43)
-			{
-				return true;
-			}
-
-			if (type == 17 && Itembans.ItemIsBanned("Dirt Rod", player))
-			//Dirt Rod Projectile
-			{
-				return true;
-			}
-
-			if ((type == 42 || type == 65 || type == 68) && Itembans.ItemIsBanned("Sandgun", player)) //Sandgun Projectiles
-			{
-				return true;
-			}
-
-			Projectile proj = new Projectile();
-			proj.SetDefaults(type);
-
-			if (Main.projHostile[type])
-			{
-				//player.SendMessage( proj.name, Color.Yellow);
-				return true;
-			}
-
-			return false;
-		}
-
-		/// <summary>CheckRangePermission - Checks if a player has permission to modify a tile dependent on range checks.</summary>
-		/// <param name="player">player - The TSPlayer object.</param>
-		/// <param name="x">x - The x coordinate of the tile.</param>
-		/// <param name="y">y - The y coordinate of the tile.</param>
-		/// <param name="range">range - The range to check for.</param>
-		/// <returns>bool - True if the player should not be able to place the tile. False if they can, or if range checks are off.</returns>
-		public static bool CheckRangePermission(TSPlayer player, int x, int y, int range = 32)
-		{
-			if (Config.RangeChecks && ((Math.Abs(player.TileX - x) > range) || (Math.Abs(player.TileY - y) > range)))
-			{
-				return true;
-			}
-			return false;
-		}
-
-		/// <summary>CheckTilePermission - Checks to see if a player has permission to modify a tile in general.</summary>
-		/// <param name="player">player - The TSPlayer object.</param>
-		/// <param name="tileX">tileX - The x coordinate of the tile.</param>
-		/// <param name="tileY">tileY - The y coordinate of the tile.</param>
-		/// <param name="tileType">tileType - The tile type.</param>
-		/// <param name="actionType">actionType - The type of edit that took place.</param>
-		/// <returns>bool - True if the player should not be able to modify a tile.</returns>
-		public static bool CheckTilePermission(TSPlayer player, int tileX, int tileY, short tileType, GetDataHandlers.EditAction actionType)
-		{
-			if (!player.HasPermission(Permissions.canbuild))
-			{
-				if (TShock.Config.AllowIce && actionType != GetDataHandlers.EditAction.PlaceTile)
-				{
-					foreach (Point p in player.IceTiles)
-					{
-						if (p.X == tileX && p.Y == tileY && (Main.tile[p.X, p.Y].type == 0 || Main.tile[p.X, p.Y].type == 127))
-						{
-							player.IceTiles.Remove(p);
-							return false;
-						}
-					}
-
-					if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.BPm) > 2000)
-					{
-						player.SendErrorMessage("You do not have permission to build!");
-						player.BPm = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-					}
-					return true;
-				}
-
-				if (TShock.Config.AllowIce && actionType == GetDataHandlers.EditAction.PlaceTile && tileType == 127)
-				{
-					player.IceTiles.Add(new Point(tileX, tileY));
-					return false;
-				}
-
-				if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.BPm) > 2000)
-				{
-					player.SendErrorMessage("You do not have permission to build!");
-					player.BPm = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-				}
-				return true;
-			}
-
-			if (!Regions.CanBuild(tileX, tileY, player))
-			{
-				if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.RPm) > 2000)
-				{
-					player.SendErrorMessage("This region is protected from changes.");
-					player.RPm = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-				}
-				return true;
-			}
-
-			if (Config.DisableBuild)
-			{
-				if (!player.HasPermission(Permissions.antibuild))
-				{
-					if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.WPm) > 2000)
-					{
-						player.SendErrorMessage("The world is protected from changes.");
-						player.WPm = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-					}
-					return true;
-				}
-			}
-
-			if (Config.SpawnProtection)
-			{
-				if (!player.HasPermission(Permissions.editspawn))
-				{
-					if (CheckSpawn(tileX, tileY))
-					{
-						if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.SPm) > 2000)
-						{
-							player.SendErrorMessage("Spawn is protected from changes.");
-							player.SPm = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-						}
-						return true;
-					}
-				}
-			}
-			return false;
-		}
-
-		/// <summary>CheckTilePermission - Checks to see if a player has the ability to modify a tile at a given position.</summary>
-		/// <param name="player">player - The TSPlayer object.</param>
-		/// <param name="tileX">tileX - The x coordinate of the tile.</param>
-		/// <param name="tileY">tileY - The y coordinate of the tile.</param>
-		/// <param name="paint">paint - Whether or not the tile is paint.</param>
-		/// <returns>bool - True if the player should not be able to modify the tile.</returns>
-		public static bool CheckTilePermission(TSPlayer player, int tileX, int tileY, bool paint = false)
-		{
-			if ((!paint && !player.HasPermission(Permissions.canbuild)) ||
-				(paint && !player.HasPermission(Permissions.canpaint)))
-			{
-				if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.BPm) > 2000)
-				{
-					if (paint)
-					{
-						player.SendErrorMessage("You do not have permission to paint!");
-					}
-					else
-					{
-						player.SendErrorMessage("You do not have permission to build!");
-					}
-					player.BPm = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-				}
-				return true;
-			}
-
-			if (!Regions.CanBuild(tileX, tileY, player))
-			{
-				if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.RPm) > 2000)
-				{
-					player.SendErrorMessage("This region is protected from changes.");
-					player.RPm = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-				}
-				return true;
-			}
-
-			if (Config.DisableBuild)
-			{
-				if (!player.HasPermission(Permissions.antibuild))
-				{
-					if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.WPm) > 2000)
-					{
-						player.SendErrorMessage("The world is protected from changes.");
-						player.WPm = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-					}
-					return true;
-				}
-			}
-
-			if (Config.SpawnProtection)
-			{
-				if (!player.HasPermission(Permissions.editspawn))
-				{
-					if (CheckSpawn(tileX, tileY))
-					{
-						if (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.SPm) > 1000)
-						{
-							player.SendErrorMessage("Spawn is protected from changes.");
-							player.SPm = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-						}
-						return true;
-					}
-				}
-			}
-			return false;
-		}
-
-		/// <summary>CheckSpawn - Checks to see if a location is inside the spawn protection zone.</summary>
-		/// <param name="x">x - The x coordinate to check.</param>
-		/// <param name="y">y - The y coordinate to check.</param>
-		/// <returns>bool - True if the location is inside the spawn protection zone.</returns>
-		public static bool CheckSpawn(int x, int y)
-		{
-			Vector2 tile = new Vector2(x, y);
-			Vector2 spawn = new Vector2(Main.spawnTileX, Main.spawnTileY);
-			return Distance(spawn, tile) <= Config.SpawnProtectionRadius;
-		}
-
-		/// <summary>Distance - Determines the distance between two vectors.</summary>
-		/// <param name="value1">value1 - The first vector location.</param>
-		/// <param name="value2">value2 - The second vector location.</param>
-		/// <returns>float - The distance between the two vectors.</returns>
-		public static float Distance(Vector2 value1, Vector2 value2)
-		{
-			float num2 = value1.X - value2.X;
-			float num = value1.Y - value2.Y;
-			float num3 = (num2 * num2) + (num * num);
-			return (float)Math.Sqrt(num3);
-		}
-
-		/// <summary>HackedInventory - Checks to see if a user has a hacked inventory. In addition, messages players the result.</summary>
-		/// <param name="player">player - The TSPlayer object.</param>
-		/// <returns>bool - True if the player has a hacked inventory.</returns>
-		public static bool HackedInventory(TSPlayer player)
-		{
-			bool check = false;
-
-			Item[] inventory = player.TPlayer.inventory;
-			Item[] armor = player.TPlayer.armor;
-			Item[] dye = player.TPlayer.dye;
-			Item[] miscEquips = player.TPlayer.miscEquips;
-			Item[] miscDyes = player.TPlayer.miscDyes;
-			Item[] piggy = player.TPlayer.bank.item;
-			Item[] safe = player.TPlayer.bank2.item;
-			Item[] forge = player.TPlayer.bank3.item;
-			Item trash = player.TPlayer.trashItem;
-			for (int i = 0; i < NetItem.MaxInventory; i++)
-			{
-				if (i < NetItem.InventoryIndex.Item2)
-				{
-					//0-58
-					Item item = new Item();
-					if (inventory[i] != null && inventory[i].netID != 0)
-					{
-						item.netDefaults(inventory[i].netID);
-						item.Prefix(inventory[i].prefix);
-						item.AffixName();
-						if (inventory[i].stack > item.maxStack)
-						{
-							check = true;
-							player.SendMessage(
-								String.Format("Stack cheat detected. Remove item {0} ({1}) and then rejoin", item.Name, inventory[i].stack),
-								Color.Cyan);
-						}
-					}
-				}
-				else if (i < NetItem.ArmorIndex.Item2)
-				{
-					//59-78
-					var index = i - NetItem.ArmorIndex.Item1;
-					Item item = new Item();
-					if (armor[index] != null && armor[index].netID != 0)
-					{
-						item.netDefaults(armor[index].netID);
-						item.Prefix(armor[index].prefix);
-						item.AffixName();
-						if (armor[index].stack > item.maxStack)
-						{
-							check = true;
-							player.SendMessage(
-								String.Format("Stack cheat detected. Remove armor {0} ({1}) and then rejoin", item.Name, armor[index].stack),
-								Color.Cyan);
-						}
-					}
-				}
-				else if (i < NetItem.DyeIndex.Item2)
-				{
-					//79-88
-					var index = i - NetItem.DyeIndex.Item1;
-					Item item = new Item();
-					if (dye[index] != null && dye[index].netID != 0)
-					{
-						item.netDefaults(dye[index].netID);
-						item.Prefix(dye[index].prefix);
-						item.AffixName();
-						if (dye[index].stack > item.maxStack)
-						{
-							check = true;
-							player.SendMessage(
-								String.Format("Stack cheat detected. Remove dye {0} ({1}) and then rejoin", item.Name, dye[index].stack),
-								Color.Cyan);
-						}
-					}
-				}
-				else if (i < NetItem.MiscEquipIndex.Item2)
-				{
-					//89-93
-					var index = i - NetItem.MiscEquipIndex.Item1;
-					Item item = new Item();
-					if (miscEquips[index] != null && miscEquips[index].netID != 0)
-					{
-						item.netDefaults(miscEquips[index].netID);
-						item.Prefix(miscEquips[index].prefix);
-						item.AffixName();
-						if (miscEquips[index].stack > item.maxStack)
-						{
-							check = true;
-							player.SendMessage(
-								String.Format("Stack cheat detected. Remove item {0} ({1}) and then rejoin", item.Name, miscEquips[index].stack),
-								Color.Cyan);
-						}
-					}
-				}
-				else if (i < NetItem.MiscDyeIndex.Item2)
-				{
-					//93-98
-					var index = i - NetItem.MiscDyeIndex.Item1;
-					Item item = new Item();
-					if (miscDyes[index] != null && miscDyes[index].netID != 0)
-					{
-						item.netDefaults(miscDyes[index].netID);
-						item.Prefix(miscDyes[index].prefix);
-						item.AffixName();
-						if (miscDyes[index].stack > item.maxStack)
-						{
-							check = true;
-							player.SendMessage(
-								String.Format("Stack cheat detected. Remove item dye {0} ({1}) and then rejoin", item.Name, miscDyes[index].stack),
-								Color.Cyan);
-						}
-					}
-				}
-				else if (i < NetItem.PiggyIndex.Item2)
-				{
-					//98-138
-					var index = i - NetItem.PiggyIndex.Item1;
-					Item item = new Item();
-					if (piggy[index] != null && piggy[index].netID != 0)
-					{
-						item.netDefaults(piggy[index].netID);
-						item.Prefix(piggy[index].prefix);
-						item.AffixName();
-
-						if (piggy[index].stack > item.maxStack)
-						{
-							check = true;
-							player.SendMessage(
-								String.Format("Stack cheat detected. Remove Piggy-bank item {0} ({1}) and then rejoin", item.Name, piggy[index].stack),
-								Color.Cyan);
-						}
-					}
-				}
-				else if (i < NetItem.SafeIndex.Item2)
-				{
-					//138-178
-					var index = i - NetItem.SafeIndex.Item1;
-					Item item = new Item();
-					if (safe[index] != null && safe[index].netID != 0)
-					{
-						item.netDefaults(safe[index].netID);
-						item.Prefix(safe[index].prefix);
-						item.AffixName();
-
-						if (safe[index].stack > item.maxStack)
-						{
-							check = true;
-							player.SendMessage(
-								String.Format("Stack cheat detected. Remove Safe item {0} ({1}) and then rejoin", item.Name, safe[index].stack),
-								Color.Cyan);
-						}
-					}
-				}
-				else if (i < NetItem.TrashIndex.Item2)
-				{
-					//179-219
-					Item item = new Item();
-					if (trash != null && trash.netID != 0)
-					{
-						item.netDefaults(trash.netID);
-						item.Prefix(trash.prefix);
-						item.AffixName();
-
-						if (trash.stack > item.maxStack)
-						{
-							check = true;
-							player.SendMessage(
-								String.Format("Stack cheat detected. Remove trash item {0} ({1}) and then rejoin", item.Name, trash.stack),
-								Color.Cyan);
-						}
-					}
-				}
-				else
-				{
-					//220
-					var index = i - NetItem.ForgeIndex.Item1;
-					Item item = new Item();
-					if (forge[index] != null && forge[index].netID != 0)
-					{
-						item.netDefaults(forge[index].netID);
-						item.Prefix(forge[index].prefix);
-						item.AffixName();
-
-						if (forge[index].stack > item.maxStack)
-						{
-							check = true;
-							player.SendMessage(
-								String.Format("Stack cheat detected. Remove Defender's Forge item {0} ({1}) and then rejoin", item.Name, forge[index].stack),
-								Color.Cyan);
-						}
-					}
-
-				}
-			}
-
-			return check;
-		}
-
-		/// <summary>CheckIgnores - Checks a players ignores...?</summary>
-		/// <param name="player">player - The TSPlayer object.</param>
-		/// <returns>bool - True if any ignore is not none, false, or login state differs from the required state.</returns>
-		public static bool CheckIgnores(TSPlayer player)
-		{
-			return player.IgnoreActionsForInventory != "none" || player.IgnoreActionsForCheating != "none" || player.IgnoreActionsForDisabledArmor != "none" || player.IgnoreActionsForClearingTrashCan || !player.IsLoggedIn && Config.RequireLogin;
-		}
-
 		/// <summary>OnConfigRead - Fired when the config file has been read.</summary>
 		/// <param name="file">file - The config file object.</param>
 		public void OnConfigRead(ConfigFile file)
@@ -2199,9 +1658,9 @@ namespace TShockAPI
 				Netplay.ListenPort = file.ServerPort;
 			}
 
-			if (file.MaxSlots > 235)
-				file.MaxSlots = 235;
-			Main.maxNetPlayers = file.MaxSlots + 20;
+			if (file.MaxSlots > Main.maxPlayers - file.ReservedSlots)
+				file.MaxSlots = Main.maxPlayers - file.ReservedSlots;
+			Main.maxNetPlayers = file.MaxSlots + file.ReservedSlots;
 
 			Netplay.ServerPassword = "";
 			if (!string.IsNullOrEmpty(_cliPassword))

@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2017 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2019 Pryaxis & TShock Contributors
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ namespace TShockAPI.DB
 		/// <param name="x">The X position.</param>
 		/// <param name="y">The Y position.</param>
 		/// <param name="name">The name.</param>
-		/// <returns>Whether the opration succeeded.</returns>
+		/// <returns>Whether the operation succeeded.</returns>
 		public bool Add(int x, int y, string name)
 		{
 			try

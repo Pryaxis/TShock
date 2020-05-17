@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2017 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2019 Pryaxis & TShock Contributors
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -131,7 +131,7 @@ namespace Rests
 				tokenBucket.Add(context.RemoteEndPoint.Address.ToString(), 1); // First time request, set to one and process request
 			}
 
-			User userAccount = TShock.Users.GetUserByName(username);
+			UserAccount userAccount = TShock.UserAccounts.GetUserAccountByName(username);
 			if (userAccount == null)
 			{
 				AddTokenToBucket(context.RemoteEndPoint.Address.ToString());
@@ -144,7 +144,7 @@ namespace Rests
 				return new RestObject("403") { Error = "Username or password may be incorrect or this account may not have sufficient privileges." };
 			}
 
-			Group userGroup = TShock.Utils.GetGroup(userAccount.Group);
+			Group userGroup = TShock.Groups.GetGroupByName(userAccount.Group);
 			if (!userGroup.HasPermission(RestPermissions.restapi) && userAccount.Group != "superadmin")
 			{
 				AddTokenToBucket(context.RemoteEndPoint.Address.ToString());

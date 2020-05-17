@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Get help with TShock
+    url: https://github.com/Pryaxis/TShock/discussions/new
+    about: If you aren't sure if you have a bug, or if you're having any problems with TShock, post a question here.
+  - name: Chat with people on Discord
+    url: https://discord.gg/Cav9nYX
+    about: If you wanna chill or brainstorm, here's the place to do that.
+  - name: Don't talk about TShock
+    url: https://t.me/refugeecamp
+    about: Where the TShock developers chat about nothing related to TShock.
+  - name: 在QQ群提问
+    url: https://jq.qq.com/?_wv=1027&k=5GJZCe4
+    about: 如果你不会英语或想使用中文进行交流，可以加入我们的官方QQ群

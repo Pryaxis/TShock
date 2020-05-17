@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2017 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2019 Pryaxis & TShock Contributors
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using MySql.Data.MySqlClient;
+using TShockAPI.Hooks;
 
 namespace TShockAPI.DB
 {
@@ -199,6 +200,10 @@ namespace TShockAPI.DB
 
 			if (ply.HasPermission(Permissions.usebanneditem))
 				return true;
+
+			PermissionHookResult hookResult = PlayerHooks.OnPlayerItembanPermission(ply, this);
+			if (hookResult != PermissionHookResult.Unhandled)
+				return hookResult == PermissionHookResult.Granted;
 
 			var cur = ply.Group;
 			var traversed = new List<Group>();

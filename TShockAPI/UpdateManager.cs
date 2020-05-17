@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2017 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2019 Pryaxis & TShock Contributors
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ namespace TShockAPI
 	/// </summary>
 	public class UpdateManager
 	{
-		private const string UpdateUrl = "http://update.tshock.co/latest/";
+		private const string UpdateUrl = "https://update.tshock.co/latest/";
 		private HttpClient _client = new HttpClient();
 
 		/// <summary>

@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2017 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2019 Pryaxis & TShock Contributors
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -250,30 +250,6 @@ namespace Rests
 			}
 		}
 
-		#region Event
-		[Obsolete("This class will be removed in the next release")]
-		public class RestRequestEventArgs : HandledEventArgs
-		{
-			public RequestEventArgs Request { get; set; }
-		}
-
-		[Obsolete("This method will be removed in the next release")]
-		public static HandlerList<RestRequestEventArgs> RestRequestEvent;
-
-		private static bool OnRestRequestCall(RequestEventArgs request)
-		{
-			if (RestRequestEvent == null)
-				return false;
-
-			var args = new RestRequestEventArgs
-			{
-				Request = request,
-			};
-			RestRequestEvent.Invoke(null, args);
-			return args.Handled;
-		}
-		#endregion
-
 		/// <summary>
 		/// Called when the <see cref="HttpListener"/> receives a request
 		/// </summary>
@@ -284,9 +260,6 @@ namespace Rests
 			var obj = ProcessRequest(sender, e);
 			if (obj == null)
 				throw new NullReferenceException("obj");
-
-			if (OnRestRequestCall(e))
-				return;
 
 			var str = JsonConvert.SerializeObject(obj, Formatting.Indented);
 			var jsonp = e.Request.Parameters["jsonp"];

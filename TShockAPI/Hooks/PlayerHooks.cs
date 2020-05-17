@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2017 Nyx Studios (fka. The TShock Team)
+Copyright (C) 2011-2019 Pryaxis & TShock Contributors
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
 using System.ComponentModel;
+using TShockAPI.DB;
 
 namespace TShockAPI.Hooks
 {
@@ -142,7 +143,7 @@ namespace TShockAPI.Hooks
 	/// <summary>
 	/// EventArgs used for the <see cref="PlayerHooks.PlayerPermission"/> event.
 	/// </summary>
-	public class PlayerPermissionEventArgs : HandledEventArgs
+	public class PlayerPermissionEventArgs
 	{
 		/// <summary>
 		/// The player who fired the event.
@@ -155,6 +156,11 @@ namespace TShockAPI.Hooks
 		public string Permission { get; set; }
 
 		/// <summary>
+		/// <see cref="PermissionHookResult"/> of the hook.
+		/// </summary>
+		public PermissionHookResult Result { get; set; }
+
+		/// <summary>
 		/// Initializes a new instance of the PlayerPermissionEventArgs class.
 		/// </summary>
 		/// <param name="player">The player who fired the event.</param>
@@ -163,6 +169,106 @@ namespace TShockAPI.Hooks
 		{
 			Player = player;
 			Permission = permission;
+			Result = PermissionHookResult.Unhandled;
+		}
+	}
+
+	/// <summary>
+	/// EventArgs used for the <see cref="PlayerHooks.PlayerItembanPermission"/> event.
+	/// </summary>
+	public class PlayerItembanPermissionEventArgs
+	{
+		/// <summary>
+		/// The player who fired the event.
+		/// </summary>
+		public TSPlayer Player { get; set; }
+
+		/// <summary>
+		/// The banned item being checked.
+		/// </summary>
+		public ItemBan BannedItem { get; set; }
+
+		/// <summary>
+		/// <see cref="PermissionHookResult"/> of the hook.
+		/// </summary>
+		public PermissionHookResult Result { get; set; }
+
+		/// <summary>
+		/// Initializes a new instance of the PlayerItembanPermissionEventArgs class.
+		/// </summary>
+		/// <param name="player">The player who fired the event.</param>
+		/// <param name="bannedItem">The banned item being checked.</param>
+		public PlayerItembanPermissionEventArgs(TSPlayer player, ItemBan bannedItem)
+		{
+			Player = player;
+			BannedItem = bannedItem;
+			Result = PermissionHookResult.Unhandled;
+		}
+	}
+
+	/// <summary>
+	/// EventArgs used for the <see cref="PlayerHooks.PlayerProjbanPermission"/> event.
+	/// </summary>
+	public class PlayerProjbanPermissionEventArgs
+	{
+		/// <summary>
+		/// The player who fired the event.
+		/// </summary>
+		public TSPlayer Player { get; set; }
+
+		/// <summary>
+		/// The banned projectile being checked.
+		/// </summary>
+		public ProjectileBan BannedProjectile { get; set; }
+
+		/// <summary>
+		/// <see cref="PermissionHookResult"/> of the hook.
+		/// </summary>
+		public PermissionHookResult Result { get; set; }
+
+		/// <summary>
+		/// Initializes a new instance of the PlayerProjbanPermissionEventArgs class.
+		/// </summary>
+		/// <param name="player">The player who fired the event.</param>
+		/// <param name="checkedProjectile">The banned projectile being checked.</param>
+		public PlayerProjbanPermissionEventArgs(TSPlayer player, ProjectileBan checkedProjectile)
+		{
+			Player = player;
+			BannedProjectile = checkedProjectile;
+			Result = PermissionHookResult.Unhandled;
+		}
+	}
+
+	/// <summary>
+	/// EventArgs used for the <see cref="PlayerHooks.PlayerTilebanPermission"/> event.
+	/// </summary>
+	public class PlayerTilebanPermissionEventArgs
+	{
+		/// <summary>
+		/// The player who fired the event.
+		/// </summary>
+		public TSPlayer Player { get; set; }
+
+		/// <summary>
+		/// The banned tile being checked.
+		/// </summary>
+		public TileBan BannedTile { get; set; }
+
+		/// <summary>
+		/// <see cref="PermissionHookResult"/> of the hook.
+		/// </summary>
+		public PermissionHookResult Result { get; set; }
+
+		/// <summary>
+		/// Initializes a new instance of the PlayerTilebanPermissionEventArgs class.
+		/// </summary>
+		/// <param name="player">The player who fired the event.</param>
+		/// <param name="checkedTile">The banned tile being checked.</param>
+		public PlayerTilebanPermissionEventArgs(TSPlayer player, TileBan checkedTile)
+		{
+			Player = player;
+			BannedTile = checkedTile;
+			Result = PermissionHookResult.Unhandled;
 		}
 	}
 
@@ -231,6 +337,37 @@ namespace TShockAPI.Hooks
 		/// Fired by players every time a permission check involving them occurs.
 		/// </summary>
 		public static event PlayerPermissionD PlayerPermission;
+
+		/// <summary>
+		/// The delegate of the <see cref="PlayerItembanPermission"/> event.
+		/// </summary>
+		/// <param name="e">The EventArgs for this event.</param>
+		public delegate void PlayerItembanPermissionD(PlayerItembanPermissionEventArgs e);
+		/// <summary>
+		/// Fired by players every time a permission check on banned items involving them occurs.
+		/// </summary>
+		public static event PlayerItembanPermissionD PlayerItembanPermission;
+
+		/// <summary>
+		/// The delegate of the <see cref="PlayerProjbanPermission"/> event.
+		/// </summary>
+		/// <param name="e">The EventArgs for this event.</param>
+		public delegate void PlayerProjbanPermissionD(PlayerProjbanPermissionEventArgs e);
+		/// <summary>
+		/// Fired by players every time a permission check on banned projectiles involving them occurs.
+		/// </summary>
+		public static event PlayerProjbanPermissionD PlayerProjbanPermission;
+
+		/// <summary>
+		/// The delegate of the <see cref="PlayerTilebanPermission"/> event.
+		/// </summary>
+		/// <param name="e">The EventArgs for this event.</param>
+		public delegate void PlayerTilebanPermissionD(PlayerTilebanPermissionEventArgs e);
+		/// <summary>
+		/// Fired by players every time a permission check on banned tiles involving them occurs.
+		/// </summary>
+		public static event PlayerTilebanPermissionD PlayerTilebanPermission;
+
 
 		/// <summary>
 		/// Fires the <see cref="PlayerPostLogin"/> event.
@@ -326,15 +463,79 @@ namespace TShockAPI.Hooks
 		/// Fires the <see cref="PlayerPermission"/> event.
 		/// </summary>
 		/// <param name="player">The player firing the event.</param>
-		/// <returns>True if the event has been handled.</returns>
-		public static bool OnPlayerPermission(TSPlayer player, string permission)
+		/// <returns>Event result if the event has been handled, otherwise <see cref="PermissionHookResult.Unhandled"/>.</returns>
+		public static PermissionHookResult OnPlayerPermission(TSPlayer player, string permission)
 		{
 			if (PlayerPermission == null)
-				return false;
+				return PermissionHookResult.Unhandled;
 
 			var args = new PlayerPermissionEventArgs(player, permission);
 			PlayerPermission(args);
-			return args.Handled;
+
+			return args.Result;
 		}
+
+		/// <summary>
+		/// Fires the <see cref="PlayerItembanPermission"/> event.
+		/// </summary>
+		/// <param name="player">The player firing the event.</param>
+		/// <returns>Event result if the event has been handled, otherwise <see cref="PermissionHookResult.Unhandled"/>.</returns>
+		public static PermissionHookResult OnPlayerItembanPermission(TSPlayer player, ItemBan bannedItem)
+		{
+			if (PlayerItembanPermission == null)
+				return PermissionHookResult.Unhandled;
+
+			var args = new PlayerItembanPermissionEventArgs(player, bannedItem);
+			PlayerItembanPermission(args);
+
+			return args.Result;
+		}
+
+		/// <summary>
+		/// Fires the <see cref="PlayerProjbanPermission"/> event.
+		/// </summary>
+		/// <param name="player">The player firing the event.</param>
+		/// <returns>Event result if the event has been handled, otherwise <see cref="PermissionHookResult.Unhandled"/>.</returns>
+		public static PermissionHookResult OnPlayerProjbanPermission(TSPlayer player, ProjectileBan bannedProj)
+		{
+			if (PlayerProjbanPermission == null)
+				return PermissionHookResult.Unhandled;
+
+			var args = new PlayerProjbanPermissionEventArgs(player, bannedProj);
+			PlayerProjbanPermission(args);
+
+			return args.Result;
+		}
+
+		/// <summary>
+		/// Fires the <see cref="PlayerTilebanPermission"/> event.
+		/// </summary>
+		/// <param name="player">The player firing the event.</param>
+		/// <returns>Event result if the event has been handled, otherwise <see cref="PermissionHookResult.Unhandled"/>.</returns>
+		public static PermissionHookResult OnPlayerTilebanPermission(TSPlayer player, TileBan bannedTile)
+		{
+			if (PlayerTilebanPermission == null)
+				return PermissionHookResult.Unhandled;
+
+			var args = new PlayerTilebanPermissionEventArgs(player, bannedTile);
+			PlayerTilebanPermission(args);
+
+			return args.Result;
+		}
+
 	}
+
+	/// <summary>
+	/// Defines the possible outcomes of <see cref="PlayerHooks.PlayerPermission"/> handlers.
+	/// </summary>
+	public enum PermissionHookResult
+	{
+		/// <summary>Hook doesn't return a result on the permission check.</summary>
+		Unhandled,
+		/// <summary>Permission is explicitly denied by a hook.</summary>
+		Denied,
+		/// <summary>Permission is explicitly granted by a hook.</summary>
+		Granted
+	}
+
 }
