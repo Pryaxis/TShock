@@ -36,6 +36,7 @@ using Microsoft.Xna.Framework;
 using OTAPI.Tile;
 using TShockAPI.Localization;
 using System.Text.RegularExpressions;
+using Terraria.DataStructures;
 
 namespace TShockAPI
 {
@@ -2144,12 +2145,10 @@ namespace TShockAPI
 
 		private static void ToggleExpert(CommandArgs args)
 		{
-			const int NormalMode = 0;
-			const int ExpertMode = 1;
-			if (Main.GameMode != ExpertMode)
-				Main.GameMode = ExpertMode;
-			else if (Main.GameMode == ExpertMode)
-				Main.GameMode = NormalMode;
+			if (Main.GameMode != GameModeID.Expert)
+				Main.GameMode = GameModeID.Expert;
+			else if (Main.GameMode == GameModeID.Expert)
+				Main.GameMode = GameModeID.Normal;
 			TSPlayer.All.SendData(PacketTypes.WorldInfo);
 			args.Player.SendSuccessMessage("Expert mode is now {0}.", Main.expertMode ? "on" : "off");
 		}
