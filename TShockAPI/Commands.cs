@@ -2145,10 +2145,13 @@ namespace TShockAPI
 
 		private static void ToggleExpert(CommandArgs args)
 		{
-			if (Main.GameMode != GameModeID.Expert)
-				Main.GameMode = GameModeID.Expert;
-			else if (Main.GameMode == GameModeID.Expert)
-				Main.GameMode = GameModeID.Normal;
+			const int NormalMode = 0;
+			const int ExpertMode = 1;
+			if (Main.GameMode != ExpertMode)
+				Main.GameMode = ExpertMode;
+			else if (Main.GameMode == ExpertMode)
+				Main.GameMode = NormalMode;
+
 			TSPlayer.All.SendData(PacketTypes.WorldInfo);
 			args.Player.SendSuccessMessage("Expert mode is now {0}.", Main.expertMode ? "on" : "off");
 		}
