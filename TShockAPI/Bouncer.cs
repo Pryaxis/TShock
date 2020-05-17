@@ -183,6 +183,7 @@ namespace TShockAPI
 		/// <param name="args">The packet arguments that the event has.</param>
 		internal void OnTileEdit(object sender, GetDataHandlers.TileEditEventArgs args)
 		{
+			// TODO: Add checks on the new edit actions. ReplaceTile, ReplaceWall, TryKillTile, Acutate, PokeLogicGate, SlopePoundTile
 			EditAction action = args.Action;
 			int tileX = args.X;
 			int tileY = args.Y;

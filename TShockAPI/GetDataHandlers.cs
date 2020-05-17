@@ -2249,17 +2249,17 @@ namespace TShockAPI
 		private static bool HandleTile(GetDataHandlerArgs args)
 		{
 			EditAction action = (EditAction)args.Data.ReadInt8();
-			var tileX = args.Data.ReadInt16();
-			var tileY = args.Data.ReadInt16();
-			var editData = args.Data.ReadInt16();
+			short tileX = args.Data.ReadInt16();
+			short tileY = args.Data.ReadInt16();
+			short editData = args.Data.ReadInt16();
 			EditType type = (action == EditAction.KillTile || action == EditAction.KillWall ||
-			                 action == EditAction.KillTileNoItem)
+			                 action == EditAction.KillTileNoItem || action == EditAction.TryKillTile)
 				? EditType.Fail
-				: (action == EditAction.PlaceTile || action == EditAction.PlaceWall)
+				: (action == EditAction.PlaceTile || action == EditAction.PlaceWall || action == EditAction.ReplaceTile || action == EditAction.ReplaceWall)
 					? EditType.Type
 					: EditType.Slope;
 
-			var style = args.Data.ReadInt8();
+			byte style = args.Data.ReadInt8();
 
 			if (OnTileEdit(args.Player, args.Data, tileX, tileY, action, type, editData, style))
 				return true;
@@ -3406,7 +3406,13 @@ namespace TShockAPI
 			SlopeTile,
 			FrameTrack,
 			PlaceWire4,
-			KillWire4
+			KillWire4,
+			PokeLogicGate,
+			Acutate,
+			TryKillTile,
+			ReplaceTile,
+			ReplaceWall,
+			SlopePoundTile
 		}
 		public enum EditType
 		{
@@ -3414,7 +3420,6 @@ namespace TShockAPI
 			Type,
 			Slope,
 		}
-
 		/// <summary>
 		/// The maximum place styles for each tile.
 		/// </summary>
