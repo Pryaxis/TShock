@@ -29,7 +29,7 @@ namespace TShockAPI
 	{
 		// Singleton
 		private static readonly SaveManager instance = new SaveManager();
-		private SaveManager() 
+		private SaveManager()
 		{
 			_saveThread = new Thread(SaveWorker);
 			_saveThread.Name = "TShock SaveManager Worker";
@@ -126,10 +126,10 @@ namespace TShockAPI
 								if (task.direct)
 								{
 									OnSaveWorld(new WorldSaveEventArgs());
-									WorldFile.saveWorld(task.resetTime);
+									WorldFile.SaveWorld(task.resetTime);
 								}
 								else
-									WorldFile.saveWorld(task.resetTime);
+									WorldFile.SaveWorld(task.resetTime);
 									TShock.Utils.Broadcast("World saved.", Color.Yellow);
 									TShock.Log.Info(string.Format("World saved at ({0})", Main.worldPathName));
 							}
@@ -154,7 +154,7 @@ namespace TShockAPI
 				this.resetTime = resetTime;
 				this.direct = direct;
 			}
-		
+
 			public override string ToString()
 			{
 				return string.Format("resetTime {0}, direct {1}", resetTime, direct);

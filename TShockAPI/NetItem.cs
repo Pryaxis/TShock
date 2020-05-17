@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-﻿using System;
+ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -45,6 +45,11 @@ namespace TShockAPI
 		/// 40 - The number of slots in a forge
 		/// </summary>
 		public static readonly int ForgeSlots = SafeSlots;
+
+		/// <summary>
+		/// 40 - The number of slots in a void vault
+		/// </summary>
+		public static readonly int VoidSlots = ForgeSlots;
 
 		/// <summary>
 		/// 59 - The size of the player's inventory (inventory, coins, ammo, held item)
@@ -79,7 +84,7 @@ namespace TShockAPI
 		/// <summary>
 		/// 180 - The inventory size (inventory, held item, armour, dies, coins, ammo, piggy, safe, and trash)
 		/// </summary>
-		public static readonly int MaxInventory = InventorySlots + ArmorSlots + DyeSlots + MiscEquipSlots + MiscDyeSlots + PiggySlots + SafeSlots + ForgeSlots + 1;
+		public static readonly int MaxInventory = InventorySlots + ArmorSlots + DyeSlots + MiscEquipSlots + MiscDyeSlots + PiggySlots + SafeSlots + ForgeSlots + VoidSlots + 1;
 
 		public static readonly Tuple<int, int> InventoryIndex = new Tuple<int, int>(0, InventorySlots);
 		public static readonly Tuple<int, int> ArmorIndex = new Tuple<int, int>(InventoryIndex.Item2, InventoryIndex.Item2 + ArmorSlots);
@@ -90,6 +95,7 @@ namespace TShockAPI
 		public static readonly Tuple<int, int> SafeIndex = new Tuple<int, int>(PiggyIndex.Item2, PiggyIndex.Item2 + SafeSlots);
 		public static readonly Tuple<int, int> TrashIndex = new Tuple<int, int>(SafeIndex.Item2, SafeIndex.Item2 + TrashSlots);
 		public static readonly Tuple<int, int> ForgeIndex = new Tuple<int, int>(TrashIndex.Item2, TrashIndex.Item2 + ForgeSlots);
+		public static readonly Tuple<int, int> VoidIndex = new Tuple<int, int>(ForgeIndex.Item2, ForgeIndex.Item2 + VoidSlots);
 
 		[JsonProperty("netID")]
 		private int _netId;

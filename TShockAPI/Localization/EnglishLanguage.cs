@@ -39,13 +39,13 @@ namespace TShockAPI.Localization
 		{
 			var culture = Language.ActiveCulture;
 
-			var skip = culture == GameCulture.English;
+			var skip = culture == GameCulture.FromCultureName(GameCulture.CultureName.English);
 
 			try
 			{
 				if (!skip)
 				{
-					LanguageManager.Instance.SetLanguage(GameCulture.English);
+					LanguageManager.Instance.SetLanguage(GameCulture.FromCultureName(GameCulture.CultureName.English));
 				}
 
 				for (var i = -48; i < Main.maxItemTypes; i++)
