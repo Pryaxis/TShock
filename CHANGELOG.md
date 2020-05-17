@@ -3,6 +3,10 @@
 This is the rolling changelog for TShock for Terraria. Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
 
 ## Upcoming Changes
+* Compatibility with Terraria 1.4.0.2 (@AxeelAnder, @Patrikkk)
+* Multiple fields got slightly renamed. 
+* Modifying ToggleExpert command. Main.expertMode is no longer settable. Using a Main.GameMode int property comparsion.
+* GameCulture no longer has static fields to get local language. Using methods to return/compare language.
 
 ## TShock 4.3.26
 * Removed the stat tracking system. (@hakusaro)
