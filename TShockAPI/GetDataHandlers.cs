@@ -2296,23 +2296,21 @@ namespace TShockAPI
 		private static bool HandleProjectileNew(GetDataHandlerArgs args)
 		{
 			short ident = args.Data.ReadInt16();
-			var pos = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
-			var vel = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
-			float knockback = args.Data.ReadSingle();
-			short dmg = args.Data.ReadInt16();
+			Vector2 pos = args.Data.ReadVector2();
+			Vector2 vel = args.Data.ReadVector2();
 			byte owner = args.Data.ReadInt8();
 			short type = args.Data.ReadInt16();
-			BitsByte bits = args.Data.ReadInt8();
-			//owner = (byte)args.Player.Index;
+			BitsByte bits = (BitsByte)args.Data.ReadByte();
 			float[] ai = new float[Projectile.maxAI];
+			for (int i = 0; i < Projectile.maxAI; ++i)
+				ai[i] = !bits[i] ? 0.0f : args.Data.ReadSingle();
+			short dmg = bits[4] ? args.Data.ReadInt16() : (short)0;
+			float knockback = bits[5] ? args.Data.ReadSingle() : 0.0f;
+			short origDmg = bits[6] ? args.Data.ReadInt16() : (short)0;
+			short projUUID = bits[7] ? args.Data.ReadInt16() : (short)-1;
+			if (projUUID >= 1000)
+				projUUID = -1;
 
-			for (int i = 0; i < Projectile.maxAI; i++)
-			{
-				if (bits[i])
-					ai[i] = args.Data.ReadSingle();
-				else
-					ai[i] = 0f;
-			}
 
 			var index = TShock.Utils.SearchProjectile(ident, owner);
 
