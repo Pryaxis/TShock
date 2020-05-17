@@ -1110,7 +1110,7 @@ namespace TShockAPI
 		/// <returns>True if allowed, otherwise false</returns>
 		private bool OnCreep(int tileType)
 		{
-			if (!Config.AllowCrimsonCreep && (tileType == TileID.Dirt || tileType == TileID.FleshWeeds
+			if (!Config.AllowCrimsonCreep && (tileType == TileID.Dirt || tileType == TileID.CrimsonGrass
 				|| TileID.Sets.Crimson[tileType]))
 			{
 				return false;
@@ -1669,7 +1669,7 @@ namespace TShockAPI
 				file.ServerPassword = _cliPassword;
 			}
 
-			Netplay.spamCheck = false;
+			Netplay.SpamCheck = false;
 		}
 	}
 }

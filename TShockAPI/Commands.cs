@@ -1317,7 +1317,7 @@ namespace TShockAPI
 							args.Player.SendMultipleMatchError(players.Select(p => p.Name));
 							return;
 						}
-						
+
 						UserAccount offlineUserAccount = TShock.UserAccounts.GetUserAccountByName(args.Parameters[1]);
 
 						// Storage variable to determine if the command executor is the server console
@@ -1338,8 +1338,8 @@ namespace TShockAPI
 							if (args.Parameters[2] != "0")
 							{
 								parsedOkay = TShock.Utils.TryParseTime(args.Parameters[2], out banLengthInSeconds);
-							} 
-							else 
+							}
+							else
 							{
 								parsedOkay = true;
 							}
@@ -1409,8 +1409,8 @@ namespace TShockAPI
 									args.Player.SendErrorMessage("Note: An account named with this IP address also exists.");
 									args.Player.SendErrorMessage("Note: It will also be banned.");
 								}
-							} 
-							else 
+							}
+							else
 							{
 								// Apparently there is no way to not IP ban someone
 								// This means that where we would normally just ban a "character name" here
@@ -1435,7 +1435,7 @@ namespace TShockAPI
 							// This needs to be fixed in a future implementation.
 							targetGeneralizedName = offlineUserAccount.Name;
 
-							if (TShock.Groups.GetGroupByName(offlineUserAccount.Group).HasPermission(Permissions.immunetoban) && 
+							if (TShock.Groups.GetGroupByName(offlineUserAccount.Group).HasPermission(Permissions.immunetoban) &&
 								!callerIsServerConsole)
 							{
 								args.Player.SendErrorMessage("Permission denied. Target {0} is immune to ban.", targetGeneralizedName);
@@ -1450,7 +1450,7 @@ namespace TShockAPI
 
 							string lastIP = JsonConvert.DeserializeObject<List<string>>(offlineUserAccount.KnownIps).Last();
 
-							success = 
+							success =
 								TShock.Bans.AddBan(lastIP,
 									"", offlineUserAccount.UUID, offlineUserAccount.Name, banReason, false, args.Player.Account.Name,
 									banLengthInSeconds == 0 ? "" : DateTime.UtcNow.AddSeconds(banLengthInSeconds).ToString("s"));
@@ -2144,7 +2144,12 @@ namespace TShockAPI
 
 		private static void ToggleExpert(CommandArgs args)
 		{
-			Main.expertMode = !Main.expertMode;
+			const int NormalMode = 0;
+			const int ExpertMode = 1;
+			if (Main.GameMode != ExpertMode)
+				Main.GameMode = ExpertMode;
+			else if (Main.GameMode == ExpertMode)
+				Main.GameMode = NormalMode;
 			TSPlayer.All.SendData(PacketTypes.WorldInfo);
 			args.Player.SendSuccessMessage("Expert mode is now {0}.", Main.expertMode ? "on" : "off");
 		}
@@ -2274,7 +2279,7 @@ namespace TShockAPI
 					return;
 				case "wof":
 				case "wall of flesh":
-					if (Main.wof >= 0)
+					if (Main.wofNPCIndex != -1)
 					{
 						args.Player.SendErrorMessage("There is already a Wall of Flesh!");
 						return;
@@ -2347,7 +2352,7 @@ namespace TShockAPI
 				}
 				else if (npc.type == 113)
 				{
-					if (Main.wof >= 0 || (args.Player.Y / 16f < (Main.maxTilesY - 205)))
+					if (Main.wofNPCIndex != -1 || (args.Player.Y / 16f < (Main.maxTilesY - 205)))
 					{
 						args.Player.SendErrorMessage("Can't spawn Wall of Flesh!");
 						return;
@@ -4148,9 +4153,8 @@ namespace TShockAPI
 				return;
 			}
 
-			Main.windSpeed = speed;
-			Main.windSpeedSet = speed;
-			Main.windSpeedSpeed = 0f;
+			Main.windSpeedCurrent = speed;
+			Main.windSpeedTarget = 0f;
 			TSPlayer.All.SendData(PacketTypes.WorldInfo);
 			TSPlayer.All.SendInfoMessage("{0} changed the wind speed to {1}.", args.Player.Name, speed);
 		}
@@ -4651,7 +4655,7 @@ namespace TShockAPI
 								args.Player.SendErrorMessage("Region \"{0}\" already exists.", newName);
 								break;
 							}
-							
+
 							if(TShock.Regions.RenameRegion(oldName, newName))
 							{
 								args.Player.SendInfoMessage("Region renamed successfully!");

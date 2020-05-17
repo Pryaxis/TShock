@@ -1,4 +1,4 @@
-/*
+﻿/*
 TShock, a server mod for Terraria
 Copyright (C) 2011-2019 Pryaxis & TShock Contributors
 
@@ -185,7 +185,7 @@ namespace TShockAPI.Sockets
 
 		private void ListenLoop(object unused)
 		{
-			while (this._isListening && !Netplay.disconnect)
+			while (this._isListening && !Netplay.Disconnect)
 			{
 				try
 				{
