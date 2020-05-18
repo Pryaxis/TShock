@@ -2821,6 +2821,9 @@ namespace TShockAPI
 			return false;
 		}
 
+		private static readonly int[] invasions = { -1, -2, -3, -4, -5, -6, -7, -8, -10, -11 };
+		private static readonly int[] pets = { -12, -13, -14 };
+		private static readonly int[] bosses = { 4, 13, 50, 125, 126, 134, 127, 128, 131, 129, 130, 222, 245, 266, 370, 657 };
 		private static bool HandleSpawnBoss(GetDataHandlerArgs args)
 		{
 			if (args.Player.IsBouncerThrottled())
@@ -2828,104 +2831,67 @@ namespace TShockAPI
 				return true;
 			}
 
-			var spawnboss = false;
-			var invasion = false;
 			var plr = args.Data.ReadInt16();
-			var Type = args.Data.ReadInt16();
+			var thingType = args.Data.ReadInt16();
 			NPC npc = new NPC();
-			npc.SetDefaults(Type);
-			spawnboss = npc.boss;
-			if (!spawnboss)
-			{
-				switch (Type)
-				{
-					case -1:
-					case -2:
-					case -3:
-					case -4:
-					case -5:
-					case -6:
-					case -7:
-					case -8:
-						invasion = true;
-						break;
-					case 4:
-					case 13:
-					case 50:
-					case 75:
-					case 125:
-					case 126:
-					case 127:
-					case 128:
-					case 129:
-					case 130:
-					case 131:
-					case 134:
-					case 222:
-					case 245:
-					case 266:
-					case 370:
-					case 398:
-					case 422:
-					case 439:
-					case 493:
-					case 507:
-					case 517:
-						spawnboss = true;
-						break;
-				}
-			}
-			if (spawnboss && !args.Player.HasPermission(Permissions.summonboss))
+			npc.SetDefaults(thingType);
+
+			if (bosses.Contains(thingType) && !args.Player.HasPermission(Permissions.summonboss))
 			{
 				args.Player.SendErrorMessage("You don't have permission to summon a boss.");
 				return true;
 			}
-			if (invasion && !args.Player.HasPermission(Permissions.startinvasion))
+
+			if (invasions.Contains(thingType) && !args.Player.HasPermission(Permissions.startinvasion))
 			{
 				args.Player.SendErrorMessage("You don't have permission to start an invasion.");
 				return true;
 			}
-			if (!spawnboss && !invasion)
+
+			if (pets.Contains(thingType) && !args.Player.HasPermission(Permissions.spawnpets))
+			{
+				args.Player.SendErrorMessage("You don't have permission to spawn pets.");
 				return true;
+			}
 
 			if (plr != args.Player.Index)
 				return true;
 
-			string boss;
-			switch (Type)
+			string thing;
+			switch (thingType)
 			{
 				case -8:
-					boss = "a Moon Lord";
+					thing = "a Moon Lord";
 					break;
 				case -7:
-					boss = "a Martian invasion";
+					thing = "a Martian invasion";
 					break;
 				case -6:
-					boss = "an eclipse";
+					thing = "an eclipse";
 					break;
 				case -5:
-					boss = "a frost moon";
+					thing = "a frost moon";
 					break;
 				case -4:
-					boss = "a pumpkin moon";
+					thing = "a pumpkin moon";
 					break;
 				case -3:
-					boss = "the Pirates";
+					thing = "the Pirates";
 					break;
 				case -2:
-					boss = "the Snow Legion";
+					thing = "the Snow Legion";
 					break;
 				case -1:
-					boss = "a Goblin Invasion";
+					thing = "a Goblin Invasion";
 					break;
 				default:
-					boss = String.Format("the {0}", npc.FullName);
+					thing = String.Format("the {0}", npc.FullName);
 					break;
 			}
 			if (TShock.Config.AnonymousBossInvasions)
-				TShock.Utils.SendLogs(string.Format("{0} summoned {1}!", args.Player.Name, boss), Color.PaleVioletRed, args.Player);
+				TShock.Utils.SendLogs(string.Format("{0} summoned {1}!", args.Player.Name, thing), Color.PaleVioletRed, args.Player);
 			else
-				TShock.Utils.Broadcast(String.Format("{0} summoned {1}!", args.Player.Name, boss), 175, 75, 255);
+				TShock.Utils.Broadcast(String.Format("{0} summoned {1}!", args.Player.Name, thing), 175, 75, 255);
 			return false;
 		}
 

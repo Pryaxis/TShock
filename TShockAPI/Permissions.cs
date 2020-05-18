@@ -189,7 +189,7 @@ namespace TShockAPI
 		[Description("User can edit the spawnrate.")]
 		public static readonly string spawnrate = "tshock.npc.spawnrate";
 
-		[Description("User can start an invasion.")]
+		[Description("User can start an invasion. Warning: high network use. Easy to abuse.")]
 		public static readonly string invade = "tshock.npc.invade";
 
 		[Description("User can hurt town NPCs.")]
@@ -197,6 +197,9 @@ namespace TShockAPI
 
 		[Description("User can spawn bosses.")]
 		public static readonly string spawnboss = "tshock.npc.spawnboss";
+
+		[Description("User can spawn pets. Warning: high network use. Easy to abuse.")]
+		public static readonly string spawnpets = "tshock.npc.spawnpets";
 
 		[Description("User can rename NPCs.")]
 		public static readonly string renamenpc = "tshock.npc.rename";

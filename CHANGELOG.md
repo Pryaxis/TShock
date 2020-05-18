@@ -104,6 +104,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * Multiple fields got slightly renamed.
   * Modifying ToggleExpert command. Main.expertMode is no longer settable. Using a Main.GameMode int property comparsion.
   * GameCulture no longer has static fields to get local language. Using methods to return/compare language.
+  * Added permission "tshock.npc.spawnpets" which restricts pet spawns. This can cause high network load, so it's restricted. (@hakusaro)
 
 ## TShock 4.3.26
 * Removed the stat tracking system. (@hakusaro)
