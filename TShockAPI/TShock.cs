@@ -59,7 +59,7 @@ namespace TShockAPI
 		/// <summary>VersionNum - The version number the TerrariaAPI will return back to the API. We just use the Assembly info.</summary>
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
 		/// <summary>VersionCodename - The version codename is displayed when the server starts. Inspired by software codenames conventions.</summary>
-		public static readonly string VersionCodename = "Zombie";
+		public static readonly string VersionCodename = "Go to sleep Patrikkk, Icy, Chris, Death, Axeel, Zaicon, hakusaro, and Yoraiz0r <3";
 
 		/// <summary>SavePath - This is the path TShock saves its data in. This path is relative to the TerrariaServer.exe (not in ServerPlugins).</summary>
 		public static string SavePath = "tshock";
@@ -137,6 +137,9 @@ namespace TShockAPI
 
 		/// <summary>The TShock anti-cheat/anti-exploit system.</summary>
 		internal Bouncer Bouncer;
+
+		/// <summary>The TShock item ban system.</summary>
+		internal ItemBans ItemBans;
 
 		/// <summary>
 		/// TShock's Region subsystem.
@@ -330,6 +333,7 @@ namespace TShockAPI
 				RestManager.RegisterRestfulCommands();
 				Bouncer = new Bouncer();
 				RegionSystem = new RegionHandler(Regions);
+				ItemBans = new ItemBans(this, DB);
 
 				var geoippath = "GeoIP.dat";
 				if (Config.EnableGeoIP && File.Exists(geoippath))
@@ -1061,91 +1065,16 @@ namespace TShockAPI
 						player.Spawn();
 					}
 
-					if (Main.ServerSideCharacter && !player.IsLoggedIn)
-					{
-						if (player.IsBeingDisabled())
-						{
-							player.Disable(flags: flags);
-						}
-						else if (Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(player.TPlayer.inventory[player.TPlayer.selectedItem].netID), player))
-						{
-							player.Disable($"holding banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].Name}", flags);
-							player.SendErrorMessage($"You are holding a banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].Name}");
-						}
-					}
-					else if (!Main.ServerSideCharacter || (Main.ServerSideCharacter && player.IsLoggedIn))
+					if (!Main.ServerSideCharacter || (Main.ServerSideCharacter && player.IsLoggedIn))
 					{
 						if (!player.HasPermission(Permissions.ignorestackhackdetection))
 						{
 							player.IsDisabledForStackDetection = player.HasHackedItemStacks(shouldWarnPlayer: true);
 						}
-						string check = "none";
-						// Please don't remove this for the time being; without it, players wearing banned equipment will only get debuffed once
-						foreach (Item item in player.TPlayer.armor)
-						{
-							if (Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), player))
-							{
-								player.SetBuff(BuffID.Frozen, 330, true);
-								player.SetBuff(BuffID.Stoned, 330, true);
-								player.SetBuff(BuffID.Webbed, 330, true);
-								check = "Remove armor/accessory " + item.Name;
-
-								player.SendErrorMessage("You are wearing banned equipment. {0}", check);
-								break;
-							}
-						}
-						foreach (Item item in player.TPlayer.dye)
-						{
-							if (Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), player))
-							{
-								player.SetBuff(BuffID.Frozen, 330, true);
-								player.SetBuff(BuffID.Stoned, 330, true);
-								player.SetBuff(BuffID.Webbed, 330, true);
-								check = "Remove dye " + item.Name;
-
-								player.SendErrorMessage("You are wearing banned equipment. {0}", check);
-								break;
-							}
-						}
-						foreach (Item item in player.TPlayer.miscEquips)
-						{
-							if (Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), player))
-							{
-								player.SetBuff(BuffID.Frozen, 330, true);
-								player.SetBuff(BuffID.Stoned, 330, true);
-								player.SetBuff(BuffID.Webbed, 330, true);
-								check = "Remove misc equip " + item.Name;
-
-								player.SendErrorMessage("You are wearing banned equipment. {0}", check);
-								break;
-							}
-						}
-						foreach (Item item in player.TPlayer.miscDyes)
-						{
-							if (Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), player))
-							{
-								player.SetBuff(BuffID.Frozen, 330, true);
-								player.SetBuff(BuffID.Stoned, 330, true);
-								player.SetBuff(BuffID.Webbed, 330, true);
-								check = "Remove misc dye " + item.Name;
-
-								player.SendErrorMessage("You are wearing banned equipment. {0}", check);
-								break;
-							}
-						}
-						if (check != "none")
-							player.IsDisabledForBannedWearable = true;
-						else
-							player.IsDisabledForBannedWearable = false;
 
 						if (player.IsBeingDisabled())
 						{
 							player.Disable(flags: flags);
-						}
-						else if (Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(player.TPlayer.inventory[player.TPlayer.selectedItem].netID), player))
-						{
-							player.Disable($"holding banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].Name}", flags);
-							player.SendErrorMessage($"You are holding a banned item: {player.TPlayer.inventory[player.TPlayer.selectedItem].Name}");
 						}
 					}
 				}
@@ -1186,7 +1115,7 @@ namespace TShockAPI
 		/// <returns>True if allowed, otherwise false</returns>
 		private bool OnCreep(int tileType)
 		{
-			if (!Config.AllowCrimsonCreep && (tileType == TileID.Dirt || tileType == TileID.FleshWeeds
+			if (!Config.AllowCrimsonCreep && (tileType == TileID.Dirt || tileType == TileID.CrimsonGrass
 				|| TileID.Sets.Crimson[tileType]))
 			{
 				return false;
@@ -1745,7 +1674,7 @@ namespace TShockAPI
 				file.ServerPassword = _cliPassword;
 			}
 
-			Netplay.spamCheck = false;
+			Netplay.SpamCheck = false;
 		}
 	}
 }

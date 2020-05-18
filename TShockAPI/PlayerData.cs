@@ -107,7 +107,7 @@ namespace TShockAPI
 			this.shirtColor = player.TPlayer.shirtColor;
 			this.underShirtColor = player.TPlayer.underShirtColor;
 			this.shoeColor = player.TPlayer.shoeColor;
-			this.hideVisuals = player.TPlayer.hideVisual;
+			this.hideVisuals = player.TPlayer.hideVisibleAccessory;
 			this.skinColor = player.TPlayer.skinColor;
 			this.eyeColor = player.TPlayer.eyeColor;
 			this.questsCompleted = player.TPlayer.anglerQuestsFinished;
@@ -120,6 +120,7 @@ namespace TShockAPI
 			Item[] piggy = player.TPlayer.bank.item;
 			Item[] safe = player.TPlayer.bank2.item;
 			Item[] forge = player.TPlayer.bank3.item;
+			Item[] voidVault = player.TPlayer.bank4.item;
 			Item trash = player.TPlayer.trashItem;
 
 			for (int i = 0; i < NetItem.MaxInventory; i++)
@@ -170,12 +171,17 @@ namespace TShockAPI
 					//179-219
 					this.inventory[i] = (NetItem)trash;
 				}
-				else
+				else if (i < NetItem.ForgeIndex.Item2)
 				{
 					//220
 					var index = i - NetItem.ForgeIndex.Item1;
 					this.inventory[i] = (NetItem)forge[index];
-					
+				}
+				else
+				{
+					//220
+					var index = i - NetItem.VoidIndex.Item1;
+					this.inventory[i] = (NetItem)voidVault[index];
 				}
 			}
 		}
@@ -222,9 +228,9 @@ namespace TShockAPI
 				player.TPlayer.eyeColor = this.eyeColor.Value;
 
 			if (this.hideVisuals != null)
-				player.TPlayer.hideVisual = this.hideVisuals;
+				player.TPlayer.hideVisibleAccessory = this.hideVisuals;
 			else
-				player.TPlayer.hideVisual = new bool[player.TPlayer.hideVisual.Length];
+				player.TPlayer.hideVisibleAccessory = new bool[player.TPlayer.hideVisibleAccessory.Length];
 
 			for (int i = 0; i < NetItem.MaxInventory; i++)
 			{
@@ -323,7 +329,7 @@ namespace TShockAPI
 						player.TPlayer.trashItem.prefix = (byte)this.inventory[i].PrefixId;
 					}
 				}
-				else
+				else if (i < NetItem.ForgeIndex.Item2)
 				{
 					//220
 					var index = i - NetItem.ForgeIndex.Item1;
@@ -334,7 +340,18 @@ namespace TShockAPI
 						player.TPlayer.bank3.item[index].stack = this.inventory[i].Stack;
 						player.TPlayer.bank3.item[index].Prefix((byte)this.inventory[i].PrefixId);
 					}
-					
+				}
+				else
+				{
+					//260
+					var index = i - NetItem.VoidIndex.Item1;
+					player.TPlayer.bank4.item[index].netDefaults(this.inventory[i].NetId);
+
+					if (player.TPlayer.bank4.item[index].netID != 0)
+					{
+						player.TPlayer.bank4.item[index].stack = this.inventory[i].Stack;
+						player.TPlayer.bank4.item[index].Prefix((byte)this.inventory[i].PrefixId);
+					}
 				}
 			}
 
@@ -378,6 +395,11 @@ namespace TShockAPI
 			for (int k = 0; k < NetItem.ForgeSlots; k++)
 			{
 				NetMessage.SendData(5, -1, -1, NetworkText.FromLiteral(Main.player[player.Index].bank3.item[k].Name), player.Index, slot, (float)Main.player[player.Index].bank3.item[k].prefix);
+				slot++;
+			}
+			for (int k = 0; k < NetItem.VoidSlots; k++)
+			{
+				NetMessage.SendData(5, -1, -1, NetworkText.FromLiteral(Main.player[player.Index].bank4.item[k].Name), player.Index, slot, (float)Main.player[player.Index].bank4.item[k].prefix);
 				slot++;
 			}
 
@@ -428,8 +450,13 @@ namespace TShockAPI
 				NetMessage.SendData(5, player.Index, -1, NetworkText.FromLiteral(Main.player[player.Index].bank3.item[k].Name), player.Index, slot, (float)Main.player[player.Index].bank3.item[k].prefix);
 				slot++;
 			}
+			for (int k = 0; k < NetItem.VoidSlots; k++)
+			{
+				NetMessage.SendData(5, player.Index, -1, NetworkText.FromLiteral(Main.player[player.Index].bank4.item[k].Name), player.Index, slot, (float)Main.player[player.Index].bank4.item[k].prefix);
+				slot++;
+			}
 
-			
+
 
 			NetMessage.SendData(4, player.Index, -1, NetworkText.FromLiteral(player.Name), player.Index, 0f, 0f, 0f, 0);
 			NetMessage.SendData(42, player.Index, -1, NetworkText.Empty, player.Index, 0f, 0f, 0f, 0);

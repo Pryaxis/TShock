@@ -255,7 +255,7 @@ namespace TShockAPI
 			var found = new List<Item>();
 			Item item = new Item();
 			string nameLower = name.ToLowerInvariant();
-			var checkEnglish = Language.ActiveCulture != GameCulture.English;
+			var checkEnglish = Language.ActiveCulture != GameCulture.FromCultureName(GameCulture.CultureName.English);
 
 			for (int i = 1; i < Main.maxItemTypes; i++)
 			{
@@ -471,7 +471,7 @@ namespace TShockAPI
 			TShock.Utils.Broadcast(reason, Color.Red);
 
 			// Disconnect after kick as that signifies server is exiting and could cause a race
-			Netplay.disconnect = true;
+			Netplay.Disconnect = true;
 		}
 
 		/// <summary>
@@ -853,7 +853,7 @@ namespace TShockAPI
 			for(int i = 0; i < Main.recipe.Length; i++)
 				Main.recipe[i] = new Recipe();
 		}
-		
+
 		/// <summary>Dumps a matrix of all permissions & all groups in Markdown table format.</summary>
 		/// <param name="path">The save destination.</param>
 		internal void DumpPermissionMatrix(string path)

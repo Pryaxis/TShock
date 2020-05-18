@@ -2,7 +2,7 @@
 
 This is the rolling changelog for TShock for Terraria. Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
 
-## Upcoming Changes
+## TShock 4.4.0 (Pre-release 1)
 * Added confused debuff to Bouncer for confusion applied from Brain of Confusion
 * API: Added return in OnNameCollision if hook has been handled. (@Patrikkk)
 * API: Added hooks for item, projectile and tile bans (@deadsurgeon42)
@@ -41,7 +41,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Added `GetDataHandlers.PlaceObject` hook. (@hakusaro)
 * `GetDataHandlers.KillMe` now sends a `TSPlayer` and a `PlayerDeathReason`. (@hakusaro)
 * Added `GetDataHandlers.ProjectileKill` hook. (@hakusaro)
-* Removed `TShock.CheckProjectilePermission` and replaced it with `TSPlayer.HasProjectilePermission` and `TSPlayer.LacksProjectilePermission` respectively. (@hakusaro)
+* Removed `TShock.CheckProjectilePermission`. (@hakusaro)
 * Added `TSPlayer` object to `GetDataHandlers.LiquidSetEventArgs`. (@hakusaro)
 * Removed `TShock.StartInvasion` for public use (moved to Utils and marked internal). (@hakusaro)
 * Fixed invasions started by TShock not reporting size correctly and probably not working at all. (@hakusaro)
@@ -90,7 +90,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * `Utils.TryParseTime` can now take spaces (e.g., `3d 5h 2m 3s`) (@QuiCM)
 * Enabled banning unregistered users (@QuiCM)
 * Added filtering and validation on packet 96 (Teleport player through portal) (@QuiCM)
-* Update tracker now uses TLS (@pandabear41) 
+* Update tracker now uses TLS (@pandabear41)
 * When deleting an user account, any player logged in to that account is now logged out properly (@Enerdy)
 * Add NPCAddBuff data handler and bouncer (@AxeelAnder)
 * Improved config file documentation (@Enerdy)
@@ -98,6 +98,23 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Update sqlite binaries to 32bit 3.27.2 for Windows (@hakusaro)
 * Fix banned armour checks not clearing properly (thanks @tysonstrange)
 * Added warning message on invalid group comand (@hakusaro, thanks to IcyPhoenix, nuLLzy & Cy on Discord)
+* Moved item bans subsystem to isolated file/contained mini-plugin & reorganized codebase accordingly. (@hakusaro)
+* Moved bouncer checks for item bans in OnTileEdit to item bans subsystem. (@hakusaro)
+* Compatibility with Terraria 1.4.0.2 (@AxeelAnder, @Patrikkk)
+  * Multiple fields got slightly renamed.
+  * Modifying ToggleExpert command. Main.expertMode is no longer settable. Using a Main.GameMode int property comparsion.
+  * GameCulture no longer has static fields to get local language. Using methods to return/compare language.
+  * Added permission "tshock.npc.spawnpets" which restricts pet spawns. This can cause high network load, so it's restricted. (@hakusaro)
+  * Updated OnTeleport to support new args per protocol changes. (@hakusaro)
+  * Disabled anticheat checks for projectile updates due to issues with game changes. (@hakusaro)
+  * This update has been brought to you by: Patrikkk, Icy, Chris, Death, Axeel, Zaicon, hakusaro, and Yoraiz0r! <3
+
+## TShock 4.3.26
+* Removed the stat tracking system. (@hakusaro)
+* Updated SQLite binaries. (@hakusaro)
+* Removed server-sided healing when disabled. (@QuiCM)
+* Patched an exploit that allowed users to kill town NPCs (@QuiCM)
+* [API] Added a patch for the 0-length crash (@QuiCM)
 
 ## TShock 4.3.25
 * Fixed a critical exploit in the Terraria protocol that could cause massive unpreventable world corruption as well as a number of other problems. Thanks to @bartico6 for reporting. Fixed by the efforts of @QuiCM, @hakusaro, and tips in the right directioon from @bartico6.

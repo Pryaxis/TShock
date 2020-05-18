@@ -36,6 +36,7 @@ using Microsoft.Xna.Framework;
 using OTAPI.Tile;
 using TShockAPI.Localization;
 using System.Text.RegularExpressions;
+using Terraria.DataStructures;
 
 namespace TShockAPI
 {
@@ -2143,7 +2144,13 @@ namespace TShockAPI
 
 		private static void ToggleExpert(CommandArgs args)
 		{
-			Main.expertMode = !Main.expertMode;
+			const int NormalMode = 0;
+			const int ExpertMode = 1;
+			if (Main.GameMode != ExpertMode)
+				Main.GameMode = ExpertMode;
+			else if (Main.GameMode == ExpertMode)
+				Main.GameMode = NormalMode;
+
 			TSPlayer.All.SendData(PacketTypes.WorldInfo);
 			args.Player.SendSuccessMessage("Expert mode is now {0}.", Main.expertMode ? "on" : "off");
 		}
@@ -2273,7 +2280,7 @@ namespace TShockAPI
 					return;
 				case "wof":
 				case "wall of flesh":
-					if (Main.wof >= 0)
+					if (Main.wofNPCIndex != -1)
 					{
 						args.Player.SendErrorMessage("There is already a Wall of Flesh!");
 						return;
@@ -2346,7 +2353,7 @@ namespace TShockAPI
 				}
 				else if (npc.type == 113)
 				{
-					if (Main.wof >= 0 || (args.Player.Y / 16f < (Main.maxTilesY - 205)))
+					if (Main.wofNPCIndex != -1 || (args.Player.Y / 16f < (Main.maxTilesY - 205)))
 					{
 						args.Player.SendErrorMessage("Can't spawn Wall of Flesh!");
 						return;
@@ -3273,7 +3280,32 @@ namespace TShockAPI
 						}
 						else
 						{
-							TShock.Itembans.AddNewBan(EnglishLanguage.GetItemNameById(items[0].type));
+							// Yes this is required because of localization
+							// User may have passed in localized name but itembans works on English names
+							string englishNameForStorage = EnglishLanguage.GetItemNameById(items[0].type);
+							TShock.Itembans.AddNewBan(englishNameForStorage);
+
+							// It was decided in Telegram that we would continue to ban
+							// projectiles based on whether or not their associated item was
+							// banned. However, it was also decided that we'd change the way
+							// this worked: in particular, we'd make it so that the item ban
+							// system just adds things to the projectile ban system at the
+							// command layer instead of inferring the state of projectile
+							// bans based on the state of the item ban system.
+
+							if (items[0].type == ItemID.DirtRod)
+							{
+								TShock.ProjectileBans.AddNewBan(ProjectileID.DirtBall);
+							}
+
+							if (items[0].type == ItemID.Sandgun)
+							{
+								TShock.ProjectileBans.AddNewBan(ProjectileID.SandBallGun);
+								TShock.ProjectileBans.AddNewBan(ProjectileID.EbonsandBallGun);
+								TShock.ProjectileBans.AddNewBan(ProjectileID.PearlSandBallGun);
+							}
+
+							// This returns the localized name to the player, not the item as it was stored.
 							args.Player.SendSuccessMessage("Banned " + items[0].Name + ".");
 						}
 					}
@@ -4122,9 +4154,8 @@ namespace TShockAPI
 				return;
 			}
 
-			Main.windSpeed = speed;
-			Main.windSpeedSet = speed;
-			Main.windSpeedSpeed = 0f;
+			Main.windSpeedCurrent = speed;
+			Main.windSpeedTarget = 0f;
 			TSPlayer.All.SendData(PacketTypes.WorldInfo);
 			TSPlayer.All.SendInfoMessage("{0} changed the wind speed to {1}.", args.Player.Name, speed);
 		}

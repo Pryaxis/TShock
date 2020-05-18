@@ -30,6 +30,7 @@ using TerrariaApi.Server;
 using Terraria.ObjectData;
 using Terraria.DataStructures;
 using Terraria.Localization;
+using TShockAPI.Models.PlayerUpdate;
 
 namespace TShockAPI
 {
@@ -97,9 +98,9 @@ namespace TShockAPI
 		internal void OnPlayerUpdate(object sender, GetDataHandlers.PlayerUpdateEventArgs args)
 		{
 			byte plr = args.PlayerId;
-			BitsByte control = args.Control;
-			BitsByte pulley = args.Pulley;
-			byte item = args.Item;
+			ControlSet control = args.Control;
+			MiscDataSet1 miscData1 = args.MiscData1;
+			byte item = args.SelectedItem ;
 			var pos = args.Position;
 			var vel = args.Velocity;
 
@@ -183,6 +184,7 @@ namespace TShockAPI
 		/// <param name="args">The packet arguments that the event has.</param>
 		internal void OnTileEdit(object sender, GetDataHandlers.TileEditEventArgs args)
 		{
+			// TODO: Add checks on the new edit actions. ReplaceTile, ReplaceWall, TryKillTile, Acutate, PokeLogicGate, SlopePoundTile
 			EditAction action = args.Action;
 			int tileX = args.X;
 			int tileY = args.Y;
@@ -297,15 +299,7 @@ namespace TShockAPI
 						return;
 					}
 
-					// Using the actuation accessory can lead to actuator hacking
-					if (TShock.Itembans.ItemIsBanned("Actuator", args.Player) && args.Player.TPlayer.autoActuator)
-					{
-						args.Player.SendTileSquare(tileX, tileY, 1);
-						args.Player.SendErrorMessage("You do not have permission to place actuators.");
-						args.Handled = true;
-						return;
-					}
-					if (TShock.Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(selectedItem.netID), args.Player) || editData >= (action == EditAction.PlaceTile ? Main.maxTileSets : Main.maxWallTypes))
+					if (editData >= (action == EditAction.PlaceTile ? Main.maxTileSets : Main.maxWallTypes))
 					{
 						args.Player.SendTileSquare(tileX, tileY, 4);
 						args.Handled = true;
@@ -757,7 +751,7 @@ namespace TShockAPI
 				return;
 			}
 		}
-		
+
 		/// <summary>Bouncer's projectile trigger hook stops world damaging projectiles from destroying the world.</summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">The packet arguments that the event has.</param>
@@ -803,8 +797,36 @@ namespace TShockAPI
 				return;
 			}
 
-			bool hasPermission = args.Player.HasProjectilePermission(index, type);
-			if (!TShock.Config.IgnoreProjUpdate && !hasPermission && !args.Player.HasPermission(Permissions.ignoreprojectiledetection))
+
+			if (stabProjectile.ContainsKey(type))
+			{
+				if (stabProjectile[type] == args.Player.TPlayer.HeldItem.type)
+				{
+					args.Handled = false;
+					return;
+				}
+			}
+
+
+			// Main.projHostile contains projectiles that can harm players
+			// without PvP enabled and belong to enemy mobs, so they shouldn't be
+			// possible for players to create. (Source: Ijwu, QuiCM)
+			if (Main.projHostile[type])
+			{
+				args.Player.RemoveProjectile(ident, owner);
+				args.Handled = true;
+				return;
+			}
+
+			// Tombstones should never be permitted by players
+			if (type == ProjectileID.Tombstone)
+			{
+				args.Player.RemoveProjectile(ident, owner);
+				args.Handled = true;
+				return;
+			}
+
+			if (!TShock.Config.IgnoreProjUpdate && !args.Player.HasPermission(Permissions.ignoreprojectiledetection))
 			{
 				if (type == ProjectileID.BlowupSmokeMoonlord
 					|| type == ProjectileID.PhantasmalEye
@@ -822,11 +844,11 @@ namespace TShockAPI
 				}
 				else
 				{
-					args.Player.Disable(String.Format("Does not have projectile permission to update projectile. ({0})", type), DisableFlags.WriteToLogAndConsole);
-					args.Player.RemoveProjectile(ident, owner);
+					// args.Player.Disable(String.Format("Does not have projectile permission to update projectile. ({0})", type), DisableFlags.WriteToLogAndConsole);
+					// args.Player.RemoveProjectile(ident, owner);
 				}
-				args.Handled = true;
-				return;
+				// args.Handled = false;
+				// return;
 			}
 
 			if (args.Player.ProjectileThreshold >= TShock.Config.ProjectileThreshold)
@@ -856,8 +878,7 @@ namespace TShockAPI
 				}
 			}
 
-			if (hasPermission &&
-				(type == ProjectileID.Bomb
+			if ((type == ProjectileID.Bomb
 				|| type == ProjectileID.Dynamite
 				|| type == ProjectileID.StickyBomb
 				|| type == ProjectileID.StickyDynamite))
@@ -866,7 +887,7 @@ namespace TShockAPI
 				args.Player.RecentFuse = 10;
 			}
 		}
-		
+
 		/// <summary>Handles the NPC Strike event for Bouncer.</summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">The packet arguments that the event has.</param>
@@ -1276,7 +1297,7 @@ namespace TShockAPI
 		internal void OnPlayerBuff(object sender, GetDataHandlers.PlayerBuffEventArgs args)
 		{
 			byte id = args.ID;
-			byte type = args.Type;
+			int type = args.Type;
 			int time = args.Time;
 
 			if (TShock.Players[id] == null)
@@ -1333,7 +1354,7 @@ namespace TShockAPI
 		internal void OnNPCAddBuff(object sender, GetDataHandlers.NPCAddBuffEventArgs args)
 		{
 			short id = args.ID;
-			byte type = args.Type;
+			int type = args.Type;
 			short time = args.Time;
 
 			if (id >= Main.npc.Length)
@@ -1848,7 +1869,7 @@ namespace TShockAPI
 		}
 		
 		
-		private static Dictionary<byte, short> NPCAddBuffTimeMax = new Dictionary<byte, short>()
+		private static Dictionary<int, short> NPCAddBuffTimeMax = new Dictionary<int, short>()
 		{
 			{ BuffID.Poisoned, 3600 },
 			{ BuffID.OnFire, 1200 },
@@ -1913,5 +1934,18 @@ namespace TShockAPI
 			TileID.Campfire
 		};
 
+		private static Dictionary<int, int> stabProjectile = new Dictionary<int, int>()
+		{
+			{ ProjectileID.GladiusStab, ItemID.Gladius },
+			{ ProjectileID.RulerStab, ItemID.Ruler },
+			{ ProjectileID.CopperShortswordStab, ItemID.CopperShortsword },
+			{ ProjectileID.TinShortswordStab, ItemID.TinShortsword },
+			{ ProjectileID.IronShortswordStab, ItemID.IronShortsword },
+			{ ProjectileID.LeadShortswordStab, ItemID.LeadShortsword },
+			{ ProjectileID.SilverShortswordStab, ItemID.SilverShortsword },
+			{ ProjectileID.TungstenShortswordStab, ItemID.TungstenShortsword },
+			{ ProjectileID.GoldShortswordStab, ItemID.GoldShortsword },
+			{ ProjectileID.PlatinumShortswordStab, ItemID.PlatinumShortsword }
+		};
 	}
 }
