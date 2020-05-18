@@ -106,6 +106,8 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * GameCulture no longer has static fields to get local language. Using methods to return/compare language.
   * Added permission "tshock.npc.spawnpets" which restricts pet spawns. This can cause high network load, so it's restricted. (@hakusaro)
   * Updated OnTeleport to support new args per protocol changes. (@hakusaro)
+  * Disabled anticheat checks for projectile updates due to issues with game changes. (@hakusaro)
+  * This update has been brought to you by: Patrikkk, Icy, Chris, Death, Axeel, Zaicon, hakusaro, and Yoraiz0r! <3
 
 ## TShock 4.3.26
 * Removed the stat tracking system. (@hakusaro)
