@@ -844,11 +844,11 @@ namespace TShockAPI
 				}
 				else
 				{
-					args.Player.Disable(String.Format("Does not have projectile permission to update projectile. ({0})", type), DisableFlags.WriteToLogAndConsole);
-					args.Player.RemoveProjectile(ident, owner);
+					// args.Player.Disable(String.Format("Does not have projectile permission to update projectile. ({0})", type), DisableFlags.WriteToLogAndConsole);
+					// args.Player.RemoveProjectile(ident, owner);
 				}
-				args.Handled = true;
-				return;
+				// args.Handled = false;
+				// return;
 			}
 
 			if (args.Player.ProjectileThreshold >= TShock.Config.ProjectileThreshold)
