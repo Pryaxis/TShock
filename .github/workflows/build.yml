@@ -48,8 +48,8 @@ jobs:
     - name: Copy prebuilts into output folders
       shell: cmd
       run: |
-        cp -rf prebuilts\* TShockAPI\bin\Release
-        cp -rf prebuilts\* TShockAPI\bin\Debug
+        cp -rf .\prebuilts\* TShockAPI\bin\Release
+        cp -rf .\prebuilts\* TShockAPI\bin\Debug
     - uses: actions/upload-artifact@master
       with:
         name: Experimental TShock (not debug)
