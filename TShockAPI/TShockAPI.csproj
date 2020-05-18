@@ -7,6 +7,12 @@
     <AssemblyVersion>4.3.26</AssemblyVersion>
     <FileVersion>4.3.26</FileVersion>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <LocalOTAPI Condition=" $(Configuration.Contains(LocalOTAPI)) ">true</LocalOTAPI>
+    <LocalOTAPI Condition=" !$(Configuration.Contains(LocalOTAPI)) ">false</LocalOTAPI>
+    <BinType Condition=" $(Configuration.StartsWith(Debug)) ">Debug</BinType>
+    <BinType Condition=" $(Configuration.StartsWith(Release)) ">Release</BinType>
+    <Configurations>Debug;Release;ReleaseLocalOTAPI;DebugLocalOTAPI</Configurations>
+    <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\TerrariaServerAPI\TerrariaServerAPI\TerrariaServerAPI.csproj" />
@@ -28,5 +34,10 @@
     <PackageReference Include="System.Net.NameResolution" Version="4.3.0" />
     <PackageReference Include="System.Net.Primitives" Version="4.3.0" />
     <PackageReference Include="System.Threading.ThreadPool" Version="4.3.0" />
+  </ItemGroup>
+  <ItemGroup Condition=" $(LocalOTAPI) == true ">
+    <Reference Include="OTAPI">
+      <HintPath>$(SolutionDir)\TerrariaServerAPI\TShock.Modifications.Bootstrapper\bin\$(BinType)\Output\OTAPI.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>
