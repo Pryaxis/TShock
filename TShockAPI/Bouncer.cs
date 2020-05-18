@@ -1891,7 +1891,20 @@ namespace TShockAPI
 			{ BuffID.BetsysCurse, 600 },
 			{ BuffID.Oiled, 540 },
 			{ BuffID.Confused, 450 }, // Brain of Confusion Internal Item ID: 3223
-			{ BuffID.Daybreak, 300 } // Solar Eruption Item ID: 3473, Daybreak Item ID: 3543
+			{ BuffID.Daybreak, 300 },// Solar Eruption Item ID: 3473, Daybreak Item ID: 3543
+			{ BuffID.ThornWhipNPCDebuff, 300 },
+			{ BuffID.BlandWhipEnemyDebuff, 300},
+			{ BuffID.FlameWhipEnemyDebuff, 300 },
+			{ BuffID.MaceWhipNPCDebuff, 300 },
+			{ BuffID.RainbowWhipNPCDebuff, 300 },
+			{ BuffID.ScytheWhipEnemyDebuff, 300 },
+			{ BuffID.ThornWhipNPCDebuff, 300 }
+
+
+
+
+
+
 		};
 		
 		/// <summary>
