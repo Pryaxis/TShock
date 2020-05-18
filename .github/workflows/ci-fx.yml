@@ -24,6 +24,7 @@ jobs:
         run: |
           cd ./TerrariaServerAPI/TShock.Modifications.Bootstrapper/bin/Release/
           ./TShock.Modifications.Bootstrapper.exe
+
       - name: TShock Debug
         run: dotnet build -f net462 -c DebugLocalOTAPI .\TShock.Launcher\TShock.Launcher.csproj
       - name: TShock Release

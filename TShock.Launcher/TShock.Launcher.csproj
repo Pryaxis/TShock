@@ -27,7 +27,7 @@
   </ItemGroup>
   <ItemGroup Condition=" $(LocalOTAPI) == true ">
     <Reference Include="OTAPI">
-      <HintPath>$(SolutionDir)\TerrariaServerAPI\TShock.Modifications.Bootstrapper\bin\$(BinType)\Output\OTAPI.dll</HintPath>
+      <HintPath>$(ProjectDir)\..\TerrariaServerAPI\TShock.Modifications.Bootstrapper\bin\$(BinType)\Output\OTAPI.dll</HintPath>
     </Reference>
   </ItemGroup>
 
