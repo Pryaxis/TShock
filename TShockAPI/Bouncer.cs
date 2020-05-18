@@ -799,7 +799,7 @@ namespace TShockAPI
 
 			if (stabProjectile.ContainsKey(type))
 			{
-				if (stabProjectile.Values.Any(t => t == args.Player.TPlayer.HeldItem.type))
+				if (stabProjectile[type] == args.Player.TPlayer.HeldItem.type)
 				{
 					args.Handled = false;
 					return;
