@@ -20,7 +20,8 @@ TShock is a toolbox for Terraria servers and communities. That toolbox is jam pa
 * Download: [Stable](https://github.com/TShock/TShock/releases) or [Experimental](#experimental-downloads).
 * Read [the documentation](https://tshock.readme.io/) to quickly get up to speed.
 * Join [Discord](https://discord.gg/Cav9nYX).
-* Download [other plugins](https://tshock.co/xf/index.php?resources/) to supercharge your server.
+* Use the ancient [old forums](https://tshock.co/xf/index.php?resources/) to find old stuff.
+* Talk on [GitHub discussions](https://github.com/Pryaxis/TShock/discussions) to ask for help, chat, and other things. This is the best way to get help if Discord isn't your thing.
 
 ----
 
