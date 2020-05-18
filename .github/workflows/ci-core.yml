@@ -24,10 +24,11 @@ jobs:
         run: |
           cd ./TerrariaServerAPI/TShock.Modifications.Bootstrapper/bin/Release/
           ./TShock.Modifications.Bootstrapper.exe
+
       - name: Build TShock Debug
-        run: dotnet build -f netcoreapp3.1 -c Debug ./TShock.Launcher/TShock.Launcher.csproj
+        run: dotnet build -f netcoreapp3.1 -c DebugLocalOTAPI ./TShock.Launcher/TShock.Launcher.csproj
       - name: Build TShock Release
-        run: dotnet build -f netcoreapp3.1 -c Release ./TShock.Launcher/TShock.Launcher.csproj
+        run: dotnet build -f netcoreapp3.1 -c ReleaseLocalOTAPI ./TShock.Launcher/TShock.Launcher.csproj
 
       - name: Publish Debug any
         run: dotnet publish -f netcoreapp3.1 -c DebugLocalOTAPI ./TShock.Launcher/TShock.Launcher.csproj
