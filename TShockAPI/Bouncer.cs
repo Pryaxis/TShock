@@ -99,7 +99,7 @@ namespace TShockAPI
 			byte plr = args.PlayerId;
 			BitsByte control = args.Control;
 			BitsByte pulley = args.Pulley;
-			byte item = args.Item;
+			byte item = args.SelectedItem ;
 			var pos = args.Position;
 			var vel = args.Velocity;
 
@@ -183,6 +183,7 @@ namespace TShockAPI
 		/// <param name="args">The packet arguments that the event has.</param>
 		internal void OnTileEdit(object sender, GetDataHandlers.TileEditEventArgs args)
 		{
+			// TODO: Add checks on the new edit actions. ReplaceTile, ReplaceWall, TryKillTile, Acutate, PokeLogicGate, SlopePoundTile
 			EditAction action = args.Action;
 			int tileX = args.X;
 			int tileY = args.Y;
@@ -795,6 +796,17 @@ namespace TShockAPI
 				return;
 			}
 
+
+			if (stabProjectile.ContainsKey(type))
+			{
+				if (stabProjectile[type] == args.Player.TPlayer.HeldItem.type)
+				{
+					args.Handled = false;
+					return;
+				}
+			}
+
+
 			// Main.projHostile contains projectiles that can harm players
 			// without PvP enabled and belong to enemy mobs, so they shouldn't be
 			// possible for players to create. (Source: Ijwu, QuiCM)
@@ -1284,7 +1296,7 @@ namespace TShockAPI
 		internal void OnPlayerBuff(object sender, GetDataHandlers.PlayerBuffEventArgs args)
 		{
 			byte id = args.ID;
-			byte type = args.Type;
+			int type = args.Type;
 			int time = args.Time;
 
 			if (TShock.Players[id] == null)
@@ -1341,7 +1353,7 @@ namespace TShockAPI
 		internal void OnNPCAddBuff(object sender, GetDataHandlers.NPCAddBuffEventArgs args)
 		{
 			short id = args.ID;
-			byte type = args.Type;
+			int type = args.Type;
 			short time = args.Time;
 
 			if (id >= Main.npc.Length)
@@ -1856,7 +1868,7 @@ namespace TShockAPI
 		}
 		
 		
-		private static Dictionary<byte, short> NPCAddBuffTimeMax = new Dictionary<byte, short>()
+		private static Dictionary<int, short> NPCAddBuffTimeMax = new Dictionary<int, short>()
 		{
 			{ BuffID.Poisoned, 3600 },
 			{ BuffID.OnFire, 1200 },
@@ -1921,5 +1933,18 @@ namespace TShockAPI
 			TileID.Campfire
 		};
 
+		private static Dictionary<int, int> stabProjectile = new Dictionary<int, int>()
+		{
+			{ ProjectileID.GladiusStab, ItemID.Gladius },
+			{ ProjectileID.RulerStab, ItemID.Ruler },
+			{ ProjectileID.CopperShortswordStab, ItemID.CopperShortsword },
+			{ ProjectileID.TinShortswordStab, ItemID.TinShortsword },
+			{ ProjectileID.IronShortswordStab, ItemID.IronShortsword },
+			{ ProjectileID.LeadShortswordStab, ItemID.LeadShortsword },
+			{ ProjectileID.SilverShortswordStab, ItemID.SilverShortsword },
+			{ ProjectileID.TungstenShortswordStab, ItemID.TungstenShortsword },
+			{ ProjectileID.GoldShortswordStab, ItemID.GoldShortsword },
+			{ ProjectileID.PlatinumShortswordStab, ItemID.PlatinumShortsword }
+		};
 	}
 }

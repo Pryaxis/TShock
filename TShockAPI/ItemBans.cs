@@ -156,9 +156,9 @@ namespace TShockAPI
 			DisableFlags disableFlags = TShock.Config.DisableSecondUpdateLogs ? DisableFlags.WriteToConsole : DisableFlags.WriteToLogAndConsole;
 			bool useItem = ((BitsByte) args.Control)[5];
 			TSPlayer player = args.Player;
-			string itemName = player.TPlayer.inventory[args.Item].Name;
+			string itemName = player.TPlayer.inventory[args.SelectedItem].Name;
 
-			if (DataModel.ItemIsBanned(EnglishLanguage.GetItemNameById(player.TPlayer.inventory[args.Item].netID), args.Player))
+			if (DataModel.ItemIsBanned(EnglishLanguage.GetItemNameById(player.TPlayer.inventory[args.SelectedItem].netID), args.Player))
 			{
 				player.TPlayer.controlUseItem = false;
 				player.Disable($"holding banned item: {itemName}", disableFlags);

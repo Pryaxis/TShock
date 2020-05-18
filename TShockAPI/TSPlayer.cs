@@ -360,6 +360,8 @@ namespace TShockAPI
 			Item[] piggy = TPlayer.bank.item;
 			Item[] safe = TPlayer.bank2.item;
 			Item[] forge = TPlayer.bank3.item;
+			Item[] voidVault = TPlayer.bank4.item;
+
 			Item trash = TPlayer.trashItem;
 			for (int i = 0; i < NetItem.MaxInventory; i++)
 			{
@@ -507,7 +509,7 @@ namespace TShockAPI
 				}
 				else if (i < NetItem.TrashIndex.Item2)
 				{
-					// 179-219
+					// 178-179
 					Item item = new Item();
 					if (trash != null && trash.netID != 0)
 					{
@@ -525,9 +527,9 @@ namespace TShockAPI
 						}
 					}
 				}
-				else
+				else if (i < NetItem.ForgeIndex.Item2)
 				{
-					// 220
+					// 179-220
 					var index = i - NetItem.ForgeIndex.Item1;
 					Item item = new Item();
 					if (forge[index] != null && forge[index].netID != 0)
@@ -545,8 +547,29 @@ namespace TShockAPI
 							}
 						}
 					}
-
 				}
+				else if (i < NetItem.VoidIndex.Item2)
+				{
+					// 220-260
+					var index = i - NetItem.VoidIndex.Item1;
+					Item item = new Item();
+					if (voidVault[index] != null && voidVault[index].netID != 0)
+					{
+						item.netDefaults(voidVault[index].netID);
+						item.Prefix(voidVault[index].prefix);
+						item.AffixName();
+
+						if (voidVault[index].stack > item.maxStack || voidVault[index].stack < 0)
+						{
+							check = true;
+							if (shouldWarnPlayer)
+							{
+								SendErrorMessage("Stack cheat detected. Remove Void Vault item {0} ({1}) and then rejoin.", item.Name, voidVault[index].stack);
+							}
+						}
+					}
+				}
+				
 			}
 
 			return check;
