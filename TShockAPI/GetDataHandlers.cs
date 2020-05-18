@@ -3196,6 +3196,7 @@ namespace TShockAPI
 		private static bool HandleKillPortal(GetDataHandlerArgs args)
 		{
 			short projectileIndex = args.Data.ReadInt16();
+			args.Data.ReadInt8(); // Read byte projectile AI
 
 			Projectile projectile = Main.projectile[projectileIndex];
 			if (projectile != null && projectile.active)
