@@ -3115,8 +3115,18 @@ namespace TShockAPI
 
 		private static bool HandleLoadNetModule(GetDataHandlerArgs args)
 		{
-			// Since this packet is never actually sent to us, every attempt at sending it can be considered as a liquid exploit attempt
-			return true;
+			// As of 1.4.x.x, this is now used for more things:
+			//	NetCreativePowersModule
+			//	NetCreativePowerPermissionsModule
+			//	NetLiquidModule
+			//	NetParticlesModule
+			//	NetPingModule
+			//	NetTeleportPylonModule
+			//	NetTextModule
+			// I (particles) have disabled the original return here, which means that we need to
+			// handle this more. In the interm, this unbreaks parts of vanilla. Originally
+			// we just blocked this because it was a liquid exploit.
+			return false;
 		}
 
 		private static bool HandlePlaceTileEntity(GetDataHandlerArgs args)
