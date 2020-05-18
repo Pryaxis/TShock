@@ -1285,7 +1285,7 @@ namespace TShockAPI
 		internal void OnPlayerBuff(object sender, GetDataHandlers.PlayerBuffEventArgs args)
 		{
 			byte id = args.ID;
-			byte type = args.Type;
+			int type = args.Type;
 			int time = args.Time;
 
 			if (TShock.Players[id] == null)
@@ -1342,7 +1342,7 @@ namespace TShockAPI
 		internal void OnNPCAddBuff(object sender, GetDataHandlers.NPCAddBuffEventArgs args)
 		{
 			short id = args.ID;
-			byte type = args.Type;
+			int type = args.Type;
 			short time = args.Time;
 
 			if (id >= Main.npc.Length)
@@ -1857,7 +1857,7 @@ namespace TShockAPI
 		}
 		
 		
-		private static Dictionary<byte, short> NPCAddBuffTimeMax = new Dictionary<byte, short>()
+		private static Dictionary<int, short> NPCAddBuffTimeMax = new Dictionary<int, short>()
 		{
 			{ BuffID.Poisoned, 3600 },
 			{ BuffID.OnFire, 1200 },

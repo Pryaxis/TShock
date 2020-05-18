@@ -944,7 +944,7 @@ namespace TShockAPI
 			/// </summary>
 			public BitsByte Zone3 { get; set; }
 			/// <summary>
-			/// 0 = Old One's Army
+			/// 0 = Old One's Army, 1 = Granite, 2 = Marble, 3 = Hive, 4 = Gem Cave, 5 = Lihzhard Temple, 6 = Graveyard
 			/// </summary>
 			public BitsByte Zone4 { get; set; }
 		}
@@ -1215,7 +1215,7 @@ namespace TShockAPI
 			/// <summary>
 			/// Buff Type
 			/// </summary>
-			public byte Type { get; set; }
+			public int Type { get; set; }
 			/// <summary>
 			/// Time the buff lasts
 			/// </summary>
@@ -1225,7 +1225,7 @@ namespace TShockAPI
 		/// NPCAddBuff - Called when a npc is buffed
 		/// </summary>
 		public static HandlerList<NPCAddBuffEventArgs> NPCAddBuff = new HandlerList<NPCAddBuffEventArgs>();
-		private static bool OnNPCAddBuff(TSPlayer player, MemoryStream data, short id, byte type, short time)
+		private static bool OnNPCAddBuff(TSPlayer player, MemoryStream data, short id, int type, short time)
 		{
 			if (NPCAddBuff == null)
 				return false;
@@ -1254,7 +1254,7 @@ namespace TShockAPI
 			/// <summary>
 			/// Buff Type
 			/// </summary>
-			public byte Type { get; set; }
+			public int Type { get; set; }
 			/// <summary>
 			/// Time the buff lasts
 			/// </summary>
@@ -1264,7 +1264,7 @@ namespace TShockAPI
 		/// PlayerBuff - Called when a player is buffed
 		/// </summary>
 		public static HandlerList<PlayerBuffEventArgs> PlayerBuff = new HandlerList<PlayerBuffEventArgs>();
-		private static bool OnPlayerBuff(TSPlayer player, MemoryStream data, byte id, byte type, int time)
+		private static bool OnPlayerBuff(TSPlayer player, MemoryStream data, byte id, int type, int time)
 		{
 			if (PlayerBuff == null)
 				return false;
@@ -2714,7 +2714,7 @@ namespace TShockAPI
 
 			for (int i = 0; i < Terraria.Player.maxBuffs; i++)
 			{
-				var buff = args.Data.ReadInt8();
+				var buff = args.Data.ReadUInt16();
 
 				if (buff == 10 && TShock.Config.DisableInvisPvP && args.TPlayer.hostile)
 					buff = 0;
@@ -2765,7 +2765,7 @@ namespace TShockAPI
 		private static bool HandleNPCAddBuff(GetDataHandlerArgs args)
 		{
 			var id = args.Data.ReadInt16();
-			var type = args.Data.ReadInt8();
+			var type = args.Data.ReadUInt16();
 			var time = args.Data.ReadInt16();
 
 			if (OnNPCAddBuff(args.Player, args.Data, id, type, time))
@@ -2777,7 +2777,7 @@ namespace TShockAPI
 		private static bool HandlePlayerAddBuff(GetDataHandlerArgs args)
 		{
 			var id = args.Data.ReadInt8();
-			var type = args.Data.ReadInt8();
+			var type = args.Data.ReadUInt16();
 			var time = args.Data.ReadInt32();
 
 			if (OnPlayerBuff(args.Player, args.Data, id, type, time))
