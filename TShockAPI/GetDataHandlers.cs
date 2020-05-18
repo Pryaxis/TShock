@@ -38,6 +38,7 @@ using OTAPI.Tile;
 using TShockAPI.Localization;
 using TShockAPI.Models;
 using TShockAPI.Models.PlayerUpdate;
+using TShockAPI.Models.Projectiles;
 
 namespace TShockAPI
 {
@@ -2374,17 +2375,16 @@ namespace TShockAPI
 			Vector2 vel = args.Data.ReadVector2();
 			byte owner = args.Data.ReadInt8();
 			short type = args.Data.ReadInt16();
-			BitsByte bits = (BitsByte)args.Data.ReadByte();
+			NewProjectileData bits = new NewProjectileData((BitsByte)args.Data.ReadByte());
 			float[] ai = new float[Projectile.maxAI];
 			for (int i = 0; i < Projectile.maxAI; ++i)
-				ai[i] = !bits[i] ? 0.0f : args.Data.ReadSingle();
-			short dmg = bits[4] ? args.Data.ReadInt16() : (short)0;
-			float knockback = bits[5] ? args.Data.ReadSingle() : 0.0f;
-			short origDmg = bits[6] ? args.Data.ReadInt16() : (short)0;
-			short projUUID = bits[7] ? args.Data.ReadInt16() : (short)-1;
+				ai[i] = !bits.AI[i] ? 0.0f : args.Data.ReadSingle();
+			short dmg = bits.HasDamage ? args.Data.ReadInt16() : (short)0;
+			float knockback = bits.HasKnockback ? args.Data.ReadSingle() : 0.0f;
+			short origDmg = bits.HasOriginalDamage ? args.Data.ReadInt16() : (short)0;
+			short projUUID = bits.HasUUUID ? args.Data.ReadInt16() : (short)-1;
 			if (projUUID >= 1000)
 				projUUID = -1;
-
 
 			var index = TShock.Utils.SearchProjectile(ident, owner);
 

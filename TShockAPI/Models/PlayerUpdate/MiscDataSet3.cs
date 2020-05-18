@@ -14,6 +14,9 @@ namespace TShockAPI.Models.PlayerUpdate
 	{
 		public BitsByte bitsbyte;
 
+		/// <summary>
+		/// Gets or Sets the Sleeping flag on the backing field
+		/// </summary>
 		public bool IsSleeping
 		{
 			get => bitsbyte[0];
