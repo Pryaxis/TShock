@@ -796,6 +796,17 @@ namespace TShockAPI
 				return;
 			}
 
+
+			if (stabProjectile.ContainsKey(type))
+			{
+				if (stabProjectile.Values.Any(t => t == args.Player.TPlayer.HeldItem.type))
+				{
+					args.Handled = false;
+					return;
+				}
+			}
+
+
 			// Main.projHostile contains projectiles that can harm players
 			// without PvP enabled and belong to enemy mobs, so they shouldn't be
 			// possible for players to create. (Source: Ijwu, QuiCM)
@@ -1922,5 +1933,18 @@ namespace TShockAPI
 			TileID.Campfire
 		};
 
+		private static Dictionary<int, int> stabProjectile = new Dictionary<int, int>()
+		{
+			{ ProjectileID.GladiusStab, ItemID.Gladius },
+			{ ProjectileID.RulerStab, ItemID.Ruler },
+			{ ProjectileID.CopperShortswordStab, ItemID.CopperShortsword },
+			{ ProjectileID.TinShortswordStab, ItemID.TinShortsword },
+			{ ProjectileID.IronShortswordStab, ItemID.IronShortsword },
+			{ ProjectileID.LeadShortswordStab, ItemID.LeadShortsword },
+			{ ProjectileID.SilverShortswordStab, ItemID.SilverShortsword },
+			{ ProjectileID.TungstenShortswordStab, ItemID.TungstenShortsword },
+			{ ProjectileID.GoldShortswordStab, ItemID.GoldShortsword },
+			{ ProjectileID.PlatinumShortswordStab, ItemID.PlatinumShortsword }
+		};
 	}
 }
