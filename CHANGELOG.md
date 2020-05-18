@@ -1,7 +1,8 @@
 # TShock for Terraria
 
 This is the rolling changelog for TShock for Terraria. Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
-
+## Upcoming
+* Fixed getting kicked for hitting mobs with whips (@ndragon798)
 ## TShock 4.4.0 (Pre-release 1)
 * Added confused debuff to Bouncer for confusion applied from Brain of Confusion
 * API: Added return in OnNameCollision if hook has been handled. (@Patrikkk)
