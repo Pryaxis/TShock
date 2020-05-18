@@ -36,6 +36,8 @@ using Terraria.Localization;
 using Microsoft.Xna.Framework;
 using OTAPI.Tile;
 using TShockAPI.Localization;
+using TShockAPI.Models;
+using TShockAPI.Models.PlayerUpdate;
 
 namespace TShockAPI
 {
@@ -305,19 +307,19 @@ namespace TShockAPI
 			/// <summary>
 			/// Control direction (BitFlags)
 			/// </summary>
-			public byte Control { get; set; }
+			public ControlSet Control { get; set; }
 			/// <summary>
-			/// Pulley update (BitFlags)
+			/// Misc Data Set 1
 			/// </summary>
-			public byte Pulley { get; set; }
+			public MiscDataSet1 MiscData1 { get; set; }
 			/// <summary>
-			/// Misc (BitFlags) Check tshock.readme.io 
+			/// Misc Data Set 2
 			/// </summary>
-			public byte Misc { get; set; }
+			public MiscDataSet2 MiscData2 { get; set; }
 			/// <summary>
-			/// (BitFlags) Wether or not the player is sleeping.
+			/// Misc Data Set 3
 			/// </summary>
-			public byte Sleeping { get; set; }
+			public MiscDataSet3 MiscData3 { get; set; }
 			/// <summary>
 			/// The selected item in player's hand.
 			/// </summary>
@@ -344,7 +346,19 @@ namespace TShockAPI
 		/// PlayerUpdate - When the player sends it's updated information to the server
 		/// </summary>
 		public static HandlerList<PlayerUpdateEventArgs> PlayerUpdate = new HandlerList<PlayerUpdateEventArgs>();
-		private static bool OnPlayerUpdate(TSPlayer player, MemoryStream data, byte plr, byte control, byte pulley, byte misc, byte sleeping, byte selectedItem, Vector2 position, Vector2 velocity, Vector2? originalPos, Vector2? homePos)
+		private static bool OnPlayerUpdate(
+			TSPlayer player,
+			MemoryStream data,
+			byte plr,
+			ControlSet control,
+			MiscDataSet1 miscData1,
+			MiscDataSet2 miscData2,
+			MiscDataSet3 miscData3,
+			byte selectedItem,
+			Vector2 position,
+			Vector2 velocity,
+			Vector2? originalPos,
+			Vector2? homePos)
 		{
 			if (PlayerUpdate == null)
 				return false;
@@ -355,9 +369,9 @@ namespace TShockAPI
 				Data = data,
 				PlayerId = plr,
 				Control = control,
-				Pulley = pulley,
-				Misc = misc,
-				Sleeping = sleeping,
+				MiscData1 = miscData1,
+				MiscData2 = miscData2,
+				MiscData3 = miscData3,
 				SelectedItem = selectedItem,
 				Position = position,
 				Velocity = velocity,
@@ -1956,7 +1970,7 @@ namespace TShockAPI
 
 		private static bool HandleConnecting(GetDataHandlerArgs args)
 		{
-			var account = TShock.UserAccounts.GetUserAccountByName(args.Player.Name);
+			var account = TShock.UserAccounts.GetUserAccountByName(args.Player.Name);//
 			args.Player.DataWhenJoined = new PlayerData(args.Player);
 			args.Player.DataWhenJoined.CopyCharacter(args.Player);
 			args.Player.PlayerData = new PlayerData(args.Player);
@@ -2080,29 +2094,29 @@ namespace TShockAPI
 			}
 
 			byte playerID = args.Data.ReadInt8();
-			BitsByte control = (BitsByte)args.Data.ReadByte();
-			BitsByte pulley = (BitsByte)args.Data.ReadByte();
-			BitsByte misc = (BitsByte)args.Data.ReadByte();
-			BitsByte sleeping = (BitsByte)args.Data.ReadByte();
+			ControlSet controls = new ControlSet((BitsByte)args.Data.ReadByte());
+			MiscDataSet1 miscData1 = new MiscDataSet1((BitsByte)args.Data.ReadByte());
+			MiscDataSet2 miscData2 = new MiscDataSet2((BitsByte)args.Data.ReadByte());
+			MiscDataSet3 miscData3 = new MiscDataSet3((BitsByte)args.Data.ReadByte());
 			byte selectedItem = args.Data.ReadInt8();
 			Vector2 position = args.Data.ReadVector2();
 
 			Vector2 velocity = Vector2.Zero;
-			if (pulley[2]) // if UpdateVelocity
+			if (miscData1.HasVelocity)
 				velocity = args.Data.ReadVector2();
 
 			Vector2? originalPosition = new Vector2?();
 			Vector2? homePosition = Vector2.Zero;
-			if (misc[6]) // if UsedPotionofReturn
+			if (miscData2.CanReturnWithPotionOfReturn)
 			{
 				originalPosition = new Vector2?(args.Data.ReadVector2());
 				homePosition = new Vector2?(args.Data.ReadVector2());
 			}
 
-			if (OnPlayerUpdate(args.Player, args.Data, playerID, control, pulley, misc, sleeping, selectedItem, position, velocity, originalPosition, homePosition))
+			if (OnPlayerUpdate(args.Player, args.Data, playerID, controls, miscData1, miscData2, miscData3, selectedItem, position, velocity, originalPosition, homePosition))
 				return true;
 
-			if (control[5])
+			if (controls.IsUsingItem)
 			{
 				// Reimplementation of normal Terraria stuff?
 				if (args.TPlayer.inventory[selectedItem].Name == "Mana Crystal" && args.Player.TPlayer.statManaMax <= 180)
@@ -2137,45 +2151,45 @@ namespace TShockAPI
 			args.TPlayer.controlRight = false;
 			args.TPlayer.controlJump = false;
 			args.TPlayer.controlUseItem = false;
-			args.TPlayer.pulley = pulley[0];
+			args.TPlayer.pulley = miscData1.IsUsingPulley;
 
-			if (pulley[0])
-				args.TPlayer.pulleyDir = (byte)(pulley[1] ? 2 : 1);
+			if (miscData1.IsUsingPulley)
+				args.TPlayer.pulleyDir = (byte)(miscData1.PulleyDirection ? 2 : 1);
 
-			if (pulley[3])
+			if (miscData1.IsVortexStealthActive)
 				args.TPlayer.vortexStealthActive = true;
 			else
 				args.TPlayer.vortexStealthActive = false;
 
-			args.TPlayer.gravDir = pulley[4] ? 1f : -1f;
+			args.TPlayer.gravDir = miscData1.GravityDirection ? 1f : -1f;
 
 			args.TPlayer.direction = -1;
 
-			if (control[0])
+			if (controls.MoveUp)
 			{
 				args.TPlayer.controlUp = true;
 			}
-			if (control[1])
+			if (controls.MoveDown)
 			{
 				args.TPlayer.controlDown = true;
 			}
-			if (control[2])
+			if (controls.MoveLeft)
 			{
 				args.TPlayer.controlLeft = true;
 			}
-			if (control[3])
+			if (controls.MoveRight)
 			{
 				args.TPlayer.controlRight = true;
 			}
-			if (control[4])
+			if (controls.Jump)
 			{
 				args.TPlayer.controlJump = true;
 			}
-			if (control[5])
+			if (controls.IsUsingItem)
 			{
 				args.TPlayer.controlUseItem = true;
 			}
-			if (control[6])
+			if (controls.FaceDirection)
 			{
 				args.TPlayer.direction = 1;
 			}
