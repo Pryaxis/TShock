@@ -26,9 +26,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("TShock for Terraria")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Pryaxis & TShock Contributors")]
+[assembly: AssemblyCompany("Re-Logic, Pryaxis & TShock Contributors")]
 [assembly: AssemblyProduct("TShockAPI")]
-[assembly: AssemblyCopyright("Copyright © Pryaxis & TShock Contributors 2011-2019")]
+[assembly: AssemblyCopyright("Copyright © Re-Logic, Pryaxis & TShock Contributors 2011-2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -53,5 +53,5 @@ using System.Runtime.InteropServices;
 // Also, be sure to release on github with the exact assembly version tag as below
 // so that the update manager works correctly (via the Github releases api and mimic)
 
-[assembly: AssemblyVersion("4.3.26")]
-[assembly: AssemblyFileVersion("4.3.26")]
+[assembly: AssemblyVersion("4.4.0")]
+[assembly: AssemblyFileVersion("4.4.0")]
