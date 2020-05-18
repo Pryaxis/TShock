@@ -1430,8 +1430,8 @@ namespace TShockAPI
 			/// Flag is a bit field
 			///   if the first bit is set -> 0 = player, 1 = NPC
 			///	  if the second bit is set, ignore this packet
-			///   if the third bit is set, style +1
-			///   if the fourth bit is set, style +1
+			///   if the third bit is set, "get extra info from target" is true
+			///   if the fourth bit is set, extra information is valid to read
 			/// </summary>
 			public byte Flag { get; set; }
 			/// <summary>
@@ -1442,12 +1442,20 @@ namespace TShockAPI
 			/// Y Location
 			/// </summary>
 			public float Y { get; set; }
+			/// <summary>
+			/// Style
+			/// </summary>
+			public byte Style { get; set; }
+			/// <summary>
+			/// "Extra info"
+			/// </summary>
+			public int ExtraInfo { get; set; }
 		}
 		/// <summary>
 		/// NPCStrike - Called when an NPC is attacked
 		/// </summary>
 		public static HandlerList<TeleportEventArgs> Teleport = new HandlerList<TeleportEventArgs>();
-		private static bool OnTeleport(TSPlayer player, MemoryStream data, Int16 id, byte f, float x, float y)
+		private static bool OnTeleport(TSPlayer player, MemoryStream data, Int16 id, byte f, float x, float y, byte style, int extraInfo)
 		{
 			if (Teleport == null)
 				return false;
@@ -1459,7 +1467,9 @@ namespace TShockAPI
 				ID = id,
 				Flag = f,
 				X = x,
-				Y = y
+				Y = y,
+				Style = style,
+				ExtraInfo = extraInfo
 			};
 			Teleport.Invoke(null, args);
 			return args.Handled;
@@ -2989,13 +2999,12 @@ namespace TShockAPI
 			short id = args.Data.ReadInt16();
 			var x = args.Data.ReadSingle();
 			var y = args.Data.ReadSingle();
-
-			if (OnTeleport(args.Player, args.Data, id, flag, x, y))
-				return true;
+			byte style = args.Data.ReadInt8();
 
 			int type = 0;
-			byte style = 0;
 			bool isNPC = type == 1;
+			int extraInfo = -1;
+			bool getPositionFromTarget = false;
 
 			if (flag[0])
 			{
@@ -3007,12 +3016,15 @@ namespace TShockAPI
 			}
 			if (flag[2])
 			{
-				style++;
+				getPositionFromTarget = true;
 			}
 			if (flag[3])
 			{
-				style += 2;
+				extraInfo = args.Data.ReadInt32();
 			}
+
+			if (OnTeleport(args.Player, args.Data, id, flag, x, y, style, extraInfo))
+				return true;
 
 			//Rod of Discord teleport (usually (may be used by modded clients to teleport))
 			if (type == 0 && !args.Player.HasPermission(Permissions.rod))
