@@ -15,7 +15,7 @@
 
 TShock is a toolbox for Terraria servers and communities. That toolbox is jam packed with anti-cheat tools, server-side characters, groups, permissions, item bans, tons of commands, and limitless potential. It's one of a kind.
 
-**We are currently updating for Terraria 1.4.0.1 (curRelease = 225). For updates, check our [twitter, @Pryaxis](https://twitter.com/Pryaxis).**
+**We are currently polishing on Terraria 1.4.0.2 (curRelease = 226). For updates, check our [twitter, @Pryaxis](https://twitter.com/Pryaxis).**
 
 * Download: [Stable](https://github.com/TShock/TShock/releases) or [Experimental](#experimental-downloads).
 * Read [the documentation](https://tshock.readme.io/) to quickly get up to speed.
