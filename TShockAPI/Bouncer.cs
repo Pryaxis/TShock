@@ -30,6 +30,7 @@ using TerrariaApi.Server;
 using Terraria.ObjectData;
 using Terraria.DataStructures;
 using Terraria.Localization;
+using TShockAPI.Models.PlayerUpdate;
 
 namespace TShockAPI
 {
@@ -97,8 +98,8 @@ namespace TShockAPI
 		internal void OnPlayerUpdate(object sender, GetDataHandlers.PlayerUpdateEventArgs args)
 		{
 			byte plr = args.PlayerId;
-			BitsByte control = args.Control;
-			BitsByte pulley = args.MiscData1;
+			ControlSet control = args.Control;
+			MiscDataSet1 miscData1 = args.MiscData1;
 			byte item = args.SelectedItem ;
 			var pos = args.Position;
 			var vel = args.Velocity;

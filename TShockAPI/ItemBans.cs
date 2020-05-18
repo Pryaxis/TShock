@@ -154,7 +154,7 @@ namespace TShockAPI
 		internal void OnPlayerUpdate(object sender, PlayerUpdateEventArgs args)
 		{
 			DisableFlags disableFlags = TShock.Config.DisableSecondUpdateLogs ? DisableFlags.WriteToConsole : DisableFlags.WriteToLogAndConsole;
-			bool useItem = ((BitsByte) args.Control)[5];
+			bool useItem = args.Control.IsUsingItem;
 			TSPlayer player = args.Player;
 			string itemName = player.TPlayer.inventory[args.SelectedItem].Name;
 
