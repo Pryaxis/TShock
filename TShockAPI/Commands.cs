@@ -2145,10 +2145,10 @@ namespace TShockAPI
 
 		static Dictionary<string, int> _worldModes = new Dictionary<string, int>
 		{
-			{ "normal",    1 },
-			{ "expert",    2 },
-			{ "master",    3 },
-			{ "creative",  4 },
+			{ "normal",    0 },
+			{ "expert",    1 },
+			{ "master",    2 },
+			{ "creative",  3 },
 		};
 
 		private static void ChangeWorldMode(CommandArgs args)
