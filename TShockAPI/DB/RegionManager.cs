@@ -141,7 +141,7 @@ namespace TShockAPI.DB
 			try
 			{
 				database.Query(
-					"INSERT INTO Regions (X1, Y1, width, height, RegionName, WorldID, UserIds, Protected, Groups, Owner, Z) VALUES (@0, @1, @2, @3, @4, @5, @6, @7, @8, @9, @10);",
+					"INSERT INTO Regions (X1, Y1, width, height, RegionName, WorldID, UserIds, Protected, `Groups`, Owner, Z) VALUES (@0, @1, @2, @3, @4, @5, @6, @7, @8, @9, @10);",
 					tx, ty, width, height, regionname, worldid, "", 1, "", owner, z);
 				int id;
 				using (QueryResult res = database.QueryReader("SELECT Id FROM Regions WHERE RegionName = @0 AND WorldID = @1", regionname, worldid))
@@ -609,7 +609,7 @@ namespace TShockAPI.DB
 		{
 			string mergedGroups = "";
 			using (
-				var reader = database.QueryReader("SELECT Groups FROM Regions WHERE RegionName=@0 AND WorldID=@1", regionName,
+				var reader = database.QueryReader("SELECT `Groups` FROM Regions WHERE RegionName=@0 AND WorldID=@1", regionName,
 												  Main.worldID.ToString()))
 			{
 				if (reader.Read())
@@ -625,7 +625,7 @@ namespace TShockAPI.DB
 				mergedGroups += ",";
 			mergedGroups += groupName;
 
-			int q = database.Query("UPDATE Regions SET Groups=@0 WHERE RegionName=@1 AND WorldID=@2", mergedGroups,
+			int q = database.Query("UPDATE Regions SET `Groups`=@0 WHERE RegionName=@1 AND WorldID=@2", mergedGroups,
 								   regionName, Main.worldID.ToString());
 
 			Region r = GetRegionByName(regionName);
@@ -654,7 +654,7 @@ namespace TShockAPI.DB
 			{
 				r.RemoveGroup(group);
 				string groups = string.Join(",", r.AllowedGroups);
-				int q = database.Query("UPDATE Regions SET Groups=@0 WHERE RegionName=@1 AND WorldID=@2", groups,
+				int q = database.Query("UPDATE Regions SET `Groups`=@0 WHERE RegionName=@1 AND WorldID=@2", groups,
 									   regionName, Main.worldID.ToString());
 				if (q > 0)
 					return true;
