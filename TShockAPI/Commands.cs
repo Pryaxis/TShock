@@ -478,7 +478,7 @@ namespace TShockAPI
 			{
 				HelpText = "Toggles build protection."
 			});
-			add(new Command(Permissions.bloodmoon, Bloodmoon, "bloodmoon")
+			add(new Command(Permissions.bloodmoon, Bloodmoon, "tbloodmoon")
 			{
 				HelpText = "Sets a blood moon."
 			});
