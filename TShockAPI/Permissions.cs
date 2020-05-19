@@ -271,6 +271,16 @@ namespace TShockAPI
 
 		// tshock.world nodes
 
+		[Description("User can use the 'worldevent' command")]
+		public static readonly string manageevents = "tshock.world.events";
+		public static readonly string managebloodmoonevent = "tshock.world.events.bloodmoon";
+		public static readonly string managefullmoonevent = "tshock.world.events.fullmoon";
+		public static readonly string manageinvasionevent = "tshock.world.events.invasion";
+		public static readonly string managemeteorevent = "tshock.world.events.meteor";
+		public static readonly string manageeclipseevent = "tshock.world.events.eclipse";
+		public static readonly string managesandstormevent = "tshock.world.events.sandstorm";
+		public static readonly string managerainevent = "tshock.world.events.rain";
+
 		[Description("User can change expert state.")]
 		public static readonly string toggleexpert = "tshock.world.toggleexpert";
 
