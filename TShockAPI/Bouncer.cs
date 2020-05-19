@@ -1402,7 +1402,8 @@ namespace TShockAPI
 
 			if (detectedNPCBuffTimeCheat)
 			{
-				args.Player.Kick("Added buff to NPC abnormally.", true);
+
+				args.Player.Kick($"Added buff to NPC abnormally.", true);
 				args.Handled = true;
 			}
 		}
@@ -1867,8 +1868,8 @@ namespace TShockAPI
 				}
 			}
 		}
-		
-		
+
+		// These time values are references from Projectile.cs, at npc.AddBuff() calls.
 		private static Dictionary<int, short> NPCAddBuffTimeMax = new Dictionary<int, short>()
 		{
 			{ BuffID.Poisoned, 3600 },
@@ -1891,9 +1892,18 @@ namespace TShockAPI
 			{ BuffID.BetsysCurse, 600 },
 			{ BuffID.Oiled, 540 },
 			{ BuffID.Confused, 450 }, // Brain of Confusion Internal Item ID: 3223
-			{ BuffID.Daybreak, 300 } // Solar Eruption Item ID: 3473, Daybreak Item ID: 3543
+			{ BuffID.Daybreak, 300 }, // Solar Eruption Item ID: 3473, Daybreak Item ID: 3543
+			{ BuffID.BlandWhipEnemyDebuff, 240  },
+			{ BuffID.SwordWhipNPCDebuff, 240  },
+			{ BuffID.ScytheWhipEnemyDebuff, 240  },
+			{ BuffID.FlameWhipEnemyDebuff, 240  },
+			{ BuffID.ThornWhipNPCDebuff, 240  },
+			{ BuffID.RainbowWhipNPCDebuff, 240  },
+			{ BuffID.MaceWhipNPCDebuff, 240  },
+			{ BuffID.GelBalloonBuff, 1800  }
+
 		};
-		
+
 		/// <summary>
 		/// Tile IDs that can be oriented:
 		/// Cannon,
