@@ -2,6 +2,11 @@
 
 This is the rolling changelog for TShock for Terraria. Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
 
+## Upcoming changes
+
+* Fixed NPC buff anticheat issue conflicting with Terraria gameplay changes (whips). (@Patrikkk)
+* Renamed `/bloodmoon` to `/tbloodmoon` because of conflict with Terraria reserved words. (@hakusaro)
+
 ## TShock 4.4.0 (Pre-release 1)
 * Added confused debuff to Bouncer for confusion applied from Brain of Confusion
 * API: Added return in OnNameCollision if hook has been handled. (@Patrikkk)

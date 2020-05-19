@@ -9,6 +9,6 @@
     <ProjectReference Include="..\TShockAPI\TShockAPI.csproj" />
   </ItemGroup>
 
-  <Import Project="$(SolutionDir)/TShock.Common.props" />
+  <Import Project="../TShock.Common.props" />
 
 </Project>

@@ -27,6 +27,12 @@ PUT SUPER LONG ERROR MESSAGES IN THE TICK MARKS
 
 #### Any screenshots?
 
-#### Any log messages from files that end in `.log`?
+<!-- Please add context. Even if you don't have an error message, please show a screenshot of the server console at least. -->
+
+<!-- If providing screenshots of client, send before and after pressing F8 to show network debug -->
+
+#### Any log messages from files that end in `.log` or `.txt`?
+
+<!-- Please add context. Even if you don't have an error message, please show recent server logs at least. -->
 
 #### What plugins and what versions of those plugins are you running?
