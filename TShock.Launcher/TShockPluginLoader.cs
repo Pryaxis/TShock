@@ -28,7 +28,10 @@ namespace TShock.Launcher
 		public override List<IPlugin> LoadPlugins(bool reload = false)
 		{
 			var plugins = base.LoadPlugins(reload);
-			plugins.Add(new TShockAPI.TShock(Main.instance));
+			plugins.Add(new TShockAPI.TShock(Main.instance)
+			{
+				Loader = this,
+			});
 			loadedPlugins = (from x in plugins
 				orderby x.Order, x.Name
 				select x).ToList();
