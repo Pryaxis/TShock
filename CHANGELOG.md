@@ -4,6 +4,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 ## Upcoming changes
 
+* Fixed worldmode command (@Ristellise)
 * Fixed NPC buff anticheat issue conflicting with Terraria gameplay changes (whips). (@Patrikkk)
 * Renamed `/bloodmoon` to `/tbloodmoon` because of conflict with Terraria reserved words. (@hakusaro)
 
