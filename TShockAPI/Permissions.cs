@@ -273,12 +273,26 @@ namespace TShockAPI
 
 		[Description("User can use the 'worldevent' command")]
 		public static readonly string manageevents = "tshock.world.events";
+
+		[Description("User can use the 'bloodmoon' subcommand of the 'worldevent' command")]
 		public static readonly string managebloodmoonevent = "tshock.world.events.bloodmoon";
+
+		[Description("User can use the 'fullmoon' subcommand of the 'worldevent' command")]
 		public static readonly string managefullmoonevent = "tshock.world.events.fullmoon";
+
+		[Description("User can use the 'invasion' subcommand of the 'worldevent' command")]
 		public static readonly string manageinvasionevent = "tshock.world.events.invasion";
+
+		[Description("User can use the 'meteor' subcommand of the 'worldevent' command")]
 		public static readonly string managemeteorevent = "tshock.world.events.meteor";
+
+		[Description("User can use the 'eclipse' subcommand of the 'worldevent' command")]
 		public static readonly string manageeclipseevent = "tshock.world.events.eclipse";
+
+		[Description("User can use the 'sandstorm' subcommand of the 'worldevent' command")]
 		public static readonly string managesandstormevent = "tshock.world.events.sandstorm";
+
+		[Description("User can use the 'rain' subcommand of the 'worldevent' command")]
 		public static readonly string managerainevent = "tshock.world.events.rain";
 
 		[Description("User can change expert state.")]
