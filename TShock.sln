@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TerrariaServerAPI", "Terrar
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TShock.Launcher", "TShock.Launcher\TShock.Launcher.csproj", "{03046AE4-DD03-4C3D-A9AC-75413D7FD3E5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExamplePlugin", "ExamplePlugin\ExamplePlugin.csproj", "{C6C06263-750C-4A9F-9E92-C8733BF519F7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,14 @@ Global
 		{03046AE4-DD03-4C3D-A9AC-75413D7FD3E5}.ReleaseLocalOTAPI|Any CPU.Build.0 = ReleaseLocalOTAPI|Any CPU
 		{03046AE4-DD03-4C3D-A9AC-75413D7FD3E5}.DebugLocalOTAPI|Any CPU.ActiveCfg = DebugLocalOTAPI|Any CPU
 		{03046AE4-DD03-4C3D-A9AC-75413D7FD3E5}.DebugLocalOTAPI|Any CPU.Build.0 = DebugLocalOTAPI|Any CPU
+		{C6C06263-750C-4A9F-9E92-C8733BF519F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6C06263-750C-4A9F-9E92-C8733BF519F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6C06263-750C-4A9F-9E92-C8733BF519F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6C06263-750C-4A9F-9E92-C8733BF519F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6C06263-750C-4A9F-9E92-C8733BF519F7}.DebugLocalOTAPI|Any CPU.ActiveCfg = DebugLocalOTAPI|Any CPU
+		{C6C06263-750C-4A9F-9E92-C8733BF519F7}.DebugLocalOTAPI|Any CPU.Build.0 = DebugLocalOTAPI|Any CPU
+		{C6C06263-750C-4A9F-9E92-C8733BF519F7}.ReleaseLocalOTAPI|Any CPU.ActiveCfg = ReleaseLocalOTAPI|Any CPU
+		{C6C06263-750C-4A9F-9E92-C8733BF519F7}.ReleaseLocalOTAPI|Any CPU.Build.0 = ReleaseLocalOTAPI|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

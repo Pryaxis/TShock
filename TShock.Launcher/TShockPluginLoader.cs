@@ -22,6 +22,7 @@ namespace TShock.Launcher
 
 		public TShockPluginLoader([NotNull] string pluginDirPath, bool ignoreVersion = false) : base(pluginDirPath, ignoreVersion)
 		{
+			AppDomain.CurrentDomain.AssemblyResolve += CurrentDomainOnAssemblyResolve;
 		}
 
 		public override List<IPlugin> LoadPlugins(bool reload = false)
@@ -32,6 +33,13 @@ namespace TShock.Launcher
 				orderby x.Order, x.Name
 				select x).ToList();
 			return loadedPlugins;
+		}
+
+		public override void UnloadPlugin(IPlugin plugin)
+		{
+			if (plugin.GetType() == typeof(TShockAPI.TShock))
+				return;
+			base.UnloadPlugin(plugin);
 		}
 
 		protected override List<IPlugin> LoadPluginFromFile(FileInfo fileInfo)
@@ -57,6 +65,19 @@ namespace TShock.Launcher
 				Log.Error($"Error when loading plugin file '{fileInfo.FullName}'\nError: {e}");
 			}
 			return null;
+		}
+
+		private Assembly CurrentDomainOnAssemblyResolve(object sender, ResolveEventArgs args)
+		{
+			if (args.Name.StartsWith("TShockAPI,"))
+				return typeof(TShockAPI.TShock).Assembly;
+			return null;
+		}
+
+		protected override void DisposeUnmanaged()
+		{
+			AppDomain.CurrentDomain.AssemblyResolve -= CurrentDomainOnAssemblyResolve;
+			base.DisposeUnmanaged();
 		}
 	}
 }

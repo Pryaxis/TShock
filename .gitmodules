@@ -2,4 +2,3 @@
 	path = TerrariaServerAPI
 	url = https://github.com/Pryaxis/TerrariaAPI-Server.git
 	ignore = dirty
-	branch = netcore
