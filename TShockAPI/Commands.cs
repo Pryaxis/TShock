@@ -470,9 +470,9 @@ namespace TShockAPI
 			});
 			#endregion
 			#region World Commands
-			add(new Command(Permissions.toggleexpert, ToggleExpert, "expert", "expertmode")
+			add(new Command(Permissions.toggleexpert, ChangeWorldMode, "worldmode", "gamemode")
 			{
-				HelpText = "Toggles expert mode."
+				HelpText = "Changes the world mode."
 			});
 			add(new Command(Permissions.antibuild, ToggleAntiBuild, "antibuild")
 			{
@@ -2143,17 +2143,45 @@ namespace TShockAPI
 			}
 		}
 
-		private static void ToggleExpert(CommandArgs args)
+		static Dictionary<string, int> _worldModes = new Dictionary<string, int>
 		{
-			const int NormalMode = 0;
-			const int ExpertMode = 1;
-			if (Main.GameMode != ExpertMode)
-				Main.GameMode = ExpertMode;
-			else if (Main.GameMode == ExpertMode)
-				Main.GameMode = NormalMode;
+			{ "normal",    1 },
+			{ "expert",    2 },
+			{ "master",    3 },
+			{ "creative",  4 },
+		};
 
-			TSPlayer.All.SendData(PacketTypes.WorldInfo);
-			args.Player.SendSuccessMessage("Expert mode is now {0}.", Main.expertMode ? "on" : "off");
+		private static void ChangeWorldMode(CommandArgs args)
+		{
+			if (args.Parameters.Count < 1)
+			{
+				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}worldmode <mode>", Specifier);
+				args.Player.SendErrorMessage("Valid mode: {0}", String.Join(", ", _worldModes.Keys));
+				return;
+			}
+
+			int mode;
+
+			if (int.TryParse(args.Parameters[0], out mode))
+			{
+				if (mode < 1 || mode > 4)
+				{
+					args.Player.SendErrorMessage("Invalid mode! Valid modes: {0}", String.Join(", ", _worldModes.Keys));
+					return;
+				}
+			}
+			else if (_worldModes.ContainsKey(args.Parameters[0].ToLowerInvariant()))
+			{
+				mode = _worldModes[args.Parameters[0].ToLowerInvariant()];
+			}
+			else
+			{
+				args.Player.SendErrorMessage("Invalid mode! Valid modes: {0}", String.Join(", ", _worldModes.Keys));
+				return;
+			}
+
+			Main.GameMode = mode;
+			args.Player.SendSuccessMessage("World mode set to {0}", _worldModes.Keys.ElementAt(mode - 1));
 		}
 
 		private static void Hardmode(CommandArgs args)
