@@ -2149,6 +2149,7 @@ namespace TShockAPI
 			{ "expert",    1 },
 			{ "master",    2 },
 			{ "creative",  3 },
+			{ "journey",   3 }
 		};
 
 		private static void ChangeWorldMode(CommandArgs args)
@@ -2164,7 +2165,7 @@ namespace TShockAPI
 
 			if (int.TryParse(args.Parameters[0], out mode))
 			{
-				if (mode < 1 || mode > 4)
+				if (mode < 0 || mode > 3)
 				{
 					args.Player.SendErrorMessage("Invalid mode! Valid modes: {0}", String.Join(", ", _worldModes.Keys));
 					return;
