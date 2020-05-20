@@ -80,6 +80,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="http://www.nathaneaston.com/"><img src="https://avatars2.githubusercontent.com/u/10368650?v=4" width="100px;" alt=""/><br /><sub><b>Nathan Easton</b></sub></a><br /><a href="https://github.com/Pryaxis/TShock/commits?author=ndragon798" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/Ristellise"><img src="https://avatars2.githubusercontent.com/u/7894419?v=4" width="100px;" alt=""/><br /><sub><b>Shinon</b></sub></a><br /><a href="https://github.com/Pryaxis/TShock/commits?author=Ristellise" title="Tests">⚠️</a> <a href="https://github.com/Pryaxis/TShock/commits?author=Ristellise" title="Code">💻</a> <a href="https://github.com/Pryaxis/TShock/commits?author=Ristellise" title="Documentation">📖</a></td>
   </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/Retrograde-i486"><img src="https://avatars1.githubusercontent.com/u/65242258?v=4" width="100px;" alt=""/><br /><sub><b>Retrograde-i486</b></sub></a><br /><a href="https://github.com/Pryaxis/TShock/commits?author=Retrograde-i486" title="Code">💻</a></td>
+  </tr>
 </table>
 
 <!-- markdownlint-enable -->
