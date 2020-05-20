@@ -123,13 +123,25 @@ namespace TShockAPI
 		void Write(string message, TraceLevel level);
 
 		/// <summary>
-		/// Writes a debug string to the log file. Only works if the DEBUG preprocessor conditional is set.
+		/// Writes a debug string to the log file and console. Only works if the DebugLogs config option is set to true.
+		/// </summary>
+		/// <param name="message">The message to be written.</param>
+		void ConsoleDebug(string message);
+
+		/// <summary>
+		/// Writes a debug string to the log file. Only works if the DebugLogs config option is set to true.
+		/// </summary>
+		/// <param name="message">The message to be written.</param>
+		void ConsoleDebug(string message, params object[] args);
+
+		/// <summary>
+		/// Writes a debug string to the log file. Only works if the DebugLogs config option is set to true.
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
 		void Debug(string message);
 
 		/// <summary>
-		/// Writes a debug string to the log file. Only works if the DEBUG preprocessor conditional is set.
+		/// Writes a debug string to the log file. Only works if the DebugLogs config option is set to true.
 		/// </summary>
 		/// <param name="format">The format of the message to be written.</param>
 		/// <param name="args">The format arguments.</param>
