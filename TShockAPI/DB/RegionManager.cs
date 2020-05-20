@@ -51,7 +51,7 @@ namespace TShockAPI.DB
 									 new SqlColumn("WorldID", MySqlDbType.VarChar, 50) { Unique = true },
 									 new SqlColumn("UserIds", MySqlDbType.Text),
 									 new SqlColumn("Protected", MySqlDbType.Int32),
-									 new SqlColumn("Groups", MySqlDbType.Text),
+									 new SqlColumn("`Groups`", MySqlDbType.Text),
 									 new SqlColumn("Owner", MySqlDbType.VarChar, 50),
 									 new SqlColumn("Z", MySqlDbType.Int32){ DefaultValue = "0" }
 				);
