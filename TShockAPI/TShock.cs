@@ -685,16 +685,6 @@ namespace TShockAPI
 						}
 					})
 
-				.AddFlag("-worldpath", pathChecker)
-					.After(() =>
-					{
-						if (path != null)
-						{
-							Main.WorldPath = path;
-							ServerApi.LogWriter.PluginWriteLine(this, "World path has been set to " + path, TraceLevel.Info);
-						}
-					})
-
 				.AddFlag("-logpath", pathChecker)
 					.After(() =>
 					{
