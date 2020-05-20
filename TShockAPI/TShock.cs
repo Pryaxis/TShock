@@ -846,7 +846,7 @@ namespace TShockAPI
 
 				if (File.Exists(Path.Combine(SavePath, "setup-code.txt")))
 				{
-					Log.ConsoleInfo("A superadmin account has been detected in the user database, but setup-code.txt is still present.");
+					Log.ConsoleInfo("An account has been detected in the user database, but setup-code.txt is still present.");
 					Log.ConsoleInfo("TShock will now disable the initial setup system and remove setup-code.txt as it is no longer needed.");
 					File.Delete(Path.Combine(SavePath, "setup-code.txt"));
 				}
