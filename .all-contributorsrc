@@ -57,6 +57,15 @@
         "doc",
         "test"
       ]
+    },
+    {
+      "login": "ndragon798",
+      "name": "Nathan Easton",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/10368650?v=4",
+      "profile": "http://www.nathaneaston.com/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
