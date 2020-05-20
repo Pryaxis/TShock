@@ -2,11 +2,28 @@
 
 This is the rolling changelog for TShock for Terraria. Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
 
-## Upcoming changes
-
+## TShock 4.4.0 (Pre-release 3)
 * Fixed `/worldmode` command to correctly target world mode. (@Ristellise)
+* The following commands have been removed: `tbloodmoon`, `invade`, `dropmeteor`. `fullmoon`, `sandstorm`, `rain`, `eclipse`
+* The following command has been added to replace them: `worldevent`. This command requires the `tshock.world.events` permission.
+  * `worldevent` can be used as so: `worldevent [event type] [sub type] [wave (if invasion event)]`
+  * Valid event types are `meteor`, `fullmoon`, `bloodmoon`, `eclipse`, `invasion`, `sandstorm`, `rain`
+  * Valid sub types are `goblins`, `snowmen`, `pirates`, `pumpkinmoon`, `frostmoon` for invasions, and `slime` for rain.
+
+* A new set of permissions has been added under the node `tshock.world.events`:
+  * `tshock.world.events.bloodmoon`: Enables access to the `worldevent bloodmoon` command
+  * `tshock.world.events.fullmoon`: Enables access to the `worldevent fullmoon` command
+  * `tshock.world.events.invasion`: Enables access to the `worldevent invasion` command
+  * `tshock.world.events.eclipse`: Enables access to the `worldevent eclipse` command
+  * `tshock.world.events.sandstorm`: Enables access to the `worldevent sandstorm` command
+  * `tshock.world.events.rain`: Enables access to the `worldevent rain` command
+  * `tshock.world.events.meteor`: Enables access to the `worldevent meteor` command
+
+Please note that the permissions previously tied to the removed commands are also still used to confirm access to the new commands, so if you have existing configurations no one should have any new or lost access.
+
+## TShock 4.4.0 (Pre-release 2)
+* Replaced `/expert` with `/worldmode` command. (@QuiCM)
 * Fixed NPC buff anticheat issue conflicting with Terraria gameplay changes (whips). (@Patrikkk)
-* Renamed `/bloodmoon` to `/tbloodmoon` because of conflict with Terraria reserved words. (@hakusaro)
 
 ## TShock 4.4.0 (Pre-release 1)
 * Added confused debuff to Bouncer for confusion applied from Brain of Confusion
