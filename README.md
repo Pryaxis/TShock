@@ -18,6 +18,7 @@ TShock is a toolbox for Terraria servers and communities. That toolbox is jam pa
 **We are currently polishing on Terraria 1.4.0.2 (curRelease = 226). For updates, check our [twitter, @Pryaxis](https://twitter.com/Pryaxis).**
 
 * Download: [Stable](https://github.com/TShock/TShock/releases) or [Experimental](#experimental-downloads).
+* Download: [Plugins and tools](https://github.com/Pryaxis/plugins) that work with TShock, TSAPI, and Terraria.
 * Read [the documentation](https://tshock.readme.io/) to quickly get up to speed.
 * Join [Discord](https://discord.gg/Cav9nYX).
 * Use the ancient [old forums](https://tshock.co/xf/index.php?resources/) to find old stuff.
@@ -260,6 +261,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://sgkoi.dev"><img src="https://avatars2.githubusercontent.com/u/9637711?v=4" width="100px;" alt=""/><br /><sub><b>Stargazing Koishi</b></sub></a><br /><a href="https://github.com/Pryaxis/TShock/commits?author=sgkoishi" title="Code">💻</a> <a href="#infra-sgkoishi" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a></td>
     <td align="center"><a href="https://github.com/AxeelAnder"><img src="https://avatars2.githubusercontent.com/u/25691207?v=4" width="100px;" alt=""/><br /><sub><b>Axeel</b></sub></a><br /><a href="https://github.com/Pryaxis/TShock/commits?author=AxeelAnder" title="Documentation">📖</a> <a href="#projectManagement-AxeelAnder" title="Project Management">📆</a></td>
     <td align="center"><a href="http://www.nathaneaston.com/"><img src="https://avatars2.githubusercontent.com/u/10368650?v=4" width="100px;" alt=""/><br /><sub><b>Nathan Easton</b></sub></a><br /><a href="https://github.com/Pryaxis/TShock/commits?author=ndragon798" title="Code">💻</a></td>
+    <td align="center"><a href="https://aurora-gaming.org/"><img src="https://avatars0.githubusercontent.com/u/58985873?v=4" width="100px;" alt=""/><br /><sub><b>Patrikkk</b></sub></a><br /><a href="https://github.com/Pryaxis/TShock/commits?author=Patrikkk" title="Code">💻</a> <a href="https://github.com/Pryaxis/TShock/commits?author=Patrikkk" title="Documentation">📖</a> <a href="https://github.com/Pryaxis/TShock/commits?author=Patrikkk" title="Tests">⚠️</a></td>
   </tr>
 </table>
 

@@ -400,10 +400,6 @@ namespace TShockAPI
 			{
 				HelpText = "Renames an NPC."
 			});
-			add(new Command(Permissions.invade, Invade, "invade")
-			{
-				HelpText = "Starts an NPC invasion."
-			});
 			add(new Command(Permissions.maxspawns, MaxSpawns, "maxspawns")
 			{
 				HelpText = "Sets the maximum number of NPCs."
@@ -470,30 +466,18 @@ namespace TShockAPI
 			});
 			#endregion
 			#region World Commands
-			add(new Command(Permissions.toggleexpert, ToggleExpert, "expert", "expertmode")
+			add(new Command(Permissions.toggleexpert, ChangeWorldMode, "worldmode", "gamemode")
 			{
-				HelpText = "Toggles expert mode."
+				HelpText = "Changes the world mode."
 			});
 			add(new Command(Permissions.antibuild, ToggleAntiBuild, "antibuild")
 			{
 				HelpText = "Toggles build protection."
 			});
-			add(new Command(Permissions.bloodmoon, Bloodmoon, "bloodmoon")
-			{
-				HelpText = "Sets a blood moon."
-			});
 			add(new Command(Permissions.grow, Grow, "grow")
 			{
 				AllowServer = false,
 				HelpText = "Grows plants at your location."
-			});
-			add(new Command(Permissions.dropmeteor, DropMeteor, "dropmeteor")
-			{
-				HelpText = "Drops a meteor somewhere in the world."
-			});
-			add(new Command(Permissions.eclipse, Eclipse, "eclipse")
-			{
-				HelpText = "Sets an eclipse."
 			});
 			add(new Command(Permissions.halloween, ForceHalloween, "forcehalloween")
 			{
@@ -503,9 +487,9 @@ namespace TShockAPI
 			{
 				HelpText = "Toggles christmas mode (present spawning, santa, etc)."
 			});
-			add(new Command(Permissions.fullmoon, Fullmoon, "fullmoon")
+			add(new Command(Permissions.manageevents, ManageWorldEvent, "worldevent")
 			{
-				HelpText = "Sets a full moon."
+				HelpText = "Enables starting and stopping various world events."
 			});
 			add(new Command(Permissions.hardmode, Hardmode, "hardmode")
 			{
@@ -514,14 +498,6 @@ namespace TShockAPI
 			add(new Command(Permissions.editspawn, ProtectSpawn, "protectspawn")
 			{
 				HelpText = "Toggles spawn protection."
-			});
-			add(new Command(Permissions.sandstorm, Sandstorm, "sandstorm")
-			{
-				HelpText = "Toggles sandstorms."
-			});
-			add(new Command(Permissions.rain, Rain, "rain")
-			{
-				HelpText = "Toggles the rain."
 			});
 			add(new Command(Permissions.worldsave, Save, "save")
 			{
@@ -1978,6 +1954,118 @@ namespace TShockAPI
 
 		#region Cause Events and Spawn Monsters Commands
 
+		static readonly List<string> _validEvents = new List<string>()
+		{
+			"meteor",
+			"fullmoon",
+			"bloodmoon",
+			"eclipse",
+			"invasion",
+			"sandstorm",
+			"rain"
+		};
+		static readonly List<string> _validInvasions = new List<string>()
+		{
+			"goblins",
+			"snowmen",
+			"pirates",
+			"pumpkinmoon",
+			"frostmoon"
+		};
+
+		private static void ManageWorldEvent(CommandArgs args)
+		{
+			if (args.Parameters.Count < 1)
+			{
+				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}worldevent <event type>", Specifier);
+				args.Player.SendErrorMessage("Valid event types: {0}", String.Join(", ", _validEvents));
+				args.Player.SendErrorMessage("Valid invasion types if spawning an invasion: {0}", String.Join(", ", _validInvasions));
+				return;
+			}
+
+			var eventType = args.Parameters[0].ToLowerInvariant();
+
+			void FailedPermissionCheck()
+			{
+				args.Player.SendErrorMessage("You do not have sufficient permissions to start the {0} event.", eventType);
+				return;
+			}
+
+			switch (eventType)
+			{
+				case "meteor":
+					if (!args.Player.HasPermission(Permissions.dropmeteor) && !args.Player.HasPermission(Permissions.managemeteorevent))
+					{
+						FailedPermissionCheck();
+						return;
+					}
+
+					DropMeteor(args);
+					return;
+
+				case "fullmoon":
+				case "full moon":
+					if (!args.Player.HasPermission(Permissions.fullmoon) && !args.Player.HasPermission(Permissions.managefullmoonevent))
+					{
+						FailedPermissionCheck();
+						return;
+					}
+					Fullmoon(args);
+					return;
+
+				case "bloodmoon":
+				case "blood moon":
+					if (!args.Player.HasPermission(Permissions.bloodmoon) && !args.Player.HasPermission(Permissions.managebloodmoonevent))
+					{
+						FailedPermissionCheck();
+						return;
+					}
+					Bloodmoon(args);
+					return;
+
+				case "eclipse":
+					if (!args.Player.HasPermission(Permissions.eclipse) && !args.Player.HasPermission(Permissions.manageeclipseevent))
+					{
+						FailedPermissionCheck();
+						return;
+					}
+					Eclipse(args);
+					return;
+
+				case "invade":
+				case "invasion":
+					if (!args.Player.HasPermission(Permissions.invade) && !args.Player.HasPermission(Permissions.manageinvasionevent))
+					{
+						FailedPermissionCheck();
+						return;
+					}
+					Invade(args);
+					return;
+
+				case "sandstorm":
+					if (!args.Player.HasPermission(Permissions.sandstorm) && !args.Player.HasPermission(Permissions.managesandstormevent))
+					{
+						FailedPermissionCheck();
+						return;
+					}
+					Sandstorm(args);
+					return;
+
+				case "rain":
+					if (!args.Player.HasPermission(Permissions.rain) && !args.Player.HasPermission(Permissions.managerainevent))
+					{
+						FailedPermissionCheck();
+						return;
+					}
+					Rain(args);
+					return;
+
+				default:
+					args.Player.SendErrorMessage("Invalid event type! Valid event types: {0}", String.Join(", ", _validEvents));
+					return;
+			}
+		}
+
 		private static void DropMeteor(CommandArgs args)
 		{
 			WorldGen.spawnMeteor = false;
@@ -2035,14 +2123,15 @@ namespace TShockAPI
 		{
 			if (Main.invasionSize <= 0)
 			{
-				if (args.Parameters.Count < 1)
+				if (args.Parameters.Count < 2)
 				{
-					args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}invade <invasion type> [wave]", Specifier);
+					args.Player.SendErrorMessage("Invalid syntax! Proper syntax:  {0}worldevent invasion [invasion type] [invasion wave]", Specifier);
+					args.Player.SendErrorMessage("Valid invasion types: {0}", String.Join(", ", _validInvasions));
 					return;
 				}
 
 				int wave = 1;
-				switch (args.Parameters[0].ToLower())
+				switch (args.Parameters[1].ToLowerInvariant())
 				{
 					case "goblin":
 					case "goblins":
@@ -2064,9 +2153,9 @@ namespace TShockAPI
 
 					case "pumpkin":
 					case "pumpkinmoon":
-						if (args.Parameters.Count > 1)
+						if (args.Parameters.Count > 2)
 						{
-							if (!int.TryParse(args.Parameters[1], out wave) || wave <= 0)
+							if (!int.TryParse(args.Parameters[2], out wave) || wave <= 0)
 							{
 								args.Player.SendErrorMessage("Invalid wave!");
 								break;
@@ -2082,9 +2171,9 @@ namespace TShockAPI
 
 					case "frost":
 					case "frostmoon":
-						if (args.Parameters.Count > 1)
+						if (args.Parameters.Count > 2)
 						{
-							if (!int.TryParse(args.Parameters[1], out wave) || wave <= 0)
+							if (!int.TryParse(args.Parameters[2], out wave) || wave <= 0)
 							{
 								args.Player.SendErrorMessage("Invalid wave!");
 								return;
@@ -2103,6 +2192,10 @@ namespace TShockAPI
 						TSPlayer.All.SendInfoMessage("{0} has started a martian invasion.", args.Player.Name);
 						TShock.Utils.StartInvasion(4);
 						break;
+
+					default:
+						args.Player.SendErrorMessage("Invalid invasion type! Valid invasion types: {0}", String.Join(", ", _validInvasions));
+						break;
 				}
 			}
 			else if (DD2Event.Ongoing)
@@ -2114,6 +2207,71 @@ namespace TShockAPI
 			{
 				TSPlayer.All.SendInfoMessage("{0} has ended the invasion.", args.Player.Name);
 				Main.invasionSize = 0;
+			}
+		}
+
+		private static void Sandstorm(CommandArgs args)
+		{
+			if (Terraria.GameContent.Events.Sandstorm.Happening)
+			{
+				Terraria.GameContent.Events.Sandstorm.StopSandstorm();
+				TSPlayer.All.SendInfoMessage("{0} stopped the sandstorm.", args.Player.Name);
+			}
+			else
+			{
+				Terraria.GameContent.Events.Sandstorm.StartSandstorm();
+				TSPlayer.All.SendInfoMessage("{0} started a sandstorm.", args.Player.Name);
+			}
+		}
+
+		private static void Rain(CommandArgs args)
+		{
+			bool slime = false;
+			if (args.Parameters.Count > 1 && args.Parameters[1].ToLowerInvariant() == "slime")
+			{
+				slime = true;
+			}
+
+			if (!slime)
+			{
+				args.Player.SendInfoMessage("Use \"{0}worldevent rain slime\" to start slime rain!", Specifier);
+			}
+
+			if (slime && Main.raining) //Slime rain cannot be activated during normal rain
+			{
+				args.Player.SendErrorMessage("You should stop the current downpour before beginning a slimier one!");
+				return;
+			}
+
+			if (slime && Main.slimeRain) //Toggle slime rain off
+			{
+				Main.StopSlimeRain(false);
+				TSPlayer.All.SendData(PacketTypes.WorldInfo);
+				TSPlayer.All.SendInfoMessage("{0} ended the slimey downpour.", args.Player.Name);
+				return;
+			}
+
+			if (slime && !Main.slimeRain) //Toggle slime rain on
+			{
+				Main.StartSlimeRain(false);
+				TSPlayer.All.SendData(PacketTypes.WorldInfo);
+				TSPlayer.All.SendInfoMessage("{0} caused it to rain slime.", args.Player.Name);
+			}
+
+			if (Main.raining && !slime) //Toggle rain off
+			{
+				Main.StopRain();
+				TSPlayer.All.SendData(PacketTypes.WorldInfo);
+				TSPlayer.All.SendInfoMessage("{0} ended the downpour.", args.Player.Name);
+				return;
+			}
+
+			if (!Main.raining && !slime) //Toggle rain on
+			{
+				Main.StartRain();
+				TSPlayer.All.SendData(PacketTypes.WorldInfo);
+				TSPlayer.All.SendInfoMessage("{0} caused it to rain.", args.Player.Name);
+				return;
 			}
 		}
 
@@ -2143,17 +2301,46 @@ namespace TShockAPI
 			}
 		}
 
-		private static void ToggleExpert(CommandArgs args)
+		static Dictionary<string, int> _worldModes = new Dictionary<string, int>
 		{
-			const int NormalMode = 0;
-			const int ExpertMode = 1;
-			if (Main.GameMode != ExpertMode)
-				Main.GameMode = ExpertMode;
-			else if (Main.GameMode == ExpertMode)
-				Main.GameMode = NormalMode;
+			{ "normal",    0 },
+			{ "expert",    1 },
+			{ "master",    2 },
+			{ "journey",   3 },
+			{ "creative",  3 }
+		};
 
-			TSPlayer.All.SendData(PacketTypes.WorldInfo);
-			args.Player.SendSuccessMessage("Expert mode is now {0}.", Main.expertMode ? "on" : "off");
+		private static void ChangeWorldMode(CommandArgs args)
+		{
+			if (args.Parameters.Count < 1)
+			{
+				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}worldmode <mode>", Specifier);
+				args.Player.SendErrorMessage("Valid mode: {0}", String.Join(", ", _worldModes.Keys));
+				return;
+			}
+
+			int mode;
+
+			if (int.TryParse(args.Parameters[0], out mode))
+			{
+				if (mode < 0 || mode > 3)
+				{
+					args.Player.SendErrorMessage("Invalid mode! Valid modes: {0}", String.Join(", ", _worldModes.Keys));
+					return;
+				}
+			}
+			else if (_worldModes.ContainsKey(args.Parameters[0].ToLowerInvariant()))
+			{
+				mode = _worldModes[args.Parameters[0].ToLowerInvariant()];
+			}
+			else
+			{
+				args.Player.SendErrorMessage("Invalid mode! Valid modes: {0}", String.Join(", ", _worldModes.Keys));
+				return;
+			}
+
+			Main.GameMode = mode;
+			args.Player.SendSuccessMessage("World mode set to {0}", _worldModes.Keys.ElementAt(mode));
 		}
 
 		private static void Hardmode(CommandArgs args)
@@ -4021,81 +4208,6 @@ namespace TShockAPI
 					}
 					TSPlayer.All.SendInfoMessage("{0} set the time to {1}:{2:D2}.", args.Player.Name, hours, minutes);
 					break;
-			}
-		}
-
-		private static void Sandstorm(CommandArgs args)
-		{
-			if (args.Parameters.Count < 1)
-			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}sandstorm <stop/start>", Specifier);
-				return;
-			}
-
-			switch (args.Parameters[0].ToLowerInvariant())
-			{
-				case "start":
-					Terraria.GameContent.Events.Sandstorm.StartSandstorm();
-					TSPlayer.All.SendInfoMessage("{0} started a sandstorm.", args.Player.Name);
-					break;
-				case "stop":
-					Terraria.GameContent.Events.Sandstorm.StopSandstorm();
-					TSPlayer.All.SendInfoMessage("{0} stopped the sandstorm.", args.Player.Name);
-					break;
-				default:
-					args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}sandstorm <stop/start>", Specifier);
-					break;
-			}
-		}
-
-		private static void Rain(CommandArgs args)
-		{
-			if (args.Parameters.Count < 1 || args.Parameters.Count > 2)
-			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}rain [slime] <stop/start>", Specifier);
-				return;
-			}
-
-			int switchIndex = 0;
-			if (args.Parameters.Count == 2 && args.Parameters[0].ToLowerInvariant() == "slime")
-			{
-				switchIndex = 1;
-			}
-
-			switch (args.Parameters[switchIndex].ToLower())
-			{
-				case "start":
-					if (switchIndex == 1)
-					{
-						Main.StartSlimeRain(false);
-						TSPlayer.All.SendData(PacketTypes.WorldInfo);
-						TSPlayer.All.SendInfoMessage("{0} caused it to rain slime.", args.Player.Name);
-					}
-					else
-					{
-						Main.StartRain();
-						TSPlayer.All.SendData(PacketTypes.WorldInfo);
-						TSPlayer.All.SendInfoMessage("{0} caused it to rain.", args.Player.Name);
-					}
-					break;
-				case "stop":
-					if (switchIndex == 1)
-					{
-						Main.StopSlimeRain(false);
-						TSPlayer.All.SendData(PacketTypes.WorldInfo);
-						TSPlayer.All.SendInfoMessage("{0} ended the slimey downpour.", args.Player.Name);
-					}
-					else
-					{
-						Main.StopRain();
-						TSPlayer.All.SendData(PacketTypes.WorldInfo);
-						TSPlayer.All.SendInfoMessage("{0} ended the downpour.", args.Player.Name);
-					}
-					break;
-				default:
-					args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}rain [slime] <stop/start>", Specifier);
-					break;
-
 			}
 		}
 

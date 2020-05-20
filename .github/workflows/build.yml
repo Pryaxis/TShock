@@ -45,11 +45,15 @@ jobs:
       run: |
         nuget restore TShock.sln
         "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\msbuild.exe" .\TShockAPI\TShockAPI.csproj /p:Configuration=Release
-    - name: Copy prebuilts into output folders
+    - name: Normalize release packaging
       shell: cmd
       run: |
         xcopy /Y prebuilts\*.* TShockAPI\bin\Release
         xcopy /Y prebuilts\*.* TShockAPI\bin\Debug
+        mkdir TShockAPI\bin\Debug\ServerPlugins
+        mkdir TShockAPI\bin\Release\ServerPlugins
+        move TShockAPI\bin\Release\TShockAPI.dll TShockAPI\bin\Release\ServerPlugins
+        move TShockAPI\bin\Debug\TShockAPI.dll TShockAPI\bin\Debug\ServerPlugins
     - uses: actions/upload-artifact@master
       with:
         name: Experimental TShock (not debug)
