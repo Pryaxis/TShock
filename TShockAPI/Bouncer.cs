@@ -590,6 +590,13 @@ namespace TShockAPI
 							return;
 						}
 
+						// Doors
+						if (tile.type == TileID.OpenDoor || tile.type == TileID.ClosedDoor)
+						{
+							args.Handled = false;
+							return;
+						}
+
 						// Orientable tiles
 						if (tile.type == newtile.Type && orientableTiles.Contains(tile.type))
 						{
