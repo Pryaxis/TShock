@@ -1487,7 +1487,7 @@ namespace TShockAPI
 
 			PacketTypes type = e.MsgID;
 
-			Debug.WriteLine("Recv: {0:X}: {2} ({1:XX})", e.Msg.whoAmI, (byte)type, type);
+			Log.ConsoleDebug("Recv: {0:X}: {2} ({1:XX})", e.Msg.whoAmI, (byte)type, type);
 
 			var player = Players[e.Msg.whoAmI];
 			if (player == null || !player.ConnectionAlive)

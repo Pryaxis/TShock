@@ -2101,6 +2101,7 @@ namespace TShockAPI
 		{
 			if (args.Player == null || args.TPlayer == null || args.Data == null)
 			{
+				TShock.Log.ConsoleDebug("GetDataHandlers / OnPlayerUpdate rejected from null player.");
 				return true;
 			}
 
