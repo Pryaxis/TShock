@@ -164,7 +164,7 @@ namespace TShockAPI
 						var lastTileY = args.Player.LastNetPosition.Y - 48;
 						if (!args.Player.Teleport(lastTileX, lastTileY))
 						{
-							args.Player.Spawn();
+							args.Player.Spawn(PlayerSpawnContext.RecallFromItem);
 						}
 						TShock.Log.ConsoleDebug("Bouncer / OnPlayerUpdate rejected from (??) {0}", args.Player.Name);
 						args.Handled = true;
@@ -491,7 +491,7 @@ namespace TShockAPI
 				return;
 			}
 		}
-		
+
 		/// <summary>Bouncer's SendTileSquare hook halts large scope world destruction.</summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">The packet arguments that the event has.</param>
@@ -684,7 +684,7 @@ namespace TShockAPI
 
 			args.Handled = true;
 		}
-		
+
 		/// <summary>Registered when items fall to the ground to prevent cheating.</summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">The packet arguments that the event has.</param>
@@ -969,7 +969,7 @@ namespace TShockAPI
 				return;
 			}
 		}
-		
+
 		/// <summary>Handles ProjectileKill events for throttling and out of bounds projectiles.</summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">The packet arguments that the event has.</param>
@@ -995,7 +995,7 @@ namespace TShockAPI
 				return;
 			}
 		}
-		
+
 		/// <summary>Handles when a chest item is changed.</summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">The packet arguments that the event has.</param>
@@ -1032,7 +1032,7 @@ namespace TShockAPI
 				return;
 			}
 		}
-		
+
 		/// <summary>The Bouncer handler for when chests are opened.</summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">The packet arguments that the event has.</param>
@@ -1059,7 +1059,7 @@ namespace TShockAPI
 			int id = Chest.FindChest(args.X, args.Y);
 			args.Player.ActiveChest = id;
 		}
-		
+
 		/// <summary>The place chest event that Bouncer hooks to prevent accidental damage.</summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">The packet arguments that the event has.</param>
@@ -1119,7 +1119,7 @@ namespace TShockAPI
 				return;
 			}
 		}
-		
+
 		/// <summary>Handles PlayerZone events for preventing spawning NPC maliciously.</summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">The packet arguments that the event has.</param>
@@ -1155,7 +1155,7 @@ namespace TShockAPI
 				}
 			}
 		}
-		
+
 		/// <summary>Handles basic animation throttling for disabled players.</summary>
 		/// <param name="sender">sender</param>
 		/// <param name="args">args</param>
@@ -1175,7 +1175,7 @@ namespace TShockAPI
 				return;
 			}
 		}
-		
+
 		/// <summary>Handles Bouncer's liquid set anti-cheat.</summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">The packet arguments that the event has.</param>
@@ -1315,7 +1315,7 @@ namespace TShockAPI
 				return;
 			}
 		}
-		
+
 		/// <summary>Handles Buff events.</summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">The packet arguments that the event has.</param>
@@ -1372,7 +1372,7 @@ namespace TShockAPI
 				return;
 			}
 		}
-		
+
 		/// <summary>Handles NPCAddBuff events.</summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">The packet arguments that the event has.</param>
@@ -1432,7 +1432,7 @@ namespace TShockAPI
 				args.Handled = true;
 			}
 		}
-		
+
 		/// <summary>The Bouncer handler for when an NPC is rehomed.</summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">The packet arguments that the event has.</param>
@@ -1459,7 +1459,7 @@ namespace TShockAPI
 				return;
 			}
 		}
-		
+
 		/// <summary>Bouncer's HealOther handler prevents gross misuse of HealOther packets by hackers.</summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">The packet arguments that the event has.</param>
@@ -1501,7 +1501,7 @@ namespace TShockAPI
 			args.Handled = false;
 			return;
 		}
-		
+
 		/// <summary>Bouncer's PlaceObject hook reverts malicious tile placement.</summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">The packet arguments that the event has.</param>
@@ -1571,8 +1571,8 @@ namespace TShockAPI
 				return;
 			}
 
-			// This is neccessary to check in order to prevent special tiles such as 
-			// queen bee larva, paintings etc that use this packet from being placed 
+			// This is neccessary to check in order to prevent special tiles such as
+			// queen bee larva, paintings etc that use this packet from being placed
 			// without selecting the right item.
 			if (type != args.Player.TPlayer.inventory[args.Player.TPlayer.selectedItem].createTile)
 			{
@@ -1634,7 +1634,7 @@ namespace TShockAPI
 						args.Player.TilesCreated.Add(coords, Main.tile[x, y]);
 			}
 		}
-		
+
 		/// <summary>Fired when a PlaceTileEntity occurs for basic anti-cheat on perms and range.</summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">The packet arguments that the event has.</param>
@@ -1658,7 +1658,7 @@ namespace TShockAPI
 				return;
 			}
 		}
-		
+
 		/// <summary>Fired when an item frame is placed for anti-cheat detection.</summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">The packet arguments that the event has.</param>
@@ -1685,7 +1685,7 @@ namespace TShockAPI
 				return;
 			}
 		}
-		
+
 		internal void OnPlayerPortalTeleport(object sender, GetDataHandlers.TeleportThroughPortalEventArgs args)
 		{
 			//Packet 96 (player teleport through portal) has no validation on whether or not the player id provided
@@ -1713,7 +1713,7 @@ namespace TShockAPI
 				return;
 			}
 		}
-		
+
 		/// <summary>Handles the anti-cheat components of gem lock toggles.</summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">The packet arguments that the event has.</param>
@@ -1743,7 +1743,7 @@ namespace TShockAPI
 				return;
 			}
 		}
-		
+
 		/// <summary>Handles validation of of basic anti-cheat on mass wire operations.</summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">The packet arguments that the event has.</param>

@@ -2565,7 +2565,7 @@ namespace TShockAPI
 
 		private static void Home(CommandArgs args)
 		{
-			args.Player.Spawn();
+			args.Player.Spawn(PlayerSpawnContext.RecallFromItem);
 			args.Player.SendSuccessMessage("Teleported to your spawnpoint.");
 		}
 
