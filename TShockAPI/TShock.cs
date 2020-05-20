@@ -264,7 +264,8 @@ namespace TShockAPI
 			{
 				if (Config.StorageType.ToLower() == "sqlite")
 				{
-					string sql = Path.Combine(SavePath, "tshock.sqlite");
+					string sql = Path.Combine(SavePath, Config.SqliteDBPath);
+					Directory.CreateDirectory(Path.GetDirectoryName(sql));
 					DB = new SqliteConnection(string.Format("uri=file://{0},Version=3", sql));
 				}
 				else if (Config.StorageType.ToLower() == "mysql")
