@@ -5012,7 +5012,7 @@ namespace TShockAPI
 				args.Player.SendSuccessMessage("Your new account has been verified, and the {0}setup system has been turned off.", Specifier);
 				args.Player.SendSuccessMessage("You can always use the {0}user command to manage players.", Specifier);
 				args.Player.SendSuccessMessage("The setup system will remain disabled as long as a superadmin exists (even if you delete setup.lock).");
-				args.Player.SendSuccessMessage("Share your server, talk with other admins, and more on our forums -- https://tshock.co/");
+				args.Player.SendSuccessMessage("Share your server, talk with other admins, and more on GitHub! -- https://tshock.co/");
 				args.Player.SendSuccessMessage("Thank you for using TShock for Terraria!");
 				FileTools.CreateFile(Path.Combine(TShock.SavePath, "setup.lock"));
 				File.Delete(Path.Combine(TShock.SavePath, "setup-code.txt"));
