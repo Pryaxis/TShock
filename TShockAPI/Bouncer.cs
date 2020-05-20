@@ -122,9 +122,9 @@ namespace TShockAPI
 
 			if (args.Player.LastNetPosition == Vector2.Zero)
 			{
-				TShock.Log.ConsoleDebug("Bouncer / OnPlayerUpdate rejected from (last network position) {0}", args.Player.Name);
-				args.Handled = true;
-				return;
+				TShock.Log.ConsoleInfo("Bouncer / OnPlayerUpdate *would have rejected* from (last network position zero) {0}", args.Player.Name);
+				// args.Handled = true;
+				// return;
 			}
 
 			if (!pos.Equals(args.Player.LastNetPosition))
@@ -184,6 +184,7 @@ namespace TShockAPI
 				}
 			}
 
+			args.Player.LastNetPosition = pos;
 			return;
 		}
 

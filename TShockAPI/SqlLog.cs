@@ -211,8 +211,11 @@ namespace TShockAPI
 		/// <param name="message">The message to be written.</param>
 		public void ConsoleDebug(string message)
 		{
-			Console.WriteLine("Debug: " + message);
-			Write(message, TraceLevel.Verbose);
+			if (TShock.Config.DebugLogs)
+			{
+				Console.WriteLine("Debug: " + message);
+				Write(message, TraceLevel.Verbose);
+			}
 		}
 
 		/// <summary>
