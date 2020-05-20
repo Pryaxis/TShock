@@ -2092,7 +2092,7 @@ namespace TShockAPI
 
 			if (respawnTimer > 0)
 				args.Player.Dead = true;
-			else 
+			else
 				args.Player.Dead = false;
 			return false;
 		}
@@ -2662,7 +2662,7 @@ namespace TShockAPI
 			if (type == 1 && TShock.Config.DisableDungeonGuardian)
 			{
 				args.Player.SendMessage("The Dungeon Guardian returned you to your spawn point", Color.Purple);
-				args.Player.Spawn();
+				args.Player.Spawn(PlayerSpawnContext.RecallFromItem);
 				return true;
 			}
 

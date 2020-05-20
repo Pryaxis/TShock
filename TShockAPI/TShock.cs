@@ -1047,7 +1047,7 @@ namespace TShockAPI
 
 					if (player.RespawnTimer > 0 && --player.RespawnTimer == 0 && player.Difficulty != 2)
 					{
-						player.Spawn();
+						player.Spawn(PlayerSpawnContext.ReviveFromDeath);
 					}
 
 					if (!Main.ServerSideCharacter || (Main.ServerSideCharacter && player.IsLoggedIn))
