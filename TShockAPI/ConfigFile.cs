@@ -140,6 +140,10 @@ namespace TShockAPI
 		[Description("The type of database to use when storing data (either \"sqlite\" or \"mysql\").")]
 		public string StorageType = "sqlite";
 
+		/// <summary>The path of sqlite db.</summary>
+		[Description("The path of sqlite db.")]
+		public string SqliteDBPath = "tshock.sqlite";
+
 		/// <summary>The MySQL hostname and port to direct connections to.</summary>
 		[Description("The MySQL hostname and port to direct connections to.")]
 		public string MySqlHost = "localhost:3306";
