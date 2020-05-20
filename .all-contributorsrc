@@ -66,6 +66,17 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "Ristellise",
+      "name": "Shinon",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/7894419?v=4",
+      "profile": "https://github.com/Ristellise",
+      "contributions": [
+        "test",
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
