@@ -69,11 +69,12 @@ namespace TShockAPI
 			GetDataHandlers.PlayerDamage += OnPlayerDamage;
 			GetDataHandlers.KillMe += OnKillMe;
 		}
-		
+
 		internal void OnGetSection(object sender, GetDataHandlers.GetSectionEventArgs args)
 		{
 			if (args.Player.RequestedSection)
 			{
+				TShock.Log.ConsoleDebug("Bouncer / OnGetSection rejected GetSection packet from {0}", args.Player.Name);
 				args.Handled = true;
 				return;
 			}
@@ -81,6 +82,7 @@ namespace TShockAPI
 
 			if (String.IsNullOrEmpty(args.Player.Name))
 			{
+				TShock.Log.ConsoleDebug("Bouncer / OnGetSection rejected empty player name.");
 				args.Player.Kick("Your client sent a blank character name.", true, true);
 				args.Handled = true;
 				return;
@@ -106,18 +108,21 @@ namespace TShockAPI
 
 			if (pos.X < 0 || pos.Y < 0 || pos.X >= Main.maxTilesX * 16 - 16 || pos.Y >= Main.maxTilesY * 16 - 16)
 			{
+				TShock.Log.ConsoleDebug("Bouncer / OnPlayerUpdate rejected from (position check) {0}", args.Player.Name);
 				args.Handled = true;
 				return;
 			}
 
 			if (item < 0 || item >= args.Player.TPlayer.inventory.Length)
 			{
+				TShock.Log.ConsoleDebug("Bouncer / OnPlayerUpdate rejected from (inventory length) {0}", args.Player.Name);
 				args.Handled = true;
 				return;
 			}
 
 			if (args.Player.LastNetPosition == Vector2.Zero)
 			{
+				TShock.Log.ConsoleDebug("Bouncer / OnPlayerUpdate rejected from (last network position) {0}", args.Player.Name);
 				args.Handled = true;
 				return;
 			}
@@ -161,9 +166,11 @@ namespace TShockAPI
 						{
 							args.Player.Spawn();
 						}
+						TShock.Log.ConsoleDebug("Bouncer / OnPlayerUpdate rejected from (??) {0}", args.Player.Name);
 						args.Handled = true;
 						return;
 					}
+					TShock.Log.ConsoleDebug("Bouncer / OnPlayerUpdate rejected from (below ??) {0}", args.Player.Name);
 					args.Handled = true;
 					return;
 				}
@@ -171,6 +178,7 @@ namespace TShockAPI
 				// Corpses don't move
 				if (args.Player.Dead)
 				{
+					TShock.Log.ConsoleDebug("Bouncer / OnPlayerUpdate rejected from (corpses don't move) {0}", args.Player.Name);
 					args.Handled = true;
 					return;
 				}
@@ -196,6 +204,7 @@ namespace TShockAPI
 			{
 				if (editData < 0)
 				{
+					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (editData check) {0}", args.Player.Name);
 					args.Player.SendTileSquare(tileX, tileY, 4);
 					args.Handled = true;
 					return;
@@ -203,6 +212,7 @@ namespace TShockAPI
 
 				if (!TShock.Utils.TilePlacementValid(tileX, tileY))
 				{
+					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (tile placement valid) {0}", args.Player.Name);
 					args.Player.SendTileSquare(tileX, tileY, 1);
 					args.Handled = true;
 					return;
@@ -210,12 +220,14 @@ namespace TShockAPI
 
 				if (action == EditAction.KillTile && Main.tile[tileX, tileY].type == TileID.MagicalIceBlock)
 				{
+					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit super accepted from (ice block) {0}", args.Player.Name);
 					args.Handled = false;
 					return;
 				}
 
 				if (args.Player.Dead && TShock.Config.PreventDeadModification)
 				{
+					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (pdm) {0}", args.Player.Name);
 					args.Player.SendTileSquare(tileX, tileY, 4);
 					args.Handled = true;
 					return;
@@ -229,6 +241,7 @@ namespace TShockAPI
 				{
 					if (TShock.TileBans.TileIsBanned(editData, args.Player))
 					{
+						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (tb) {0}", args.Player.Name);
 						args.Player.SendTileSquare(tileX, tileY, 1);
 						args.Player.SendErrorMessage("You do not have permission to place this tile.");
 						args.Handled = true;
@@ -243,6 +256,7 @@ namespace TShockAPI
 					// If the tile is an axe tile and they aren't selecting an axe, they're hacking.
 					if (Main.tileAxe[tile.type] && ((args.Player.TPlayer.mount.Type != 8 && selectedItem.axe == 0) && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0))
 					{
+						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (axe) {0}", args.Player.Name);
 						args.Player.SendTileSquare(tileX, tileY, 4);
 						args.Handled = true;
 						return;
@@ -250,6 +264,7 @@ namespace TShockAPI
 					// If the tile is a hammer tile and they aren't selecting a hammer, they're hacking.
 					else if (Main.tileHammer[tile.type] && ((args.Player.TPlayer.mount.Type != 8 && selectedItem.hammer == 0) && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0))
 					{
+						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (hammer) {0}", args.Player.Name);
 						args.Player.SendTileSquare(tileX, tileY, 4);
 						args.Handled = true;
 						return;
@@ -259,6 +274,7 @@ namespace TShockAPI
 					else if (tile.type != TileID.ItemFrame
 						&& !Main.tileAxe[tile.type] && !Main.tileHammer[tile.type] && tile.wall == 0 && args.Player.TPlayer.mount.Type != 8 && selectedItem.pick == 0 && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0)
 					{
+						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (pick) {0}", args.Player.Name);
 						args.Player.SendTileSquare(tileX, tileY, 4);
 						args.Handled = true;
 						return;
@@ -269,6 +285,7 @@ namespace TShockAPI
 					// If they aren't selecting a hammer, they could be hacking.
 					if (selectedItem.hammer == 0 && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0 && selectedItem.createWall == 0)
 					{
+						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (hammer2) {0}", args.Player.Name);
 						args.Player.SendTileSquare(tileX, tileY, 1);
 						args.Handled = true;
 						return;
@@ -284,6 +301,7 @@ namespace TShockAPI
 						(MaxPlaceStyles.ContainsKey(editData) && style > MaxPlaceStyles[editData]) &&
 						(ExtraneousPlaceStyles.ContainsKey(editData) && style > ExtraneousPlaceStyles[editData]))
 					{
+						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (ms1) {0}", args.Player.Name);
 						args.Player.SendTileSquare(tileX, tileY, 4);
 						args.Handled = true;
 						return;
@@ -294,6 +312,8 @@ namespace TShockAPI
 						(editData != (action == EditAction.PlaceTile ? selectedItem.createTile : selectedItem.createWall) &&
 						!(ropeCoilPlacements.ContainsKey(selectedItem.netID) && editData == ropeCoilPlacements[selectedItem.netID])))
 					{
+						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (ms2) {0}", args.Player.Name);
+
 						args.Player.SendTileSquare(tileX, tileY, 4);
 						args.Handled = true;
 						return;
@@ -301,12 +321,14 @@ namespace TShockAPI
 
 					if (editData >= (action == EditAction.PlaceTile ? Main.maxTileSets : Main.maxWallTypes))
 					{
+						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (ms3) {0}", args.Player.Name);
 						args.Player.SendTileSquare(tileX, tileY, 4);
 						args.Handled = true;
 						return;
 					}
 					if (action == EditAction.PlaceTile && (editData == TileID.PiggyBank || editData == TileID.Safes) && Main.ServerSideCharacter)
 					{
+						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (sscprotect) {0}", args.Player.Name);
 						args.Player.SendErrorMessage("You cannot place this tile because server side characters are enabled.");
 						args.Player.SendTileSquare(tileX, tileY, 3);
 						args.Handled = true;
@@ -316,6 +338,7 @@ namespace TShockAPI
 					{
 						if (TShock.Utils.HasWorldReachedMaxChests())
 						{
+							TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (chestcap) {0}", args.Player.Name);
 							args.Player.SendErrorMessage("The world's chest limit has been reached - unable to place more.");
 							args.Player.SendTileSquare(tileX, tileY, 3);
 							args.Handled = true;
@@ -324,6 +347,7 @@ namespace TShockAPI
 						if ((TShock.Utils.TilePlacementValid(tileX, tileY + 1) && Main.tile[tileX, tileY + 1].type == TileID.Boulder) ||
 							(TShock.Utils.TilePlacementValid(tileX + 1, tileY + 1) && Main.tile[tileX + 1, tileY + 1].type == TileID.Boulder))
 						{
+							TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (validplacement) {0}", args.Player.Name);
 							args.Player.SendTileSquare(tileX, tileY, 3);
 							args.Handled = true;
 							return;

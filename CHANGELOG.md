@@ -3,6 +3,7 @@
 This is the rolling changelog for TShock for Terraria. Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
 
 ## Upcoming changes
+* Debug logging now provides ConsoleDebug and ILog has been updated to support the concept of debug logs. Debug logs are now controlled by `config.json` instead of by preprocessor debug flag. (@hakusaro)
 * Removed `/confuse` command and Terraria player data resync from @Zidonuke. (@hakusaro)
 
 ## TShock 4.4.0 (Pre-release 3)

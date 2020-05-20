@@ -173,14 +173,33 @@ namespace TShockAPI
 		}
 
 		/// <summary>
+		/// Writes a debug string to the log file. Also outputs to the console. Requires config TShock.DebugLogs to be true.
+		/// </summary>
+		/// <param name="message">The message to be written.</param>
+		public void ConsoleDebug(string message)
+		{
+			Console.WriteLine("Debug: " + message);
+			Write(message, TraceLevel.Verbose);
+		}
+
+		/// <summary>
+		/// Writes a debug string to the log file. Also outputs to the console. Requires config TShock.DebugLogs to be true.
+		/// </summary>
+		/// <param name="format">The format of the message to be written.</param>
+		/// <param name="args">The format arguments.</param>
+		public void ConsoleDebug(string format, params object[] args)
+		{
+			ConsoleDebug(string.Format(format, args));
+		}
+
+		/// <summary>
 		/// Writes a debug string to the log file.
 		/// </summary>
 		/// <param name="message">The message to be written.</param>
 		public void Debug(string message)
 		{
-#if DEBUG
-			Write(message, TraceLevel.Verbose);
-#endif
+			if (TShock.Config.DebugLogs)
+				Write(message, TraceLevel.Verbose);
 		}
 
 		/// <summary>
@@ -190,9 +209,8 @@ namespace TShockAPI
 		/// <param name="args">The format arguments.</param>
 		public void Debug(string format, params object[] args)
 		{
-#if DEBUG
-			Debug(string.Format(format, args));
-#endif
+			if (TShock.Config.DebugLogs)
+				Debug(string.Format(format, args));
 		}
 
 		/// <summary>

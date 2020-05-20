@@ -520,6 +520,9 @@ namespace TShockAPI
 		[Description("Whether or not to show backup auto save messages.")]
 		public bool ShowBackupAutosaveMessages = true;
 
+		[Description("Whether or not the server should output debug level messages related to system operation.")]
+		public bool DebugLogs = false;
+
 		/// <summary>
 		/// Reads a configuration file from a given path
 		/// </summary>
