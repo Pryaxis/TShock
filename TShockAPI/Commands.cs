@@ -224,7 +224,7 @@ namespace TShockAPI
 			add(new Command(SetupToken, "setup")
 			{
 				AllowServer = false,
-				HelpText = "Used to authenticate as superadmin when first setting up TShock."
+				HelpText = "Used to authenticate yourself as owner when first setting up TShock."
 			});
 			add(new Command(Permissions.user, ManageUsers, "user")
 			{
@@ -5006,12 +5006,12 @@ namespace TShockAPI
 				}
 			}
 
-			// If the user account is already a superadmin (permanent), disable the system
+			// If the user account is already authenticated, disable the system
 			if (args.Player.IsLoggedIn && args.Player.tempGroup == null)
 			{
 				args.Player.SendSuccessMessage("Your new account has been verified, and the {0}setup system has been turned off.", Specifier);
 				args.Player.SendSuccessMessage("You can always use the {0}user command to manage players.", Specifier);
-				args.Player.SendSuccessMessage("The setup system will remain disabled as long as a superadmin exists (even if you delete setup.lock).");
+				args.Player.SendSuccessMessage("The setup system will remain disabled as long as user accounts exist (even if you delete setup.lock).");
 				args.Player.SendSuccessMessage("Share your server, talk with other admins, and more on GitHub! -- https://tshock.co/");
 				args.Player.SendSuccessMessage("Thank you for using TShock for Terraria!");
 				FileTools.CreateFile(Path.Combine(TShock.SavePath, "setup.lock"));
