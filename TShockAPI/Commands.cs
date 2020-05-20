@@ -337,10 +337,6 @@ namespace TShockAPI
 			{
 				HelpText = "Annoys a player for an amount of time."
 			});
-			add(new Command(Permissions.annoy, Confuse, "confuse")
-			{
-				HelpText = "Confuses a player for an amount of time."
-			});
 			add(new Command(Permissions.annoy, Rocket, "rocket")
 			{
 				HelpText = "Rockets a player upwards. Requires SSC."
@@ -5205,26 +5201,6 @@ namespace TShockAPI
 				var ply = players[0];
 				args.Player.SendSuccessMessage("Annoying " + ply.Name + " for " + annoy + " seconds.");
 				(new Thread(ply.Whoopie)).Start(annoy);
-			}
-		}
-
-		private static void Confuse(CommandArgs args)
-		{
-			if (args.Parameters.Count != 1)
-			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}confuse <player>", Specifier);
-				return;
-			}
-			var players = TSPlayer.FindByNameOrID(args.Parameters[0]);
-			if (players.Count == 0)
-				args.Player.SendErrorMessage("Invalid player!");
-			else if (players.Count > 1)
-				args.Player.SendMultipleMatchError(players.Select(p => p.Name));
-			else
-			{
-				var ply = players[0];
-				ply.Confused = !ply.Confused;
-				args.Player.SendSuccessMessage("{0} is {1} confused.", ply.Name, ply.Confused ? "now" : "no longer");
 			}
 		}
 
