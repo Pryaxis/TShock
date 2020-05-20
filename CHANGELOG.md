@@ -5,6 +5,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 ## Upcoming changes
 * Update player spawn related things to 1.4. `Terraria.Player.Spawn` method now has a required argument, `PlayerSpawnContext context`. (@AxeelAnder)
 * Make sqlite db path configurable. (@AxeelAnder)
+* Make TShock database MySQL 8 compatible by backticking `Group` column name in Region table.
 
 ## TShock 4.4.0 (Pre-release 4)
 * Debug logging now provides ConsoleDebug and ILog has been updated to support the concept of debug logs. Debug logs are now controlled by `config.json` instead of by preprocessor debug flag. (@hakusaro)
