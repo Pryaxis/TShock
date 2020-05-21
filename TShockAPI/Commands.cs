@@ -2565,7 +2565,7 @@ namespace TShockAPI
 
 		private static void Home(CommandArgs args)
 		{
-			args.Player.Spawn();
+			args.Player.Spawn(PlayerSpawnContext.RecallFromItem);
 			args.Player.SendSuccessMessage("Teleported to your spawnpoint.");
 		}
 
@@ -4996,23 +4996,17 @@ namespace TShockAPI
 		{
 			if (TShock.SetupToken == 0)
 			{
-				if (args.Player.Group.Name == new SuperAdminGroup().Name)
-					args.Player.SendInfoMessage("The initial setup system is already disabled.");
-				else
-				{
-					args.Player.SendWarningMessage("The initial setup system is disabled. This incident has been logged.");
-					TShock.Log.Warn("{0} attempted to use the initial setup system even though it's disabled.", args.Player.IP);
-					return;
-				}
+				args.Player.SendWarningMessage("The initial setup system is disabled. This incident has been logged.");
+				args.Player.SendWarningMessage("If you are locked out of all admin accounts, ask for help on https://tshock.co/");
+				TShock.Log.Warn("{0} attempted to use the initial setup system even though it's disabled.", args.Player.IP);
+				return;
 			}
 
-			// If the user account is already a superadmin (permanent), disable the system
+			// If the user account is already logged in, turn off the setup system
 			if (args.Player.IsLoggedIn && args.Player.tempGroup == null)
 			{
 				args.Player.SendSuccessMessage("Your new account has been verified, and the {0}setup system has been turned off.", Specifier);
-				args.Player.SendSuccessMessage("You can always use the {0}user command to manage players.", Specifier);
-				args.Player.SendSuccessMessage("The setup system will remain disabled as long as a superadmin exists (even if you delete setup.lock).");
-				args.Player.SendSuccessMessage("Share your server, talk with other admins, and more on GitHub! -- https://tshock.co/");
+				args.Player.SendSuccessMessage("Share your server, talk with admins, and chill on GitHub & Discord. -- https://tshock.co/");
 				args.Player.SendSuccessMessage("Thank you for using TShock for Terraria!");
 				FileTools.CreateFile(Path.Combine(TShock.SavePath, "setup.lock"));
 				File.Delete(Path.Combine(TShock.SavePath, "setup-code.txt"));
@@ -5038,11 +5032,11 @@ namespace TShockAPI
 				args.Player.tempGroup = new SuperAdminGroup();
 
 			args.Player.SendInfoMessage("Temporary system access has been given to you, so you can run one command.");
-			args.Player.SendInfoMessage("Please use the following to create a permanent account for you.");
-			args.Player.SendInfoMessage("{0}user add <username> <password> owner", Specifier);
+			args.Player.SendWarningMessage("Please use the following to create a permanent account for you.");
+			args.Player.SendWarningMessage("{0}user add <username> <password> owner", Specifier);
 			args.Player.SendInfoMessage("Creates: <username> with the password <password> as part of the owner group.");
 			args.Player.SendInfoMessage("Please use {0}login <username> <password> after this process.", Specifier);
-			args.Player.SendInfoMessage("If you understand, please {0}login <username> <password> now, and then type {0}setup.", Specifier);
+			args.Player.SendWarningMessage("If you understand, please {0}login <username> <password> now, and then type {0}setup.", Specifier);
 			return;
 		}
 

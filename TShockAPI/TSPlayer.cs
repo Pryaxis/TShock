@@ -297,7 +297,11 @@ namespace TShockAPI
 		/// <summary>
 		/// The player's respawn timer.
 		/// </summary>
-		public int RespawnTimer;
+		public int RespawnTimer
+		{
+			get => TPlayer.respawnTimer;
+			set => TPlayer.respawnTimer = value;
+		}
 
 		/// <summary>
 		/// Whether the player is dead or not.
@@ -569,7 +573,7 @@ namespace TShockAPI
 						}
 					}
 				}
-				
+
 			}
 
 			return check;
@@ -1164,15 +1168,15 @@ namespace TShockAPI
 		/// <summary>
 		/// Spawns the player at his spawn point.
 		/// </summary>
-		public void Spawn()
+		public void Spawn(PlayerSpawnContext context, int? respawnTimer = null)
 		{
 			if (this.sX > 0 && this.sY > 0)
 			{
-				Spawn(this.sX, this.sY);
+				Spawn(this.sX, this.sY, context, respawnTimer);
 			}
 			else
 			{
-				Spawn(TPlayer.SpawnX, TPlayer.SpawnY);
+				Spawn(TPlayer.SpawnX, TPlayer.SpawnY, context, respawnTimer);
 			}
 		}
 
@@ -1181,7 +1185,9 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="tilex">The X coordinate.</param>
 		/// <param name="tiley">The Y coordinate.</param>
-		public void Spawn(int tilex, int tiley)
+		/// <param name="context">The PlayerSpawnContext.</param>
+		/// <param name="respawnTimer">The respawn timer, will be Player.respawnTimer if parameter is null.</param>
+		public void Spawn(int tilex, int tiley, PlayerSpawnContext context, int? respawnTimer = null)
 		{
 			using (var ms = new MemoryStream())
 			{
@@ -1189,7 +1195,9 @@ namespace TShockAPI
 				{
 					PlayerIndex = (byte)Index,
 					TileX = (short)tilex,
-					TileY = (short)tiley
+					TileY = (short)tiley,
+					RespawnTimer = respawnTimer ?? TShock.Players[Index].TPlayer.respawnTimer,
+					PlayerSpawnContext = context,
 				};
 				msg.PackFull(ms);
 				SendRawData(ms.ToArray());
@@ -1215,7 +1223,7 @@ namespace TShockAPI
 			}
 		}
 
-		/// <summary>Sends a tile square at a location with a given size. 	
+		/// <summary>Sends a tile square at a location with a given size.
 		/// Typically used to revert changes by Bouncer through sending the
 		/// "old" version of modified data back to a client.
 		/// Prevents desync issues.
@@ -1624,7 +1632,7 @@ namespace TShockAPI
 		public void SendMultipleMatchError(IEnumerable<object> matches)
 		{
 			SendErrorMessage("More than one match found: ");
-			
+
 			var lines = PaginationTools.BuildLinesFromTerms(matches.ToArray());
 			lines.ForEach(SendInfoMessage);
 

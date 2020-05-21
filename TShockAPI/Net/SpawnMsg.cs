@@ -1,4 +1,4 @@
-﻿/*
+﻿﻿/*
 TShock, a server mod for Terraria
 Copyright (C) 2011-2019 Pryaxis & TShock Contributors
 
@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.IO;
 using System.IO.Streams;
+using Terraria;
 
 namespace TShockAPI.Net
 {
@@ -28,15 +29,19 @@ namespace TShockAPI.Net
 			get { return PacketTypes.PlayerSpawn; }
 		}
 
+		public byte PlayerIndex { get; set; }
 		public short TileX { get; set; }
 		public short TileY { get; set; }
-		public byte PlayerIndex { get; set; }
+		public int RespawnTimer { get; set; }
+		public PlayerSpawnContext PlayerSpawnContext { get; set; }
 
 		public override void Pack(Stream stream)
 		{
 			stream.WriteInt8(PlayerIndex);
-			stream.WriteInt32(TileX);
-			stream.WriteInt32(TileY);
+			stream.WriteInt16(TileX);
+			stream.WriteInt16(TileY);
+			stream.WriteInt32(RespawnTimer);
+			stream.WriteByte((byte) PlayerSpawnContext);
 		}
 	}
 }

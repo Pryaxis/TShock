@@ -264,7 +264,8 @@ namespace TShockAPI
 			{
 				if (Config.StorageType.ToLower() == "sqlite")
 				{
-					string sql = Path.Combine(SavePath, "tshock.sqlite");
+					string sql = Path.Combine(SavePath, Config.SqliteDBPath);
+					Directory.CreateDirectory(Path.GetDirectoryName(sql));
 					DB = new SqliteConnection(string.Format("uri=file://{0},Version=3", sql));
 				}
 				else if (Config.StorageType.ToLower() == "mysql")
@@ -845,7 +846,7 @@ namespace TShockAPI
 
 				if (File.Exists(Path.Combine(SavePath, "setup-code.txt")))
 				{
-					Log.ConsoleInfo("A superadmin account has been detected in the user database, but setup-code.txt is still present.");
+					Log.ConsoleInfo("An account has been detected in the user database, but setup-code.txt is still present.");
 					Log.ConsoleInfo("TShock will now disable the initial setup system and remove setup-code.txt as it is no longer needed.");
 					File.Delete(Path.Combine(SavePath, "setup-code.txt"));
 				}
@@ -1047,7 +1048,7 @@ namespace TShockAPI
 
 					if (player.RespawnTimer > 0 && --player.RespawnTimer == 0 && player.Difficulty != 2)
 					{
-						player.Spawn();
+						player.Spawn(PlayerSpawnContext.ReviveFromDeath);
 					}
 
 					if (!Main.ServerSideCharacter || (Main.ServerSideCharacter && player.IsLoggedIn))
