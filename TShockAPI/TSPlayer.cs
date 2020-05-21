@@ -1197,7 +1197,7 @@ namespace TShockAPI
 					PlayerIndex = (byte)Index,
 					TileX = (short)tilex,
 					TileY = (short)tiley,
-					RespawnTimer = respawnTimer ?? TShock.Players[Index].RespawnTimer * 60,
+					RespawnTimer = respawnTimer ?? TShock.Players[Index].TPlayer.respawnTimer,
 					PlayerSpawnContext = context,
 				};
 				msg.PackFull(ms);

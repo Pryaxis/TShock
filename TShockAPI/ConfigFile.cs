@@ -441,12 +441,12 @@ namespace TShockAPI
 		[Description("Whether or not to log REST API connections.")]
 		public bool LogRest = false;
 
-		/// <summary>The number of seconds a player must wait before being respawned.</summary>
-		[Description("The number of seconds a player must wait before being respawned.")]
+		/// <summary>The number of seconds a player must wait before being respawned. Cannot be longer than normal value now. Use at your own risk.</summary>
+		[Description("The number of seconds a player must wait before being respawned. Cannot be longer than normal value now. Use at your own risk.")]
 		public int RespawnSeconds = 5;
 
-		/// <summary>The number of seconds a player must wait before being respawned if there is a boss nearby.</summary>
-		[Description("The number of seconds a player must wait before being respawned if there is a boss nearby.")]
+		/// <summary>The number of seconds a player must wait before being respawned if there is a boss nearby. Cannot be longer than normal value now. Use at your own risk.</summary>
+		[Description("The number of seconds a player must wait before being respawned if there is a boss nearby. Cannot be longer than normal value now. Use at your own risk.")]
 		public int RespawnBossSeconds = 10;
 
 		/// <summary>Disables a player if this number of tiles is painted within 1 second.</summary>
