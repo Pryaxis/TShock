@@ -15,14 +15,13 @@
 
 TShock is a toolbox for Terraria servers and communities. That toolbox is jam packed with anti-cheat tools, server-side characters, groups, permissions, item bans, tons of commands, and limitless potential. It's one of a kind.
 
-**We are currently polishing on Terraria 1.4.0.2 (curRelease = 226). For updates, check our [twitter, @Pryaxis](https://twitter.com/Pryaxis).**
-
-* Download: [Stable](https://github.com/TShock/TShock/releases) or [Experimental](#experimental-downloads).
-* Download: [Plugins and tools](https://github.com/Pryaxis/plugins) that work with TShock, TSAPI, and Terraria.
+* Download: [official](https://github.com/TShock/TShock/releases) or [experimental](#experimental-downloads).
+* Download: [plugins and tools](https://github.com/Pryaxis/plugins) that work with TShock, TSAPI, and Terraria.
 * Read [the documentation](https://tshock.readme.io/) to quickly get up to speed.
 * Join [Discord](https://discord.gg/Cav9nYX).
 * Use the ancient [old forums](https://tshock.co/xf/index.php?resources/) to find old stuff.
 * Talk on [GitHub discussions](https://github.com/Pryaxis/TShock/discussions) to ask for help, chat, and other things. This is the best way to get help if Discord isn't your thing.
+* For news, follow [@Pryaxis](https://twitter.com/Pryaxis) on Twitter.
 
 ----
 
