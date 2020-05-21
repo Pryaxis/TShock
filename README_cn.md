@@ -82,6 +82,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/Retrograde-i486"><img src="https://avatars1.githubusercontent.com/u/65242258?v=4" width="100px;" alt=""/><br /><sub><b>Retrograde-i486</b></sub></a><br /><a href="https://github.com/Pryaxis/TShock/commits?author=Retrograde-i486" title="Code">💻</a></td>
+    <td align="center"><a href="http://colinbohn.me"><img src="https://avatars0.githubusercontent.com/u/1351268?v=4" width="100px;" alt=""/><br /><sub><b>Colin Bohn</b></sub></a><br /><a href="https://github.com/Pryaxis/TShock/commits?author=ColinBohn" title="Code">💻</a></td>
   </tr>
 </table>
 
