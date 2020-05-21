@@ -95,6 +95,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "mrshroomy",
+      "name": "mrshroomy",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/52048952?v=4",
+      "profile": "https://github.com/mrshroomy",
+      "contributions": [
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
