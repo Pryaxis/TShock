@@ -2,9 +2,11 @@
 
 This is the rolling changelog for TShock for Terraria. Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
 
-## Upcoming changes
+## TShock 4.4.0 (Pre-release 5 (Pre-release 1))
 * Update player spawn related things to 1.4. `Terraria.Player.Spawn` method now has a required argument, `PlayerSpawnContext context`. (@AxeelAnder)
 * Make sqlite db path configurable. (@AxeelAnder)
+* Terraria 1.4.0.3 experimental support. (@Patrikkk)
+* Updated changelog. (@hakusaro)
 
 ## TShock 4.4.0 (Pre-release 4)
 * Debug logging now provides ConsoleDebug and ILog has been updated to support the concept of debug logs. Debug logs are now controlled by `config.json` instead of by preprocessor debug flag. (@hakusaro)
