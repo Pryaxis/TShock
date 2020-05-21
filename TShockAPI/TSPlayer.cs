@@ -299,9 +299,10 @@ namespace TShockAPI
 		/// </summary>
 		public int RespawnTimer
 		{
-			get => TPlayer.respawnTimer;
-			set => TPlayer.respawnTimer = value;
+			get => _respawnTimer;
+			set => TPlayer.respawnTimer = (_respawnTimer = value) * 60;
 		}
+		private int _respawnTimer;
 
 		/// <summary>
 		/// Whether the player is dead or not.
@@ -1196,7 +1197,7 @@ namespace TShockAPI
 					PlayerIndex = (byte)Index,
 					TileX = (short)tilex,
 					TileY = (short)tiley,
-					RespawnTimer = respawnTimer ?? TShock.Players[Index].TPlayer.respawnTimer,
+					RespawnTimer = respawnTimer ?? TShock.Players[Index].RespawnTimer * 60,
 					PlayerSpawnContext = context,
 				};
 				msg.PackFull(ms);
