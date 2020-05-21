@@ -2065,6 +2065,10 @@ namespace TShockAPI
 
 		private static bool HandleSpawn(GetDataHandlerArgs args)
 		{
+			// Should we add a bouncer here or in Bouncer.cs to prohibit client-side reviving
+			// if (args.Player.Dead && args.Player.RespawnTimer > 0)
+			// 	return true;
+
 			byte player = args.Data.ReadInt8();
 			short spawnx = args.Data.ReadInt16();
 			short spawny = args.Data.ReadInt16();
