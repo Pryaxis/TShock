@@ -86,6 +86,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "ColinBohn",
+      "name": "Colin Bohn",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/1351268?v=4",
+      "profile": "http://colinbohn.me",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
