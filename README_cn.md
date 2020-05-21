@@ -84,6 +84,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/Retrograde-i486"><img src="https://avatars1.githubusercontent.com/u/65242258?v=4" width="100px;" alt=""/><br /><sub><b>Retrograde-i486</b></sub></a><br /><a href="https://github.com/Pryaxis/TShock/commits?author=Retrograde-i486" title="Code">💻</a></td>
     <td align="center"><a href="http://colinbohn.me"><img src="https://avatars0.githubusercontent.com/u/1351268?v=4" width="100px;" alt=""/><br /><sub><b>Colin Bohn</b></sub></a><br /><a href="https://github.com/Pryaxis/TShock/commits?author=ColinBohn" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/mrshroomy"><img src="https://avatars0.githubusercontent.com/u/52048952?v=4" width="100px;" alt=""/><br /><sub><b>mrshroomy</b></sub></a><br /><a href="https://github.com/Pryaxis/TShock/commits?author=mrshroomy" title="Tests">⚠️</a></td>
+    <td align="center"><a href="https://github.com/agentsparrow"><img src="https://avatars0.githubusercontent.com/u/16114336?v=4" width="100px;" alt=""/><br /><sub><b>agentsparrow</b></sub></a><br /><a href="https://github.com/Pryaxis/TShock/commits?author=agentsparrow" title="Tests">⚠️</a></td>
   </tr>
 </table>
 
