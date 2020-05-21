@@ -2,7 +2,10 @@
 
 This is the rolling changelog for TShock for Terraria. Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
 
-## TShock 4.4.0 (Pre-release 5 (Pre-release 1))
+## TShock 4.4.0 (Pre-release 6)
+* Updates to OTAPI 2.0.0.35 (@DeathCradle).
+
+## TShock 4.4.0 (Pre-release 5)
 * Update player spawn related things to 1.4. `Terraria.Player.Spawn` method now has a required argument, `PlayerSpawnContext context`. (@AxeelAnder)
 * Make sqlite db path configurable. (@AxeelAnder)
 * Terraria 1.4.0.3 experimental support. (@Patrikkk)
