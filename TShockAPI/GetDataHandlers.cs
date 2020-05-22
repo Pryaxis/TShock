@@ -2079,6 +2079,13 @@ namespace TShockAPI
 			if (OnPlayerSpawn(args.Player, args.Data, player, spawnx, spawny, respawnTimer, context))
 				return true;
 
+			if ((Main.ServerSideCharacter) && (spawnx == -1 && spawny == -1)) //this means they want to spawn to vanilla spawn
+			{
+				args.Player.sX = Main.spawnTileX;
+				args.Player.sY = Main.spawnTileY;
+				args.Player.Teleport(args.Player.sX * 16, (args.Player.sY * 16) - 48);
+			}
+
 			if ((Main.ServerSideCharacter) && (args.Player.sX > 0) && (args.Player.sY > 0) && (args.TPlayer.SpawnX > 0) && ((args.TPlayer.SpawnX != args.Player.sX) && (args.TPlayer.SpawnY != args.Player.sY)))
 			{
 
