@@ -1421,7 +1421,15 @@ namespace TShockAPI
 				}
 				return;
 			}
-			SendData(PacketTypes.SmartTextMessage, msg, 255, red, green, blue, -1);
+
+			if (this.Index == -1) //-1 is our broadcast index - this implies we're using TSPlayer.All.SendMessage and broadcasting to all clients
+			{
+				Terraria.Chat.ChatHelper.BroadcastChatMessage(NetworkText.FromFormattable(msg), new Color(red, green, blue));
+			}
+			else
+			{
+				Terraria.Chat.ChatHelper.SendChatMessageToClient(NetworkText.FromFormattable(msg), new Color(red, green, blue), this.Index);
+			}
 		}
 
 		/// <summary>
@@ -1443,7 +1451,7 @@ namespace TShockAPI
 				}
 				return;
 			}
-			SendDataFromPlayer(PacketTypes.SmartTextMessage, ply, msg, red, green, blue, -1);
+			Terraria.Chat.ChatHelper.BroadcastChatMessageAs((byte)ply, NetworkText.FromFormattable(msg), new Color(red, green, blue));
 		}
 
 		/// <summary>
