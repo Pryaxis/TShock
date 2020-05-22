@@ -2,6 +2,9 @@
 
 This is the rolling changelog for TShock for Terraria. Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
 
+## TShock 4.4.0 (Pre-release ?)
+* Fix bed spawn issues when trying to remove spawn point in SSC (@Olink)
+
 ## TShock 4.4.0 (Pre-release 6)
 * Updates to OTAPI 2.0.0.35 (@DeathCradle).
 
