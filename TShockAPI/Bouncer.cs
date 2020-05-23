@@ -1245,7 +1245,7 @@ namespace TShockAPI
 			int tileX = args.TileX;
 			int tileY = args.TileY;
 			byte amount = args.Amount;
-			byte type = args.Type;
+			LiquidType type = args.Type;
 
 			if (!TShock.Utils.TilePlacementValid(tileX, tileY) || (args.Player.Dead && TShock.Config.PreventDeadModification))
 			{
@@ -1281,29 +1281,34 @@ namespace TShockAPI
 			if (amount != 0)
 			{
 				int bucket = -1;
-				if (args.Player.TPlayer.inventory[args.Player.TPlayer.selectedItem].type == ItemID.EmptyBucket)
+				int selectedItemType = args.Player.TPlayer.inventory[args.Player.TPlayer.selectedItem].type;
+				if (selectedItemType == ItemID.EmptyBucket)
 				{
 					bucket = 0;
 				}
-				else if (args.Player.TPlayer.inventory[args.Player.TPlayer.selectedItem].type == ItemID.WaterBucket)
+				else if (selectedItemType == ItemID.WaterBucket)
 				{
 					bucket = 1;
 				}
-				else if (args.Player.TPlayer.inventory[args.Player.TPlayer.selectedItem].type == ItemID.LavaBucket)
+				else if (selectedItemType == ItemID.LavaBucket)
 				{
 					bucket = 2;
 				}
-				else if (args.Player.TPlayer.inventory[args.Player.TPlayer.selectedItem].type == ItemID.HoneyBucket)
+				else if (selectedItemType == ItemID.HoneyBucket)
 				{
 					bucket = 3;
 				}
-				else if (args.Player.TPlayer.inventory[args.Player.TPlayer.selectedItem].type == ItemID.BottomlessBucket ||
-					args.Player.TPlayer.inventory[args.Player.TPlayer.selectedItem].type == ItemID.SuperAbsorbantSponge)
+				else if (selectedItemType == ItemID.BottomlessBucket ||
+					selectedItemType == ItemID.SuperAbsorbantSponge)
 				{
 					bucket = 4;
 				}
+				else if (selectedItemType == ItemID.LavaAbsorbantSponge)
+				{
+					bucket = 5;
+				}
 
-				if (type == 1 && !(bucket == 2 || bucket == 0))
+				if (type == LiquidType.Lava && !(bucket == 2 || bucket == 0 || bucket == 5))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected bucket check 1 from {0}", args.Player.Name);
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
@@ -1313,7 +1318,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (type == 1 && TShock.Itembans.ItemIsBanned("Lava Bucket", args.Player))
+				if (type == LiquidType.Lava && TShock.Itembans.ItemIsBanned("Lava Bucket", args.Player))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected lava bucket from {0}", args.Player.Name);
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
@@ -1323,7 +1328,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (type == 0 && !(bucket == 1 || bucket == 0 || bucket == 4))
+				if (type == LiquidType.Water && !(bucket == 1 || bucket == 0 || bucket == 4))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected bucket check 2 from {0}", args.Player.Name);
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
@@ -1333,7 +1338,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (type == 0 && TShock.Itembans.ItemIsBanned("Water Bucket", args.Player))
+				if (type == LiquidType.Water && TShock.Itembans.ItemIsBanned("Water Bucket", args.Player))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected bucket check 3 from {0}", args.Player.Name);
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
@@ -1343,7 +1348,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (type == 2 && !(bucket == 3 || bucket == 0))
+				if (type == LiquidType.Honey && !(bucket == 3 || bucket == 0))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected bucket check 4 from {0}", args.Player.Name);
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
@@ -1353,7 +1358,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (type == 2 && TShock.Itembans.ItemIsBanned("Honey Bucket", args.Player))
+				if (type == LiquidType.Honey && TShock.Itembans.ItemIsBanned("Honey Bucket", args.Player))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected bucket check 5 from {0}", args.Player.Name);
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
