@@ -1,0 +1,15 @@
+bin
+obj
+*.suo
+/*.user
+packages/
+
+.DS_Store
+
+Output/
+
+*.exe
+*.pdb
+*.dll
+
+.idea/
