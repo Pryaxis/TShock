@@ -1307,8 +1307,12 @@ namespace TShockAPI
 				{
 					bucket = 5;
 				}
+				else if (selectedItemType == ItemID.BottomlessLavaBucket)
+				{
+					bucket = 6;
+				}
 
-				if (type == LiquidType.Lava && !(bucket == 2 || bucket == 0 || bucket == 5))
+				if (type == LiquidType.Lava && !(bucket == 2 || bucket == 0 || bucket == 5 || bucket == 6))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected bucket check 1 from {0}", args.Player.Name);
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");

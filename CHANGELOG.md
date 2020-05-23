@@ -6,6 +6,8 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Fix bed spawn issues when trying to remove spawn point in SSC (@Olink)
 * Fix Snake Flute (@Olink)
 * Fix lava absorbant sponge not capturing lava. `LiquidSetEventArgs` now returns a `LiquidType` instead of a byte type. (@hakusaro)
+* Fix bottomless lava bucket from not being able to create lava. (@hakusaro)
+  * Ban a lava bucket to ban lava on the server entirely, until we figure out a better way to handle liquids.
 
 ## TShock 4.4.0 (Pre-release 6)
 * Updates to OTAPI 2.0.0.35 (@DeathCradle).
