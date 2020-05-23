@@ -2717,10 +2717,9 @@ namespace TShockAPI
 				return true;
 			}
 
-			// typo? type == 3 & !args....
-			if (type == 3 & !args.Player.HasPermission(Permissions.usesundial))
+			if (type == 3 && !args.Player.HasPermission(Permissions.usesundial))
 			{
-				TShock.Log.ConsoleDebug("GetDataHandlers / HandleSpecial rejected enchanted sundial type 3 binary and (warn) {0}", args.Player.Name);
+				TShock.Log.ConsoleDebug("GetDataHandlers / HandleSpecial rejected enchanted sundial permission {0}", args.Player.Name);
 				args.Player.SendErrorMessage("You do not have permission to use the Enchanted Sundial!");
 				return true;
 			}
