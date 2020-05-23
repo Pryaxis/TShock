@@ -943,7 +943,8 @@ namespace TShockAPI
 			if ((type == ProjectileID.Bomb
 				|| type == ProjectileID.Dynamite
 				|| type == ProjectileID.StickyBomb
-				|| type == ProjectileID.StickyDynamite))
+				|| type == ProjectileID.StickyDynamite
+				|| type == ProjectileID.ScarabBomb))
 			{
 				//  Denotes that the player has recently set a fuse - used for cheat detection.
 				args.Player.RecentFuse = 10;
