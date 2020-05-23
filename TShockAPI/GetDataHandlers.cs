@@ -3360,6 +3360,7 @@ namespace TShockAPI
 			{ ProjectileID.EbonsandBallGun, TileID.Ebonsand },
 			{ ProjectileID.PearlSandBallGun, TileID.Pearlsand },
 			{ ProjectileID.CrimsandBallGun, TileID.Crimsand },
+			{ ProjectileID.MysticSnakeCoil, TileID.MysticSnakeRope }
 		};
 
 		internal static Dictionary<int, int> ropeCoilPlacements = new Dictionary<int, int>

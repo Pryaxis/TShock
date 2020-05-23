@@ -4,6 +4,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 ## TShock 4.4.0 (Pre-release ?)
 * Fix bed spawn issues when trying to remove spawn point in SSC (@Olink)
+* Fix Snake Flute (@Olink)
 
 ## TShock 4.4.0 (Pre-release 6)
 * Updates to OTAPI 2.0.0.35 (@DeathCradle).
