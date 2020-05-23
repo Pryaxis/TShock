@@ -3,8 +3,14 @@
 This is the rolling changelog for TShock for Terraria. Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
 
 ## TShock 4.4.0 (Pre-release ?)
-* Fix bed spawn issues when trying to remove spawn point in SSC (@Olink)
-* Fix Snake Flute (@Olink)
+* Fixed bed spawn issues when trying to remove spawn point in SSC. (@Olink)
+* Fixed Snake Flute. (@Olink)
+* Fixed lava absorbant sponge not capturing lava. `LiquidSetEventArgs` now returns a `LiquidType` instead of a byte type. (@hakusaro)
+* Fixed bottomless lava bucket from not being able to create lava. (@hakusaro)
+  * Ban a lava bucket to ban lava on the server entirely, until we figure out a better way to handle liquids.
+* Fixed scarab bombs not detonating on pick style tiles. (@hakusaro)
+* Fixed dirt bombs not creating dirt. (@hakusaro)
+* Added a ridiculous amount of debug information. If you're experiencing any problems with 1.4 items being caught by the TShock anticheat system, please turn on DebugLogs in your config file and capture log data. It'll be extremely helpful in narrowing down precisely how to fix your problem. (@hakusaro)
 
 ## TShock 4.4.0 (Pre-release 6)
 * Updates to OTAPI 2.0.0.35 (@DeathCradle).
