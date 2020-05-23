@@ -601,8 +601,11 @@ namespace TShockAPI
 		/// <returns>True if the player is in range of a tile or if range checks are off. False if not.</returns>
 		public bool IsInRange(int x, int y, int range = 32)
 		{
-			if (TShock.Config.RangeChecks && ((Math.Abs(TileX - x) > range) || (Math.Abs(TileY - y) > range)))
+			int rgX = Math.Abs(TileX - x);
+			int rgY = Math.Abs(TileY - y);
+			if (TShock.Config.RangeChecks && ((rgX > range) || (rgY > range)))
 			{
+				TShock.Log.ConsoleDebug("Rangecheck failed for {0} ({1}, {2}) (rg: {3}/{5}, {4}/{5})", Name, x, y, rgX, rgY, range);
 				return false;
 			}
 			return true;
