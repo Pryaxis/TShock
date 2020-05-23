@@ -440,7 +440,15 @@ namespace TShockAPI
 						args.Handled = false;
 						return;
 					}
-					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from explosives/fuses from {0}", args.Player.Name);
+
+					// Dirt bomb makes dirt everywhere
+					if ((action == EditAction.PlaceTile || action == EditAction.SlopeTile) && editData == TileID.Dirt && args.Player.RecentFuse > 0)
+					{
+						args.Handled = false;
+						return;
+					}
+
+					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from explosives/fuses from {0} {1} {2}", args.Player.Name, action, editData);
 					args.Player.SendTileSquare(tileX, tileY, 4);
 					args.Handled = true;
 					return;
@@ -944,7 +952,8 @@ namespace TShockAPI
 				|| type == ProjectileID.Dynamite
 				|| type == ProjectileID.StickyBomb
 				|| type == ProjectileID.StickyDynamite
-				|| type == ProjectileID.ScarabBomb))
+				|| type == ProjectileID.ScarabBomb
+				|| type == ProjectileID.DirtBomb))
 			{
 				//  Denotes that the player has recently set a fuse - used for cheat detection.
 				args.Player.RecentFuse = 10;
