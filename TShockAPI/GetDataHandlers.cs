@@ -1129,10 +1129,21 @@ namespace TShockAPI
 			/// </summary>
 			public byte Amount { get; set; }
 			/// <summary>
-			/// Type of Liquid: 0=water, 1=lave, 2=honey
+			/// Type of Liquid: 0=water, 1=lava, 2=honey
 			/// </summary>
-			public byte Type { get; set; }
+			public LiquidType Type { get; set; }
 		}
+
+		/// <summary>
+		/// LiquidType - supported liquid types
+		/// </summary>
+		public enum LiquidType : byte
+		{
+			Water = 0,
+			Lava = 1,
+			Honey = 2
+		}
+
 		/// <summary>
 		/// LiquidSet - When ever a liquid is set
 		/// </summary>
@@ -1149,7 +1160,7 @@ namespace TShockAPI
 				TileX = tilex,
 				TileY = tiley,
 				Amount = amount,
-				Type = type,
+				Type = (LiquidType) type,
 			};
 			LiquidSet.Invoke(null, args);
 			return args.Handled;

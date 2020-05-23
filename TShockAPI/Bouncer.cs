@@ -205,7 +205,7 @@ namespace TShockAPI
 			{
 				if (editData < 0)
 				{
-					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (editData check) {0}", args.Player.Name);
+					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (editData check) {0} {1} {2}", args.Player.Name, action, editData);
 					args.Player.SendTileSquare(tileX, tileY, 4);
 					args.Handled = true;
 					return;
@@ -213,7 +213,7 @@ namespace TShockAPI
 
 				if (!TShock.Utils.TilePlacementValid(tileX, tileY))
 				{
-					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (tile placement valid) {0}", args.Player.Name);
+					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (tile placement valid) {0} {1} {2}", args.Player.Name, action, editData);
 					args.Player.SendTileSquare(tileX, tileY, 1);
 					args.Handled = true;
 					return;
@@ -221,14 +221,14 @@ namespace TShockAPI
 
 				if (action == EditAction.KillTile && Main.tile[tileX, tileY].type == TileID.MagicalIceBlock)
 				{
-					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit super accepted from (ice block) {0}", args.Player.Name);
+					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit super accepted from (ice block) {0} {1} {2}", args.Player.Name, action, editData);
 					args.Handled = false;
 					return;
 				}
 
 				if (args.Player.Dead && TShock.Config.PreventDeadModification)
 				{
-					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (pdm) {0}", args.Player.Name);
+					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (pdm) {0} {1} {2}", args.Player.Name, action, editData);
 					args.Player.SendTileSquare(tileX, tileY, 4);
 					args.Handled = true;
 					return;
@@ -242,7 +242,7 @@ namespace TShockAPI
 				{
 					if (TShock.TileBans.TileIsBanned(editData, args.Player))
 					{
-						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (tb) {0}", args.Player.Name);
+						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (tb) {0} {1} {2}", args.Player.Name, action, editData);
 						args.Player.SendTileSquare(tileX, tileY, 1);
 						args.Player.SendErrorMessage("You do not have permission to place this tile.");
 						args.Handled = true;
@@ -257,7 +257,7 @@ namespace TShockAPI
 					// If the tile is an axe tile and they aren't selecting an axe, they're hacking.
 					if (Main.tileAxe[tile.type] && ((args.Player.TPlayer.mount.Type != 8 && selectedItem.axe == 0) && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0))
 					{
-						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (axe) {0}", args.Player.Name);
+						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (axe) {0} {1} {2}", args.Player.Name, action, editData);
 						args.Player.SendTileSquare(tileX, tileY, 4);
 						args.Handled = true;
 						return;
@@ -265,7 +265,7 @@ namespace TShockAPI
 					// If the tile is a hammer tile and they aren't selecting a hammer, they're hacking.
 					else if (Main.tileHammer[tile.type] && ((args.Player.TPlayer.mount.Type != 8 && selectedItem.hammer == 0) && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0))
 					{
-						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (hammer) {0}", args.Player.Name);
+						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (hammer) {0} {1} {2}", args.Player.Name, action, editData);
 						args.Player.SendTileSquare(tileX, tileY, 4);
 						args.Handled = true;
 						return;
@@ -275,7 +275,7 @@ namespace TShockAPI
 					else if (tile.type != TileID.ItemFrame
 						&& !Main.tileAxe[tile.type] && !Main.tileHammer[tile.type] && tile.wall == 0 && args.Player.TPlayer.mount.Type != 8 && selectedItem.pick == 0 && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0)
 					{
-						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (pick) {0}", args.Player.Name);
+						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (pick) {0} {1} {2}", args.Player.Name, action, editData);
 						args.Player.SendTileSquare(tileX, tileY, 4);
 						args.Handled = true;
 						return;
@@ -286,7 +286,7 @@ namespace TShockAPI
 					// If they aren't selecting a hammer, they could be hacking.
 					if (selectedItem.hammer == 0 && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0 && selectedItem.createWall == 0)
 					{
-						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (hammer2) {0}", args.Player.Name);
+						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (hammer2) {0} {1} {2}", args.Player.Name, action, editData);
 						args.Player.SendTileSquare(tileX, tileY, 1);
 						args.Handled = true;
 						return;
@@ -302,7 +302,7 @@ namespace TShockAPI
 						(MaxPlaceStyles.ContainsKey(editData) && style > MaxPlaceStyles[editData]) &&
 						(ExtraneousPlaceStyles.ContainsKey(editData) && style > ExtraneousPlaceStyles[editData]))
 					{
-						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (ms1) {0}", args.Player.Name);
+						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (ms1) {0} {1} {2}", args.Player.Name, action, editData);
 						args.Player.SendTileSquare(tileX, tileY, 4);
 						args.Handled = true;
 						return;
@@ -313,23 +313,27 @@ namespace TShockAPI
 						(editData != (action == EditAction.PlaceTile ? selectedItem.createTile : selectedItem.createWall) &&
 						!(ropeCoilPlacements.ContainsKey(selectedItem.netID) && editData == ropeCoilPlacements[selectedItem.netID])))
 					{
-						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (ms2) {0}", args.Player.Name);
-
-						args.Player.SendTileSquare(tileX, tileY, 4);
-						args.Handled = true;
-						return;
+						// Rather than attempting to figure out what the above if statement does, we'll just patch it
+						// Adds exception to this check to allow dirt bombs to create dirt tiles
+						if (!(selectedItem.netID == ItemID.DirtBomb && action == EditAction.PlaceTile && editData == TileID.Dirt))
+						{
+							TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (ms2) {0} {1} {2}", args.Player.Name, action, editData);
+							args.Player.SendTileSquare(tileX, tileY, 4);
+							args.Handled = true;
+							return;
+						}
 					}
 
 					if (editData >= (action == EditAction.PlaceTile ? Main.maxTileSets : Main.maxWallTypes))
 					{
-						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (ms3) {0}", args.Player.Name);
+						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (ms3) {0} {1} {2}", args.Player.Name, action, editData);
 						args.Player.SendTileSquare(tileX, tileY, 4);
 						args.Handled = true;
 						return;
 					}
 					if (action == EditAction.PlaceTile && (editData == TileID.PiggyBank || editData == TileID.Safes) && Main.ServerSideCharacter)
 					{
-						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (sscprotect) {0}", args.Player.Name);
+						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (sscprotect) {0} {1} {2}", args.Player.Name, action, editData);
 						args.Player.SendErrorMessage("You cannot place this tile because server side characters are enabled.");
 						args.Player.SendTileSquare(tileX, tileY, 3);
 						args.Handled = true;
@@ -339,7 +343,7 @@ namespace TShockAPI
 					{
 						if (TShock.Utils.HasWorldReachedMaxChests())
 						{
-							TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (chestcap) {0}", args.Player.Name);
+							TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (chestcap) {0} {1} {2}", args.Player.Name, action, editData);
 							args.Player.SendErrorMessage("The world's chest limit has been reached - unable to place more.");
 							args.Player.SendTileSquare(tileX, tileY, 3);
 							args.Handled = true;
@@ -348,7 +352,7 @@ namespace TShockAPI
 						if ((TShock.Utils.TilePlacementValid(tileX, tileY + 1) && Main.tile[tileX, tileY + 1].type == TileID.Boulder) ||
 							(TShock.Utils.TilePlacementValid(tileX + 1, tileY + 1) && Main.tile[tileX + 1, tileY + 1].type == TileID.Boulder))
 						{
-							TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (validplacement) {0}", args.Player.Name);
+							TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (validplacement) {0} {1} {2}", args.Player.Name, action, editData);
 							args.Player.SendTileSquare(tileX, tileY, 3);
 							args.Handled = true;
 							return;
@@ -366,7 +370,7 @@ namespace TShockAPI
 						&& selectedItem.type != ItemID.MulticolorWrench
 						&& selectedItem.type != ItemID.WireKite)
 					{
-						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from place wire from {0}", args.Player.Name);
+						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from place wire from {0} {1} {2}", args.Player.Name, action, editData);
 						args.Player.SendTileSquare(tileX, tileY, 1);
 						args.Handled = true;
 						return;
@@ -380,7 +384,7 @@ namespace TShockAPI
 						&& selectedItem.type != ItemID.WireKite
 						&& selectedItem.type != ItemID.MulticolorWrench)
 					{
-						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from wire cutter from {0}", args.Player.Name);
+						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from wire cutter from {0} {1} {2}", args.Player.Name, action, editData);
 						args.Player.SendTileSquare(tileX, tileY, 1);
 						args.Handled = true;
 						return;
@@ -391,7 +395,7 @@ namespace TShockAPI
 					// If they aren't selecting the actuator and don't have the Presserator equipped, they're hacking.
 					if (selectedItem.type != ItemID.Actuator && !args.Player.TPlayer.autoActuator)
 					{
-						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from actuator/presserator from {0}", args.Player.Name);
+						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from actuator/presserator from {0} {1} {2}", args.Player.Name, action, editData);
 						args.Player.SendTileSquare(tileX, tileY, 1);
 						args.Handled = true;
 						return;
@@ -401,7 +405,7 @@ namespace TShockAPI
 				{
 					if (action == EditAction.KillWall)
 					{
-						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from sts allow cut from {0}", args.Player.Name);
+						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from sts allow cut from {0} {1} {2}", args.Player.Name, action, editData);
 						args.Player.SendTileSquare(tileX, tileY, 1);
 						args.Handled = true;
 						return;
@@ -412,7 +416,7 @@ namespace TShockAPI
 
 				if (args.Player.IsBeingDisabled())
 				{
-					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from wire cutter from {0}", args.Player.Name);
+					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from wire cutter from {0} {1} {2}", args.Player.Name, action, editData);
 					args.Player.SendTileSquare(tileX, tileY, 4);
 					args.Handled = true;
 					return;
@@ -421,7 +425,7 @@ namespace TShockAPI
 				if (!args.Player.HasModifiedIceSuccessfully(tileX, tileY, editData, action)
 					&& !args.Player.HasBuildPermission(tileX, tileY))
 				{
-					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from ice/build from {0}", args.Player.Name);
+					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from ice/build from {0} {1} {2}", args.Player.Name, action, editData);
 					args.Player.SendTileSquare(tileX, tileY, 4);
 					args.Handled = true;
 					return;
@@ -440,7 +444,15 @@ namespace TShockAPI
 						args.Handled = false;
 						return;
 					}
-					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from explosives/fuses from {0}", args.Player.Name);
+
+					// Dirt bomb makes dirt everywhere
+					if ((action == EditAction.PlaceTile || action == EditAction.SlopeTile) && editData == TileID.Dirt && args.Player.RecentFuse > 0)
+					{
+						args.Handled = false;
+						return;
+					}
+
+					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from explosives/fuses from {0} {1} {2}", args.Player.Name, action, editData);
 					args.Player.SendTileSquare(tileX, tileY, 4);
 					args.Handled = true;
 					return;
@@ -468,7 +480,7 @@ namespace TShockAPI
 
 				if (args.Player.IsBouncerThrottled())
 				{
-					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from throttled from {0}", args.Player.Name);
+					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from throttled from {0} {1} {2}", args.Player.Name, action, editData);
 					args.Player.SendTileSquare(tileX, tileY, 4);
 					args.Handled = true;
 					return;
@@ -943,7 +955,9 @@ namespace TShockAPI
 			if ((type == ProjectileID.Bomb
 				|| type == ProjectileID.Dynamite
 				|| type == ProjectileID.StickyBomb
-				|| type == ProjectileID.StickyDynamite))
+				|| type == ProjectileID.StickyDynamite
+				|| type == ProjectileID.ScarabBomb
+				|| type == ProjectileID.DirtBomb))
 			{
 				//  Denotes that the player has recently set a fuse - used for cheat detection.
 				args.Player.RecentFuse = 10;
@@ -1245,7 +1259,7 @@ namespace TShockAPI
 			int tileX = args.TileX;
 			int tileY = args.TileY;
 			byte amount = args.Amount;
-			byte type = args.Type;
+			LiquidType type = args.Type;
 
 			if (!TShock.Utils.TilePlacementValid(tileX, tileY) || (args.Player.Dead && TShock.Config.PreventDeadModification))
 			{
@@ -1281,29 +1295,38 @@ namespace TShockAPI
 			if (amount != 0)
 			{
 				int bucket = -1;
-				if (args.Player.TPlayer.inventory[args.Player.TPlayer.selectedItem].type == ItemID.EmptyBucket)
+				int selectedItemType = args.Player.TPlayer.inventory[args.Player.TPlayer.selectedItem].type;
+				if (selectedItemType == ItemID.EmptyBucket)
 				{
 					bucket = 0;
 				}
-				else if (args.Player.TPlayer.inventory[args.Player.TPlayer.selectedItem].type == ItemID.WaterBucket)
+				else if (selectedItemType == ItemID.WaterBucket)
 				{
 					bucket = 1;
 				}
-				else if (args.Player.TPlayer.inventory[args.Player.TPlayer.selectedItem].type == ItemID.LavaBucket)
+				else if (selectedItemType == ItemID.LavaBucket)
 				{
 					bucket = 2;
 				}
-				else if (args.Player.TPlayer.inventory[args.Player.TPlayer.selectedItem].type == ItemID.HoneyBucket)
+				else if (selectedItemType == ItemID.HoneyBucket)
 				{
 					bucket = 3;
 				}
-				else if (args.Player.TPlayer.inventory[args.Player.TPlayer.selectedItem].type == ItemID.BottomlessBucket ||
-					args.Player.TPlayer.inventory[args.Player.TPlayer.selectedItem].type == ItemID.SuperAbsorbantSponge)
+				else if (selectedItemType == ItemID.BottomlessBucket ||
+					selectedItemType == ItemID.SuperAbsorbantSponge)
 				{
 					bucket = 4;
 				}
+				else if (selectedItemType == ItemID.LavaAbsorbantSponge)
+				{
+					bucket = 5;
+				}
+				else if (selectedItemType == ItemID.BottomlessLavaBucket)
+				{
+					bucket = 6;
+				}
 
-				if (type == 1 && !(bucket == 2 || bucket == 0))
+				if (type == LiquidType.Lava && !(bucket == 2 || bucket == 0 || bucket == 5 || bucket == 6))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected bucket check 1 from {0}", args.Player.Name);
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
@@ -1313,7 +1336,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (type == 1 && TShock.Itembans.ItemIsBanned("Lava Bucket", args.Player))
+				if (type == LiquidType.Lava && TShock.Itembans.ItemIsBanned("Lava Bucket", args.Player))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected lava bucket from {0}", args.Player.Name);
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
@@ -1323,7 +1346,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (type == 0 && !(bucket == 1 || bucket == 0 || bucket == 4))
+				if (type == LiquidType.Water && !(bucket == 1 || bucket == 0 || bucket == 4))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected bucket check 2 from {0}", args.Player.Name);
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
@@ -1333,7 +1356,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (type == 0 && TShock.Itembans.ItemIsBanned("Water Bucket", args.Player))
+				if (type == LiquidType.Water && TShock.Itembans.ItemIsBanned("Water Bucket", args.Player))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected bucket check 3 from {0}", args.Player.Name);
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
@@ -1343,7 +1366,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (type == 2 && !(bucket == 3 || bucket == 0))
+				if (type == LiquidType.Honey && !(bucket == 3 || bucket == 0))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected bucket check 4 from {0}", args.Player.Name);
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
@@ -1353,7 +1376,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (type == 2 && TShock.Itembans.ItemIsBanned("Honey Bucket", args.Player))
+				if (type == LiquidType.Honey && TShock.Itembans.ItemIsBanned("Honey Bucket", args.Player))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected bucket check 5 from {0}", args.Player.Name);
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
