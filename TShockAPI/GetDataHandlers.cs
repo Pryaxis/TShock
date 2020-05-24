@@ -3465,8 +3465,11 @@ namespace TShockAPI
 		internal static Dictionary<int, LiquidType> projectileCreatesLiquid = new Dictionary<int, LiquidType>
 		{
 			{ProjectileID.LavaBomb, LiquidType.Lava},
+			{ProjectileID.LavaRocket, LiquidType.Lava },
 			{ProjectileID.WetBomb, LiquidType.Water},
-			{ProjectileID.HoneyBomb, LiquidType.Honey}
+			{ProjectileID.WetRocket, LiquidType.Water },
+			{ProjectileID.HoneyBomb, LiquidType.Honey},
+			{ProjectileID.HoneyRocket, LiquidType.Honey }
 		};
 
 		internal static Dictionary<int, int> ropeCoilPlacements = new Dictionary<int, int>
