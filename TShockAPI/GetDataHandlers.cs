@@ -1141,7 +1141,8 @@ namespace TShockAPI
 		{
 			Water = 0,
 			Lava = 1,
-			Honey = 2
+			Honey = 2,
+			Removal = 255 //@Olink: lets hope they never invent 255 fluids or decide to also use this :(
 		}
 
 		/// <summary>
@@ -2329,6 +2330,17 @@ namespace TShockAPI
 			if (OnNewProjectile(args.Data, ident, pos, vel, knockback, dmg, owner, type, index, args.Player))
 				return true;
 
+			lock (args.Player.RecentlyCreatedProjectiles)
+			{
+				if (!args.Player.RecentlyCreatedProjectiles.Any(p => p.Index == index))
+				{
+					args.Player.RecentlyCreatedProjectiles.Add(new GetDataHandlers.ProjectileStruct()
+					{
+						Index = index,
+						CreatedAt = DateTime.Now
+					});
+				}
+			}
 			return false;
 		}
 
@@ -2393,6 +2405,10 @@ namespace TShockAPI
 			}
 
 			args.Player.LastKilledProjectile = type;
+			lock (args.Player.RecentlyCreatedProjectiles)
+			{
+				args.Player.RecentlyCreatedProjectiles.ForEach(s => { if (s.Index == index) { s.Killed = true; } });
+			}
 
 			return false;
 		}
@@ -3453,6 +3469,30 @@ namespace TShockAPI
 			{ ProjectileID.MysticSnakeCoil, TileID.MysticSnakeRope }
 		};
 
+		internal static Dictionary<int, LiquidType> projectileCreatesLiquid = new Dictionary<int, LiquidType>
+		{
+			{ProjectileID.LavaBomb, LiquidType.Lava},
+			{ProjectileID.LavaRocket, LiquidType.Lava },
+			{ProjectileID.LavaGrenade, LiquidType.Lava },
+			{ProjectileID.LavaMine, LiquidType.Lava },
+			//{ProjectileID.LavaSnowmanRocket, LiquidType.Lava }, //these require additional checks.
+			{ProjectileID.WetBomb, LiquidType.Water},
+			{ProjectileID.WetRocket, LiquidType.Water },
+			{ProjectileID.WetGrenade, LiquidType.Water},
+			{ProjectileID.WetMine, LiquidType.Water},
+			//{ProjectileID.WetSnowmanRocket, LiquidType.Water}, //these require additional checks.
+			{ProjectileID.HoneyBomb, LiquidType.Honey},
+			{ProjectileID.HoneyRocket, LiquidType.Honey },
+			{ProjectileID.HoneyGrenade, LiquidType.Honey },
+			{ProjectileID.HoneyMine, LiquidType.Honey },
+			//{ProjectileID.HoneySnowmanRocket, LiquidType.Honey }, //these require additional checks.
+			{ProjectileID.DryBomb, LiquidType.Removal },
+			{ProjectileID.DryRocket, LiquidType.Removal },
+			{ProjectileID.DryGrenade, LiquidType.Removal },
+			{ProjectileID.DryMine, LiquidType.Removal },
+			//{ProjectileID.DrySnowmanRocket, LiquidType.Removal } //these require additional checks.
+		};
+
 		internal static Dictionary<int, int> ropeCoilPlacements = new Dictionary<int, int>
 		{
 			{ItemID.RopeCoil, TileID.Rope},
@@ -3468,5 +3508,12 @@ namespace TShockAPI
 		{
 			{TileID.MinecartTrack, 3}
 		};
+
+		internal struct ProjectileStruct
+		{
+			public int Index { get; set; }
+			public DateTime CreatedAt { get; set; }
+			public bool Killed { get; internal set; }
+		}
 	}
 }
