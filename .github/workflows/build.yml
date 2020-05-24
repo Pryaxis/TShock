@@ -70,7 +70,7 @@ jobs:
       run: |
         nuget restore TShock.sln
         MSBuild.exe .\TShockAPI\TShockAPI.csproj /p:Configuration=Release
-    - name: Prepare packaging
+    - name: Normalize release packaging
       shell: cmd
       run: |
         xcopy /Y prebuilts\*.* TShockAPI\bin\Release
