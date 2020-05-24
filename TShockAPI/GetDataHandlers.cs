@@ -2322,6 +2322,18 @@ namespace TShockAPI
 			if (OnNewProjectile(args.Data, ident, pos, vel, knockback, dmg, owner, type, index, args.Player))
 				return true;
 
+			if (projectileCreatesLiquid.ContainsKey(type))
+			{
+				lock (args.Player.RecentlyCreatedProjectiles)
+				{
+					args.Player.RecentlyCreatedProjectiles.Add(new ProjectileStruct()
+					{
+						Index = ident,
+						CreatedAt = DateTime.Now
+					});
+				}
+			}
+
 			return false;
 		}
 

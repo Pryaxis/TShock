@@ -44,7 +44,6 @@ using Microsoft.Xna.Framework;
 using TShockAPI.Sockets;
 using TShockAPI.CLI;
 using TShockAPI.Localization;
-using System.Threading.Tasks;
 
 namespace TShockAPI
 {
@@ -1065,19 +1064,9 @@ namespace TShockAPI
 						}
 					}
 				}
-
-				Task.Run(() =>
-				{
-					if (player != null && player.TPlayer.whoAmI >= 0)
-					{
-						var threshold = DateTime.Now.AddSeconds(-5);
-						lock (player.RecentlyCreatedProjectiles)
-						{
-							player.RecentlyCreatedProjectiles = player.RecentlyCreatedProjectiles.Where(s => s.CreatedAt > threshold).ToList();
-						}
-					}
-				});
 			}
+
+			Bouncer.OnSecondUpdate();
 			Utils.SetConsoleTitle(false);
 		}
 

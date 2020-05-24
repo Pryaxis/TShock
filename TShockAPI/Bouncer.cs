@@ -19,18 +19,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria.ID;
-using TShockAPI.DB;
 using TShockAPI.Net;
 using Terraria;
 using Microsoft.Xna.Framework;
 using OTAPI.Tile;
 using TShockAPI.Localization;
 using static TShockAPI.GetDataHandlers;
-using TerrariaApi.Server;
 using Terraria.ObjectData;
 using Terraria.DataStructures;
 using Terraria.Localization;
 using TShockAPI.Models.PlayerUpdate;
+using System.Threading.Tasks;
 
 namespace TShockAPI
 {
@@ -961,18 +960,6 @@ namespace TShockAPI
 			{
 				//  Denotes that the player has recently set a fuse - used for cheat detection.
 				args.Player.RecentFuse = 10;
-			}
-
-			if (projectileCreatesLiquid.ContainsKey(type))
-			{
-				lock (args.Player.RecentlyCreatedProjectiles)
-				{
-					args.Player.RecentlyCreatedProjectiles.Add(new ProjectileStruct()
-					{
-						Index = ident,
-						CreatedAt = DateTime.Now
-					});
-				}
 			}
 		}
 
@@ -2067,6 +2054,24 @@ namespace TShockAPI
 					return;
 				}
 			}
+		}
+
+		internal void OnSecondUpdate()
+		{
+			Task.Run(() =>
+			{
+				foreach (var player in TShock.Players)
+				{
+					if (player != null && player.TPlayer.whoAmI >= 0)
+					{
+						var threshold = DateTime.Now.AddSeconds(-5);
+						lock (player.RecentlyCreatedProjectiles)
+						{
+							player.RecentlyCreatedProjectiles = player.RecentlyCreatedProjectiles.Where(s => s.CreatedAt > threshold).ToList();
+						}
+					}
+				}
+			});
 		}
 
 		// These time values are references from Projectile.cs, at npc.AddBuff() calls.
