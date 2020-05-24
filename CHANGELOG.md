@@ -4,6 +4,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 ## Upcoming release
 * Update for OTAPI 2.0.0.36 and Terraria 1.4.0.4. (@hakusaro, @Patrikkk, @DeathCradle)
+* Fixed /wind command. (@AxeelAnder)
 * Fixed NPC buff bouncer. (@AxeelAnder)
 
 ## TShock 4.4.0 (Pre-release 7 (Entangled))
