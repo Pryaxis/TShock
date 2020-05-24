@@ -1065,6 +1065,8 @@ namespace TShockAPI
 					}
 				}
 			}
+
+			Bouncer.OnSecondUpdate();
 			Utils.SetConsoleTitle(false);
 		}
 
@@ -1620,6 +1622,32 @@ namespace TShockAPI
 					e.Handled = true;
 					return;
 				}
+			} else if (e.MsgId == PacketTypes.ProjectileNew)
+			{
+				if (e.number >= 0 && e.number < Main.projectile.Length)
+				{
+					var projectile = Main.projectile[e.number];
+					if (projectile.active && projectile.owner >= 0 && GetDataHandlers.projectileCreatesLiquid.ContainsKey(projectile.type))
+					{
+						var player = Players[projectile.owner];
+						if (player != null)
+						{
+							if (player.RecentlyCreatedProjectiles.Any(p => p.Index == e.number && p.Killed))
+							{
+								player.RecentlyCreatedProjectiles.RemoveAll(p => p.Index == e.number && p.Killed);
+							}
+
+							if (!player.RecentlyCreatedProjectiles.Any(p => p.Index == e.number)) {
+								player.RecentlyCreatedProjectiles.Add(new GetDataHandlers.ProjectileStruct()
+								{
+									Index = e.number,
+									CreatedAt = DateTime.Now
+								});
+							}
+						}
+					}
+				}
+
 			}
 		}
 

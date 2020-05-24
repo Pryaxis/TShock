@@ -19,18 +19,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria.ID;
-using TShockAPI.DB;
 using TShockAPI.Net;
 using Terraria;
 using Microsoft.Xna.Framework;
 using OTAPI.Tile;
 using TShockAPI.Localization;
 using static TShockAPI.GetDataHandlers;
-using TerrariaApi.Server;
 using Terraria.ObjectData;
 using Terraria.DataStructures;
 using Terraria.Localization;
 using TShockAPI.Models.PlayerUpdate;
+using System.Threading.Tasks;
 
 namespace TShockAPI
 {
@@ -1290,6 +1289,24 @@ namespace TShockAPI
 				args.Player.TileLiquidThreshold++;
 			}
 
+			bool wasThereABombNearby = false;
+			lock (args.Player.RecentlyCreatedProjectiles)
+			{
+				IEnumerable<int> projectileTypesThatPerformThisOperation;
+				if (amount > 0) //handle the projectiles that create fluid.
+				{
+					projectileTypesThatPerformThisOperation = projectileCreatesLiquid.Where(k => k.Value == type).Select(k => k.Key);
+				}
+				else //handle the scenario where we are removing liquid
+				{
+					projectileTypesThatPerformThisOperation = projectileCreatesLiquid.Where(k => k.Value == LiquidType.Removal).Select(k => k.Key);
+				}
+
+				var recentBombs = args.Player.RecentlyCreatedProjectiles.Where(p => projectileTypesThatPerformThisOperation.Contains(Main.projectile[p.Index].type));
+				wasThereABombNearby = recentBombs.Any(r => Math.Abs(args.TileX - (Main.projectile[r.Index].position.X / 16.0f)) < TShock.Config.BombExplosionRadius
+														&& Math.Abs(args.TileY - (Main.projectile[r.Index].position.Y / 16.0f)) < TShock.Config.BombExplosionRadius);
+			}
+
 			// Liquid anti-cheat
 			// Arguably the banned buckets bit should be in the item bans system
 			if (amount != 0)
@@ -1326,7 +1343,7 @@ namespace TShockAPI
 					bucket = 6;
 				}
 
-				if (type == LiquidType.Lava && !(bucket == 2 || bucket == 0 || bucket == 5 || bucket == 6))
+				if (!wasThereABombNearby && type == LiquidType.Lava && !(bucket == 2 || bucket == 0 || bucket == 5 || bucket == 6))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected bucket check 1 from {0}", args.Player.Name);
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
@@ -1336,7 +1353,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (type == LiquidType.Lava && TShock.Itembans.ItemIsBanned("Lava Bucket", args.Player))
+				if (!wasThereABombNearby && type == LiquidType.Lava && TShock.Itembans.ItemIsBanned("Lava Bucket", args.Player))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected lava bucket from {0}", args.Player.Name);
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
@@ -1346,7 +1363,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (type == LiquidType.Water && !(bucket == 1 || bucket == 0 || bucket == 4))
+				if (!wasThereABombNearby && type == LiquidType.Water && !(bucket == 1 || bucket == 0 || bucket == 4))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected bucket check 2 from {0}", args.Player.Name);
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
@@ -1356,7 +1373,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (type == LiquidType.Water && TShock.Itembans.ItemIsBanned("Water Bucket", args.Player))
+				if (!wasThereABombNearby && type == LiquidType.Water && TShock.Itembans.ItemIsBanned("Water Bucket", args.Player))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected bucket check 3 from {0}", args.Player.Name);
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
@@ -1366,7 +1383,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (type == LiquidType.Honey && !(bucket == 3 || bucket == 0))
+				if (!wasThereABombNearby && type == LiquidType.Honey && !(bucket == 3 || bucket == 0))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected bucket check 4 from {0}", args.Player.Name);
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
@@ -1376,7 +1393,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (type == LiquidType.Honey && TShock.Itembans.ItemIsBanned("Honey Bucket", args.Player))
+				if (!wasThereABombNearby && type == LiquidType.Honey && TShock.Itembans.ItemIsBanned("Honey Bucket", args.Player))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected bucket check 5 from {0}", args.Player.Name);
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
@@ -1395,7 +1412,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (!args.Player.IsInRange(tileX, tileY, 16))
+			if (!wasThereABombNearby && !args.Player.IsInRange(tileX, tileY, 16))
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected range checks from {0}", args.Player.Name);
 				args.Player.SendTileSquare(tileX, tileY, 1);
@@ -2043,6 +2060,24 @@ namespace TShockAPI
 					return;
 				}
 			}
+		}
+
+		internal void OnSecondUpdate()
+		{
+			Task.Run(() =>
+			{
+				foreach (var player in TShock.Players)
+				{
+					if (player != null && player.TPlayer.whoAmI >= 0)
+					{
+						var threshold = DateTime.Now.AddSeconds(-5);
+						lock (player.RecentlyCreatedProjectiles)
+						{
+							player.RecentlyCreatedProjectiles = player.RecentlyCreatedProjectiles.Where(s => s.CreatedAt > threshold).ToList();
+						}
+					}
+				}
+			});
 		}
 
 		// These time values are references from Projectile.cs, at npc.AddBuff() calls.
