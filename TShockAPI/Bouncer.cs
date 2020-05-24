@@ -962,6 +962,18 @@ namespace TShockAPI
 				//  Denotes that the player has recently set a fuse - used for cheat detection.
 				args.Player.RecentFuse = 10;
 			}
+
+			if (projectileCreatesLiquid.ContainsKey(type))
+			{
+				lock (args.Player.RecentlyCreatedProjectiles)
+				{
+					args.Player.RecentlyCreatedProjectiles.Add(new ProjectileStruct()
+					{
+						Index = ident,
+						CreatedAt = DateTime.Now
+					});
+				}
+			}
 		}
 
 		/// <summary>Handles the NPC Strike event for Bouncer.</summary>
@@ -1290,6 +1302,18 @@ namespace TShockAPI
 				args.Player.TileLiquidThreshold++;
 			}
 
+			bool wasThereABombNearby = false;
+
+			lock (args.Player.RecentlyCreatedProjectiles)
+			{
+				var keys = projectileCreatesLiquid.Where(k => k.Value == type).Select(k => k.Key);
+				var recentBombs = args.Player.RecentlyCreatedProjectiles.Where(keys.Contains(Main.projectile[p.Index].type));
+				wasThereABombNearby = recentBombs.Any(r => (args.TileX > (Main.projectile[r.Index].position.X / 16.0f) - 32
+									&& args.TileX < (Main.projectile[r.Index].position.X / 16.0f) + 32)
+									&& (args.TileY > (Main.projectile[r.Index].position.Y / 16.0f) - 32
+									&& args.TileY < (Main.projectile[r.Index].position.Y / 16.0f) + 32));
+			}
+
 			// Liquid anti-cheat
 			// Arguably the banned buckets bit should be in the item bans system
 			if (amount != 0)
@@ -1326,7 +1350,7 @@ namespace TShockAPI
 					bucket = 6;
 				}
 
-				if (type == LiquidType.Lava && !(bucket == 2 || bucket == 0 || bucket == 5 || bucket == 6))
+				if (!wasThereABombNearby && type == LiquidType.Lava && !(bucket == 2 || bucket == 0 || bucket == 5 || bucket == 6))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected bucket check 1 from {0}", args.Player.Name);
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
@@ -1336,7 +1360,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (type == LiquidType.Lava && TShock.Itembans.ItemIsBanned("Lava Bucket", args.Player))
+				if (!wasThereABombNearby && type == LiquidType.Lava && TShock.Itembans.ItemIsBanned("Lava Bucket", args.Player))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected lava bucket from {0}", args.Player.Name);
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
@@ -1346,7 +1370,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (type == LiquidType.Water && !(bucket == 1 || bucket == 0 || bucket == 4))
+				if (!wasThereABombNearby && type == LiquidType.Water && !(bucket == 1 || bucket == 0 || bucket == 4))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected bucket check 2 from {0}", args.Player.Name);
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
@@ -1356,7 +1380,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (type == LiquidType.Water && TShock.Itembans.ItemIsBanned("Water Bucket", args.Player))
+				if (!wasThereABombNearby && type == LiquidType.Water && TShock.Itembans.ItemIsBanned("Water Bucket", args.Player))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected bucket check 3 from {0}", args.Player.Name);
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
@@ -1366,7 +1390,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (type == LiquidType.Honey && !(bucket == 3 || bucket == 0))
+				if (!wasThereABombNearby && type == LiquidType.Honey && !(bucket == 3 || bucket == 0))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected bucket check 4 from {0}", args.Player.Name);
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
@@ -1376,7 +1400,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (type == LiquidType.Honey && TShock.Itembans.ItemIsBanned("Honey Bucket", args.Player))
+				if (!wasThereABombNearby && type == LiquidType.Honey && TShock.Itembans.ItemIsBanned("Honey Bucket", args.Player))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected bucket check 5 from {0}", args.Player.Name);
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
@@ -1395,7 +1419,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (!args.Player.IsInRange(tileX, tileY, 16))
+			if (!wasThereABombNearby && !args.Player.IsInRange(tileX, tileY, 16))
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected range checks from {0}", args.Player.Name);
 				args.Player.SendTileSquare(tileX, tileY, 1);

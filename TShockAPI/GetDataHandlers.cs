@@ -2386,6 +2386,10 @@ namespace TShockAPI
 			}
 
 			args.Player.LastKilledProjectile = type;
+			lock (args.Player.RecentlyCreatedProjectiles)
+			{
+				args.Player.RecentlyCreatedProjectiles.ForEach(s => { if (s.Index == index) { s.Killed = true; } });
+			}
 
 			return false;
 		}
@@ -3446,6 +3450,13 @@ namespace TShockAPI
 			{ ProjectileID.MysticSnakeCoil, TileID.MysticSnakeRope }
 		};
 
+		internal static Dictionary<int, LiquidType> projectileCreatesLiquid = new Dictionary<int, LiquidType>
+		{
+			{ProjectileID.LavaBomb, LiquidType.Lava},
+			{ProjectileID.WetBomb, LiquidType.Water},
+			{ProjectileID.HoneyBomb, LiquidType.Honey}
+		};
+
 		internal static Dictionary<int, int> ropeCoilPlacements = new Dictionary<int, int>
 		{
 			{ItemID.RopeCoil, TileID.Rope},
@@ -3461,5 +3472,12 @@ namespace TShockAPI
 		{
 			{TileID.MinecartTrack, 3}
 		};
+
+		internal struct ProjectileStruct
+		{
+			public int Index { get; set; }
+			public DateTime CreatedAt { get; set; }
+			public bool Killed { get; internal set; }
+		}
 	}
 }
