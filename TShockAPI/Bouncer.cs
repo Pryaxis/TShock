@@ -1547,7 +1547,6 @@ namespace TShockAPI
 			int id = args.ID;
 			short x = args.X;
 			short y = args.Y;
-			byte homeless = args.Homeless;
 
 			if (!args.Player.HasBuildPermission(x, y))
 			{
@@ -1558,7 +1557,8 @@ namespace TShockAPI
 				return;
 			}
 
-			if (!args.Player.IsInRange(x, y))
+			// When kicking out an npc, x and y in args are 0, we shouldn't check range at this case
+			if (args.HouseholdStatus != HouseholdStatus.Homeless && !args.Player.IsInRange(x, y))
 			{
 				args.Player.SendData(PacketTypes.UpdateNPCHome, "", id, Main.npc[id].homeTileX, Main.npc[id].homeTileY,
 									 Convert.ToByte(Main.npc[id].homeless));
