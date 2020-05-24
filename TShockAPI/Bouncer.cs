@@ -1295,10 +1295,10 @@ namespace TShockAPI
 			{
 				var keys = projectileCreatesLiquid.Where(k => k.Value == type).Select(k => k.Key);
 				var recentBombs = args.Player.RecentlyCreatedProjectiles.Where(p => keys.Contains(Main.projectile[p.Index].type));
-				wasThereABombNearby = recentBombs.Any(r => (args.TileX > (Main.projectile[r.Index].position.X / 16.0f) - 16
-									&& args.TileX < (Main.projectile[r.Index].position.X / 16.0f) + 16)
-									&& (args.TileY > (Main.projectile[r.Index].position.Y / 16.0f) - 16
-									&& args.TileY < (Main.projectile[r.Index].position.Y / 16.0f) + 16));
+				wasThereABombNearby = recentBombs.Any(r => (args.TileX > (Main.projectile[r.Index].position.X / 16.0f) - TShock.Config.BombExplosionRadius
+									&& args.TileX < (Main.projectile[r.Index].position.X / 16.0f) + TShock.Config.BombExplosionRadius)
+									&& (args.TileY > (Main.projectile[r.Index].position.Y / 16.0f) - TShock.Config.BombExplosionRadius
+									&& args.TileY < (Main.projectile[r.Index].position.Y / 16.0f) + TShock.Config.BombExplosionRadius));
 			}
 
 			// Liquid anti-cheat
