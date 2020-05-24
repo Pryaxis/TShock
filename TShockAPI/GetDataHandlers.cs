@@ -125,7 +125,7 @@ namespace TShockAPI
 					{ PacketTypes.NpcSpecial, HandleSpecial },
 					{ PacketTypes.NpcAddBuff, HandleNPCAddBuff },
 					{ PacketTypes.PlayerAddBuff, HandlePlayerAddBuff },
-					{ PacketTypes.UpdateNPCHome, UpdateNPCHome },
+					{ PacketTypes.UpdateNPCHome, HandleUpdateNPCHome },
 					{ PacketTypes.SpawnBossorInvasion, HandleSpawnBoss },
 					{ PacketTypes.PaintTile, HandlePaintTile },
 					{ PacketTypes.PaintWall, HandlePaintWall },
@@ -1307,6 +1307,13 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		public enum HouseholdStatus : byte
+		{
+			None = 0,
+			Homeless = 1,
+			HasRoom = 2,
+		}
+
 		/// <summary>
 		/// For use in a NPCHome event
 		/// </summary>
@@ -1325,15 +1332,15 @@ namespace TShockAPI
 			/// </summary>
 			public short Y { get; set; }
 			/// <summary>
-			/// ByteBool homeless
+			/// HouseholdStatus of the NPC
 			/// </summary>
-			public byte Homeless { get; set; }
+			public HouseholdStatus HouseholdStatus { get; set; }
 		}
 		/// <summary>
 		/// NPCHome - Called when an NPC's home is changed
 		/// </summary>
 		public static HandlerList<NPCHomeChangeEventArgs> NPCHome = new HandlerList<NPCHomeChangeEventArgs>();
-		private static bool OnUpdateNPCHome(TSPlayer player, MemoryStream data, short id, short x, short y, byte homeless)
+		private static bool OnUpdateNPCHome(TSPlayer player, MemoryStream data, short id, short x, short y, byte houseHoldStatus)
 		{
 			if (NPCHome == null)
 				return false;
@@ -1345,7 +1352,7 @@ namespace TShockAPI
 				ID = id,
 				X = x,
 				Y = y,
-				Homeless = homeless,
+				HouseholdStatus = (HouseholdStatus) houseHoldStatus,
 			};
 			NPCHome.Invoke(null, args);
 			return args.Handled;
@@ -2763,14 +2770,14 @@ namespace TShockAPI
 			return true;
 		}
 
-		private static bool UpdateNPCHome(GetDataHandlerArgs args)
+		private static bool HandleUpdateNPCHome(GetDataHandlerArgs args)
 		{
 			var id = args.Data.ReadInt16();
 			var x = args.Data.ReadInt16();
 			var y = args.Data.ReadInt16();
-			var homeless = args.Data.ReadInt8();
+			var householdStatus = args.Data.ReadInt8();
 
-			if (OnUpdateNPCHome(args.Player, args.Data, id, x, y, homeless))
+			if (OnUpdateNPCHome(args.Player, args.Data, id, x, y, householdStatus))
 				return true;
 
 			if (!args.Player.HasPermission(Permissions.movenpc))
