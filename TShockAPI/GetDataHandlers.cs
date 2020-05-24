@@ -3107,6 +3107,130 @@ namespace TShockAPI
 
 		private static bool HandleLoadNetModule(GetDataHandlerArgs args)
 		{
+			short moduleId = args.Data.ReadInt16();
+			if (moduleId == 6) // Power module.
+			{
+				short powerId = args.Data.ReadInt16();
+				switch (powerId)
+				{
+					case 0:
+						{
+							if (!args.Player.HasPermission(Permissions.journey_timefreeze))
+							{
+								args.Player.SendErrorMessage("You have no permission to freeze the time of the server!");
+								return true;
+							}
+							break;
+						}
+					case 1:
+					case 2:
+					case 3:
+					case 4:
+						{
+							if (!args.Player.HasPermission(Permissions.journey_timeset))
+							{
+								args.Player.SendErrorMessage("You have no permission to modify the time of the server!");
+								return true;
+							}
+							break;
+						}
+					case 5:
+						{
+							if (!args.Player.HasPermission(Permissions.journey_godmode))
+							{
+								args.Player.SendErrorMessage("You have no permission to toggle godmode!");
+								return true;
+							}
+							break;
+						}
+					case 6:
+						{
+							if (!args.Player.HasPermission(Permissions.journey_windstrength))
+							{
+								args.Player.SendErrorMessage("You have no permission to modify the wind strength of the server!");
+								return true;
+							}
+							break;
+						}
+					case 7:
+						{
+							if (!args.Player.HasPermission(Permissions.journey_rainstrength))
+							{
+								args.Player.SendErrorMessage("You have no permission to modify the rain strength of the server!");
+								return true;
+							}
+							break;
+						}
+					case 8:
+						{
+							if (!args.Player.HasPermission(Permissions.journey_timespeed))
+							{
+								args.Player.SendErrorMessage("You have no permission to modify the time speed of the server!");
+								return true;
+							}
+							break;
+						}
+					case 9:
+						{
+							if (!args.Player.HasPermission(Permissions.journey_rainfreeze))
+							{
+								args.Player.SendErrorMessage("You have no permission to freeze the rain strength of the server!");
+								return true;
+							}
+							break;
+						}
+					case 10:
+						{
+							if (!args.Player.HasPermission(Permissions.journey_windfreeze))
+							{
+								args.Player.SendErrorMessage("You have no permission to freeze the wind strength of the server!");
+								return true;
+							}
+							break;
+						}
+					case 11:
+						{
+							if (!args.Player.HasPermission(Permissions.journey_placementrange))
+							{
+								args.Player.SendErrorMessage("You have no permission to modify the tile placement range of your character!");
+								return true;
+							}
+							break;
+						}
+					case 12:
+						{
+							if (!args.Player.HasPermission(Permissions.journey_setdifficulty))
+							{
+								args.Player.SendErrorMessage("You have no permission to modify the world dificulty of the server!");
+								return true;
+							}
+							break;
+						}
+					case 13:
+						{
+							if (!args.Player.HasPermission(Permissions.journey_biomespreadfreeze))
+							{
+								args.Player.SendErrorMessage("You have no permission to freeze the biome spread of server!");
+								return true;
+							}
+							break;
+						}
+					case 14:
+						{
+							if (!args.Player.HasPermission(Permissions.journey_setspawnrate))
+							{
+								args.Player.SendErrorMessage("You have no permission to modify the NPC spawn rate of server!");
+								return true;
+							}
+							break;
+						}
+					default:
+						{
+							return true;
+						}
+				}
+			}
+
 			// As of 1.4.x.x, this is now used for more things:
 			//	NetCreativePowersModule
 			//	NetCreativePowerPermissionsModule

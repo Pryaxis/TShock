@@ -408,7 +408,7 @@ namespace TShockAPI
 		public static readonly string journey_biomespreadfreeze = "tshock.journey.biomespreadfreeze";
 
 		[Description("User can use Creative UI to set the NPC spawn rate of the world.")]
-		public static readonly string journey_setdawn = "tshock.journey.setspawnrate";
+		public static readonly string journey_setspawnrate = "tshock.journey.setspawnrate";
 		#endregion
 
 		#region Non-grouped
@@ -513,7 +513,5 @@ namespace TShockAPI
 
 			File.WriteAllText("PermissionsDescriptions.txt", sb.ToString());
 		}
-
-		public static void FromJourneyModePermission(string tshockPermission)
 	}
 }
