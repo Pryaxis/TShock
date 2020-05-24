@@ -11,6 +11,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   and lava, wet, honey, and dry grenades; 
   and lava, wet, honey, and dry rockets; 
   and lava, wet, honey, and dry mines. (@Olink)
+* Adding Journey mode user account permissions. (@Patrikkk)
 
 ## TShock 4.4.0 (Pre-release 7 (Entangled))
 * Fixed bed spawn issues when trying to remove spawn point in SSC. (@Olink)
