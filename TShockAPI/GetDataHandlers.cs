@@ -1923,11 +1923,14 @@ namespace TShockAPI
 				args.Player.TPlayer.shirtColor = shirtColor;
 				args.Player.TPlayer.underShirtColor = underShirtColor;
 				args.Player.TPlayer.shoeColor = shoeColor;
+				//@Olink: If you need to change bool[10], please make sure you also update the for loops below to account for it.
+				//There are two arrays from terraria that we only have a single array for.  You will need to make sure that you are looking
+				//at the correct terraria array (hideVisual or hideVisual2).
 				args.Player.TPlayer.hideVisibleAccessory = new bool[10];
 				for (int i = 0; i < 8; i++)
 					args.Player.TPlayer.hideVisibleAccessory[i] = hideVisual[i];
-				for (int i = 8; i < 10; i++)
-					args.Player.TPlayer.hideVisibleAccessory[i] = hideVisual2[i];
+				for (int i = 0; i < 2; i++)
+					args.Player.TPlayer.hideVisibleAccessory[i+8] = hideVisual2[i];
 				args.Player.TPlayer.hideMisc = hideMisc;
 				args.Player.TPlayer.extraAccessory = extraSlot;
 				NetMessage.SendData((int)PacketTypes.PlayerInfo, -1, args.Player.Index, NetworkText.FromLiteral(args.Player.Name), args.Player.Index);
