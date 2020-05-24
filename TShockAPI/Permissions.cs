@@ -373,6 +373,44 @@ namespace TShockAPI
 		public static readonly string toggleparty = "tshock.world.toggleparty";
 		#endregion
 
+		#region tshock.journey nodes
+		[Description("User can use Creative UI freeze time.")]
+		public static readonly string journey_timefreeze = "tshock.journey.time.freeze";
+
+		[Description("User can use Creative UI to set world time.")]
+		public static readonly string journey_timeset = "tshock.journey.time.set";
+
+		[Description("User can use Creative UI to set world time speed.")]
+		public static readonly string journey_timespeed = "tshock.journey.time.setspeed";
+
+		[Description("User can use Creative UI to to toggle character godmode.")]
+		public static readonly string journey_godmode = "tshock.journey.godmode";
+
+		[Description("User can use Creative UI to set world wind strength/seed.")]
+		public static readonly string journey_windstrength = "tshock.journey.wind.strength";
+
+		[Description("User can use Creative UI to stop the world wind strength from changing.")]
+		public static readonly string journey_windfreeze = "tshock.journey.wind.freeze";
+
+		[Description("User can use Creative UI to set world rain strength/seed.")]
+		public static readonly string journey_rainstrength = "tshock.journey.rain.strength";
+
+		[Description("User can use Creative UI to stop the world rain strength from changing.")]
+		public static readonly string journey_rainfreeze = "tshock.journey.rain.freeze";
+
+		[Description("User can use Creative UI to toggle increased placement range.")]
+		public static readonly string journey_placementrange = "tshock.journey.placementrange";
+
+		[Description("User can use Creative UI to set world difficulty/mode.")]
+		public static readonly string journey_setdifficulty = "tshock.journey.setdifficulty";
+
+		[Description("User can use Creative UI to stop the biome spread of the world.")]
+		public static readonly string journey_biomespreadfreeze = "tshock.journey.biomespreadfreeze";
+
+		[Description("User can use Creative UI to set the NPC spawn rate of the world.")]
+		public static readonly string journey_setdawn = "tshock.journey.setspawnrate";
+		#endregion
+
 		#region Non-grouped
 		[Description("User can clear items or projectiles.")]
 		public static readonly string clear = "tshock.clear";
@@ -475,5 +513,7 @@ namespace TShockAPI
 
 			File.WriteAllText("PermissionsDescriptions.txt", sb.ToString());
 		}
+
+		public static void FromJourneyModePermission(string tshockPermission)
 	}
 }
