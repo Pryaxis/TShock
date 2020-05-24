@@ -10,11 +10,6 @@ jobs:
       uses: actions/checkout@v1
       with:
         submodules: recursive
-    - name: Add MSBuild to environment variable
-      shell: pwsh
-      run: |
-        $msbuildPath = Split-Path (& "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -requires Microsoft.Component.MSBuild -find MSBuild\Current\Bin\amd64\MSBuild.exe | Select-Object -First 1) -Parent
-        echo "::set-env name=PATH::$msbuildPath;$env:PATH"
     - name: Installer NuGet client
       uses: nuget/setup-nuget@v1
     - name: Restore NuGet packages
@@ -24,19 +19,19 @@ jobs:
     - name: Build OTAPI (Debug)
       shell: cmd
       run: |
-        MSBuild.exe .\TerrariaServerAPI\TShock.4.OTAPI.sln /p:Configuration=Debug
+        "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\msbuild.exe" .\TerrariaServerAPI\TShock.4.OTAPI.sln /p:Configuration=Debug
         cd .\TerrariaServerAPI\TShock.Modifications.Bootstrapper\bin\Debug
         TShock.Modifications.Bootstrapper.exe
     - name: Build TerrariaServerAPI (Debug)
       shell: cmd
       run: |
         cd .\TerrariaServerAPI
-        MSBuild.exe .\TerrariaServerAPI\TerrariaServerAPI.csproj /p:Configuration=Debug
+        "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\msbuild.exe" .\TerrariaServerAPI\TerrariaServerAPI.csproj /p:Configuration=Debug
     - name: Build TShock (Debug)
       shell: cmd
       run: |
         nuget restore TShock.sln
-        MSBuild.exe .\TShockAPI\TShockAPI.csproj /p:Configuration=Debug
+        "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\msbuild.exe" .\TShockAPI\TShockAPI.csproj /p:Configuration=Debug
     - name: Prepare packaging
       shell: cmd
       run: |
@@ -57,19 +52,19 @@ jobs:
       shell: cmd
       run: |
         nuget restore .\TerrariaServerAPI\TShock.4.OTAPI.sln
-        MSBuild.exe .\TerrariaServerAPI\TShock.4.OTAPI.sln /p:Configuration=Release
+        "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\msbuild.exe" .\TerrariaServerAPI\TShock.4.OTAPI.sln /p:Configuration=Release
         cd .\TerrariaServerAPI\TShock.Modifications.Bootstrapper\bin\Release
         TShock.Modifications.Bootstrapper.exe
     - name: Build TerrariaServerAPI (Not Debug)
       shell: cmd
       run: |
         cd .\TerrariaServerAPI
-        MSBuild.exe .\TerrariaServerAPI\TerrariaServerAPI.csproj /p:Configuration=Release
+        "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\msbuild.exe" .\TerrariaServerAPI\TerrariaServerAPI.csproj /p:Configuration=Release
     - name: Build TShock (Not Debug)
       shell: cmd
       run: |
         nuget restore TShock.sln
-        MSBuild.exe .\TShockAPI\TShockAPI.csproj /p:Configuration=Release
+        "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\msbuild.exe" .\TShockAPI\TShockAPI.csproj /p:Configuration=Release
     - name: Normalize release packaging
       shell: cmd
       run: |
