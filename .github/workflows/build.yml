@@ -6,67 +6,83 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v1
+    - name: Git checkout
+      uses: actions/checkout@v1
       with:
         submodules: recursive
-    - name: Install nuget
-      run: choco install nuget.commandline
-    - name: OTAPI Debug
-      shell: cmd
+    - name: Add MSBuild to environment variable
+      shell: pwsh
+      run: |
+        $msbuildPath = Split-Path (& "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -requires Microsoft.Component.MSBuild -find MSBuild\Current\Bin\amd64\MSBuild.exe | Select-Object -First 1) -Parent
+        echo "::set-env name=PATH::$msbuildPath;$env:PATH"
+    - name: Installer NuGet client
+      uses: nuget/setup-nuget@v1
+    - name: Restore NuGet packages
       run: |
         nuget restore .\TerrariaServerAPI\TShock.4.OTAPI.sln
-        "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\msbuild.exe" .\TerrariaServerAPI\TShock.4.OTAPI.sln /p:Configuration=Debug
+        nuget restore TShock.sln
+    - name: Build OTAPI (Debug)
+      shell: cmd
+      run: |
+        MSBuild.exe .\TerrariaServerAPI\TShock.4.OTAPI.sln /p:Configuration=Debug
         cd .\TerrariaServerAPI\TShock.Modifications.Bootstrapper\bin\Debug
         TShock.Modifications.Bootstrapper.exe
-    - name: OTAPI Release
-      shell: cmd
-      run: |
-        nuget restore .\TerrariaServerAPI\TShock.4.OTAPI.sln
-        "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\msbuild.exe" .\TerrariaServerAPI\TShock.4.OTAPI.sln /p:Configuration=Release
-        cd .\TerrariaServerAPI\TShock.Modifications.Bootstrapper\bin\Release
-        TShock.Modifications.Bootstrapper.exe
-    - name: TerrariaServerAPI Debug
+    - name: Build TerrariaServerAPI (Debug)
       shell: cmd
       run: |
         cd .\TerrariaServerAPI
-        "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\msbuild.exe" .\TerrariaServerAPI\TerrariaServerAPI.csproj /p:Configuration=Debug
-    - name: TShock Debug
+        MSBuild.exe .\TerrariaServerAPI\TerrariaServerAPI.csproj /p:Configuration=Debug
+    - name: Build TShock (Debug)
       shell: cmd
       run: |
         nuget restore TShock.sln
-        "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\msbuild.exe" .\TShockAPI\TShockAPI.csproj /p:Configuration=Debug
-    - name: TerrariaServerAPI Release
+        MSBuild.exe .\TShockAPI\TShockAPI.csproj /p:Configuration=Debug
+    - name: Prepare packaging
       shell: cmd
       run: |
-        cd .\TerrariaServerAPI
-        "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\msbuild.exe" .\TerrariaServerAPI\TerrariaServerAPI.csproj /p:Configuration=Release
-    - name: TShock Release
-      shell: cmd
-      run: |
-        nuget restore TShock.sln
-        "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\msbuild.exe" .\TShockAPI\TShockAPI.csproj /p:Configuration=Release
-    - name: Normalize release packaging
-      shell: cmd
-      run: |
-        xcopy /Y prebuilts\*.* TShockAPI\bin\Release
         xcopy /Y prebuilts\*.* TShockAPI\bin\Debug
         mkdir TShockAPI\bin\Debug\ServerPlugins
-        mkdir TShockAPI\bin\Release\ServerPlugins
-        move TShockAPI\bin\Release\TShockAPI.dll TShockAPI\bin\Release\ServerPlugins
         move TShockAPI\bin\Debug\TShockAPI.dll TShockAPI\bin\Debug\ServerPlugins
-    - uses: actions/upload-artifact@master
-      with:
-        name: Experimental TShock (not debug)
-        path: TShockAPI\bin\Release
-    - uses: actions/upload-artifact@master
+    - name: Upload TShock (Debug)
+      uses: actions/upload-artifact@master
       with:
         name: Experimental TShock (debug)
         path: TShockAPI\bin\Debug
-    - uses: actions/upload-artifact@master
+    - name: Upload OTAPI Bootstrapper (Debug)
+      uses: actions/upload-artifact@master
       with:
         name: Experimental (debug) OTAPI Bootstrapper
         path: .\TerrariaServerAPI\TShock.Modifications.Bootstrapper\bin\Debug\TShock.Modifications.Bootstrapper.exe
-    - uses: actions/upload-artifact@master
+    - name: Build OTAPI (Release)
+      shell: cmd
+      run: |
+        nuget restore .\TerrariaServerAPI\TShock.4.OTAPI.sln
+        MSBuild.exe .\TerrariaServerAPI\TShock.4.OTAPI.sln /p:Configuration=Release
+        cd .\TerrariaServerAPI\TShock.Modifications.Bootstrapper\bin\Release
+        TShock.Modifications.Bootstrapper.exe
+    - name: Build TerrariaServerAPI (Release)
+      shell: cmd
+      run: |
+        cd .\TerrariaServerAPI
+        MSBuild.exe .\TerrariaServerAPI\TerrariaServerAPI.csproj /p:Configuration=Release
+    - name: Build TShock (Release)
+      shell: cmd
+      run: |
+        nuget restore TShock.sln
+        MSBuild.exe .\TShockAPI\TShockAPI.csproj /p:Configuration=Release
+    - name: Prepare packaging
+      shell: cmd
+      run: |
+        xcopy /Y prebuilts\*.* TShockAPI\bin\Release
+        mkdir TShockAPI\bin\Release\ServerPlugins
+        move TShockAPI\bin\Release\TShockAPI.dll TShockAPI\bin\Release\ServerPlugins
+    - name: Upload TShock (Release)
+      uses: actions/upload-artifact@master
+      with:
+        name: Experimental TShock (not debug)
+        path: TShockAPI\bin\Release
+    - name: Upload OTAPI Bootstrapper (Release)
+      uses: actions/upload-artifact@master
       with:
         name: Experimental (not debug) OTAPI Bootstrapper
         path: .\TerrariaServerAPI\TShock.Modifications.Bootstrapper\bin\Release\TShock.Modifications.Bootstrapper.exe
