@@ -865,7 +865,6 @@ namespace TShockAPI
 				return;
 			}
 
-
 			if (stabProjectile.ContainsKey(type))
 			{
 				if (stabProjectile[type] == args.Player.TPlayer.HeldItem.type)
@@ -874,7 +873,6 @@ namespace TShockAPI
 					return;
 				}
 			}
-
 
 			// Main.projHostile contains projectiles that can harm players
 			// without PvP enabled and belong to enemy mobs, so they shouldn't be
@@ -888,6 +886,8 @@ namespace TShockAPI
 			}
 
 			// Tombstones should never be permitted by players
+			// This check means like, invalid or hacked tombstones (sent from hacked clients)
+			// Death does not create a tombstone projectile by default
 			if (type == ProjectileID.Tombstone)
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnNewProjectile rejected from tombstones from {0}", args.Player.Name);
