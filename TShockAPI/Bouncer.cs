@@ -528,7 +528,7 @@ namespace TShockAPI
 
 			if (args.Player.HasPermission(Permissions.allowclientsideworldedit))
 			{
-				TShock.Log.ConsoleDebug("Bouncer / SendTileSquare rejected clientside world edit from {0}", args.Player.Name);
+				TShock.Log.ConsoleDebug("Bouncer / SendTileSquare accepted clientside world edit from {0}", args.Player.Name);
 				args.Handled = false;
 				return;
 			}
