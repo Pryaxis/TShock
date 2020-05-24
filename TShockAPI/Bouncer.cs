@@ -711,7 +711,7 @@ namespace TShockAPI
 				args.Player.SendTileSquare(tileX, tileY, size);
 			}
 
-			TShock.Log.ConsoleDebug("Bouncer / SendTileSquare rejected from spaghetti from {0}", args.Player.Name);
+			TShock.Log.ConsoleDebug("Bouncer / SendTileSquare reimplemented from spaghetti from {0}", args.Player.Name);
 			args.Handled = true;
 		}
 
