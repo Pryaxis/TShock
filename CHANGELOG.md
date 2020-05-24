@@ -6,7 +6,8 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Update for OTAPI 2.0.0.36 and Terraria 1.4.0.4. (@hakusaro, @Patrikkk, @DeathCradle)
 * Fixed /wind command. (@AxeelAnder)
 * Fixed NPC buff bouncer. (@AxeelAnder)
-* Fixed lava, wet, and honey bombs. (@Olink)
+* Fixed players are unable to remove an NPC. Change `byte NPCHomeChangeEventArgs.Homeless` to `HouseholdStatus NPCHomeChangeEventArgs.HouseholdStatus`. (@AxeelAnder)
+* Fixed lava, wet, and honey bombs/grenades/rockets. (@Olink)
 
 ## TShock 4.4.0 (Pre-release 7 (Entangled))
 * Fixed bed spawn issues when trying to remove spawn point in SSC. (@Olink)

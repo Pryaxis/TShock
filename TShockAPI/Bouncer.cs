@@ -1290,15 +1290,21 @@ namespace TShockAPI
 			}
 
 			bool wasThereABombNearby = false;
-// The +/- 16 is compensation for maximum detonation distance, but it might be possible to drop to 5 and be conservative
 			lock (args.Player.RecentlyCreatedProjectiles)
 			{
-				var keys = projectileCreatesLiquid.Where(k => k.Value == type).Select(k => k.Key);
-				var recentBombs = args.Player.RecentlyCreatedProjectiles.Where(p => keys.Contains(Main.projectile[p.Index].type));
-				wasThereABombNearby = recentBombs.Any(r => (args.TileX > (Main.projectile[r.Index].position.X / 16.0f) - TShock.Config.BombExplosionRadius
-									&& args.TileX < (Main.projectile[r.Index].position.X / 16.0f) + TShock.Config.BombExplosionRadius)
-									&& (args.TileY > (Main.projectile[r.Index].position.Y / 16.0f) - TShock.Config.BombExplosionRadius
-									&& args.TileY < (Main.projectile[r.Index].position.Y / 16.0f) + TShock.Config.BombExplosionRadius));
+				IEnumerable<int> projectileTypesThatPerformThisOperation;
+				if (amount > 0) //handle the projectiles that create fluid.
+				{
+					projectileTypesThatPerformThisOperation = projectileCreatesLiquid.Where(k => k.Value == type).Select(k => k.Key);
+				}
+				else //handle the scenario where we are removing liquid
+				{
+					projectileTypesThatPerformThisOperation = projectileCreatesLiquid.Where(k => k.Value == LiquidType.Removal).Select(k => k.Key);
+				}
+
+				var recentBombs = args.Player.RecentlyCreatedProjectiles.Where(p => projectileTypesThatPerformThisOperation.Contains(Main.projectile[p.Index].type));
+				wasThereABombNearby = recentBombs.Any(r => Math.Abs(args.TileX - (Main.projectile[r.Index].position.X / 16.0f)) < TShock.Config.BombExplosionRadius
+														&& Math.Abs(args.TileY - (Main.projectile[r.Index].position.Y / 16.0f)) < TShock.Config.BombExplosionRadius);
 			}
 
 			// Liquid anti-cheat
@@ -1558,7 +1564,6 @@ namespace TShockAPI
 			int id = args.ID;
 			short x = args.X;
 			short y = args.Y;
-			byte homeless = args.Homeless;
 
 			if (!args.Player.HasBuildPermission(x, y))
 			{
@@ -1569,7 +1574,8 @@ namespace TShockAPI
 				return;
 			}
 
-			if (!args.Player.IsInRange(x, y))
+			// When kicking out an npc, x and y in args are 0, we shouldn't check range at this case
+			if (args.HouseholdStatus != HouseholdStatus.Homeless && !args.Player.IsInRange(x, y))
 			{
 				args.Player.SendData(PacketTypes.UpdateNPCHome, "", id, Main.npc[id].homeTileX, Main.npc[id].homeTileY,
 									 Convert.ToByte(Main.npc[id].homeless));

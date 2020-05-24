@@ -125,7 +125,7 @@ namespace TShockAPI
 					{ PacketTypes.NpcSpecial, HandleSpecial },
 					{ PacketTypes.NpcAddBuff, HandleNPCAddBuff },
 					{ PacketTypes.PlayerAddBuff, HandlePlayerAddBuff },
-					{ PacketTypes.UpdateNPCHome, UpdateNPCHome },
+					{ PacketTypes.UpdateNPCHome, HandleUpdateNPCHome },
 					{ PacketTypes.SpawnBossorInvasion, HandleSpawnBoss },
 					{ PacketTypes.PaintTile, HandlePaintTile },
 					{ PacketTypes.PaintWall, HandlePaintWall },
@@ -1141,7 +1141,8 @@ namespace TShockAPI
 		{
 			Water = 0,
 			Lava = 1,
-			Honey = 2
+			Honey = 2,
+			Removal = 255 //@Olink: lets hope they never invent 255 fluids or decide to also use this :(
 		}
 
 		/// <summary>
@@ -1307,6 +1308,13 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		public enum HouseholdStatus : byte
+		{
+			None = 0,
+			Homeless = 1,
+			HasRoom = 2,
+		}
+
 		/// <summary>
 		/// For use in a NPCHome event
 		/// </summary>
@@ -1325,15 +1333,15 @@ namespace TShockAPI
 			/// </summary>
 			public short Y { get; set; }
 			/// <summary>
-			/// ByteBool homeless
+			/// HouseholdStatus of the NPC
 			/// </summary>
-			public byte Homeless { get; set; }
+			public HouseholdStatus HouseholdStatus { get; set; }
 		}
 		/// <summary>
 		/// NPCHome - Called when an NPC's home is changed
 		/// </summary>
 		public static HandlerList<NPCHomeChangeEventArgs> NPCHome = new HandlerList<NPCHomeChangeEventArgs>();
-		private static bool OnUpdateNPCHome(TSPlayer player, MemoryStream data, short id, short x, short y, byte homeless)
+		private static bool OnUpdateNPCHome(TSPlayer player, MemoryStream data, short id, short x, short y, byte houseHoldStatus)
 		{
 			if (NPCHome == null)
 				return false;
@@ -1345,7 +1353,7 @@ namespace TShockAPI
 				ID = id,
 				X = x,
 				Y = y,
-				Homeless = homeless,
+				HouseholdStatus = (HouseholdStatus) houseHoldStatus,
 			};
 			NPCHome.Invoke(null, args);
 			return args.Handled;
@@ -2322,18 +2330,17 @@ namespace TShockAPI
 			if (OnNewProjectile(args.Data, ident, pos, vel, knockback, dmg, owner, type, index, args.Player))
 				return true;
 
-			if (projectileCreatesLiquid.ContainsKey(type))
+			lock (args.Player.RecentlyCreatedProjectiles)
 			{
-				lock (args.Player.RecentlyCreatedProjectiles)
+				if (!args.Player.RecentlyCreatedProjectiles.Any(p => p.Index == index))
 				{
-					args.Player.RecentlyCreatedProjectiles.Add(new ProjectileStruct()
+					args.Player.RecentlyCreatedProjectiles.Add(new GetDataHandlers.ProjectileStruct()
 					{
-						Index = ident,
+						Index = index,
 						CreatedAt = DateTime.Now
 					});
 				}
 			}
-
 			return false;
 		}
 
@@ -2779,14 +2786,14 @@ namespace TShockAPI
 			return true;
 		}
 
-		private static bool UpdateNPCHome(GetDataHandlerArgs args)
+		private static bool HandleUpdateNPCHome(GetDataHandlerArgs args)
 		{
 			var id = args.Data.ReadInt16();
 			var x = args.Data.ReadInt16();
 			var y = args.Data.ReadInt16();
-			var homeless = args.Data.ReadInt8();
+			var householdStatus = args.Data.ReadInt8();
 
-			if (OnUpdateNPCHome(args.Player, args.Data, id, x, y, homeless))
+			if (OnUpdateNPCHome(args.Player, args.Data, id, x, y, householdStatus))
 				return true;
 
 			if (!args.Player.HasPermission(Permissions.movenpc))
@@ -3466,10 +3473,24 @@ namespace TShockAPI
 		{
 			{ProjectileID.LavaBomb, LiquidType.Lava},
 			{ProjectileID.LavaRocket, LiquidType.Lava },
+			{ProjectileID.LavaGrenade, LiquidType.Lava },
+			{ProjectileID.LavaMine, LiquidType.Lava },
+			//{ProjectileID.LavaSnowmanRocket, LiquidType.Lava }, //these require additional checks.
 			{ProjectileID.WetBomb, LiquidType.Water},
 			{ProjectileID.WetRocket, LiquidType.Water },
+			{ProjectileID.WetGrenade, LiquidType.Water},
+			{ProjectileID.WetMine, LiquidType.Water},
+			//{ProjectileID.WetSnowmanRocket, LiquidType.Water}, //these require additional checks.
 			{ProjectileID.HoneyBomb, LiquidType.Honey},
-			{ProjectileID.HoneyRocket, LiquidType.Honey }
+			{ProjectileID.HoneyRocket, LiquidType.Honey },
+			{ProjectileID.HoneyGrenade, LiquidType.Honey },
+			{ProjectileID.HoneyMine, LiquidType.Honey },
+			//{ProjectileID.HoneySnowmanRocket, LiquidType.Honey }, //these require additional checks.
+			{ProjectileID.DryBomb, LiquidType.Removal },
+			{ProjectileID.DryRocket, LiquidType.Removal },
+			{ProjectileID.DryGrenade, LiquidType.Removal },
+			{ProjectileID.DryMine, LiquidType.Removal },
+			//{ProjectileID.DrySnowmanRocket, LiquidType.Removal } //these require additional checks.
 		};
 
 		internal static Dictionary<int, int> ropeCoilPlacements = new Dictionary<int, int>
