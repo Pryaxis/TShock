@@ -275,11 +275,11 @@ namespace TShockAPI
 
 		/// <summary>Disables a player and reverts their actions if this number of tile places is exceeded within 1 second.</summary>
 		[Description("Disables a player and reverts their actions if this number of tile places is exceeded within 1 second.")]
-		public int TilePlaceThreshold = 20;
+		public int TilePlaceThreshold = 32;
 
 		/// <summary>Disables a player if this number of liquid sets is exceeded within 1 second.</summary>
 		[Description("Disables a player if this number of liquid sets is exceeded within 1 second.")]
-		public int TileLiquidThreshold = 15;
+		public int TileLiquidThreshold = 50;
 
 		/// <summary>Disable a player if this number of projectiles is created within 1 second.</summary>
 		[Description("Disable a player if this number of projectiles is created within 1 second.")]
