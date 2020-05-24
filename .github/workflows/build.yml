@@ -53,19 +53,19 @@ jobs:
       with:
         name: Experimental (debug) OTAPI Bootstrapper
         path: .\TerrariaServerAPI\TShock.Modifications.Bootstrapper\bin\Debug\TShock.Modifications.Bootstrapper.exe
-    - name: Build OTAPI (Release)
+    - name: Build OTAPI (Not Debug)
       shell: cmd
       run: |
         nuget restore .\TerrariaServerAPI\TShock.4.OTAPI.sln
         MSBuild.exe .\TerrariaServerAPI\TShock.4.OTAPI.sln /p:Configuration=Release
         cd .\TerrariaServerAPI\TShock.Modifications.Bootstrapper\bin\Release
         TShock.Modifications.Bootstrapper.exe
-    - name: Build TerrariaServerAPI (Release)
+    - name: Build TerrariaServerAPI (Not Debug)
       shell: cmd
       run: |
         cd .\TerrariaServerAPI
         MSBuild.exe .\TerrariaServerAPI\TerrariaServerAPI.csproj /p:Configuration=Release
-    - name: Build TShock (Release)
+    - name: Build TShock (Not Debug)
       shell: cmd
       run: |
         nuget restore TShock.sln
@@ -76,12 +76,12 @@ jobs:
         xcopy /Y prebuilts\*.* TShockAPI\bin\Release
         mkdir TShockAPI\bin\Release\ServerPlugins
         move TShockAPI\bin\Release\TShockAPI.dll TShockAPI\bin\Release\ServerPlugins
-    - name: Upload TShock (Release)
+    - name: Upload TShock (Not Debug)
       uses: actions/upload-artifact@master
       with:
         name: Experimental TShock (not debug)
         path: TShockAPI\bin\Release
-    - name: Upload OTAPI Bootstrapper (Release)
+    - name: Upload OTAPI Bootstrapper (Not Debug)
       uses: actions/upload-artifact@master
       with:
         name: Experimental (not debug) OTAPI Bootstrapper
