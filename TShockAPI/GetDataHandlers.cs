@@ -2850,38 +2850,44 @@ namespace TShockAPI
 			string thing;
 			switch (thingType)
 			{
+				case -11:
+					thing = "applied advanced combat techniques";
+					break;
+				case -10:
+					thing = "summoned a Blood Moon";
+					break;
 				case -8:
-					thing = "a Moon Lord";
+					thing = "summoned a Moon Lord";
 					break;
 				case -7:
-					thing = "a Martian invasion";
+					thing = "summoned a Martian invasion";
 					break;
 				case -6:
-					thing = "an eclipse";
+					thing = "summoned an eclipse";
 					break;
 				case -5:
-					thing = "a frost moon";
+					thing = "summoned a frost moon";
 					break;
 				case -4:
-					thing = "a pumpkin moon";
+					thing = "summoned a pumpkin moon";
 					break;
 				case -3:
-					thing = "the Pirates";
+					thing = "summoned the Pirates";
 					break;
 				case -2:
-					thing = "the Snow Legion";
+					thing = "summoned the Snow Legion";
 					break;
 				case -1:
-					thing = "a Goblin Invasion";
+					thing = "summoned a Goblin Invasion";
 					break;
 				default:
-					thing = String.Format("the {0}", npc.FullName);
+					thing = String.Format("summoned the {0}", npc.FullName);
 					break;
 			}
 			if (TShock.Config.AnonymousBossInvasions)
-				TShock.Utils.SendLogs(string.Format("{0} summoned {1}!", args.Player.Name, thing), Color.PaleVioletRed, args.Player);
+				TShock.Utils.SendLogs(string.Format("{0} {1}!", args.Player.Name, thing), Color.PaleVioletRed, args.Player);
 			else
-				TShock.Utils.Broadcast(String.Format("{0} summoned {1}!", args.Player.Name, thing), 175, 75, 255);
+				TShock.Utils.Broadcast(String.Format("{0} {1}!", args.Player.Name, thing), 175, 75, 255);
 			return false;
 		}
 
