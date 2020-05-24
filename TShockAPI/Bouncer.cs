@@ -2048,36 +2048,35 @@ namespace TShockAPI
 		// These time values are references from Projectile.cs, at npc.AddBuff() calls.
 		private static Dictionary<int, short> NPCAddBuffTimeMax = new Dictionary<int, short>()
 		{
-			{ BuffID.Poisoned, 3600 },
-			{ BuffID.OnFire, 1200 },
-			{ BuffID.CursedInferno, 420 },
-			{ BuffID.Frostburn, 900 },
-			{ BuffID.Ichor, 1200 },
-			{ BuffID.Venom, 1260 },
-			{ BuffID.Midas, 120 },
-			{ BuffID.Wet, 1500 },
-			{ BuffID.Slimed, 1500 },
-			{ BuffID.Lovestruck, 1800 },
-			{ BuffID.Stinky, 1800 },
-			{ BuffID.SoulDrain, 30 },
-			{ BuffID.ShadowFlame, 660 },
-			{ BuffID.DryadsWard, 120 },
-			{ BuffID.BoneJavelin, 900 },
-			{ BuffID.StardustMinionBleed, 900 },
-			{ BuffID.DryadsWardDebuff, 120 },
-			{ BuffID.BetsysCurse, 600 },
-			{ BuffID.Oiled, 540 },
-			{ BuffID.Confused, 450 }, // Brain of Confusion Internal Item ID: 3223
-			{ BuffID.Daybreak, 300 }, // Solar Eruption Item ID: 3473, Daybreak Item ID: 3543
-			{ BuffID.BlandWhipEnemyDebuff, 240  },
-			{ BuffID.SwordWhipNPCDebuff, 240  },
-			{ BuffID.ScytheWhipEnemyDebuff, 240  },
-			{ BuffID.FlameWhipEnemyDebuff, 240  },
-			{ BuffID.ThornWhipNPCDebuff, 240  },
-			{ BuffID.RainbowWhipNPCDebuff, 240  },
-			{ BuffID.MaceWhipNPCDebuff, 240  },
-			{ BuffID.GelBalloonBuff, 1800  }
-
+			{ BuffID.Poisoned, 3600 },              // BuffID: 20
+			{ BuffID.OnFire, 1200 },                // BuffID: 24
+			{ BuffID.Confused, short.MaxValue },    // BuffID: 31 Brain of Confusion Internal Item ID: 3223
+			{ BuffID.CursedInferno, 420 },          // BuffID: 39
+			{ BuffID.Frostburn, 900 },              // BuffID: 44
+			{ BuffID.Ichor, 1200 },                 // BuffID: 69
+			{ BuffID.Venom, 1800 },                 // BuffID: 70
+			{ BuffID.Midas, 120 },                  // BuffID: 72
+			{ BuffID.Wet, 1500 },                   // BuffID: 103
+			{ BuffID.Lovestruck, 1800 },            // BuffID: 119
+			{ BuffID.Stinky, 1800 },                // BuffID: 120
+			{ BuffID.Slimed, 1500 },                // BuffID: 137
+			{ BuffID.SoulDrain, 30 },               // BuffID: 151
+			{ BuffID.ShadowFlame, 660 },            // BuffID: 153
+			{ BuffID.DryadsWard, 120 },             // BuffID: 165
+			{ BuffID.BoneJavelin, 900 },            // BuffID: 169
+			{ BuffID.StardustMinionBleed, 900 },    // BuffID: 183
+			{ BuffID.DryadsWardDebuff, 120 },       // BuffID: 186
+			{ BuffID.Daybreak, 300 },               // BuffID: 189 Solar Eruption Item ID: 3473, Daybreak Item ID: 3543
+			{ BuffID.BetsysCurse, 600 },            // BuffID: 203
+			{ BuffID.Oiled, 540 },                  // BuffID: 204
+			{ BuffID.BlandWhipEnemyDebuff, 240  },  // BuffID: 307
+			{ BuffID.SwordWhipNPCDebuff, 240  },    // BuffID: 309
+			{ BuffID.ScytheWhipEnemyDebuff, 240  }, // BuffID: 310
+			{ BuffID.FlameWhipEnemyDebuff, 240  },  // BuffID: 313
+			{ BuffID.ThornWhipNPCDebuff, 240  },    // BuffID: 315
+			{ BuffID.RainbowWhipNPCDebuff, 240  },  // BuffID: 316
+			{ BuffID.MaceWhipNPCDebuff, 240  },     // BuffID: 319
+			{ BuffID.GelBalloonBuff, 1800  }        // BuffID: 320
 		};
 
 		/// <summary>
