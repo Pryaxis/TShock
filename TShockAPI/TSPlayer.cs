@@ -299,9 +299,10 @@ namespace TShockAPI
 		/// </summary>
 		public int RespawnTimer
 		{
-			get => TPlayer.respawnTimer;
-			set => TPlayer.respawnTimer = value;
+			get => _respawnTimer;
+			set => TPlayer.respawnTimer = (_respawnTimer = value) * 60;
 		}
+		private int _respawnTimer;
 
 		/// <summary>
 		/// Whether the player is dead or not.
@@ -600,8 +601,11 @@ namespace TShockAPI
 		/// <returns>True if the player is in range of a tile or if range checks are off. False if not.</returns>
 		public bool IsInRange(int x, int y, int range = 32)
 		{
-			if (TShock.Config.RangeChecks && ((Math.Abs(TileX - x) > range) || (Math.Abs(TileY - y) > range)))
+			int rgX = Math.Abs(TileX - x);
+			int rgY = Math.Abs(TileY - y);
+			if (TShock.Config.RangeChecks && ((rgX > range) || (rgY > range)))
 			{
+				TShock.Log.ConsoleDebug("Rangecheck failed for {0} ({1}, {2}) (rg: {3}/{5}, {4}/{5})", Name, x, y, rgX, rgY, range);
 				return false;
 			}
 			return true;
@@ -1196,7 +1200,7 @@ namespace TShockAPI
 					PlayerIndex = (byte)Index,
 					TileX = (short)tilex,
 					TileY = (short)tiley,
-					RespawnTimer = respawnTimer ?? TShock.Players[Index].TPlayer.respawnTimer,
+					RespawnTimer = respawnTimer ?? TShock.Players[Index].RespawnTimer * 60,
 					PlayerSpawnContext = context,
 				};
 				msg.PackFull(ms);
@@ -1420,7 +1424,15 @@ namespace TShockAPI
 				}
 				return;
 			}
-			SendData(PacketTypes.SmartTextMessage, msg, 255, red, green, blue, -1);
+
+			if (this.Index == -1) //-1 is our broadcast index - this implies we're using TSPlayer.All.SendMessage and broadcasting to all clients
+			{
+				Terraria.Chat.ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(msg), new Color(red, green, blue));
+			}
+			else
+			{
+				Terraria.Chat.ChatHelper.SendChatMessageToClient(NetworkText.FromLiteral(msg), new Color(red, green, blue), this.Index);
+			}
 		}
 
 		/// <summary>
@@ -1442,7 +1454,7 @@ namespace TShockAPI
 				}
 				return;
 			}
-			SendDataFromPlayer(PacketTypes.SmartTextMessage, ply, msg, red, green, blue, -1);
+			Terraria.Chat.ChatHelper.BroadcastChatMessageAs((byte)ply, NetworkText.FromLiteral(msg), new Color(red, green, blue));
 		}
 
 		/// <summary>

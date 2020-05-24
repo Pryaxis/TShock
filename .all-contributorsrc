@@ -86,6 +86,33 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "ColinBohn",
+      "name": "Colin Bohn",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/1351268?v=4",
+      "profile": "http://colinbohn.me",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "mrshroomy",
+      "name": "mrshroomy",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/52048952?v=4",
+      "profile": "https://github.com/mrshroomy",
+      "contributions": [
+        "test"
+      ]
+    },
+    {
+      "login": "agentsparrow",
+      "name": "agentsparrow",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/16114336?v=4",
+      "profile": "https://github.com/agentsparrow",
+      "contributions": [
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
