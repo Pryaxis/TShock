@@ -4044,7 +4044,6 @@ namespace TShockAPI
 			{
 				tsply.SaveServerCharacter();
 			}
-			args.Player.SendSuccessMessage("Save succeeded.");
 		}
 
 		private static void Settle(CommandArgs args)
