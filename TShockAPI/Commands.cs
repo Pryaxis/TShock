@@ -4263,7 +4263,7 @@ namespace TShockAPI
 			}
 
 			Main.windSpeedCurrent = speed;
-			Main.windSpeedTarget = 0f;
+			Main.windSpeedTarget = speed;
 			TSPlayer.All.SendData(PacketTypes.WorldInfo);
 			TSPlayer.All.SendInfoMessage("{0} changed the wind speed to {1}.", args.Player.Name, speed);
 		}
