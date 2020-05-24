@@ -1303,7 +1303,7 @@ namespace TShockAPI
 			}
 
 			bool wasThereABombNearby = false;
-
+// The +/- 16 is compensation for maximum detonation distance, but it might be possible to drop to 5 and be conservative
 			lock (args.Player.RecentlyCreatedProjectiles)
 			{
 				var keys = projectileCreatesLiquid.Where(k => k.Value == type).Select(k => k.Key);

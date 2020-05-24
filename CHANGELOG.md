@@ -6,7 +6,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Update for OTAPI 2.0.0.36 and Terraria 1.4.0.4. (@hakusaro, @Patrikkk, @DeathCradle)
 * Fixed /wind command. (@AxeelAnder)
 * Fixed NPC buff bouncer. (@AxeelAnder)
-* Fix fluid bombs. (@Olink)
+* Fixed lava, wet, and honey bombs. (@Olink)
 
 ## TShock 4.4.0 (Pre-release 7 (Entangled))
 * Fixed bed spawn issues when trying to remove spawn point in SSC. (@Olink)
