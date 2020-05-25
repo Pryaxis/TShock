@@ -26,6 +26,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * `tshock.journey.setdifficulty`
   * `tshock.journey.biomespreadfreeze`
   * `tshock.journey.setspawnrate`
+* Changed default thresholds for some changes in the config file to accommodate new items & changes to Terraria. (@hakusaro)
 
 ## TShock 4.4.0 (Pre-release 7 (Entangled))
 * Fixed bed spawn issues when trying to remove spawn point in SSC. (@Olink)
