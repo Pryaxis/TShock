@@ -3237,6 +3237,12 @@ namespace TShockAPI
 						}
 					case CreativePowerTypes.SetSpawnRate:
 						{
+							// This is a monkeypatch because the 1.4.0.4 seemingly at random sends NPC spawn rate changes even outside of journey mode
+							// (with SSC on) -- particles, May 25, 2 Reiwa
+							if (!Main.GameModeInfo.IsJourneyMode)
+							{
+								return true;
+							}
 							if (!args.Player.HasPermission(Permissions.journey_setspawnrate))
 							{
 								args.Player.SendErrorMessage("You don't have permission to modify the NPC spawn rate of the server!");
@@ -3249,7 +3255,7 @@ namespace TShockAPI
 							return true;
 						}
 				}
-			} else if (moduleId == (int)NetModulesTypes.CreativeUnlocksPlayerReport)
+			} else if (moduleId == (int)NetModulesTypes.CreativeUnlocksPlayerReport && Main.GameModeInfo.IsJourneyMode)
 			{
 				var unknownField = args.Data.ReadByte();
 

@@ -484,18 +484,20 @@ namespace TShockAPI
 
 			NetMessage.SendData(39, player.Index, -1, NetworkText.Empty, 400);
 
-
-			var sacrificedItems = TShock.ResearchDatastore.GetSacrificedItems();
-			for(int i = 0; i < ItemID.Count; i++)
+			if (Main.GameModeInfo.IsJourneyMode)
 			{
-				var amount = 0;
-				if (sacrificedItems.ContainsKey(i))
+				var sacrificedItems = TShock.ResearchDatastore.GetSacrificedItems();
+				for(int i = 0; i < ItemID.Count; i++)
 				{
-					amount = sacrificedItems[i];
-				}
+					var amount = 0;
+					if (sacrificedItems.ContainsKey(i))
+					{
+						amount = sacrificedItems[i];
+					}
 
-				var response = NetCreativeUnlocksModule.SerializeItemSacrifice(i, amount);
-				NetManager.Instance.SendToClient(response, player.TPlayer.whoAmI);
+					var response = NetCreativeUnlocksModule.SerializeItemSacrifice(i, amount);
+					NetManager.Instance.SendToClient(response, player.TPlayer.whoAmI);
+				}
 			}
 		}
 	}
