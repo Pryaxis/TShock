@@ -2,6 +2,9 @@
 
 This is the rolling changelog for TShock for Terraria. Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
 
+## Upcoming Release
+* Initial support for Journey mode in SSC worlds. (@Olink)
+  
 ## TShock 4.4.0 (Pre-release 8)
 * Update for OTAPI 2.0.0.36 and Terraria 1.4.0.4. (@hakusaro, @Patrikkk, @DeathCradle)
 * Fixed /wind command. (@AxeelAnder)
