@@ -9,6 +9,8 @@ assignees: ''
 
 <!-- Please provide the information requested below -->
 
+<!-- STOP! Please set DebugLogs to true in your config file, restart the server, and then produce the problem again. Please attach the new debug log to this report. -->
+
 * TShock version:
 * TShock build number (if known):
 
@@ -31,8 +33,12 @@ PUT SUPER LONG ERROR MESSAGES IN THE TICK MARKS
 
 <!-- If providing screenshots of client, send before and after pressing F8 to show network debug -->
 
-#### Any log messages from files that end in `.log` or `.txt`?
+#### Any log messages from files that end in `.log` or `.txt`? What are the last 100 log messages from the server console?
 
 <!-- Please add context. Even if you don't have an error message, please show recent server logs at least. -->
 
+<!-- STOP! If you do not provide any logs or screenshots, your issue may be closed or converted to a discussion without warning! -->
+
 #### What plugins and what versions of those plugins are you running?
+
+If I didn't provide any logs this issue, please close my issue immediately. I'm sorry for the inconvenience.
