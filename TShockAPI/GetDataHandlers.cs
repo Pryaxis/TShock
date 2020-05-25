@@ -3116,6 +3116,130 @@ namespace TShockAPI
 
 		private static bool HandleLoadNetModule(GetDataHandlerArgs args)
 		{
+			short moduleId = args.Data.ReadInt16();
+			if (moduleId == (int)NetModulesTypes.CreativePowers)
+			{
+				CreativePowerTypes powerId = (CreativePowerTypes)args.Data.ReadInt16();
+				switch (powerId)
+				{
+					case CreativePowerTypes.FreezeTime:
+						{
+							if (!args.Player.HasPermission(Permissions.journey_timefreeze))
+							{
+								args.Player.SendErrorMessage("You have no permission to freeze the time of the server!");
+								return true;
+							}
+							break;
+						}
+					case CreativePowerTypes.SetDawn:
+					case CreativePowerTypes.SetNoon:
+					case CreativePowerTypes.SetDusk:
+					case CreativePowerTypes.SetMidnight:
+						{
+							if (!args.Player.HasPermission(Permissions.journey_timeset))
+							{
+								args.Player.SendErrorMessage("You have no permission to modify the time of the server!");
+								return true;
+							}
+							break;
+						}
+					case CreativePowerTypes.Godmode:
+						{
+							if (!args.Player.HasPermission(Permissions.journey_godmode))
+							{
+								args.Player.SendErrorMessage("You have no permission to toggle godmode!");
+								return true;
+							}
+							break;
+						}
+					case CreativePowerTypes.WindStrength:
+						{
+							if (!args.Player.HasPermission(Permissions.journey_windstrength))
+							{
+								args.Player.SendErrorMessage("You have no permission to modify the wind strength of the server!");
+								return true;
+							}
+							break;
+						}
+					case CreativePowerTypes.RainStrength:
+						{
+							if (!args.Player.HasPermission(Permissions.journey_rainstrength))
+							{
+								args.Player.SendErrorMessage("You have no permission to modify the rain strength of the server!");
+								return true;
+							}
+							break;
+						}
+					case CreativePowerTypes.TimeSpeed:
+						{
+							if (!args.Player.HasPermission(Permissions.journey_timespeed))
+							{
+								args.Player.SendErrorMessage("You have no permission to modify the time speed of the server!");
+								return true;
+							}
+							break;
+						}
+					case CreativePowerTypes.RainFreeze:
+						{
+							if (!args.Player.HasPermission(Permissions.journey_rainfreeze))
+							{
+								args.Player.SendErrorMessage("You have no permission to freeze the rain strength of the server!");
+								return true;
+							}
+							break;
+						}
+					case CreativePowerTypes.WindFreeze:
+						{
+							if (!args.Player.HasPermission(Permissions.journey_windfreeze))
+							{
+								args.Player.SendErrorMessage("You have no permission to freeze the wind strength of the server!");
+								return true;
+							}
+							break;
+						}
+					case CreativePowerTypes.IncreasePlacementRange:
+						{
+							if (!args.Player.HasPermission(Permissions.journey_placementrange))
+							{
+								args.Player.SendErrorMessage("You have no permission to modify the tile placement range of your character!");
+								return true;
+							}
+							break;
+						}
+					case CreativePowerTypes.WorldDifficulty:
+						{
+							if (!args.Player.HasPermission(Permissions.journey_setdifficulty))
+							{
+								args.Player.SendErrorMessage("You have no permission to modify the world dificulty of the server!");
+								return true;
+							}
+							break;
+						}
+					case CreativePowerTypes.BiomeSpreadFreeze:
+						{
+							if (!args.Player.HasPermission(Permissions.journey_biomespreadfreeze))
+							{
+								args.Player.SendErrorMessage("You have no permission to freeze the biome spread of server!");
+								return true;
+							}
+							break;
+						}
+					case CreativePowerTypes.SetSpawnRate:
+						{
+							if (!args.Player.HasPermission(Permissions.journey_setspawnrate))
+							{
+								args.Player.SendErrorMessage("You have no permission to modify the NPC spawn rate of server!");
+								return true;
+							}
+							break;
+						}
+					default:
+						{
+							return true;
+						}
+				}
+			}
+
 			// As of 1.4.x.x, this is now used for more things:
 			//	NetCreativePowersModule
 			//	NetCreativePowerPermissionsModule
@@ -3523,6 +3647,40 @@ namespace TShockAPI
 			public int Index { get; set; }
 			public DateTime CreatedAt { get; set; }
 			public bool Killed { get; internal set; }
+		}
+
+		public enum NetModulesTypes
+		{
+			Liquid,
+			Text,
+			Ping,
+			Ambience,
+			Bestiary,
+			CreativeUnlocks,
+			CreativePowers,
+			CreativeUnlocksPlayerReport,
+			TeleportPylon,
+			Particles,
+			CreativePowerPermissions
+		}
+
+		public enum CreativePowerTypes
+		{
+			FreezeTime,
+			SetDawn,
+			SetNoon,
+			SetDusk,
+			SetMidnight,
+			Godmode,
+			WindStrength,
+			RainStrength,
+			TimeSpeed,
+			RainFreeze,
+			WindFreeze,
+			IncreasePlacementRange,
+			WorldDifficulty,
+			BiomeSpreadFreeze,
+			SetSpawnRate
 		}
 	}
 }

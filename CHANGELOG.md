@@ -13,6 +13,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   and lava, wet, honey, and dry mines. (@Olink)
 * Fix Bloody Tear displaying the wrong text when used. (@Olink)
 * Fix the visibility toggle for the last two accessory slots. (@Olink)
+* Adding Journey mode user account permissions. (@Patrikkk)
 
 
 ## TShock 4.4.0 (Pre-release 7 (Entangled))
