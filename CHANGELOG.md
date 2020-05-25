@@ -13,8 +13,19 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   and lava, wet, honey, and dry mines. (@Olink)
 * Fix Bloody Tear displaying the wrong text when used. (@Olink)
 * Fix the visibility toggle for the last two accessory slots. (@Olink)
-* Adding Journey mode user account permissions. (@Patrikkk)
-
+* Adding Journey mode user account permissions. Journey mode must be enabled for these to have any effect. (@Patrikkk)
+  * `tshock.journey.time.freeze`
+  * `tshock.journey.time.set`
+  * `tshock.journey.time.setspeed`
+  * `tshock.journey.godmode`
+  * `tshock.journey.wind.strength`
+  * `tshock.journey.wind.freeze`
+  * `tshock.journey.rain.strength`
+  * `tshock.journey.rain.freeze`
+  * `tshock.journey.placementrange`
+  * `tshock.journey.setdifficulty`
+  * `tshock.journey.biomespreadfreeze`
+  * `tshock.journey.setspawnrate`
 
 ## TShock 4.4.0 (Pre-release 7 (Entangled))
 * Fixed bed spawn issues when trying to remove spawn point in SSC. (@Olink)
