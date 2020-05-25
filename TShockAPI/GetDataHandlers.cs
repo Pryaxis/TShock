@@ -3126,7 +3126,7 @@ namespace TShockAPI
 						{
 							if (!args.Player.HasPermission(Permissions.journey_timefreeze))
 							{
-								args.Player.SendErrorMessage("You have no permission to freeze the time of the server!");
+								args.Player.SendErrorMessage("You don't have permission to freeze the time of the server!");
 								return true;
 							}
 							break;
@@ -3138,7 +3138,7 @@ namespace TShockAPI
 						{
 							if (!args.Player.HasPermission(Permissions.journey_timeset))
 							{
-								args.Player.SendErrorMessage("You have no permission to modify the time of the server!");
+								args.Player.SendErrorMessage("You don't have permission to modify the time of the server!");
 								return true;
 							}
 							break;
@@ -3147,7 +3147,7 @@ namespace TShockAPI
 						{
 							if (!args.Player.HasPermission(Permissions.journey_godmode))
 							{
-								args.Player.SendErrorMessage("You have no permission to toggle godmode!");
+								args.Player.SendErrorMessage("You don't have permission to toggle godmode!");
 								return true;
 							}
 							break;
@@ -3156,7 +3156,7 @@ namespace TShockAPI
 						{
 							if (!args.Player.HasPermission(Permissions.journey_windstrength))
 							{
-								args.Player.SendErrorMessage("You have no permission to modify the wind strength of the server!");
+								args.Player.SendErrorMessage("You don't have permission to modify the wind strength of the server!");
 								return true;
 							}
 							break;
@@ -3165,7 +3165,7 @@ namespace TShockAPI
 						{
 							if (!args.Player.HasPermission(Permissions.journey_rainstrength))
 							{
-								args.Player.SendErrorMessage("You have no permission to modify the rain strength of the server!");
+								args.Player.SendErrorMessage("You don't have permission to modify the rain strength of the server!");
 								return true;
 							}
 							break;
@@ -3174,7 +3174,7 @@ namespace TShockAPI
 						{
 							if (!args.Player.HasPermission(Permissions.journey_timespeed))
 							{
-								args.Player.SendErrorMessage("You have no permission to modify the time speed of the server!");
+								args.Player.SendErrorMessage("You don't have permission to modify the time speed of the server!");
 								return true;
 							}
 							break;
@@ -3183,7 +3183,7 @@ namespace TShockAPI
 						{
 							if (!args.Player.HasPermission(Permissions.journey_rainfreeze))
 							{
-								args.Player.SendErrorMessage("You have no permission to freeze the rain strength of the server!");
+								args.Player.SendErrorMessage("You don't have permission to freeze the rain strength of the server!");
 								return true;
 							}
 							break;
@@ -3192,7 +3192,7 @@ namespace TShockAPI
 						{
 							if (!args.Player.HasPermission(Permissions.journey_windfreeze))
 							{
-								args.Player.SendErrorMessage("You have no permission to freeze the wind strength of the server!");
+								args.Player.SendErrorMessage("You don't have permission to freeze the wind strength of the server!");
 								return true;
 							}
 							break;
@@ -3201,7 +3201,7 @@ namespace TShockAPI
 						{
 							if (!args.Player.HasPermission(Permissions.journey_placementrange))
 							{
-								args.Player.SendErrorMessage("You have no permission to modify the tile placement range of your character!");
+								args.Player.SendErrorMessage("You don't have permission to modify the tile placement range of your character!");
 								return true;
 							}
 							break;
@@ -3210,7 +3210,7 @@ namespace TShockAPI
 						{
 							if (!args.Player.HasPermission(Permissions.journey_setdifficulty))
 							{
-								args.Player.SendErrorMessage("You have no permission to modify the world dificulty of the server!");
+								args.Player.SendErrorMessage("You don't have permission to modify the world dificulty of the server!");
 								return true;
 							}
 							break;
@@ -3219,7 +3219,7 @@ namespace TShockAPI
 						{
 							if (!args.Player.HasPermission(Permissions.journey_biomespreadfreeze))
 							{
-								args.Player.SendErrorMessage("You have no permission to freeze the biome spread of server!");
+								args.Player.SendErrorMessage("You don't have permission to freeze the biome spread of server!");
 								return true;
 							}
 							break;
@@ -3228,7 +3228,7 @@ namespace TShockAPI
 						{
 							if (!args.Player.HasPermission(Permissions.journey_setspawnrate))
 							{
-								args.Player.SendErrorMessage("You have no permission to modify the NPC spawn rate of server!");
+								args.Player.SendErrorMessage("You don't have permission to modify the NPC spawn rate of server!");
 								return true;
 							}
 							break;
