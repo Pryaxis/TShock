@@ -7,11 +7,14 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Fixed /wind command. (@AxeelAnder)
 * Fixed NPC buff bouncer. (@AxeelAnder)
 * Fixed players are unable to remove an NPC. Change `byte NPCHomeChangeEventArgs.Homeless` to `HouseholdStatus NPCHomeChangeEventArgs.HouseholdStatus`. (@AxeelAnder)
-* Fixed lava, wet, honey, and dry bombs; 
-  and lava, wet, honey, and dry grenades; 
-  and lava, wet, honey, and dry rockets; 
+* Fixed lava, wet, honey, and dry bombs;  
+  and lava, wet, honey, and dry grenades;  
+  and lava, wet, honey, and dry rockets;  
   and lava, wet, honey, and dry mines. (@Olink)
+* Fix Bloody Tear displaying the wrong text when used. (@Olink)
+* Fix the visibility toggle for the last two accessory slots. (@Olink)
 * Adding Journey mode user account permissions. (@Patrikkk)
+
 
 ## TShock 4.4.0 (Pre-release 7 (Entangled))
 * Fixed bed spawn issues when trying to remove spawn point in SSC. (@Olink)
