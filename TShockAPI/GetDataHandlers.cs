@@ -3108,12 +3108,12 @@ namespace TShockAPI
 		private static bool HandleLoadNetModule(GetDataHandlerArgs args)
 		{
 			short moduleId = args.Data.ReadInt16();
-			if (moduleId == 6) // Power module.
+			if (moduleId == (int)NetModulesTypes.CreativePowers)
 			{
-				short powerId = args.Data.ReadInt16();
+				CreativePowerTypes powerId = (CreativePowerTypes)args.Data.ReadInt16();
 				switch (powerId)
 				{
-					case 0:
+					case CreativePowerTypes.FreezeTime:
 						{
 							if (!args.Player.HasPermission(Permissions.journey_timefreeze))
 							{
@@ -3122,10 +3122,10 @@ namespace TShockAPI
 							}
 							break;
 						}
-					case 1:
-					case 2:
-					case 3:
-					case 4:
+					case CreativePowerTypes.SetDawn:
+					case CreativePowerTypes.SetNoon:
+					case CreativePowerTypes.SetDusk:
+					case CreativePowerTypes.SetMidnight:
 						{
 							if (!args.Player.HasPermission(Permissions.journey_timeset))
 							{
@@ -3134,7 +3134,7 @@ namespace TShockAPI
 							}
 							break;
 						}
-					case 5:
+					case CreativePowerTypes.Godmode:
 						{
 							if (!args.Player.HasPermission(Permissions.journey_godmode))
 							{
@@ -3143,7 +3143,7 @@ namespace TShockAPI
 							}
 							break;
 						}
-					case 6:
+					case CreativePowerTypes.WindStrength:
 						{
 							if (!args.Player.HasPermission(Permissions.journey_windstrength))
 							{
@@ -3152,7 +3152,7 @@ namespace TShockAPI
 							}
 							break;
 						}
-					case 7:
+					case CreativePowerTypes.RainStrength:
 						{
 							if (!args.Player.HasPermission(Permissions.journey_rainstrength))
 							{
@@ -3161,7 +3161,7 @@ namespace TShockAPI
 							}
 							break;
 						}
-					case 8:
+					case CreativePowerTypes.TimeSpeed:
 						{
 							if (!args.Player.HasPermission(Permissions.journey_timespeed))
 							{
@@ -3170,7 +3170,7 @@ namespace TShockAPI
 							}
 							break;
 						}
-					case 9:
+					case CreativePowerTypes.RainFreeze:
 						{
 							if (!args.Player.HasPermission(Permissions.journey_rainfreeze))
 							{
@@ -3179,7 +3179,7 @@ namespace TShockAPI
 							}
 							break;
 						}
-					case 10:
+					case CreativePowerTypes.WindFreeze:
 						{
 							if (!args.Player.HasPermission(Permissions.journey_windfreeze))
 							{
@@ -3188,7 +3188,7 @@ namespace TShockAPI
 							}
 							break;
 						}
-					case 11:
+					case CreativePowerTypes.IncreasePlacementRange:
 						{
 							if (!args.Player.HasPermission(Permissions.journey_placementrange))
 							{
@@ -3197,7 +3197,7 @@ namespace TShockAPI
 							}
 							break;
 						}
-					case 12:
+					case CreativePowerTypes.WorldDifficulty:
 						{
 							if (!args.Player.HasPermission(Permissions.journey_setdifficulty))
 							{
@@ -3206,7 +3206,7 @@ namespace TShockAPI
 							}
 							break;
 						}
-					case 13:
+					case CreativePowerTypes.BiomeSpreadFreeze:
 						{
 							if (!args.Player.HasPermission(Permissions.journey_biomespreadfreeze))
 							{
@@ -3215,7 +3215,7 @@ namespace TShockAPI
 							}
 							break;
 						}
-					case 14:
+					case CreativePowerTypes.SetSpawnRate:
 						{
 							if (!args.Player.HasPermission(Permissions.journey_setspawnrate))
 							{
@@ -3638,6 +3638,40 @@ namespace TShockAPI
 			public int Index { get; set; }
 			public DateTime CreatedAt { get; set; }
 			public bool Killed { get; internal set; }
+		}
+
+		public enum NetModulesTypes
+		{
+			Liquid,
+			Text,
+			Ping,
+			Ambience,
+			Bestiary,
+			CreativeUnlocks,
+			CreativePowers,
+			CreativeUnlocksPlayerReport,
+			TeleportPylon,
+			Particles,
+			CreativePowerPermissions
+		}
+
+		public enum CreativePowerTypes
+		{
+			FreezeTime,
+			SetDawn,
+			SetNoon,
+			SetDusk,
+			SetMidnight,
+			Godmode,
+			WindStrength,
+			RainStrength,
+			TimeSpeed,
+			RainFreeze,
+			WindFreeze,
+			IncreasePlacementRange,
+			WorldDifficulty,
+			BiomeSpreadFreeze,
+			SetSpawnRate
 		}
 	}
 }
