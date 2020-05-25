@@ -100,6 +100,8 @@ namespace TShockAPI
 		public static RememberedPosManager RememberedPos;
 		/// <summary>CharacterDB - Static reference to the SSC character manager.</summary>
 		public static CharacterManager CharacterDB;
+		/// <summary>Contains the information about what research has been performed in Journey mode.</summary>
+		public static ResearchDatastore ResearchDatastore;
 		/// <summary>Config - Static reference to the config system, for accessing values set in users' config files.</summary>
 		public static ConfigFile Config { get; set; }
 		/// <summary>ServerSideCharacterConfig - Static reference to the server side character config, for accessing values set by users to modify SSC.</summary>
@@ -324,6 +326,7 @@ namespace TShockAPI
 				TileBans = new TileManager(DB);
 				RememberedPos = new RememberedPosManager(DB);
 				CharacterDB = new CharacterManager(DB);
+				ResearchDatastore = new ResearchDatastore(DB);
 				RestApi = new SecureRest(Netplay.ServerIP, Config.RestApiPort);
 				RestManager = new RestManager(RestApi);
 				RestManager.RegisterRestfulCommands();

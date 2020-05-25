@@ -39,6 +39,8 @@ using TShockAPI.Localization;
 using TShockAPI.Models;
 using TShockAPI.Models.PlayerUpdate;
 using TShockAPI.Models.Projectiles;
+using Terraria.Net;
+using Terraria.GameContent.NetModules;
 
 namespace TShockAPI
 {
@@ -3237,6 +3239,20 @@ namespace TShockAPI
 						{
 							return true;
 						}
+				}
+			} else if (moduleId == (int)NetModulesTypes.CreativeUnlocksPlayerReport)
+			{
+				var unknownField = args.Data.ReadByte();
+
+				if (unknownField == 0) //this is required or something???
+				{
+					var itemId = args.Data.ReadUInt16();
+					var amount = args.Data.ReadUInt16();
+
+					var totalSacrificed = TShock.ResearchDatastore.SacrificeItem(itemId, amount, args.Player);
+
+					var response = NetCreativeUnlocksModule.SerializeItemSacrifice(itemId, totalSacrificed);
+					NetManager.Instance.Broadcast(response);
 				}
 			}
 
