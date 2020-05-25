@@ -2,8 +2,35 @@
 
 This is the rolling changelog for TShock for Terraria. Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
 
-## Upcoming release
+## Upcoming Release
+* Fix pet licenses. (@Olink)
+* Initial support for Journey mode in SSC worlds. (@Olink)
+  
+## TShock 4.4.0 (Pre-release 8)
 * Update for OTAPI 2.0.0.36 and Terraria 1.4.0.4. (@hakusaro, @Patrikkk, @DeathCradle)
+* Fixed /wind command. (@AxeelAnder)
+* Fixed NPC debuff issue when attempting to fight bosses resulting in kicks. (@AxeelAnder)
+* Fixed players are unable to remove an NPC. Change `byte NPCHomeChangeEventArgs.Homeless` to `HouseholdStatus NPCHomeChangeEventArgs.HouseholdStatus`. (@AxeelAnder)
+* Fixed lava, wet, honey, and dry bombs;  
+  and lava, wet, honey, and dry grenades;  
+  and lava, wet, honey, and dry rockets;  
+  and lava, wet, honey, and dry mines. (@Olink)
+* Fix Bloody Tear displaying the wrong text when used. (@Olink)
+* Fix the visibility toggle for the last two accessory slots. (@Olink)
+* Adding Journey mode user account permissions. Journey mode must be enabled for these to have any effect. (@Patrikkk)
+  * `tshock.journey.time.freeze`
+  * `tshock.journey.time.set`
+  * `tshock.journey.time.setspeed`
+  * `tshock.journey.godmode`
+  * `tshock.journey.wind.strength`
+  * `tshock.journey.wind.freeze`
+  * `tshock.journey.rain.strength`
+  * `tshock.journey.rain.freeze`
+  * `tshock.journey.placementrange`
+  * `tshock.journey.setdifficulty`
+  * `tshock.journey.biomespreadfreeze`
+  * `tshock.journey.setspawnrate`
+* Changed default thresholds for some changes in the config file to accommodate new items & changes to Terraria. (@hakusaro)
 
 ## TShock 4.4.0 (Pre-release 7 (Entangled))
 * Fixed bed spawn issues when trying to remove spawn point in SSC. (@Olink)

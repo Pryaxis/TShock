@@ -19,18 +19,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria.ID;
-using TShockAPI.DB;
 using TShockAPI.Net;
 using Terraria;
 using Microsoft.Xna.Framework;
 using OTAPI.Tile;
 using TShockAPI.Localization;
 using static TShockAPI.GetDataHandlers;
-using TerrariaApi.Server;
 using Terraria.ObjectData;
 using Terraria.DataStructures;
 using Terraria.Localization;
 using TShockAPI.Models.PlayerUpdate;
+using System.Threading.Tasks;
 
 namespace TShockAPI
 {
@@ -528,7 +527,7 @@ namespace TShockAPI
 
 			if (args.Player.HasPermission(Permissions.allowclientsideworldedit))
 			{
-				TShock.Log.ConsoleDebug("Bouncer / SendTileSquare rejected clientside world edit from {0}", args.Player.Name);
+				TShock.Log.ConsoleDebug("Bouncer / SendTileSquare accepted clientside world edit from {0}", args.Player.Name);
 				args.Handled = false;
 				return;
 			}
@@ -711,7 +710,7 @@ namespace TShockAPI
 				args.Player.SendTileSquare(tileX, tileY, size);
 			}
 
-			TShock.Log.ConsoleDebug("Bouncer / SendTileSquare rejected from spaghetti from {0}", args.Player.Name);
+			TShock.Log.ConsoleDebug("Bouncer / SendTileSquare reimplemented from spaghetti from {0}", args.Player.Name);
 			args.Handled = true;
 		}
 
@@ -865,7 +864,6 @@ namespace TShockAPI
 				return;
 			}
 
-
 			if (stabProjectile.ContainsKey(type))
 			{
 				if (stabProjectile[type] == args.Player.TPlayer.HeldItem.type)
@@ -874,7 +872,6 @@ namespace TShockAPI
 					return;
 				}
 			}
-
 
 			// Main.projHostile contains projectiles that can harm players
 			// without PvP enabled and belong to enemy mobs, so they shouldn't be
@@ -888,6 +885,8 @@ namespace TShockAPI
 			}
 
 			// Tombstones should never be permitted by players
+			// This check means like, invalid or hacked tombstones (sent from hacked clients)
+			// Death does not create a tombstone projectile by default
 			if (type == ProjectileID.Tombstone)
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnNewProjectile rejected from tombstones from {0}", args.Player.Name);
@@ -1290,6 +1289,24 @@ namespace TShockAPI
 				args.Player.TileLiquidThreshold++;
 			}
 
+			bool wasThereABombNearby = false;
+			lock (args.Player.RecentlyCreatedProjectiles)
+			{
+				IEnumerable<int> projectileTypesThatPerformThisOperation;
+				if (amount > 0) //handle the projectiles that create fluid.
+				{
+					projectileTypesThatPerformThisOperation = projectileCreatesLiquid.Where(k => k.Value == type).Select(k => k.Key);
+				}
+				else //handle the scenario where we are removing liquid
+				{
+					projectileTypesThatPerformThisOperation = projectileCreatesLiquid.Where(k => k.Value == LiquidType.Removal).Select(k => k.Key);
+				}
+
+				var recentBombs = args.Player.RecentlyCreatedProjectiles.Where(p => projectileTypesThatPerformThisOperation.Contains(Main.projectile[p.Index].type));
+				wasThereABombNearby = recentBombs.Any(r => Math.Abs(args.TileX - (Main.projectile[r.Index].position.X / 16.0f)) < TShock.Config.BombExplosionRadius
+														&& Math.Abs(args.TileY - (Main.projectile[r.Index].position.Y / 16.0f)) < TShock.Config.BombExplosionRadius);
+			}
+
 			// Liquid anti-cheat
 			// Arguably the banned buckets bit should be in the item bans system
 			if (amount != 0)
@@ -1326,7 +1343,7 @@ namespace TShockAPI
 					bucket = 6;
 				}
 
-				if (type == LiquidType.Lava && !(bucket == 2 || bucket == 0 || bucket == 5 || bucket == 6))
+				if (!wasThereABombNearby && type == LiquidType.Lava && !(bucket == 2 || bucket == 0 || bucket == 5 || bucket == 6))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected bucket check 1 from {0}", args.Player.Name);
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
@@ -1336,7 +1353,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (type == LiquidType.Lava && TShock.Itembans.ItemIsBanned("Lava Bucket", args.Player))
+				if (!wasThereABombNearby && type == LiquidType.Lava && TShock.Itembans.ItemIsBanned("Lava Bucket", args.Player))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected lava bucket from {0}", args.Player.Name);
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
@@ -1346,7 +1363,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (type == LiquidType.Water && !(bucket == 1 || bucket == 0 || bucket == 4))
+				if (!wasThereABombNearby && type == LiquidType.Water && !(bucket == 1 || bucket == 0 || bucket == 4))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected bucket check 2 from {0}", args.Player.Name);
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
@@ -1356,7 +1373,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (type == LiquidType.Water && TShock.Itembans.ItemIsBanned("Water Bucket", args.Player))
+				if (!wasThereABombNearby && type == LiquidType.Water && TShock.Itembans.ItemIsBanned("Water Bucket", args.Player))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected bucket check 3 from {0}", args.Player.Name);
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
@@ -1366,7 +1383,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (type == LiquidType.Honey && !(bucket == 3 || bucket == 0))
+				if (!wasThereABombNearby && type == LiquidType.Honey && !(bucket == 3 || bucket == 0))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected bucket check 4 from {0}", args.Player.Name);
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
@@ -1376,7 +1393,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (type == LiquidType.Honey && TShock.Itembans.ItemIsBanned("Honey Bucket", args.Player))
+				if (!wasThereABombNearby && type == LiquidType.Honey && TShock.Itembans.ItemIsBanned("Honey Bucket", args.Player))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected bucket check 5 from {0}", args.Player.Name);
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
@@ -1395,7 +1412,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (!args.Player.IsInRange(tileX, tileY, 16))
+			if (!wasThereABombNearby && !args.Player.IsInRange(tileX, tileY, 16))
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected range checks from {0}", args.Player.Name);
 				args.Player.SendTileSquare(tileX, tileY, 1);
@@ -1547,7 +1564,6 @@ namespace TShockAPI
 			int id = args.ID;
 			short x = args.X;
 			short y = args.Y;
-			byte homeless = args.Homeless;
 
 			if (!args.Player.HasBuildPermission(x, y))
 			{
@@ -1558,7 +1574,8 @@ namespace TShockAPI
 				return;
 			}
 
-			if (!args.Player.IsInRange(x, y))
+			// When kicking out an npc, x and y in args are 0, we shouldn't check range at this case
+			if (args.HouseholdStatus != HouseholdStatus.Homeless && !args.Player.IsInRange(x, y))
 			{
 				args.Player.SendData(PacketTypes.UpdateNPCHome, "", id, Main.npc[id].homeTileX, Main.npc[id].homeTileY,
 									 Convert.ToByte(Main.npc[id].homeless));
@@ -2045,39 +2062,56 @@ namespace TShockAPI
 			}
 		}
 
+		internal void OnSecondUpdate()
+		{
+			Task.Run(() =>
+			{
+				foreach (var player in TShock.Players)
+				{
+					if (player != null && player.TPlayer.whoAmI >= 0)
+					{
+						var threshold = DateTime.Now.AddSeconds(-5);
+						lock (player.RecentlyCreatedProjectiles)
+						{
+							player.RecentlyCreatedProjectiles = player.RecentlyCreatedProjectiles.Where(s => s.CreatedAt > threshold).ToList();
+						}
+					}
+				}
+			});
+		}
+
 		// These time values are references from Projectile.cs, at npc.AddBuff() calls.
 		private static Dictionary<int, short> NPCAddBuffTimeMax = new Dictionary<int, short>()
 		{
-			{ BuffID.Poisoned, 3600 },
-			{ BuffID.OnFire, 1200 },
-			{ BuffID.CursedInferno, 420 },
-			{ BuffID.Frostburn, 900 },
-			{ BuffID.Ichor, 1200 },
-			{ BuffID.Venom, 1260 },
-			{ BuffID.Midas, 120 },
-			{ BuffID.Wet, 1500 },
-			{ BuffID.Slimed, 1500 },
-			{ BuffID.Lovestruck, 1800 },
-			{ BuffID.Stinky, 1800 },
-			{ BuffID.SoulDrain, 30 },
-			{ BuffID.ShadowFlame, 660 },
-			{ BuffID.DryadsWard, 120 },
-			{ BuffID.BoneJavelin, 900 },
-			{ BuffID.StardustMinionBleed, 900 },
-			{ BuffID.DryadsWardDebuff, 120 },
-			{ BuffID.BetsysCurse, 600 },
-			{ BuffID.Oiled, 540 },
-			{ BuffID.Confused, 450 }, // Brain of Confusion Internal Item ID: 3223
-			{ BuffID.Daybreak, 300 }, // Solar Eruption Item ID: 3473, Daybreak Item ID: 3543
-			{ BuffID.BlandWhipEnemyDebuff, 240  },
-			{ BuffID.SwordWhipNPCDebuff, 240  },
-			{ BuffID.ScytheWhipEnemyDebuff, 240  },
-			{ BuffID.FlameWhipEnemyDebuff, 240  },
-			{ BuffID.ThornWhipNPCDebuff, 240  },
-			{ BuffID.RainbowWhipNPCDebuff, 240  },
-			{ BuffID.MaceWhipNPCDebuff, 240  },
-			{ BuffID.GelBalloonBuff, 1800  }
-
+			{ BuffID.Poisoned, 3600 },              // BuffID: 20
+			{ BuffID.OnFire, 1200 },                // BuffID: 24
+			{ BuffID.Confused, short.MaxValue },    // BuffID: 31 Brain of Confusion Internal Item ID: 3223
+			{ BuffID.CursedInferno, 420 },          // BuffID: 39
+			{ BuffID.Frostburn, 900 },              // BuffID: 44
+			{ BuffID.Ichor, 1200 },                 // BuffID: 69
+			{ BuffID.Venom, 1800 },                 // BuffID: 70
+			{ BuffID.Midas, 120 },                  // BuffID: 72
+			{ BuffID.Wet, 1500 },                   // BuffID: 103
+			{ BuffID.Lovestruck, 1800 },            // BuffID: 119
+			{ BuffID.Stinky, 1800 },                // BuffID: 120
+			{ BuffID.Slimed, 1500 },                // BuffID: 137
+			{ BuffID.SoulDrain, 30 },               // BuffID: 151
+			{ BuffID.ShadowFlame, 660 },            // BuffID: 153
+			{ BuffID.DryadsWard, 120 },             // BuffID: 165
+			{ BuffID.BoneJavelin, 900 },            // BuffID: 169
+			{ BuffID.StardustMinionBleed, 900 },    // BuffID: 183
+			{ BuffID.DryadsWardDebuff, 120 },       // BuffID: 186
+			{ BuffID.Daybreak, 300 },               // BuffID: 189 Solar Eruption Item ID: 3473, Daybreak Item ID: 3543
+			{ BuffID.BetsysCurse, 600 },            // BuffID: 203
+			{ BuffID.Oiled, 540 },                  // BuffID: 204
+			{ BuffID.BlandWhipEnemyDebuff, 240  },  // BuffID: 307
+			{ BuffID.SwordWhipNPCDebuff, 240  },    // BuffID: 309
+			{ BuffID.ScytheWhipEnemyDebuff, 240  }, // BuffID: 310
+			{ BuffID.FlameWhipEnemyDebuff, 240  },  // BuffID: 313
+			{ BuffID.ThornWhipNPCDebuff, 240  },    // BuffID: 315
+			{ BuffID.RainbowWhipNPCDebuff, 240  },  // BuffID: 316
+			{ BuffID.MaceWhipNPCDebuff, 240  },     // BuffID: 319
+			{ BuffID.GelBalloonBuff, 1800  }        // BuffID: 320
 		};
 
 		/// <summary>
