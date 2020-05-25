@@ -49,6 +49,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 ## TShock 4.4.0 (Pre-release 5)
 * Update player spawn related things to 1.4. `Terraria.Player.Spawn` method now has a required argument, `PlayerSpawnContext context`. (@AxeelAnder)
 * Make sqlite db path configurable. (@AxeelAnder)
+* Make TShock database MySQL 8 compatible by escaping column names in our IQueryBuilder code. (Name `Groups` is a reserved element in this version, which is used in our `Region` table.)
 * Terraria 1.4.0.3 experimental support. (@Patrikkk)
 * Updated changelog. (@hakusaro)
 

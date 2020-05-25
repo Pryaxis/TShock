@@ -192,12 +192,12 @@ namespace TShockAPI.DB
 			var columns =
 				table.Columns.Select(
 					c =>
-					"{0} {1} {2} {3} {4} {5}".SFormat(c.Name, DbTypeToString(c.Type, c.Length),
+					"`{0}` {1} {2} {3} {4} {5}".SFormat(c.Name, DbTypeToString(c.Type, c.Length),
 												c.Primary ? "PRIMARY KEY" : "",
 												c.AutoIncrement ? "AUTO_INCREMENT" : "",
 												c.NotNull ? "NOT NULL" : "",
 												c.DefaultCurrentTimestamp ? "DEFAULT CURRENT_TIMESTAMP" : ""));
-			var uniques = table.Columns.Where(c => c.Unique).Select(c => c.Name);
+			var uniques = table.Columns.Where(c => c.Unique).Select(c => $"`{c.Name}`");
 			return "CREATE TABLE {0} ({1} {2})".SFormat(EscapeTableName(table.Name), string.Join(", ", columns),
 														uniques.Count() > 0
 															? ", UNIQUE({0})".SFormat(string.Join(", ", uniques))
@@ -299,7 +299,7 @@ namespace TShockAPI.DB
 			var create = CreateTable(to);
 			// combine all columns in the 'from' variable excluding ones that aren't in the 'to' variable.
 			// exclude the ones that aren't in 'to' variable because if the column is deleted, why try to import the data?
-			var columns = string.Join(", ", from.Columns.Where(c => to.Columns.Any(c2 => c2.Name == c.Name)).Select(c => c.Name));
+			var columns = string.Join(", ", from.Columns.Where(c => to.Columns.Any(c2 => c2.Name == c.Name)).Select(c => $"`{c.Name}`"));
 			var insert = "INSERT INTO {0} ({1}) SELECT {1} FROM {2}".SFormat(escapedTable, columns, tmpTable);
 			var drop = "DROP TABLE {0}".SFormat(tmpTable);
 			return "{0}; {1}; {2}; {3};".SFormat(alter, create, insert, drop);
@@ -396,7 +396,7 @@ namespace TShockAPI.DB
 			if (0 == wheres.Count)
 				return string.Empty;
 
-			return "WHERE {0}".SFormat(string.Join(", ", wheres.Select(v => v.Name + " = " + v.Value)));
+			return "WHERE {0}".SFormat(string.Join(", ", wheres.Select(v => $"{v.Name}" + " = " + v.Value)));
 		}
 	}
 }
