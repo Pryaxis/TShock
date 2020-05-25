@@ -84,16 +84,21 @@ namespace TShockAPI.DB
 	where WorldId = @0
       group by itemId";
 
-			using (var reader = database.QueryReader(sql, Main.worldID))
-			{
-				while (reader.Read())
+			try { 
+				using (var reader = database.QueryReader(sql, Main.worldID))
 				{
-					var itemId = reader.Get<Int32>("itemId");
-					var amount = reader.Get<Int32>("totalSacrificed");
-					sacrificedItems[itemId] = amount;
+					while (reader.Read())
+					{
+						var itemId = reader.Get<Int32>("itemId");
+						var amount = reader.Get<Int32>("totalSacrificed");
+						sacrificedItems[itemId] = amount;
+					}
 				}
 			}
-
+			catch (Exception ex)
+			{
+				TShock.Log.Error(ex.ToString());
+			}
 			return sacrificedItems;
 		}
 
@@ -111,7 +116,17 @@ namespace TShockAPI.DB
 				itemsSacrificed[itemId] = 0;
 
 			var sql = @"insert into Research (WorldId, PlayerId, ItemId, AmountSacrificed, TimeSacrificed) values (@0, @1, @2, @3, @4)";
-			var result = database.Query(sql, Main.worldID, player.Account.ID, itemId, amount, DateTime.Now);
+
+			var result = 0;
+			try
+			{
+				result = database.Query(sql, Main.worldID, player.Account.ID, itemId, amount, DateTime.Now);
+			}
+			catch (Exception ex)
+			{
+				TShock.Log.Error(ex.ToString());
+			}
+
 			if (result == 1)
 			{
 				itemsSacrificed[itemId] += amount;
