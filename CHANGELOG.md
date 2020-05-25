@@ -6,6 +6,13 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Fix pet licenses. (@Olink)
 * Initial support for Journey mode in SSC worlds. (@Olink)
 * Make TShock database MySQL 8 compatible by escaping column names in our IQueryBuilder code. (Name `Groups` is a reserved element in this version, which is used in our `Region` table.) (@Patrikkk)
+* Reintroduce `-worldselectpath` per feedback from @fjfnaranjo. This command line argument should be used to specify the place where the interactive server startup will look for worlds to show on the world select screen. The original version of this argument, `-worldpath`, was removed because several game service providers have broken configurations that stop the server from running with an unhelpful error. This specific configuration was `-world` and `-worldpath`. In the new world, you can do the following:
+  * `-worldselectpath` should be used if you want to customize the server interactive boot world list (so that you can select from a number of worlds in non-standard locations).
+  * `-world` will behave as an absolute path to the world to load. This is the most common thing you want if you're starting the server and have a specific world in mind.
+  * `-worldselectpath` and `-worldname` should work together enabling you to select from a world from the list that you specify. This is *not* a world file name, but a world name as described by Terraria.
+  * `-worldselectpath` is identical to the old `-worldpath`. If you specify `-worldselectpath` and `-world` without specifying an absolute path the server will crash for sure.
+  * Thank you again to @fjfnaranjo for supplying a [detailed feature request](https://github.com/Pryaxis/TShock/issues/1914) explaining precisely why this option should be available. Without this, we would have had no context as to why this feature was useful or important. Thank you, @fjfnaranjo!
+  * This change was implemented by (@QuiCM, @hakusaro).
 
 ## TShock 4.4.0 (Pre-release 8)
 * Update for OTAPI 2.0.0.36 and Terraria 1.4.0.4. (@hakusaro, @Patrikkk, @DeathCradle)
