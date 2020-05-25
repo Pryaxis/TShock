@@ -3221,7 +3221,7 @@ namespace TShockAPI
 						{
 							if (!args.Player.HasPermission(Permissions.journey_setdifficulty))
 							{
-								args.Player.SendErrorMessage("You don't have permission to modify the world dificulty of the server!");
+								args.Player.SendErrorMessage("You don't have permission to modify the world difficulty of the server!");
 								return true;
 							}
 							break;
@@ -3230,7 +3230,7 @@ namespace TShockAPI
 						{
 							if (!args.Player.HasPermission(Permissions.journey_biomespreadfreeze))
 							{
-								args.Player.SendErrorMessage("You don't have permission to freeze the biome spread of server!");
+								args.Player.SendErrorMessage("You don't have permission to freeze the biome spread of the server!");
 								return true;
 							}
 							break;
@@ -3239,7 +3239,7 @@ namespace TShockAPI
 						{
 							if (!args.Player.HasPermission(Permissions.journey_setspawnrate))
 							{
-								args.Player.SendErrorMessage("You don't have permission to modify the NPC spawn rate of server!");
+								args.Player.SendErrorMessage("You don't have permission to modify the NPC spawn rate of the server!");
 								return true;
 							}
 							break;
