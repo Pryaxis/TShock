@@ -2855,6 +2855,15 @@ namespace TShockAPI
 			string thing;
 			switch (thingType)
 			{
+				case -14:
+					thing = "has sent a request to the bunny delivery service";
+					break;
+				case -13:
+					thing = "has sent a request to the dog delivery service";
+					break;
+				case -12:
+					thing = "has sent a request to the cat delivery service";
+					break;
 				case -11:
 					thing = "applied advanced combat techniques";
 					break;
