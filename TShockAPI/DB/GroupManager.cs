@@ -184,7 +184,7 @@ namespace TShockAPI.DB
 						Permissions.journey_placementrange,
 						Permissions.journey_setdifficulty,
 						Permissions.journey_biomespreadfreeze,
-						Permissions.journey_setdawn));
+						Permissions.journey_setspawnrate));
 			}
 
 			// Load Permissions from the DB
