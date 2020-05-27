@@ -3524,7 +3524,7 @@ namespace TShockAPI
 			}
 
 			// Handle kicks/bans on mediumcore/hardcore deaths.
-			if (args.TPlayer.difficulty != 0) // Player is not softcore
+			if (args.TPlayer.difficulty == 1 || args.TPlayer.difficulty == 2) // Player is not softcore
 			{
 				bool mediumcore = args.TPlayer.difficulty == 1;
 				bool shouldBan = mediumcore ? TShock.Config.BanOnMediumcoreDeath : TShock.Config.BanOnHardcoreDeath;
