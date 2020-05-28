@@ -13,7 +13,8 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * `-worldselectpath` is identical to the old `-worldpath`. If you specify `-worldselectpath` and `-world` without specifying an absolute path the server will crash for sure.
   * Thank you again to @fjfnaranjo for supplying a [detailed feature request](https://github.com/Pryaxis/TShock/issues/1914) explaining precisely why this option should be available. Without this, we would have had no context as to why this feature was useful or important. Thank you, @fjfnaranjo!
   * This change was implemented by (@QuiCM, @hakusaro).
-* Fix kick on hardcore death / kick on mediumcore death / ban on either from taking action against journey mode players. (@hakusaro)
+* Fixed kick on hardcore death / kick on mediumcore death / ban on either from taking action against journey mode players. (@hakusaro)
+* Attempted to fix the problem with the magic mirror spawn problems. You should be able to remove your spawn point in SSC by right clicking on a bed now. (@hakusaro, @AxeelAnder)
 
 ## TShock 4.4.0 (Pre-release 8)
 * Update for OTAPI 2.0.0.36 and Terraria 1.4.0.4. (@hakusaro, @Patrikkk, @DeathCradle)
