@@ -1640,7 +1640,8 @@ namespace TShockAPI
 				if (e.number >= 0 && e.number < Main.projectile.Length)
 				{
 					var projectile = Main.projectile[e.number];
-					if (projectile.active && projectile.owner >= 0 && GetDataHandlers.projectileCreatesLiquid.ContainsKey(projectile.type))
+					if (projectile.active && projectile.owner >= 0 &&
+						(GetDataHandlers.projectileCreatesLiquid.ContainsKey(projectile.type) || GetDataHandlers.projectileCreatesTile.ContainsKey(projectile.type)))
 					{
 						var player = Players[projectile.owner];
 						if (player != null)

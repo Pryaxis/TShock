@@ -295,6 +295,19 @@ namespace TShockAPI
 				{
 					args.Player.LastKilledProjectile = 0;
 				}
+				else if (editData == TileID.MysticSnakeRope)
+				{
+					//projectile should be the same X coordinate as all tile places
+					if (!args.Player.RecentlyCreatedProjectiles.Any(p => Main.projectile[p.Index].type == ProjectileID.MysticSnakeCoil &&
+							Math.Abs((int)(Main.projectile[p.Index].position.X / 16f) - tileX) <= Math.Abs(Main.projectile[p.Index].velocity.X)))
+					{
+						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (inconceivable mystic snake rope) {0} {1} {2}", args.Player.Name, action, editData);
+						Console.WriteLine("Bouncer / OnTileEdit rejected from (inconceivable mystic snake rope) {0} {1} {2}", args.Player.Name, action, editData);
+						args.Player.SendTileSquare(tileX, tileY, 1);
+						args.Handled = true;
+						return;
+					}
+				}
 				else if (action == EditAction.PlaceTile || action == EditAction.PlaceWall)
 				{
 					if ((action == EditAction.PlaceTile && TShock.Config.PreventInvalidPlaceStyle) &&
