@@ -1635,7 +1635,8 @@ namespace TShockAPI
 					e.Handled = true;
 					return;
 				}
-			} else if (e.MsgId == PacketTypes.ProjectileNew)
+			}
+			else if (e.MsgId == PacketTypes.ProjectileNew)
 			{
 				if (e.number >= 0 && e.number < Main.projectile.Length)
 				{
@@ -1660,7 +1661,6 @@ namespace TShockAPI
 						}
 					}
 				}
-
 			}
 		}
 
