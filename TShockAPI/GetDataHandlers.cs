@@ -1889,7 +1889,7 @@ namespace TShockAPI
 		public static HandlerList<FishOutNPCEventArgs> FishOutNPC = new HandlerList<FishOutNPCEventArgs>();
 		private static bool OnFishOutNPC(TSPlayer player, MemoryStream data, ushort tileX, ushort tileY, short npcID)
 		{
-			if (FoodPlatterTryPlacing == null)
+			if (FishOutNPC == null)
 				return false;
 
 			var args = new FishOutNPCEventArgs

@@ -2071,16 +2071,9 @@ namespace TShockAPI
 		/// <param name="args"></param>
 		internal void OnFishOutNPC(object sender, GetDataHandlers.FishOutNPCEventArgs args)
 		{
-			Projectile projectile = null;
-			foreach (var recentProjectile in args.Player.RecentlyCreatedProjectiles)
-			{
-				if (Main.projectile[recentProjectile.Index] != null && Main.projectile[recentProjectile.Index].Name == "Bobber")
-				{
-					projectile = Main.projectile[recentProjectile.Index];
-					break;
-				}
-			}
-			if (!FishingRodItemIDs.Contains(args.Player.SelectedItem.type) || projectile == null || !FishableNpcIDs.Contains(args.NpcID))
+			var projectile = args.Player.RecentlyCreatedProjectiles.FirstOrDefault(p => Main.projectile[p.Index] != null && Main.projectile[p.Index].Name == "Bobber");
+
+			if (!FishingRodItemIDs.Contains(args.Player.SelectedItem.type) || Main.projectile[projectile.Index] == null || !FishableNpcIDs.Contains(args.NpcID))
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnFishOutNPC rejected invalid NPC spawning from {0}", args.Player.Name);
 				args.Handled = true;
