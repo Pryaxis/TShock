@@ -150,7 +150,8 @@ namespace TShockAPI
 					{ PacketTypes.ToggleParty, HandleToggleParty },
 					{ PacketTypes.CrystalInvasionStart, HandleOldOnesArmy },
 					{ PacketTypes.PlayerHurtV2, HandlePlayerDamageV2 },
-					{ PacketTypes.PlayerDeathV2, HandlePlayerKillMeV2 }
+					{ PacketTypes.PlayerDeathV2, HandlePlayerKillMeV2 },
+					{ PacketTypes.FoodPlatterTryPlacing, HandleFoodPlatterTryPlacing }
 				};
 		}
 
@@ -1863,6 +1864,52 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		public class FoodPlatterTryPlacingEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// The X tile position of the placement action.
+			/// </summary>
+			public short TileX { get; set; }
+			/// <summary>
+			/// The Y tile position of the placement action.
+			/// </summary>
+			public short TileY { get; set; }
+			/// <summary>
+			/// The Item ID that is being placed in the plate.
+			/// </summary>
+			public short ItemID { get; set; }
+			/// <summary>
+			/// The prefix of the item that is being placed in the plate.
+			/// </summary>
+			public byte Prefix { get; set; }
+			/// <summary>
+			/// The stack of the item that is being placed in the plate.
+			/// </summary>
+			public short Stack { get; set; }
+		}
+		/// <summary>
+		/// Called when a player is placing an item in a food plate.
+		/// </summary>
+		public static HandlerList<FoodPlatterTryPlacingEventArgs> FoodPlatterTryPlacing = new HandlerList<FoodPlatterTryPlacingEventArgs>();
+		private static bool OnFoodPlatterTryPlacing(TSPlayer player, MemoryStream data, short tileX, short tileY, short itemID, byte prefix, short stack)
+		{
+			if (FoodPlatterTryPlacing == null)
+				return false;
+
+			var args = new FoodPlatterTryPlacingEventArgs
+			{
+				Player = player,
+				Data = data,
+				TileX = tileX,
+				TileY = tileY,
+				ItemID = itemID,
+				Prefix = prefix,
+				Stack = stack,
+			};
+			FoodPlatterTryPlacing.Invoke(null, args);
+			return args.Handled;
+		}
+
 		#endregion
 
 		private static bool HandlePlayerInfo(GetDataHandlerArgs args)
@@ -2118,7 +2165,7 @@ namespace TShockAPI
 				TShock.Log.ConsoleDebug("GetDataHandlers / HandleSpawn force teleport 'vanilla spawn' {0}", args.Player.Name);
 			}
 
-			if ((Main.ServerSideCharacter) && (args.Player.sX > 0) && (args.Player.sY > 0) && (args.TPlayer.SpawnX > 0) && ((args.TPlayer.SpawnX != args.Player.sX) && (args.TPlayer.SpawnY != args.Player.sY)))
+			else if ((Main.ServerSideCharacter) && (args.Player.sX > 0) && (args.Player.sY > 0) && (args.TPlayer.SpawnX > 0) && ((args.TPlayer.SpawnX != args.Player.sX) && (args.TPlayer.SpawnY != args.Player.sY)))
 			{
 
 				args.Player.sX = args.TPlayer.SpawnX;
@@ -2269,6 +2316,14 @@ namespace TShockAPI
 		{
 			var player = args.Player;
 			var size = args.Data.ReadInt16();
+			
+			var changeType = TileChangeType.None;
+			bool hasChangeType = ((size & 0x7FFF) & 0x8000) != 0;
+			if (hasChangeType)
+			{
+				changeType = (TileChangeType)args.Data.ReadInt8();
+			}
+			
 			var tileX = args.Data.ReadInt16();
 			var tileY = args.Data.ReadInt16();
 			var data = args.Data;
@@ -3559,7 +3614,19 @@ namespace TShockAPI
 
 			return false;
 		}
+		private static bool HandleFoodPlatterTryPlacing(GetDataHandlerArgs args)
+		{
+			short tileX = args.Data.ReadInt16();
+			short tileY = args.Data.ReadInt16();
+			short itemID = args.Data.ReadInt16();
+			byte prefix = args.Data.ReadInt8();
+			short stack = args.Data.ReadInt16();
 
+			if (OnFoodPlatterTryPlacing(args.Player, args.Data, tileX, tileY, itemID, prefix, stack))
+				return true;
+
+			return false;
+		}
 
 		public enum EditAction
 		{
