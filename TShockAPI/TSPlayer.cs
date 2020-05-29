@@ -620,7 +620,8 @@ namespace TShockAPI
 
 		/// <summary>Determines if the player can build on a given point.</summary>
 		/// <param name="x">The x coordinate they want to build at.</param>
-		/// <param name="y">The y coordinate they want to paint at.</param>
+		/// <param name="y">The y coordinate they want to build at.</param>
+		/// <param name="shouldWarnPlayer">Whether or not the player should be warned if their build attempt fails</param>
 		/// <returns>True if the player can build at the given point from build, spawn, and region protection.</returns>
 		public bool HasBuildPermission(int x, int y, bool shouldWarnPlayer = true)
 		{
@@ -677,6 +678,31 @@ namespace TShockAPI
 			lastPermissionWarning = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 
 			return false;
+		}
+
+		/// <summary>
+		/// Determines if the player can build a tile object on a given point.
+		/// </summary>
+		/// <param name="x">The x coordinate they want to build at.</param>
+		/// <param name="y">The y coordinate they want to build at.</param>
+		/// <param name="width">The width of the tile object</param>
+		/// <param name="height">The height of the tile object</param>
+		/// <param name="shouldWarnPlayer">Whether or not the player should be warned if their build attempt fails</param>
+		/// <returns>True if the player can build at the given point from build, spawn, and region protection.</returns>
+		public bool HasBuildPermissionForTileObject(int x, int y, int width, int height, bool shouldWarnPlayer = true)
+		{
+			for (int realx = x; realx < x + width; realx++)
+			{
+				for (int realy = y; realy < y + height; realy++)
+				{
+					if (!HasBuildPermission(realx, realy, shouldWarnPlayer))
+					{
+						return false;
+					}
+				}
+			}
+
+			return true;
 		}
 
 		/// <summary>Determines if the player can paint on a given point. Checks general build permissions, then paint.</summary>

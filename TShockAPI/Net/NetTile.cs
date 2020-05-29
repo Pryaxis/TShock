@@ -36,6 +36,7 @@ namespace TShockAPI.Net
 		public bool Wire { get; set; }
 		public bool Wire2 { get; set; }
 		public bool Wire3 { get; set; }
+		public bool Wire4 { get; set; }
 		public byte HalfBrick { get; set; }
 		public byte Actuator { get; set; }
 		public bool Inactive { get; set; }
@@ -83,6 +84,7 @@ namespace TShockAPI.Net
 			Wire = false;
 			Wire2 = false;
 			Wire3 = false;
+			Wire4 = false;
 			HalfBrick = 0;
 			Actuator = 0;
 			Inactive = false;
@@ -151,8 +153,10 @@ namespace TShockAPI.Net
 			if (Slope3)
 				bits[6] = true;
 
+			if (Wire4)
+				bits[7] = true;
 
-			stream.WriteInt8((byte)bits);
+			stream.WriteByte(bits);
 
 			if (HasColor)
 			{
@@ -194,6 +198,7 @@ namespace TShockAPI.Net
 			Slope = flags2[4];
 			Slope2 = flags2[5];
 			Slope3 = flags2[6];
+			Wire4 = flags2[7];
 
 			if (flags2[2])
 			{
