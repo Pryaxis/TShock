@@ -15,8 +15,8 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * This change was implemented by (@QuiCM, @hakusaro).
 * Fixed kick on hardcore death / kick on mediumcore death / ban on either from taking action against journey mode players. (@hakusaro)
 * Attempted to fix the problem with the magic mirror spawn problems. You should be able to remove your spawn point in SSC by right clicking on a bed now. (@hakusaro, @AxeelAnder)
-* Add HandleFoodPlatterTryPlacing event, which is called whenever a player places a food in a plate. Add antihack to bouncer, to prevent removing food from plates if the region is protected; To prevent placement if they are not in range; To prevent placement if the item is not placed from player hand. (@Patrikkk)
-* Fixed an offset error in NetTile that impacted SendTileSquare
+* Added HandleFoodPlatterTryPlacing event, which is called whenever a player places a food in a plate. Add antihack to bouncer, to prevent removing food from plates if the region is protected; To prevent placement if they are not in range; To prevent placement if the item is not placed from player hand. (@Patrikkk)
+* Fixed an offset error in NetTile that impacted `SendTileSquare`. It was being read as a `byte` and not a `ushort`. (@QuiCM)
 
 ## TShock 4.4.0 (Pre-release 8)
 * Update for OTAPI 2.0.0.36 and Terraria 1.4.0.4. (@hakusaro, @Patrikkk, @DeathCradle)
