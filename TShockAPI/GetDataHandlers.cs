@@ -2316,6 +2316,14 @@ namespace TShockAPI
 		{
 			var player = args.Player;
 			var size = args.Data.ReadInt16();
+			var changeType = TileChangeType.None;
+
+			bool hasChangeType = ((size & 0x7FFF) & 0x8000) != 0;
+			if (hasChangeType)
+			{
+				changeType = (TileChangeType)args.Data.ReadInt8();
+			}
+
 			var tileX = args.Data.ReadInt16();
 			var tileY = args.Data.ReadInt16();
 			var data = args.Data;
