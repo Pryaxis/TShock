@@ -3630,7 +3630,20 @@ namespace TShockAPI
 			{ ProjectileID.EbonsandBallGun, TileID.Ebonsand },
 			{ ProjectileID.PearlSandBallGun, TileID.Pearlsand },
 			{ ProjectileID.CrimsandBallGun, TileID.Crimsand },
-			{ ProjectileID.MysticSnakeCoil, TileID.MysticSnakeRope }
+			{ ProjectileID.MysticSnakeCoil, TileID.MysticSnakeRope },
+			{ ProjectileID.RopeCoil, TileID.Rope },
+			{ ProjectileID.SilkRopeCoil, TileID.SilkRope },
+			{ ProjectileID.VineRopeCoil, TileID.VineRope },
+			{ ProjectileID.WebRopeCoil, TileID.WebRope }
+		};
+
+		internal static List<int> CoilTileIds = new List<int>()
+		{
+			TileID.MysticSnakeRope,
+			TileID.Rope,
+			TileID.SilkRope,
+			TileID.VineRope,
+			TileID.WebRope
 		};
 
 		internal static Dictionary<int, LiquidType> projectileCreatesLiquid = new Dictionary<int, LiquidType>
