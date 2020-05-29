@@ -67,6 +67,7 @@ namespace TShockAPI
 			GetDataHandlers.MassWireOperation += OnMassWireOperation;
 			GetDataHandlers.PlayerDamage += OnPlayerDamage;
 			GetDataHandlers.KillMe += OnKillMe;
+			GetDataHandlers.FishOutNPC += OnFishOutNPC;
 			GetDataHandlers.FoodPlatterTryPlacing += OnFoodPlatterTryPlacing;
 		}
 
@@ -2060,6 +2061,41 @@ namespace TShockAPI
 					args.Handled = true;
 					return;
 				}
+			}
+		}
+
+		/// <summary>
+		/// Called when the player fishes out an NPC.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		internal void OnFishOutNPC(object sender, GetDataHandlers.FishOutNPCEventArgs args)
+		{
+			Projectile projectile = null;
+			foreach (var recentProjectile in args.Player.RecentlyCreatedProjectiles)
+			{
+				if (Main.projectile[recentProjectile.Index] != null && Main.projectile[recentProjectile.Index].Name == "Bobber")
+				{
+					projectile = Main.projectile[recentProjectile.Index];
+					break;
+				}
+			}
+			if (!FishingRodItemIDs.Contains(args.Player.SelectedItem.type) || projectile == null || !FishableNpcIDs.Contains(args.NpcID))
+			{
+				TShock.Log.ConsoleDebug("Bouncer / OnFoodPlatterTryPlacing rejected invalid NPC spawning from {0}", args.Player.Name);
+				args.Handled = true;
+				return;
+			}
+			if (args.NpcID == NPCID.DukeFishron && !args.Player.HasPermission(Permissions.summonboss))
+			{
+				TShock.Log.ConsoleDebug("Bouncer / OnFoodPlatterTryPlacing rejected summon boss permissions from {0}", args.Player.Name);
+				args.Handled = true;
+				return;
+			}
+			if (args.Player.IsInRange(args.TileX, args.TileY, 55))
+			{
+				TShock.Log.ConsoleDebug("Bouncer / OnFishOutNPC rejected range checks from {0}", args.Player.Name);
+				args.Handled = true;
 			}
 		}
 

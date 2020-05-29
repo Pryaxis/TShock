@@ -151,6 +151,7 @@ namespace TShockAPI
 					{ PacketTypes.CrystalInvasionStart, HandleOldOnesArmy },
 					{ PacketTypes.PlayerHurtV2, HandlePlayerDamageV2 },
 					{ PacketTypes.PlayerDeathV2, HandlePlayerKillMeV2 },
+					{ PacketTypes.FishOutNPC, HandleFishOutNPC },
 					{ PacketTypes.FoodPlatterTryPlacing, HandleFoodPlatterTryPlacing }
 				};
 		}
@@ -1861,6 +1862,45 @@ namespace TShockAPI
 				PlayerDeathReason = playerDeathReason,
 			};
 			KillMe.Invoke(null, args);
+			return args.Handled;
+		}
+
+		/// <summary>
+		/// For use in a FishOutNPC event.
+		/// </summary>
+		public class FishOutNPCEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// The X world position of the spawning NPC.
+			/// </summary>
+			public ushort TileX { get; set; }
+			/// <summary>
+			/// The Y world position of the spawning NPC.
+			/// </summary>
+			public ushort TileY { get; set; }
+			/// <summary>
+			/// The NPC type that is being spawned.
+			/// </summary>
+			public short NpcID { get; set; }
+		}
+		/// <summary>
+		/// Called when a player fishes out an NPC.
+		/// </summary>
+		public static HandlerList<FishOutNPCEventArgs> FishOutNPC = new HandlerList<FishOutNPCEventArgs>();
+		private static bool OnFishOutNPC(TSPlayer player, MemoryStream data, ushort tileX, ushort tileY, short npcID)
+		{
+			if (FoodPlatterTryPlacing == null)
+				return false;
+
+			var args = new FishOutNPCEventArgs
+			{
+				Player = player,
+				Data = data,
+				TileX = tileX,
+				TileY = tileY,
+				NpcID = npcID
+			};
+			FishOutNPC.Invoke(null, args);
 			return args.Handled;
 		}
 
@@ -3606,6 +3646,19 @@ namespace TShockAPI
 
 			return false;
 		}
+
+		private static bool HandleFishOutNPC(GetDataHandlerArgs args)
+		{
+			ushort tileX = args.Data.ReadUInt16();
+			ushort tileY = args.Data.ReadUInt16();
+			short npcType = args.Data.ReadInt16();
+
+			if (OnFishOutNPC(args.Player, args.Data, tileX, tileY, npcType))
+				return true;
+
+			return false;
+		}
+
 		private static bool HandleFoodPlatterTryPlacing(GetDataHandlerArgs args)
 		{
 			short tileX = args.Data.ReadInt16();
@@ -3677,6 +3730,39 @@ namespace TShockAPI
 			TileID.Torches,
 			TileID.WaterCandle,
 			TileID.Womannequin,
+		};
+
+		/// <summary>
+		/// List of Fishing rod item IDs.
+		/// </summary>
+		internal static readonly List<int> FishingRodItemIDs = new List<int>()
+		{
+			ItemID.WoodFishingPole,
+			ItemID.ReinforcedFishingPole,
+			ItemID.FiberglassFishingPole,
+			ItemID.FisherofSouls,
+			ItemID.GoldenFishingRod,
+			ItemID.MechanicsRod,
+			ItemID.SittingDucksFishingRod,
+			ItemID.Fleshcatcher,
+			ItemID.HotlineFishingHook,
+			ItemID.BloodFishingRod,
+			ItemID.ScarabFishingRod
+		};
+
+		/// <summary>
+		/// List of NPC IDs that can be fished out by the player.
+		/// </summary>
+		internal static readonly List<int> FishableNpcIDs = new List<int>()
+		{
+			NPCID.EyeballFlyingFish,
+			NPCID.ZombieMerman,
+			NPCID.GoblinShark,
+			NPCID.BloodEelHead,
+			NPCID.BloodEelBody,
+			NPCID.BloodEelTail,
+			NPCID.BloodNautilus,
+			NPCID.DukeFishron
 		};
 
 		/// <summary>
