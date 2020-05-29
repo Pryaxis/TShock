@@ -2099,7 +2099,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (!args.Player.IsInRange(args.TileX, args.TileY, range: 10)) // To my knowledge, max legit tile reach with accessories.
+			if (!args.Player.IsInRange(args.TileX, args.TileY, range: 13)) // To my knowledge, max legit tile reach with accessories.
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnFoodPlatterTryPlacing rejected range checks from {0}", args.Player.Name);
 				args.Player.SendTileSquare(args.TileX, args.TileY, 1);
