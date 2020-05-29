@@ -2082,13 +2082,13 @@ namespace TShockAPI
 			}
 			if (!FishingRodItemIDs.Contains(args.Player.SelectedItem.type) || projectile == null || !FishableNpcIDs.Contains(args.NpcID))
 			{
-				TShock.Log.ConsoleDebug("Bouncer / OnFoodPlatterTryPlacing rejected invalid NPC spawning from {0}", args.Player.Name);
+				TShock.Log.ConsoleDebug("Bouncer / OnFishOutNPC rejected invalid NPC spawning from {0}", args.Player.Name);
 				args.Handled = true;
 				return;
 			}
 			if (args.NpcID == NPCID.DukeFishron && !args.Player.HasPermission(Permissions.summonboss))
 			{
-				TShock.Log.ConsoleDebug("Bouncer / OnFoodPlatterTryPlacing rejected summon boss permissions from {0}", args.Player.Name);
+				TShock.Log.ConsoleDebug("Bouncer / OnFishOutNPC rejected summon boss permissions from {0}", args.Player.Name);
 				args.Handled = true;
 				return;
 			}
