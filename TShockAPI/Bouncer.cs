@@ -559,6 +559,8 @@ namespace TShockAPI
 				return;
 			}
 
+			bool changed = false;
+			bool failed = false;
 			try
 			{
 				var tiles = new NetTile[size, size];
@@ -570,7 +572,6 @@ namespace TShockAPI
 					}
 				}
 
-				bool changed = false;
 				for (int x = 0; x < size; x++)
 				{
 					int realx = tileX + x;
@@ -710,9 +711,10 @@ namespace TShockAPI
 			catch
 			{
 				args.Player.SendTileSquare(tileX, tileY, size);
+				failed = true;
 			}
 
-			TShock.Log.ConsoleDebug("Bouncer / SendTileSquare reimplemented from spaghetti from {0}", args.Player.Name);
+			TShock.Log.ConsoleDebug("Bouncer / SendTileSquare from {0} {1} {2}", args.Player.Name, changed, failed);
 			args.Handled = true;
 		}
 
@@ -1539,7 +1541,7 @@ namespace TShockAPI
 				if (npc.townNPC && npc.netID != NPCID.Guide && npc.netID != NPCID.Clothier)
 				{
 					if (type != BuffID.Lovestruck && type != BuffID.Stinky && type != BuffID.DryadsWard &&
-						type != BuffID.Wet && type != BuffID.Slimed)
+						type != BuffID.Wet && type != BuffID.Slimed && type != BuffID.GelBalloonBuff)
 					{
 						detectedNPCBuffTimeCheat = true;
 					}
@@ -2099,7 +2101,7 @@ namespace TShockAPI
 		/// <param name="args"></param>
 		internal void OnFoodPlatterTryPlacing(object sender, GetDataHandlers.FoodPlatterTryPlacingEventArgs args)
 		{
-			if (args.Player.ItemInHand.type != args.ItemID)
+			if ((args.Player.SelectedItem.type != args.ItemID && args.Player.ItemInHand.type != args.ItemID))
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnFoodPlatterTryPlacing rejected item not placed by hand from {0}", args.Player.Name);
 				args.Player.SendTileSquare(args.TileX, args.TileY, 1);
@@ -2128,12 +2130,9 @@ namespace TShockAPI
 				return;
 			}
 
-			if (!args.Player.IsInRange(args.TileX, args.TileY))
+			if (!args.Player.IsInRange(args.TileX, args.TileY, range: 13)) // To my knowledge, max legit tile reach with accessories.
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnFoodPlatterTryPlacing rejected range checks from {0}", args.Player.Name);
-				Item item = new Item();
-				item.netDefaults(args.ItemID);
-				args.Player.GiveItemCheck(args.ItemID, item.Name, args.Stack, args.Prefix);
 				args.Player.SendTileSquare(args.TileX, args.TileY, 1);
 				args.Handled = true;
 				return;

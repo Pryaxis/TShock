@@ -465,6 +465,9 @@ namespace TShockAPI
 
 		[Description("Player can see advanced information about any user account.")]
 		public static readonly string advaccountinfo = "tshock.accountinfo.details";
+
+		[Description("Player can resync themselves with server state.")]
+		public static readonly string synclocalarea = "tshock.synclocalarea";
 		#endregion
 		/// <summary>
 		/// Lists all commands associated with a given permission
