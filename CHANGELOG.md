@@ -20,6 +20,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Attempted to fix the problem with the magic mirror spawn problems. You should be able to remove your spawn point in SSC by right clicking on a bed now. (@hakusaro, @AxeelAnder)
 * Added HandleFoodPlatterTryPlacing event, which is called whenever a player places a food in a plate. Add antihack to bouncer, to prevent removing food from plates if the region is protected; To prevent placement if they are not in range; To prevent placement if the item is not placed from player hand. (@Patrikkk)
 * Fixed an offset error in NetTile that impacted `SendTileSquare`. It was being read as a `byte` and not a `ushort`. (@QuiCM)
+* Fixed coins not dropping after being picked up by npcs. The ExtraValue packet was not being read correctly. (@Olink)
 * Removed packet monitoring from debug logs. To achieve the same results, install @QuiCM's packet monitor plugin (it does better things). (@hakusaro)
 * Updated packet monitoring in send tile square handler for Bouncer debugging. (@hakusaro)
 * Added `/sync`, activated with `tshock.synclocalarea`. This is a default guest permission. When the command is issued, the server will resync area around the player in the event of a desync issue. (@hakusaro)
