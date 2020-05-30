@@ -685,7 +685,7 @@ namespace TShockAPI
 		/// <returns>True if they can paint.</returns>
 		public bool HasPaintPermission(int x, int y)
 		{
-			return HasBuildPermission(x, y) || HasPermission(Permissions.canpaint);
+			return HasBuildPermission(x, y) && HasPermission(Permissions.canpaint);
 		}
 
 		/// <summary>Checks if a player can place ice, and if they can, tracks ice placements and removals.</summary>
