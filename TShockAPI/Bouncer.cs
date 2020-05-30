@@ -558,6 +558,8 @@ namespace TShockAPI
 				return;
 			}
 
+			bool changed = false;
+			bool failed = false;
 			try
 			{
 				var tiles = new NetTile[size, size];
@@ -569,7 +571,6 @@ namespace TShockAPI
 					}
 				}
 
-				bool changed = false;
 				for (int x = 0; x < size; x++)
 				{
 					int realx = tileX + x;
@@ -709,9 +710,10 @@ namespace TShockAPI
 			catch
 			{
 				args.Player.SendTileSquare(tileX, tileY, size);
+				failed = true;
 			}
 
-			TShock.Log.ConsoleDebug("Bouncer / SendTileSquare reimplemented from spaghetti from {0}", args.Player.Name);
+			TShock.Log.ConsoleDebug("Bouncer / SendTileSquare from {0} {1} {2}", args.Player.Name, changed, failed);
 			args.Handled = true;
 		}
 

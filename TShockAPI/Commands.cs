@@ -589,6 +589,10 @@ namespace TShockAPI
 			{
 				HelpText = "Creates a reference tables for Terraria data types and the TShock permission system in the server folder."
 			});
+			add(new Command(Permissions.synclocalarea, SyncLocalArea, "sync")
+			{
+				HelpText = "Sends all tiles from the server to the player to resync the client with the actual world state."
+			});
 			#endregion
 
 			add(new Command(Aliases, "aliases")
@@ -5299,6 +5303,13 @@ namespace TShockAPI
 			TShock.Utils.DumpPermissionMatrix("PermissionMatrix.txt");
 			TShock.Utils.Dump(false);
 			args.Player.SendSuccessMessage("Your reference dumps have been created in the server folder.");
+			return;
+		}
+
+		private static void SyncLocalArea(CommandArgs args)
+		{
+			args.Player.SendTileSquare((int) args.Player.TileX, (int) args.Player.TileY, 32);
+			args.Player.SendWarningMessage("Sync'd!");
 			return;
 		}
 
