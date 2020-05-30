@@ -589,6 +589,10 @@ namespace TShockAPI
 			{
 				HelpText = "Creates a reference tables for Terraria data types and the TShock permission system in the server folder."
 			});
+			add(new Command(Permissions.synclocalarea, SyncLocalArea, "sync")
+			{
+				HelpText = "Sends all tiles from the server to the player to resync the client with the actual world state."
+			});
 			#endregion
 
 			add(new Command(Aliases, "aliases")
@@ -2378,7 +2382,7 @@ namespace TShockAPI
 			{
 				case "*":
 				case "all":
-					int[] npcIds = { 4, 13, 35, 50, 125, 126, 127, 134, 222, 245, 262, 266, 370, 398 };
+					int[] npcIds = { 4, 13, 35, 50, 125, 126, 127, 134, 222, 245, 262, 266, 370, 398, 636, 657 };
 					TSPlayer.Server.SetTime(false, 0.0);
 					foreach (int i in npcIds)
 					{
@@ -2442,7 +2446,6 @@ namespace TShockAPI
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
 					TSPlayer.All.SendSuccessMessage("{0} has spawned Skeletron Prime {1} time(s).", args.Player.Name, amount);
 					return;
-				case "queen":
 				case "queen bee":
 					npc.SetDefaults(222);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
@@ -2482,6 +2485,17 @@ namespace TShockAPI
 					npc.SetDefaults(398);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
 					TSPlayer.All.SendSuccessMessage("{0} has spawned the Moon Lord {1} time(s).", args.Player.Name, amount);
+					return;
+				case "empress":
+				case "empress of light":
+					npc.SetDefaults(636);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.All.SendSuccessMessage("{0} has spawned the Empress of Light {1} time(s).", args.Player.Name, amount);
+					return;
+				case "queen slime":
+					npc.SetDefaults(657);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.All.SendSuccessMessage("{0} has spawned the Queen Slime {1} time(s).", args.Player.Name, amount);
 					return;
 				default:
 					args.Player.SendErrorMessage("Invalid boss type!");
@@ -5299,6 +5313,13 @@ namespace TShockAPI
 			TShock.Utils.DumpPermissionMatrix("PermissionMatrix.txt");
 			TShock.Utils.Dump(false);
 			args.Player.SendSuccessMessage("Your reference dumps have been created in the server folder.");
+			return;
+		}
+
+		private static void SyncLocalArea(CommandArgs args)
+		{
+			args.Player.SendTileSquare((int) args.Player.TileX, (int) args.Player.TileY, 32);
+			args.Player.SendWarningMessage("Sync'd!");
 			return;
 		}
 

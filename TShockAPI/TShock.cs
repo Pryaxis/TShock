@@ -1493,8 +1493,6 @@ namespace TShockAPI
 
 			PacketTypes type = e.MsgID;
 
-			Log.ConsoleDebug("Recv: {0:X}: {2} ({1:XX})", e.Msg.whoAmI, (byte)type, type);
-
 			var player = Players[e.Msg.whoAmI];
 			if (player == null || !player.ConnectionAlive)
 			{
@@ -1635,7 +1633,8 @@ namespace TShockAPI
 					e.Handled = true;
 					return;
 				}
-			} else if (e.MsgId == PacketTypes.ProjectileNew)
+			}
+			else if (e.MsgId == PacketTypes.ProjectileNew)
 			{
 				if (e.number >= 0 && e.number < Main.projectile.Length)
 				{
@@ -1661,7 +1660,6 @@ namespace TShockAPI
 						}
 					}
 				}
-
 			}
 		}
 
