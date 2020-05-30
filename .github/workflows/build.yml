@@ -5,6 +5,9 @@ on: [push, pull_request]
 jobs:
   build:
     runs-on: windows-latest
+    strategy:
+      matrix:
+        mode: ["Debug", "Release"]
     steps:
     - name: Git checkout
       uses: actions/checkout@v1
@@ -16,28 +19,27 @@ jobs:
       run: |
         nuget restore .\TerrariaServerAPI\TShock.4.OTAPI.sln
         nuget restore TShock.sln
-    - name: Build OTAPI (Debug)
+    - name: Build OTAPI
       shell: cmd
       run: |
-        "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\msbuild.exe" .\TerrariaServerAPI\TShock.4.OTAPI.sln /p:Configuration=Debug
-        cd .\TerrariaServerAPI\TShock.Modifications.Bootstrapper\bin\Debug
+        "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\msbuild.exe" .\TerrariaServerAPI\TShock.4.OTAPI.sln /p:Configuration=${{ matrix.mode }}
+        cd .\TerrariaServerAPI\TShock.Modifications.Bootstrapper\bin\${{ matrix.mode }}
         TShock.Modifications.Bootstrapper.exe
-    - name: Build TerrariaServerAPI (Debug)
+    - name: Build TerrariaServerAPI
       shell: cmd
       run: |
         cd .\TerrariaServerAPI
-        "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\msbuild.exe" .\TerrariaServerAPI\TerrariaServerAPI.csproj /p:Configuration=Debug
-    - name: Build TShock (Debug)
+        "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\msbuild.exe" .\TerrariaServerAPI\TerrariaServerAPI.csproj /p:Configuration=${{ matrix.mode }}
+    - name: Build TShock
       shell: cmd
       run: |
-        nuget restore TShock.sln
-        "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\msbuild.exe" .\TShockAPI\TShockAPI.csproj /p:Configuration=Debug
-    - name: Prepare packaging
+        "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\msbuild.exe" .\TShockAPI\TShockAPI.csproj /p:Configuration=${{ matrix.mode }}
+    - name: Normalize release packaging
       shell: cmd
       run: |
-        xcopy /Y prebuilts\*.* TShockAPI\bin\Debug
-        mkdir TShockAPI\bin\Debug\ServerPlugins
-        move TShockAPI\bin\Debug\TShockAPI.dll TShockAPI\bin\Debug\ServerPlugins
+        xcopy /Y prebuilts\*.* TShockAPI\bin\${{ matrix.mode }}
+        mkdir TShockAPI\bin\${{ matrix.mode }}\ServerPlugins
+        move TShockAPI\bin\${{ matrix.mode }}\TShockAPI.dll TShockAPI\bin\${{ matrix.mode }}\ServerPlugins
     - name: Upload TShock (Debug)
       uses: actions/upload-artifact@master
       with:
@@ -48,29 +50,6 @@ jobs:
       with:
         name: Experimental (debug) OTAPI Bootstrapper
         path: .\TerrariaServerAPI\TShock.Modifications.Bootstrapper\bin\Debug\TShock.Modifications.Bootstrapper.exe
-    - name: Build OTAPI (Not Debug)
-      shell: cmd
-      run: |
-        nuget restore .\TerrariaServerAPI\TShock.4.OTAPI.sln
-        "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\msbuild.exe" .\TerrariaServerAPI\TShock.4.OTAPI.sln /p:Configuration=Release
-        cd .\TerrariaServerAPI\TShock.Modifications.Bootstrapper\bin\Release
-        TShock.Modifications.Bootstrapper.exe
-    - name: Build TerrariaServerAPI (Not Debug)
-      shell: cmd
-      run: |
-        cd .\TerrariaServerAPI
-        "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\msbuild.exe" .\TerrariaServerAPI\TerrariaServerAPI.csproj /p:Configuration=Release
-    - name: Build TShock (Not Debug)
-      shell: cmd
-      run: |
-        nuget restore TShock.sln
-        "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\msbuild.exe" .\TShockAPI\TShockAPI.csproj /p:Configuration=Release
-    - name: Normalize release packaging
-      shell: cmd
-      run: |
-        xcopy /Y prebuilts\*.* TShockAPI\bin\Release
-        mkdir TShockAPI\bin\Release\ServerPlugins
-        move TShockAPI\bin\Release\TShockAPI.dll TShockAPI\bin\Release\ServerPlugins
     - name: Upload TShock (Not Debug)
       uses: actions/upload-artifact@master
       with:
