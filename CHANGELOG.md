@@ -3,10 +3,10 @@
 This is the rolling changelog for TShock for Terraria. Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
 
 ## Upcoming Release
-* Fix pet licenses. (@Olink)
-* Initial support for Journey mode in SSC worlds. (@Olink)
-* Make TShock database MySQL 8 compatible by escaping column names in our IQueryBuilder code. (Name `Groups` is a reserved element in this version, which is used in our `Region` table.) (@Patrikkk)
-* Reintroduce `-worldselectpath` per feedback from @fjfnaranjo. This command line argument should be used to specify the place where the interactive server startup will look for worlds to show on the world select screen. The original version of this argument, `-worldpath`, was removed because several game service providers have broken configurations that stop the server from running with an unhelpful error. This specific configuration was `-world` and `-worldpath`. In the new world, you can do the following:
+* Fixed pet licenses. (@Olink)
+* Added initial support for Journey mode in SSC worlds. (@Olink)
+* Made TShock database MySQL 8 compatible by escaping column names in our IQueryBuilder code. (Name `Groups` is a reserved element in this version, which is used in our `Region` table.) (@Patrikkk)
+* Reintroduced `-worldselectpath` per feedback from @fjfnaranjo. This command line argument should be used to specify the place where the interactive server startup will look for worlds to show on the world select screen. The original version of this argument, `-worldpath`, was removed because several game service providers have broken configurations that stop the server from running with an unhelpful error. This specific configuration was `-world` and `-worldpath`. In the new world, you can do the following:
   * `-worldselectpath` should be used if you want to customize the server interactive boot world list (so that you can select from a number of worlds in non-standard locations).
   * `-world` will behave as an absolute path to the world to load. This is the most common thing you want if you're starting the server and have a specific world in mind.
   * `-worldselectpath` and `-worldname` should work together enabling you to select from a world from the list that you specify. This is *not* a world file name, but a world name as described by Terraria.
@@ -15,7 +15,15 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * This change was implemented by (@QuiCM, @hakusaro).
 * Fixed kick on hardcore death / kick on mediumcore death / ban on either from taking action against journey mode players. (@hakusaro)
 * Attempted to fix the problem with the magic mirror spawn problems. You should be able to remove your spawn point in SSC by right clicking on a bed now. (@hakusaro, @AxeelAnder)
-* Add HandleFoodPlatterTryPlacing event, which is called whenever a player places a food in a plate. Add antihack to bouncer, to prevent removing food from plates if the region is protected; To prevent placement if they are not in range; To prevent placement if the item is not placed from player hand. (@Patrikkk)
+* Added HandleFoodPlatterTryPlacing event, which is called whenever a player places a food in a plate. Add antihack to bouncer, to prevent removing food from plates if the region is protected; To prevent placement if they are not in range; To prevent placement if the item is not placed from player hand. (@Patrikkk)
+* Fixed an offset error in NetTile that impacted `SendTileSquare`. It was being read as a `byte` and not a `ushort`. (@QuiCM)
+* Removed packet monitoring from debug logs. To achieve the same results, install @QuiCM's packet monitor plugin (it does better things). (@hakusaro)
+* Updated packet monitoring in send tile square handler for Bouncer debugging. (@hakusaro)
+* Added `/sync`, activated with `tshock.synclocalarea`. This is a default guest permission. When the command is issued, the server will resync area around the player in the event of a desync issue. (@hakusaro)
+  * If your doors disappear, this command will allow a player to resync without having to disconnect from the server.
+  * The default group that gets this permission is `Guest` for the time being.
+  * To add this command to your guest group, give them `tshock.synclocalarea`, with `/group addperm guest tshock.synclocalarea`.
+  * This command may be removed at any time in the future (and will likely be removed when send tile square handling is fixed).
 
 ## TShock 4.4.0 (Pre-release 8)
 * Update for OTAPI 2.0.0.36 and Terraria 1.4.0.4. (@hakusaro, @Patrikkk, @DeathCradle)
