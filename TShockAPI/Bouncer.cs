@@ -304,7 +304,6 @@ namespace TShockAPI
 							GetDataHandlers.projectileCreatesTile[Main.projectile[p.Index].type] == editData))
 					{
 						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (inconceivable rope coil) {0} {1} {2}", args.Player.Name, action, editData);
-						Console.WriteLine("Bouncer / OnTileEdit rejected from (inconceivable rope coil) {0} {1} {2}", args.Player.Name, action, editData);
 						args.Player.SendTileSquare(tileX, tileY, 1);
 						args.Handled = true;
 						return;
