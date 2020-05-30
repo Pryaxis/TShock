@@ -13,6 +13,9 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * `-worldselectpath` is identical to the old `-worldpath`. If you specify `-worldselectpath` and `-world` without specifying an absolute path the server will crash for sure.
   * Thank you again to @fjfnaranjo for supplying a [detailed feature request](https://github.com/Pryaxis/TShock/issues/1914) explaining precisely why this option should be available. Without this, we would have had no context as to why this feature was useful or important. Thank you, @fjfnaranjo!
   * This change was implemented by (@QuiCM, @hakusaro).
+* Updated Bouncer to include Sparkle Slime debuff that can be applied to town NPCs. (@moisterrific)
+* Updated `/spawnboss` command to include Empress of Light and Queen Slime. (@moisterrific)
+* Added journey mode permissions to owner group by default. (@moisterrific)
 * Fixed kick on hardcore death / kick on mediumcore death / ban on either from taking action against journey mode players. (@hakusaro)
 * Attempted to fix the problem with the magic mirror spawn problems. You should be able to remove your spawn point in SSC by right clicking on a bed now. (@hakusaro, @AxeelAnder)
 * Added HandleFoodPlatterTryPlacing event, which is called whenever a player places a food in a plate. Add antihack to bouncer, to prevent removing food from plates if the region is protected; To prevent placement if they are not in range; To prevent placement if the item is not placed from player hand. (@Patrikkk)
