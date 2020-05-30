@@ -1653,6 +1653,7 @@ namespace TShockAPI
 								player.RecentlyCreatedProjectiles.Add(new GetDataHandlers.ProjectileStruct()
 								{
 									Index = e.number,
+									Type = (short)projectile.type,
 									CreatedAt = DateTime.Now
 								});
 							}

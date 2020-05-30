@@ -768,7 +768,7 @@ namespace TShockAPI
 		/// Keeps track of recently created projectiles by this player. TShock.cs OnSecondUpdate() removes from this in an async task.
 		/// Projectiles older than 5 seconds are purged from this collection as they are no longer "recent."
 		/// </summary>
-		internal List<TShockAPI.GetDataHandlers.ProjectileStruct> RecentlyCreatedProjectiles = new List<TShockAPI.GetDataHandlers.ProjectileStruct>();
+		public List<TShockAPI.GetDataHandlers.ProjectileStruct> RecentlyCreatedProjectiles = new List<TShockAPI.GetDataHandlers.ProjectileStruct>();
 
 		/// <summary>
 		/// The current region this player is in, or null if none.

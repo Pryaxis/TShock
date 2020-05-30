@@ -2398,6 +2398,7 @@ namespace TShockAPI
 					args.Player.RecentlyCreatedProjectiles.Add(new GetDataHandlers.ProjectileStruct()
 					{
 						Index = index,
+						Type = type,
 						CreatedAt = DateTime.Now
 					});
 				}
@@ -3770,9 +3771,10 @@ namespace TShockAPI
 			{TileID.MinecartTrack, 3}
 		};
 
-		internal struct ProjectileStruct
+		public struct ProjectileStruct
 		{
 			public int Index { get; set; }
+			public short Type { get; set; }
 			public DateTime CreatedAt { get; set; }
 			public bool Killed { get; internal set; }
 		}
