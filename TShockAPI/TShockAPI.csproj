@@ -85,6 +85,7 @@
     <Compile Include="CLI\FlagSet.cs" />
     <Compile Include="DB\ProjectileManager.cs" />
     <Compile Include="DB\RegionManager.cs" />
+    <Compile Include="DB\ResearchDatastore.cs" />
     <Compile Include="DB\TileManager.cs" />
     <Compile Include="Extensions\ExceptionExt.cs" />
     <Compile Include="Hooks\AccountHooks.cs" />

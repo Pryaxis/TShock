@@ -31,8 +31,7 @@ namespace TShockAPI
 	/// <summary>Contains the permission nodes used in TShock.</summary>
 	public static class Permissions
 	{
-		// tshock.account nodes
-
+		#region tshock.account nodes
 		[Description("User can register account in game.")]
 		public static readonly string canregister = "tshock.account.register";
 
@@ -44,9 +43,9 @@ namespace TShockAPI
 
 		[Description("User can change password in game.")]
 		public static readonly string canchangepassword = "tshock.account.changepassword";
+		#endregion
 
-		// tshock.admin nodes
-
+		#region tshock.admin nodes
 		[Description("User can set build protection status.")]
 		public static readonly string antibuild = "tshock.admin.antibuild";
 
@@ -106,17 +105,17 @@ namespace TShockAPI
 
 		[Description("User can get other users' info.")]
 		public static readonly string userinfo = "tshock.admin.userinfo";
+		#endregion
 
-		// tshock.buff nodes
-
+		#region tshock.buff nodes
 		[Description("User can buff self.")]
 		public static readonly string buff = "tshock.buff.self";
 
 		[Description("User can buff other players.")]
 		public static readonly string buffplayer = "tshock.buff.others";
+		#endregion
 
-		// tshock.cfg nodes
-
+		#region tshock.cfg nodes
 		[Description("User is notified when an update is available, user can turn off / restart the server.")]
 		public static readonly string maintenance = "tshock.cfg.maintenance";
 
@@ -131,9 +130,9 @@ namespace TShockAPI
 
 		[Description("User can create reference files of Terraria IDs and the permission matrix in the server folder.")]
 		public static readonly string createdumps = "tshock.cfg.createdumps";
+		#endregion
 
-		// tshock.ignore nodes
-
+		#region tshock.ignore nodes
 		[Description("Prevents you from being reverted by kill tile abuse detection.")]
 		public static readonly string ignorekilltiledetection = "tshock.ignore.removetile";
 
@@ -169,9 +168,9 @@ namespace TShockAPI
 
 		[Description("Prevents you from being disabled by abnormal MP.")]
 		public static readonly string ignoremp = "tshock.ignore.mp";
+		#endregion
 
-		// tshock.item nodes
-
+		#region tshock.item nodes
 		[Description("User can give items.")]
 		public static readonly string give = "tshock.item.give";
 
@@ -180,9 +179,9 @@ namespace TShockAPI
 
 		[Description("Allows you to use banned items.")]
 		public static readonly string usebanneditem = "tshock.item.usebanned";
+		#endregion
 
-		// tshock.npc nodes
-
+		#region tshock.npc nodes
 		[Description("User can edit the max spawns.")]
 		public static readonly string maxspawns = "tshock.npc.maxspawns";
 
@@ -227,9 +226,9 @@ namespace TShockAPI
 
 		[Description("Allows a user to elevate to superadmin for 10 minutes.")]
 		public static readonly string su = "tshock.su";
+		#endregion
 
-		// tshock.tp nodes
-
+		#region tshock.tp nodes
 		[Description("User can teleport *everyone* to them.")]
 		public static readonly string tpallothers = "tshock.tp.allothers";
 
@@ -268,9 +267,9 @@ namespace TShockAPI
 
 		[Description("User can use wormhole potions.")]
 		public static readonly string wormhole = "tshock.tp.wormhole";
+		#endregion
 
-		// tshock.world nodes
-
+		#region tshock.world nodes
 		[Description("User can use the 'worldevent' command")]
 		public static readonly string manageevents = "tshock.world.events";
 
@@ -372,9 +371,47 @@ namespace TShockAPI
 
 		[Description("Player can toggle party event.")]
 		public static readonly string toggleparty = "tshock.world.toggleparty";
+		#endregion
 
-		// Non-grouped
+		#region tshock.journey nodes
+		[Description("User can use Creative UI freeze time.")]
+		public static readonly string journey_timefreeze = "tshock.journey.time.freeze";
 
+		[Description("User can use Creative UI to set world time.")]
+		public static readonly string journey_timeset = "tshock.journey.time.set";
+
+		[Description("User can use Creative UI to set world time speed.")]
+		public static readonly string journey_timespeed = "tshock.journey.time.setspeed";
+
+		[Description("User can use Creative UI to to toggle character godmode.")]
+		public static readonly string journey_godmode = "tshock.journey.godmode";
+
+		[Description("User can use Creative UI to set world wind strength/seed.")]
+		public static readonly string journey_windstrength = "tshock.journey.wind.strength";
+
+		[Description("User can use Creative UI to stop the world wind strength from changing.")]
+		public static readonly string journey_windfreeze = "tshock.journey.wind.freeze";
+
+		[Description("User can use Creative UI to set world rain strength/seed.")]
+		public static readonly string journey_rainstrength = "tshock.journey.rain.strength";
+
+		[Description("User can use Creative UI to stop the world rain strength from changing.")]
+		public static readonly string journey_rainfreeze = "tshock.journey.rain.freeze";
+
+		[Description("User can use Creative UI to toggle increased placement range.")]
+		public static readonly string journey_placementrange = "tshock.journey.placementrange";
+
+		[Description("User can use Creative UI to set world difficulty/mode.")]
+		public static readonly string journey_setdifficulty = "tshock.journey.setdifficulty";
+
+		[Description("User can use Creative UI to stop the biome spread of the world.")]
+		public static readonly string journey_biomespreadfreeze = "tshock.journey.biomespreadfreeze";
+
+		[Description("User can use Creative UI to set the NPC spawn rate of the world.")]
+		public static readonly string journey_setspawnrate = "tshock.journey.setspawnrate";
+		#endregion
+
+		#region Non-grouped
 		[Description("User can clear items or projectiles.")]
 		public static readonly string clear = "tshock.clear";
 
@@ -429,6 +466,9 @@ namespace TShockAPI
 		[Description("Player can see advanced information about any user account.")]
 		public static readonly string advaccountinfo = "tshock.accountinfo.details";
 
+		[Description("Player can resync themselves with server state.")]
+		public static readonly string synclocalarea = "tshock.synclocalarea";
+		#endregion
 		/// <summary>
 		/// Lists all commands associated with a given permission
 		/// </summary>

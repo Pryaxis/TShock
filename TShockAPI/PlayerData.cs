@@ -20,6 +20,9 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using TShockAPI;
 using Terraria.Localization;
+using Terraria.GameContent.NetModules;
+using Terraria.Net;
+using Terraria.ID;
 
 namespace TShockAPI
 {
@@ -480,6 +483,22 @@ namespace TShockAPI
 			NetMessage.SendData(76, -1, -1, NetworkText.Empty, player.Index);
 
 			NetMessage.SendData(39, player.Index, -1, NetworkText.Empty, 400);
+
+			if (Main.GameModeInfo.IsJourneyMode)
+			{
+				var sacrificedItems = TShock.ResearchDatastore.GetSacrificedItems();
+				for(int i = 0; i < ItemID.Count; i++)
+				{
+					var amount = 0;
+					if (sacrificedItems.ContainsKey(i))
+					{
+						amount = sacrificedItems[i];
+					}
+
+					var response = NetCreativeUnlocksModule.SerializeItemSacrifice(i, amount);
+					NetManager.Instance.SendToClient(response, player.TPlayer.whoAmI);
+				}
+			}
 		}
 	}
 }

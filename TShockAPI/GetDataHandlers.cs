@@ -39,6 +39,8 @@ using TShockAPI.Localization;
 using TShockAPI.Models;
 using TShockAPI.Models.PlayerUpdate;
 using TShockAPI.Models.Projectiles;
+using Terraria.Net;
+using Terraria.GameContent.NetModules;
 
 namespace TShockAPI
 {
@@ -125,7 +127,7 @@ namespace TShockAPI
 					{ PacketTypes.NpcSpecial, HandleSpecial },
 					{ PacketTypes.NpcAddBuff, HandleNPCAddBuff },
 					{ PacketTypes.PlayerAddBuff, HandlePlayerAddBuff },
-					{ PacketTypes.UpdateNPCHome, UpdateNPCHome },
+					{ PacketTypes.UpdateNPCHome, HandleUpdateNPCHome },
 					{ PacketTypes.SpawnBossorInvasion, HandleSpawnBoss },
 					{ PacketTypes.PaintTile, HandlePaintTile },
 					{ PacketTypes.PaintWall, HandlePaintWall },
@@ -148,7 +150,9 @@ namespace TShockAPI
 					{ PacketTypes.ToggleParty, HandleToggleParty },
 					{ PacketTypes.CrystalInvasionStart, HandleOldOnesArmy },
 					{ PacketTypes.PlayerHurtV2, HandlePlayerDamageV2 },
-					{ PacketTypes.PlayerDeathV2, HandlePlayerKillMeV2 }
+					{ PacketTypes.PlayerDeathV2, HandlePlayerKillMeV2 },
+					{ PacketTypes.FoodPlatterTryPlacing, HandleFoodPlatterTryPlacing },
+					{ PacketTypes.SyncRevengeMarker, HandleSyncRevengeMarker }
 				};
 		}
 
@@ -1141,7 +1145,8 @@ namespace TShockAPI
 		{
 			Water = 0,
 			Lava = 1,
-			Honey = 2
+			Honey = 2,
+			Removal = 255 //@Olink: lets hope they never invent 255 fluids or decide to also use this :(
 		}
 
 		/// <summary>
@@ -1307,6 +1312,13 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		public enum HouseholdStatus : byte
+		{
+			None = 0,
+			Homeless = 1,
+			HasRoom = 2,
+		}
+
 		/// <summary>
 		/// For use in a NPCHome event
 		/// </summary>
@@ -1325,15 +1337,15 @@ namespace TShockAPI
 			/// </summary>
 			public short Y { get; set; }
 			/// <summary>
-			/// ByteBool homeless
+			/// HouseholdStatus of the NPC
 			/// </summary>
-			public byte Homeless { get; set; }
+			public HouseholdStatus HouseholdStatus { get; set; }
 		}
 		/// <summary>
 		/// NPCHome - Called when an NPC's home is changed
 		/// </summary>
 		public static HandlerList<NPCHomeChangeEventArgs> NPCHome = new HandlerList<NPCHomeChangeEventArgs>();
-		private static bool OnUpdateNPCHome(TSPlayer player, MemoryStream data, short id, short x, short y, byte homeless)
+		private static bool OnUpdateNPCHome(TSPlayer player, MemoryStream data, short id, short x, short y, byte houseHoldStatus)
 		{
 			if (NPCHome == null)
 				return false;
@@ -1345,7 +1357,7 @@ namespace TShockAPI
 				ID = id,
 				X = x,
 				Y = y,
-				Homeless = homeless,
+				HouseholdStatus = (HouseholdStatus) houseHoldStatus,
 			};
 			NPCHome.Invoke(null, args);
 			return args.Handled;
@@ -1853,6 +1865,52 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		public class FoodPlatterTryPlacingEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// The X tile position of the placement action.
+			/// </summary>
+			public short TileX { get; set; }
+			/// <summary>
+			/// The Y tile position of the placement action.
+			/// </summary>
+			public short TileY { get; set; }
+			/// <summary>
+			/// The Item ID that is being placed in the plate.
+			/// </summary>
+			public short ItemID { get; set; }
+			/// <summary>
+			/// The prefix of the item that is being placed in the plate.
+			/// </summary>
+			public byte Prefix { get; set; }
+			/// <summary>
+			/// The stack of the item that is being placed in the plate.
+			/// </summary>
+			public short Stack { get; set; }
+		}
+		/// <summary>
+		/// Called when a player is placing an item in a food plate.
+		/// </summary>
+		public static HandlerList<FoodPlatterTryPlacingEventArgs> FoodPlatterTryPlacing = new HandlerList<FoodPlatterTryPlacingEventArgs>();
+		private static bool OnFoodPlatterTryPlacing(TSPlayer player, MemoryStream data, short tileX, short tileY, short itemID, byte prefix, short stack)
+		{
+			if (FoodPlatterTryPlacing == null)
+				return false;
+
+			var args = new FoodPlatterTryPlacingEventArgs
+			{
+				Player = player,
+				Data = data,
+				TileX = tileX,
+				TileY = tileY,
+				ItemID = itemID,
+				Prefix = prefix,
+				Stack = stack,
+			};
+			FoodPlatterTryPlacing.Invoke(null, args);
+			return args.Handled;
+		}
+
 		#endregion
 
 		private static bool HandlePlayerInfo(GetDataHandlerArgs args)
@@ -1915,11 +1973,14 @@ namespace TShockAPI
 				args.Player.TPlayer.shirtColor = shirtColor;
 				args.Player.TPlayer.underShirtColor = underShirtColor;
 				args.Player.TPlayer.shoeColor = shoeColor;
+				//@Olink: If you need to change bool[10], please make sure you also update the for loops below to account for it.
+				//There are two arrays from terraria that we only have a single array for.  You will need to make sure that you are looking
+				//at the correct terraria array (hideVisual or hideVisual2).
 				args.Player.TPlayer.hideVisibleAccessory = new bool[10];
 				for (int i = 0; i < 8; i++)
 					args.Player.TPlayer.hideVisibleAccessory[i] = hideVisual[i];
-				for (int i = 8; i < 10; i++)
-					args.Player.TPlayer.hideVisibleAccessory[i] = hideVisual2[i];
+				for (int i = 0; i < 2; i++)
+					args.Player.TPlayer.hideVisibleAccessory[i+8] = hideVisual2[i];
 				args.Player.TPlayer.hideMisc = hideMisc;
 				args.Player.TPlayer.extraAccessory = extraSlot;
 				NetMessage.SendData((int)PacketTypes.PlayerInfo, -1, args.Player.Index, NetworkText.FromLiteral(args.Player.Name), args.Player.Index);
@@ -2105,7 +2166,7 @@ namespace TShockAPI
 				TShock.Log.ConsoleDebug("GetDataHandlers / HandleSpawn force teleport 'vanilla spawn' {0}", args.Player.Name);
 			}
 
-			if ((Main.ServerSideCharacter) && (args.Player.sX > 0) && (args.Player.sY > 0) && (args.TPlayer.SpawnX > 0) && ((args.TPlayer.SpawnX != args.Player.sX) && (args.TPlayer.SpawnY != args.Player.sY)))
+			else if ((Main.ServerSideCharacter) && (args.Player.sX > 0) && (args.Player.sY > 0) && (args.TPlayer.SpawnX > 0) && ((args.TPlayer.SpawnX != args.Player.sX) && (args.TPlayer.SpawnY != args.Player.sY)))
 			{
 
 				args.Player.sX = args.TPlayer.SpawnX;
@@ -2256,6 +2317,14 @@ namespace TShockAPI
 		{
 			var player = args.Player;
 			var size = args.Data.ReadInt16();
+			
+			var changeType = TileChangeType.None;
+			bool hasChangeType = ((size & 0x7FFF) & 0x8000) != 0;
+			if (hasChangeType)
+			{
+				changeType = (TileChangeType)args.Data.ReadInt8();
+			}
+			
 			var tileX = args.Data.ReadInt16();
 			var tileY = args.Data.ReadInt16();
 			var data = args.Data;
@@ -2322,6 +2391,17 @@ namespace TShockAPI
 			if (OnNewProjectile(args.Data, ident, pos, vel, knockback, dmg, owner, type, index, args.Player))
 				return true;
 
+			lock (args.Player.RecentlyCreatedProjectiles)
+			{
+				if (!args.Player.RecentlyCreatedProjectiles.Any(p => p.Index == index))
+				{
+					args.Player.RecentlyCreatedProjectiles.Add(new GetDataHandlers.ProjectileStruct()
+					{
+						Index = index,
+						CreatedAt = DateTime.Now
+					});
+				}
+			}
 			return false;
 		}
 
@@ -2386,6 +2466,10 @@ namespace TShockAPI
 			}
 
 			args.Player.LastKilledProjectile = type;
+			lock (args.Player.RecentlyCreatedProjectiles)
+			{
+				args.Player.RecentlyCreatedProjectiles.ForEach(s => { if (s.Index == index) { s.Killed = true; } });
+			}
 
 			return false;
 		}
@@ -2763,14 +2847,14 @@ namespace TShockAPI
 			return true;
 		}
 
-		private static bool UpdateNPCHome(GetDataHandlerArgs args)
+		private static bool HandleUpdateNPCHome(GetDataHandlerArgs args)
 		{
 			var id = args.Data.ReadInt16();
 			var x = args.Data.ReadInt16();
 			var y = args.Data.ReadInt16();
-			var homeless = args.Data.ReadInt8();
+			var householdStatus = args.Data.ReadInt8();
 
-			if (OnUpdateNPCHome(args.Player, args.Data, id, x, y, homeless))
+			if (OnUpdateNPCHome(args.Player, args.Data, id, x, y, householdStatus))
 				return true;
 
 			if (!args.Player.HasPermission(Permissions.movenpc))
@@ -2827,38 +2911,53 @@ namespace TShockAPI
 			string thing;
 			switch (thingType)
 			{
+				case -14:
+					thing = "has sent a request to the bunny delivery service";
+					break;
+				case -13:
+					thing = "has sent a request to the dog delivery service";
+					break;
+				case -12:
+					thing = "has sent a request to the cat delivery service";
+					break;
+				case -11:
+					thing = "applied advanced combat techniques";
+					break;
+				case -10:
+					thing = "summoned a Blood Moon";
+					break;
 				case -8:
-					thing = "a Moon Lord";
+					thing = "summoned a Moon Lord";
 					break;
 				case -7:
-					thing = "a Martian invasion";
+					thing = "summoned a Martian invasion";
 					break;
 				case -6:
-					thing = "an eclipse";
+					thing = "summoned an eclipse";
 					break;
 				case -5:
-					thing = "a frost moon";
+					thing = "summoned a frost moon";
 					break;
 				case -4:
-					thing = "a pumpkin moon";
+					thing = "summoned a pumpkin moon";
 					break;
 				case -3:
-					thing = "the Pirates";
+					thing = "summoned the Pirates";
 					break;
 				case -2:
-					thing = "the Snow Legion";
+					thing = "summoned the Snow Legion";
 					break;
 				case -1:
-					thing = "a Goblin Invasion";
+					thing = "summoned a Goblin Invasion";
 					break;
 				default:
-					thing = String.Format("the {0}", npc.FullName);
+					thing = String.Format("summoned the {0}", npc.FullName);
 					break;
 			}
 			if (TShock.Config.AnonymousBossInvasions)
-				TShock.Utils.SendLogs(string.Format("{0} summoned {1}!", args.Player.Name, thing), Color.PaleVioletRed, args.Player);
+				TShock.Utils.SendLogs(string.Format("{0} {1}!", args.Player.Name, thing), Color.PaleVioletRed, args.Player);
 			else
-				TShock.Utils.Broadcast(String.Format("{0} summoned {1}!", args.Player.Name, thing), 175, 75, 255);
+				TShock.Utils.Broadcast(String.Format("{0} {1}!", args.Player.Name, thing), 175, 75, 255);
 			return false;
 		}
 
@@ -3084,6 +3183,150 @@ namespace TShockAPI
 
 		private static bool HandleLoadNetModule(GetDataHandlerArgs args)
 		{
+			short moduleId = args.Data.ReadInt16();
+			if (moduleId == (int)NetModulesTypes.CreativePowers)
+			{
+				CreativePowerTypes powerId = (CreativePowerTypes)args.Data.ReadInt16();
+				switch (powerId)
+				{
+					case CreativePowerTypes.FreezeTime:
+						{
+							if (!args.Player.HasPermission(Permissions.journey_timefreeze))
+							{
+								args.Player.SendErrorMessage("You don't have permission to freeze the time of the server!");
+								return true;
+							}
+							break;
+						}
+					case CreativePowerTypes.SetDawn:
+					case CreativePowerTypes.SetNoon:
+					case CreativePowerTypes.SetDusk:
+					case CreativePowerTypes.SetMidnight:
+						{
+							if (!args.Player.HasPermission(Permissions.journey_timeset))
+							{
+								args.Player.SendErrorMessage("You don't have permission to modify the time of the server!");
+								return true;
+							}
+							break;
+						}
+					case CreativePowerTypes.Godmode:
+						{
+							if (!args.Player.HasPermission(Permissions.journey_godmode))
+							{
+								args.Player.SendErrorMessage("You don't have permission to toggle godmode!");
+								return true;
+							}
+							break;
+						}
+					case CreativePowerTypes.WindStrength:
+						{
+							if (!args.Player.HasPermission(Permissions.journey_windstrength))
+							{
+								args.Player.SendErrorMessage("You don't have permission to modify the wind strength of the server!");
+								return true;
+							}
+							break;
+						}
+					case CreativePowerTypes.RainStrength:
+						{
+							if (!args.Player.HasPermission(Permissions.journey_rainstrength))
+							{
+								args.Player.SendErrorMessage("You don't have permission to modify the rain strength of the server!");
+								return true;
+							}
+							break;
+						}
+					case CreativePowerTypes.TimeSpeed:
+						{
+							if (!args.Player.HasPermission(Permissions.journey_timespeed))
+							{
+								args.Player.SendErrorMessage("You don't have permission to modify the time speed of the server!");
+								return true;
+							}
+							break;
+						}
+					case CreativePowerTypes.RainFreeze:
+						{
+							if (!args.Player.HasPermission(Permissions.journey_rainfreeze))
+							{
+								args.Player.SendErrorMessage("You don't have permission to freeze the rain strength of the server!");
+								return true;
+							}
+							break;
+						}
+					case CreativePowerTypes.WindFreeze:
+						{
+							if (!args.Player.HasPermission(Permissions.journey_windfreeze))
+							{
+								args.Player.SendErrorMessage("You don't have permission to freeze the wind strength of the server!");
+								return true;
+							}
+							break;
+						}
+					case CreativePowerTypes.IncreasePlacementRange:
+						{
+							if (!args.Player.HasPermission(Permissions.journey_placementrange))
+							{
+								args.Player.SendErrorMessage("You don't have permission to modify the tile placement range of your character!");
+								return true;
+							}
+							break;
+						}
+					case CreativePowerTypes.WorldDifficulty:
+						{
+							if (!args.Player.HasPermission(Permissions.journey_setdifficulty))
+							{
+								args.Player.SendErrorMessage("You don't have permission to modify the world difficulty of the server!");
+								return true;
+							}
+							break;
+						}
+					case CreativePowerTypes.BiomeSpreadFreeze:
+						{
+							if (!args.Player.HasPermission(Permissions.journey_biomespreadfreeze))
+							{
+								args.Player.SendErrorMessage("You don't have permission to freeze the biome spread of the server!");
+								return true;
+							}
+							break;
+						}
+					case CreativePowerTypes.SetSpawnRate:
+						{
+							// This is a monkeypatch because the 1.4.0.4 seemingly at random sends NPC spawn rate changes even outside of journey mode
+							// (with SSC on) -- particles, May 25, 2 Reiwa
+							if (!Main.GameModeInfo.IsJourneyMode)
+							{
+								return true;
+							}
+							if (!args.Player.HasPermission(Permissions.journey_setspawnrate))
+							{
+								args.Player.SendErrorMessage("You don't have permission to modify the NPC spawn rate of the server!");
+								return true;
+							}
+							break;
+						}
+					default:
+						{
+							return true;
+						}
+				}
+			} else if (moduleId == (int)NetModulesTypes.CreativeUnlocksPlayerReport && Main.GameModeInfo.IsJourneyMode)
+			{
+				var unknownField = args.Data.ReadByte();
+
+				if (unknownField == 0) //this is required or something???
+				{
+					var itemId = args.Data.ReadUInt16();
+					var amount = args.Data.ReadUInt16();
+
+					var totalSacrificed = TShock.ResearchDatastore.SacrificeItem(itemId, amount, args.Player);
+
+					var response = NetCreativeUnlocksModule.SerializeItemSacrifice(itemId, totalSacrificed);
+					NetManager.Instance.Broadcast(response);
+				}
+			}
+
 			// As of 1.4.x.x, this is now used for more things:
 			//	NetCreativePowersModule
 			//	NetCreativePowerPermissionsModule
@@ -3141,24 +3384,38 @@ namespace TShockAPI
 		private static bool HandleSyncExtraValue(GetDataHandlerArgs args)
 		{
 			var npcIndex = args.Data.ReadInt16();
-			var extraValue = args.Data.ReadSingle();
+			var extraValue = args.Data.ReadInt32();
 			var position = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
 
-			if (position.X < 0 || position.X >= Main.maxTilesX || position.Y < 0 || position.Y >= Main.maxTilesY)
+			if (position.X < 0 || position.X >= (Main.maxTilesX * 16.0f) || position.Y < 0 || position.Y >= (Main.maxTilesY * 16.0f))
 			{
 				TShock.Log.ConsoleDebug("GetDataHandlers / HandleSyncExtraValue rejected extents check {0}", args.Player.Name);
 				return true;
 			}
 
-			if (!Main.expertMode)
+			if (!Main.expertMode && !Main.masterMode)
 			{
-				TShock.Log.ConsoleDebug("GetDataHandlers / HandleSyncExtraValue rejected expert mode check {0}", args.Player.Name);
+				TShock.Log.ConsoleDebug("GetDataHandlers / HandleSyncExtraValue rejected expert/master mode check {0}", args.Player.Name);
 				return true;
 			}
 
-			if (!args.Player.IsInRange((int)position.X, (int)position.Y))
+			if (npcIndex < 0 || npcIndex >= Main.npc.Length)
 			{
-				TShock.Log.ConsoleDebug("GetDataHandlers / HandleSyncExtraValue rejected range check {0}", args.Player.Name);
+				TShock.Log.ConsoleDebug("GetDataHandlers / HandleSyncExtraValue rejected npc id out of bounds check - NPC ID: {0}", npcIndex);
+				return true;
+			}
+
+			var npc = Main.npc[npcIndex];
+			if (npc == null)
+			{
+				TShock.Log.ConsoleDebug("GetDataHandlers / HandleSyncExtraValue rejected npc is null - NPC ID: {0}", npcIndex);
+				return true;
+			}
+
+			var distanceFromCoinPacketToNpc = Utils.Distance(position, npc.position);
+			if (distanceFromCoinPacketToNpc >= (5*16f)) //5 tile range
+			{
+				TShock.Log.ConsoleDebug("GetDataHandlers / HandleSyncExtraValue rejected range check {0},{1} vs {2},{3} which is {4}", npc.position.X, npc.position.Y, position.X, position.Y, distanceFromCoinPacketToNpc);
 				return true;
 			}
 
@@ -3337,7 +3594,7 @@ namespace TShockAPI
 			}
 
 			// Handle kicks/bans on mediumcore/hardcore deaths.
-			if (args.TPlayer.difficulty != 0) // Player is not softcore
+			if (args.TPlayer.difficulty == 1 || args.TPlayer.difficulty == 2) // Player is not softcore
 			{
 				bool mediumcore = args.TPlayer.difficulty == 1;
 				bool shouldBan = mediumcore ? TShock.Config.BanOnMediumcoreDeath : TShock.Config.BanOnHardcoreDeath;
@@ -3372,7 +3629,34 @@ namespace TShockAPI
 
 			return false;
 		}
+		private static bool HandleFoodPlatterTryPlacing(GetDataHandlerArgs args)
+		{
+			short tileX = args.Data.ReadInt16();
+			short tileY = args.Data.ReadInt16();
+			short itemID = args.Data.ReadInt16();
+			byte prefix = args.Data.ReadInt8();
+			short stack = args.Data.ReadInt16();
 
+			if (OnFoodPlatterTryPlacing(args.Player, args.Data, tileX, tileY, itemID, prefix, stack))
+				return true;
+
+			return false;
+		}
+
+		private static bool HandleSyncRevengeMarker(GetDataHandlerArgs args)
+		{
+			int uniqueID = args.Data.ReadInt32();
+			Vector2 location = args.Data.ReadVector2();
+			int netId = args.Data.ReadInt32();
+			float npcHpPercent = args.Data.ReadSingle();
+			int npcTypeAgainstDiscouragement = args.Data.ReadInt32(); //tfw the argument is Type Against Discouragement
+			int npcAiStyleAgainstDiscouragement = args.Data.ReadInt32(); //see ^
+			int coinsValue = args.Data.ReadInt32();
+			float baseValue = args.Data.ReadSingle();
+			bool spawnedFromStatus = args.Data.ReadBoolean();
+
+			return false;
+		}
 
 		public enum EditAction
 		{
@@ -3446,6 +3730,30 @@ namespace TShockAPI
 			{ ProjectileID.MysticSnakeCoil, TileID.MysticSnakeRope }
 		};
 
+		internal static Dictionary<int, LiquidType> projectileCreatesLiquid = new Dictionary<int, LiquidType>
+		{
+			{ProjectileID.LavaBomb, LiquidType.Lava},
+			{ProjectileID.LavaRocket, LiquidType.Lava },
+			{ProjectileID.LavaGrenade, LiquidType.Lava },
+			{ProjectileID.LavaMine, LiquidType.Lava },
+			//{ProjectileID.LavaSnowmanRocket, LiquidType.Lava }, //these require additional checks.
+			{ProjectileID.WetBomb, LiquidType.Water},
+			{ProjectileID.WetRocket, LiquidType.Water },
+			{ProjectileID.WetGrenade, LiquidType.Water},
+			{ProjectileID.WetMine, LiquidType.Water},
+			//{ProjectileID.WetSnowmanRocket, LiquidType.Water}, //these require additional checks.
+			{ProjectileID.HoneyBomb, LiquidType.Honey},
+			{ProjectileID.HoneyRocket, LiquidType.Honey },
+			{ProjectileID.HoneyGrenade, LiquidType.Honey },
+			{ProjectileID.HoneyMine, LiquidType.Honey },
+			//{ProjectileID.HoneySnowmanRocket, LiquidType.Honey }, //these require additional checks.
+			{ProjectileID.DryBomb, LiquidType.Removal },
+			{ProjectileID.DryRocket, LiquidType.Removal },
+			{ProjectileID.DryGrenade, LiquidType.Removal },
+			{ProjectileID.DryMine, LiquidType.Removal },
+			//{ProjectileID.DrySnowmanRocket, LiquidType.Removal } //these require additional checks.
+		};
+
 		internal static Dictionary<int, int> ropeCoilPlacements = new Dictionary<int, int>
 		{
 			{ItemID.RopeCoil, TileID.Rope},
@@ -3461,5 +3769,46 @@ namespace TShockAPI
 		{
 			{TileID.MinecartTrack, 3}
 		};
+
+		internal struct ProjectileStruct
+		{
+			public int Index { get; set; }
+			public DateTime CreatedAt { get; set; }
+			public bool Killed { get; internal set; }
+		}
+
+		public enum NetModulesTypes
+		{
+			Liquid,
+			Text,
+			Ping,
+			Ambience,
+			Bestiary,
+			CreativeUnlocks,
+			CreativePowers,
+			CreativeUnlocksPlayerReport,
+			TeleportPylon,
+			Particles,
+			CreativePowerPermissions
+		}
+
+		public enum CreativePowerTypes
+		{
+			FreezeTime,
+			SetDawn,
+			SetNoon,
+			SetDusk,
+			SetMidnight,
+			Godmode,
+			WindStrength,
+			RainStrength,
+			TimeSpeed,
+			RainFreeze,
+			WindFreeze,
+			IncreasePlacementRange,
+			WorldDifficulty,
+			BiomeSpreadFreeze,
+			SetSpawnRate
+		}
 	}
 }

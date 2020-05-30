@@ -57,7 +57,7 @@ namespace TShockAPI
 		/// <summary>VersionNum - The version number the TerrariaAPI will return back to the API. We just use the Assembly info.</summary>
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
 		/// <summary>VersionCodename - The version codename is displayed when the server starts. Inspired by software codenames conventions.</summary>
-		public static readonly string VersionCodename = "Go to sleep Patrikkk, Icy, Chris, Death, Axeel, Zaicon, hakusaro, and Yoraiz0r <3";
+		public static readonly string VersionCodename = "Go to sleep Patrikkk, Icy, Chris, Death, Axeel, Zaicon, hakusaro, Zack, and Yoraiz0r <3";
 
 		/// <summary>SavePath - This is the path TShock saves its data in. This path is relative to the TerrariaServer.exe (not in ServerPlugins).</summary>
 		public static string SavePath = "tshock";
@@ -100,6 +100,8 @@ namespace TShockAPI
 		public static RememberedPosManager RememberedPos;
 		/// <summary>CharacterDB - Static reference to the SSC character manager.</summary>
 		public static CharacterManager CharacterDB;
+		/// <summary>Contains the information about what research has been performed in Journey mode.</summary>
+		public static ResearchDatastore ResearchDatastore;
 		/// <summary>Config - Static reference to the config system, for accessing values set in users' config files.</summary>
 		public static ConfigFile Config { get; set; }
 		/// <summary>ServerSideCharacterConfig - Static reference to the server side character config, for accessing values set by users to modify SSC.</summary>
@@ -324,6 +326,7 @@ namespace TShockAPI
 				TileBans = new TileManager(DB);
 				RememberedPos = new RememberedPosManager(DB);
 				CharacterDB = new CharacterManager(DB);
+				ResearchDatastore = new ResearchDatastore(DB);
 				RestApi = new SecureRest(Netplay.ServerIP, Config.RestApiPort);
 				RestManager = new RestManager(RestApi);
 				RestManager.RegisterRestfulCommands();
@@ -683,6 +686,16 @@ namespace TShockAPI
 						if (path != null)
 						{
 							ServerApi.LogWriter.PluginWriteLine(this, "Config path has been set to " + path, TraceLevel.Info);
+						}
+					})
+
+				.AddFlag("-worldselectpath", pathChecker)
+					.After(() =>
+					{
+						if (path != null)
+						{
+							Main.WorldPath = path;
+							ServerApi.LogWriter.PluginWriteLine(this, "World path has been set to " + path, TraceLevel.Info);
 						}
 					})
 
@@ -1065,6 +1078,8 @@ namespace TShockAPI
 					}
 				}
 			}
+
+			Bouncer.OnSecondUpdate();
 			Utils.SetConsoleTitle(false);
 		}
 
@@ -1478,8 +1493,6 @@ namespace TShockAPI
 
 			PacketTypes type = e.MsgID;
 
-			Log.ConsoleDebug("Recv: {0:X}: {2} ({1:XX})", e.Msg.whoAmI, (byte)type, type);
-
 			var player = Players[e.Msg.whoAmI];
 			if (player == null || !player.ConnectionAlive)
 			{
@@ -1619,6 +1632,32 @@ namespace TShockAPI
 				{
 					e.Handled = true;
 					return;
+				}
+			}
+			else if (e.MsgId == PacketTypes.ProjectileNew)
+			{
+				if (e.number >= 0 && e.number < Main.projectile.Length)
+				{
+					var projectile = Main.projectile[e.number];
+					if (projectile.active && projectile.owner >= 0 && GetDataHandlers.projectileCreatesLiquid.ContainsKey(projectile.type))
+					{
+						var player = Players[projectile.owner];
+						if (player != null)
+						{
+							if (player.RecentlyCreatedProjectiles.Any(p => p.Index == e.number && p.Killed))
+							{
+								player.RecentlyCreatedProjectiles.RemoveAll(p => p.Index == e.number && p.Killed);
+							}
+
+							if (!player.RecentlyCreatedProjectiles.Any(p => p.Index == e.number)) {
+								player.RecentlyCreatedProjectiles.Add(new GetDataHandlers.ProjectileStruct()
+								{
+									Index = e.number,
+									CreatedAt = DateTime.Now
+								});
+							}
+						}
+					}
 				}
 			}
 		}

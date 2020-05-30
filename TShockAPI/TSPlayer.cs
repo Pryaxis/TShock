@@ -685,7 +685,7 @@ namespace TShockAPI
 		/// <returns>True if they can paint.</returns>
 		public bool HasPaintPermission(int x, int y)
 		{
-			return HasBuildPermission(x, y) || HasPermission(Permissions.canpaint);
+			return HasBuildPermission(x, y) && HasPermission(Permissions.canpaint);
 		}
 
 		/// <summary>Checks if a player can place ice, and if they can, tracks ice placements and removals.</summary>
@@ -763,6 +763,12 @@ namespace TShockAPI
 		/// The last projectile type this player tried to kill.
 		/// </summary>
 		public int LastKilledProjectile = 0;
+
+		/// <summary>
+		/// Keeps track of recently created projectiles by this player. TShock.cs OnSecondUpdate() removes from this in an async task.
+		/// Projectiles older than 5 seconds are purged from this collection as they are no longer "recent."
+		/// </summary>
+		internal List<TShockAPI.GetDataHandlers.ProjectileStruct> RecentlyCreatedProjectiles = new List<TShockAPI.GetDataHandlers.ProjectileStruct>();
 
 		/// <summary>
 		/// The current region this player is in, or null if none.
