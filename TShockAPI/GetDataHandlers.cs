@@ -151,7 +151,8 @@ namespace TShockAPI
 					{ PacketTypes.CrystalInvasionStart, HandleOldOnesArmy },
 					{ PacketTypes.PlayerHurtV2, HandlePlayerDamageV2 },
 					{ PacketTypes.PlayerDeathV2, HandlePlayerKillMeV2 },
-					{ PacketTypes.FoodPlatterTryPlacing, HandleFoodPlatterTryPlacing }
+					{ PacketTypes.FoodPlatterTryPlacing, HandleFoodPlatterTryPlacing },
+					{ PacketTypes.SyncRevengeMarker, HandleSyncRevengeMarker }
 				};
 		}
 
@@ -2316,6 +2317,14 @@ namespace TShockAPI
 		{
 			var player = args.Player;
 			var size = args.Data.ReadInt16();
+			
+			var changeType = TileChangeType.None;
+			bool hasChangeType = ((size & 0x7FFF) & 0x8000) != 0;
+			if (hasChangeType)
+			{
+				changeType = (TileChangeType)args.Data.ReadInt8();
+			}
+			
 			var tileX = args.Data.ReadInt16();
 			var tileY = args.Data.ReadInt16();
 			var data = args.Data;
@@ -3375,24 +3384,38 @@ namespace TShockAPI
 		private static bool HandleSyncExtraValue(GetDataHandlerArgs args)
 		{
 			var npcIndex = args.Data.ReadInt16();
-			var extraValue = args.Data.ReadSingle();
+			var extraValue = args.Data.ReadInt32();
 			var position = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
 
-			if (position.X < 0 || position.X >= Main.maxTilesX || position.Y < 0 || position.Y >= Main.maxTilesY)
+			if (position.X < 0 || position.X >= (Main.maxTilesX * 16.0f) || position.Y < 0 || position.Y >= (Main.maxTilesY * 16.0f))
 			{
 				TShock.Log.ConsoleDebug("GetDataHandlers / HandleSyncExtraValue rejected extents check {0}", args.Player.Name);
 				return true;
 			}
 
-			if (!Main.expertMode)
+			if (!Main.expertMode && !Main.masterMode)
 			{
-				TShock.Log.ConsoleDebug("GetDataHandlers / HandleSyncExtraValue rejected expert mode check {0}", args.Player.Name);
+				TShock.Log.ConsoleDebug("GetDataHandlers / HandleSyncExtraValue rejected expert/master mode check {0}", args.Player.Name);
 				return true;
 			}
 
-			if (!args.Player.IsInRange((int)position.X, (int)position.Y))
+			if (npcIndex < 0 || npcIndex >= Main.npc.Length)
 			{
-				TShock.Log.ConsoleDebug("GetDataHandlers / HandleSyncExtraValue rejected range check {0}", args.Player.Name);
+				TShock.Log.ConsoleDebug("GetDataHandlers / HandleSyncExtraValue rejected npc id out of bounds check - NPC ID: {0}", npcIndex);
+				return true;
+			}
+
+			var npc = Main.npc[npcIndex];
+			if (npc == null)
+			{
+				TShock.Log.ConsoleDebug("GetDataHandlers / HandleSyncExtraValue rejected npc is null - NPC ID: {0}", npcIndex);
+				return true;
+			}
+
+			var distanceFromCoinPacketToNpc = Utils.Distance(position, npc.position);
+			if (distanceFromCoinPacketToNpc >= (5*16f)) //5 tile range
+			{
+				TShock.Log.ConsoleDebug("GetDataHandlers / HandleSyncExtraValue rejected range check {0},{1} vs {2},{3} which is {4}", npc.position.X, npc.position.Y, position.X, position.Y, distanceFromCoinPacketToNpc);
 				return true;
 			}
 
@@ -3616,6 +3639,21 @@ namespace TShockAPI
 
 			if (OnFoodPlatterTryPlacing(args.Player, args.Data, tileX, tileY, itemID, prefix, stack))
 				return true;
+
+			return false;
+		}
+
+		private static bool HandleSyncRevengeMarker(GetDataHandlerArgs args)
+		{
+			int uniqueID = args.Data.ReadInt32();
+			Vector2 location = args.Data.ReadVector2();
+			int netId = args.Data.ReadInt32();
+			float npcHpPercent = args.Data.ReadSingle();
+			int npcTypeAgainstDiscouragement = args.Data.ReadInt32(); //tfw the argument is Type Against Discouragement
+			int npcAiStyleAgainstDiscouragement = args.Data.ReadInt32(); //see ^
+			int coinsValue = args.Data.ReadInt32();
+			float baseValue = args.Data.ReadSingle();
+			bool spawnedFromStatus = args.Data.ReadBoolean();
 
 			return false;
 		}
