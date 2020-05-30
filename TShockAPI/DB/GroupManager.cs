@@ -64,7 +64,8 @@ namespace TShockAPI.DB
 						Permissions.canlogin,
 						Permissions.canpartychat,
 						Permissions.cantalkinthird,
-						Permissions.canchat));
+						Permissions.canchat,
+						Permissions.synclocalarea));
 
 				AddDefaultGroup("default", "guest",
 					string.Join(",",
@@ -172,7 +173,19 @@ namespace TShockAPI.DB
 						Permissions.settempgroup,
 						Permissions.spawnrate,
 						Permissions.tpoverride,
-						Permissions.createdumps));
+						Permissions.createdumps,
+						Permissions.journey_timefreeze,
+						Permissions.journey_timeset,
+						Permissions.journey_timespeed,
+						Permissions.journey_godmode,
+						Permissions.journey_windstrength,
+						Permissions.journey_windfreeze,
+						Permissions.journey_rainstrength,
+						Permissions.journey_rainfreeze,
+						Permissions.journey_placementrange,
+						Permissions.journey_setdifficulty,
+						Permissions.journey_biomespreadfreeze,
+						Permissions.journey_setspawnrate));
 			}
 
 			// Load Permissions from the DB
