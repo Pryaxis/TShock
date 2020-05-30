@@ -1540,7 +1540,7 @@ namespace TShockAPI
 				if (npc.townNPC && npc.netID != NPCID.Guide && npc.netID != NPCID.Clothier)
 				{
 					if (type != BuffID.Lovestruck && type != BuffID.Stinky && type != BuffID.DryadsWard &&
-						type != BuffID.Wet && type != BuffID.Slimed)
+						type != BuffID.Wet && type != BuffID.Slimed && type != BuffID.GelBalloonBuff)
 					{
 						detectedNPCBuffTimeCheat = true;
 					}
