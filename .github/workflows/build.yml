@@ -41,21 +41,25 @@ jobs:
         mkdir TShockAPI\bin\${{ matrix.mode }}\ServerPlugins
         move TShockAPI\bin\${{ matrix.mode }}\TShockAPI.dll TShockAPI\bin\${{ matrix.mode }}\ServerPlugins
     - name: Upload TShock (Debug)
+      if: contains(matrix.mode, 'Debug')
       uses: actions/upload-artifact@master
       with:
         name: Experimental TShock (debug)
         path: TShockAPI\bin\Debug
     - name: Upload OTAPI Bootstrapper (Debug)
+      if: contains(matrix.mode, 'Debug')
       uses: actions/upload-artifact@master
       with:
         name: Experimental (debug) OTAPI Bootstrapper
         path: .\TerrariaServerAPI\TShock.Modifications.Bootstrapper\bin\Debug\TShock.Modifications.Bootstrapper.exe
     - name: Upload TShock (Not Debug)
+      if: contains(matrix.mode, 'Release')
       uses: actions/upload-artifact@master
       with:
         name: Experimental TShock (not debug)
         path: TShockAPI\bin\Release
     - name: Upload OTAPI Bootstrapper (Not Debug)
+      if: contains(matrix.mode, 'Release')
       uses: actions/upload-artifact@master
       with:
         name: Experimental (not debug) OTAPI Bootstrapper
