@@ -30,7 +30,7 @@ namespace TShockAPI.Net
 		public short FrameX { get; set; }
 		public short FrameY { get; set; }
 		public bool Lighted { get; set; }
-		public byte Wall { get; set; }
+		public ushort Wall { get; set; }
 		public byte Liquid { get; set; }
 		public byte LiquidType { get; set; }
 		public bool Wire { get; set; }
@@ -175,7 +175,7 @@ namespace TShockAPI.Net
 			}
 
 			if (HasWall)
-				stream.WriteInt8(Wall);
+				stream.WriteInt16((short)Wall);;
 
 			if (HasLiquid)
 			{
@@ -218,7 +218,7 @@ namespace TShockAPI.Net
 
 			if (flags[2])
 			{
-				Wall = stream.ReadInt8();
+				Wall = stream.ReadUInt16();
 			}
 
 			if (flags[3])

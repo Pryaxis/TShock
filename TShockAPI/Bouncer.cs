@@ -67,6 +67,7 @@ namespace TShockAPI
 			GetDataHandlers.MassWireOperation += OnMassWireOperation;
 			GetDataHandlers.PlayerDamage += OnPlayerDamage;
 			GetDataHandlers.KillMe += OnKillMe;
+			GetDataHandlers.FoodPlatterTryPlacing += OnFoodPlatterTryPlacing;
 		}
 
 		internal void OnGetSection(object sender, GetDataHandlers.GetSectionEventArgs args)
@@ -557,6 +558,8 @@ namespace TShockAPI
 				return;
 			}
 
+			bool changed = false;
+			bool failed = false;
 			try
 			{
 				var tiles = new NetTile[size, size];
@@ -568,7 +571,6 @@ namespace TShockAPI
 					}
 				}
 
-				bool changed = false;
 				for (int x = 0; x < size; x++)
 				{
 					int realx = tileX + x;
@@ -708,9 +710,10 @@ namespace TShockAPI
 			catch
 			{
 				args.Player.SendTileSquare(tileX, tileY, size);
+				failed = true;
 			}
 
-			TShock.Log.ConsoleDebug("Bouncer / SendTileSquare reimplemented from spaghetti from {0}", args.Player.Name);
+			TShock.Log.ConsoleDebug("Bouncer / SendTileSquare from {0} {1} {2}", args.Player.Name, changed, failed);
 			args.Handled = true;
 		}
 
@@ -2059,6 +2062,54 @@ namespace TShockAPI
 					args.Handled = true;
 					return;
 				}
+			}
+		}
+
+		/// <summary>
+		/// Called when a player is trying to place an item into a food plate.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		internal void OnFoodPlatterTryPlacing(object sender, GetDataHandlers.FoodPlatterTryPlacingEventArgs args)
+		{
+			if (args.Player.ItemInHand.type != args.ItemID)
+			{
+				TShock.Log.ConsoleDebug("Bouncer / OnFoodPlatterTryPlacing rejected item not placed by hand from {0}", args.Player.Name);
+				args.Player.SendTileSquare(args.TileX, args.TileY, 1);
+				args.Handled = true;
+				return;
+			}
+			if (args.Player.IsBeingDisabled())
+			{
+				TShock.Log.ConsoleDebug("Bouncer / OnFoodPlatterTryPlacing rejected disabled from {0}", args.Player.Name);
+				Item item = new Item();
+				item.netDefaults(args.ItemID);
+				args.Player.GiveItemCheck(args.ItemID, item.Name, args.Stack, args.Prefix);
+				args.Player.SendTileSquare(args.TileX, args.TileY, 1);
+				args.Handled = true;
+				return;
+			}
+
+			if (!args.Player.HasBuildPermission(args.TileX, args.TileY))
+			{
+				TShock.Log.ConsoleDebug("Bouncer / OnFoodPlatterTryPlacing rejected permissions from {0}", args.Player.Name);
+				Item item = new Item();
+				item.netDefaults(args.ItemID);
+				args.Player.GiveItemCheck(args.ItemID, item.Name, args.Stack, args.Prefix);
+				args.Player.SendTileSquare(args.TileX, args.TileY, 1);
+				args.Handled = true;
+				return;
+			}
+
+			if (!args.Player.IsInRange(args.TileX, args.TileY))
+			{
+				TShock.Log.ConsoleDebug("Bouncer / OnFoodPlatterTryPlacing rejected range checks from {0}", args.Player.Name);
+				Item item = new Item();
+				item.netDefaults(args.ItemID);
+				args.Player.GiveItemCheck(args.ItemID, item.Name, args.Stack, args.Prefix);
+				args.Player.SendTileSquare(args.TileX, args.TileY, 1);
+				args.Handled = true;
+				return;
 			}
 		}
 
