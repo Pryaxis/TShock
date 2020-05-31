@@ -561,6 +561,7 @@ namespace TShockAPI
 
 			bool changed = false;
 			bool failed = false;
+			bool doorRelated = false;
 			try
 			{
 				var tiles = new NetTile[size, size];
@@ -590,6 +591,11 @@ namespace TShockAPI
 							!args.Player.IsInRange(realx, realy))
 						{
 							continue;
+						}
+
+						if (newtile.Active && Terraria.ID.TileID.Sets.RoomNeeds.CountsAsDoor.Contains(newtile.Type))
+						{
+							doorRelated = true;
 						}
 
 						// Fixes the Flower Boots not creating flowers issue
@@ -705,7 +711,8 @@ namespace TShockAPI
 				}
 				else
 				{
-					args.Player.SendTileSquare(tileX, tileY, size);
+					if (!doorRelated)
+						args.Player.SendTileSquare(tileX, tileY, size);
 				}
 			}
 			catch
