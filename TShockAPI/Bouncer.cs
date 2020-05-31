@@ -548,19 +548,7 @@ namespace TShockAPI
 					{
 						int realX = x + startX;
 						ushort type = Main.tile[realX, realY].type;
-						string type2;
-						switch (type)
-						{
-							case 10:
-								type2 = "[X]";
-								break;
-							case 11:
-								type2 = "[ ]";
-								break;
-							default:
-								type2 = type.ToString();
-								break;
-						}
+						string type2 = type.ToString();
 						Console.Write((type2.ToString()).PadLeft(3, pad) + " ");
 					}
 					Console.Write(" -> ");
@@ -570,37 +558,13 @@ namespace TShockAPI
 						if (tiles[x, y].Active)
 						{
 							ushort type = tiles[x, y].Type;
-							string type2;
-							switch (type)
-							{
-								case 10:
-									type2 = "{X}";
-									break;
-								case 11:
-									type2 = "{ }";
-									break;
-								default:
-									type2 = type.ToString();
-									break;
-							}
+							string type2 = type.ToString();
 							Console.Write((type2.ToString()).PadLeft(3, pad) + " ");
 						}
 						else
 						{
 							ushort type = Main.tile[realX, realY].type;
-							string type2;
-							switch (type)
-							{
-								case 10:
-									type2 = "[X]";
-									break;
-								case 11:
-									type2 = "[ ]";
-									break;
-								default:
-									type2 = type.ToString();
-									break;
-							}
+							string type2 = type.ToString();
 							Console.Write((type2.ToString()).PadLeft(3, pad) + " ");
 						}
 					}
