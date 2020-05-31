@@ -2,7 +2,10 @@
 
 This is the rolling changelog for TShock for Terraria. Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
 
-## Upcoming Release
+## Upcoming release
+* Your change goes here!
+
+## TShock 4.4.0 (Pre-release 9)
 * Fixed pet licenses. (@Olink)
 * Added initial support for Journey mode in SSC worlds. (@Olink)
 * Made TShock database MySQL 8 compatible by escaping column names in our IQueryBuilder code. (Name `Groups` is a reserved element in this version, which is used in our `Region` table.) (@Patrikkk)
