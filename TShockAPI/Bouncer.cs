@@ -2043,7 +2043,7 @@ namespace TShockAPI
 			short id = args.PlayerId;
 			PlayerDeathReason playerDeathReason = args.PlayerDeathReason;
 
-			if (damage > 20000) //Abnormal values have the potential to cause infinite loops in the server.
+			if (damage > 42000) //Abnormal values have the potential to cause infinite loops in the server.
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnKillMe rejected high damage from {0} {1}", args.Player.Name, damage);
 				args.Player.Kick("Failed to shade polygon normals.", true, true);
