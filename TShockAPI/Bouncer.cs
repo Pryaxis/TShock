@@ -526,6 +526,88 @@ namespace TShockAPI
 			int tileX = args.TileX;
 			int tileY = args.TileY;
 
+			int startX = tileX;
+			int startY = tileY;
+
+			var tiles = new NetTile[size, size];
+			for (int x = 0; x < size; x++)
+			{
+				for (int y = 0; y < size; y++)
+				{
+					tiles[x, y] = new NetTile(args.Data);
+				}
+			}
+
+			if (TShock.Config.DebugLogs)
+			{
+				char pad = '0';
+				for (int y = 0; y < size; y++)
+				{
+					int realY = y + startY;
+					for (int x = 0; x < size; x++)
+					{
+						int realX = x + startX;
+						ushort type = Main.tile[realX, realY].type;
+						string type2;
+						switch (type)
+						{
+							case 10:
+								type2 = "[X]";
+								break;
+							case 11:
+								type2 = "[ ]";
+								break;
+							default:
+								type2 = type.ToString();
+								break;
+						}
+						Console.Write((type2.ToString()).PadLeft(3, pad) + " ");
+					}
+					Console.Write(" -> ");
+					for (int x = 0; x < size; x++)
+					{
+						int realX = x + startX;
+						if (tiles[x, y].Active)
+						{
+							ushort type = tiles[x, y].Type;
+							string type2;
+							switch (type)
+							{
+								case 10:
+									type2 = "{X}";
+									break;
+								case 11:
+									type2 = "{ }";
+									break;
+								default:
+									type2 = type.ToString();
+									break;
+							}
+							Console.Write((type2.ToString()).PadLeft(3, pad) + " ");
+						}
+						else
+						{
+							ushort type = Main.tile[realX, realY].type;
+							string type2;
+							switch (type)
+							{
+								case 10:
+									type2 = "[X]";
+									break;
+								case 11:
+									type2 = "[ ]";
+									break;
+								default:
+									type2 = type.ToString();
+									break;
+							}
+							Console.Write((type2.ToString()).PadLeft(3, pad) + " ");
+						}
+					}
+					Console.Write("\n");
+				}
+			}
+
 			if (args.Player.HasPermission(Permissions.allowclientsideworldedit))
 			{
 				TShock.Log.ConsoleDebug("Bouncer / SendTileSquare accepted clientside world edit from {0}", args.Player.Name);
@@ -562,15 +644,6 @@ namespace TShockAPI
 			bool failed = false;
 			try
 			{
-				var tiles = new NetTile[size, size];
-				for (int x = 0; x < size; x++)
-				{
-					for (int y = 0; y < size; y++)
-					{
-						tiles[x, y] = new NetTile(args.Data);
-					}
-				}
-
 				for (int x = 0; x < size; x++)
 				{
 					int realx = tileX + x;
@@ -707,9 +780,11 @@ namespace TShockAPI
 					args.Player.SendTileSquare(tileX, tileY, size);
 				}
 			}
-			catch
+			catch(Exception e)
 			{
 				args.Player.SendTileSquare(tileX, tileY, size);
+				Console.WriteLine(e.Message);
+				Console.WriteLine(e.StackTrace);
 				failed = true;
 			}
 
