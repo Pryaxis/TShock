@@ -15,7 +15,7 @@ namespace TShockAPI.Handlers
 		{
 			if (args.PlayerIndex != args.Player.Index)
 			{
-				TShock.Log.ConsoleError($"EmojiHandler: Packet is spoofing to be player ID {args.PlayerIndex}! - From [{args.Player.Index}]{args.Player.Name}");
+				TShock.Log.ConsoleError($"EmojiHandler: Packet is spoofing to be player ID {args.PlayerIndex}! - From [{args.Player.Index}] {args.Player.Name}");
 				args.Handled = true;
 				return;
 			}
