@@ -496,7 +496,7 @@ namespace TShockAPI
 					}
 
 					var response = NetCreativeUnlocksModule.SerializeItemSacrifice(i, amount);
-					NetManager.Instance.SendToClient(response, player.TPlayer.whoAmI);
+					NetManager.Instance.SendToClient(response, player.Index);
 				}
 			}
 		}

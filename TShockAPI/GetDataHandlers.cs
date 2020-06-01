@@ -2357,14 +2357,14 @@ namespace TShockAPI
 		{
 			var player = args.Player;
 			var size = args.Data.ReadInt16();
-			
 			var changeType = TileChangeType.None;
+
 			bool hasChangeType = ((size & 0x7FFF) & 0x8000) != 0;
 			if (hasChangeType)
 			{
 				changeType = (TileChangeType)args.Data.ReadInt8();
 			}
-			
+
 			var tileX = args.Data.ReadInt16();
 			var tileY = args.Data.ReadInt16();
 			var data = args.Data;
@@ -3813,7 +3813,20 @@ namespace TShockAPI
 			{ ProjectileID.EbonsandBallGun, TileID.Ebonsand },
 			{ ProjectileID.PearlSandBallGun, TileID.Pearlsand },
 			{ ProjectileID.CrimsandBallGun, TileID.Crimsand },
-			{ ProjectileID.MysticSnakeCoil, TileID.MysticSnakeRope }
+			{ ProjectileID.MysticSnakeCoil, TileID.MysticSnakeRope },
+			{ ProjectileID.RopeCoil, TileID.Rope },
+			{ ProjectileID.SilkRopeCoil, TileID.SilkRope },
+			{ ProjectileID.VineRopeCoil, TileID.VineRope },
+			{ ProjectileID.WebRopeCoil, TileID.WebRope }
+		};
+
+		internal static List<int> CoilTileIds = new List<int>()
+		{
+			TileID.MysticSnakeRope,
+			TileID.Rope,
+			TileID.SilkRope,
+			TileID.VineRope,
+			TileID.WebRope
 		};
 
 		internal static Dictionary<int, LiquidType> projectileCreatesLiquid = new Dictionary<int, LiquidType>
