@@ -63,6 +63,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * `tshock.journey.biomespreadfreeze`
   * `tshock.journey.setspawnrate`
 * Changed default thresholds for some changes in the config file to accommodate new items & changes to Terraria. (@hakusaro)
+* Store projectile type in `ProjectileStruct RecentlyCreatedProjectiles` to identify the recently created projectiles by type. Make `RecentlyCreatedProjectiles` and `ProjectileStruct` public for developers to access from plugins.
 
 ## TShock 4.4.0 (Pre-release 7 (Entangled))
 * Fixed bed spawn issues when trying to remove spawn point in SSC. (@Olink)
