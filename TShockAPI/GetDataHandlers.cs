@@ -151,9 +151,10 @@ namespace TShockAPI
 					{ PacketTypes.CrystalInvasionStart, HandleOldOnesArmy },
 					{ PacketTypes.PlayerHurtV2, HandlePlayerDamageV2 },
 					{ PacketTypes.PlayerDeathV2, HandlePlayerKillMeV2 },
+					{ PacketTypes.SyncTilePicking, HandleSyncTilePicking },
+					{ PacketTypes.SyncRevengeMarker, HandleSyncRevengeMarker },
 					{ PacketTypes.FishOutNPC, HandleFishOutNPC },
-					{ PacketTypes.FoodPlatterTryPlacing, HandleFoodPlatterTryPlacing },
-					{ PacketTypes.SyncRevengeMarker, HandleSyncRevengeMarker }
+					{ PacketTypes.FoodPlatterTryPlacing, HandleFoodPlatterTryPlacing }
 				};
 		}
 
@@ -1865,6 +1866,51 @@ namespace TShockAPI
 			KillMe.Invoke(null, args);
 			return args.Handled;
 		}
+
+		/// <summary>
+		/// For use in a SyncTilePicking event.
+		/// </summary>
+		public class SyncTilePickingEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// The player index in the packet, who sends the tile picking data.
+			/// </summary>
+			public byte PlayerIndex { get; set; }
+			/// <summary>
+			/// The X world position of the tile that is being picked.
+			/// </summary>
+			public short TileX { get; set; }
+			/// <summary>
+			/// The Y world position of the tile that is being picked.
+			/// </summary>
+			public short TileY { get; set; }
+			/// <summary>
+			/// The damage that is being dealt on the tile.
+			/// </summary>
+			public byte TileDamage { get; set; }
+		}
+		/// <summary>
+		/// Called when a player hits and damages a tile.
+		/// </summary>
+		public static HandlerList<SyncTilePickingEventArgs> SyncTilePicking = new HandlerList<SyncTilePickingEventArgs>();
+		private static bool OnSyncTilePicking(TSPlayer player, MemoryStream data, byte playerIndex, short tileX, short tileY, byte tileDamage)
+		{
+			if (SyncTilePicking == null)
+				return false;
+
+			var args = new SyncTilePickingEventArgs
+			{
+				Player = player,
+				Data = data,
+				PlayerIndex = playerIndex,
+				TileX = tileX,
+				TileY = tileY,
+				TileDamage = tileDamage
+			};
+			SyncTilePicking.Invoke(null, args);
+			return args.Handled;
+		}
+
 
 		/// <summary>
 		/// For use in a FishOutNPC event.
@@ -3671,6 +3717,34 @@ namespace TShockAPI
 			return false;
 		}
 
+		private static bool HandleSyncTilePicking(GetDataHandlerArgs args)
+		{
+			byte playerIndex = args.Data.ReadInt8();
+			short tileX = args.Data.ReadInt16();
+			short tileY = args.Data.ReadInt16();
+			byte damage = args.Data.ReadInt8();
+
+			if (OnSyncTilePicking(args.Player, args.Data, playerIndex, tileX, tileY, damage))
+				return true;
+
+			return false;
+		}
+
+		private static bool HandleSyncRevengeMarker(GetDataHandlerArgs args)
+		{
+			int uniqueID = args.Data.ReadInt32();
+			Vector2 location = args.Data.ReadVector2();
+			int netId = args.Data.ReadInt32();
+			float npcHpPercent = args.Data.ReadSingle();
+			int npcTypeAgainstDiscouragement = args.Data.ReadInt32(); //tfw the argument is Type Against Discouragement
+			int npcAiStyleAgainstDiscouragement = args.Data.ReadInt32(); //see ^
+			int coinsValue = args.Data.ReadInt32();
+			float baseValue = args.Data.ReadSingle();
+			bool spawnedFromStatus = args.Data.ReadBoolean();
+
+			return false;
+		}
+
 		private static bool HandleFishOutNPC(GetDataHandlerArgs args)
 		{
 			ushort tileX = args.Data.ReadUInt16();
@@ -3693,21 +3767,6 @@ namespace TShockAPI
 
 			if (OnFoodPlatterTryPlacing(args.Player, args.Data, tileX, tileY, itemID, prefix, stack))
 				return true;
-
-			return false;
-		}
-
-		private static bool HandleSyncRevengeMarker(GetDataHandlerArgs args)
-		{
-			int uniqueID = args.Data.ReadInt32();
-			Vector2 location = args.Data.ReadVector2();
-			int netId = args.Data.ReadInt32();
-			float npcHpPercent = args.Data.ReadSingle();
-			int npcTypeAgainstDiscouragement = args.Data.ReadInt32(); //tfw the argument is Type Against Discouragement
-			int npcAiStyleAgainstDiscouragement = args.Data.ReadInt32(); //see ^
-			int coinsValue = args.Data.ReadInt32();
-			float baseValue = args.Data.ReadSingle();
-			bool spawnedFromStatus = args.Data.ReadBoolean();
 
 			return false;
 		}
