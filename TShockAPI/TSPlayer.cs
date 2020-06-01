@@ -1267,49 +1267,13 @@ namespace TShockAPI
 		/// <param name="x">The x coordinate to send.</param>
 		/// <param name="y">The y coordinate to send.</param>
 		/// <param name="size">The size square set of tiles to send.</param>
-		/// <returns>Status if the tile square was sent successfully (i.e. no exceptions).</returns>
+		/// <returns>true if the tile square was sent successfully, else false</returns>
 		public virtual bool SendTileSquare(int x, int y, int size = 10)
 		{
 			try
 			{
-				int num = (size - 1) / 2;
-				int m_x = 0;
-				int m_y = 0;
-
-				if (x - num < 0)
-				{
-					m_x = 0;
-				}
-				else
-				{
-					m_x = x - num;
-				}
-
-				if (y - num < 0)
-				{
-					m_y = 0;
-				}
-				else
-				{
-					m_y = y - num;
-				}
-
-				if (m_x + size > Main.maxTilesX)
-				{
-					m_x = Main.maxTilesX - size;
-				}
-
-				if (m_y + size > Main.maxTilesY)
-				{
-					m_y = Main.maxTilesY - size;
-				}
-
-				SendData(PacketTypes.TileSendSquare, "", size, m_x, m_y);
+				SendData(PacketTypes.TileSendSquare, "", size, x, y);
 				return true;
-			}
-			catch (IndexOutOfRangeException)
-			{
-				// This is expected if square exceeds array.
 			}
 			catch (Exception ex)
 			{

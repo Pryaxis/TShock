@@ -13,8 +13,14 @@ using TShockAPI.Net;
 
 namespace TShockAPI.Handlers
 {
+	/// <summary>
+	/// Provides processors and handling for Tile Square packets
+	/// </summary>
 	public class SendTileSquareHandler
 	{
+		/// <summary>
+		/// Maps grass-type blocks to flowers that can be grown on them with flower boots
+		/// </summary>
 		Dictionary<ushort, List<ushort>> _grassToPlantMap = new Dictionary<ushort, List<ushort>>
 		{
 			{ TileID.Grass, new List<ushort>            { TileID.Plants,         TileID.Plants2 } },
@@ -22,6 +28,9 @@ namespace TShockAPI.Handlers
 			{ TileID.JungleGrass, new List<ushort>      { TileID.JunglePlants,   TileID.JunglePlants2 } }
 		};
 
+		/// <summary>
+		/// Item IDs that can spawn flowers while you walk
+		/// </summary>
 		List<int> _flowerBootItems = new List<int>
 		{
 			ItemID.FlowerBoots,
@@ -41,11 +50,11 @@ namespace TShockAPI.Handlers
 		};
 
 		/// <summary>
-		/// Updates a single tile
+		/// Syncs a single tile on the server with a tile from the tile square packet
 		/// </summary>
-		/// <param name="tile"></param>
-		/// <param name="newTile"></param>
-		public void UpdateTile(ITile tile, NetTile newTile)
+		/// <param name="tile">The tile to update</param>
+		/// <param name="newTile">The NetTile containing new tile properties</param>
+		public static void UpdateTile(ITile tile, NetTile newTile)
 		{
 			tile.active(newTile.Active);
 
@@ -110,22 +119,23 @@ namespace TShockAPI.Handlers
 		/// <summary>
 		///  Determines if a Tile Square for flower-growing boots should be accepted or not
 		/// </summary>
-		/// <param name="realx"></param>
-		/// <param name="realy"></param>
-		/// <param name="newTile"></param>
-		/// <param name="args"></param>
-		/// <returns></returns>
+		/// <param name="realx">The tile x position of the tile square packet - this is where the flowers are intending to grow</param>
+		/// <param name="realy">The tile y position of the tile square packet - this is where the flowers are intending to grow</param>
+		/// <param name="newTile">The NetTile containing information about the flowers that are being grown</param>
+		/// <param name="args">SendTileSquareEventArgs containing event information</param>
 		internal void HandleFlowerBoots(int realx, int realy, NetTile newTile, GetDataHandlers.SendTileSquareEventArgs args)
 		{
 			// We need to get the tile below the tile square to determine what grass types are allowed
 			if (!WorldGen.InWorld(realx, realy + 1))
 			{
+				// If the tile below the tile square isn't valid, we return here and don't update the server tile state
 				return;
 			}
 
 			ITile tile = Main.tile[realx, realy + 1];
 			if (!_grassToPlantMap.TryGetValue(tile.type, out List<ushort> plantTiles) && !plantTiles.Contains(newTile.Type))
 			{
+				// If the tile below the tile square isn't a valid plant tile (eg grass) then we don't update the server tile state
 				return;
 			}
 
@@ -133,10 +143,10 @@ namespace TShockAPI.Handlers
 		}
 
 		/// <summary>
-		/// 
+		/// Updates a single tile on the server if it is a valid conversion from one tile or wall type to another (eg stone -> corrupt stone)
 		/// </summary>
-		/// <param name="tile"></param>
-		/// <param name="newTile"></param>
+		/// <param name="tile">The tile to update</param>
+		/// <param name="newTile">The NetTile containing new tile properties</param>
 		internal void HandleConversionSpreads(ITile tile, NetTile newTile)
 		{
 			// Update if the existing tile or wall is convertible and the new tile or wall is a valid conversion
@@ -167,8 +177,18 @@ namespace TShockAPI.Handlers
 			}
 		}
 
+		/// <summary>
+		/// Processes a single tile from the tile square packet
+		/// </summary>
+		/// <param name="realx">X position at the top left of the object</param>
+		/// <param name="realy">Y position at the top left of the object</param>
+		/// <param name="newTile">The NetTile containing new tile properties</param>
+		/// <param name="squareSize">The size of the tile square being received</param>
+		/// <param name="args">SendTileSquareEventArgs containing event information</param>
 		internal void ProcessSingleTile(int realx, int realy, NetTile newTile, int squareSize, GetDataHandlers.SendTileSquareEventArgs args)
 		{
+			// Some boots allow growing flowers on grass. This process sends a 1x1 tile square to grow the flowers
+			// The square size must be 1 and the player must have an accessory that allows growing flowers in order for this square to be valid
 			if (squareSize == 1 && args.Player.Accessories.Any(a => a != null && _flowerBootItems.Contains(a.type)))
 			{
 				HandleFlowerBoots(realx, realy, newTile, args);
@@ -188,17 +208,19 @@ namespace TShockAPI.Handlers
 			}
 
 			HandleConversionSpreads(Main.tile[realx, realy], newTile);
+
+			// All other single tile updates should not be processed.
 		}
 
 		/// <summary>
-		/// 
+		/// Processes a tile object consisting of multiple tiles from the tile square packet
 		/// </summary>
-		/// <param name="tileType"></param>
-		/// <param name="data"></param>
-		/// <param name="newTiles"></param>
-		/// <param name="realx"></param>
-		/// <param name="realy"></param>
-		/// <param name="args"></param>
+		/// <param name="tileType">The tile type the object is comprised of</param>
+		/// <param name="data">TileObjectData describing the tile object</param>
+		/// <param name="newTiles">2D array of NetTile containing the new tiles properties</param>
+		/// <param name="realx">X position at the top left of the object</param>
+		/// <param name="realy">Y position at the top left of the object</param>
+		/// <param name="args">SendTileSquareEventArgs containing event information</param>
 		public void ProcessTileObject(int tileType, TileObjectData data, NetTile[,] newTiles, int realx, int realy, GetDataHandlers.SendTileSquareEventArgs args)
 		{
 			// As long as the player has permission to build, we should allow a tile object to be placed
@@ -209,64 +231,20 @@ namespace TShockAPI.Handlers
 				return;
 			}
 
-			if (tileType == TileID.ClosedDoor || tileType == TileID.OpenDoor)
-			{
-				ProcessDoor(realx, realy, newTiles, args);
-				return;
-			}
-
 			for (int x = 0; x < data.Width; x++)
 			{
 				for (int y = 0; y < data.Height; y++)
 				{
-					// Update all tiles in the tile object
+					// Update all tiles in the tile object. These will be synced back to the player later
 					UpdateTile(Main.tile[realx + x, realy + y], newTiles[x, y]);
 				}
 			}
 
-			args.Handled = false;
-		}
-
-		private void ProcessDoor(int realx, int realy, NetTile[,] newTiles, GetDataHandlers.SendTileSquareEventArgs args)
-		{
-			//If we handle this then doors disappear... We only send back the tile square if args.Handled == true, so somewhere we're either breaking or not implementing the tile square properly
-			///Calling UpdateTile on all tiles in newTiles doesn't help either.
-			//Need to figure out what's differing from Vanilla in this regard
-			args.Handled = false;
-			TShock.Log.ConsoleDebug("Bouncer / SendTileSquare processing door from {0}", args.Player.Name);
-		}
-
-		static List<char> symbols = new List<char> { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y' };
-		void VisualiseTileSquare(NetTile[,] tiles, int size)
-		{
-			Dictionary<int, char> tileToCharMap = new Dictionary<int, char>();
-			int lastCharIndex = 0;
-
-			StringBuilder sb = new StringBuilder("\n");
-
-			for (int y = 0; y < size; y++)
+			// Tile entities have special placements that we should let the game deal with
+			if (_tileEntityIdToTileIdMap.ContainsKey(tileType))
 			{
-				for (int x = 0; x < size; x++)
-				{
-					NetTile tile = tiles[x, y];
-					char symbol;
-					if (tileToCharMap.ContainsKey(tile.Type))
-					{
-						symbol = tileToCharMap[tile.Type];
-					}
-					else
-					{
-						symbol = symbols[lastCharIndex++];
-						tileToCharMap.Add(tile.Type, symbol);
-					}
-
-					sb.Append(symbol);
-				}
-				sb.Append("\n");
+				TileEntity.PlaceEntityNet(realx, realy, _tileEntityIdToTileIdMap[tileType]);
 			}
-			sb.Append("Key: " + String.Join(", ", tileToCharMap.Select(kvp => $"{kvp.Value} = {kvp.Key}")));
-
-			TShock.Log.ConsoleDebug(sb.ToString());
 		}
 
 		/// <summary>
@@ -290,8 +268,7 @@ namespace TShockAPI.Handlers
 				return;
 			}
 
-			// From White:
-			// IIRC it's because 5 means a 5x5 square which is normal for a tile square, and anything bigger is a non-vanilla tile modification attempt
+			// 5x5 is the largest vanilla-sized tile square. Anything larger than this should not be seen in the vanilla game and should be rejected
 			if (size > 5)
 			{
 				TShock.Log.ConsoleDebug("Bouncer / SendTileSquare rejected from non-vanilla tilemod from {0}", args.Player.Name);
@@ -322,24 +299,22 @@ namespace TShockAPI.Handlers
 				}
 			}
 
-			VisualiseTileSquare(tiles, size);
+			Debug.VisualiseTileSetDiff(tileX, tileY, size, size, tiles);
 
 			for (int x = 0; x < size; x++)
 			{
 				for (int y = 0; y < size; y++)
 				{
-					TShock.Log.ConsoleDebug("Bouncer / SendTileSquare tile ({0}, {1})", x, y);
-
-					// Do not handle already processed tiles
+					// Do not process already processed tiles
 					if (processed[x, y])
 					{
-						TShock.Log.ConsoleDebug("Bouncer / SendTileSquare skipping processed tile from {0}", args.Player.Name);
 						continue;
 					}
 
 					int realx = tileX + x;
 					int realy = tileY + y;
 
+					// Do not process tiles outside of the world boundaries
 					if ((realx < 0 || realx >= Main.maxTilesX)
 						|| (realy < 0 || realy > Main.maxTilesY))
 					{
@@ -347,6 +322,7 @@ namespace TShockAPI.Handlers
 						continue;
 					}
 
+					// Do not process tiles that the player cannot update
 					if (!args.Player.HasBuildPermission(realx, realy) ||
 						!args.Player.IsInRange(realx, realy))
 					{
@@ -356,6 +332,8 @@ namespace TShockAPI.Handlers
 					NetTile newTile = tiles[x, y];
 					TileObjectData data;
 
+					// If the new tile has an associated TileObjectData object, we take the tile and the surrounding tiles that make up the tile object
+					// and process them as a tile object
 					if (newTile.Type < TileObjectData._data.Count && (data = TileObjectData._data[newTile.Type]) != null)
 					{
 						NetTile[,] newTiles = new NetTile[data.Width, data.Height];
@@ -368,121 +346,100 @@ namespace TShockAPI.Handlers
 							}
 						}
 
-						TShock.Log.ConsoleDebug("Bouncer / SendTileSquare processing tile object ({1}) from {0}", args.Player.Name, newTile.Type);
 						ProcessTileObject(newTile.Type, data, newTiles, realx, realy, args);
 						continue;
 					}
 
-					if (Main.tile[realx, realy].type == TileID.ClosedDoor || Main.tile[realx, realy].type == TileID.OpenDoor)
-					{
-						NetTile[,] newTiles = new NetTile[2, 3];
-						for (int i = 0; i < 2; i++)
-						{
-							for (int j = 0; j < 3; j++)
-							{
-								newTiles[i, j] = tiles[x + i, y + j];
-								processed[x + i, y + j] = true;
-							}
-						}
-
-						ProcessDoor(realx, realy, newTiles, args);
-						continue;
-					}
-
-					TShock.Log.ConsoleDebug("Bouncer / SendTileSquare processing single tile ({1}->{2}) from {0}", args.Player.Name, Main.tile[realx, realy].type, newTile.Type);
+					// If the new tile does not have an associated tile object, process it as an individual tile
 					ProcessSingleTile(realx, realy, newTile, size, args);
 					processed[x, y] = true;
 				}
 			}
 
+			// Uncommenting this function will send the same tile square 10 blocks above you for visualisation. This will modify your world and overwrite existing blocks.
+			// Use in test worlds only.
+			//Debug.DisplayTileSetInGame(tileX, tileY - 10, size, size, tiles, args.Player);
+
+			// If we are handling this event then we have updated the server's Main.tile state the way we want it.
+			// At this point we should send our state back to the client so they remain in sync with the server
 			if (args.Handled == true)
 			{
 				args.Player.SendTileSquare(tileX, tileY, size);
 				TShock.Log.ConsoleDebug("Bouncer / SendTileSquare reimplemented from spaghetti from {0}", args.Player.Name);
 			}
 		}
-	}
 
-	/*
-		bool changed = false;
-		for (int x = 0; x < size; x++)
+
+		class Debug
 		{
-			int realx = tileX + x;
-			if (realx < 0 || realx >= Main.maxTilesX)
-				continue;
-
-			for (int y = 0; y < size; y++)
+			/// <summary>
+			/// Displays the difference in IDs between existing tiles and a set of NetTiles to the console
+			/// </summary>
+			/// <param name="tileX">X position at the top left of the square</param>
+			/// <param name="tileY">Y position at the top left of the square</param>
+			/// <param name="width">Width of the NetTile set</param>
+			/// <param name="height">Height of the NetTile set</param>
+			/// <param name="newTiles">New tiles to be visualised</param>
+			public static void VisualiseTileSetDiff(int tileX, int tileY, int width, int height, NetTile[,] newTiles)
 			{
-				int realy = tileY + y;
-				if (realy < 0 || realy >= Main.maxTilesY)
-					continue;
-
-				var tile = Main.tile[realx, realy];
-				var newtile = tiles[x, y];
-
-				// Junction Box
-				if (tile.type == TileID.WirePipe)
+				if (TShock.Config.DebugLogs)
 				{
-					args.Handled = false;
-					return;
-				}
-
-				if (tile.active() && newtile.Active && tile.type != newtile.Type)
-				{
-					// Grass <-> Grass
-					if ((TileID.Sets.Conversion.Grass[tile.type] && TileID.Sets.Conversion.Grass[newtile.Type]) ||
-						// Dirt <-> Dirt
-						((tile.type == 0 || tile.type == 59) &&
-						(newtile.Type == 0 || newtile.Type == 59)) ||
-						// Ice <-> Ice
-						(TileID.Sets.Conversion.Ice[tile.type] && TileID.Sets.Conversion.Ice[newtile.Type]) ||
-						// Stone <-> Stone
-						((TileID.Sets.Conversion.Stone[tile.type] || Main.tileMoss[tile.type]) &&
-						(TileID.Sets.Conversion.Stone[newtile.Type] || Main.tileMoss[newtile.Type])) ||
-						// Sand <-> Sand
-						(TileID.Sets.Conversion.Sand[tile.type] && TileID.Sets.Conversion.Sand[newtile.Type]) ||
-						// Sandstone <-> Sandstone
-						(TileID.Sets.Conversion.Sandstone[tile.type] && TileID.Sets.Conversion.Sandstone[newtile.Type]) ||
-						// Hardened Sand <-> Hardened Sand
-						(TileID.Sets.Conversion.HardenedSand[tile.type] && TileID.Sets.Conversion.HardenedSand[newtile.Type]))
+					char pad = '0';
+					for (int y = 0; y < height; y++)
 					{
-						Main.tile[realx, realy].type = newtile.Type;
-						changed = true;
+						int realY = y + tileY;
+						for (int x = 0; x < width; x++)
+						{
+							int realX = x + tileX;
+							ushort type = Main.tile[realX, realY].type;
+							string type2 = type.ToString();
+							Console.Write((type2.ToString()).PadLeft(3, pad) + " ");
+						}
+						Console.Write(" -> ");
+						for (int x = 0; x < width; x++)
+						{
+							int realX = x + tileX;
+							if (newTiles[x, y].Active)
+							{
+								ushort type = newTiles[x, y].Type;
+								string type2 = type.ToString();
+								Console.Write((type2.ToString()).PadLeft(3, pad) + " ");
+							}
+							else
+							{
+								ushort type = Main.tile[realX, realY].type;
+								string type2 = type.ToString();
+								Console.Write((type2.ToString()).PadLeft(3, pad) + " ");
+							}
+						}
+						Console.Write("\n");
 					}
 				}
+			}
 
-				// Stone wall <-> Stone wall
-				if (((tile.wall == 1 || tile.wall == 3 || tile.wall == 28 || tile.wall == 83) &&
-					(newtile.Wall == 1 || newtile.Wall == 3 || newtile.Wall == 28 || newtile.Wall == 83)) ||
-					// Leaf wall <-> Leaf wall
-					(((tile.wall >= 63 && tile.wall <= 70) || tile.wall == 81) &&
-					((newtile.Wall >= 63 && newtile.Wall <= 70) || newtile.Wall == 81)))
+			/// <summary>
+			/// Sends a tile square at the given (tileX, tileY) coordinate, using the given set of NetTiles information to update the tile square
+			/// </summary>
+			/// <param name="tileX">X position at the top left of the square</param>
+			/// <param name="tileY">Y position at the top left of the square</param>
+			/// <param name="width">Width of the NetTile set</param>
+			/// <param name="height">Height of the NetTile set</param>
+			/// <param name="newTiles">New tiles to place in the square</param>
+			/// <param name="player">Player to send the debug display to</param>
+			public static void DisplayTileSetInGame(int tileX, int tileY, int width, int height, NetTile[,] newTiles, TSPlayer player)
+			{
+				for (int x = 0; x < width; x++)
 				{
-					Main.tile[realx, realy].wall = newtile.Wall;
-					changed = true;
+					for (int y = 0; y < height; y++)
+					{
+						UpdateTile(Main.tile[tileX + x, tileY + y], newTiles[x, y]);
+					}
+					//Add a line of dirt blocks at the bottom for safety
+					UpdateTile(Main.tile[tileX + x, tileY + height], new NetTile { Active = true, Type = 0 });
 				}
 
-				if ((tile.type == TileID.TrapdoorClosed && (newtile.Type == TileID.TrapdoorOpen || !newtile.Active)) ||
-					(tile.type == TileID.TrapdoorOpen && (newtile.Type == TileID.TrapdoorClosed || !newtile.Active)) ||
-					(!tile.active() && newtile.Active && (newtile.Type == TileID.TrapdoorOpen || newtile.Type == TileID.TrapdoorClosed)))
-				{
-					Main.tile[realx, realy].type = newtile.Type;
-					Main.tile[realx, realy].frameX = newtile.FrameX;
-					Main.tile[realx, realy].frameY = newtile.FrameY;
-					Main.tile[realx, realy].active(newtile.Active);
-					changed = true;
-				}
+				player.SendTileSquare(tileX, tileY, Math.Max(width, height) + 1);
 			}
 		}
-
-		if (changed)
-		{
-			TSPlayer.All.SendTileSquare(tileX, tileY, size + 1);
-			WorldGen.RangeFrame(tileX, tileY, tileX + size, tileY + size);
-		}
-		else
-		{
-			args.Player.SendTileSquare(tileX, tileY, size);
-		}
-	}*/
+	}
 }
