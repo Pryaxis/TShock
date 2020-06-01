@@ -36,15 +36,19 @@ namespace TShockAPI
 	/// <summary>Bouncer is the TShock anti-hack and anti-cheat system.</summary>
 	internal sealed class Bouncer
 	{
+		internal Handlers.SendTileSquareHandler STSHandler { get; set; }
+
 		/// <summary>Constructor call initializes Bouncer and related functionality.</summary>
 		/// <returns>A new Bouncer.</returns>
 		internal Bouncer()
 		{
+			STSHandler = new Handlers.SendTileSquareHandler();
+			GetDataHandlers.SendTileSquare += STSHandler.OnReceiveSendTileSquare;
+
 			// Setup hooks
 			GetDataHandlers.GetSection += OnGetSection;
 			GetDataHandlers.PlayerUpdate += OnPlayerUpdate;
 			GetDataHandlers.TileEdit += OnTileEdit;
-			GetDataHandlers.SendTileSquare += OnSendTileSquare;
 			GetDataHandlers.ItemDrop += OnItemDrop;
 			GetDataHandlers.NewProjectile += OnNewProjectile;
 			GetDataHandlers.NPCStrike += OnNPCStrike;
@@ -528,206 +532,6 @@ namespace TShockAPI
 				args.Handled = true;
 				return;
 			}
-		}
-
-		/// <summary>Bouncer's SendTileSquare hook halts large scope world destruction.</summary>
-		/// <param name="sender">The object that triggered the event.</param>
-		/// <param name="args">The packet arguments that the event has.</param>
-		internal void OnSendTileSquare(object sender, GetDataHandlers.SendTileSquareEventArgs args)
-		{
-			short size = args.Size;
-			int tileX = args.TileX;
-			int tileY = args.TileY;
-
-			if (args.Player.HasPermission(Permissions.allowclientsideworldedit))
-			{
-				TShock.Log.ConsoleDebug("Bouncer / SendTileSquare accepted clientside world edit from {0}", args.Player.Name);
-				args.Handled = false;
-				return;
-			}
-
-			// From White:
-			// IIRC it's because 5 means a 5x5 square which is normal for a tile square, and anything bigger is a non-vanilla tile modification attempt
-			if (size > 5)
-			{
-				TShock.Log.ConsoleDebug("Bouncer / SendTileSquare rejected from non-vanilla tilemod from {0}", args.Player.Name);
-				args.Handled = true;
-				return;
-			}
-
-			if (args.Player.IsBouncerThrottled())
-			{
-				TShock.Log.ConsoleDebug("Bouncer / SendTileSquare rejected from throttle from {0}", args.Player.Name);
-				args.Player.SendTileSquare(tileX, tileY, size);
-				args.Handled = true;
-				return;
-			}
-
-			if (args.Player.IsBeingDisabled())
-			{
-				TShock.Log.ConsoleDebug("Bouncer / SendTileSquare rejected from being disabled from {0}", args.Player.Name);
-				args.Player.SendTileSquare(tileX, tileY, size);
-				args.Handled = true;
-				return;
-			}
-
-			bool changed = false;
-			bool failed = false;
-			try
-			{
-				var tiles = new NetTile[size, size];
-				for (int x = 0; x < size; x++)
-				{
-					for (int y = 0; y < size; y++)
-					{
-						tiles[x, y] = new NetTile(args.Data);
-					}
-				}
-
-				for (int x = 0; x < size; x++)
-				{
-					int realx = tileX + x;
-					if (realx < 0 || realx >= Main.maxTilesX)
-						continue;
-
-					for (int y = 0; y < size; y++)
-					{
-						int realy = tileY + y;
-						if (realy < 0 || realy >= Main.maxTilesY)
-							continue;
-
-						var tile = Main.tile[realx, realy];
-						var newtile = tiles[x, y];
-						if (!args.Player.HasBuildPermission(realx, realy) ||
-							!args.Player.IsInRange(realx, realy))
-						{
-							continue;
-						}
-
-						// Fixes the Flower Boots not creating flowers issue
-						if (size == 1 && args.Player.Accessories.Any(i => i.active && i.netID == ItemID.FlowerBoots))
-						{
-							if (Main.tile[realx, realy + 1].type == TileID.Grass && (newtile.Type == TileID.Plants || newtile.Type == TileID.Plants2))
-							{
-								args.Handled = false;
-								return;
-							}
-
-							if (Main.tile[realx, realy + 1].type == TileID.HallowedGrass && (newtile.Type == TileID.HallowedPlants || newtile.Type == TileID.HallowedPlants2))
-							{
-								args.Handled = false;
-								return;
-							}
-
-							if (Main.tile[realx, realy + 1].type == TileID.JungleGrass && newtile.Type == TileID.JunglePlants2)
-							{
-								args.Handled = false;
-								return;
-							}
-						}
-
-						// Junction Box
-						if (tile.type == TileID.WirePipe)
-						{
-							args.Handled = false;
-							return;
-						}
-
-						// Orientable tiles
-						if (tile.type == newtile.Type && orientableTiles.Contains(tile.type))
-						{
-							Main.tile[realx, realy].frameX = newtile.FrameX;
-							Main.tile[realx, realy].frameY = newtile.FrameY;
-							changed = true;
-						}
-
-						// Landmine
-						if (tile.type == TileID.LandMine && !newtile.Active)
-						{
-							Main.tile[realx, realy].active(false);
-							changed = true;
-						}
-
-						// Tile entities: sensors, item frames, training dummies
-						// here it handles all tile entities listed in `TileEntityID`
-						if ((newtile.Type == TileID.LogicSensor ||
-							newtile.Type == TileID.ItemFrame ||
-							newtile.Type == TileID.TargetDummy) &&
-							!Main.tile[realx, realy].active())
-						{
-							Main.tile[realx, realy].type = newtile.Type;
-							Main.tile[realx, realy].frameX = newtile.FrameX;
-							Main.tile[realx, realy].frameY = newtile.FrameY;
-							Main.tile[realx, realy].active(true);
-							changed = true;
-						}
-
-						if (tile.active() && newtile.Active && tile.type != newtile.Type)
-						{
-							// Grass <-> Grass
-							if ((TileID.Sets.Conversion.Grass[tile.type] && TileID.Sets.Conversion.Grass[newtile.Type]) ||
-								// Dirt <-> Dirt
-								((tile.type == 0 || tile.type == 59) &&
-								(newtile.Type == 0 || newtile.Type == 59)) ||
-								// Ice <-> Ice
-								(TileID.Sets.Conversion.Ice[tile.type] && TileID.Sets.Conversion.Ice[newtile.Type]) ||
-								// Stone <-> Stone
-								((TileID.Sets.Conversion.Stone[tile.type] || Main.tileMoss[tile.type]) &&
-								(TileID.Sets.Conversion.Stone[newtile.Type] || Main.tileMoss[newtile.Type])) ||
-								// Sand <-> Sand
-								(TileID.Sets.Conversion.Sand[tile.type] && TileID.Sets.Conversion.Sand[newtile.Type]) ||
-								// Sandstone <-> Sandstone
-								(TileID.Sets.Conversion.Sandstone[tile.type] && TileID.Sets.Conversion.Sandstone[newtile.Type]) ||
-								// Hardened Sand <-> Hardened Sand
-								(TileID.Sets.Conversion.HardenedSand[tile.type] && TileID.Sets.Conversion.HardenedSand[newtile.Type]))
-							{
-								Main.tile[realx, realy].type = newtile.Type;
-								changed = true;
-							}
-						}
-
-						// Stone wall <-> Stone wall
-						if (((tile.wall == 1 || tile.wall == 3 || tile.wall == 28 || tile.wall == 83) &&
-							(newtile.Wall == 1 || newtile.Wall == 3 || newtile.Wall == 28 || newtile.Wall == 83)) ||
-							// Leaf wall <-> Leaf wall
-							(((tile.wall >= 63 && tile.wall <= 70) || tile.wall == 81) &&
-							((newtile.Wall >= 63 && newtile.Wall <= 70) || newtile.Wall == 81)))
-						{
-							Main.tile[realx, realy].wall = newtile.Wall;
-							changed = true;
-						}
-
-						if ((tile.type == TileID.TrapdoorClosed && (newtile.Type == TileID.TrapdoorOpen || !newtile.Active)) ||
-							(tile.type == TileID.TrapdoorOpen && (newtile.Type == TileID.TrapdoorClosed || !newtile.Active)) ||
-							(!tile.active() && newtile.Active && (newtile.Type == TileID.TrapdoorOpen || newtile.Type == TileID.TrapdoorClosed)))
-						{
-							Main.tile[realx, realy].type = newtile.Type;
-							Main.tile[realx, realy].frameX = newtile.FrameX;
-							Main.tile[realx, realy].frameY = newtile.FrameY;
-							Main.tile[realx, realy].active(newtile.Active);
-							changed = true;
-						}
-					}
-				}
-
-				if (changed)
-				{
-					TSPlayer.All.SendTileSquare(tileX, tileY, size + 1);
-					WorldGen.RangeFrame(tileX, tileY, tileX + size, tileY + size);
-				}
-				else
-				{
-					args.Player.SendTileSquare(tileX, tileY, size);
-				}
-			}
-			catch
-			{
-				args.Player.SendTileSquare(tileX, tileY, size);
-				failed = true;
-			}
-
-			TShock.Log.ConsoleDebug("Bouncer / SendTileSquare from {0} {1} {2}", args.Player.Name, changed, failed);
-			args.Handled = true;
 		}
 
 		/// <summary>Registered when items fall to the ground to prevent cheating.</summary>
@@ -2049,7 +1853,7 @@ namespace TShockAPI
 			short id = args.PlayerId;
 			PlayerDeathReason playerDeathReason = args.PlayerDeathReason;
 
-			if (damage > 20000) //Abnormal values have the potential to cause infinite loops in the server.
+			if (damage > 42000) //Abnormal values have the potential to cause infinite loops in the server.
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnKillMe rejected high damage from {0} {1}", args.Player.Name, damage);
 				args.Player.Kick("Failed to shade polygon normals.", true, true);
