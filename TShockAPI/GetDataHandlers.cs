@@ -151,9 +151,9 @@ namespace TShockAPI
 					{ PacketTypes.CrystalInvasionStart, HandleOldOnesArmy },
 					{ PacketTypes.PlayerHurtV2, HandlePlayerDamageV2 },
 					{ PacketTypes.PlayerDeathV2, HandlePlayerKillMeV2 },
+					{ PacketTypes.SyncRevengeMarker, HandleSyncRevengeMarker },
 					{ PacketTypes.FishOutNPC, HandleFishOutNPC },
-					{ PacketTypes.FoodPlatterTryPlacing, HandleFoodPlatterTryPlacing },
-					{ PacketTypes.SyncRevengeMarker, HandleSyncRevengeMarker }
+					{ PacketTypes.FoodPlatterTryPlacing, HandleFoodPlatterTryPlacing }
 				};
 		}
 
@@ -3671,6 +3671,21 @@ namespace TShockAPI
 			return false;
 		}
 
+		private static bool HandleSyncRevengeMarker(GetDataHandlerArgs args)
+		{
+			int uniqueID = args.Data.ReadInt32();
+			Vector2 location = args.Data.ReadVector2();
+			int netId = args.Data.ReadInt32();
+			float npcHpPercent = args.Data.ReadSingle();
+			int npcTypeAgainstDiscouragement = args.Data.ReadInt32(); //tfw the argument is Type Against Discouragement
+			int npcAiStyleAgainstDiscouragement = args.Data.ReadInt32(); //see ^
+			int coinsValue = args.Data.ReadInt32();
+			float baseValue = args.Data.ReadSingle();
+			bool spawnedFromStatus = args.Data.ReadBoolean();
+
+			return false;
+		}
+
 		private static bool HandleFishOutNPC(GetDataHandlerArgs args)
 		{
 			ushort tileX = args.Data.ReadUInt16();
@@ -3693,21 +3708,6 @@ namespace TShockAPI
 
 			if (OnFoodPlatterTryPlacing(args.Player, args.Data, tileX, tileY, itemID, prefix, stack))
 				return true;
-
-			return false;
-		}
-
-		private static bool HandleSyncRevengeMarker(GetDataHandlerArgs args)
-		{
-			int uniqueID = args.Data.ReadInt32();
-			Vector2 location = args.Data.ReadVector2();
-			int netId = args.Data.ReadInt32();
-			float npcHpPercent = args.Data.ReadSingle();
-			int npcTypeAgainstDiscouragement = args.Data.ReadInt32(); //tfw the argument is Type Against Discouragement
-			int npcAiStyleAgainstDiscouragement = args.Data.ReadInt32(); //see ^
-			int coinsValue = args.Data.ReadInt32();
-			float baseValue = args.Data.ReadSingle();
-			bool spawnedFromStatus = args.Data.ReadBoolean();
 
 			return false;
 		}
