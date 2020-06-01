@@ -1344,7 +1344,7 @@ namespace TShockAPI
 				if (npc.townNPC && npc.netID != NPCID.Guide && npc.netID != NPCID.Clothier)
 				{
 					if (type != BuffID.Lovestruck && type != BuffID.Stinky && type != BuffID.DryadsWard &&
-						type != BuffID.Wet && type != BuffID.Slimed)
+						type != BuffID.Wet && type != BuffID.Slimed && type != BuffID.GelBalloonBuff)
 					{
 						detectedNPCBuffTimeCheat = true;
 					}
@@ -1840,7 +1840,7 @@ namespace TShockAPI
 			short id = args.PlayerId;
 			PlayerDeathReason playerDeathReason = args.PlayerDeathReason;
 
-			if (damage > 20000) //Abnormal values have the potential to cause infinite loops in the server.
+			if (damage > 42000) //Abnormal values have the potential to cause infinite loops in the server.
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnKillMe rejected high damage from {0} {1}", args.Player.Name, damage);
 				args.Player.Kick("Failed to shade polygon normals.", true, true);
@@ -1876,7 +1876,7 @@ namespace TShockAPI
 		/// <param name="args"></param>
 		internal void OnFoodPlatterTryPlacing(object sender, GetDataHandlers.FoodPlatterTryPlacingEventArgs args)
 		{
-			if (args.Player.ItemInHand.type != args.ItemID)
+			if ((args.Player.SelectedItem.type != args.ItemID && args.Player.ItemInHand.type != args.ItemID))
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnFoodPlatterTryPlacing rejected item not placed by hand from {0}", args.Player.Name);
 				args.Player.SendTileSquare(args.TileX, args.TileY, 1);
@@ -1905,12 +1905,9 @@ namespace TShockAPI
 				return;
 			}
 
-			if (!args.Player.IsInRange(args.TileX, args.TileY))
+			if (!args.Player.IsInRange(args.TileX, args.TileY, range: 13)) // To my knowledge, max legit tile reach with accessories.
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnFoodPlatterTryPlacing rejected range checks from {0}", args.Player.Name);
-				Item item = new Item();
-				item.netDefaults(args.ItemID);
-				args.Player.GiveItemCheck(args.ItemID, item.Name, args.Stack, args.Prefix);
 				args.Player.SendTileSquare(args.TileX, args.TileY, 1);
 				args.Handled = true;
 				return;
