@@ -2382,7 +2382,7 @@ namespace TShockAPI
 			{
 				case "*":
 				case "all":
-					int[] npcIds = { 4, 13, 35, 50, 125, 126, 127, 134, 222, 245, 262, 266, 370, 398, 636, 657 };
+					int[] npcIds = { 4, 13, 35, 50, 125, 126, 127, 134, 222, 245, 262, 266, 370, 398, 439, 636, 657 };
 					TSPlayer.Server.SetTime(false, 0.0);
 					foreach (int i in npcIds)
 					{
@@ -2393,6 +2393,7 @@ namespace TShockAPI
 					return;
 				case "brain":
 				case "brain of cthulhu":
+				case "boc":
 					npc.SetDefaults(266);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
 					TSPlayer.All.SendSuccessMessage("{0} has spawned the Brain of Cthulhu {1} time(s).", args.Player.Name, amount);
@@ -2412,12 +2413,14 @@ namespace TShockAPI
 					return;
 				case "eater":
 				case "eater of worlds":
+				case "eow":
 					npc.SetDefaults(13);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
 					TSPlayer.All.SendSuccessMessage("{0} has spawned the Eater of Worlds {1} time(s).", args.Player.Name, amount);
 					return;
 				case "eye":
 				case "eye of cthulhu":
+				case "eoc":
 					npc.SetDefaults(4);
 					TSPlayer.Server.SetTime(false, 0.0);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
@@ -2430,6 +2433,7 @@ namespace TShockAPI
 					return;
 				case "king":
 				case "king slime":
+				case "ks":
 					npc.SetDefaults(50);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
 					TSPlayer.All.SendSuccessMessage("{0} has spawned King Slime {1} time(s).", args.Player.Name, amount);
@@ -2447,6 +2451,7 @@ namespace TShockAPI
 					TSPlayer.All.SendSuccessMessage("{0} has spawned Skeletron Prime {1} time(s).", args.Player.Name, amount);
 					return;
 				case "queen bee":
+				case "qb":
 					npc.SetDefaults(222);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
 					TSPlayer.All.SendSuccessMessage("{0} has spawned Queen Bee {1} time(s).", args.Player.Name, amount);
@@ -2482,20 +2487,94 @@ namespace TShockAPI
 					return;
 				case "moon":
 				case "moon lord":
+				case "ml":
 					npc.SetDefaults(398);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
 					TSPlayer.All.SendSuccessMessage("{0} has spawned the Moon Lord {1} time(s).", args.Player.Name, amount);
 					return;
 				case "empress":
 				case "empress of light":
+				case "eol":
 					npc.SetDefaults(636);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
 					TSPlayer.All.SendSuccessMessage("{0} has spawned the Empress of Light {1} time(s).", args.Player.Name, amount);
 					return;
 				case "queen slime":
+				case "qs":
 					npc.SetDefaults(657);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
-					TSPlayer.All.SendSuccessMessage("{0} has spawned the Queen Slime {1} time(s).", args.Player.Name, amount);
+					TSPlayer.All.SendSuccessMessage("{0} has spawned Queen Slime {1} time(s).", args.Player.Name, amount);
+					return;
+				case "lunatic":
+				case "lunatic cultist":
+				case "cultist":
+				case "lc":
+					npc.SetDefaults(439);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.All.SendSuccessMessage("{0} has spawned the Lunatic Cultist {1} time(s).", args.Player.Name, amount);
+					return;
+				case "betsy":
+					npc.SetDefaults(551);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.All.SendSuccessMessage("{0} has spawned Betsy {1} time(s).", args.Player.Name, amount);
+					return;
+				case "flying dutchman":
+				case "flying":
+				case "dutchman":
+					npc.SetDefaults(491);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.All.SendSuccessMessage("{0} has spawned the Flying Dutchman {1} time(s).", args.Player.Name, amount);
+					return;
+				case "mourning wood":
+					npc.SetDefaults(325);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.All.SendSuccessMessage("{0} has spawned Mourning Wood {1} time(s).", args.Player.Name, amount);
+					return;
+				case "pumpking":
+					npc.SetDefaults(327);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.All.SendSuccessMessage("{0} has spawned Pumpking {1} time(s).", args.Player.Name, amount);
+					return;
+				case "everscream":
+					npc.SetDefaults(344);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.All.SendSuccessMessage("{0} has spawned Everscream {1} time(s).", args.Player.Name, amount);
+					return;
+				case "santa-nk1":
+				case "santa":
+					npc.SetDefaults(346);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.All.SendSuccessMessage("{0} has spawned Santa-NK1 {1} time(s).", args.Player.Name, amount);
+					return;
+				case "ice queen":
+					npc.SetDefaults(345);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.All.SendSuccessMessage("{0} has spawned the Ice Queen {1} time(s).", args.Player.Name, amount);
+					return;
+				case "martian saucer":
+					npc.SetDefaults(392);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.All.SendSuccessMessage("{0} has spawned the Martian Saucer {1} time(s).", args.Player.Name, amount);
+					return;
+				case "solar pillar":
+					npc.SetDefaults(517);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.All.SendSuccessMessage("{0} has spawned the Solar Pillar {1} time(s).", args.Player.Name, amount);
+					return;
+				case "nebula pillar": 
+					npc.SetDefaults(507);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.All.SendSuccessMessage("{0} has spawned the Nebula Pillar {1} time(s).", args.Player.Name, amount);
+					return;
+				case "vortex pillar":
+					npc.SetDefaults(422);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.All.SendSuccessMessage("{0} has spawned the Vortex Pillar {1} time(s).", args.Player.Name, amount);
+					return;
+				case "stardust pillar":
+					npc.SetDefaults(493);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
+					TSPlayer.All.SendSuccessMessage("{0} has spawned the Stardust Pillar {1} time(s).", args.Player.Name, amount);
 					return;
 				default:
 					args.Player.SendErrorMessage("Invalid boss type!");

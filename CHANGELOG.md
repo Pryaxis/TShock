@@ -2,7 +2,14 @@
 
 This is the rolling changelog for TShock for Terraria. Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
 
-## Upcoming Release
+## Upcoming release
+* Fix all rope coils. (@Olink)
+* Fixed a longstanding issue with SendTileSquare that could result in desyncs and visual errors. (@QuiCM)
+* Fixed placement issues with Item Frames, Teleportation Pylons, etc. (@QuiCM)
+* Doors are good now for real probably (@QuiCM, @Hakusaro, @Olink)
+* Bump default max damage received cap to 42,000 to accommodate the Empress of Light's instant kill death amount. (@hakusaro, @moisterrific, @Irethia, @Ayrawei)
+
+## TShock 4.4.0 (Pre-release 9)
 * Fixed pet licenses. (@Olink)
 * Added initial support for Journey mode in SSC worlds. (@Olink)
 * Made TShock database MySQL 8 compatible by escaping column names in our IQueryBuilder code. (Name `Groups` is a reserved element in this version, which is used in our `Region` table.) (@Patrikkk)
@@ -14,7 +21,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * Thank you again to @fjfnaranjo for supplying a [detailed feature request](https://github.com/Pryaxis/TShock/issues/1914) explaining precisely why this option should be available. Without this, we would have had no context as to why this feature was useful or important. Thank you, @fjfnaranjo!
   * This change was implemented by (@QuiCM, @hakusaro).
 * Updated Bouncer to include Sparkle Slime debuff that can be applied to town NPCs. (@moisterrific)
-* Updated `/spawnboss` command to include Empress of Light and Queen Slime. (@moisterrific)
+* Updated `/spawnboss` command to include Empress of Light, Queen Slime, and other additional bosses that have a health bar. (@moisterrific)
 * Added journey mode permissions to owner group by default. (@moisterrific)
 * Fixed kick on hardcore death / kick on mediumcore death / ban on either from taking action against journey mode players. (@hakusaro)
 * Attempted to fix the problem with the magic mirror spawn problems. You should be able to remove your spawn point in SSC by right clicking on a bed now. (@hakusaro, @AxeelAnder)
@@ -28,6 +35,8 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * The default group that gets this permission is `Guest` for the time being.
   * To add this command to your guest group, give them `tshock.synclocalarea`, with `/group addperm guest tshock.synclocalarea`.
   * This command may be removed at any time in the future (and will likely be removed when send tile square handling is fixed).
+* Add FishOutNPC event handler, which is called whenever a player fishes out an NPC using a fishing rod. Added antihack to Bouncer, to prevent unathorized and invalid mob spawning, by checking player action, NPC IDs and range. (@Patrikkk, @moisterrific)
+* Fixed smart door automatic door desync and deletion issue. (@hakusaro)
 
 ## TShock 4.4.0 (Pre-release 8)
 * Update for OTAPI 2.0.0.36 and Terraria 1.4.0.4. (@hakusaro, @Patrikkk, @DeathCradle)
