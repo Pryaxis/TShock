@@ -3,7 +3,9 @@
 This is the rolling changelog for TShock for Terraria. Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
 
 ## Upcoming release
-* Your change goes here!
+* Fixed a longstanding issue with SendTileSquare that could result in desyncs and visual errors (@QuiCM)
+* Fixed placement issues with Item Frames, Teleportation Pylons, etc (@QuiCM)
+* Doors are good now for real probably (@QuiCM, @Hakusaro, @Olink)
 
 ## TShock 4.4.0 (Pre-release 9)
 * Fixed pet licenses. (@Olink)
@@ -33,6 +35,8 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * This command may be removed at any time in the future (and will likely be removed when send tile square handling is fixed).
 * Fixed smart door automatic door desync and deletion issue. (@hakusaro)
 * Bump default max damage received cap to 42,000 to accommodate the Empress of Light's instant kill death amount. (@hakusaro, @moisterrific, @Irethia, @Ayrawei)
+
+
 
 ## TShock 4.4.0 (Pre-release 8)
 * Update for OTAPI 2.0.0.36 and Terraria 1.4.0.4. (@hakusaro, @Patrikkk, @DeathCradle)
