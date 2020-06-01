@@ -388,7 +388,7 @@ namespace TShockAPI.Handlers
 
 			// Uncommenting this function will send the same tile square 10 blocks above you for visualisation. This will modify your world and overwrite existing blocks.
 			// Use in test worlds only.
-			Debug.DisplayTileSetInGame(tileX, tileY - 10, size, size, tiles, args.Player);
+			//Debug.DisplayTileSetInGame(tileX, tileY - 10, size, size, tiles, args.Player);
 			Debug.VisualiseTileSetDiff(tileX, tileY, size, size, tiles);
 
 			// If we are handling this event then we have updated the server's Main.tile state the way we want it.
