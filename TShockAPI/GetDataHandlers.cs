@@ -151,6 +151,7 @@ namespace TShockAPI
 					{ PacketTypes.CrystalInvasionStart, HandleOldOnesArmy },
 					{ PacketTypes.PlayerHurtV2, HandlePlayerDamageV2 },
 					{ PacketTypes.PlayerDeathV2, HandlePlayerKillMeV2 },
+					{ PacketTypes.Emoji, HandleEmoji },
 					{ PacketTypes.FishOutNPC, HandleFishOutNPC },
 					{ PacketTypes.FoodPlatterTryPlacing, HandleFoodPlatterTryPlacing },
 					{ PacketTypes.SyncRevengeMarker, HandleSyncRevengeMarker }
@@ -1863,6 +1864,40 @@ namespace TShockAPI
 				PlayerDeathReason = playerDeathReason,
 			};
 			KillMe.Invoke(null, args);
+			return args.Handled;
+		}
+
+		/// <summary>
+		/// For use in an Emoji event.
+		/// </summary>
+		public class EmojiEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// The player index in the packet, who sends the emoji.
+			/// </summary>
+			public byte PlayerIndex { get; set; }
+			/// <summary>
+			/// The ID of the emoji, that is being received.
+			/// </summary>
+			public byte EmojiID { get; set; }
+		}
+		/// <summary>
+		/// Called when a player sends an emoji.
+		/// </summary>
+		public static HandlerList<EmojiEventArgs> Emoji = new HandlerList<EmojiEventArgs>();
+		private static bool OnEmoji(TSPlayer player, MemoryStream data, byte playerIndex, byte emojiID)
+		{
+			if (Emoji == null)
+				return false;
+
+			var args = new EmojiEventArgs
+			{
+				Player = player,
+				Data = data,
+				PlayerIndex = playerIndex,
+				EmojiID = emojiID
+			};
+			Emoji.Invoke(null, args);
 			return args.Handled;
 		}
 
@@ -3667,6 +3702,17 @@ namespace TShockAPI
 					TShock.CharacterDB.SeedInitialData(args.Player.Account);
 				}
 			}
+
+			return false;
+		}
+
+		private static bool HandleEmoji(GetDataHandlerArgs args)
+		{
+			byte playerIndex = args.Data.ReadInt8();
+			byte emojiID = args.Data.ReadInt8();
+
+			if (OnEmoji(args.Player, args.Data, playerIndex, emojiID))
+				return true;
 
 			return false;
 		}
