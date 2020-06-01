@@ -468,6 +468,9 @@ namespace TShockAPI
 
 		[Description("Player can resync themselves with server state.")]
 		public static readonly string synclocalarea = "tshock.synclocalarea";
+
+		[Description("Player can send emotes.")]
+		public static readonly string sendemoji = "tshock.sendemoji";
 		#endregion
 		/// <summary>
 		/// Lists all commands associated with a given permission
