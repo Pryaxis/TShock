@@ -151,6 +151,7 @@ namespace TShockAPI
 					{ PacketTypes.CrystalInvasionStart, HandleOldOnesArmy },
 					{ PacketTypes.PlayerHurtV2, HandlePlayerDamageV2 },
 					{ PacketTypes.PlayerDeathV2, HandlePlayerKillMeV2 },
+					{ PacketTypes.FishOutNPC, HandleFishOutNPC },
 					{ PacketTypes.FoodPlatterTryPlacing, HandleFoodPlatterTryPlacing },
 					{ PacketTypes.SyncRevengeMarker, HandleSyncRevengeMarker }
 				};
@@ -1865,6 +1866,45 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		/// <summary>
+		/// For use in a FishOutNPC event.
+		/// </summary>
+		public class FishOutNPCEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// The X world position of the spawning NPC.
+			/// </summary>
+			public ushort TileX { get; set; }
+			/// <summary>
+			/// The Y world position of the spawning NPC.
+			/// </summary>
+			public ushort TileY { get; set; }
+			/// <summary>
+			/// The NPC type that is being spawned.
+			/// </summary>
+			public short NpcID { get; set; }
+		}
+		/// <summary>
+		/// Called when a player fishes out an NPC.
+		/// </summary>
+		public static HandlerList<FishOutNPCEventArgs> FishOutNPC = new HandlerList<FishOutNPCEventArgs>();
+		private static bool OnFishOutNPC(TSPlayer player, MemoryStream data, ushort tileX, ushort tileY, short npcID)
+		{
+			if (FishOutNPC == null)
+				return false;
+
+			var args = new FishOutNPCEventArgs
+			{
+				Player = player,
+				Data = data,
+				TileX = tileX,
+				TileY = tileY,
+				NpcID = npcID
+			};
+			FishOutNPC.Invoke(null, args);
+			return args.Handled;
+		}
+
 		public class FoodPlatterTryPlacingEventArgs : GetDataHandledEventArgs
 		{
 			/// <summary>
@@ -2317,14 +2357,14 @@ namespace TShockAPI
 		{
 			var player = args.Player;
 			var size = args.Data.ReadInt16();
-			
 			var changeType = TileChangeType.None;
+
 			bool hasChangeType = ((size & 0x7FFF) & 0x8000) != 0;
 			if (hasChangeType)
 			{
 				changeType = (TileChangeType)args.Data.ReadInt8();
 			}
-			
+
 			var tileX = args.Data.ReadInt16();
 			var tileY = args.Data.ReadInt16();
 			var data = args.Data;
@@ -3629,6 +3669,19 @@ namespace TShockAPI
 
 			return false;
 		}
+
+		private static bool HandleFishOutNPC(GetDataHandlerArgs args)
+		{
+			ushort tileX = args.Data.ReadUInt16();
+			ushort tileY = args.Data.ReadUInt16();
+			short npcType = args.Data.ReadInt16();
+
+			if (OnFishOutNPC(args.Player, args.Data, tileX, tileY, npcType))
+				return true;
+
+			return false;
+		}
+
 		private static bool HandleFoodPlatterTryPlacing(GetDataHandlerArgs args)
 		{
 			short tileX = args.Data.ReadInt16();
@@ -3718,6 +3771,39 @@ namespace TShockAPI
 		};
 
 		/// <summary>
+		/// List of Fishing rod item IDs.
+		/// </summary>
+		internal static readonly List<int> FishingRodItemIDs = new List<int>()
+		{
+			ItemID.WoodFishingPole,
+			ItemID.ReinforcedFishingPole,
+			ItemID.FiberglassFishingPole,
+			ItemID.FisherofSouls,
+			ItemID.GoldenFishingRod,
+			ItemID.MechanicsRod,
+			ItemID.SittingDucksFishingRod,
+			ItemID.Fleshcatcher,
+			ItemID.HotlineFishingHook,
+			ItemID.BloodFishingRod,
+			ItemID.ScarabFishingRod
+		};
+
+		/// <summary>
+		/// List of NPC IDs that can be fished out by the player.
+		/// </summary>
+		internal static readonly List<int> FishableNpcIDs = new List<int>()
+		{
+			NPCID.EyeballFlyingFish,
+			NPCID.ZombieMerman,
+			NPCID.GoblinShark,
+			NPCID.BloodEelHead,
+			NPCID.BloodEelBody,
+			NPCID.BloodEelTail,
+			NPCID.BloodNautilus,
+			NPCID.DukeFishron
+		};
+
+		/// <summary>
 		/// These projectiles create tiles on death.
 		/// </summary>
 		internal static Dictionary<int, int> projectileCreatesTile = new Dictionary<int, int>
@@ -3727,7 +3813,20 @@ namespace TShockAPI
 			{ ProjectileID.EbonsandBallGun, TileID.Ebonsand },
 			{ ProjectileID.PearlSandBallGun, TileID.Pearlsand },
 			{ ProjectileID.CrimsandBallGun, TileID.Crimsand },
-			{ ProjectileID.MysticSnakeCoil, TileID.MysticSnakeRope }
+			{ ProjectileID.MysticSnakeCoil, TileID.MysticSnakeRope },
+			{ ProjectileID.RopeCoil, TileID.Rope },
+			{ ProjectileID.SilkRopeCoil, TileID.SilkRope },
+			{ ProjectileID.VineRopeCoil, TileID.VineRope },
+			{ ProjectileID.WebRopeCoil, TileID.WebRope }
+		};
+
+		internal static List<int> CoilTileIds = new List<int>()
+		{
+			TileID.MysticSnakeRope,
+			TileID.Rope,
+			TileID.SilkRope,
+			TileID.VineRope,
+			TileID.WebRope
 		};
 
 		internal static Dictionary<int, LiquidType> projectileCreatesLiquid = new Dictionary<int, LiquidType>

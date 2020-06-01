@@ -620,7 +620,8 @@ namespace TShockAPI
 
 		/// <summary>Determines if the player can build on a given point.</summary>
 		/// <param name="x">The x coordinate they want to build at.</param>
-		/// <param name="y">The y coordinate they want to paint at.</param>
+		/// <param name="y">The y coordinate they want to build at.</param>
+		/// <param name="shouldWarnPlayer">Whether or not the player should be warned if their build attempt fails</param>
 		/// <returns>True if the player can build at the given point from build, spawn, and region protection.</returns>
 		public bool HasBuildPermission(int x, int y, bool shouldWarnPlayer = true)
 		{
@@ -677,6 +678,32 @@ namespace TShockAPI
 			lastPermissionWarning = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 
 			return false;
+		}
+
+		/// <summary>
+		/// Determines if the player can build a multi-block tile object on a given point.
+		/// Tile objects include things like Doors, Trap Doors, Item Frames, Beds, and Dressers.
+		/// </summary>
+		/// <param name="x">The x coordinate they want to build at.</param>
+		/// <param name="y">The y coordinate they want to build at.</param>
+		/// <param name="width">The width of the tile object</param>
+		/// <param name="height">The height of the tile object</param>
+		/// <param name="shouldWarnPlayer">Whether or not the player should be warned if their build attempt fails</param>
+		/// <returns>True if the player can build at the given point from build, spawn, and region protection.</returns>
+		public bool HasBuildPermissionForTileObject(int x, int y, int width, int height, bool shouldWarnPlayer = true)
+		{
+			for (int realx = x; realx < x + width; realx++)
+			{
+				for (int realy = y; realy < y + height; realy++)
+				{
+					if (!HasBuildPermission(realx, realy, shouldWarnPlayer))
+					{
+						return false;
+					}
+				}
+			}
+
+			return true;
 		}
 
 		/// <summary>Determines if the player can paint on a given point. Checks general build permissions, then paint.</summary>
@@ -1241,49 +1268,13 @@ namespace TShockAPI
 		/// <param name="x">The x coordinate to send.</param>
 		/// <param name="y">The y coordinate to send.</param>
 		/// <param name="size">The size square set of tiles to send.</param>
-		/// <returns>Status if the tile square was sent successfully (i.e. no exceptions).</returns>
+		/// <returns>true if the tile square was sent successfully, else false</returns>
 		public virtual bool SendTileSquare(int x, int y, int size = 10)
 		{
 			try
 			{
-				int num = (size - 1) / 2;
-				int m_x = 0;
-				int m_y = 0;
-
-				if (x - num < 0)
-				{
-					m_x = 0;
-				}
-				else
-				{
-					m_x = x - num;
-				}
-
-				if (y - num < 0)
-				{
-					m_y = 0;
-				}
-				else
-				{
-					m_y = y - num;
-				}
-
-				if (m_x + size > Main.maxTilesX)
-				{
-					m_x = Main.maxTilesX - size;
-				}
-
-				if (m_y + size > Main.maxTilesY)
-				{
-					m_y = Main.maxTilesY - size;
-				}
-
-				SendData(PacketTypes.TileSendSquare, "", size, m_x, m_y);
+				SendData(PacketTypes.TileSendSquare, "", size, x, y);
 				return true;
-			}
-			catch (IndexOutOfRangeException)
-			{
-				// This is expected if square exceeds array.
 			}
 			catch (Exception ex)
 			{
