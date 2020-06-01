@@ -3770,12 +3770,27 @@ namespace TShockAPI
 		{
 			{TileID.MinecartTrack, 3}
 		};
-
+		
+		/// <summary>
+		/// Contains brief information about a projectile
+		/// </summary>
 		public struct ProjectileStruct
 		{
+			/// <summary>
+			/// Index inside Main.projectile
+			/// </summary>
 			public int Index { get; set; }
+			/// <summary>
+			/// Projectile's type ID
+			/// </summary>
 			public short Type { get; set; }
+			/// <summary>
+			/// Time at which the projectile was created
+			/// </summary>
 			public DateTime CreatedAt { get; set; }
+			/// <summary>
+			/// Whether or not the projectile has been killed
+			/// </summary>
 			public bool Killed { get; internal set; }
 		}
 
