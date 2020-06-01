@@ -681,7 +681,8 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Determines if the player can build a tile object on a given point.
+		/// Determines if the player can build a multi-block tile object on a given point.
+		/// Tile objects include things like Doors, Trap Doors, Item Frames, Beds, and Dressers.
 		/// </summary>
 		/// <param name="x">The x coordinate they want to build at.</param>
 		/// <param name="y">The y coordinate they want to build at.</param>
