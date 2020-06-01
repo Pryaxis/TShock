@@ -88,6 +88,7 @@
     <Compile Include="DB\ResearchDatastore.cs" />
     <Compile Include="DB\TileManager.cs" />
     <Compile Include="Extensions\ExceptionExt.cs" />
+    <Compile Include="Handlers\LandGolfBallInCupHandler.cs" />
     <Compile Include="Handlers\SendTileSquareHandler.cs" />
     <Compile Include="Hooks\AccountHooks.cs" />
     <Compile Include="Hooks\GeneralHooks.cs" />
