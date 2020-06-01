@@ -2,12 +2,16 @@
 
 This is the rolling changelog for TShock for Terraria. Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
 
-## Upcoming release
+## Upcoming Changes
+* Your change goes here!
+
+## TShock 4.4.0 (Pre-release 10)
 * Fix all rope coils. (@Olink)
 * Fixed a longstanding issue with SendTileSquare that could result in desyncs and visual errors. (@QuiCM)
 * Fixed placement issues with Item Frames, Teleportation Pylons, etc. (@QuiCM)
 * Doors are good now for real probably (@QuiCM, @Hakusaro, @Olink)
 * Bump default max damage received cap to 42,000 to accommodate the Empress of Light's instant kill death amount. (@hakusaro, @moisterrific, @Irethia, @Ayrawei)
+* Updated `/spawnboss` command to include Empress of Light, Queen Slime, and other additional bosses that have a health bar. (@moisterrific)
 
 ## TShock 4.4.0 (Pre-release 9)
 * Fixed pet licenses. (@Olink)
