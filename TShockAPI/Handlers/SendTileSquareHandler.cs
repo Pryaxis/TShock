@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent.Tile_Entities;
@@ -57,11 +55,7 @@ namespace TShockAPI.Handlers
 		public static void UpdateTile(ITile tile, NetTile newTile)
 		{
 			tile.active(newTile.Active);
-
-			if (newTile.Active && !newTile.Inactive)
-			{
-				tile.type = newTile.Type;
-			}
+			tile.type = newTile.Type;
 
 			if (newTile.FrameImportant)
 			{
@@ -153,23 +147,23 @@ namespace TShockAPI.Handlers
 			if (
 				((TileID.Sets.Conversion.Stone[tile.type] || Main.tileMoss[tile.type]) && (TileID.Sets.Conversion.Stone[newTile.Type] || Main.tileMoss[newTile.Type])) ||
 				((tile.type == 0 || tile.type == 59) && (newTile.Type == 0 || newTile.Type == 59)) ||
-				TileID.Sets.Conversion.Grass[tile.type]			&& TileID.Sets.Conversion.Grass[newTile.Type] ||
-				TileID.Sets.Conversion.Ice[tile.type]			&& TileID.Sets.Conversion.Ice[newTile.Type] ||
-				TileID.Sets.Conversion.Sand[tile.type]			&& TileID.Sets.Conversion.Sand[newTile.Type] ||
-				TileID.Sets.Conversion.Sandstone[tile.type]		&& TileID.Sets.Conversion.Sandstone[newTile.Type] ||
-				TileID.Sets.Conversion.HardenedSand[tile.type]	&& TileID.Sets.Conversion.HardenedSand[newTile.Type] ||
-				TileID.Sets.Conversion.Thorn[tile.type]			&& TileID.Sets.Conversion.Thorn[newTile.Type] ||
-				TileID.Sets.Conversion.Moss[tile.type]			&& TileID.Sets.Conversion.Moss[newTile.Type] ||
-				TileID.Sets.Conversion.MossBrick[tile.type]		&& TileID.Sets.Conversion.MossBrick[newTile.Type] ||
-				WallID.Sets.Conversion.Stone[tile.wall]			&& WallID.Sets.Conversion.Stone[newTile.Wall] ||
-				WallID.Sets.Conversion.Grass[tile.wall]			&& WallID.Sets.Conversion.Grass[newTile.Wall] ||
-				WallID.Sets.Conversion.Sandstone[tile.wall]		&& WallID.Sets.Conversion.Sandstone[newTile.Wall] ||
-				WallID.Sets.Conversion.HardenedSand[tile.wall]	&& WallID.Sets.Conversion.HardenedSand[newTile.Wall] ||
-				WallID.Sets.Conversion.PureSand[tile.wall]		&& WallID.Sets.Conversion.PureSand[newTile.Wall] ||
-				WallID.Sets.Conversion.NewWall1[tile.wall]		&& WallID.Sets.Conversion.NewWall1[newTile.Wall] ||
-				WallID.Sets.Conversion.NewWall2[tile.wall]		&& WallID.Sets.Conversion.NewWall2[newTile.Wall] ||
-				WallID.Sets.Conversion.NewWall3[tile.wall]		&& WallID.Sets.Conversion.NewWall3[newTile.Wall] ||
-				WallID.Sets.Conversion.NewWall4[tile.wall]		&& WallID.Sets.Conversion.NewWall4[newTile.Wall]
+				TileID.Sets.Conversion.Grass[tile.type] && TileID.Sets.Conversion.Grass[newTile.Type] ||
+				TileID.Sets.Conversion.Ice[tile.type] && TileID.Sets.Conversion.Ice[newTile.Type] ||
+				TileID.Sets.Conversion.Sand[tile.type] && TileID.Sets.Conversion.Sand[newTile.Type] ||
+				TileID.Sets.Conversion.Sandstone[tile.type] && TileID.Sets.Conversion.Sandstone[newTile.Type] ||
+				TileID.Sets.Conversion.HardenedSand[tile.type] && TileID.Sets.Conversion.HardenedSand[newTile.Type] ||
+				TileID.Sets.Conversion.Thorn[tile.type] && TileID.Sets.Conversion.Thorn[newTile.Type] ||
+				TileID.Sets.Conversion.Moss[tile.type] && TileID.Sets.Conversion.Moss[newTile.Type] ||
+				TileID.Sets.Conversion.MossBrick[tile.type] && TileID.Sets.Conversion.MossBrick[newTile.Type] ||
+				WallID.Sets.Conversion.Stone[tile.wall] && WallID.Sets.Conversion.Stone[newTile.Wall] ||
+				WallID.Sets.Conversion.Grass[tile.wall] && WallID.Sets.Conversion.Grass[newTile.Wall] ||
+				WallID.Sets.Conversion.Sandstone[tile.wall] && WallID.Sets.Conversion.Sandstone[newTile.Wall] ||
+				WallID.Sets.Conversion.HardenedSand[tile.wall] && WallID.Sets.Conversion.HardenedSand[newTile.Wall] ||
+				WallID.Sets.Conversion.PureSand[tile.wall] && WallID.Sets.Conversion.PureSand[newTile.Wall] ||
+				WallID.Sets.Conversion.NewWall1[tile.wall] && WallID.Sets.Conversion.NewWall1[newTile.Wall] ||
+				WallID.Sets.Conversion.NewWall2[tile.wall] && WallID.Sets.Conversion.NewWall2[newTile.Wall] ||
+				WallID.Sets.Conversion.NewWall3[tile.wall] && WallID.Sets.Conversion.NewWall3[newTile.Wall] ||
+				WallID.Sets.Conversion.NewWall4[tile.wall] && WallID.Sets.Conversion.NewWall4[newTile.Wall]
 			)
 			{
 				TShock.Log.ConsoleDebug("Bouncer / SendTileSquare processing a conversion update - [{0}|{1}] -> [{2}|{3}]", tile.type, tile.wall, newTile.Type, newTile.Wall);
@@ -216,24 +210,25 @@ namespace TShockAPI.Handlers
 		/// Processes a tile object consisting of multiple tiles from the tile square packet
 		/// </summary>
 		/// <param name="tileType">The tile type the object is comprised of</param>
-		/// <param name="data">TileObjectData describing the tile object</param>
 		/// <param name="newTiles">2D array of NetTile containing the new tiles properties</param>
 		/// <param name="realx">X position at the top left of the object</param>
 		/// <param name="realy">Y position at the top left of the object</param>
+		/// <param name="width">Width of the tile object</param>
+		/// <param name="height">Height of the tile object</param>
 		/// <param name="args">SendTileSquareEventArgs containing event information</param>
-		public void ProcessTileObject(int tileType, TileObjectData data, NetTile[,] newTiles, int realx, int realy, GetDataHandlers.SendTileSquareEventArgs args)
+		public void ProcessTileObject(int tileType, int realx, int realy, int width, int height, NetTile[,] newTiles, GetDataHandlers.SendTileSquareEventArgs args)
 		{
 			// As long as the player has permission to build, we should allow a tile object to be placed
 			// More in depth checks should take place in handlers for the Place Object (79), Update Tile Entity (86), and Place Tile Entity (87) packets
-			if (!args.Player.HasBuildPermissionForTileObject(realx, realy, data.Width, data.Height))
+			if (!args.Player.HasBuildPermissionForTileObject(realx, realy, width, height))
 			{
 				TShock.Log.ConsoleDebug("Bouncer / SendTileSquare rejected from no permission for tile object from {0}", args.Player.Name);
 				return;
 			}
 
-			for (int x = 0; x < data.Width; x++)
+			for (int x = 0; x < width; x++)
 			{
-				for (int y = 0; y < data.Height; y++)
+				for (int y = 0; y < height; y++)
 				{
 					// Update all tiles in the tile object. These will be synced back to the player later
 					UpdateTile(Main.tile[realx + x, realy + y], newTiles[x, y]);
@@ -244,6 +239,17 @@ namespace TShockAPI.Handlers
 			if (_tileEntityIdToTileIdMap.ContainsKey(tileType))
 			{
 				TileEntity.PlaceEntityNet(realx, realy, _tileEntityIdToTileIdMap[tileType]);
+			}
+		}
+
+		private void ProcessClosedTrapDoor(int realx, int realy, NetTile[,] newTiles)
+		{
+			for (int x = 0; x < 2; x++)
+			{
+				for (int y = 0; y < 3; y++)
+				{
+					UpdateTile(Main.tile[realx + x, realy + y], newTiles[x, y]);
+				}
 			}
 		}
 
@@ -336,17 +342,41 @@ namespace TShockAPI.Handlers
 					// and process them as a tile object
 					if (newTile.Type < TileObjectData._data.Count && (data = TileObjectData._data[newTile.Type]) != null)
 					{
-						NetTile[,] newTiles = new NetTile[data.Width, data.Height];
-						for (int i = 0; i < data.Width; i++)
+						NetTile[,] newTiles;
+
+						if (newTile.Type == TileID.TrapdoorClosed)
 						{
-							for (int j = 0; j < data.Height; j++)
+							// Trapdoors can modify a 2x3 space. When it closes it will have leftover tiles either on top or bottom.
+							// If we don't update these tiles, the trapdoor gets confused and disappears.
+							// So we capture all 6 possible tiles and process them all
+							newTiles = new NetTile[2, 3];
+
+							for (int i = 0; i < 2; i++)
 							{
-								newTiles[i, j] = tiles[x + i, y + j];
-								processed[x + i, y + j] = true;
+								for (int j = 0; j < 3; j++)
+								{
+									newTiles[i, j] = tiles[x + i, y + j - 1]; // -1 will give us the tile above the closed door, the closed door, the tile below the closed door
+									processed[x + i, y + j] = true;
+								}
 							}
+							// Use realy - 1 to target the correct tile, otherwise we will write a closed trapdoor a block below where it should be
+							ProcessTileObject(newTile.Type, realx, realy - 1, width: 2, height: 3, newTiles, args);
+						}
+						else
+						{
+							newTiles = new NetTile[data.Width, data.Height];
+
+							for (int i = 0; i < data.Width; i++)
+							{
+								for (int j = 0; j < data.Height; j++)
+								{
+									newTiles[i, j] = tiles[x + i, y + j];
+									processed[x + i, y + j] = true;
+								}
+							}
+							ProcessTileObject(newTile.Type, realx, realy, data.Width, data.Height, newTiles, args);
 						}
 
-						ProcessTileObject(newTile.Type, data, newTiles, realx, realy, args);
 						continue;
 					}
 
@@ -358,17 +388,17 @@ namespace TShockAPI.Handlers
 
 			// Uncommenting this function will send the same tile square 10 blocks above you for visualisation. This will modify your world and overwrite existing blocks.
 			// Use in test worlds only.
-			//Debug.DisplayTileSetInGame(tileX, tileY - 10, size, size, tiles, args.Player);
+			Debug.DisplayTileSetInGame(tileX, tileY - 10, size, size, tiles, args.Player);
+			Debug.VisualiseTileSetDiff(tileX, tileY, size, size, tiles);
 
 			// If we are handling this event then we have updated the server's Main.tile state the way we want it.
 			// At this point we should send our state back to the client so they remain in sync with the server
 			if (args.Handled == true)
 			{
-				args.Player.SendTileSquare(tileX, tileY, size);
+				args.Player.SendTileSquare(tileX, tileY, size + 1);
 				TShock.Log.ConsoleDebug("Bouncer / SendTileSquare reimplemented from spaghetti from {0}", args.Player.Name);
 			}
 		}
-
 
 		class Debug
 		{
@@ -393,24 +423,15 @@ namespace TShockAPI.Handlers
 							int realX = x + tileX;
 							ushort type = Main.tile[realX, realY].type;
 							string type2 = type.ToString();
-							Console.Write((type2.ToString()).PadLeft(3, pad) + " ");
+							Console.Write((type2.ToString()).PadLeft(3, pad) + (Main.tile[realX, realY].active() ? "a" : "-") + " ");
 						}
 						Console.Write(" -> ");
 						for (int x = 0; x < width; x++)
 						{
 							int realX = x + tileX;
-							if (newTiles[x, y].Active)
-							{
-								ushort type = newTiles[x, y].Type;
-								string type2 = type.ToString();
-								Console.Write((type2.ToString()).PadLeft(3, pad) + " ");
-							}
-							else
-							{
-								ushort type = Main.tile[realX, realY].type;
-								string type2 = type.ToString();
-								Console.Write((type2.ToString()).PadLeft(3, pad) + " ");
-							}
+							ushort type = newTiles[x, y].Type;
+							string type2 = type.ToString();
+							Console.Write((type2.ToString()).PadLeft(3, pad) + (newTiles[x, y].Active ? "a" : "-") + " ");
 						}
 						Console.Write("\n");
 					}
