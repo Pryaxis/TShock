@@ -31,8 +31,11 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * The default group that gets this permission is `Guest` for the time being.
   * To add this command to your guest group, give them `tshock.synclocalarea`, with `/group addperm guest tshock.synclocalarea`.
   * This command may be removed at any time in the future (and will likely be removed when send tile square handling is fixed).
-* Fixed smart door automatic door desync and deletion issue. (@hakusaro)
+* Fixed smart door automatic door desync and deletion issue. (@hakusaro, @QuiCM, @Olink)
 * Bump default max damage received cap to 42,000 to accommodate the Empress of Light's instant kill death amount. (@hakusaro, @moisterrific, @Irethia, @Ayrawei)
+* Fixed a longstanding issue with SendTileSquare that could result in desyncs and visual errors (@QuiCM)
+* Fixed placement issues with Item Frames, Teleportation Pylons, etc (@QuiCM)
+
 
 ## TShock 4.4.0 (Pre-release 8)
 * Update for OTAPI 2.0.0.36 and Terraria 1.4.0.4. (@hakusaro, @Patrikkk, @DeathCradle)
