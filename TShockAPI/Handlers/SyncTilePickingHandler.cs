@@ -11,19 +11,12 @@ namespace TShockAPI.Handlers
 	class SyncTilePickingHandler : IPacketHandler<SyncTilePickingEventArgs>
 	{
 		/// <summary>
-		/// Invoked when player damages a tile.
+		/// Invoked when player damages a tile. Rejects the packet if its out of world bounds.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="args"></param>
 		public void OnReceive(object sender, SyncTilePickingEventArgs args)
 		{
-			if (args.PlayerIndex != args.Player.Index)
-			{
-				TShock.Log.ConsoleDebug($"SyncTilePickingHandler: SyncTilePicking packet rejected for ID spoofing. Expected {args.Player.Index}, received {args.PlayerIndex} from {args.Player.Name}.");
-				args.Handled = true;
-				return;
-			}
-
 			if (args.TileX > Main.maxTilesX || args.TileX < 0
 			   || args.TileY > Main.maxTilesY || args.TileY < 0)
 			{
