@@ -68,7 +68,7 @@ namespace TShockAPI.Handlers
 		{
 			if (args.PlayerIndex != args.Player.Index)
 			{
-				TShock.Log.ConsoleError($"LandGolfBallInCupHandler: Packet is spoofing to be player ID {args.PlayerIndex}! - From [{args.Player.Index}]{args.Player.Name}");
+				TShock.Log.ConsoleDebug($"LandGolfBallInCupHandler: Packet rejected for ID spoofing. Expected {args.PlayerIndex} , received {args.PlayerIndex} from {args.Player.Name}.");
 				args.Handled = true;
 				return;
 			}
@@ -76,21 +76,21 @@ namespace TShockAPI.Handlers
 			if (args.TileX > Main.maxTilesX || args.TileX < 0
 			   || args.TileY > Main.maxTilesY || args.TileY < 0)
 			{
-				TShock.Log.ConsoleError($"LandGolfBallInCupHandler: X and Y position is out of world bounds! - From {args.Player.Name}");
+				TShock.Log.ConsoleDebug($"LandGolfBallInCupHandler: X and Y position is out of world bounds! - From {args.Player.Name}");
 				args.Handled = true;
 				return;
 			}
 
 			if (!Main.tile[args.TileX, args.TileY].active() && Main.tile[args.TileX, args.TileY].type != TileID.GolfHole)
 			{
-				TShock.Log.ConsoleError($"LandGolfBallInCupHandler: Tile at packet position X:{args.TileX} Y:{args.TileY} is not a golf hole! - From {args.Player.Name}");
+				TShock.Log.ConsoleDebug($"LandGolfBallInCupHandler: Tile at packet position X:{args.TileX} Y:{args.TileY} is not a golf hole! - From {args.Player.Name}");
 				args.Handled = true;
 				return;
 			}
 
 			if (!GolfBallProjectileIDs.Contains(args.ProjectileType))
 			{
-				TShock.Log.ConsoleError($"LandGolfBallInCupHandler: Invalid golf ball projectile ID {args.ProjectileType}! - From {args.Player.Name}");
+				TShock.Log.ConsoleDebug($"LandGolfBallInCupHandler: Invalid golf ball projectile ID {args.ProjectileType}! - From {args.Player.Name}");
 				args.Handled = true;
 				return;
 			}
@@ -99,14 +99,14 @@ namespace TShockAPI.Handlers
 			var usedGolfClub = args.Player.RecentlyCreatedProjectiles.Any(e => e.Type == ProjectileID.GolfClubHelper);
 			if (!usedGolfClub && !usedGolfBall)
 			{
-				TShock.Log.ConsoleError($"GolfPacketHandler: Player did not have create a golf club projectile the last 5 seconds! - From {args.Player.Name}");
+				TShock.Log.ConsoleDebug($"GolfPacketHandler: Player did not have create a golf club projectile the last 5 seconds! - From {args.Player.Name}");
 				args.Handled = true;
 				return;
 			}
 
 			if (!GolfClubItemIDs.Contains(args.Player.SelectedItem.type))
 			{
-				TShock.Log.ConsoleError($"LandGolfBallInCupHandler: Item selected is not a golf club! - From {args.Player.Name}");
+				TShock.Log.ConsoleDebug($"LandGolfBallInCupHandler: Item selected is not a golf club! - From {args.Player.Name}");
 				args.Handled = true;
 				return;
 			}
