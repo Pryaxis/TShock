@@ -48,7 +48,7 @@ namespace TShockAPI.Handlers.NetModules
 			if (UnknownField != 0)
 			{
 				TShock.Log.ConsoleDebug(
-					"CreativeUnlocksNetModuleHandler received non-vanilla unlock request. Random field value: {0} from {1}",
+					"CreativeUnlocksHandler received non-vanilla unlock request. Random field value: {0} but should be 0 from {1}",
 					UnknownField,
 					player.Name
 				);
