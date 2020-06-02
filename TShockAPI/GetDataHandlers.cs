@@ -2928,21 +2928,21 @@ namespace TShockAPI
 			if (bosses.Contains(thingType) && !args.Player.HasPermission(Permissions.summonboss))
 			{
 				TShock.Log.ConsoleDebug("GetDataHandlers / HandleSpawnBoss rejected boss {0} {1}", args.Player.Name, thingType);
-				args.Player.SendErrorMessage("You don't have permission to summon a boss.");
+				args.Player.SendErrorMessage("You do not have permission to summon a boss.");
 				return true;
 			}
 
 			if (invasions.Contains(thingType) && !args.Player.HasPermission(Permissions.startinvasion))
 			{
 				TShock.Log.ConsoleDebug("GetDataHandlers / HandleSpawnBoss rejected invasion {0} {1}", args.Player.Name, thingType);
-				args.Player.SendErrorMessage("You don't have permission to start an invasion.");
+				args.Player.SendErrorMessage("You do not have permission to start an invasion.");
 				return true;
 			}
 
 			if (pets.Contains(thingType) && !args.Player.HasPermission(Permissions.spawnpets))
 			{
 				TShock.Log.ConsoleDebug("GetDataHandlers / HandleSpawnBoss rejected pet {0} {1}", args.Player.Name, thingType);
-				args.Player.SendErrorMessage("You don't have permission to spawn pets.");
+				args.Player.SendErrorMessage("You do not have permission to spawn pets.");
 				return true;
 			}
 
@@ -3234,7 +3234,7 @@ namespace TShockAPI
 						{
 							if (!args.Player.HasPermission(Permissions.journey_timefreeze))
 							{
-								args.Player.SendErrorMessage("You don't have permission to freeze the time of the server!");
+								args.Player.SendErrorMessage("You do not have permission to freeze the time of the server.");
 								return true;
 							}
 							break;
@@ -3246,7 +3246,7 @@ namespace TShockAPI
 						{
 							if (!args.Player.HasPermission(Permissions.journey_timeset))
 							{
-								args.Player.SendErrorMessage("You don't have permission to modify the time of the server!");
+								args.Player.SendErrorMessage("You don't have permission to modify the time of the server.");
 								return true;
 							}
 							break;
@@ -3255,7 +3255,7 @@ namespace TShockAPI
 						{
 							if (!args.Player.HasPermission(Permissions.journey_godmode))
 							{
-								args.Player.SendErrorMessage("You don't have permission to toggle godmode!");
+								args.Player.SendErrorMessage("You do not have permission to toggle godmode.");
 								return true;
 							}
 							break;
@@ -3264,7 +3264,7 @@ namespace TShockAPI
 						{
 							if (!args.Player.HasPermission(Permissions.journey_windstrength))
 							{
-								args.Player.SendErrorMessage("You don't have permission to modify the wind strength of the server!");
+								args.Player.SendErrorMessage("You do not have permission to modify the wind strength of the server.");
 								return true;
 							}
 							break;
@@ -3273,7 +3273,7 @@ namespace TShockAPI
 						{
 							if (!args.Player.HasPermission(Permissions.journey_rainstrength))
 							{
-								args.Player.SendErrorMessage("You don't have permission to modify the rain strength of the server!");
+								args.Player.SendErrorMessage("You do not have permission to modify the rain strength of the server.");
 								return true;
 							}
 							break;
@@ -3282,7 +3282,7 @@ namespace TShockAPI
 						{
 							if (!args.Player.HasPermission(Permissions.journey_timespeed))
 							{
-								args.Player.SendErrorMessage("You don't have permission to modify the time speed of the server!");
+								args.Player.SendErrorMessage("You do not have permission to modify the time speed of the server.");
 								return true;
 							}
 							break;
@@ -3291,7 +3291,7 @@ namespace TShockAPI
 						{
 							if (!args.Player.HasPermission(Permissions.journey_rainfreeze))
 							{
-								args.Player.SendErrorMessage("You don't have permission to freeze the rain strength of the server!");
+								args.Player.SendErrorMessage("You do not have permission to freeze the rain strength of the server.");
 								return true;
 							}
 							break;
@@ -3300,7 +3300,7 @@ namespace TShockAPI
 						{
 							if (!args.Player.HasPermission(Permissions.journey_windfreeze))
 							{
-								args.Player.SendErrorMessage("You don't have permission to freeze the wind strength of the server!");
+								args.Player.SendErrorMessage("You do not have permission to freeze the wind strength of the server.");
 								return true;
 							}
 							break;
@@ -3309,7 +3309,7 @@ namespace TShockAPI
 						{
 							if (!args.Player.HasPermission(Permissions.journey_placementrange))
 							{
-								args.Player.SendErrorMessage("You don't have permission to modify the tile placement range of your character!");
+								args.Player.SendErrorMessage("You do not have permission to modify the tile placement range of your character.");
 								return true;
 							}
 							break;
@@ -3318,7 +3318,7 @@ namespace TShockAPI
 						{
 							if (!args.Player.HasPermission(Permissions.journey_setdifficulty))
 							{
-								args.Player.SendErrorMessage("You don't have permission to modify the world difficulty of the server!");
+								args.Player.SendErrorMessage("You do not have permission to modify the world difficulty of the server.");
 								return true;
 							}
 							break;
@@ -3327,7 +3327,7 @@ namespace TShockAPI
 						{
 							if (!args.Player.HasPermission(Permissions.journey_biomespreadfreeze))
 							{
-								args.Player.SendErrorMessage("You don't have permission to freeze the biome spread of the server!");
+								args.Player.SendErrorMessage("You do not have permission to freeze the biome spread of the server.");
 								return true;
 							}
 							break;
@@ -3342,7 +3342,7 @@ namespace TShockAPI
 							}
 							if (!args.Player.HasPermission(Permissions.journey_setspawnrate))
 							{
-								args.Player.SendErrorMessage("You don't have permission to modify the NPC spawn rate of the server!");
+								args.Player.SendErrorMessage("You do not have permission to modify the NPC spawn rate of the server.");
 								return true;
 							}
 							break;
@@ -3576,7 +3576,7 @@ namespace TShockAPI
 			if (!args.Player.HasPermission(Permissions.startdd2))
 			{
 				TShock.Log.ConsoleDebug("GetDataHandlers / HandleOldOnesArmy rejected permissions {0}", args.Player.Name);
-				args.Player.SendErrorMessage("You don't have permission to start the Old One's Army event.");
+				args.Player.SendErrorMessage("You do not have permission to start the Old One's Army event.");
 				return true;
 			}
 
