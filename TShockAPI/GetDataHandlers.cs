@@ -1967,7 +1967,7 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<ReadNetModuleEventArgs> ReadNetModule = new HandlerList<ReadNetModuleEventArgs>();
 
-		private static bool OnLoadNetModule(TSPlayer player, MemoryStream data, NetModuleType moduleType)
+		private static bool OnReadNetModule(TSPlayer player, MemoryStream data, NetModuleType moduleType)
 		{
 			if (ReadNetModule == null)
 			{
@@ -3259,7 +3259,7 @@ namespace TShockAPI
 		{
 			short moduleId = args.Data.ReadInt16();
 
-			if (OnLoadNetModule(args.Player, args.Data, (NetModuleType)moduleId))
+			if (OnReadNetModule(args.Player, args.Data, (NetModuleType)moduleId))
 			{
 				return true;
 			}
