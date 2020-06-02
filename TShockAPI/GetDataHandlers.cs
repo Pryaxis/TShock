@@ -3715,6 +3715,7 @@ namespace TShockAPI
 
 		private static bool HandleSyncCavernMonsterType(GetDataHandlerArgs args)
 		{
+			args.Player.Kick("Exploit attempt detected!");
 			TShock.Log.ConsoleDebug($"HandleSyncCavernMonsterType: Player is trying to modify NPC cavernMonsterType; this is a crafted packet! - From {args.Player.Name}");
 			return true;
 		}
