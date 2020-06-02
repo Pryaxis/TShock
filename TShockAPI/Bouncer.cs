@@ -55,7 +55,7 @@ namespace TShockAPI
 			GetDataHandlers.Emoji += EmojiHandler.OnReceive;
       
 			LandGolfBallInCupHandler = new Handlers.LandGolfBallInCupHandler();
-			GetDataHandlers.LandGolfBallInCup += LandGolfBallInCupHandler.OnLandGolfBallInCup;
+			GetDataHandlers.LandGolfBallInCup += LandGolfBallInCupHandler.OnReceive;
 
 			// Setup hooks
 			GetDataHandlers.GetSection += OnGetSection;

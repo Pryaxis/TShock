@@ -5,13 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Terraria;
 using Terraria.ID;
+using static TShockAPI.GetDataHandlers;
 
 namespace TShockAPI.Handlers
 {
 	/// <summary>
 	/// Handles client side exploits of LandGolfBallInCup packet.
 	/// </summary>
-	public class LandGolfBallInCupHandler
+	public class LandGolfBallInCupHandler : IPacketHandler<LandGolfBallInCupEventArgs>
 	{
 		/// <summary>
 		/// List of golf ball projectile IDs.
@@ -64,7 +65,7 @@ namespace TShockAPI.Handlers
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="args"></param>
-		public void OnLandGolfBallInCup(object sender, GetDataHandlers.LandGolfBallInCupEventArgs args)
+		public void OnReceive(object sender, LandGolfBallInCupEventArgs args)
 		{
 			if (args.PlayerIndex != args.Player.Index)
 			{
