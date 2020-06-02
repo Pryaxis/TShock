@@ -191,6 +191,12 @@ namespace TShockAPI.Handlers
 				TShock.Log.ConsoleDebug("Bouncer / SendTileSquare rejected from no permission for tile object from {0}", args.Player.Name);
 				return;
 			}
+			
+			if (TShock.TileBans.TileIsBanned((short)tileType))
+			{
+				TShock.Log.ConsoleDebug("Bouncer / SendTileSquare rejected for banned tile");
+				return;
+			}
 
 			// Update all tiles in the tile object. These will be sent back to the player later
 			UpdateMultipleServerTileStates(realX, realY, width, height, newTiles);
