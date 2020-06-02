@@ -3,6 +3,8 @@
 This is the rolling changelog for TShock for Terraria. Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
 
 ## Upcoming Changes
+* New permission `tshock.tp.pylon` to enable teleporting via Teleportation Pylons (@QuiCM)
+* New permission `tshock.journey.research` to enable sharing research via item sacrifice (@QuiCM)
 * Add Emoji event to GetDataHandler. This packet is received when a player tries to display an emote.
 	* Adding EmojiHandler to handle an exploit. Adding `tshock.sendemoji` permission and checks. Added this permission to guest group by default.
 

@@ -1987,7 +1987,7 @@ namespace TShockAPI
 
 			void FailedPermissionCheck()
 			{
-				args.Player.SendErrorMessage("You do not have sufficient permissions to start the {0} event.", eventType);
+				args.Player.SendErrorMessage("You do not have permission to start the {0} event.", eventType);
 				return;
 			}
 
@@ -4873,7 +4873,7 @@ namespace TShockAPI
 					{
 						if (!args.Player.HasPermission(Permissions.tp))
 						{
-							args.Player.SendErrorMessage("You don't have the necessary permission to do that.");
+							args.Player.SendErrorMessage("You do not have permission to teleport.");
 							break;
 						}
 						if (args.Parameters.Count <= 1)
@@ -5051,7 +5051,7 @@ namespace TShockAPI
 			}
 			if (displayIdsRequested && !args.Player.HasPermission(Permissions.seeids))
 			{
-				args.Player.SendErrorMessage("You don't have the required permission to list player ids.");
+				args.Player.SendErrorMessage("You do not have permission to list player ids.");
 				return;
 			}
 
@@ -6025,7 +6025,7 @@ namespace TShockAPI
 			{
 				if (!args.Player.HasPermission(Permissions.godmodeother))
 				{
-					args.Player.SendErrorMessage("You do not have permission to god mode another player!");
+					args.Player.SendErrorMessage("You do not have permission to god mode another player.");
 					return;
 				}
 				string plStr = String.Join(" ", args.Parameters);
