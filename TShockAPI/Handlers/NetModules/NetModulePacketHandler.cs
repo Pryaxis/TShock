@@ -1,5 +1,4 @@
-﻿using System;
-using Terraria;
+﻿using Terraria;
 using static TShockAPI.GetDataHandlers;
 
 namespace TShockAPI.Handlers.NetModules
@@ -46,6 +45,11 @@ namespace TShockAPI.Handlers.NetModules
 				case NetModulesTypes.TeleportPylon:
 					{
 						handler = new PylonHandler();
+						break;
+					}
+				case NetModulesTypes.Liquid:
+					{
+						handler = new LiquidHandler();
 						break;
 					}
 				default:
