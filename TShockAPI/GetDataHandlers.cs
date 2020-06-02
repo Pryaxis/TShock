@@ -1951,6 +1951,40 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		/// <summary>
+		/// Used when a net module is loaded
+		/// </summary>
+		public class LoadNetModuleEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// The type of net module being loaded
+			/// </summary>
+			public NetModulesTypes ModuleType { get; set; }
+		}
+
+		/// <summary>
+		/// Called when a net module is loaded
+		/// </summary>
+		public static HandlerList<LoadNetModuleEventArgs> LoadNetModule = new HandlerList<LoadNetModuleEventArgs>();
+
+		private static bool OnLoadNetModule(TSPlayer player, MemoryStream data, NetModulesTypes moduleType)
+		{
+			if (LoadNetModule == null)
+			{
+				return false;
+			}
+
+			var args = new LoadNetModuleEventArgs
+			{
+				Player = player,
+				Data = data,
+				ModuleType = moduleType
+			};
+
+			LoadNetModule.Invoke(null, args);
+			return args.Handled;
+		}
+
 		#endregion
 
 		private static bool HandlePlayerInfo(GetDataHandlerArgs args)
@@ -3225,160 +3259,12 @@ namespace TShockAPI
 		private static bool HandleLoadNetModule(GetDataHandlerArgs args)
 		{
 			short moduleId = args.Data.ReadInt16();
-			if (moduleId == (int)NetModulesTypes.CreativePowers)
+
+			if (OnLoadNetModule(args.Player, args.Data, (NetModulesTypes)moduleId))
 			{
-				CreativePowerTypes powerId = (CreativePowerTypes)args.Data.ReadInt16();
-				switch (powerId)
-				{
-					case CreativePowerTypes.FreezeTime:
-						{
-							if (!args.Player.HasPermission(Permissions.journey_timefreeze))
-							{
-								args.Player.SendErrorMessage("You do not have permission to freeze the time of the server.");
-								return true;
-							}
-							break;
-						}
-					case CreativePowerTypes.SetDawn:
-					case CreativePowerTypes.SetNoon:
-					case CreativePowerTypes.SetDusk:
-					case CreativePowerTypes.SetMidnight:
-						{
-							if (!args.Player.HasPermission(Permissions.journey_timeset))
-							{
-								args.Player.SendErrorMessage("You do not have permission to modify the time of the server.");
-								return true;
-							}
-							break;
-						}
-					case CreativePowerTypes.Godmode:
-						{
-							if (!args.Player.HasPermission(Permissions.journey_godmode))
-							{
-								args.Player.SendErrorMessage("You do not have permission to toggle godmode.");
-								return true;
-							}
-							break;
-						}
-					case CreativePowerTypes.WindStrength:
-						{
-							if (!args.Player.HasPermission(Permissions.journey_windstrength))
-							{
-								args.Player.SendErrorMessage("You do not have permission to modify the wind strength of the server.");
-								return true;
-							}
-							break;
-						}
-					case CreativePowerTypes.RainStrength:
-						{
-							if (!args.Player.HasPermission(Permissions.journey_rainstrength))
-							{
-								args.Player.SendErrorMessage("You do not have permission to modify the rain strength of the server.");
-								return true;
-							}
-							break;
-						}
-					case CreativePowerTypes.TimeSpeed:
-						{
-							if (!args.Player.HasPermission(Permissions.journey_timespeed))
-							{
-								args.Player.SendErrorMessage("You do not have permission to modify the time speed of the server.");
-								return true;
-							}
-							break;
-						}
-					case CreativePowerTypes.RainFreeze:
-						{
-							if (!args.Player.HasPermission(Permissions.journey_rainfreeze))
-							{
-								args.Player.SendErrorMessage("You do not have permission to freeze the rain strength of the server.");
-								return true;
-							}
-							break;
-						}
-					case CreativePowerTypes.WindFreeze:
-						{
-							if (!args.Player.HasPermission(Permissions.journey_windfreeze))
-							{
-								args.Player.SendErrorMessage("You do not have permission to freeze the wind strength of the server.");
-								return true;
-							}
-							break;
-						}
-					case CreativePowerTypes.IncreasePlacementRange:
-						{
-							if (!args.Player.HasPermission(Permissions.journey_placementrange))
-							{
-								args.Player.SendErrorMessage("You do not have permission to modify the tile placement range of your character.");
-								return true;
-							}
-							break;
-						}
-					case CreativePowerTypes.WorldDifficulty:
-						{
-							if (!args.Player.HasPermission(Permissions.journey_setdifficulty))
-							{
-								args.Player.SendErrorMessage("You do not have permission to modify the world difficulty of the server.");
-								return true;
-							}
-							break;
-						}
-					case CreativePowerTypes.BiomeSpreadFreeze:
-						{
-							if (!args.Player.HasPermission(Permissions.journey_biomespreadfreeze))
-							{
-								args.Player.SendErrorMessage("You do not have permission to freeze the biome spread of the server.");
-								return true;
-							}
-							break;
-						}
-					case CreativePowerTypes.SetSpawnRate:
-						{
-							// This is a monkeypatch because the 1.4.0.4 seemingly at random sends NPC spawn rate changes even outside of journey mode
-							// (with SSC on) -- particles, May 25, 2 Reiwa
-							if (!Main.GameModeInfo.IsJourneyMode)
-							{
-								return true;
-							}
-							if (!args.Player.HasPermission(Permissions.journey_setspawnrate))
-							{
-								args.Player.SendErrorMessage("You do not have permission to modify the NPC spawn rate of the server.");
-								return true;
-							}
-							break;
-						}
-					default:
-						{
-							return true;
-						}
-				}
-			} else if (moduleId == (int)NetModulesTypes.CreativeUnlocksPlayerReport && Main.GameModeInfo.IsJourneyMode)
-			{
-				var unknownField = args.Data.ReadByte();
-
-				if (unknownField == 0) //this is required or something???
-				{
-					var itemId = args.Data.ReadUInt16();
-					var amount = args.Data.ReadUInt16();
-
-					var totalSacrificed = TShock.ResearchDatastore.SacrificeItem(itemId, amount, args.Player);
-
-					var response = NetCreativeUnlocksModule.SerializeItemSacrifice(itemId, totalSacrificed);
-					NetManager.Instance.Broadcast(response);
-				}
+				return true;
 			}
 
-			// As of 1.4.x.x, this is now used for more things:
-			//	NetCreativePowersModule
-			//	NetCreativePowerPermissionsModule
-			//	NetLiquidModule
-			//	NetParticlesModule
-			//	NetPingModule
-			//	NetTeleportPylonModule
-			//	NetTextModule
-			// I (particles) have disabled the original return here, which means that we need to
-			// handle this more. In the interm, this unbreaks parts of vanilla. Originally
-			// we just blocked this because it was a liquid exploit.
 			return false;
 		}
 

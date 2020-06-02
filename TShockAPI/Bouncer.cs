@@ -37,6 +37,7 @@ namespace TShockAPI
 	internal sealed class Bouncer
 	{
 		internal Handlers.SendTileSquareHandler STSHandler { get; set; }
+		internal Handlers.NetModules.NetModulePacketHandler NetModuleHandler { get; set; }
 
 		/// <summary>Constructor call initializes Bouncer and related functionality.</summary>
 		/// <returns>A new Bouncer.</returns>
@@ -44,6 +45,9 @@ namespace TShockAPI
 		{
 			STSHandler = new Handlers.SendTileSquareHandler();
 			GetDataHandlers.SendTileSquare += STSHandler.OnReceive;
+
+			NetModuleHandler = new Handlers.NetModules.NetModulePacketHandler();
+			GetDataHandlers.LoadNetModule += NetModuleHandler.OnReceive;
 
 			// Setup hooks
 			GetDataHandlers.GetSection += OnGetSection;
