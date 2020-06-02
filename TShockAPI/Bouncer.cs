@@ -47,7 +47,7 @@ namespace TShockAPI
 			GetDataHandlers.SendTileSquare += STSHandler.OnReceiveSendTileSquare;
 
 			EmojiHandler = new Handlers.EmojiHandler();
-			GetDataHandlers.Emoji += EmojiHandler.OnEmoji;
+			GetDataHandlers.Emoji += EmojiHandler.OnReceiveEmoji;
 
 			// Setup hooks
 			GetDataHandlers.GetSection += OnGetSection;
