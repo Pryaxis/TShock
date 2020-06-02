@@ -52,7 +52,7 @@ namespace TShockAPI
 			GetDataHandlers.ReadNetModule += NetModuleHandler.OnReceive;
 
 			EmojiHandler = new Handlers.EmojiHandler();
-			GetDataHandlers.Emoji += EmojiHandler.OnReceiveEmoji;
+			GetDataHandlers.Emoji += EmojiHandler.OnReceive;
       
 			LandGolfBallInCupHandler = new Handlers.LandGolfBallInCupHandler();
 			GetDataHandlers.LandGolfBallInCup += LandGolfBallInCupHandler.OnLandGolfBallInCup;

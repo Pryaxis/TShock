@@ -3669,21 +3669,6 @@ namespace TShockAPI
 			return false;
 		}
 
-		private static bool HandleSyncRevengeMarker(GetDataHandlerArgs args)
-		{
-			int uniqueID = args.Data.ReadInt32();
-			Vector2 location = args.Data.ReadVector2();
-			int netId = args.Data.ReadInt32();
-			float npcHpPercent = args.Data.ReadSingle();
-			int npcTypeAgainstDiscouragement = args.Data.ReadInt32(); //tfw the argument is Type Against Discouragement
-			int npcAiStyleAgainstDiscouragement = args.Data.ReadInt32(); //see ^
-			int coinsValue = args.Data.ReadInt32();
-			float baseValue = args.Data.ReadSingle();
-			bool spawnedFromStatus = args.Data.ReadBoolean();
-
-			return false;
-		}
-
 		private static bool HandleLandGolfBallInCup(GetDataHandlerArgs args)
 		{
 			byte playerIndex = args.Data.ReadInt8();
