@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.IO.Streams;
+using Terraria;
 using Terraria.GameContent.NetModules;
 using Terraria.Net;
 
@@ -45,6 +46,17 @@ namespace TShockAPI.Handlers.NetModules
 		/// <param name="rejectPacket"></param>
 		public void HandlePacket(TSPlayer player, out bool rejectPacket)
 		{
+			if (!Main.GameModeInfo.IsJourneyMode)
+			{
+				TShock.Log.ConsoleDebug(
+					"NetModuleHandler received attempt to unlock sacrifice while not in journey mode from",
+					player.Name
+				);
+
+				rejectPacket = true;
+				return;
+			}
+
 			if (UnknownField != 0)
 			{
 				TShock.Log.ConsoleDebug(

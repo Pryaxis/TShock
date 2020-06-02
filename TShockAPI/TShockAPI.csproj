@@ -89,6 +89,7 @@
     <Compile Include="DB\TileManager.cs" />
     <Compile Include="Extensions\ExceptionExt.cs" />
     <Compile Include="Handlers\IPacketHandler.cs" />
+    <Compile Include="Handlers\NetModules\AmbienceHandler.cs" />
     <Compile Include="Handlers\NetModules\BestiaryHandler.cs" />
     <Compile Include="Handlers\NetModules\CreativePowerHandler.cs" />
     <Compile Include="Handlers\NetModules\CreativeUnlocksHandler.cs" />
