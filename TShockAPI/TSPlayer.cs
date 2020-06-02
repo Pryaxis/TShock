@@ -664,13 +664,13 @@ namespace TShockAPI
 			switch (failure)
 			{
 				case BuildPermissionFailPoint.GeneralBuild:
-					SendErrorMessage("You lack permission to build on this server.");
+					SendErrorMessage("You do not have permission to build on this server.");
 					break;
 				case BuildPermissionFailPoint.SpawnProtect:
-					SendErrorMessage("You lack permission to build in the spawn point.");
+					SendErrorMessage("You do not have permission to build in the spawn point.");
 					break;
 				case BuildPermissionFailPoint.Regions:
-					SendErrorMessage("You lack permission to build in this region.");
+					SendErrorMessage("You do not have permission to build in this region.");
 					break;
 			}
 
