@@ -152,7 +152,7 @@ namespace TShockAPI
 					{ PacketTypes.PlayerHurtV2, HandlePlayerDamageV2 },
 					{ PacketTypes.PlayerDeathV2, HandlePlayerKillMeV2 },
 					{ PacketTypes.Emoji, HandleEmoji },
-          { PacketTypes.SyncRevengeMarker, HandleSyncRevengeMarker },
+					{ PacketTypes.SyncRevengeMarker, HandleSyncRevengeMarker },
 					{ PacketTypes.FishOutNPC, HandleFishOutNPC },
 					{ PacketTypes.FoodPlatterTryPlacing, HandleFoodPlatterTryPlacing },
 					{ PacketTypes.SyncCavernMonsterType, HandleSyncCavernMonsterType }
@@ -3603,7 +3603,7 @@ namespace TShockAPI
 			return false;
 		}
     
-    private static bool HandleSyncRevengeMarker(GetDataHandlerArgs args)
+		private static bool HandleSyncRevengeMarker(GetDataHandlerArgs args)
 		{
 			int uniqueID = args.Data.ReadInt32();
 			Vector2 location = args.Data.ReadVector2();
@@ -3615,7 +3615,7 @@ namespace TShockAPI
 			float baseValue = args.Data.ReadSingle();
 			bool spawnedFromStatus = args.Data.ReadBoolean();
       
-      return false;
+			return false;
 		}
 
 		private static bool HandleFishOutNPC(GetDataHandlerArgs args)
