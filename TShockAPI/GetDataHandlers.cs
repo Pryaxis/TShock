@@ -3246,7 +3246,7 @@ namespace TShockAPI
 						{
 							if (!args.Player.HasPermission(Permissions.journey_timeset))
 							{
-								args.Player.SendErrorMessage("You don't have permission to modify the time of the server.");
+								args.Player.SendErrorMessage("You do not have permission to modify the time of the server.");
 								return true;
 							}
 							break;
