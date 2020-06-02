@@ -39,7 +39,7 @@ namespace TShockAPI
 		internal Handlers.SendTileSquareHandler STSHandler { get; set; }
 		internal Handlers.NetModules.NetModulePacketHandler NetModuleHandler { get; set; }
 		internal Handlers.EmojiHandler EmojiHandler { get; set; }
-    internal Handlers.LandGolfBallInCupHandler LandGolfBallInCupHandler { get; set; }
+		internal Handlers.LandGolfBallInCupHandler LandGolfBallInCupHandler { get; set; }
 
 		/// <summary>Constructor call initializes Bouncer and related functionality.</summary>
 		/// <returns>A new Bouncer.</returns>
