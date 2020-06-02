@@ -1954,7 +1954,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Used when a net module is loaded
 		/// </summary>
-		public class LoadNetModuleEventArgs : GetDataHandledEventArgs
+		public class ReadNetModuleEventArgs : GetDataHandledEventArgs
 		{
 			/// <summary>
 			/// The type of net module being loaded
@@ -1963,25 +1963,25 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Called when a net module is loaded
+		/// Called when a net module is received
 		/// </summary>
-		public static HandlerList<LoadNetModuleEventArgs> LoadNetModule = new HandlerList<LoadNetModuleEventArgs>();
+		public static HandlerList<ReadNetModuleEventArgs> ReadNetModule = new HandlerList<ReadNetModuleEventArgs>();
 
 		private static bool OnLoadNetModule(TSPlayer player, MemoryStream data, NetModuleType moduleType)
 		{
-			if (LoadNetModule == null)
+			if (ReadNetModule == null)
 			{
 				return false;
 			}
 
-			var args = new LoadNetModuleEventArgs
+			var args = new ReadNetModuleEventArgs
 			{
 				Player = player,
 				Data = data,
 				ModuleType = moduleType
 			};
 
-			LoadNetModule.Invoke(null, args);
+			ReadNetModule.Invoke(null, args);
 			return args.Handled;
 		}
 
@@ -2242,11 +2242,10 @@ namespace TShockAPI
 
 			else if ((Main.ServerSideCharacter) && (args.Player.sX > 0) && (args.Player.sY > 0) && (args.TPlayer.SpawnX > 0) && ((args.TPlayer.SpawnX != args.Player.sX) && (args.TPlayer.SpawnY != args.Player.sY)))
 			{
-
 				args.Player.sX = args.TPlayer.SpawnX;
 				args.Player.sY = args.TPlayer.SpawnY;
 
-				if (((Main.tile[args.Player.sX, args.Player.sY - 1].active() && Main.tile[args.Player.sX, args.Player.sY - 1].type == 79)) && (WorldGen.StartRoomCheck(args.Player.sX, args.Player.sY - 1)))
+				if (((Main.tile[args.Player.sX, args.Player.sY - 1].active() && Main.tile[args.Player.sX, args.Player.sY - 1].type == TileID.Beds)) && (WorldGen.StartRoomCheck(args.Player.sX, args.Player.sY - 1)))
 				{
 					args.Player.Teleport(args.Player.sX * 16, (args.Player.sY * 16) - 48);
 					TShock.Log.ConsoleDebug("GetDataHandlers / HandleSpawn force teleport phase 1 {0}", args.Player.Name);
@@ -2255,7 +2254,7 @@ namespace TShockAPI
 
 			else if ((Main.ServerSideCharacter) && (args.Player.sX > 0) && (args.Player.sY > 0))
 			{
-				if (((Main.tile[args.Player.sX, args.Player.sY - 1].active() && Main.tile[args.Player.sX, args.Player.sY - 1].type == 79)) && (WorldGen.StartRoomCheck(args.Player.sX, args.Player.sY - 1)))
+				if (((Main.tile[args.Player.sX, args.Player.sY - 1].active() && Main.tile[args.Player.sX, args.Player.sY - 1].type == TileID.Beds)) && (WorldGen.StartRoomCheck(args.Player.sX, args.Player.sY - 1)))
 				{
 					args.Player.Teleport(args.Player.sX * 16, (args.Player.sY * 16) - 48);
 					TShock.Log.ConsoleDebug("GetDataHandlers / HandleSpawn force teleport phase 2 {0}", args.Player.Name);

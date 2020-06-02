@@ -8,7 +8,7 @@ namespace TShockAPI.Handlers.NetModules
 	/// <summary>
 	/// Handles packet 82 - Load Net Module packets
 	/// </summary>
-	public class NetModulePacketHandler : IPacketHandler<LoadNetModuleEventArgs>
+	public class NetModulePacketHandler : IPacketHandler<ReadNetModuleEventArgs>
 	{
 		/// <summary>
 		/// Maps net module types to handlers for the net module type. Add to or edit this dictionary to customise handling
@@ -29,7 +29,7 @@ namespace TShockAPI.Handlers.NetModules
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="args"></param>
-		public void OnReceive(object sender, LoadNetModuleEventArgs args)
+		public void OnReceive(object sender, ReadNetModuleEventArgs args)
 		{
 			INetModuleHandler handler;
 
@@ -39,17 +39,8 @@ namespace TShockAPI.Handlers.NetModules
 			}
 			else
 			{
-				// As of 1.4.x.x, this is now used for more things:
-				//	NetCreativePowersModule
-				//	NetCreativePowerPermissionsModule
-				//	NetLiquidModule
-				//	NetParticlesModule
-				//	NetPingModule
-				//	NetTeleportPylonModule
-				//	NetTextModule
-				// I (particles) have disabled the original return here, which means that we need to
-				// handle this more. In the interm, this unbreaks parts of vanilla. Originally
-				// we just blocked this because it was a liquid exploit.
+				// We don't have handlers for NetModuleType.Ping and NetModuleType.Particles.
+				// These net modules are fairly innocuous and can be processed normally by the game
 				args.Handled = false;
 				return;
 			}

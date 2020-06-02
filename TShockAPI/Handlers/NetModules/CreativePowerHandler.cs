@@ -31,7 +31,7 @@ namespace TShockAPI.Handlers.NetModules
 		/// <param name="rejectPacket"></param>
 		public void HandlePacket(TSPlayer player, out bool rejectPacket)
 		{
-			if (!CheckPermission(PowerType, player))
+			if (!HasPermission(PowerType, player))
 			{
 				rejectPacket = true;
 				return;
@@ -46,7 +46,7 @@ namespace TShockAPI.Handlers.NetModules
 		/// <param name="powerType"></param>
 		/// <param name="player"></param>
 		/// <returns></returns>
-		public static bool CheckPermission(CreativePowerTypes powerType, TSPlayer player)
+		public static bool HasPermission(CreativePowerTypes powerType, TSPlayer player)
 		{
 			if (!PowerToPermissionMap.ContainsKey(powerType))
 			{

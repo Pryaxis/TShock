@@ -47,7 +47,7 @@ namespace TShockAPI
 			GetDataHandlers.SendTileSquare += STSHandler.OnReceive;
 
 			NetModuleHandler = new Handlers.NetModules.NetModulePacketHandler();
-			GetDataHandlers.LoadNetModule += NetModuleHandler.OnReceive;
+			GetDataHandlers.ReadNetModule += NetModuleHandler.OnReceive;
 
 			// Setup hooks
 			GetDataHandlers.GetSection += OnGetSection;
