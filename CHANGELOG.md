@@ -7,6 +7,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * New permission `tshock.journey.research` to enable sharing research via item sacrifice (@QuiCM)
 * Add Emoji event to GetDataHandler. This packet is received when a player tries to display an emote.
 	* Adding EmojiHandler to handle an exploit. Adding `tshock.sendemoji` permission and checks. Added this permission to guest group by default.
+* Handling SyncCavernMonsterType packet to prevent an exploit where players could modify the server's cavern monster types and make the server spawn any NPCs - including bosses - onto other players.
 
 ## TShock 4.4.0 (Pre-release 10)
 * Fix all rope coils. (@Olink)

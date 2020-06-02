@@ -152,9 +152,10 @@ namespace TShockAPI
 					{ PacketTypes.PlayerHurtV2, HandlePlayerDamageV2 },
 					{ PacketTypes.PlayerDeathV2, HandlePlayerKillMeV2 },
 					{ PacketTypes.Emoji, HandleEmoji },
+					{ PacketTypes.SyncRevengeMarker, HandleSyncRevengeMarker },
 					{ PacketTypes.FishOutNPC, HandleFishOutNPC },
 					{ PacketTypes.FoodPlatterTryPlacing, HandleFoodPlatterTryPlacing },
-					{ PacketTypes.SyncRevengeMarker, HandleSyncRevengeMarker }
+					{ PacketTypes.SyncCavernMonsterType, HandleSyncCavernMonsterType }
 				};
 		}
 
@@ -3590,7 +3591,7 @@ namespace TShockAPI
 
 			return false;
 		}
-
+    
 		private static bool HandleEmoji(GetDataHandlerArgs args)
 		{
 			byte playerIndex = args.Data.ReadInt8();
@@ -3599,6 +3600,21 @@ namespace TShockAPI
 			if (OnEmoji(args.Player, args.Data, playerIndex, emojiID))
 				return true;
 
+			return false;
+		}
+    
+		private static bool HandleSyncRevengeMarker(GetDataHandlerArgs args)
+		{
+			int uniqueID = args.Data.ReadInt32();
+			Vector2 location = args.Data.ReadVector2();
+			int netId = args.Data.ReadInt32();
+			float npcHpPercent = args.Data.ReadSingle();
+			int npcTypeAgainstDiscouragement = args.Data.ReadInt32(); //tfw the argument is Type Against Discouragement
+			int npcAiStyleAgainstDiscouragement = args.Data.ReadInt32(); //see ^
+			int coinsValue = args.Data.ReadInt32();
+			float baseValue = args.Data.ReadSingle();
+			bool spawnedFromStatus = args.Data.ReadBoolean();
+      
 			return false;
 		}
 
@@ -3628,19 +3644,11 @@ namespace TShockAPI
 			return false;
 		}
 
-		private static bool HandleSyncRevengeMarker(GetDataHandlerArgs args)
+		private static bool HandleSyncCavernMonsterType(GetDataHandlerArgs args)
 		{
-			int uniqueID = args.Data.ReadInt32();
-			Vector2 location = args.Data.ReadVector2();
-			int netId = args.Data.ReadInt32();
-			float npcHpPercent = args.Data.ReadSingle();
-			int npcTypeAgainstDiscouragement = args.Data.ReadInt32(); //tfw the argument is Type Against Discouragement
-			int npcAiStyleAgainstDiscouragement = args.Data.ReadInt32(); //see ^
-			int coinsValue = args.Data.ReadInt32();
-			float baseValue = args.Data.ReadSingle();
-			bool spawnedFromStatus = args.Data.ReadBoolean();
-
-			return false;
+			args.Player.Kick("Exploit attempt detected!");
+			TShock.Log.ConsoleDebug($"HandleSyncCavernMonsterType: Player is trying to modify NPC cavernMonsterType; this is a crafted packet! - From {args.Player.Name}");
+			return true;
 		}
 
 		public enum EditAction
