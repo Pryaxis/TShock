@@ -5,7 +5,7 @@ namespace TShockAPI.Handlers.NetModules
 	/// <summary>
 	/// Rejects ambience new modules from clients
 	/// </summary>
-	internal class AmbienceHandler : INetModuleHandler
+	public class AmbienceHandler : INetModuleHandler
 	{
 		/// <summary>
 		/// No deserialization needed. This should never be received by the server

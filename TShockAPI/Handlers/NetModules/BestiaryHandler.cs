@@ -5,7 +5,7 @@ namespace TShockAPI.Handlers.NetModules
 	/// <summary>
 	/// Rejects client->server bestiary net modules as the client should never send this to the server
 	/// </summary>
-	internal class BestiaryHandler : INetModuleHandler
+	public class BestiaryHandler : INetModuleHandler
 	{
 		/// <summary>
 		/// No deserialization needed. This should never be received by the server
