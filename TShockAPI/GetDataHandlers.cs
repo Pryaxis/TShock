@@ -153,6 +153,7 @@ namespace TShockAPI
 					{ PacketTypes.PlayerDeathV2, HandlePlayerKillMeV2 },
 					{ PacketTypes.Emoji, HandleEmoji },
 					{ PacketTypes.SyncRevengeMarker, HandleSyncRevengeMarker },
+					{ PacketTypes.LandGolfBallInCup, HandleLandGolfBallInCup },
 					{ PacketTypes.FishOutNPC, HandleFishOutNPC },
 					{ PacketTypes.FoodPlatterTryPlacing, HandleFoodPlatterTryPlacing },
 					{ PacketTypes.SyncCavernMonsterType, HandleSyncCavernMonsterType }
@@ -1901,6 +1902,56 @@ namespace TShockAPI
 			Emoji.Invoke(null, args);
 			return args.Handled;
 		}
+   
+		/// <summary>
+		/// For use in a LandBallInCup event.
+		/// </summary>
+		public class LandGolfBallInCupEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// The player index in the packet, who puts the ball in the cup.
+			/// </summary>
+			public byte PlayerIndex { get; set; }
+			/// <summary>
+			/// The X tile position of where the ball lands in a cup.
+			/// </summary>
+			public ushort TileX { get; set; }
+			/// <summary>
+			/// The Y tile position of where the ball lands in a cup.
+			/// </summary>
+			public ushort TileY { get; set; }
+			/// <summary>
+			/// The amount of hits it took for the player to land the ball in the cup.
+			/// </summary>
+			public ushort Hits { get; set; }
+			/// <summary>
+			/// The type of the projectile that was landed in the cup. A golfball in legit cases.
+			/// </summary>
+			public ushort ProjectileType { get; set; }
+		}
+
+		/// <summary>
+		/// Called when a player lands a golf ball in a cup.
+		/// </summary>
+		public static HandlerList<LandGolfBallInCupEventArgs> LandGolfBallInCup = new HandlerList<LandGolfBallInCupEventArgs>();
+		private static bool OnLandGolfBallInCup(TSPlayer player, MemoryStream data, byte playerIndex, ushort tileX, ushort tileY, ushort hits, ushort projectileType )
+		{
+			if (LandGolfBallInCup == null)
+				return false;
+
+			var args = new LandGolfBallInCupEventArgs
+			{
+				Player = player,
+				Data = data,
+				PlayerIndex = playerIndex,
+				TileX = tileX,
+				TileY = tileY,
+				Hits = hits,
+				ProjectileType = projectileType
+			};
+			LandGolfBallInCup.Invoke(null, args);
+			return args.Handled;
+		}
 
 		/// <summary>
 		/// For use in a FishOutNPC event.
@@ -3615,6 +3666,20 @@ namespace TShockAPI
 			float baseValue = args.Data.ReadSingle();
 			bool spawnedFromStatus = args.Data.ReadBoolean();
       
+			return false;
+		}
+
+		private static bool HandleLandGolfBallInCup(GetDataHandlerArgs args)
+		{
+			byte playerIndex = args.Data.ReadInt8();
+			ushort tileX = args.Data.ReadUInt16();
+			ushort tileY = args.Data.ReadUInt16();
+			ushort hits = args.Data.ReadUInt16();
+			ushort projectileType = args.Data.ReadUInt16();
+
+			if (OnLandGolfBallInCup(args.Player, args.Data, playerIndex, tileX, tileY, hits, projectileType))
+				return true;
+
 			return false;
 		}
 
