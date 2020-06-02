@@ -1959,7 +1959,7 @@ namespace TShockAPI
 			/// <summary>
 			/// The type of net module being loaded
 			/// </summary>
-			public NetModulesTypes ModuleType { get; set; }
+			public NetModuleType ModuleType { get; set; }
 		}
 
 		/// <summary>
@@ -1967,7 +1967,7 @@ namespace TShockAPI
 		/// </summary>
 		public static HandlerList<LoadNetModuleEventArgs> LoadNetModule = new HandlerList<LoadNetModuleEventArgs>();
 
-		private static bool OnLoadNetModule(TSPlayer player, MemoryStream data, NetModulesTypes moduleType)
+		private static bool OnLoadNetModule(TSPlayer player, MemoryStream data, NetModuleType moduleType)
 		{
 			if (LoadNetModule == null)
 			{
@@ -3260,7 +3260,7 @@ namespace TShockAPI
 		{
 			short moduleId = args.Data.ReadInt16();
 
-			if (OnLoadNetModule(args.Player, args.Data, (NetModulesTypes)moduleId))
+			if (OnLoadNetModule(args.Player, args.Data, (NetModuleType)moduleId))
 			{
 				return true;
 			}
@@ -3779,7 +3779,7 @@ namespace TShockAPI
 			public bool Killed { get; internal set; }
 		}
 
-		public enum NetModulesTypes
+		public enum NetModuleType
 		{
 			Liquid,
 			Text,

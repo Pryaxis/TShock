@@ -13,14 +13,14 @@ namespace TShockAPI.Handlers.NetModules
 		/// <summary>
 		/// Maps net module types to handlers for the net module type. Add to or edit this dictionary to customise handling
 		/// </summary>
-		public static Dictionary<NetModulesTypes, Type> NetModulesToHandlersMap = new Dictionary<NetModulesTypes, Type>
+		public static Dictionary<NetModuleType, Type> NetModulesToHandlersMap = new Dictionary<NetModuleType, Type>
 		{
-			{ NetModulesTypes.CreativePowers,               typeof(CreativePowerHandler)    },
-			{ NetModulesTypes.CreativeUnlocksPlayerReport,  typeof(CreativeUnlocksHandler)  },
-			{ NetModulesTypes.TeleportPylon,                typeof(PylonHandler)            },
-			{ NetModulesTypes.Liquid,                       typeof(LiquidHandler)           },
-			{ NetModulesTypes.Bestiary,                     typeof(BestiaryHandler)         },
-			{ NetModulesTypes.Ambience,                     typeof(AmbienceHandler)         }
+			{ NetModuleType.CreativePowers,               typeof(CreativePowerHandler)    },
+			{ NetModuleType.CreativeUnlocksPlayerReport,  typeof(CreativeUnlocksHandler)  },
+			{ NetModuleType.TeleportPylon,                typeof(PylonHandler)            },
+			{ NetModuleType.Liquid,                       typeof(LiquidHandler)           },
+			{ NetModuleType.Bestiary,                     typeof(BestiaryHandler)         },
+			{ NetModuleType.Ambience,                     typeof(AmbienceHandler)         }
 		};
 
 		/// <summary>
