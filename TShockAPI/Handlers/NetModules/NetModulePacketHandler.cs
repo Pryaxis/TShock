@@ -52,6 +52,11 @@ namespace TShockAPI.Handlers.NetModules
 						handler = new LiquidHandler();
 						break;
 					}
+				case NetModulesTypes.Bestiary:
+					{
+						handler = new BestiaryHandler();
+						break;
+					}
 				default:
 					{
 						// As of 1.4.x.x, this is now used for more things:
