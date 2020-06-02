@@ -43,7 +43,7 @@ namespace TShockAPI
 		internal Bouncer()
 		{
 			STSHandler = new Handlers.SendTileSquareHandler();
-			GetDataHandlers.SendTileSquare += STSHandler.OnReceiveSendTileSquare;
+			GetDataHandlers.SendTileSquare += STSHandler.OnReceive;
 
 			// Setup hooks
 			GetDataHandlers.GetSection += OnGetSection;

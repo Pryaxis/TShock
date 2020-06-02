@@ -14,12 +14,12 @@ namespace TShockAPI.Handlers
 	/// <summary>
 	/// Provides processors for handling Tile Square packets
 	/// </summary>
-	public class SendTileSquareHandler
+	public class SendTileSquareHandler : IPacketHandler<GetDataHandlers.SendTileSquareEventArgs>
 	{
 		/// <summary>
 		/// Maps grass-type blocks to flowers that can be grown on them with flower boots
 		/// </summary>
-		Dictionary<ushort, List<ushort>> _grassToPlantMap = new Dictionary<ushort, List<ushort>>
+		public static Dictionary<ushort, List<ushort>> GrassToPlantMap = new Dictionary<ushort, List<ushort>>
 		{
 			{ TileID.Grass, new List<ushort>            { TileID.Plants,         TileID.Plants2 } },
 			{ TileID.HallowedGrass, new List<ushort>    { TileID.HallowedPlants, TileID.HallowedPlants2 } },
@@ -29,7 +29,7 @@ namespace TShockAPI.Handlers
 		/// <summary>
 		/// Item IDs that can spawn flowers while you walk
 		/// </summary>
-		List<int> _flowerBootItems = new List<int>
+		public static List<int> FlowerBootItems = new List<int>
 		{
 			ItemID.FlowerBoots,
 			ItemID.FairyBoots
@@ -40,7 +40,7 @@ namespace TShockAPI.Handlers
 		/// Note: <see cref="Terraria.ID.TileEntityID"/> is empty at the time of writing, but entities are dynamically assigned their ID at initialize time
 		/// which is why we can use the _myEntityId field on each entity type
 		/// </summary>
-		Dictionary<int, int> _tileEntityIdToTileIdMap = new Dictionary<int, int>
+		public static Dictionary<int, int> TileEntityIdToTileIdMap = new Dictionary<int, int>
 		{
 			{ TileID.TargetDummy,        TETrainingDummy._myEntityID },
 			{ TileID.ItemFrame,          TEItemFrame._myEntityID },
@@ -57,7 +57,7 @@ namespace TShockAPI.Handlers
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="args"></param>
-		public void OnReceiveSendTileSquare(object sender, GetDataHandlers.SendTileSquareEventArgs args)
+		public void OnReceive(object sender, GetDataHandlers.SendTileSquareEventArgs args)
 		{
 			// By default, we'll handle everything
 			args.Handled = true;
@@ -196,9 +196,9 @@ namespace TShockAPI.Handlers
 			UpdateMultipleServerTileStates(realX, realY, width, height, newTiles);
 
 			// Tile entities have special placements that we should let the game deal with
-			if (_tileEntityIdToTileIdMap.ContainsKey(tileType))
+			if (TileEntityIdToTileIdMap.ContainsKey(tileType))
 			{
-				TileEntity.PlaceEntityNet(realX, realY, _tileEntityIdToTileIdMap[tileType]);
+				TileEntity.PlaceEntityNet(realX, realY, TileEntityIdToTileIdMap[tileType]);
 			}
 		}
 
@@ -214,7 +214,7 @@ namespace TShockAPI.Handlers
 		{
 			// Some boots allow growing flowers on grass. This process sends a 1x1 tile square to grow the flowers
 			// The square size must be 1 and the player must have an accessory that allows growing flowers in order for this square to be valid
-			if (squareSize == 1 && args.Player.Accessories.Any(a => a != null && _flowerBootItems.Contains(a.type)))
+			if (squareSize == 1 && args.Player.Accessories.Any(a => a != null && FlowerBootItems.Contains(a.type)))
 			{
 				ProcessFlowerBoots(realX, realY, newTile, args);
 				return;
@@ -254,7 +254,7 @@ namespace TShockAPI.Handlers
 			}
 
 			ITile tile = Main.tile[realX, realY + 1];
-			if (!_grassToPlantMap.TryGetValue(tile.type, out List<ushort> plantTiles) && !plantTiles.Contains(newTile.Type))
+			if (!GrassToPlantMap.TryGetValue(tile.type, out List<ushort> plantTiles) && !plantTiles.Contains(newTile.Type))
 			{
 				// If the tile below the tile square isn't a valid plant tile (eg grass) then we don't update the server tile state
 				return;
