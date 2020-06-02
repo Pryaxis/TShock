@@ -38,6 +38,7 @@ namespace TShockAPI
 	{
 		internal Handlers.SendTileSquareHandler STSHandler { get; set; }
 		internal Handlers.NetModules.NetModulePacketHandler NetModuleHandler { get; set; }
+    internal Handlers.EmojiHandler EmojiHandler { get; set; }
 
 		/// <summary>Constructor call initializes Bouncer and related functionality.</summary>
 		/// <returns>A new Bouncer.</returns>
@@ -48,6 +49,9 @@ namespace TShockAPI
 
 			NetModuleHandler = new Handlers.NetModules.NetModulePacketHandler();
 			GetDataHandlers.ReadNetModule += NetModuleHandler.OnReceive;
+
+			EmojiHandler = new Handlers.EmojiHandler();
+			GetDataHandlers.Emoji += EmojiHandler.OnReceiveEmoji;
 
 			// Setup hooks
 			GetDataHandlers.GetSection += OnGetSection;
