@@ -97,6 +97,7 @@
     <Compile Include="Handlers\NetModules\LiquidHandler.cs" />
     <Compile Include="Handlers\NetModules\NetModulePacketHandler.cs" />
     <Compile Include="Handlers\NetModules\PylonHandler.cs" />
+    <Compile Include="Handlers\EmojiHandler.cs" />
     <Compile Include="Handlers\LandGolfBallInCupHandler.cs" />
     <Compile Include="Handlers\SendTileSquareHandler.cs" />
     <Compile Include="Hooks\AccountHooks.cs" />
