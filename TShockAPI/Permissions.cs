@@ -267,6 +267,9 @@ namespace TShockAPI
 
 		[Description("User can use wormhole potions.")]
 		public static readonly string wormhole = "tshock.tp.wormhole";
+
+		[Description("User can use pylons to teleport")]
+		public static readonly string pylon = "tshock.tp.pylon";
 		#endregion
 
 		#region tshock.world nodes
@@ -409,6 +412,9 @@ namespace TShockAPI
 
 		[Description("User can use Creative UI to set the NPC spawn rate of the world.")]
 		public static readonly string journey_setspawnrate = "tshock.journey.setspawnrate";
+
+		[Description("User can contribute research by sacrificing items")]
+		public static readonly string journey_contributeresearch = "tshock.journey.research";
 		#endregion
 
 		#region Non-grouped
@@ -468,6 +474,9 @@ namespace TShockAPI
 
 		[Description("Player can resync themselves with server state.")]
 		public static readonly string synclocalarea = "tshock.synclocalarea";
+
+		[Description("Player can send emotes.")]
+		public static readonly string sendemoji = "tshock.sendemoji";
 		#endregion
 		/// <summary>
 		/// Lists all commands associated with a given permission

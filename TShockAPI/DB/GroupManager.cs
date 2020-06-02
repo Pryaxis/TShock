@@ -65,7 +65,8 @@ namespace TShockAPI.DB
 						Permissions.canpartychat,
 						Permissions.cantalkinthird,
 						Permissions.canchat,
-						Permissions.synclocalarea));
+						Permissions.synclocalarea,
+						Permissions.sendemoji));
 
 				AddDefaultGroup("default", "guest",
 					string.Join(",",

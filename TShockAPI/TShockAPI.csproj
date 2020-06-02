@@ -88,6 +88,16 @@
     <Compile Include="DB\ResearchDatastore.cs" />
     <Compile Include="DB\TileManager.cs" />
     <Compile Include="Extensions\ExceptionExt.cs" />
+    <Compile Include="Handlers\IPacketHandler.cs" />
+    <Compile Include="Handlers\NetModules\AmbienceHandler.cs" />
+    <Compile Include="Handlers\NetModules\BestiaryHandler.cs" />
+    <Compile Include="Handlers\NetModules\CreativePowerHandler.cs" />
+    <Compile Include="Handlers\NetModules\CreativeUnlocksHandler.cs" />
+    <Compile Include="Handlers\NetModules\INetModuleHandler.cs" />
+    <Compile Include="Handlers\NetModules\LiquidHandler.cs" />
+    <Compile Include="Handlers\NetModules\NetModulePacketHandler.cs" />
+    <Compile Include="Handlers\NetModules\PylonHandler.cs" />
+    <Compile Include="Handlers\EmojiHandler.cs" />
     <Compile Include="Handlers\SendTileSquareHandler.cs" />
     <Compile Include="Hooks\AccountHooks.cs" />
     <Compile Include="Hooks\GeneralHooks.cs" />
