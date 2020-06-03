@@ -40,6 +40,7 @@ namespace TShockAPI
 		internal Handlers.NetModules.NetModulePacketHandler NetModuleHandler { get; set; }
 		internal Handlers.EmojiHandler EmojiHandler { get; set; }
 		internal Handlers.LandGolfBallInCupHandler LandGolfBallInCupHandler { get; set; }
+		internal Handlers.SyncTilePickingHandler SyncTilePickingHandler { get; set; }
 
 		/// <summary>Constructor call initializes Bouncer and related functionality.</summary>
 		/// <returns>A new Bouncer.</returns>
@@ -56,6 +57,9 @@ namespace TShockAPI
       
 			LandGolfBallInCupHandler = new Handlers.LandGolfBallInCupHandler();
 			GetDataHandlers.LandGolfBallInCup += LandGolfBallInCupHandler.OnReceive;
+
+			SyncTilePickingHandler = new Handlers.SyncTilePickingHandler();
+			GetDataHandlers.SyncTilePicking += SyncTilePickingHandler.OnReceive;
 
 			// Setup hooks
 			GetDataHandlers.GetSection += OnGetSection;

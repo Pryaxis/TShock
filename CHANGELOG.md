@@ -9,6 +9,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 	* Adding EmojiHandler to handle an exploit. Adding `tshock.sendemoji` permission and checks. Added this permission to guest group by default.
 * Handling SyncCavernMonsterType packet to prevent an exploit where players could modify the server's cavern monster types and make the server spawn any NPCs - including bosses - onto other players.
 * Added LandGolfBallInCup event which is accessible for developers to work with, as well as LandGolfBallInCup handler to handle exploits where players could send direct packets to trigger and imitate golf ball cup landing anywhere in the game world. Added two public lists in Handlers.LandGolfBallInCupHandler: GolfBallProjectileIDs and GolfClubItemIDs. (@Patrikkk)
+* Add SyncTilePicking event. This is called when a player damages a tile. Implementing SyncTilePickingHandler and patching tile damaging related exploits. (Preventing player sending invalid world position data which disconnects other players.)
 
 ## TShock 4.4.0 (Pre-release 10)
 * Fix all rope coils. (@Olink)
