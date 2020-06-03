@@ -23,11 +23,15 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
+using TShockAPI.Net;
 
 namespace TShockAPI.ServerSideCharacters
 {
 	public class ServerSideConfig
 	{
+		// Disable the 'Missing XML comment for publicly visible type or member' for these fields as they have
+		// description attributes
+#pragma warning disable CS1591
 		[Description("Enable server side characters, This stops the client from saving character data! EXPERIMENTAL!!!!!")]
 		public bool Enabled = false;
 
@@ -45,6 +49,7 @@ namespace TShockAPI.ServerSideCharacters
 
 		[Description("The starting default inventory for new SSC.")] 
 		public List<NetItem> StartingInventory = new List<NetItem>();
+#pragma warning restore CS1591
 
 		public static ServerSideConfig Read(string path)
 		{

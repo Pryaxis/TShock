@@ -111,9 +111,15 @@
     <Compile Include="Models\PlayerUpdate\MiscDataSet2.cs" />
     <Compile Include="Models\PlayerUpdate\MiscDataSet3.cs" />
     <Compile Include="Models\Projectiles\NewProjectileData.cs" />
-    <Compile Include="NetItem.cs" />
+    <Compile Include="Net\NetItem.cs" />
     <Compile Include="PlayerData.cs" />
     <Compile Include="RegionHandler.cs" />
+    <Compile Include="ServerSideCharacters\ServerSideCoordinator.cs" />
+    <Compile Include="ServerSideCharacters\ServerSideInventory.cs" />
+    <Compile Include="ServerSideCharacters\ServerSidePlayerData.cs" />
+    <Compile Include="ServerSideCharacters\ServerSideStats.cs" />
+    <Compile Include="ServerSideCharacters\ServerSideVanity.cs" />
+    <Compile Include="ServerSideCharacters\ServerSideSpawn.cs" />
     <Compile Include="Sockets\LinuxTcpSocket.cs" />
     <Compile Include="SqlLog.cs" />
     <Compile Include="TextLog.cs" />
@@ -223,7 +229,7 @@
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_IncrementBeforeBuild="False" BuildVersion_StartDate="2011/6/17" BuildVersion_BuildVersioningStyle="None.None.None.MonthAndDayStamp" BuildVersion_BuildAction="Both" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildAction="Both" BuildVersion_BuildVersioningStyle="None.None.None.MonthAndDayStamp" BuildVersion_StartDate="2011/6/17" BuildVersion_IncrementBeforeBuild="False" />
     </VisualStudio>
   </ProjectExtensions>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

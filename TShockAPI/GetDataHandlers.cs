@@ -3632,7 +3632,7 @@ namespace TShockAPI
 
 			if (args.TPlayer.difficulty == 2 && Main.ServerSideCharacter && args.Player.IsLoggedIn)
 			{
-				if (TShock.CharacterDB.RemovePlayer(args.Player.Account.ID))
+				if (TShock.CharacterDB.DeletePlayerData(args.Player.Account.ID))
 				{
 					TShock.Log.ConsoleDebug("GetDataHandlers / HandlePlayerKillMeV2 ssc delete {0} {1}", args.Player.Name, args.TPlayer.difficulty);
 					args.Player.SendErrorMessage("You have fallen in hardcore mode, and your items have been lost forever.");

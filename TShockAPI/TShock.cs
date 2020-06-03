@@ -508,7 +508,7 @@ namespace TShockAPI
 		/// <param name="args">args - The AccountDeleteEventArgs object.</param>
 		private void OnAccountDelete(Hooks.AccountDeleteEventArgs args)
 		{
-			CharacterDB.RemovePlayer(args.Account.ID);
+			CharacterDB.DeletePlayerData(args.Account.ID);
 		}
 
 		/// <summary>OnAccountCreate - Internal hook fired on account creation.</summary>

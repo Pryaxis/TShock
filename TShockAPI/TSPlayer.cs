@@ -368,6 +368,7 @@ namespace TShockAPI
 			Item[] voidVault = TPlayer.bank4.item;
 
 			Item trash = TPlayer.trashItem;
+			/*
 			for (int i = 0; i < NetItem.MaxInventory; i++)
 			{
 				if (i < NetItem.InventoryIndex.Item2)
@@ -576,7 +577,7 @@ namespace TShockAPI
 				}
 
 			}
-
+			*/
 			return check;
 		}
 

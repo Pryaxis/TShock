@@ -23,9 +23,11 @@ using Terraria.Localization;
 using Terraria.GameContent.NetModules;
 using Terraria.Net;
 using Terraria.ID;
+using TShockAPI.Net;
 
 namespace TShockAPI
 {
+	[System.Obsolete("", true)]
 	public class PlayerData
 	{
 		public NetItem[] inventory = new NetItem[NetItem.MaxInventory];
@@ -50,6 +52,7 @@ namespace TShockAPI
 		public bool[] hideVisuals;
 		public int questsCompleted;
 
+		[System.Obsolete("", true)]
 		public PlayerData(TSPlayer player)
 		{
 			for (int i = 0; i < NetItem.MaxInventory; i++)
@@ -71,6 +74,8 @@ namespace TShockAPI
 		/// <param name="netID"></param>
 		/// <param name="prefix"></param>
 		/// <param name="stack"></param>
+
+		[System.Obsolete("", true)]
 		public void StoreSlot(int slot, int netID, byte prefix, int stack)
 		{
 			if (slot > (this.inventory.Length - 1)) //if the slot is out of range then dont save
@@ -85,6 +90,8 @@ namespace TShockAPI
 		/// Copies a characters data to this object
 		/// </summary>
 		/// <param name="player"></param>
+
+		[System.Obsolete("", true)]
 		public void CopyCharacter(TSPlayer player)
 		{
 			this.health = player.TPlayer.statLife > 0 ? player.TPlayer.statLife : 1;
@@ -193,6 +200,8 @@ namespace TShockAPI
 		/// Restores a player's character to the state stored in the database
 		/// </summary>
 		/// <param name="player"></param>
+
+		[System.Obsolete("", true)]
 		public void RestoreCharacter(TSPlayer player)
 		{
 			// Start ignoring SSC-related packets! This is critical so that we don't send or receive dirty data!
