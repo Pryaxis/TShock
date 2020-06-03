@@ -993,7 +993,7 @@ namespace TShockAPI
 				bool flag = false;
 				if (RealPlayer)
 				{
-					for (int i = 0; i < NetItem.InventorySlots; i++) //51 is trash can, 52-55 is coins, 56-59 is ammo
+					for (int i = 0; i < NetItem.InventorySlots; i++)
 					{
 						if (TPlayer.inventory[i] == null || !TPlayer.inventory[i].active || TPlayer.inventory[i].Name == "")
 						{
