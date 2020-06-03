@@ -22,7 +22,6 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using MySql.Data.MySqlClient;
-using Terraria;
 using TShockAPI.Net;
 using TShockAPI.ServerSideCharacters;
 
@@ -57,7 +56,8 @@ namespace TShockAPI.DB
 									 new SqlColumn("hideVisuals", MySqlDbType.Int32),
 									 new SqlColumn("skinColor", MySqlDbType.Int32),
 									 new SqlColumn("eyeColor", MySqlDbType.Int32),
-									 new SqlColumn("questsCompleted", MySqlDbType.Int32)
+									 new SqlColumn("questsCompleted", MySqlDbType.Int32),
+									 new SqlColumn("golfScoreAccumulated", MySqlDbType.Int32)
 				);
 			var creator = new SqlTableCreator(db,
 											  db.GetSqlType() == SqlType.Sqlite
@@ -84,17 +84,17 @@ namespace TShockAPI.DB
 		/// </summary>
 		/// <param name="data"></param>
 		/// <param name="accountId"></param>
-		public void CreatePlayerData(ServerSidePlayerData data, int accountId)
+		public void InsertPlayerData(ServerSidePlayerData data, int accountId)
 		{
 			database.Query(
 				"INSERT INTO tsCharacter (Account, Health, MaxHealth, Mana, MaxMana, Inventory, extraSlot, spawnX, spawnY," +
-				"skinVariant, hair, hairDye, hairColor, pantsColor, shirtColor, underShirtColor, shoeColor, skinColor, eyeColor, hideVisuals, questsCompleted) " +
-				"VALUES (@0, @1, @2, @3, @4, @5, @6, @7, @8, @9, @10, @11, @12, @13, @14, @15, @16, @17, @18, @19, @20)",
+				"skinVariant, hair, hairDye, hairColor, pantsColor, shirtColor, underShirtColor, shoeColor, skinColor, eyeColor, hideVisuals, questsCompleted, golfScoreAccumulated) " +
+				"VALUES (@0, @1, @2, @3, @4, @5, @6, @7, @8, @9, @10, @11, @12, @13, @14, @15, @16, @17, @18, @19, @20, @21)",
 				accountId, data.Stats.Health, data.Stats.MaxHealth, data.Stats.Mana, data.Stats.MaxMana, String.Join("~", data.Inventory.Items),
 				data.Stats.HasExtraSlot ? 1 : 0, data.Spawn.TileX, data.Spawn.TileY, data.Vanity.SkinVariant, data.Vanity.Hair, data.Vanity.HairDye,
 				TShock.Utils.EncodeColor(data.Vanity.HairColor), TShock.Utils.EncodeColor(data.Vanity.PantsColor), TShock.Utils.EncodeColor(data.Vanity.ShirtColor),
 				TShock.Utils.EncodeColor(data.Vanity.UnderShirtColor), TShock.Utils.EncodeColor(data.Vanity.ShoeColor), TShock.Utils.EncodeColor(data.Vanity.SkinColor),
-				TShock.Utils.EncodeColor(data.Vanity.EyeColor), TShock.Utils.EncodeBoolArray(data.Vanity.HideVisuals), data.Stats.QuestsCompleted
+				TShock.Utils.EncodeColor(data.Vanity.EyeColor), TShock.Utils.EncodeBoolArray(data.Vanity.HideVisuals), data.Stats.QuestsCompleted, data.Stats.GolfScoreAccumulated
 			);
 		}
 
@@ -130,7 +130,8 @@ namespace TShockAPI.DB
 				MaxHealth = reader.Get<int>("MaxHealth"),
 				MaxMana = reader.Get<int>("MaxMana"),
 				HasExtraSlot = reader.Get<int>("extraSlot") == 1,
-				QuestsCompleted = reader.Get<int>("questsCompleted")
+				QuestsCompleted = reader.Get<int>("questsCompleted"),
+				GolfScoreAccumulated = reader.Get<int>("golfScoreAccumulated")
 			};
 
 			return stats;
@@ -139,7 +140,7 @@ namespace TShockAPI.DB
 		internal ServerSideInventory ReadInventory(QueryResult reader)
 		{
 			IEnumerable<NetItem> items = reader.Get<string>("Inventory").Split('~').Select(NetItem.Parse);
-			return ServerSideInventory.FromNetItems(items);
+			return ServerSideInventory.CreateFromNetItems(items);
 		}
 
 		internal ServerSideSpawn ReadSpawn(QueryResult reader)
@@ -160,14 +161,14 @@ namespace TShockAPI.DB
 				SkinVariant = reader.Get<int>("skinVariant"),
 				Hair = reader.Get<int>("hair"),
 				HairDye = (byte)reader.Get<int>("hairDye"),
-				HairColor = TShock.Utils.DecodeColor(reader.Get<int?>("hairColor")),
-				PantsColor = TShock.Utils.DecodeColor(reader.Get<int?>("pantsColor")),
-				ShirtColor = TShock.Utils.DecodeColor(reader.Get<int?>("shirtColor")),
-				UnderShirtColor = TShock.Utils.DecodeColor(reader.Get<int?>("underShirtColor")),
-				ShoeColor = TShock.Utils.DecodeColor(reader.Get<int?>("shoeColor")),
-				SkinColor = TShock.Utils.DecodeColor(reader.Get<int?>("skinColor")),
-				EyeColor = TShock.Utils.DecodeColor(reader.Get<int?>("eyeColor")),
-				HideVisuals = TShock.Utils.DecodeBoolArray(reader.Get<int?>("hideVisuals"))
+				HairColor = TShock.Utils.DecodeColor(reader.Get<int>("hairColor")),
+				PantsColor = TShock.Utils.DecodeColor(reader.Get<int>("pantsColor")),
+				ShirtColor = TShock.Utils.DecodeColor(reader.Get<int>("shirtColor")),
+				UnderShirtColor = TShock.Utils.DecodeColor(reader.Get<int>("underShirtColor")),
+				ShoeColor = TShock.Utils.DecodeColor(reader.Get<int>("shoeColor")),
+				SkinColor = TShock.Utils.DecodeColor(reader.Get<int>("skinColor")),
+				EyeColor = TShock.Utils.DecodeColor(reader.Get<int>("eyeColor")),
+				HideVisuals = TShock.Utils.DecodeBoolArray(reader.Get<int>("hideVisuals"))
 			};
 
 			return vanity;
@@ -181,18 +182,18 @@ namespace TShockAPI.DB
 		public void UpdatePlayerData(ServerSidePlayerData data, int accountId)
 		{
 			StringBuilder sb = new StringBuilder("UPDATE tsCharacter SET ")
-				.Append("Health = @0, MaxHealth = @1, Mana = @2, MaxMana = @3, extraSlot = @4, questsCompleted = @5,")
-				.Append("spawnX = @6, spawnY = @7,")
-				.Append("skinVariant = @8, hair = @9, hairDye = @10," +
-						"hairColor = @11, pantsColor = @12, shirtColor = @13," +
-						"underShirtColor = @14, shoeColor = @15, skinColor = @16," +
-						"eyeColor = @17, hideVisuals = @18,")
-				.Append("inventory = @19")
-				.Append("WHERE Account = @20");
+				.Append("Health = @0, MaxHealth = @1, Mana = @2, MaxMana = @3, extraSlot = @4, questsCompleted = @5, golfScoreAccumulated = @6,")
+				.Append("spawnX = @7, spawnY = @8,")
+				.Append("skinVariant = @9, hair = @10, hairDye = @11," +
+						"hairColor = @12, pantsColor = @13, shirtColor = @14," +
+						"underShirtColor = @15, shoeColor = @16, skinColor = @17," +
+						"eyeColor = @18, hideVisuals = @19,")
+				.Append("inventory = @20 ")
+				.Append("WHERE Account = @21");
 
 			database.Query(
 				sb.ToString(),
-				data.Stats.Health, data.Stats.MaxHealth, data.Stats.Mana, data.Stats.MaxMana, data.Stats.HasExtraSlot ? 1 : 0, data.Stats.QuestsCompleted,
+				data.Stats.Health, data.Stats.MaxHealth, data.Stats.Mana, data.Stats.MaxMana, data.Stats.HasExtraSlot ? 1 : 0, data.Stats.QuestsCompleted, data.Stats.GolfScoreAccumulated,
 				data.Spawn.TileX, data.Spawn.TileY,
 				data.Vanity.SkinVariant, data.Vanity.Hair, data.Vanity.HairDye,
 				TShock.Utils.EncodeColor(data.Vanity.HairColor), TShock.Utils.EncodeColor(data.Vanity.PantsColor), TShock.Utils.EncodeColor(data.Vanity.ShirtColor),

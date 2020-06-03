@@ -276,6 +276,25 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		/// <summary>
+		/// Invoked when a player connects to the server
+		/// </summary>
+		public static HandlerList<GetDataHandledEventArgs> PlayerConnect = new HandlerList<GetDataHandledEventArgs>();
+		private static bool OnPlayerConnect(TSPlayer player, MemoryStream data)
+		{
+			if (PlayerConnect == null)
+				return false;
+
+			var args = new GetDataHandledEventArgs
+			{
+				Data = data,
+				Player = player
+			};
+
+			PlayerConnect.Invoke(null, args);
+			return args.Handled;
+		}
+
 		/// <summary>The arguments to a GetSection packet.</summary>
 		public class GetSectionEventArgs : GetDataHandledEventArgs
 		{
@@ -2175,15 +2194,13 @@ namespace TShockAPI
 			short type = args.Data.ReadInt16();
 
 			// Players send a slot update packet for each inventory slot right after they've joined.
-			bool bypassTrashCanCheck = false;
-			if (plr == args.Player.Index && !args.Player.HasSentInventory && slot == NetItem.MaxInventory)
+			if (plr == args.Player.Index && !args.Player.HasSentInventory && slot == NetItem.TotalSlots)
 			{
 				args.Player.HasSentInventory = true;
-				bypassTrashCanCheck = true;
 			}
 
 			if (OnPlayerSlot(args.Player, args.Data, plr, slot, stack, prefix, type) || plr != args.Player.Index || slot < 0 ||
-			    slot > NetItem.MaxInventory)
+			    slot > NetItem.TotalSlots)
 				return true;
 			if (args.Player.IgnoreSSCPackets)
 			{
@@ -2197,17 +2214,6 @@ namespace TShockAPI
 			item.netDefaults(type);
 			item.Prefix(prefix);
 
-			if (args.Player.IsLoggedIn)
-			{
-				args.Player.PlayerData.StoreSlot(slot, type, prefix, stack);
-			}
-			else if (Main.ServerSideCharacter && TShock.Config.DisableLoginBeforeJoin && !bypassTrashCanCheck &&
-			         args.Player.HasSentInventory && !args.Player.HasPermission(Permissions.bypassssc))
-			{
-				// The player might have moved an item to their trash can before they performed a single login attempt yet.
-				args.Player.IsDisabledPendingTrashRemoval = true;
-			}
-
 			if (slot == 58) //this is the hand
 			{
 				item.stack = stack;
@@ -2219,11 +2225,12 @@ namespace TShockAPI
 
 		private static bool HandleConnecting(GetDataHandlerArgs args)
 		{
-			var account = TShock.UserAccounts.GetUserAccountByName(args.Player.Name);//
-			args.Player.DataWhenJoined = new PlayerData(args.Player);
-			args.Player.DataWhenJoined.CopyCharacter(args.Player);
-			args.Player.PlayerData = new PlayerData(args.Player);
-			args.Player.PlayerData.CopyCharacter(args.Player);
+			if (OnPlayerConnect(args.Player, args.Data))
+			{
+				return true;
+			}
+
+			var account = TShock.UserAccounts.GetUserAccountByName(args.Player.Name);
 
 			if (account != null && !TShock.Config.DisableUUIDLogin)
 			{
@@ -2233,8 +2240,6 @@ namespace TShockAPI
 						args.Player.State = 2;
 					NetMessage.SendData((int)PacketTypes.WorldInfo, args.Player.Index);
 
-					args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, account.ID);
-
 					var group = TShock.Groups.GetGroupByName(account.Group);
 
 					args.Player.Group = group;
@@ -2242,16 +2247,6 @@ namespace TShockAPI
 					args.Player.Account = account;
 					args.Player.IsLoggedIn = true;
 					args.Player.IsDisabledForSSC = false;
-
-					if (Main.ServerSideCharacter)
-					{
-						if (args.Player.HasPermission(Permissions.bypassssc))
-						{
-							args.Player.PlayerData.CopyCharacter(args.Player);
-							TShock.CharacterDB.InsertPlayerData(args.Player);
-						}
-						args.Player.PlayerData.RestoreCharacter(args.Player);
-					}
 					args.Player.LoginFailsBySsi = false;
 
 					if (args.Player.HasPermission(Permissions.ignorestackhackdetection))
@@ -2404,13 +2399,6 @@ namespace TShockAPI
 				TShock.Log.ConsoleDebug("GetDataHandlers / HandlePlayerHp rejected over max hp {0}", args.Player.Name);
 				args.Player.Disable("Maximum HP beyond limit", DisableFlags.WriteToLogAndConsole);
 				return true;
-			}
-
-			if (args.Player.IsLoggedIn)
-			{
-				args.Player.TPlayer.statLife = cur;
-				args.Player.TPlayer.statLifeMax = max;
-				args.Player.PlayerData.maxHealth = max;
 			}
 
 			if (args.Player.GodMode && (cur < max))
@@ -2768,7 +2756,6 @@ namespace TShockAPI
 				if (account.VerifyPassword(password))
 				{
 					args.Player.RequiresPassword = false;
-					args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, account.ID);
 
 					if (args.Player.State == 1)
 						args.Player.State = 2;
@@ -2781,16 +2768,6 @@ namespace TShockAPI
 					args.Player.Account = account;
 					args.Player.IsLoggedIn = true;
 					args.Player.IsDisabledForSSC = false;
-
-					if (Main.ServerSideCharacter)
-					{
-						if (args.Player.HasPermission(Permissions.bypassssc))
-						{
-							args.Player.PlayerData.CopyCharacter(args.Player);
-							TShock.CharacterDB.InsertPlayerData(args.Player);
-						}
-						args.Player.PlayerData.RestoreCharacter(args.Player);
-					}
 					args.Player.LoginFailsBySsi = false;
 
 					if (args.Player.HasPermission(Permissions.ignorestackhackdetection))
@@ -2850,13 +2827,6 @@ namespace TShockAPI
 				TShock.Log.ConsoleDebug("GetDataHandlers / HandlePlayerMana rejected max mana {0} {1}/{2}", args.Player.Name, max, TShock.Config.MaxMP);
 				args.Player.Disable("Maximum MP beyond limit", DisableFlags.WriteToLogAndConsole);
 				return true;
-			}
-
-			if (args.Player.IsLoggedIn)
-			{
-				args.Player.TPlayer.statMana = cur;
-				args.Player.TPlayer.statManaMax = max;
-				args.Player.PlayerData.maxMana = max;
 			}
 			return false;
 		}
@@ -3627,16 +3597,6 @@ namespace TShockAPI
 				{
 					TShock.Log.ConsoleDebug("GetDataHandlers / HandlePlayerKillMeV2 kicked with difficulty {0} {1}", args.Player.Name, args.TPlayer.difficulty);
 					args.Player.Kick(kickReason, true, true, null, false);
-				}
-			}
-
-			if (args.TPlayer.difficulty == 2 && Main.ServerSideCharacter && args.Player.IsLoggedIn)
-			{
-				if (TShock.CharacterDB.DeletePlayerData(args.Player.Account.ID))
-				{
-					TShock.Log.ConsoleDebug("GetDataHandlers / HandlePlayerKillMeV2 ssc delete {0} {1}", args.Player.Name, args.TPlayer.difficulty);
-					args.Player.SendErrorMessage("You have fallen in hardcore mode, and your items have been lost forever.");
-					TShock.CharacterDB.SeedInitialData(args.Player.Account);
 				}
 			}
 

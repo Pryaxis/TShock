@@ -23,31 +23,31 @@ namespace TShockAPI.ServerSideCharacters
 		/// <summary>
 		/// Player's hair color
 		/// </summary>
-		public Color? HairColor { get; set; }
+		public Color HairColor { get; set; }
 		/// <summary>
 		/// Player's pants color
 		/// </summary>
-		public Color? PantsColor { get; set; }
+		public Color PantsColor { get; set; }
 		/// <summary>
 		/// Player's shirt color
 		/// </summary>
-		public Color? ShirtColor { get; set; }
+		public Color ShirtColor { get; set; }
 		/// <summary>
 		/// Player's undershirt color
 		/// </summary>
-		public Color? UnderShirtColor { get; set; }
+		public Color UnderShirtColor { get; set; }
 		/// <summary>
 		/// Player's shoe color
 		/// </summary>
-		public Color? ShoeColor { get; set; }
+		public Color ShoeColor { get; set; }
 		/// <summary>
 		/// Player's skin color
 		/// </summary>
-		public Color? SkinColor { get; set; }
+		public Color SkinColor { get; set; }
 		/// <summary>
 		/// Player's eye color
 		/// </summary>
-		public Color? EyeColor { get; set; }
+		public Color EyeColor { get; set; }
 		/// <summary>
 		/// Player's hidden accessories
 		/// </summary>
@@ -58,7 +58,7 @@ namespace TShockAPI.ServerSideCharacters
 		/// </summary>
 		/// <param name="player"></param>
 		/// <returns></returns>
-		public static ServerSideVanity CreateFrom(Player player)
+		public static ServerSideVanity CreateFromPlayer(Player player)
 		{
 			ServerSideVanity vanity = new ServerSideVanity
 			{

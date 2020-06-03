@@ -17,9 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Newtonsoft.Json;
 using Terraria;
 
@@ -39,6 +36,10 @@ namespace TShockAPI.Net
 		/// The number of items in the group
 		/// </summary>
 		public int Count;
+		/// <summary>
+		/// The ending index of the inventory group
+		/// </summary>
+		public int End => Start + Count - 1;
 
 		/// <summary>
 		/// Creates a new grouping with the given start and count
@@ -150,7 +151,7 @@ namespace TShockAPI.Net
 		/// <summary>
 		/// The total number of slots available across the entire inventory
 		/// </summary>
-		public static readonly int MaxInventory =
+		public static readonly int TotalSlots =
 			InventorySlots + CoinSlots + AmmoSlots + HeldItemSlots +
 			ArmorSlots + AccessorySlots +
 			ArmorVanitySlots + AccessoryVanitySlots +
@@ -165,11 +166,11 @@ namespace TShockAPI.Net
 		/// <summary>
 		/// Groups the main inventory slots
 		/// </summary>
-		public static readonly InventoryGrouping MainInventoryGroup = new InventoryGrouping(0, InventorySlots);
+		public static readonly InventoryGrouping InventoryGroup = new InventoryGrouping(0, InventorySlots);
 		/// <summary>
 		/// Groups the coin slots
 		/// </summary>
-		public static readonly InventoryGrouping CoinGroup = new InventoryGrouping(MainInventoryGroup, CoinSlots);
+		public static readonly InventoryGrouping CoinGroup = new InventoryGrouping(InventoryGroup, CoinSlots);
 		/// <summary>
 		/// Groups the ammo slots
 		/// </summary>
@@ -178,6 +179,12 @@ namespace TShockAPI.Net
 		/// Groups the held item slot
 		/// </summary>
 		public static readonly InventoryGrouping HeldItemGroup = new InventoryGrouping(AmmoGroup, HeldItemSlots);
+
+		/// <summary>
+		/// Groups all of the main inventory slots (main inventory + coin slots + ammo slots + held item slots)
+		/// </summary>
+		public static readonly InventoryGrouping FullInventoryGroup =
+			new InventoryGrouping(0, InventorySlots + CoinSlots + AmmoSlots + HeldItemSlots);
 
 		/// <summary>
 		/// Groups the armor slots
@@ -189,6 +196,12 @@ namespace TShockAPI.Net
 		public static readonly InventoryGrouping AccessoryGroup = new InventoryGrouping(ArmorGroup, AccessorySlots);
 
 		/// <summary>
+		/// Groups equippable non-vanity armour and accessories
+		/// </summary>
+		public static readonly InventoryGrouping FullEquipmentGroup
+			= new InventoryGrouping(HeldItemGroup, ArmorSlots + AccessorySlots);
+
+		/// <summary>
 		/// Groups the armor vanity slots
 		/// </summary>
 		public static readonly InventoryGrouping ArmorVanityGroup = new InventoryGrouping(AccessoryGroup, ArmorVanitySlots);
@@ -198,6 +211,18 @@ namespace TShockAPI.Net
 		public static readonly InventoryGrouping AccessoryVanityGroup = new InventoryGrouping(ArmorVanityGroup, AccessoryVanitySlots);
 
 		/// <summary>
+		/// Groups equippable vanity armour and accessories
+		/// </summary>
+		public static readonly InventoryGrouping FullVanityEquipmentGroup
+			= new InventoryGrouping(AccessoryGroup, ArmorVanitySlots + AccessoryVanitySlots);
+
+		/// <summary>
+		/// Groups all equippable armor and accessories as well as vanity armor and accessories
+		/// </summary>
+		public static readonly InventoryGrouping FullEquipmentAndVanityGroup
+			= new InventoryGrouping(HeldItemGroup, ArmorSlots + AccessorySlots + ArmorVanitySlots + AccessoryVanitySlots);
+
+		/// <summary>
 		/// Groups the armor dye slots
 		/// </summary>
 		public static readonly InventoryGrouping ArmorDyeGroup = new InventoryGrouping(AccessoryVanityGroup, ArmorDyeSlots);
@@ -205,6 +230,12 @@ namespace TShockAPI.Net
 		/// Groups the accessory dye slots
 		/// </summary>
 		public static readonly InventoryGrouping AccessoryDyeGroup = new InventoryGrouping(ArmorDyeGroup, AccessoryDyeSlots);
+
+		/// <summary>
+		/// Groups all equippable dyes for armor and accessories
+		/// </summary>
+		public static readonly InventoryGrouping FullArmorAndVanityDyeGroup =
+			new InventoryGrouping(AccessoryVanityGroup, ArmorDyeSlots + AccessoryDyeSlots);
 
 		/// <summary>
 		/// Groups the misc equipment slots
@@ -221,19 +252,19 @@ namespace TShockAPI.Net
 		public static readonly InventoryGrouping PiggyGroup = new InventoryGrouping(MiscDyeGroup, PiggySlots);
 
 		/// <summary>
-		/// Groups the trash item slot
-		/// </summary>
-		public static readonly InventoryGrouping TrashGroup = new InventoryGrouping(PiggyGroup, TrashSlots);
-
-		/// <summary>
 		/// Groups the safe item slots
 		/// </summary>
-		public static readonly InventoryGrouping SafeGroup = new InventoryGrouping(TrashGroup, SafeSlots);
+		public static readonly InventoryGrouping SafeGroup = new InventoryGrouping(PiggyGroup, SafeSlots);
+
+		/// <summary>
+		/// Groups the trash item slot
+		/// </summary>
+		public static readonly InventoryGrouping TrashGroup = new InventoryGrouping(SafeGroup, TrashSlots);
 
 		/// <summary>
 		/// Groups the defender's forge item slots
 		/// </summary>
-		public static readonly InventoryGrouping ForgeGroup = new InventoryGrouping(SafeGroup, ForgeSlots);
+		public static readonly InventoryGrouping ForgeGroup = new InventoryGrouping(TrashGroup, ForgeSlots);
 
 		/// <summary>
 		/// Groups the void bank item slots

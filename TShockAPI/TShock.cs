@@ -44,6 +44,7 @@ using Microsoft.Xna.Framework;
 using TShockAPI.Sockets;
 using TShockAPI.CLI;
 using TShockAPI.Localization;
+using TShockAPI.Net;
 
 namespace TShockAPI
 {
@@ -136,6 +137,9 @@ namespace TShockAPI
 		/// <summary>The TShock anti-cheat/anti-exploit system.</summary>
 		internal Bouncer Bouncer;
 
+		/// <summary> Coordinates the server side player system.</summary>
+		internal ServerSideCoordinator SSC;
+
 		/// <summary>The TShock item ban system.</summary>
 		internal ItemBans ItemBans;
 
@@ -184,9 +188,9 @@ namespace TShockAPI
 		{
 			Config = new ConfigFile();
 			ServerSideCharacterConfig = new ServerSideConfig();
-			ServerSideCharacterConfig.StartingInventory.Add(new NetItem(-15, 1, 0));
-			ServerSideCharacterConfig.StartingInventory.Add(new NetItem(-13, 1, 0));
-			ServerSideCharacterConfig.StartingInventory.Add(new NetItem(-16, 1, 0));
+			ServerSideCharacterConfig.StartingInventory.Add(new NetItem(ItemID.CopperShortsword, 1, 0));
+			ServerSideCharacterConfig.StartingInventory.Add(new NetItem(ItemID.CopperPickaxe, 1, 0));
+			ServerSideCharacterConfig.StartingInventory.Add(new NetItem(ItemID.CopperAxe, 1, 0));
 			Order = 0;
 			instance = this;
 		}
@@ -361,13 +365,13 @@ namespace TShockAPI
 				ServerApi.Hooks.NetNameCollision.Register(this, NetHooks_NameCollision);
 				ServerApi.Hooks.ItemForceIntoChest.Register(this, OnItemForceIntoChest);
 				ServerApi.Hooks.WorldGrassSpread.Register(this, OnWorldGrassSpread);
-				Hooks.PlayerHooks.PlayerPreLogin += OnPlayerPreLogin;
 				Hooks.PlayerHooks.PlayerPostLogin += OnPlayerLogin;
-				Hooks.AccountHooks.AccountDelete += OnAccountDelete;
-				Hooks.AccountHooks.AccountCreate += OnAccountCreate;
 
 				GetDataHandlers.InitGetDataHandler();
 				Commands.InitCommands();
+
+				// New this up after GetDataHandlers has initialized
+				SSC = new ServerSideCoordinator();
 
 				EnglishLanguage.Initialize();
 
@@ -502,28 +506,6 @@ namespace TShockAPI
 						potentialBan.Reason), true, true);
 				}
 			}
-		}
-
-		/// <summary>OnAccountDelete - Internal hook fired on account delete.</summary>
-		/// <param name="args">args - The AccountDeleteEventArgs object.</param>
-		private void OnAccountDelete(Hooks.AccountDeleteEventArgs args)
-		{
-			CharacterDB.DeletePlayerData(args.Account.ID);
-		}
-
-		/// <summary>OnAccountCreate - Internal hook fired on account creation.</summary>
-		/// <param name="args">args - The AccountCreateEventArgs object.</param>
-		private void OnAccountCreate(Hooks.AccountCreateEventArgs args)
-		{
-			CharacterDB.SeedInitialData(UserAccounts.GetUserAccount(args.Account));
-		}
-
-		/// <summary>OnPlayerPreLogin - Internal hook fired when on player pre login.</summary>
-		/// <param name="args">args - The PlayerPreLoginEventArgs object.</param>
-		private void OnPlayerPreLogin(Hooks.PlayerPreLoginEventArgs args)
-		{
-			if (args.Player.IsLoggedIn)
-				args.Player.SaveServerCharacter();
 		}
 
 		/// <summary>NetHooks_NameCollision - Internal hook fired when a name collision happens.</summary>
@@ -922,20 +904,6 @@ namespace TShockAPI
 				OnSecondUpdate();
 				LastCheck = DateTime.UtcNow;
 			}
-
-			if (Main.ServerSideCharacter && (DateTime.UtcNow - LastSave).TotalMinutes >= ServerSideCharacterConfig.ServerSideCharacterSave)
-			{
-				foreach (TSPlayer player in Players)
-				{
-					// prevent null point exceptions
-					if (player != null && player.IsLoggedIn && !player.IsDisabledPendingTrashRemoval)
-					{
-
-						CharacterDB.InsertPlayerData(player);
-					}
-				}
-				LastSave = DateTime.UtcNow;
-			}
 		}
 
 		/// <summary>OnSecondUpdate - Called effectively every second for all time based checks.</summary>
@@ -1080,6 +1048,7 @@ namespace TShockAPI
 			}
 
 			Bouncer.OnSecondUpdate();
+			SSC.OnSecondUpdate();
 			Utils.SetConsoleTitle(false);
 		}
 
@@ -1297,12 +1266,6 @@ namespace TShockAPI
 				if (!tsplr.SilentKickInProgress && tsplr.State >= 3)
 					Utils.Broadcast(tsplr.Name + " has left.", Color.Yellow);
 				Log.Info("{0} disconnected.", tsplr.Name);
-
-				if (tsplr.IsLoggedIn && !tsplr.IsDisabledPendingTrashRemoval && Main.ServerSideCharacter && (!tsplr.Dead || tsplr.TPlayer.difficulty != 2))
-				{
-					tsplr.PlayerData.CopyCharacter(tsplr);
-					CharacterDB.InsertPlayerData(tsplr);
-				}
 
 				if (Config.RememberLeavePos && !tsplr.LoginHarassed)
 				{

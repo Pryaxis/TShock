@@ -606,23 +606,17 @@ namespace TShockAPI
 		/// <summary>EncodeColor - Encodes a color as an int.</summary>
 		/// <param name="color">color - The color to encode</param>
 		/// <returns>int? - The encoded color</returns>
-		public int? EncodeColor(Color? color)
+		public int EncodeColor(Color color)
 		{
-			if (color == null)
-				return null;
-
-			return BitConverter.ToInt32(new[] { color.Value.R, color.Value.G, color.Value.B, color.Value.A }, 0);
+			return BitConverter.ToInt32(new[] { color.R, color.G, color.B, color.A }, 0);
 		}
 
 		/// <summary>DecodeColor - Decodes a color encoded by the EncodeColor function.</summary>
 		/// <param name="encodedColor">encodedColor - The encoded color</param>
 		/// <returns>Color? - The decoded color</returns>
-		public Color? DecodeColor(int? encodedColor)
+		public Color DecodeColor(int encodedColor)
 		{
-			if (encodedColor == null)
-				return null;
-
-			byte[] data = BitConverter.GetBytes(encodedColor.Value);
+			byte[] data = BitConverter.GetBytes(encodedColor);
 			return new Color(data[0], data[1], data[2], data[3]);
 		}
 
@@ -631,11 +625,8 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="bools">The boolean array to encode.</param>
 		/// <returns>The encoded int.</returns>
-		public int? EncodeBoolArray(bool[] bools)
+		public int EncodeBoolArray(bool[] bools)
 		{
-			if (bools == null)
-				return null;
-
 			int result = 0;
 			for (int i = 0; i < bools.Length; i++)
 				if (bools[i])
@@ -649,11 +640,8 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="encodedbools">The encoded Boolean Array.</param>
 		/// <returns>The resulting Boolean Array.</returns>
-		public bool[] DecodeBoolArray(int? encodedbools)
+		public bool[] DecodeBoolArray(int encodedbools)
 		{
-			if (encodedbools == null)
-				return null;
-
 			bool[] result = new bool[10];
 			for (int i = 0; i < result.Length; i++)
 				result[i] = (encodedbools & 1 << i) != 0;

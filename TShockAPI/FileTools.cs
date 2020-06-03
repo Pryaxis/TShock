@@ -19,6 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Terraria.ID;
+using TShockAPI.Net;
 using TShockAPI.ServerSideCharacters;
 
 namespace TShockAPI
@@ -122,9 +124,9 @@ namespace TShockAPI
 					StartingInventory =
 						new List<NetItem>
 						{
-							new NetItem(-15, 1, 0),
-							new NetItem(-13, 1, 0),
-							new NetItem(-16, 1, 0)
+							new NetItem(ItemID.CopperShortsword, 1, 0),
+							new NetItem(ItemID.CopperPickaxe, 1, 0),
+							new NetItem(ItemID.CopperAxe, 1, 0)
 						}
 				};
 			}

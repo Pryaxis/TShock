@@ -1,4 +1,7 @@
-﻿namespace TShockAPI.ServerSideCharacters
+﻿using System;
+using Terraria;
+
+namespace TShockAPI.ServerSideCharacters
 {
 	/// <summary>
 	/// Contains a server side player's stats
@@ -29,6 +32,10 @@
 		/// The number of angler quests completed by the player
 		/// </summary>
 		public int QuestsCompleted { get; set; }
+		/// <summary>
+		/// The amount of golf score accumulated by the player
+		/// </summary>
+		public int GolfScoreAccumulated { get; set; }
 
 		/// <summary>
 		/// Creates a default set of stats using the <see cref="ServerSideConfig"/> settings
@@ -42,8 +49,30 @@
 				MaxHealth = TShock.ServerSideCharacterConfig.StartingHealth,
 				Mana = TShock.ServerSideCharacterConfig.StartingMana,
 				MaxMana = TShock.ServerSideCharacterConfig.StartingMana,
-				HasExtraSlot = 0,
-				QuestsCompleted = 0
+				HasExtraSlot = false,
+				QuestsCompleted = 0,
+				GolfScoreAccumulated = 0
+			};
+
+			return stats;
+		}
+
+		/// <summary>
+		/// Creates a set of server side stats using the given player's stats
+		/// </summary>
+		/// <param name="player"></param>
+		/// <returns></returns>
+		public static ServerSideStats CreateFromPlayer(Player player)
+		{
+			ServerSideStats stats = new ServerSideStats
+			{
+				Health = player.statLife,
+				MaxHealth = player.statLifeMax,
+				Mana = player.statMana,
+				MaxMana = player.statManaMax,
+				HasExtraSlot = player.extraAccessory,
+				QuestsCompleted = player.anglerQuestsFinished,
+				GolfScoreAccumulated = player.golferScoreAccumulated
 			};
 
 			return stats;

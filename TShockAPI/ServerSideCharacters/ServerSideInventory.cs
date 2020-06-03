@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Terraria;
 using TShockAPI.Net;
 
 namespace TShockAPI.ServerSideCharacters
@@ -12,13 +13,20 @@ namespace TShockAPI.ServerSideCharacters
 		/// <summary>
 		/// Array of all items in the player's inventory
 		/// </summary>
-		internal NetItem[] Items = new NetItem[NetItem.MaxInventory];
+		internal NetItem[] Items = new NetItem[NetItem.TotalSlots];
+
+		/// <summary>
+		/// Gets the item at the given index of the inventory
+		/// </summary>
+		/// <param name="index"></param>
+		/// <returns></returns>
+		public NetItem this[int index] { get => Items[index]; set => Items[index] = value; }
 
 		/// <summary>
 		/// Items in the player's main inventory slots
 		/// </summary>
 		public ArraySegment<NetItem> Inventory =>
-			new ArraySegment<NetItem>(Items, NetItem.MainInventoryGroup.Start, NetItem.MainInventoryGroup.Count);
+			new ArraySegment<NetItem>(Items, NetItem.InventoryGroup.Start, NetItem.InventoryGroup.Count);
 
 		/// <summary>
 		/// Items in the player's coin slots
@@ -117,6 +125,28 @@ namespace TShockAPI.ServerSideCharacters
 			new ArraySegment<NetItem>(Items, NetItem.VoidGroup.Start, NetItem.VoidGroup.Count);
 
 		/// <summary>
+		/// Updates an inventory slot with a new item
+		/// </summary>
+		/// <param name="slot"></param>
+		/// <param name="item"></param>
+		public void UpdateInventorySlot(int slot, Item item) => UpdateInventorySlot(slot, (NetItem)item);
+
+		/// <summary>
+		/// Updates an inventory slot with a new item
+		/// </summary>
+		/// <param name="slot"></param>
+		/// <param name="item"></param>
+		public void UpdateInventorySlot(int slot, NetItem item)
+		{
+			if (slot < 0 || slot > NetItem.TotalSlots)
+			{
+				return;
+			}
+
+			Items[slot] = item;
+		}
+
+		/// <summary>
 		/// Creates a default inventory using the items listed in <see cref="ServerSideConfig.StartingInventory"/>
 		/// </summary>
 		/// <returns></returns>
@@ -131,7 +161,7 @@ namespace TShockAPI.ServerSideCharacters
 			}
 
 			// Then fill the rest with empty items
-			for (int i = TShock.ServerSideCharacterConfig.StartingInventory.Count; i < NetItem.MaxInventory; i++)
+			for (int i = TShock.ServerSideCharacterConfig.StartingInventory.Count; i < NetItem.TotalSlots; i++)
 			{
 				inventory.Items[i] = new NetItem();
 			}
@@ -144,7 +174,7 @@ namespace TShockAPI.ServerSideCharacters
 		/// </summary>
 		/// <param name="items"></param>
 		/// <returns></returns>
-		public static ServerSideInventory FromNetItems(IEnumerable<NetItem> items)
+		public static ServerSideInventory CreateFromNetItems(IEnumerable<NetItem> items)
 		{
 			ServerSideInventory inventory = new ServerSideInventory();
 
@@ -153,6 +183,80 @@ namespace TShockAPI.ServerSideCharacters
 			{
 				inventory.Items[index] = item;
 				index++;
+			}
+
+			return inventory;
+		}
+
+		/// <summary>
+		/// Creates an inventory using the given player's inventory
+		/// </summary>
+		/// <param name="player"></param>
+		/// <returns></returns>
+		public static ServerSideInventory CreateFromPlayer(Player player)
+		{
+			ServerSideInventory inventory = new ServerSideInventory();
+			
+			for (int i = 0; i < NetItem.TotalSlots; i++)
+			{
+				if (i <= NetItem.FullInventoryGroup.End)
+				{
+					//0-58
+					inventory[i] = (NetItem)player.inventory[i];
+				}
+				else if (i <= NetItem.FullEquipmentAndVanityGroup.End)
+				{
+					//59-78
+					var index = i - NetItem.FullEquipmentAndVanityGroup.Start;
+					inventory[i] = (NetItem)player.armor[index];
+				}
+				else if (i <= NetItem.FullArmorAndVanityDyeGroup.End)
+				{
+					//79-88
+					var index = i - NetItem.FullArmorAndVanityDyeGroup.Start;
+					inventory[i] = (NetItem)player.dye[index];
+				}
+				else if (i <= NetItem.MiscEquipGroup.End)
+				{
+					//89-93
+					var index = i - NetItem.MiscEquipGroup.Start;
+					inventory[i] = (NetItem)player.miscEquips[index];
+				}
+				else if (i <= NetItem.MiscDyeGroup.End)
+				{
+					//93-98
+					var index = i - NetItem.MiscDyeGroup.Start;
+					inventory[i] = (NetItem)player.miscDyes[index];
+				}
+				else if (i <= NetItem.PiggyGroup.End)
+				{
+					//99-138
+					var index = i - NetItem.PiggyGroup.Start;
+					inventory[i] = (NetItem)player.bank.item[index];
+				}
+				else if (i <= NetItem.SafeGroup.End)
+				{
+					//139-178
+					var index = i - NetItem.SafeGroup.Start;
+					inventory[i] = (NetItem)player.bank2.item[index];
+				}
+				else if (i <= NetItem.TrashGroup.End)
+				{
+					//179
+					inventory[i] = (NetItem)player.trashItem;
+				}
+				else if (i <= NetItem.ForgeGroup.End)
+				{
+					//180-219
+					var index = i - NetItem.ForgeGroup.Start;
+					inventory[i] = (NetItem)player.bank3.item[index];
+				}
+				else
+				{
+					//220-259
+					var index = i - NetItem.VoidGroup.Start;
+					inventory[i] = (NetItem)player.bank4.item[index];
+				}
 			}
 
 			return inventory;

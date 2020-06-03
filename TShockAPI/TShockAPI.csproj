@@ -112,7 +112,6 @@
     <Compile Include="Models\PlayerUpdate\MiscDataSet3.cs" />
     <Compile Include="Models\Projectiles\NewProjectileData.cs" />
     <Compile Include="Net\NetItem.cs" />
-    <Compile Include="PlayerData.cs" />
     <Compile Include="RegionHandler.cs" />
     <Compile Include="ServerSideCharacters\ServerSideCoordinator.cs" />
     <Compile Include="ServerSideCharacters\ServerSideInventory.cs" />
