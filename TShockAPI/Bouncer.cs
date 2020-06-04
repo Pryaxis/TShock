@@ -1935,7 +1935,7 @@ namespace TShockAPI
 			}
 			if (!args.Player.IsInRange(args.TileX, args.TileY, 55))
 			{
-				TShock.Log.ConsoleError("Bouncer / OnFishOutNPC rejected range checks from {0}", args.Player.Name);
+				TShock.Log.ConsoleDebug("Bouncer / OnFishOutNPC rejected range checks from {0}", args.Player.Name);
 				args.Handled = true;
 			}
 		}
