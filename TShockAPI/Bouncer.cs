@@ -54,7 +54,7 @@ namespace TShockAPI
 
 			EmojiHandler = new Handlers.EmojiHandler();
 			GetDataHandlers.Emoji += EmojiHandler.OnReceive;
-      
+
 			LandGolfBallInCupHandler = new Handlers.LandGolfBallInCupHandler();
 			GetDataHandlers.LandGolfBallInCup += LandGolfBallInCupHandler.OnReceive;
 
@@ -348,8 +348,8 @@ namespace TShockAPI
 						!(ropeCoilPlacements.ContainsKey(selectedItem.netID) && editData == ropeCoilPlacements[selectedItem.netID])))
 					{
 						// Rather than attempting to figure out what the above if statement does, we'll just patch it
-						// Adds exception to this check to allow dirt bombs to create dirt tiles
-						if (!(selectedItem.netID == ItemID.DirtBomb && action == EditAction.PlaceTile && editData == TileID.Dirt))
+						// Adds exception to this check to allow dirt bombs and sticky dirt bombs to create dirt tiles
+						if (!((selectedItem.netID == ItemID.DirtBomb || selectedItem.netID == ItemID.StickyDirtBomb) && action == EditAction.PlaceTile && editData == TileID.Dirt))
 						{
 							TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (ms2) {0} {1} {2}", args.Player.Name, action, editData);
 							args.Player.SendTileSquare(tileX, tileY, 4);
@@ -793,7 +793,8 @@ namespace TShockAPI
 				|| type == ProjectileID.StickyBomb
 				|| type == ProjectileID.StickyDynamite
 				|| type == ProjectileID.ScarabBomb
-				|| type == ProjectileID.DirtBomb))
+				|| type == ProjectileID.DirtBomb
+				|| type == ProjectileID.StickyDirtBomb))
 			{
 				//  Denotes that the player has recently set a fuse - used for cheat detection.
 				args.Player.RecentFuse = 10;
