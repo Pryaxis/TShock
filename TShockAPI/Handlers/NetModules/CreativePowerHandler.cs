@@ -95,9 +95,6 @@ namespace TShockAPI.Handlers.NetModules
 		{
 			{ Permissions.journey_timefreeze,			"freeze the time of the server"						},
 			{ Permissions.journey_timeset,				"modify the time of the server"						},
-			{ Permissions.journey_timeset,				"modify the time of the server"						},
-			{ Permissions.journey_timeset,				"modify the time of the server"						},
-			{ Permissions.journey_timeset,				"modify the time of the server"						},
 			{ Permissions.journey_godmode,				"toggle godmode"									},
 			{ Permissions.journey_windstrength,			"modify the wind strength of the server"			},
 			{ Permissions.journey_rainstrength,			"modify the rain strength of the server"			},
