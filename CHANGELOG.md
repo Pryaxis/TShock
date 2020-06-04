@@ -11,6 +11,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Added LandGolfBallInCup event which is accessible for developers to work with, as well as LandGolfBallInCup handler to handle exploits where players could send direct packets to trigger and imitate golf ball cup landing anywhere in the game world. Added two public lists in Handlers.LandGolfBallInCupHandler: GolfBallProjectileIDs and GolfClubItemIDs. (@Patrikkk)
 * Add SyncTilePicking event. This is called when a player damages a tile. Implementing SyncTilePickingHandler and patching tile damaging related exploits. (Preventing player sending invalid world position data which disconnects other players.)
 * Fix the issue where mobs could not be fished out during bloodmoon because of Bouncer checks. (@Patrikkk)
+* Update for OTAPI 2.0.0.37 and Terraria 1.4.0.5. (@hakusaro, @Patrikkk)
 
 ## TShock 4.4.0 (Pre-release 10)
 * Fix all rope coils. (@Olink)
