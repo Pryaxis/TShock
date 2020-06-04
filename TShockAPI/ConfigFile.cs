@@ -525,7 +525,7 @@ namespace TShockAPI
 		public bool ShowBackupAutosaveMessages = true;
 
 		[Description("Whether or not the server should output debug level messages related to system operation.")]
-		public bool DebugLogs = false;
+		public bool DebugLogs = true;
 
 		[Description("Determines the range in tiles that a bomb can affect tiles from detonation point.")]
 		public int BombExplosionRadius = 5;
