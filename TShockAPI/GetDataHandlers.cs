@@ -2142,14 +2142,20 @@ namespace TShockAPI
 			byte difficulty = 0;
 			if (extra[0])
 			{
-				difficulty++;
+				difficulty = 1;
 			}
 			else if (extra[1])
 			{
-				difficulty += 2;
+				difficulty = 2;
 			}
-
+			else if (extra[3])
+			{
+				difficulty = 3;
+			}
 			bool extraSlot = extra[2];
+			BitsByte torchFlags = args.Data.ReadInt8();
+			bool usingBiomeTorches = torchFlags[0];
+			bool happyFunTorchTime = torchFlags[1];
 
 			if (OnPlayerInfo(args.Player, args.Data, playerid, hair, skinVariant, difficulty, name))
 			{
