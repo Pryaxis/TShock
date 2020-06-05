@@ -272,22 +272,42 @@ namespace TShockAPI
 		/// <summary>Disables a player and reverts their actions if this number of tile kills is exceeded within 1 second.</summary>
 		[Description("Disables a player and reverts their actions if this number of tile kills is exceeded within 1 second.")]
 		public int TileKillThreshold = 60;
+		
+		/// <summary>Whether or not to kick users when they surpass the TileKill threshold.</summary>
+		[Description("Whether or not to kick users when they surpass the TileKill threshold.")]
+		public bool KickOnTileKillThresholdBroken = false;
 
 		/// <summary>Disables a player and reverts their actions if this number of tile places is exceeded within 1 second.</summary>
 		[Description("Disables a player and reverts their actions if this number of tile places is exceeded within 1 second.")]
 		public int TilePlaceThreshold = 32;
+		
+		/// <summary>Whether or not to kick users when they surpass the TilePlace threshold.</summary>
+		[Description("Whether or not to kick users when they surpass the TilePlace threshold.")]
+		public bool KickOnTilePlaceThresholdBroken = false;
 
 		/// <summary>Disables a player if this number of liquid sets is exceeded within 1 second.</summary>
 		[Description("Disables a player if this number of liquid sets is exceeded within 1 second.")]
 		public int TileLiquidThreshold = 50;
+		
+		/// <summary>Whether or not to kick users when they surpass the TileLiquid threshold.</summary>
+		[Description("Whether or not to kick users when they surpass the TileLiquid threshold.")]
+		public bool KickOnTileLiquidThresholdBroken = false;
 
 		/// <summary>Disable a player if this number of projectiles is created within 1 second.</summary>
 		[Description("Disable a player if this number of projectiles is created within 1 second.")]
 		public int ProjectileThreshold = 50;
+		
+		/// <summary>Whether or not to kick users when they surpass the Projectile threshold.</summary>
+		[Description("Whether or not to kick users when they surpass the Projectile threshold.")]
+		public bool KickOnProjectileThresholdBroken = false;
 
 		/// <summary>Disables a player if this number of HealOtherPlayer packets is sent within 1 second.</summary>
 		[Description("Disables a player if this number of HealOtherPlayer packets is sent within 1 second.")]
 		public int HealOtherThreshold = 50;
+		
+		/// <summary>Whether or not to kick users when they surpass the HealOther threshold.</summary>
+		[Description("Whether or not to kick users when they surpass the HealOther threshold.")]
+		public bool KickOnHealOtherThresholdBroken = false;
 
 		/// <summary>Whether or not to ignore shrapnel from crystal bullets for the projectile threshold count.</summary>
 		[Description("Whether or not to ignore shrapnel from crystal bullets for the projectile threshold count.")]
@@ -452,6 +472,10 @@ namespace TShockAPI
 		/// <summary>Disables a player if this number of tiles is painted within 1 second.</summary>
 		[Description("Disables a player if this number of tiles is painted within 1 second.")]
 		public int TilePaintThreshold = 15;
+		
+		/// <summary>Whether or not to kick users when they surpass the TilePaint threshold.</summary>
+		[Description("Whether or not to kick users when they surpass the TilePaint threshold.")]
+		public bool KickOnTilePaintThresholdBroken = false;
 
 		/// <summary>Forces Halloween-only events to occur all year.</summary>
 		[Description("Forces Halloween-only events to occur all year.")]
