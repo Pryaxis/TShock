@@ -1906,11 +1906,24 @@ namespace TShockAPI
 		/// <param name="args"></param>
 		internal void OnFishOutNPC(object sender, GetDataHandlers.FishOutNPCEventArgs args)
 		{
-			var projectile = args.Player.RecentlyCreatedProjectiles.FirstOrDefault(p => Main.projectile[p.Index] != null && Main.projectile[p.Index].Name == "Bobber");
+			/// Getting recent projectiles of the player which are named Bobber. All bobbers have the same Name.
+			var projectile = args.Player.RecentlyCreatedProjectiles.FirstOrDefault(p => Main.projectile[p.Index].Name == "Bobber");
 
-			if (!FishingRodItemIDs.Contains(args.Player.SelectedItem.type) || Main.projectile[projectile.Index] == null || !FishableNpcIDs.Contains(args.NpcID))
+			if (!FishingRodItemIDs.Contains(args.Player.SelectedItem.type))
 			{
-				TShock.Log.ConsoleDebug("Bouncer / OnFishOutNPC rejected invalid NPC spawning from {0}", args.Player.Name);
+				TShock.Log.ConsoleDebug("Bouncer / OnFishOutNPC rejected for not using a fishing rod! - From {0}", args.Player.Name);
+				args.Handled = true;
+				return;
+			}
+			if (projectile.Type == 0 || projectile.Killed) /// The bobber projectile is never killed when the NPC spawns. Type can only be 0 if no recent projectile is found that is named Bobber.
+			{
+				TShock.Log.ConsoleDebug("Bouncer / OnFishOutNPC rejected for not finding active bobber projectile! - From {0}", args.Player.Name);
+				args.Handled = true;
+				return;
+			}
+			if (!FishableNpcIDs.Contains(args.NpcID))
+			{
+				TShock.Log.ConsoleDebug("Bouncer / OnFishOutNPC rejected for the NPC not being on the fishable NPCs list! - From {0}", args.Player.Name);
 				args.Handled = true;
 				return;
 			}
@@ -1920,7 +1933,7 @@ namespace TShockAPI
 				args.Handled = true;
 				return;
 			}
-			if (args.Player.IsInRange(args.TileX, args.TileY, 55))
+			if (!args.Player.IsInRange(args.TileX, args.TileY, 55))
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnFishOutNPC rejected range checks from {0}", args.Player.Name);
 				args.Handled = true;
