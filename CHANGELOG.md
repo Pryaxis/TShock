@@ -12,6 +12,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Add SyncTilePicking event. This is called when a player damages a tile. Implementing SyncTilePickingHandler and patching tile damaging related exploits. (Preventing player sending invalid world position data which disconnects other players.)
 * Fix the issue where mobs could not be fished out during bloodmoon because of Bouncer checks. (@Patrikkk)
 * Update for OTAPI 2.0.0.37 and Terraria 1.4.0.5. (@hakusaro, @Patrikkk)
+* Adding missing PlayerInfo data in GetDataHandler. (@Patrikkk)
 
 ## TShock 4.4.0 (Pre-release 10)
 * Fix all rope coils. (@Olink)
