@@ -13,6 +13,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Fix the issue where mobs could not be fished out during bloodmoon because of Bouncer checks. (@Patrikkk)
 * Update for OTAPI 2.0.0.37 and Terraria 1.4.0.5. (@hakusaro, @Patrikkk)
 * Add additional config options for automatically kicking clients from the server upon breaking anti-cheat thresholds. (@moisterrific)
+* Add pylon teleportation permission to default group, added `/spawn` permission to admin group, added the new journey mode research permission to trustedadmin, and moved all previous journey mode permissions from owner to trustedadmin. (@moisterrific)
 
 ## TShock 4.4.0 (Pre-release 10)
 * Fix all rope coils. (@Olink)
