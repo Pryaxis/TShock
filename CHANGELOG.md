@@ -4,6 +4,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 ## Upcoming changes
 * Installed new sprinklers!
+* Organized parameters by category and relevance in the `config.json` file. (@kubedzero)
 
 ## TShock 4.4.0 (Pre-release 11)
 * New permission `tshock.tp.pylon` to enable teleporting via Teleportation Pylons (@QuiCM)
