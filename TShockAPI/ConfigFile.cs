@@ -31,7 +31,7 @@ namespace TShockAPI
 	public class ConfigFile
 	{
 
-		// Server
+		/* ~~~~~ Server ~~~~~ */
 
 		/// <summary>The server password required to join the server.</summary>
 		[Description("The server password required to join the server.")]
@@ -74,7 +74,7 @@ namespace TShockAPI
 		public bool IgnoreChestStacksOnLoad = false;
 
 
-		// Backup and Save
+		/* ~~~~~ Backup and Save ~~~~~ */
 
 		/// <summary>Enable or disable Terraria's built-in world auto save.</summary>
 		[Description("Enable or disable Terraria's built-in world auto save.")]
@@ -105,130 +105,182 @@ namespace TShockAPI
 		public bool SaveWorldOnLastPlayerExit = true;
 
 
-		// Chat
+		/* ~~~~~ World ~~~~~ */
 
-		/// <summary>Specifies which string starts a command.
-		/// Note: Will not function properly if the string length is bigger than 1.</summary>
-		[Description("Specifies which string starts a command.\nNote: Will not function properly if the string length is bigger than 1.")]
-		public string CommandSpecifier = "/";
+		/// <summary>Determines the size of invasion events. The equation for calculating invasion size = 100 + (multiplier * (number of active players > 200 hp)).</summary>
+		[Description("Determines the size of invasion events.\nThe equation for calculating invasion size is 100 + (multiplier * (number of active players with greater than 200 health)).")]
+		public int InvasionMultiplier = 1;
 
-		/// <summary>Specifies which string starts a command silently.
-		/// Note: Will not function properly if the string length is bigger than 1.</summary>
-		[Description("Specifies which string starts a command silently.\nNote: Will not function properly if the string length is bigger than 1.")]
-		public string CommandSilentSpecifier = ".";
+		/// <summary>The default maximum number of mobs that will spawn per wave. Higher means more mobs in that wave.</summary>
+		[Description("The default maximum number of mobs that will spawn per wave. Higher means more mobs in that wave.")]
+		public int DefaultMaximumSpawns = 5;
 
-		/// <summary>Disables sending logs as messages to players with the log permission.</summary>
-		[Description("Disables sending logs as messages to players with the log permission.")]
-		public bool DisableSpewLogs = true;
+		/// <summary>The delay between waves. Lower values lead to more mobs.</summary>
+		[Description("The delay between waves. Lower values lead to more mobs.")]
+		public int DefaultSpawnRate = 600;
 
-		/// <summary>Prevents OnSecondUpdate checks from writing to the log file.</summary>
-		[Description("Prevents OnSecondUpdate checks from writing to the log file.")]
-		public bool DisableSecondUpdateLogs = false;
+		/// <summary>Enables never-ending invasion events. You still need to start the event.</summary>
+		[Description("Enables never ending invasion events. You still need to start the event, such as with the /invade command.")]
+		public bool InfiniteInvasion;
 
-		/// <summary>The chat color for the superadmin group.</summary>
-		[Description("The chat color for the superadmin group.\n#.#.# = Red/Blue/Green\nMax value: 255")]
-		public int[] SuperAdminChatRGB = { 255, 255, 255 };
+		/// <summary>Sets the PvP mode. Valid types are: "normal", "always", "disabled".</summary>
+		[Description("Sets the PvP mode. Valid types are: \"normal\", \"always\" and \"disabled\".")]
+		public string PvPMode = "normal";
 
-		/// <summary>The superadmin chat prefix.</summary>
-		[Description("The superadmin chat prefix.")]
-		public string SuperAdminChatPrefix = "(Super Admin) ";
+		/// <summary>Prevents tiles from being placed within SpawnProtectionRadius of the default spawn.</summary>
+		[Description("Prevents tiles from being placed within SpawnProtectionRadius of the default spawn.")]
+		public bool SpawnProtection = true;
 
-		/// <summary>The superadmin chat suffix.</summary>
-		[Description("The superadmin chat suffix.")]
-		public string SuperAdminChatSuffix = "";
+		/// <summary>The tile radius around the spawn tile that is protected by the SpawnProtection setting.</summary>
+		[Description("The tile radius around the spawn tile that is protected by the SpawnProtection setting.")]
+		public int SpawnProtectionRadius = 10;
 
-		/// <summary>Whether or not to announce a player's geographic location on join, based on their IP.</summary>
-		[Description("Whether or not to announce a player's geographic location on join, based on their IP.")]
-		public bool EnableGeoIP;
+		/// <summary>Enable or disable anti-cheat range checks based on distance between the player and their block placements.</summary>
+		[Description("Enable or disable anti-cheat range checks based on distance between the player and their block placements.")]
+		public bool RangeChecks = true;
 
-		/// <summary>Displays a player's IP on join to users with the log permission.</summary>
-		[Description("Displays a player's IP on join to users with the log permission.")]
-		public bool DisplayIPToAdmins;
+		/// <summary>Prevents non-hardcore players from connecting.</summary>
+		[Description("Prevents non-hardcore players from connecting.")]
+		public bool HardcoreOnly;
 
-		/// <summary>Changes in-game chat format: {0} = Group Name, {1} = Group Prefix, {2} = Player Name, {3} = Group Suffix, {4} = Chat Message.</summary>
-		[Description("Changes in-game chat format: {0} = Group Name, {1} = Group Prefix, {2} = Player Name, {3} = Group Suffix, {4} = Chat Message.")]
-		public string ChatFormat = "{1}{2}{3}: {4}";
+		/// <summary>Prevents softcore players from connecting.</summary>
+		[Description("Prevents softcore players from connecting.")]
+		public bool MediumcoreOnly;
 
-		/// <summary>Changes the player name when using chat above heads. Starts with a player name wrapped in brackets, as per Terraria's formatting.\nSame formatting as ChatFormat without the message.</summary>
-		[Description("Changes the player name when using chat above heads. Starts with a player name wrapped in brackets, as per Terraria's formatting.\nSame formatting as ChatFormat without the message.")]
-		public string ChatAboveHeadsFormat = "{2}";
+		/// <summary>Disables any placing, or removal of blocks.</summary>
+		[Description("Disables any placing, or removal of blocks.")]
+		public bool DisableBuild;
 
-		/// <summary>Whether or not to display chat messages above players' heads.</summary>
-		[Description("Whether or not to display chat messages above players' heads.")]
-		public bool EnableChatAboveHeads = false;
+		/// <summary>If enabled, hardmode will not be activated by the Wall of Flesh or the /starthardmode command.</summary>
+		[Description("If enabled, hardmode will not be activated by the Wall of Flesh or the /starthardmode command.")]
+		public bool DisableHardmode;
 
-		/// <summary>The RGB values used for the color of broadcast messages.</summary>
-		[Description("The RGB values used for the color of broadcast messages.\n#.#.# = Red/Blue/Green\nMax value: 255")]
-		public int[] BroadcastRGB = { 127, 255, 212 };
+		/// <summary>Prevents the dungeon guardian from being spawned while sending players to their spawn point instead.</summary>
+		[Description("Prevents the dungeon guardian from being spawned while sending players to their spawn point instead.")]
+		public bool DisableDungeonGuardian;
+
+		/// <summary>Disables clown bomb projectiles from spawning.</summary>
+		[Description("Disables clown bomb projectiles from spawning.")]
+		public bool DisableClownBombs;
+
+		/// <summary>Disables snow ball projectiles from spawning.</summary>
+		[Description("Disables snow ball projectiles from spawning.")]
+		public bool DisableSnowBalls;
+
+		/// <summary>Disables tombstone dropping during death for all players.</summary>
+		[Description("Disables tombstone dropping during death for all players.")]
+		public bool DisableTombstones = true;
+
+		/// <summary>Forces the world time to be normal, day, or night.</summary>
+		[Description("Forces the world time to be normal, day, or night.")]
+		public string ForceTime = "normal";
+
+		/// <summary>Disables the effect of invisibility potions while PvP is enabled by turning the player visible to the other clients.</summary>
+		[Description("Disables the effect of invisibility potions while PvP is enabled by turning the player visible to the other clients.")]
+		public bool DisableInvisPvP;
+
+		/// <summary>The maximum distance, in tiles, that disabled players can move from.</summary>
+		[Description("The maximum distance, in tiles, that disabled players can move from.")]
+		public int MaxRangeForDisabled = 10;
+
+		/// <summary>Whether or not region protection should apply to chests.</summary>
+		[Description("Whether or not region protection should apply to chests.")]
+		public bool RegionProtectChests;
+
+		/// <summary>Whether or not region protection should apply to gem locks.</summary>
+		[Description("Whether or not region protection should apply to gem locks.")]
+		public bool RegionProtectGemLocks = true;
+
+		/// <summary>Ignores checks to see if a player 'can' update a projectile.</summary>
+		[Description("Ignores checks to see if a player 'can' update a projectile.")]
+		public bool IgnoreProjUpdate = false;
+
+		/// <summary>Ignores checks to see if a player 'can' kill a projectile.</summary>
+		[Description("Ignores checks to see if a player 'can' kill a projectile.")]
+		public bool IgnoreProjKill = false;
+
+		/// <summary>Allows players to break temporary tiles (grass, pots, etc) where they cannot usually build.</summary>
+		[Description("Allows players to break temporary tiles (grass, pots, etc) where they cannot usually build.")]
+		public bool AllowCutTilesAndBreakables = false;
+
+		/// <summary>Allows ice placement even where a user cannot usually build.</summary>
+		[Description("Allows ice placement even where a user cannot usually build.")]
+		public bool AllowIce = false;
+
+		/// <summary>Allows the crimson to spread when a world is in hardmode.</summary>
+		[Description("Allows the crimson to spread when a world is in hardmode.")]
+		public bool AllowCrimsonCreep = true;
+
+		/// <summary>Allows the corruption to spread when a world is in hardmode.</summary>
+		[Description("Allows the corruption to spread when a world is in hardmode.")]
+		public bool AllowCorruptionCreep = true;
+
+		/// <summary>Allows the hallow to spread when a world is in hardmode.</summary>
+		[Description("Allows the hallow to spread when a world is in hardmode.")]
+		public bool AllowHallowCreep = true;
+
+		/// <summary>How many NPCs a statue can spawn within 200 pixels(?) before it stops spawning.</summary>
+		[Description("How many NPCs a statue can spawn within 200 pixels(?) before it stops spawning.\nDefault = 3.")]
+		public int StatueSpawn200 = 3;
+
+		/// <summary>How many NPCs a statue can spawn within 600 pixels(?) before it stops spawning.</summary>
+		[Description("How many NPCs a statue can spawn within 600 pixels(?) before it stops spawning.\nDefault = 6.")]
+		public int StatueSpawn600 = 6;
+
+		/// <summary>How many NPCs a statue can spawn before it stops spawning.</summary>
+		[Description("How many NPCs a statue can spawn before it stops spawning.\nDefault = 10.")]
+		public int StatueSpawnWorld = 10;
+
+		/// <summary>Prevent banned items from being spawned or given with commands.</summary>
+		[Description("Prevent banned items from being spawned or given with commands.")]
+		public bool PreventBannedItemSpawn = false;
+
+		/// <summary>Prevent players from interacting with the world while they are dead.</summary>
+		[Description("Prevent players from interacting with the world while they are dead.")]
+		public bool PreventDeadModification = true;
+
+		/// <summary>Prevents players from placing tiles with an invalid style.</summary>
+		[Description("Prevents players from placing tiles with an invalid style.")]
+		public bool PreventInvalidPlaceStyle = true;
+
+		/// <summary>Forces Christmas-only events to occur all year.</summary>
+		[Description("Forces Christmas-only events to occur all year.")]
+		public bool ForceXmas = false;
+
+		/// <summary>Forces Halloween-only events to occur all year.</summary>
+		[Description("Forces Halloween-only events to occur all year.")]
+		public bool ForceHalloween = false;
+
+		/// <summary>Allows groups on the banned item allowed list to spawn banned items even if PreventBannedItemSpawn is set to true.</summary>
+		[Description("Allows groups on the banned item allowed list to spawn banned items even if PreventBannedItemSpawn is set to true.")]
+		public bool AllowAllowedGroupsToSpawnBannedItems = false;
+
+		/// <summary>The number of seconds a player must wait before being respawned. Cannot be longer than normal value now. Use at your own risk.</summary>
+		[Description("The number of seconds a player must wait before being respawned. Cannot be longer than normal value now. Use at your own risk.")]
+		public int RespawnSeconds = 5;
+
+		/// <summary>The number of seconds a player must wait before being respawned if there is a boss nearby. Cannot be longer than normal value now. Use at your own risk.</summary>
+		[Description("The number of seconds a player must wait before being respawned if there is a boss nearby. Cannot be longer than normal value now. Use at your own risk.")]
+		public int RespawnBossSeconds = 10;
+
+		/// <summary>Whether or not to announce boss spawning or invasion starts.</summary>
+		[Description("Whether or not to announce boss spawning or invasion starts.")]
+		public bool AnonymousBossInvasions = true;
+
+		/// <summary>The maximum HP a player can have, before equipment buffs.</summary>
+		[Description("The maximum HP a player can have, before equipment buffs.")]
+		public int MaxHP = 500;
+
+		/// <summary>The maximum MP a player can have, before equipment buffs.</summary>
+		[Description("The maximum MP a player can have, before equipment buffs.")]
+		public int MaxMP = 200;
+
+		/// <summary>Determines the range in tiles that a bomb can affect tiles from detonation point.</summary>
+		[Description("Determines the range in tiles that a bomb can affect tiles from detonation point.")]
+		public int BombExplosionRadius = 5;
 
 
-		// MySQL
-
-		/// <summary>The type of database to use when storing data (either "sqlite" or "mysql").</summary>
-		[Description("The type of database to use when storing data (either \"sqlite\" or \"mysql\").")]
-		public string StorageType = "sqlite";
-
-		/// <summary>The path of sqlite db.</summary>
-		[Description("The path of sqlite db.")]
-		public string SqliteDBPath = "tshock.sqlite";
-
-		/// <summary>The MySQL hostname and port to direct connections to.</summary>
-		[Description("The MySQL hostname and port to direct connections to.")]
-		public string MySqlHost = "localhost:3306";
-
-		/// <summary>The database name to connect to when using MySQL as the database type.</summary>
-		[Description("The database name to connect to when using MySQL as the database type.")]
-		public string MySqlDbName = "";
-
-		/// <summary>The username used when connecting to a MySQL database.</summary>
-		[Description("The username used when connecting to a MySQL database.")]
-		public string MySqlUsername = "";
-
-		/// <summary>The password used when connecting to a MySQL database.</summary>
-		[Description("The password used when connecting to a MySQL database.")]
-		public string MySqlPassword = "";
-
-		/// <summary>Whether or not to save logs to the SQL database instead of a text file.</summary>
-		[Description("Whether or not to save logs to the SQL database instead of a text file.\nDefault = false.")]
-		public bool UseSqlLogs = false;
-
-		/// <summary>Number of times the SQL log must fail to insert logs before falling back to the text log.</summary>
-		[Description("Number of times the SQL log must fail to insert logs before falling back to the text log.")]
-		public int RevertToTextLogsOnSqlFailures = 10;
-
-
-		// REST API
-
-		/// <summary>Enable or disable the REST API.</summary>
-		[Description("Enable or disable the REST API.")]
-		public bool RestApiEnabled;
-
-		/// <summary>The port used by the REST API.</summary>
-		[Description("The port used by the REST API.")]
-		public int RestApiPort = 7878;
-
-		/// <summary>Whether or not to log REST API connections.</summary>
-		[Description("Whether or not to log REST API connections.")]
-		public bool LogRest = false;
-
-		/// <summary>Whether or not to require token authentication to use the public REST API endpoints.</summary>
-		[Description("Whether or not to require token authentication to use the public REST API endpoints.")]
-		public bool EnableTokenEndpointAuthentication;
-
-		/// <summary>The maximum REST requests in the bucket before denying requests. Minimum value is 5.</summary>
-		[Description("The maximum REST requests in the bucket before denying requests. Minimum value is 5.")]
-		public int RESTMaximumRequestsPerInterval = 5;
-
-		/// <summary>How often in minutes the REST requests bucket is decreased by one. Minimum value is 1 minute.</summary>
-		[Description("How often in minutes the REST requests bucket is decreased by one. Minimum value is 1 minute.")]
-		public int RESTRequestBucketDecreaseIntervalMinutes = 1;
-
-		/// <summary>A dictionary of REST tokens that external applications may use to make queries to your server.</summary>
-		[Description("A dictionary of REST tokens that external applications may use to make queries to your server.")]
-		public Dictionary<string, SecureRest.TokenData> ApplicationRestTokens = new Dictionary<string, SecureRest.TokenData>();
-
-
-		// Login and Ban
+		/* ~~~~~ Login and Ban ~~~~~ */
 
 		/// <summary>The default group name to place newly registered users under.</summary>
 		[Description("The default group name to place newly registered users under.")]
@@ -409,179 +461,128 @@ namespace TShockAPI
 		public bool KickOnHealOtherThresholdBroken = false;
 
 
-		// World
+		/* ~~~~~ Chat ~~~~~ */
 
-		/// <summary>Determines the size of invasion events. The equation for calculating invasion size = 100 + (multiplier * (number of active players > 200 hp)).</summary>
-		[Description("Determines the size of invasion events.\nThe equation for calculating invasion size is 100 + (multiplier * (number of active players with greater than 200 health)).")]
-		public int InvasionMultiplier = 1;
+		/// <summary>Specifies which string starts a command.
+		/// Note: Will not function properly if the string length is bigger than 1.</summary>
+		[Description("Specifies which string starts a command.\nNote: Will not function properly if the string length is bigger than 1.")]
+		public string CommandSpecifier = "/";
 
-		/// <summary>The default maximum number of mobs that will spawn per wave. Higher means more mobs in that wave.</summary>
-		[Description("The default maximum number of mobs that will spawn per wave. Higher means more mobs in that wave.")]
-		public int DefaultMaximumSpawns = 5;
+		/// <summary>Specifies which string starts a command silently.
+		/// Note: Will not function properly if the string length is bigger than 1.</summary>
+		[Description("Specifies which string starts a command silently.\nNote: Will not function properly if the string length is bigger than 1.")]
+		public string CommandSilentSpecifier = ".";
 
-		/// <summary>The delay between waves. Lower values lead to more mobs.</summary>
-		[Description("The delay between waves. Lower values lead to more mobs.")]
-		public int DefaultSpawnRate = 600;
+		/// <summary>Disables sending logs as messages to players with the log permission.</summary>
+		[Description("Disables sending logs as messages to players with the log permission.")]
+		public bool DisableSpewLogs = true;
 
-		/// <summary>Enables never-ending invasion events. You still need to start the event.</summary>
-		[Description("Enables never ending invasion events. You still need to start the event, such as with the /invade command.")]
-		public bool InfiniteInvasion;
+		/// <summary>Prevents OnSecondUpdate checks from writing to the log file.</summary>
+		[Description("Prevents OnSecondUpdate checks from writing to the log file.")]
+		public bool DisableSecondUpdateLogs = false;
 
-		/// <summary>Sets the PvP mode. Valid types are: "normal", "always", "disabled".</summary>
-		[Description("Sets the PvP mode. Valid types are: \"normal\", \"always\" and \"disabled\".")]
-		public string PvPMode = "normal";
+		/// <summary>The chat color for the superadmin group.</summary>
+		[Description("The chat color for the superadmin group.\n#.#.# = Red/Blue/Green\nMax value: 255")]
+		public int[] SuperAdminChatRGB = { 255, 255, 255 };
 
-		/// <summary>Prevents tiles from being placed within SpawnProtectionRadius of the default spawn.</summary>
-		[Description("Prevents tiles from being placed within SpawnProtectionRadius of the default spawn.")]
-		public bool SpawnProtection = true;
+		/// <summary>The superadmin chat prefix.</summary>
+		[Description("The superadmin chat prefix.")]
+		public string SuperAdminChatPrefix = "(Super Admin) ";
 
-		/// <summary>The tile radius around the spawn tile that is protected by the SpawnProtection setting.</summary>
-		[Description("The tile radius around the spawn tile that is protected by the SpawnProtection setting.")]
-		public int SpawnProtectionRadius = 10;
+		/// <summary>The superadmin chat suffix.</summary>
+		[Description("The superadmin chat suffix.")]
+		public string SuperAdminChatSuffix = "";
 
-		/// <summary>Enable or disable anti-cheat range checks based on distance between the player and their block placements.</summary>
-		[Description("Enable or disable anti-cheat range checks based on distance between the player and their block placements.")]
-		public bool RangeChecks = true;
+		/// <summary>Whether or not to announce a player's geographic location on join, based on their IP.</summary>
+		[Description("Whether or not to announce a player's geographic location on join, based on their IP.")]
+		public bool EnableGeoIP;
 
-		/// <summary>Prevents non-hardcore players from connecting.</summary>
-		[Description("Prevents non-hardcore players from connecting.")]
-		public bool HardcoreOnly;
+		/// <summary>Displays a player's IP on join to users with the log permission.</summary>
+		[Description("Displays a player's IP on join to users with the log permission.")]
+		public bool DisplayIPToAdmins;
 
-		/// <summary>Prevents softcore players from connecting.</summary>
-		[Description("Prevents softcore players from connecting.")]
-		public bool MediumcoreOnly;
+		/// <summary>Changes in-game chat format: {0} = Group Name, {1} = Group Prefix, {2} = Player Name, {3} = Group Suffix, {4} = Chat Message.</summary>
+		[Description("Changes in-game chat format: {0} = Group Name, {1} = Group Prefix, {2} = Player Name, {3} = Group Suffix, {4} = Chat Message.")]
+		public string ChatFormat = "{1}{2}{3}: {4}";
 
-		/// <summary>Disables any placing, or removal of blocks.</summary>
-		[Description("Disables any placing, or removal of blocks.")]
-		public bool DisableBuild;
+		/// <summary>Changes the player name when using chat above heads. Starts with a player name wrapped in brackets, as per Terraria's formatting.\nSame formatting as ChatFormat without the message.</summary>
+		[Description("Changes the player name when using chat above heads. Starts with a player name wrapped in brackets, as per Terraria's formatting.\nSame formatting as ChatFormat without the message.")]
+		public string ChatAboveHeadsFormat = "{2}";
 
-		/// <summary>If enabled, hardmode will not be activated by the Wall of Flesh or the /starthardmode command.</summary>
-		[Description("If enabled, hardmode will not be activated by the Wall of Flesh or the /starthardmode command.")]
-		public bool DisableHardmode;
+		/// <summary>Whether or not to display chat messages above players' heads.</summary>
+		[Description("Whether or not to display chat messages above players' heads.")]
+		public bool EnableChatAboveHeads = false;
 
-		/// <summary>Prevents the dungeon guardian from being spawned while sending players to their spawn point instead.</summary>
-		[Description("Prevents the dungeon guardian from being spawned while sending players to their spawn point instead.")]
-		public bool DisableDungeonGuardian;
+		/// <summary>The RGB values used for the color of broadcast messages.</summary>
+		[Description("The RGB values used for the color of broadcast messages.\n#.#.# = Red/Blue/Green\nMax value: 255")]
+		public int[] BroadcastRGB = { 127, 255, 212 };
 
-		/// <summary>Disables clown bomb projectiles from spawning.</summary>
-		[Description("Disables clown bomb projectiles from spawning.")]
-		public bool DisableClownBombs;
 
-		/// <summary>Disables snow ball projectiles from spawning.</summary>
-		[Description("Disables snow ball projectiles from spawning.")]
-		public bool DisableSnowBalls;
+		/* ~~~~~ MySQL ~~~~~ */
 
-		/// <summary>Disables tombstone dropping during death for all players.</summary>
-		[Description("Disables tombstone dropping during death for all players.")]
-		public bool DisableTombstones = true;
+		/// <summary>The type of database to use when storing data (either "sqlite" or "mysql").</summary>
+		[Description("The type of database to use when storing data (either \"sqlite\" or \"mysql\").")]
+		public string StorageType = "sqlite";
 
-		/// <summary>Forces the world time to be normal, day, or night.</summary>
-		[Description("Forces the world time to be normal, day, or night.")]
-		public string ForceTime = "normal";
+		/// <summary>The path of sqlite db.</summary>
+		[Description("The path of sqlite db.")]
+		public string SqliteDBPath = "tshock.sqlite";
 
-		/// <summary>Disables the effect of invisibility potions while PvP is enabled by turning the player visible to the other clients.</summary>
-		[Description("Disables the effect of invisibility potions while PvP is enabled by turning the player visible to the other clients.")]
-		public bool DisableInvisPvP;
+		/// <summary>The MySQL hostname and port to direct connections to.</summary>
+		[Description("The MySQL hostname and port to direct connections to.")]
+		public string MySqlHost = "localhost:3306";
 
-		/// <summary>The maximum distance, in tiles, that disabled players can move from.</summary>
-		[Description("The maximum distance, in tiles, that disabled players can move from.")]
-		public int MaxRangeForDisabled = 10;
+		/// <summary>The database name to connect to when using MySQL as the database type.</summary>
+		[Description("The database name to connect to when using MySQL as the database type.")]
+		public string MySqlDbName = "";
 
-		/// <summary>Whether or not region protection should apply to chests.</summary>
-		[Description("Whether or not region protection should apply to chests.")]
-		public bool RegionProtectChests;
+		/// <summary>The username used when connecting to a MySQL database.</summary>
+		[Description("The username used when connecting to a MySQL database.")]
+		public string MySqlUsername = "";
 
-		/// <summary>Whether or not region protection should apply to gem locks.</summary>
-		[Description("Whether or not region protection should apply to gem locks.")]
-		public bool RegionProtectGemLocks = true;
+		/// <summary>The password used when connecting to a MySQL database.</summary>
+		[Description("The password used when connecting to a MySQL database.")]
+		public string MySqlPassword = "";
 
-		/// <summary>Ignores checks to see if a player 'can' update a projectile.</summary>
-		[Description("Ignores checks to see if a player 'can' update a projectile.")]
-		public bool IgnoreProjUpdate = false;
+		/// <summary>Whether or not to save logs to the SQL database instead of a text file.</summary>
+		[Description("Whether or not to save logs to the SQL database instead of a text file.\nDefault = false.")]
+		public bool UseSqlLogs = false;
 
-		/// <summary>Ignores checks to see if a player 'can' kill a projectile.</summary>
-		[Description("Ignores checks to see if a player 'can' kill a projectile.")]
-		public bool IgnoreProjKill = false;
+		/// <summary>Number of times the SQL log must fail to insert logs before falling back to the text log.</summary>
+		[Description("Number of times the SQL log must fail to insert logs before falling back to the text log.")]
+		public int RevertToTextLogsOnSqlFailures = 10;
 
-		/// <summary>Allows players to break temporary tiles (grass, pots, etc) where they cannot usually build.</summary>
-		[Description("Allows players to break temporary tiles (grass, pots, etc) where they cannot usually build.")]
-		public bool AllowCutTilesAndBreakables = false;
 
-		/// <summary>Allows ice placement even where a user cannot usually build.</summary>
-		[Description("Allows ice placement even where a user cannot usually build.")]
-		public bool AllowIce = false;
+		/* ~~~~~ REST API ~~~~~ */
 
-		/// <summary>Allows the crimson to spread when a world is in hardmode.</summary>
-		[Description("Allows the crimson to spread when a world is in hardmode.")]
-		public bool AllowCrimsonCreep = true;
+		/// <summary>Enable or disable the REST API.</summary>
+		[Description("Enable or disable the REST API.")]
+		public bool RestApiEnabled;
 
-		/// <summary>Allows the corruption to spread when a world is in hardmode.</summary>
-		[Description("Allows the corruption to spread when a world is in hardmode.")]
-		public bool AllowCorruptionCreep = true;
+		/// <summary>The port used by the REST API.</summary>
+		[Description("The port used by the REST API.")]
+		public int RestApiPort = 7878;
 
-		/// <summary>Allows the hallow to spread when a world is in hardmode.</summary>
-		[Description("Allows the hallow to spread when a world is in hardmode.")]
-		public bool AllowHallowCreep = true;
+		/// <summary>Whether or not to log REST API connections.</summary>
+		[Description("Whether or not to log REST API connections.")]
+		public bool LogRest = false;
 
-		/// <summary>How many NPCs a statue can spawn within 200 pixels(?) before it stops spawning.</summary>
-		[Description("How many NPCs a statue can spawn within 200 pixels(?) before it stops spawning.\nDefault = 3.")]
-		public int StatueSpawn200 = 3;
+		/// <summary>Whether or not to require token authentication to use the public REST API endpoints.</summary>
+		[Description("Whether or not to require token authentication to use the public REST API endpoints.")]
+		public bool EnableTokenEndpointAuthentication;
 
-		/// <summary>How many NPCs a statue can spawn within 600 pixels(?) before it stops spawning.</summary>
-		[Description("How many NPCs a statue can spawn within 600 pixels(?) before it stops spawning.\nDefault = 6.")]
-		public int StatueSpawn600 = 6;
+		/// <summary>The maximum REST requests in the bucket before denying requests. Minimum value is 5.</summary>
+		[Description("The maximum REST requests in the bucket before denying requests. Minimum value is 5.")]
+		public int RESTMaximumRequestsPerInterval = 5;
 
-		/// <summary>How many NPCs a statue can spawn before it stops spawning.</summary>
-		[Description("How many NPCs a statue can spawn before it stops spawning.\nDefault = 10.")]
-		public int StatueSpawnWorld = 10;
+		/// <summary>How often in minutes the REST requests bucket is decreased by one. Minimum value is 1 minute.</summary>
+		[Description("How often in minutes the REST requests bucket is decreased by one. Minimum value is 1 minute.")]
+		public int RESTRequestBucketDecreaseIntervalMinutes = 1;
 
-		/// <summary>Prevent banned items from being spawned or given with commands.</summary>
-		[Description("Prevent banned items from being spawned or given with commands.")]
-		public bool PreventBannedItemSpawn = false;
+		/// <summary>A dictionary of REST tokens that external applications may use to make queries to your server.</summary>
+		[Description("A dictionary of REST tokens that external applications may use to make queries to your server.")]
+		public Dictionary<string, SecureRest.TokenData> ApplicationRestTokens = new Dictionary<string, SecureRest.TokenData>();
 
-		/// <summary>Prevent players from interacting with the world while they are dead.</summary>
-		[Description("Prevent players from interacting with the world while they are dead.")]
-		public bool PreventDeadModification = true;
-
-		/// <summary>Prevents players from placing tiles with an invalid style.</summary>
-		[Description("Prevents players from placing tiles with an invalid style.")]
-		public bool PreventInvalidPlaceStyle = true;
-
-		/// <summary>Forces Christmas-only events to occur all year.</summary>
-		[Description("Forces Christmas-only events to occur all year.")]
-		public bool ForceXmas = false;
-
-		/// <summary>Forces Halloween-only events to occur all year.</summary>
-		[Description("Forces Halloween-only events to occur all year.")]
-		public bool ForceHalloween = false;
-
-		/// <summary>Allows groups on the banned item allowed list to spawn banned items even if PreventBannedItemSpawn is set to true.</summary>
-		[Description("Allows groups on the banned item allowed list to spawn banned items even if PreventBannedItemSpawn is set to true.")]
-		public bool AllowAllowedGroupsToSpawnBannedItems = false;
-
-		/// <summary>The number of seconds a player must wait before being respawned. Cannot be longer than normal value now. Use at your own risk.</summary>
-		[Description("The number of seconds a player must wait before being respawned. Cannot be longer than normal value now. Use at your own risk.")]
-		public int RespawnSeconds = 5;
-
-		/// <summary>The number of seconds a player must wait before being respawned if there is a boss nearby. Cannot be longer than normal value now. Use at your own risk.</summary>
-		[Description("The number of seconds a player must wait before being respawned if there is a boss nearby. Cannot be longer than normal value now. Use at your own risk.")]
-		public int RespawnBossSeconds = 10;
-
-		/// <summary>Whether or not to announce boss spawning or invasion starts.</summary>
-		[Description("Whether or not to announce boss spawning or invasion starts.")]
-		public bool AnonymousBossInvasions = true;
-
-		/// <summary>The maximum HP a player can have, before equipment buffs.</summary>
-		[Description("The maximum HP a player can have, before equipment buffs.")]
-		public int MaxHP = 500;
-
-		/// <summary>The maximum MP a player can have, before equipment buffs.</summary>
-		[Description("The maximum MP a player can have, before equipment buffs.")]
-		public int MaxMP = 200;
-
-		/// <summary>Determines the range in tiles that a bomb can affect tiles from detonation point.</summary>
-		[Description("Determines the range in tiles that a bomb can affect tiles from detonation point.")]
-		public int BombExplosionRadius = 5;
 
 
 		/// <summary>
