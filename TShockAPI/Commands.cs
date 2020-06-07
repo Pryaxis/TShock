@@ -1970,7 +1970,8 @@ namespace TShockAPI
 			"snowmen",
 			"pirates",
 			"pumpkinmoon",
-			"frostmoon"
+			"frostmoon",
+                      "martians"
 		};
 
 		private static void ManageWorldEvent(CommandArgs args)
