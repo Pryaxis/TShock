@@ -1947,8 +1947,8 @@ namespace TShockAPI
 		/// <param name="args"></param>
 		internal void OnFishOutNPC(object sender, GetDataHandlers.FishOutNPCEventArgs args)
 		{
-			/// Getting recent projectiles of the player which are named Bobber. All bobbers have the same Name.
-			var projectile = args.Player.RecentlyCreatedProjectiles.FirstOrDefault(p => Main.projectile[p.Index].Name == "Bobber");
+			/// Getting recent projectiles of the player and selecting the first that is a bobber.
+			var projectile = args.Player.RecentlyCreatedProjectiles.FirstOrDefault(p => Main.projectile[p.Index].bobber);
 
 			if (!FishingRodItemIDs.Contains(args.Player.SelectedItem.type))
 			{

@@ -2,15 +2,19 @@
 
 This is the rolling changelog for TShock for Terraria. Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
 
-## Upcoming Changes
+## Upcoming changes
+* Installed new sprinklers!
+
+## TShock 4.4.0 (Pre-release 11)
 * New permission `tshock.tp.pylon` to enable teleporting via Teleportation Pylons (@QuiCM)
 * New permission `tshock.journey.research` to enable sharing research via item sacrifice (@QuiCM)
-* Add Emoji event to GetDataHandler. This packet is received when a player tries to display an emote.
-	* Adding EmojiHandler to handle an exploit. Adding `tshock.sendemoji` permission and checks. Added this permission to guest group by default.
-* Handling SyncCavernMonsterType packet to prevent an exploit where players could modify the server's cavern monster types and make the server spawn any NPCs - including bosses - onto other players.
+* Add Emoji event to GetDataHandler. This packet is received when a player tries to display an emote. (who?)
+	* Adding EmojiHandler to handle an exploit. Adding `tshock.sendemoji` permission and checks. Added this permission to guest group by default. (who?)
+* Handled SyncCavernMonsterType packet to prevent an exploit where players could modify the server's cavern monster types and make the server spawn any NPCs - including bosses - onto other players. (who?)
 * Added LandGolfBallInCup event which is accessible for developers to work with, as well as LandGolfBallInCup handler to handle exploits where players could send direct packets to trigger and imitate golf ball cup landing anywhere in the game world. Added two public lists in Handlers.LandGolfBallInCupHandler: GolfBallProjectileIDs and GolfClubItemIDs. (@Patrikkk)
-* Add SyncTilePicking event. This is called when a player damages a tile. Implementing SyncTilePickingHandler and patching tile damaging related exploits. (Preventing player sending invalid world position data which disconnects other players.)
-* Fix the issue where mobs could not be fished out during bloodmoon because of Bouncer checks. (@Patrikkk)
+* Added SyncTilePicking event. This is called when a player damages a tile. Implementing SyncTilePickingHandler and patching tile damaging related exploits. (Preventing player sending invalid world position data which disconnects other players.)
+* Fixed the issue where mobs could not be fished out during bloodmoon because of Bouncer checks. (@Patrikkk)
+	*Fixed the issue where certain fishing rods could not fish out NPCs due to a Bouncer check. (@Patrikkk)
 * Update for OTAPI 2.0.0.37 and Terraria 1.4.0.5. (@hakusaro, @Patrikkk)
 * Adding missing PlayerInfo data in GetDataHandler. (@Patrikkk)
 
