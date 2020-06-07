@@ -31,7 +31,7 @@ namespace TShockAPI
 	public class ConfigFile
 	{
 
-		/* ~~~~~ Server ~~~~~ */
+		#region Server Settings
 
 		/// <summary>The server password required to join the server.</summary>
 		[Description("The server password required to join the server.")]
@@ -73,8 +73,10 @@ namespace TShockAPI
 		[Description("Allows stacks in chests to go beyond the stack limit during world loading.")]
 		public bool IgnoreChestStacksOnLoad = false;
 
+		#endregion
 
-		/* ~~~~~ Backup and Save ~~~~~ */
+
+		#region Backup and Save Settings
 
 		/// <summary>Enable or disable Terraria's built-in world auto save.</summary>
 		[Description("Enable or disable Terraria's built-in world auto save.")]
@@ -104,8 +106,10 @@ namespace TShockAPI
 		[Description("Whether or not to save the world when the last player disconnects.")]
 		public bool SaveWorldOnLastPlayerExit = true;
 
+		#endregion
 
-		/* ~~~~~ World ~~~~~ */
+
+		#region World Settings
 
 		/// <summary>Determines the size of invasion events. The equation for calculating invasion size = 100 + (multiplier * (number of active players > 200 hp)).</summary>
 		[Description("Determines the size of invasion events.\nThe equation for calculating invasion size is 100 + (multiplier * (number of active players with greater than 200 health)).")]
@@ -279,8 +283,10 @@ namespace TShockAPI
 		[Description("Determines the range in tiles that a bomb can affect tiles from detonation point.")]
 		public int BombExplosionRadius = 5;
 
+		#endregion
 
-		/* ~~~~~ Login and Ban ~~~~~ */
+
+		#region Login and Ban Settings
 
 		/// <summary>The default group name to place newly registered users under.</summary>
 		[Description("The default group name to place newly registered users under.")]
@@ -460,8 +466,10 @@ namespace TShockAPI
 		[Description("Whether or not to kick users when they surpass the HealOther threshold.")]
 		public bool KickOnHealOtherThresholdBroken = false;
 
+		#endregion
 
-		/* ~~~~~ Chat ~~~~~ */
+
+		#region Chat Settings
 
 		/// <summary>Specifies which string starts a command.
 		/// Note: Will not function properly if the string length is bigger than 1.</summary>
@@ -517,8 +525,10 @@ namespace TShockAPI
 		[Description("The RGB values used for the color of broadcast messages.\n#.#.# = Red/Blue/Green\nMax value: 255")]
 		public int[] BroadcastRGB = { 127, 255, 212 };
 
+		#endregion
 
-		/* ~~~~~ MySQL ~~~~~ */
+
+		#region MySQL Settings
 
 		/// <summary>The type of database to use when storing data (either "sqlite" or "mysql").</summary>
 		[Description("The type of database to use when storing data (either \"sqlite\" or \"mysql\").")]
@@ -552,8 +562,10 @@ namespace TShockAPI
 		[Description("Number of times the SQL log must fail to insert logs before falling back to the text log.")]
 		public int RevertToTextLogsOnSqlFailures = 10;
 
+		#endregion
 
-		/* ~~~~~ REST API ~~~~~ */
+
+		#region REST API Settings
 
 		/// <summary>Enable or disable the REST API.</summary>
 		[Description("Enable or disable the REST API.")]
@@ -583,6 +595,7 @@ namespace TShockAPI
 		[Description("A dictionary of REST tokens that external applications may use to make queries to your server.")]
 		public Dictionary<string, SecureRest.TokenData> ApplicationRestTokens = new Dictionary<string, SecureRest.TokenData>();
 
+		#endregion
 
 
 		/// <summary>
