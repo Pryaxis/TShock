@@ -199,7 +199,7 @@ namespace TShockAPI
 
 		/// <summary>The reason given when kicking players that attempt to join while the server is full.</summary>
 		[Description("The reason given when kicking players that attempt to join while the server is full.")]
-		public string ServerFullReason = "Server is full";
+		public string ServerFullReason = "Server is fuller";
 
 		/// <summary>The reason given when kicking players for not being on the whitelist.</summary>
 		[Description("The reason given when kicking players for not being on the whitelist.")]
