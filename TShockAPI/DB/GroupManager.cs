@@ -76,7 +76,8 @@ namespace TShockAPI.DB
 						Permissions.summonboss,
 						Permissions.whisper,
 						Permissions.wormhole,
-						Permissions.canpaint));
+						Permissions.canpaint,
+                                              Permissions.pylon));
 
 				AddDefaultGroup("vip", "default",
 					string.Join(",",
@@ -123,7 +124,8 @@ namespace TShockAPI.DB
 						Permissions.tpnpc,
 						Permissions.tppos,
 						Permissions.tpsilent,
-						Permissions.userinfo));
+						Permissions.userinfo,
+                                              Permissions.spawn));
 
 				AddDefaultGroup("trustedadmin", "admin",
 					string.Join(",",
@@ -155,7 +157,20 @@ namespace TShockAPI.DB
 						Permissions.invade,
 						Permissions.startdd2,
 						Permissions.uploaddata,
-						Permissions.uploadothersdata));
+						Permissions.uploadothersdata,
+                                              Permissions.journey_timefreeze,
+						Permissions.journey_timeset,
+						Permissions.journey_timespeed,
+						Permissions.journey_godmode,
+						Permissions.journey_windstrength,
+						Permissions.journey_windfreeze,
+						Permissions.journey_rainstrength,
+						Permissions.journey_rainfreeze,
+						Permissions.journey_placementrange,
+						Permissions.journey_setdifficulty,
+						Permissions.journey_biomespreadfreeze,
+						Permissions.journey_setspawnrate,
+                                              Permissions.journey_contributeresearch));
 
 				AddDefaultGroup("owner", "trustedadmin",
 					string.Join(",",
@@ -174,19 +189,7 @@ namespace TShockAPI.DB
 						Permissions.settempgroup,
 						Permissions.spawnrate,
 						Permissions.tpoverride,
-						Permissions.createdumps,
-						Permissions.journey_timefreeze,
-						Permissions.journey_timeset,
-						Permissions.journey_timespeed,
-						Permissions.journey_godmode,
-						Permissions.journey_windstrength,
-						Permissions.journey_windfreeze,
-						Permissions.journey_rainstrength,
-						Permissions.journey_rainfreeze,
-						Permissions.journey_placementrange,
-						Permissions.journey_setdifficulty,
-						Permissions.journey_biomespreadfreeze,
-						Permissions.journey_setspawnrate));
+						Permissions.createdumps));
 			}
 
 			// Load Permissions from the DB
