@@ -33,6 +33,10 @@ namespace TShockAPI
 
 		// Server
 
+		/// <summary>The server password required to join the server.</summary>
+		[Description("The server password required to join the server.")]
+		public string ServerPassword = "";
+
 		/// <summary>The port the server runs on.</summary>
 		[Description("The port the server runs on.")]
 		public int ServerPort = 7777;
@@ -51,15 +55,7 @@ namespace TShockAPI
 
 		/// <summary>Whether or not to use ServerName in place of the world name.</summary>
 		[Description("Whether or not to use ServerName in place of the world name.")]
-		public bool UseServerName = false;
-
-		/// <summary>The server password required to join the server.</summary>
-		[Description("The server password required to join the server.")]
-		public string ServerPassword = "";
-
-		/// <summary>Prevents users from being able to login before they finish connecting.</summary>
-		[Description("Prevents users from being able to login before they finish connecting.")]
-		public bool DisableLoginBeforeJoin;
+		public bool UseServerName = false;		
 
 		/// <summary>The path to the directory where logs should be written to.</summary>
 		[Description("The path to the directory where logs should be written to.")]
@@ -69,8 +65,57 @@ namespace TShockAPI
 		[Description("Whether or not the server should output debug level messages related to system operation.")]
 		public bool DebugLogs = true;
 
+		/// <summary>Prevents users from being able to login before they finish connecting.</summary>
+		[Description("Prevents users from being able to login before they finish connecting.")]
+		public bool DisableLoginBeforeJoin;
+
+		/// <summary>Allows stacks in chests to go beyond the stack limit during world loading.</summary>
+		[Description("Allows stacks in chests to go beyond the stack limit during world loading.")]
+		public bool IgnoreChestStacksOnLoad = false;
+
+
+		// Backup and Save
+
+		/// <summary>Enable or disable Terraria's built-in world auto save.</summary>
+		[Description("Enable or disable Terraria's built-in world auto save.")]
+		public bool AutoSave = true;
+
+		/// <summary>Enable or disable world save announcements.</summary>
+		[Description("Enable or disable world save announcements.")]
+		public bool AnnounceSave = true;
+
+		/// <summary>Whether or not to show backup auto save messages.</summary>
+		[Description("Whether or not to show backup auto save messages.")]
+		public bool ShowBackupAutosaveMessages = true;
+
+		/// <summary>The interval between backups, in minutes. Backups are stored in the tshock/backups folder.</summary>
+		[Description("The interval between backups, in minutes. Backups are stored in the tshock/backups folder.")]
+		public int BackupInterval;
+
+		/// <summary>For how long backups are kept in minutes.</summary>
+		[Description("For how long backups are kept in minutes.\neg. 2880 = 2 days.")]
+		public int BackupKeepFor = 60;
+
+		/// <summary>Whether or not to save the world if the server crashes from an unhandled exception.</summary>
+		[Description("Whether or not to save the world if the server crashes from an unhandled exception.")]
+		public bool SaveWorldOnCrash = true;
+
+		/// <summary>Whether or not to save the world when the last player disconnects.</summary>
+		[Description("Whether or not to save the world when the last player disconnects.")]
+		public bool SaveWorldOnLastPlayerExit = true;
+
 
 		// Chat
+
+		/// <summary>Specifies which string starts a command.
+		/// Note: Will not function properly if the string length is bigger than 1.</summary>
+		[Description("Specifies which string starts a command.\nNote: Will not function properly if the string length is bigger than 1.")]
+		public string CommandSpecifier = "/";
+
+		/// <summary>Specifies which string starts a command silently.
+		/// Note: Will not function properly if the string length is bigger than 1.</summary>
+		[Description("Specifies which string starts a command silently.\nNote: Will not function properly if the string length is bigger than 1.")]
+		public string CommandSilentSpecifier = ".";
 
 		/// <summary>Disables sending logs as messages to players with the log permission.</summary>
 		[Description("Disables sending logs as messages to players with the log permission.")]
@@ -116,47 +161,6 @@ namespace TShockAPI
 		[Description("The RGB values used for the color of broadcast messages.\n#.#.# = Red/Blue/Green\nMax value: 255")]
 		public int[] BroadcastRGB = { 127, 255, 212 };
 
-		/// <summary>Specifies which string starts a command.
-		/// Note: Will not function properly if the string length is bigger than 1.</summary>
-		[Description("Specifies which string starts a command.\nNote: Will not function properly if the string length is bigger than 1.")]
-		public string CommandSpecifier = "/";
-
-		/// <summary>Specifies which string starts a command silently.
-		/// Note: Will not function properly if the string length is bigger than 1.</summary>
-		[Description("Specifies which string starts a command silently.\nNote: Will not function properly if the string length is bigger than 1.")]
-		public string CommandSilentSpecifier = ".";
-
-
-		// Backup and Save
-
-		/// <summary>Enable or disable Terraria's built-in world auto save.</summary>
-		[Description("Enable or disable Terraria's built-in world auto save.")]
-		public bool AutoSave = true;
-
-		/// <summary>Enable or disable world save announcements.</summary>
-		[Description("Enable or disable world save announcements.")]
-		public bool AnnounceSave = true;
-
-		/// <summary>Whether or not to show backup auto save messages.</summary>
-		[Description("Whether or not to show backup auto save messages.")]
-		public bool ShowBackupAutosaveMessages = true;
-
-		/// <summary>The interval between backups, in minutes. Backups are stored in the tshock/backups folder.</summary>
-		[Description("The interval between backups, in minutes. Backups are stored in the tshock/backups folder.")]
-		public int BackupInterval;
-
-		/// <summary>For how long backups are kept in minutes.</summary>
-		[Description("For how long backups are kept in minutes.\neg. 2880 = 2 days.")]
-		public int BackupKeepFor = 60;
-
-		/// <summary>Whether or not to save the world if the server crashes from an unhandled exception.</summary>
-		[Description("Whether or not to save the world if the server crashes from an unhandled exception.")]
-		public bool SaveWorldOnCrash = true;
-
-		/// <summary>Whether or not to save the world when the last player disconnects.</summary>
-		[Description("Whether or not to save the world when the last player disconnects.")]
-		public bool SaveWorldOnLastPlayerExit = true;
-
 
 		// MySQL
 
@@ -195,10 +199,6 @@ namespace TShockAPI
 
 		// REST API
 
-		/// <summary>Whether or not to require token authentication to use the public REST API endpoints.</summary>
-		[Description("Whether or not to require token authentication to use the public REST API endpoints.")]
-		public bool EnableTokenEndpointAuthentication;
-
 		/// <summary>Enable or disable the REST API.</summary>
 		[Description("Enable or disable the REST API.")]
 		public bool RestApiEnabled;
@@ -210,6 +210,10 @@ namespace TShockAPI
 		/// <summary>Whether or not to log REST API connections.</summary>
 		[Description("Whether or not to log REST API connections.")]
 		public bool LogRest = false;
+
+		/// <summary>Whether or not to require token authentication to use the public REST API endpoints.</summary>
+		[Description("Whether or not to require token authentication to use the public REST API endpoints.")]
+		public bool EnableTokenEndpointAuthentication;
 
 		/// <summary>The maximum REST requests in the bucket before denying requests. Minimum value is 5.</summary>
 		[Description("The maximum REST requests in the bucket before denying requests. Minimum value is 5.")]
@@ -223,7 +227,20 @@ namespace TShockAPI
 		[Description("A dictionary of REST tokens that external applications may use to make queries to your server.")]
 		public Dictionary<string, SecureRest.TokenData> ApplicationRestTokens = new Dictionary<string, SecureRest.TokenData>();
 
+
 		// Login and Ban
+
+		/// <summary>The default group name to place newly registered users under.</summary>
+		[Description("The default group name to place newly registered users under.")]
+		public string DefaultRegistrationGroupName = "default";
+
+		/// <summary>The default group name to place unregistered players under.</summary>
+		[Description("The default group name to place unregistered players under.")]
+		public string DefaultGuestGroupName = "guest";
+
+		/// <summary>Remembers where a player left off, based on their IP. Does not persist through server restarts.</summary>
+		[Description("Remembers where a player left off, based on their IP. Does not persist through server restarts.\neg. When you try to disconnect, and reconnect to be automatically placed at spawn, you'll be at your last location.")]
+		public bool RememberLeavePos;
 
 		/// <summary>Number of failed login attempts before kicking the player.</summary>
 		[Description("Number of failed login attempts before kicking the player.")]
@@ -233,46 +250,41 @@ namespace TShockAPI
 		[Description("Whether or not to kick mediumcore players on death.")]
 		public bool KickOnMediumcoreDeath;
 
+		/// <summary>The reason given if kicking a mediumcore players on death.</summary>
+		[Description("The reason given if kicking a mediumcore players on death.")]
+		public string MediumcoreKickReason = "Death results in a kick";
+
 		/// <summary>Whether or not to ban mediumcore players on death.</summary>
 		[Description("Whether or not to ban mediumcore players on death.")]
 		public bool BanOnMediumcoreDeath;
-
-		/// <summary>Remembers where a player left off, based on their IP. Does not persist through server restarts.</summary>
-		[Description("Remembers where a player left off, based on their IP. Does not persist through server restarts.\neg. When you try to disconnect, and reconnect to be automatically placed at spawn, you'll be at your last location.")]
-		public bool RememberLeavePos;
-
-		/// <summary>Enable or disable the whitelist based on IP addresses in the whitelist.txt file.</summary>
-		[Description("Enable or disable the whitelist based on IP addresses in the whitelist.txt file.")]
-		public bool EnableWhitelist;
-
-		/// <summary>The hash algorithm used to encrypt user passwords.
-		/// Valid types: "sha512", "sha256" and "md5". Append with "-xp" for the xp supported algorithms.</summary>
-		[Description("The hash algorithm used to encrypt user passwords. Valid types: \"sha512\", \"sha256\" and \"md5\". Append with \"-xp\" for the xp supported algorithms.")]
-		public string HashAlgorithm = "sha512";
-
-		/// <summary>The reason given when kicking players that attempt to join while the server is full.</summary>
-		[Description("The reason given when kicking players that attempt to join while the server is full.")]
-		public string ServerFullReason = "Server is full";
-
-		/// <summary>The reason given when kicking players for not being on the whitelist.</summary>
-		[Description("The reason given when kicking players for not being on the whitelist.")]
-		public string WhitelistKickReason = "You are not on the whitelist.";
-
-		/// <summary>The reason given when kicking players that attempt to join while the server is full with no reserved slots available.</summary>
-		[Description("The reason given when kicking players that attempt to join while the server is full with no reserved slots available.")]
-		public string ServerFullNoReservedReason = "Server is full. No reserved slots open.";
 
 		/// <summary>The reason given if banning a mediumcore player on death.</summary>
 		[Description("The reason given if banning a mediumcore player on death.")]
 		public string MediumcoreBanReason = "Death results in a ban";
 
-		/// <summary>The reason given if kicking a mediumcore players on death.</summary>
-		[Description("The reason given if kicking a mediumcore players on death.")]
-		public string MediumcoreKickReason = "Death results in a kick";
+		/// <summary>Enable or disable the whitelist based on IP addresses in the whitelist.txt file.</summary>
+		[Description("Enable or disable the whitelist based on IP addresses in the whitelist.txt file.")]
+		public bool EnableWhitelist;
+
+		/// <summary>The reason given when kicking players for not being on the whitelist.</summary>
+		[Description("The reason given when kicking players for not being on the whitelist.")]
+		public string WhitelistKickReason = "You are not on the whitelist.";
+
+		/// <summary>The reason given when kicking players that attempt to join while the server is full.</summary>
+		[Description("The reason given when kicking players that attempt to join while the server is full.")]
+		public string ServerFullReason = "Server is full";
+
+		/// <summary>The reason given when kicking players that attempt to join while the server is full with no reserved slots available.</summary>
+		[Description("The reason given when kicking players that attempt to join while the server is full with no reserved slots available.")]
+		public string ServerFullNoReservedReason = "Server is full. No reserved slots open.";
 
 		/// <summary>Whether or not to kick hardcore players on death.</summary>
 		[Description("Whether or not to kick hardcore players on death.")]
 		public bool KickOnHardcoreDeath;
+
+		/// <summary>The reason given when kicking hardcore players on death.</summary>
+		[Description("The reason given when kicking hardcore players on death.")]
+		public string HardcoreKickReason = "Death results in a kick";
 
 		/// <summary>Whether or not to ban hardcore players on death.</summary>
 		[Description("Whether or not to ban hardcore players on death.")]
@@ -281,10 +293,6 @@ namespace TShockAPI
 		/// <summary>The reason given when banning hardcore players on death.</summary>
 		[Description("The reason given when banning hardcore players on death.")]
 		public string HardcoreBanReason = "Death results in a ban";
-
-		/// <summary>The reason given when kicking hardcore players on death.</summary>
-		[Description("The reason given when kicking hardcore players on death.")]
-		public string HardcoreKickReason = "Death results in a kick";
 
 		/// <summary>Enables kicking banned users by matching their IP Address.</summary>
 		[Description("Enables kicking banned users by matching their IP Address.")]
@@ -298,14 +306,6 @@ namespace TShockAPI
 		[Description("Enables kicking banned users by matching their Character Name.")]
 		public bool EnableBanOnUsernames;
 
-		/// <summary>The default group name to place newly registered users under.</summary>
-		[Description("The default group name to place newly registered users under.")]
-		public string DefaultRegistrationGroupName = "default";
-
-		/// <summary>The default group name to place unregistered players under.</summary>
-		[Description("The default group name to place unregistered players under.")]
-		public string DefaultGuestGroupName = "guest";
-
 		/// <summary>If GeoIP is enabled, this will kick users identified as being under a proxy.</summary>
 		[Description("If GeoIP is enabled, this will kick users identified as being under a proxy.")]
 		public bool KickProxyUsers = true;
@@ -314,22 +314,27 @@ namespace TShockAPI
 		[Description("Require all players to register or login before being allowed to play.")]
 		public bool RequireLogin;
 
+		/// <summary>Allows users to login to any account even if the username doesn't match their character name.</summary>
+		[Description("Allows users to login to any account even if the username doesn't match their character name.")]
+		public bool AllowLoginAnyUsername = true;
+
 		/// <summary>Allows users to register a username that doesn't necessarily match their character name.</summary>
 		[Description("Allows users to register a username that doesn't necessarily match their character name.")]
 		public bool AllowRegisterAnyUsername;
 
-		/// <summary>Allows users to login to any account even if the username doesn't match their character name.</summary>
-		[Description("Allows users to login to any account even if the username doesn't match their character name.")]
-		public bool AllowLoginAnyUsername = true;
+		/// <summary>The minimum password length for new user accounts. Can never be lower than 4.</summary>
+		[Description("The minimum password length for new user accounts. Can never be lower than 4.")]
+		public int MinimumPasswordLength = 4;
+
+		/// <summary>The hash algorithm used to encrypt user passwords.
+		/// Valid types: "sha512", "sha256" and "md5". Append with "-xp" for the xp supported algorithms.</summary>
+		[Description("The hash algorithm used to encrypt user passwords. Valid types: \"sha512\", \"sha256\" and \"md5\". Append with \"-xp\" for the xp supported algorithms.")]
+		public string HashAlgorithm = "sha512";
 
 		/// <summary>Determines the BCrypt work factor to use. If increased, all passwords will be upgraded to new work-factor on verify.
 		/// The number of computational rounds is 2^n. Increase with caution. Range: 5-31.</summary>
 		[Description("Determines the BCrypt work factor to use. If increased, all passwords will be upgraded to new work-factor on verify. The number of computational rounds is 2^n. Increase with caution. Range: 5-31.")]
 		public int BCryptWorkFactor = 7;
-
-		/// <summary>The minimum password length for new user accounts. Can never be lower than 4.</summary>
-		[Description("The minimum password length for new user accounts. Can never be lower than 4.")]
-		public int MinimumPasswordLength = 4;
 
 		/// <summary>Prevents users from being able to login with their client UUID.</summary>
 		[Description("Prevents users from being able to login with their client UUID.")]
@@ -338,6 +343,71 @@ namespace TShockAPI
 		/// <summary>Kick clients that don't send their UUID to the server.</summary>
 		[Description("Kick clients that don't send their UUID to the server.")]
 		public bool KickEmptyUUID;
+
+		/// <summary>Disables a player if this number of tiles is painted within 1 second.</summary>
+		[Description("Disables a player if this number of tiles is painted within 1 second.")]
+		public int TilePaintThreshold = 15;
+
+		/// <summary>Whether or not to kick users when they surpass the TilePaint threshold.</summary>
+		[Description("Whether or not to kick users when they surpass the TilePaint threshold.")]
+		public bool KickOnTilePaintThresholdBroken = false;
+
+		/// <summary>The maximum damage a player/NPC can inflict.</summary>
+		[Description("The maximum damage a player/NPC can inflict.")]
+		public int MaxDamage = 1175;
+
+		/// <summary>The maximum damage a projectile can inflict.</summary>
+		[Description("The maximum damage a projectile can inflict.")]
+		public int MaxProjDamage = 1175;
+
+		/// <summary>Whether or not to kick users when they surpass the MaxDamage threshold.</summary>
+		[Description("Whether or not to kick users when they surpass the MaxDamage threshold.")]
+		public bool KickOnDamageThresholdBroken = false;
+
+		/// <summary>Disables a player and reverts their actions if this number of tile kills is exceeded within 1 second.</summary>
+		[Description("Disables a player and reverts their actions if this number of tile kills is exceeded within 1 second.")]
+		public int TileKillThreshold = 60;
+
+		/// <summary>Whether or not to kick users when they surpass the TileKill threshold.</summary>
+		[Description("Whether or not to kick users when they surpass the TileKill threshold.")]
+		public bool KickOnTileKillThresholdBroken = false;
+
+		/// <summary>Disables a player and reverts their actions if this number of tile places is exceeded within 1 second.</summary>
+		[Description("Disables a player and reverts their actions if this number of tile places is exceeded within 1 second.")]
+		public int TilePlaceThreshold = 32;
+
+		/// <summary>Whether or not to kick users when they surpass the TilePlace threshold.</summary>
+		[Description("Whether or not to kick users when they surpass the TilePlace threshold.")]
+		public bool KickOnTilePlaceThresholdBroken = false;
+
+		/// <summary>Disables a player if this number of liquid sets is exceeded within 1 second.</summary>
+		[Description("Disables a player if this number of liquid sets is exceeded within 1 second.")]
+		public int TileLiquidThreshold = 50;
+
+		/// <summary>Whether or not to kick users when they surpass the TileLiquid threshold.</summary>
+		[Description("Whether or not to kick users when they surpass the TileLiquid threshold.")]
+		public bool KickOnTileLiquidThresholdBroken = false;
+
+		/// <summary>Whether or not to ignore shrapnel from crystal bullets for the projectile threshold count.</summary>
+		[Description("Whether or not to ignore shrapnel from crystal bullets for the projectile threshold count.")]
+		public bool ProjIgnoreShrapnel = true;
+
+		/// <summary>Disable a player if this number of projectiles is created within 1 second.</summary>
+		[Description("Disable a player if this number of projectiles is created within 1 second.")]
+		public int ProjectileThreshold = 50;
+
+		/// <summary>Whether or not to kick users when they surpass the Projectile threshold.</summary>
+		[Description("Whether or not to kick users when they surpass the Projectile threshold.")]
+		public bool KickOnProjectileThresholdBroken = false;
+
+		/// <summary>Disables a player if this number of HealOtherPlayer packets is sent within 1 second.</summary>
+		[Description("Disables a player if this number of HealOtherPlayer packets is sent within 1 second.")]
+		public int HealOtherThreshold = 50;
+
+		/// <summary>Whether or not to kick users when they surpass the HealOther threshold.</summary>
+		[Description("Whether or not to kick users when they surpass the HealOther threshold.")]
+		public bool KickOnHealOtherThresholdBroken = false;
+
 
 		// World
 
@@ -373,10 +443,6 @@ namespace TShockAPI
 		[Description("Enable or disable anti-cheat range checks based on distance between the player and their block placements.")]
 		public bool RangeChecks = true;
 
-		/// <summary>Disables any placing, or removal of blocks.</summary>
-		[Description("Disables any placing, or removal of blocks.")]
-		public bool DisableBuild;
-
 		/// <summary>Prevents non-hardcore players from connecting.</summary>
 		[Description("Prevents non-hardcore players from connecting.")]
 		public bool HardcoreOnly;
@@ -384,6 +450,10 @@ namespace TShockAPI
 		/// <summary>Prevents softcore players from connecting.</summary>
 		[Description("Prevents softcore players from connecting.")]
 		public bool MediumcoreOnly;
+
+		/// <summary>Disables any placing, or removal of blocks.</summary>
+		[Description("Disables any placing, or removal of blocks.")]
+		public bool DisableBuild;
 
 		/// <summary>If enabled, hardmode will not be activated by the Wall of Flesh or the /starthardmode command.</summary>
 		[Description("If enabled, hardmode will not be activated by the Wall of Flesh or the /starthardmode command.")]
@@ -409,30 +479,6 @@ namespace TShockAPI
 		[Description("Forces the world time to be normal, day, or night.")]
 		public string ForceTime = "normal";
 
-		/// <summary>Disables a player and reverts their actions if this number of tile kills is exceeded within 1 second.</summary>
-		[Description("Disables a player and reverts their actions if this number of tile kills is exceeded within 1 second.")]
-		public int TileKillThreshold = 60;
-
-		/// <summary>Disables a player and reverts their actions if this number of tile places is exceeded within 1 second.</summary>
-		[Description("Disables a player and reverts their actions if this number of tile places is exceeded within 1 second.")]
-		public int TilePlaceThreshold = 32;
-
-		/// <summary>Disables a player if this number of liquid sets is exceeded within 1 second.</summary>
-		[Description("Disables a player if this number of liquid sets is exceeded within 1 second.")]
-		public int TileLiquidThreshold = 50;
-
-		/// <summary>Disable a player if this number of projectiles is created within 1 second.</summary>
-		[Description("Disable a player if this number of projectiles is created within 1 second.")]
-		public int ProjectileThreshold = 50;
-
-		/// <summary>Disables a player if this number of HealOtherPlayer packets is sent within 1 second.</summary>
-		[Description("Disables a player if this number of HealOtherPlayer packets is sent within 1 second.")]
-		public int HealOtherThreshold = 50;
-
-		/// <summary>Whether or not to ignore shrapnel from crystal bullets for the projectile threshold count.</summary>
-		[Description("Whether or not to ignore shrapnel from crystal bullets for the projectile threshold count.")]
-		public bool ProjIgnoreShrapnel = true;
-
 		/// <summary>Disables the effect of invisibility potions while PvP is enabled by turning the player visible to the other clients.</summary>
 		[Description("Disables the effect of invisibility potions while PvP is enabled by turning the player visible to the other clients.")]
 		public bool DisableInvisPvP;
@@ -449,18 +495,6 @@ namespace TShockAPI
 		[Description("Whether or not region protection should apply to gem locks.")]
 		public bool RegionProtectGemLocks = true;
 
-		/// <summary>The maximum damage a player/NPC can inflict.</summary>
-		[Description("The maximum damage a player/NPC can inflict.")]
-		public int MaxDamage = 1175;
-
-		/// <summary>The maximum damage a projectile can inflict.</summary>
-		[Description("The maximum damage a projectile can inflict.")]
-		public int MaxProjDamage = 1175;
-
-		/// <summary>Whether or not to kick users when they surpass the MaxDamage threshold.</summary>
-		[Description("Whether or not to kick users when they surpass the MaxDamage threshold.")]
-		public bool KickOnDamageThresholdBroken = false;
-
 		/// <summary>Ignores checks to see if a player 'can' update a projectile.</summary>
 		[Description("Ignores checks to see if a player 'can' update a projectile.")]
 		public bool IgnoreProjUpdate = false;
@@ -468,6 +502,10 @@ namespace TShockAPI
 		/// <summary>Ignores checks to see if a player 'can' kill a projectile.</summary>
 		[Description("Ignores checks to see if a player 'can' kill a projectile.")]
 		public bool IgnoreProjKill = false;
+
+		/// <summary>Allows players to break temporary tiles (grass, pots, etc) where they cannot usually build.</summary>
+		[Description("Allows players to break temporary tiles (grass, pots, etc) where they cannot usually build.")]
+		public bool AllowCutTilesAndBreakables = false;
 
 		/// <summary>Allows ice placement even where a user cannot usually build.</summary>
 		[Description("Allows ice placement even where a user cannot usually build.")]
@@ -505,17 +543,21 @@ namespace TShockAPI
 		[Description("Prevent players from interacting with the world while they are dead.")]
 		public bool PreventDeadModification = true;
 
+		/// <summary>Prevents players from placing tiles with an invalid style.</summary>
+		[Description("Prevents players from placing tiles with an invalid style.")]
+		public bool PreventInvalidPlaceStyle = true;
+
 		/// <summary>Forces Christmas-only events to occur all year.</summary>
 		[Description("Forces Christmas-only events to occur all year.")]
 		public bool ForceXmas = false;
 
+		/// <summary>Forces Halloween-only events to occur all year.</summary>
+		[Description("Forces Halloween-only events to occur all year.")]
+		public bool ForceHalloween = false;
+
 		/// <summary>Allows groups on the banned item allowed list to spawn banned items even if PreventBannedItemSpawn is set to true.</summary>
 		[Description("Allows groups on the banned item allowed list to spawn banned items even if PreventBannedItemSpawn is set to true.")]
 		public bool AllowAllowedGroupsToSpawnBannedItems = false;
-
-		/// <summary>Allows stacks in chests to go beyond the stack limit during world loading.</summary>
-		[Description("Allows stacks in chests to go beyond the stack limit during world loading.")]
-		public bool IgnoreChestStacksOnLoad = false;
 
 		/// <summary>The number of seconds a player must wait before being respawned. Cannot be longer than normal value now. Use at your own risk.</summary>
 		[Description("The number of seconds a player must wait before being respawned. Cannot be longer than normal value now. Use at your own risk.")]
@@ -524,18 +566,6 @@ namespace TShockAPI
 		/// <summary>The number of seconds a player must wait before being respawned if there is a boss nearby. Cannot be longer than normal value now. Use at your own risk.</summary>
 		[Description("The number of seconds a player must wait before being respawned if there is a boss nearby. Cannot be longer than normal value now. Use at your own risk.")]
 		public int RespawnBossSeconds = 10;
-
-		/// <summary>Disables a player if this number of tiles is painted within 1 second.</summary>
-		[Description("Disables a player if this number of tiles is painted within 1 second.")]
-		public int TilePaintThreshold = 15;
-
-		/// <summary>Forces Halloween-only events to occur all year.</summary>
-		[Description("Forces Halloween-only events to occur all year.")]
-		public bool ForceHalloween = false;
-
-		/// <summary>Allows players to break temporary tiles (grass, pots, etc) where they cannot usually build.</summary>
-		[Description("Allows players to break temporary tiles (grass, pots, etc) where they cannot usually build.")]
-		public bool AllowCutTilesAndBreakables = false;
 
 		/// <summary>Whether or not to announce boss spawning or invasion starts.</summary>
 		[Description("Whether or not to announce boss spawning or invasion starts.")]
@@ -552,10 +582,6 @@ namespace TShockAPI
 		/// <summary>Determines the range in tiles that a bomb can affect tiles from detonation point.</summary>
 		[Description("Determines the range in tiles that a bomb can affect tiles from detonation point.")]
 		public int BombExplosionRadius = 5;
-
-		/// <summary>Prevents players from placing tiles with an invalid style.</summary>
-		[Description("Prevents players from placing tiles with an invalid style.")]
-		public bool PreventInvalidPlaceStyle = true;
 
 
 		/// <summary>
