@@ -72,7 +72,7 @@ namespace TShockAPI.Handlers
 
 			Debug.VisualiseTileSetDiff(args.TileX, args.TileY, args.Size, args.Size, tiles);
 
-			IterateTileSquare(tiles, processed, args);			
+			IterateTileSquare(tiles, processed, args);
 
 			// Uncommenting this function will send the same tile square 10 blocks above you for visualisation. This will modify your world and overwrite existing blocks.
 			// Use in test worlds only.
@@ -139,7 +139,7 @@ namespace TShockAPI.Handlers
 						NetTile[,] newTiles;
 						int width = data.Width;
 						int height = data.Height;
-						int offset = 0;
+						int offsetY = 0;
 
 						if (newTile.Type == TileID.TrapdoorClosed)
 						{
@@ -148,7 +148,13 @@ namespace TShockAPI.Handlers
 							// So we capture all 6 possible tiles and offset ourselves 1 tile above the closed trapdoor to capture the entire 2x3 area
 							width = 2;
 							height = 3;
-							offset = -1;
+							offsetY = -1;
+						}
+
+						// Ensure the tile object fits inside the square before processing it
+						if (!DoesTileObjectFitInTileSquare(x, y, width, height, size, offsetY, processed))
+						{
+							continue;
 						}
 
 						newTiles = new NetTile[width, height];
@@ -157,11 +163,11 @@ namespace TShockAPI.Handlers
 						{
 							for (int j = 0; j < height; j++)
 							{
-								newTiles[i, j] = tiles[x + i, y + j + offset];
-								processed[x + i, y + j] = true;
+								newTiles[i, j] = tiles[x + i, y + j + offsetY];
+								processed[x + i, y + j + offsetY] = true;
 							}
 						}
-						ProcessTileObject(newTile.Type, realX, realY + offset, width, height, newTiles, args);
+						ProcessTileObject(newTile.Type, realX, realY + offsetY, width, height, newTiles, args);
 						continue;
 					}
 
@@ -392,7 +398,7 @@ namespace TShockAPI.Handlers
 		/// <param name="stream"></param>
 		/// <param name="size"></param>
 		/// <returns></returns>
-		static NetTile[,] ReadNetTilesFromStream(System.IO.MemoryStream stream, int size)
+		static NetTile[,] ReadNetTilesFromStream(System.IO.MemoryStream stream, short size)
 		{
 			NetTile[,] tiles = new NetTile[size, size];
 			for (int x = 0; x < size; x++)
@@ -420,8 +426,8 @@ namespace TShockAPI.Handlers
 				return true;
 			}
 
-			// 5x5 is the largest vanilla-sized tile square. Anything larger than this should not be seen in the vanilla game and should be rejected
-			if (args.Size > 5)
+			// 7x7 is the largest vanilla-sized tile square (used for lamp posts). Anything larger than this should not be sent by the vanilla game and should be rejected
+			if (args.Size > 7)
 			{
 				TShock.Log.ConsoleDebug("Bouncer / SendTileSquare rejected from non-vanilla tilemod from {0}", args.Player.Name);
 				return true;
@@ -442,6 +448,44 @@ namespace TShockAPI.Handlers
 			}
 
 			return false;
+		}
+
+		/// <summary>
+		/// Checks if a tile object fits inside the dimensions of a tile square
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="size"></param>
+		/// <param name="offsetY"></param>
+		/// <param name="processed"></param>
+		/// <returns></returns>
+		static bool DoesTileObjectFitInTileSquare(int x, int y, int width, int height, int size, int offsetY, bool[,] processed)
+		{
+			// If the starting y position of this tile object is at (x, 0) and the y offset is negative, we'll be accessing tiles outside the square
+			if (y + offsetY < 0)
+			{
+				TShock.Log.ConsoleDebug("Bouncer / SendTileSquareHandler - rejected tile object because object dimensions fall outside the tile square (negative y value)");
+				return false;
+			}
+
+			if (x + width >= size || y + height + offsetY >= size)
+			{
+				// This is ugly, but we want to mark all these tiles as processed so that we're not hitting this check multiple times for one dodgy tile object
+				for (int i = x; i < size; i++)
+				{
+					for (int j = Math.Max(0, y + offsetY); j < size; j++) // This is also ugly. Using Math.Max to make sure y + offsetY >= 0
+					{
+						processed[i, j] = true;
+					}
+				}
+
+				TShock.Log.ConsoleDebug("Bouncer / SendTileSquareHandler - rejected tile object because object dimensions fall outside the tile square (excessive size)");
+				return false;
+			}
+
+			return true;
 		}
 
 		class Debug
