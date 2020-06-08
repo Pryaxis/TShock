@@ -4,6 +4,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 ## Upcoming changes
 * Installed new sprinklers!
+* Fix issue where players could replace tiles with banned tiles without permission. (@Patrikkk)
 
 ## TShock 4.4.0 (Pre-release 11)
 * New permission `tshock.tp.pylon` to enable teleporting via Teleportation Pylons (@QuiCM)

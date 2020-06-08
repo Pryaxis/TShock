@@ -259,7 +259,7 @@ namespace TShockAPI
 				int lastKilledProj = args.Player.LastKilledProjectile;
 				ITile tile = Main.tile[tileX, tileY];
 
-				if (action == EditAction.PlaceTile)
+				if (action == EditAction.PlaceTile || action == EditAction.ReplaceTile)
 				{
 					if (TShock.TileBans.TileIsBanned(editData, args.Player))
 					{
