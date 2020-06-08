@@ -358,7 +358,7 @@ namespace TShockAPI
 						}
 					}
 
-					if (editData >= (action == EditAction.PlaceTile ? Main.maxTileSets : Main.maxWallTypes))
+					if (editData >= ((action == EditAction.PlaceTile || action == EditAction.ReplaceTile) ? Main.maxTileSets : Main.maxWallTypes))
 					{
 						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (ms3) {0} {1} {2}", args.Player.Name, action, editData);
 						args.Player.SendTileSquare(tileX, tileY, 4);
@@ -536,7 +536,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if ((action == EditAction.PlaceTile || action == EditAction.PlaceWall) && !args.Player.HasPermission(Permissions.ignoreplacetiledetection))
+				if ((action == EditAction.PlaceTile || action == EditAction.ReplaceTile || action == EditAction.PlaceWall) && !args.Player.HasPermission(Permissions.ignoreplacetiledetection))
 				{
 					args.Player.TilePlaceThreshold++;
 					var coords = new Vector2(tileX, tileY);
