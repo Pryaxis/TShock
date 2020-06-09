@@ -259,7 +259,7 @@ namespace TShockAPI
 				int lastKilledProj = args.Player.LastKilledProjectile;
 				ITile tile = Main.tile[tileX, tileY];
 
-				if (action == EditAction.PlaceTile)
+				if (action == EditAction.PlaceTile || action == EditAction.ReplaceTile)
 				{
 					if (TShock.TileBans.TileIsBanned(editData, args.Player))
 					{
@@ -330,7 +330,7 @@ namespace TShockAPI
 						return;
 					}
 				}
-				else if (action == EditAction.PlaceTile || action == EditAction.PlaceWall)
+				else if (action == EditAction.PlaceTile || action == EditAction.ReplaceTile || action == EditAction.PlaceWall || action == EditAction.ReplaceWall)
 				{
 					if ((action == EditAction.PlaceTile && TShock.Config.PreventInvalidPlaceStyle) &&
 						(MaxPlaceStyles.ContainsKey(editData) && style > MaxPlaceStyles[editData]) &&
@@ -358,7 +358,7 @@ namespace TShockAPI
 						}
 					}
 
-					if (editData >= (action == EditAction.PlaceTile ? Main.maxTileSets : Main.maxWallTypes))
+					if (editData >= ((action == EditAction.PlaceTile || action == EditAction.ReplaceTile) ? Main.maxTileSets : Main.maxWallTypes))
 					{
 						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (ms3) {0} {1} {2}", args.Player.Name, action, editData);
 						args.Player.SendTileSquare(tileX, tileY, 4);
@@ -437,7 +437,7 @@ namespace TShockAPI
 				}
 				if (TShock.Config.AllowCutTilesAndBreakables && Main.tileCut[tile.type])
 				{
-					if (action == EditAction.KillWall)
+					if (action == EditAction.KillWall || action == EditAction.ReplaceWall)
 					{
 						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from sts allow cut from {0} {1} {2}", args.Player.Name, action, editData);
 						args.Player.SendTileSquare(tileX, tileY, 1);
@@ -536,7 +536,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if ((action == EditAction.PlaceTile || action == EditAction.PlaceWall) && !args.Player.HasPermission(Permissions.ignoreplacetiledetection))
+				if ((action == EditAction.PlaceTile || action == EditAction.ReplaceTile || action == EditAction.PlaceWall || action == EditAction.ReplaceWall) && !args.Player.HasPermission(Permissions.ignoreplacetiledetection))
 				{
 					args.Player.TilePlaceThreshold++;
 					var coords = new Vector2(tileX, tileY);
@@ -545,7 +545,7 @@ namespace TShockAPI
 							args.Player.TilesCreated.Add(coords, Main.tile[tileX, tileY]);
 				}
 
-				if ((action == EditAction.KillTile || action == EditAction.KillTileNoItem || action == EditAction.KillWall) && Main.tileSolid[Main.tile[tileX, tileY].type] &&
+				if ((action == EditAction.KillTile  || action == EditAction.KillTileNoItem || action == EditAction.ReplaceTile ||  action == EditAction.KillWall || action == EditAction.ReplaceWall) && Main.tileSolid[Main.tile[tileX, tileY].type] &&
 					!args.Player.HasPermission(Permissions.ignorekilltiledetection))
 				{
 					args.Player.TileKillThreshold++;

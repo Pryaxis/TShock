@@ -4,6 +4,11 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 ## Upcoming changes
 * Installed new sprinklers!
+* Fix multiple holes in Bouncer OnTileData. (@Patrikkk, @hakusaro)
+	* Issue where players could replace tiles with banned tiles without permission. 
+	* Including replace action in TilePlace threshold incrementation, so players cannot bypass the threshold while replacing tiles/walls.
+	* Including check for maxTileSets when player is replacing tiles, so players cannot send invalid tile data through the replace tile action.
+	* Including a check for ReplaceWall when the tile is a Breakable/CutTile.
 * Adding checks in Bouncer OnNewProjectile (@Patrikkk):
 	* For valid golf club and golf ball creation.
 	* Renamed stabProjectile to directionalProjectile for a more accurate naming.
