@@ -4,6 +4,11 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 ## Upcoming changes
 * Installed new sprinklers!
+* Adding checks in Bouncer OnNewProjectile (@Patrikkk):
+	* For valid golf club and golf ball creation.
+	* Renamed stabProjectile to directionalProjectile for a more accurate naming.
+	* Adding staff projectiles to the directionalProjectiles Dictionary to include staffs in the valid projectile creation check.
+	* Adding GolfBallItemIDs list in Handlers.LandGolfBallInCupHandler.cs
 
 ## TShock 4.4.0 (Pre-release 11)
 * New permission `tshock.tp.pylon` to enable teleporting via Teleportation Pylons (@QuiCM)
