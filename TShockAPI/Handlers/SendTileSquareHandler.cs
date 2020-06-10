@@ -470,7 +470,7 @@ namespace TShockAPI.Handlers
 				return false;
 			}
 
-			if (x + width >= size || y + height + offsetY >= size)
+			if (x + width > size || y + height + offsetY > size)
 			{
 				// This is ugly, but we want to mark all these tiles as processed so that we're not hitting this check multiple times for one dodgy tile object
 				for (int i = x; i < size; i++)

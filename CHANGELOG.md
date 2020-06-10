@@ -14,6 +14,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 	* Renamed stabProjectile to directionalProjectile for a more accurate naming.
 	* Adding staff projectiles to the directionalProjectiles Dictionary to include staffs in the valid projectile creation check.
 	* Adding GolfBallItemIDs list in Handlers.LandGolfBallInCupHandler.cs
+* Fixed an issue in the SendTileSquare handler that was rejecting valid tile objects (@QuiCM)
 
 ## TShock 4.4.0 (Pre-release 11)
 * New permission `tshock.tp.pylon` to enable teleporting via Teleportation Pylons (@QuiCM)
