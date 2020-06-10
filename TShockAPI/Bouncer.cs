@@ -717,13 +717,30 @@ namespace TShockAPI
 				return;
 			}
 
-			if (stabProjectile.ContainsKey(type))
+			/// If the projectile is a directional projectile, check if the player is holding their respected item to validate the projectile creation.
+			if (directionalProjectiles.ContainsKey(type))
 			{
-				if (stabProjectile[type] == args.Player.TPlayer.HeldItem.type)
+				if (directionalProjectiles[type] == args.Player.TPlayer.HeldItem.type)
 				{
 					args.Handled = false;
 					return;
 				}
+			}
+
+			/// If the created projectile is a golf club, check if the player is holding one of the golf club items to validate the projectile creation.
+			if (type == ProjectileID.GolfClubHelper && Handlers.LandGolfBallInCupHandler.GolfClubItemIDs.Contains(args.Player.TPlayer.HeldItem.type))
+			{
+				args.Handled = false;
+				return;
+			}
+
+			/// If the created projectile is a golf ball and the player is not holding a golf club item and neither a golf ball item and neither they have had a golf club projectile created recently.
+			if (Handlers.LandGolfBallInCupHandler.GolfBallProjectileIDs.Contains(type) &&
+				!Handlers.LandGolfBallInCupHandler.GolfClubItemIDs.Contains(args.Player.TPlayer.HeldItem.type) &&
+				!Handlers.LandGolfBallInCupHandler.GolfBallItemIDs.Contains(args.Player.TPlayer.HeldItem.type) &&
+				!args.Player.RecentlyCreatedProjectiles.Any(p => p.Type == ProjectileID.GolfClubHelper))
+			{
+				TShock.Log.ConsoleDebug("Bouncer / OnNewProjectile please report to tshock about this! normally this is a reject from {0} {1} (golf)", args.Player.Name, type);
 			}
 
 			// Main.projHostile contains projectiles that can harm players
@@ -2118,9 +2135,33 @@ namespace TShockAPI
 			TileID.Campfire
 		};
 
-		private static Dictionary<int, int> stabProjectile = new Dictionary<int, int>()
+		/// <summary>
+		/// These projectiles have been added or modified with Terraria 1.4.
+		/// They come from normal items, but to have the directional functionality, they must be projectiles.
+		/// </summary>
+		private static Dictionary<int, int> directionalProjectiles = new Dictionary<int, int>()
 		{
-			{ ProjectileID.GladiusStab, ItemID.Gladius },
+			///Spears
+			{ ProjectileID.DarkLance, ItemID.DarkLance},
+			{ ProjectileID.Trident, ItemID.Trident},
+			{ ProjectileID.Spear, ItemID.Spear},
+			{ ProjectileID.MythrilHalberd, ItemID.MythrilHalberd},
+			{ ProjectileID.AdamantiteGlaive, ItemID.AdamantiteGlaive},
+			{ ProjectileID.CobaltNaginata, ItemID.CobaltNaginata},
+			{ ProjectileID.Gungnir, ItemID.Gungnir},
+			{ ProjectileID.MushroomSpear, ItemID.MushroomSpear},
+			{ ProjectileID.TheRottedFork, ItemID.TheRottedFork},
+			{ ProjectileID.PalladiumPike, ItemID.PalladiumPike},
+			{ ProjectileID.OrichalcumHalberd, ItemID.OrichalcumHalberd},
+			{ ProjectileID.TitaniumTrident, ItemID.TitaniumTrident},
+			{ ProjectileID.ChlorophytePartisan, ItemID.ChlorophytePartisan},
+			{ ProjectileID.NorthPoleWeapon, ItemID.NorthPole},
+			{ ProjectileID.ObsidianSwordfish, ItemID.ObsidianSwordfish},
+			{ ProjectileID.Swordfish, ItemID.Swordfish},
+			{ ProjectileID.MonkStaffT2, ItemID.MonkStaffT2},
+			{ ProjectileID.ThunderSpear, ItemID.ThunderSpear},
+			{ ProjectileID.GladiusStab, ItemID.Gladius},
+			/// ShortSwords
 			{ ProjectileID.RulerStab, ItemID.Ruler },
 			{ ProjectileID.CopperShortswordStab, ItemID.CopperShortsword },
 			{ ProjectileID.TinShortswordStab, ItemID.TinShortsword },
