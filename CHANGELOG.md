@@ -5,6 +5,17 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 ## Upcoming changes
 * Installed new sprinklers!
 * Organized parameters by category and relevance in the `config.json` file. (@kubedzero)
+* Fix multiple holes in Bouncer OnTileData. (@Patrikkk, @hakusaro)
+	* Issue where players could replace tiles with banned tiles without permission. 
+	* Including replace action in TilePlace threshold incrementation, so players cannot bypass the threshold while replacing tiles/walls.
+	* Including check for maxTileSets when player is replacing tiles, so players cannot send invalid tile data through the replace tile action.
+	* Including a check for ReplaceWall when the tile is a Breakable/CutTile.
+* Adding checks in Bouncer OnNewProjectile (@Patrikkk):
+	* For valid golf club and golf ball creation.
+	* Renamed stabProjectile to directionalProjectile for a more accurate naming.
+	* Adding staff projectiles to the directionalProjectiles Dictionary to include staffs in the valid projectile creation check.
+	* Adding GolfBallItemIDs list in Handlers.LandGolfBallInCupHandler.cs
+* Fixed an issue in the SendTileSquare handler that was rejecting valid tile objects (@QuiCM)
 
 ## TShock 4.4.0 (Pre-release 11)
 * New permission `tshock.tp.pylon` to enable teleporting via Teleportation Pylons (@QuiCM)

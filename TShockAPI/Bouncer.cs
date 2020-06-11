@@ -259,7 +259,7 @@ namespace TShockAPI
 				int lastKilledProj = args.Player.LastKilledProjectile;
 				ITile tile = Main.tile[tileX, tileY];
 
-				if (action == EditAction.PlaceTile)
+				if (action == EditAction.PlaceTile || action == EditAction.ReplaceTile)
 				{
 					if (TShock.TileBans.TileIsBanned(editData, args.Player))
 					{
@@ -330,7 +330,7 @@ namespace TShockAPI
 						return;
 					}
 				}
-				else if (action == EditAction.PlaceTile || action == EditAction.PlaceWall)
+				else if (action == EditAction.PlaceTile || action == EditAction.ReplaceTile || action == EditAction.PlaceWall || action == EditAction.ReplaceWall)
 				{
 					if ((action == EditAction.PlaceTile && TShock.Config.PreventInvalidPlaceStyle) &&
 						(MaxPlaceStyles.ContainsKey(editData) && style > MaxPlaceStyles[editData]) &&
@@ -358,7 +358,7 @@ namespace TShockAPI
 						}
 					}
 
-					if (editData >= (action == EditAction.PlaceTile ? Main.maxTileSets : Main.maxWallTypes))
+					if (editData >= ((action == EditAction.PlaceTile || action == EditAction.ReplaceTile) ? Main.maxTileSets : Main.maxWallTypes))
 					{
 						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (ms3) {0} {1} {2}", args.Player.Name, action, editData);
 						args.Player.SendTileSquare(tileX, tileY, 4);
@@ -437,7 +437,7 @@ namespace TShockAPI
 				}
 				if (TShock.Config.AllowCutTilesAndBreakables && Main.tileCut[tile.type])
 				{
-					if (action == EditAction.KillWall)
+					if (action == EditAction.KillWall || action == EditAction.ReplaceWall)
 					{
 						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from sts allow cut from {0} {1} {2}", args.Player.Name, action, editData);
 						args.Player.SendTileSquare(tileX, tileY, 1);
@@ -536,7 +536,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if ((action == EditAction.PlaceTile || action == EditAction.PlaceWall) && !args.Player.HasPermission(Permissions.ignoreplacetiledetection))
+				if ((action == EditAction.PlaceTile || action == EditAction.ReplaceTile || action == EditAction.PlaceWall || action == EditAction.ReplaceWall) && !args.Player.HasPermission(Permissions.ignoreplacetiledetection))
 				{
 					args.Player.TilePlaceThreshold++;
 					var coords = new Vector2(tileX, tileY);
@@ -545,7 +545,7 @@ namespace TShockAPI
 							args.Player.TilesCreated.Add(coords, Main.tile[tileX, tileY]);
 				}
 
-				if ((action == EditAction.KillTile || action == EditAction.KillTileNoItem || action == EditAction.KillWall) && Main.tileSolid[Main.tile[tileX, tileY].type] &&
+				if ((action == EditAction.KillTile  || action == EditAction.KillTileNoItem || action == EditAction.ReplaceTile ||  action == EditAction.KillWall || action == EditAction.ReplaceWall) && Main.tileSolid[Main.tile[tileX, tileY].type] &&
 					!args.Player.HasPermission(Permissions.ignorekilltiledetection))
 				{
 					args.Player.TileKillThreshold++;
@@ -717,13 +717,30 @@ namespace TShockAPI
 				return;
 			}
 
-			if (stabProjectile.ContainsKey(type))
+			/// If the projectile is a directional projectile, check if the player is holding their respected item to validate the projectile creation.
+			if (directionalProjectiles.ContainsKey(type))
 			{
-				if (stabProjectile[type] == args.Player.TPlayer.HeldItem.type)
+				if (directionalProjectiles[type] == args.Player.TPlayer.HeldItem.type)
 				{
 					args.Handled = false;
 					return;
 				}
+			}
+
+			/// If the created projectile is a golf club, check if the player is holding one of the golf club items to validate the projectile creation.
+			if (type == ProjectileID.GolfClubHelper && Handlers.LandGolfBallInCupHandler.GolfClubItemIDs.Contains(args.Player.TPlayer.HeldItem.type))
+			{
+				args.Handled = false;
+				return;
+			}
+
+			/// If the created projectile is a golf ball and the player is not holding a golf club item and neither a golf ball item and neither they have had a golf club projectile created recently.
+			if (Handlers.LandGolfBallInCupHandler.GolfBallProjectileIDs.Contains(type) &&
+				!Handlers.LandGolfBallInCupHandler.GolfClubItemIDs.Contains(args.Player.TPlayer.HeldItem.type) &&
+				!Handlers.LandGolfBallInCupHandler.GolfBallItemIDs.Contains(args.Player.TPlayer.HeldItem.type) &&
+				!args.Player.RecentlyCreatedProjectiles.Any(p => p.Type == ProjectileID.GolfClubHelper))
+			{
+				TShock.Log.ConsoleDebug("Bouncer / OnNewProjectile please report to tshock about this! normally this is a reject from {0} {1} (golf)", args.Player.Name, type);
 			}
 
 			// Main.projHostile contains projectiles that can harm players
@@ -2118,9 +2135,33 @@ namespace TShockAPI
 			TileID.Campfire
 		};
 
-		private static Dictionary<int, int> stabProjectile = new Dictionary<int, int>()
+		/// <summary>
+		/// These projectiles have been added or modified with Terraria 1.4.
+		/// They come from normal items, but to have the directional functionality, they must be projectiles.
+		/// </summary>
+		private static Dictionary<int, int> directionalProjectiles = new Dictionary<int, int>()
 		{
-			{ ProjectileID.GladiusStab, ItemID.Gladius },
+			///Spears
+			{ ProjectileID.DarkLance, ItemID.DarkLance},
+			{ ProjectileID.Trident, ItemID.Trident},
+			{ ProjectileID.Spear, ItemID.Spear},
+			{ ProjectileID.MythrilHalberd, ItemID.MythrilHalberd},
+			{ ProjectileID.AdamantiteGlaive, ItemID.AdamantiteGlaive},
+			{ ProjectileID.CobaltNaginata, ItemID.CobaltNaginata},
+			{ ProjectileID.Gungnir, ItemID.Gungnir},
+			{ ProjectileID.MushroomSpear, ItemID.MushroomSpear},
+			{ ProjectileID.TheRottedFork, ItemID.TheRottedFork},
+			{ ProjectileID.PalladiumPike, ItemID.PalladiumPike},
+			{ ProjectileID.OrichalcumHalberd, ItemID.OrichalcumHalberd},
+			{ ProjectileID.TitaniumTrident, ItemID.TitaniumTrident},
+			{ ProjectileID.ChlorophytePartisan, ItemID.ChlorophytePartisan},
+			{ ProjectileID.NorthPoleWeapon, ItemID.NorthPole},
+			{ ProjectileID.ObsidianSwordfish, ItemID.ObsidianSwordfish},
+			{ ProjectileID.Swordfish, ItemID.Swordfish},
+			{ ProjectileID.MonkStaffT2, ItemID.MonkStaffT2},
+			{ ProjectileID.ThunderSpear, ItemID.ThunderSpear},
+			{ ProjectileID.GladiusStab, ItemID.Gladius},
+			/// ShortSwords
 			{ ProjectileID.RulerStab, ItemID.Ruler },
 			{ ProjectileID.CopperShortswordStab, ItemID.CopperShortsword },
 			{ ProjectileID.TinShortswordStab, ItemID.TinShortsword },

@@ -59,6 +59,26 @@ namespace TShockAPI.Handlers
 			ItemID.GolfClubWedge,
 			ItemID.GolfClubPutter
 		};
+		/// <summary>
+		/// List of golf ball item IDs.
+		/// </summary>
+		public static readonly List<int> GolfBallItemIDs = new List<int>()
+		{
+			ItemID.GolfBall,
+			ItemID.GolfBallDyedBlack,
+			ItemID.GolfBallDyedBlue,
+			ItemID.GolfBallDyedBrown,
+			ItemID.GolfBallDyedCyan,
+			ItemID.GolfBallDyedGreen,
+			ItemID.GolfBallDyedLimeGreen,
+			ItemID.GolfBallDyedOrange,
+			ItemID.GolfBallDyedPink,
+			ItemID.GolfBallDyedPurple,
+			ItemID.GolfBallDyedRed,
+			ItemID.GolfBallDyedSkyBlue,
+			ItemID.GolfBallDyedTeal,
+			ItemID.GolfBallDyedViolet
+		};
 
 		/// <summary>
 		/// Invoked when a player lands a golf ball in a cup.
