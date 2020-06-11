@@ -231,6 +231,14 @@ namespace TShockAPI
 					args.Handled = true;
 					return;
 				}
+				else if (((action == EditAction.PlaceTile || action == EditAction.ReplaceTile) && editData >= Main.maxTileSets) || 
+							(action == EditAction.PlaceWall || action == EditAction.ReplaceWall) && editData >= Main.maxWallTypes)
+				{
+					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (editData check) {0} {1} {2}", args.Player.Name, action, editData);
+					args.Player.SendTileSquare(tileX, tileY, 4);
+					args.Handled = true;
+					return;
+				}
 
 				if (!TShock.Utils.TilePlacementValid(tileX, tileY))
 				{
@@ -240,6 +248,7 @@ namespace TShockAPI
 					return;
 				}
 
+				/// Allow killing of ice blocks that come from the Ice Rod.
 				if (action == EditAction.KillTile && Main.tile[tileX, tileY].type == TileID.MagicalIceBlock)
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit super accepted from (ice block) {0} {1} {2}", args.Player.Name, action, editData);
@@ -344,7 +353,7 @@ namespace TShockAPI
 
 					// If they aren't selecting the item which creates the tile or wall, they're hacking.
 					if (!(selectedItem.netID == ItemID.IceRod && editData == TileID.MagicalIceBlock) &&
-						(editData != (action == EditAction.PlaceTile ? selectedItem.createTile : selectedItem.createWall) &&
+						(editData != ((action == EditAction.PlaceTile || action == EditAction.ReplaceTile) ? selectedItem.createTile : selectedItem.createWall) &&
 						!(ropeCoilPlacements.ContainsKey(selectedItem.netID) && editData == ropeCoilPlacements[selectedItem.netID])))
 					{
 						// Rather than attempting to figure out what the above if statement does, we'll just patch it
@@ -356,14 +365,6 @@ namespace TShockAPI
 							args.Handled = true;
 							return;
 						}
-					}
-
-					if (editData >= ((action == EditAction.PlaceTile || action == EditAction.ReplaceTile) ? Main.maxTileSets : Main.maxWallTypes))
-					{
-						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (ms3) {0} {1} {2}", args.Player.Name, action, editData);
-						args.Player.SendTileSquare(tileX, tileY, 4);
-						args.Handled = true;
-						return;
 					}
 					if (action == EditAction.PlaceTile && (editData == TileID.PiggyBank || editData == TileID.Safes) && Main.ServerSideCharacter)
 					{
