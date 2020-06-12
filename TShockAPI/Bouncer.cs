@@ -321,7 +321,7 @@ namespace TShockAPI
 				{
 					/// Handle placement if the user is placing rope that comes from a ropecoil,
 					/// but have not created the ropecoil projectile recently or the projectile was not at the correct coordinate, or the tile that the projectile places does not match the rope it is suposed to place
-					///projectile should be the same X coordinate as all tile places (Note by @Olink)
+					/// projectile should be the same X coordinate as all tile places (Note by @Olink)
 					if (ropeCoilPlacements.ContainsKey(selectedItem.netID) &&
 						!args.Player.RecentlyCreatedProjectiles.Any(p => GetDataHandlers.projectileCreatesTile.ContainsKey(p.Type) && GetDataHandlers.projectileCreatesTile[p.Type] == editData &&
 						!p.Killed && Math.Abs((int)(Main.projectile[p.Index].position.X / 16f) - tileX) <= Math.Abs(Main.projectile[p.Index].velocity.X)))
