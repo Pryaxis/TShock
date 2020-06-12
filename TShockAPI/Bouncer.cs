@@ -365,14 +365,6 @@ namespace TShockAPI
 						args.Handled = true;
 						return;
 					}
-					if (action == EditAction.PlaceTile && personalStorageTileIDs.Contains(editData) && Main.ServerSideCharacter)
-					{
-						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (sscprotect) {0} {1} {2}", args.Player.Name, action, editData);
-						args.Player.SendErrorMessage("You cannot place this tile because server side characters are enabled.");
-						args.Player.SendTileSquare(tileX, tileY, 3);
-						args.Handled = true;
-						return;
-					}
 					if (action == EditAction.PlaceTile && (editData == TileID.Containers || editData == TileID.Containers2))
 					{
 						if (TShock.Utils.HasWorldReachedMaxChests())
@@ -2133,14 +2125,6 @@ namespace TShockAPI
 			TileID.LunarMonolith,
 			TileID.TargetDummy,
 			TileID.Campfire
-		};
-
-		private static List<int> personalStorageTileIDs = new List<int>()
-		{
-			TileID.PiggyBank,
-			TileID.Safes,
-			TileID.DefendersForge,
-			TileID.VoidVault
 		};
 
 		/// <summary>
