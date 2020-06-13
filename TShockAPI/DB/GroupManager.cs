@@ -77,7 +77,7 @@ namespace TShockAPI.DB
 						Permissions.whisper,
 						Permissions.wormhole,
 						Permissions.canpaint,
-                                                Permissions.pylon));
+						Permissions.pylon));
 
 				AddDefaultGroup("vip", "default",
 					string.Join(",",
@@ -125,7 +125,7 @@ namespace TShockAPI.DB
 						Permissions.tppos,
 						Permissions.tpsilent,
 						Permissions.userinfo,
-                                                Permissions.spawn));
+						Permissions.spawn));
 
 				AddDefaultGroup("trustedadmin", "admin",
 					string.Join(",",
@@ -159,7 +159,7 @@ namespace TShockAPI.DB
 						Permissions.uploaddata,
 						Permissions.uploadothersdata,
 						Permissions.spawnpets,
-                                                Permissions.journey_timefreeze,
+						Permissions.journey_timefreeze,
 						Permissions.journey_timeset,
 						Permissions.journey_timespeed,
 						Permissions.journey_godmode,
@@ -171,7 +171,7 @@ namespace TShockAPI.DB
 						Permissions.journey_setdifficulty,
 						Permissions.journey_biomespreadfreeze,
 						Permissions.journey_setspawnrate,
-                                                Permissions.journey_contributeresearch));
+						Permissions.journey_contributeresearch));
 
 				AddDefaultGroup("owner", "trustedadmin",
 					string.Join(",",
