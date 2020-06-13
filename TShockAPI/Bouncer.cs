@@ -319,12 +319,14 @@ namespace TShockAPI
 				}
 				else if (CoilTileIds.Contains(editData))
 				{
-					//projectile should be the same X coordinate as all tile places
-					if (!args.Player.RecentlyCreatedProjectiles.Any(p => GetDataHandlers.projectileCreatesTile.ContainsKey(Main.projectile[p.Index].type) &&
-							Math.Abs((int)(Main.projectile[p.Index].position.X / 16f) - tileX) <= Math.Abs(Main.projectile[p.Index].velocity.X) &&
-							GetDataHandlers.projectileCreatesTile[Main.projectile[p.Index].type] == editData))
+					/// Handle placement if the user is placing rope that comes from a ropecoil,
+					/// but have not created the ropecoil projectile recently or the projectile was not at the correct coordinate, or the tile that the projectile places does not match the rope it is suposed to place
+					/// projectile should be the same X coordinate as all tile places (Note by @Olink)
+					if (ropeCoilPlacements.ContainsKey(selectedItem.netID) &&
+						!args.Player.RecentlyCreatedProjectiles.Any(p => GetDataHandlers.projectileCreatesTile.ContainsKey(p.Type) && GetDataHandlers.projectileCreatesTile[p.Type] == editData &&
+						!p.Killed && Math.Abs((int)(Main.projectile[p.Index].position.X / 16f) - tileX) <= Math.Abs(Main.projectile[p.Index].velocity.X)))
 					{
-						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (inconceivable rope coil) {0} {1} {2}", args.Player.Name, action, editData);
+						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (inconceivable rope coil) {0} {1} {2} selectedItem:{3} itemCreateTile:{4}", args.Player.Name, action, editData, selectedItem.netID, selectedItem.createTile);
 						args.Player.SendTileSquare(tileX, tileY, 1);
 						args.Handled = true;
 						return;
@@ -362,14 +364,6 @@ namespace TShockAPI
 					{
 						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (ms3) {0} {1} {2}", args.Player.Name, action, editData);
 						args.Player.SendTileSquare(tileX, tileY, 4);
-						args.Handled = true;
-						return;
-					}
-					if (action == EditAction.PlaceTile && (editData == TileID.PiggyBank || editData == TileID.Safes) && Main.ServerSideCharacter)
-					{
-						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (sscprotect) {0} {1} {2}", args.Player.Name, action, editData);
-						args.Player.SendErrorMessage("You cannot place this tile because server side characters are enabled.");
-						args.Player.SendTileSquare(tileX, tileY, 3);
 						args.Handled = true;
 						return;
 					}

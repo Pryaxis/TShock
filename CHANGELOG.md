@@ -16,6 +16,8 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 	* Adding staff projectiles to the directionalProjectiles Dictionary to include staffs in the valid projectile creation check.
 	* Adding GolfBallItemIDs list in Handlers.LandGolfBallInCupHandler.cs
 * Fixed an issue in the SendTileSquare handler that was rejecting valid tile objects (@QuiCM)
+* Fixed the issue where players were unable to place regular ropes because of the valid placement being caught in Bouncer OnTileEdit. (@Patrikkk)
+* Remove checks that prevented people placing personal storage tiles in SSC as the personal storage is synced with the server.(@Patrikkk)
 
 ## TShock 4.4.0 (Pre-release 11)
 * New permission `tshock.tp.pylon` to enable teleporting via Teleportation Pylons (@QuiCM)
