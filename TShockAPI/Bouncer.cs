@@ -224,9 +224,11 @@ namespace TShockAPI
 
 			try
 			{
-				if (editData < 0)
+				if (editData < 0 ||
+					((action == EditAction.PlaceTile || action == EditAction.ReplaceTile) && editData >= Main.maxTileSets) ||
+					((action == EditAction.PlaceWall || action == EditAction.ReplaceWall) && editData >= Main.maxWallTypes))
 				{
-					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (editData check) {0} {1} {2}", args.Player.Name, action, editData);
+					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from editData out of bounds {0} {1} {2}", args.Player.Name, action, editData);
 					args.Player.SendTileSquare(tileX, tileY, 4);
 					args.Handled = true;
 					return;
@@ -344,34 +346,30 @@ namespace TShockAPI
 						return;
 					}
 
-					// If they aren't selecting the item which creates the tile or wall, they're hacking.
-					if (!(selectedItem.netID == ItemID.IceRod && editData == TileID.MagicalIceBlock) &&
-						(editData != (action == EditAction.PlaceTile ? selectedItem.createTile : selectedItem.createWall) &&
-						!(ropeCoilPlacements.ContainsKey(selectedItem.netID) && editData == ropeCoilPlacements[selectedItem.netID])))
+					/// Handle placement action if the player is using an Ice Rod but not placing the iceblock.
+					if (selectedItem.netID == ItemID.IceRod && editData != TileID.MagicalIceBlock)
 					{
-						// Rather than attempting to figure out what the above if statement does, we'll just patch it
-						// Adds exception to this check to allow dirt bombs to create dirt tiles
-						if (!(selectedItem.netID == ItemID.DirtBomb && action == EditAction.PlaceTile && editData == TileID.Dirt))
+						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from using ice rod but not placing ice block {0} {1} {2}", args.Player.Name, action, editData);
+						args.Player.SendTileSquare(tileX, tileY, 4);
+						args.Handled = true;
+					}
+					/// If they aren't selecting the item which creates the tile, they're hacking.
+					if ((action == EditAction.PlaceTile || action == EditAction.ReplaceTile) && editData != selectedItem.createTile)
+					{
+						/// These would get caught up in the below check because Terraria does not set their createTile field.
+						if (selectedItem.netID != ItemID.IceRod && selectedItem.netID != ItemID.DirtBomb && selectedItem.netID != ItemID.StickyBomb)
 						{
-							TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (ms2) {0} {1} {2}", args.Player.Name, action, editData);
+							TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from tile placement not matching selected item createTile {0} {1} {2} selectedItemID:{3} createTile:{4}", args.Player.Name, action, editData, selectedItem.netID, selectedItem.createTile);
 							args.Player.SendTileSquare(tileX, tileY, 4);
 							args.Handled = true;
 							return;
 						}
 					}
-
-					if (editData >= ((action == EditAction.PlaceTile || action == EditAction.ReplaceTile) ? Main.maxTileSets : Main.maxWallTypes))
+					/// If they aren't selecting the item which creates the wall, they're hacking.
+					if ((action == EditAction.PlaceWall || action == EditAction.ReplaceWall) && editData != selectedItem.createWall)
 					{
-						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (ms3) {0} {1} {2}", args.Player.Name, action, editData);
+						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from wall placement not matching selected item createWall {0} {1} {2} selectedItemID:{3} createWall:{4}", args.Player.Name, action, editData, selectedItem.netID, selectedItem.createWall);
 						args.Player.SendTileSquare(tileX, tileY, 4);
-						args.Handled = true;
-						return;
-					}
-					if (action == EditAction.PlaceTile && (editData == TileID.PiggyBank || editData == TileID.Safes) && Main.ServerSideCharacter)
-					{
-						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (sscprotect) {0} {1} {2}", args.Player.Name, action, editData);
-						args.Player.SendErrorMessage("You cannot place this tile because server side characters are enabled.");
-						args.Player.SendTileSquare(tileX, tileY, 3);
 						args.Handled = true;
 						return;
 					}
