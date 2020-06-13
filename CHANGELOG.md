@@ -16,6 +16,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 	* Adding GolfBallItemIDs list in Handlers.LandGolfBallInCupHandler.cs
 * Fixed an issue in the SendTileSquare handler that was rejecting valid tile objects (@QuiCM)
 * Fixed the issue where players were unable to place regular ropes because of the valid placement being caught in Bouncer OnTileEdit. (@Patrikkk)
+* Added pet license usage permissions to `trustedadmin` and `owner` groups. Do note that this has a high network usage and can be easily be abused so it is not recommended to give out this permission to lower level groups. 
 
 ## TShock 4.4.0 (Pre-release 11)
 * New permission `tshock.tp.pylon` to enable teleporting via Teleportation Pylons (@QuiCM)
