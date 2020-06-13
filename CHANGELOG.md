@@ -4,6 +4,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 ## Upcoming changes
 * Installed new sprinklers!
+* Organized parameters by category and relevance in the `config.json` file. (@kubedzero)
 * Fix multiple holes in Bouncer OnTileData. (@Patrikkk, @hakusaro)
 	* Issue where players could replace tiles with banned tiles without permission. 
 	* Including replace action in TilePlace threshold incrementation, so players cannot bypass the threshold while replacing tiles/walls.
@@ -16,6 +17,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 	* Adding GolfBallItemIDs list in Handlers.LandGolfBallInCupHandler.cs
 * Fixed an issue in the SendTileSquare handler that was rejecting valid tile objects (@QuiCM)
 * Fixed the issue where players were unable to place regular ropes because of the valid placement being caught in Bouncer OnTileEdit. (@Patrikkk)
+* Remove checks that prevented people placing personal storage tiles in SSC as the personal storage is synced with the server.(@Patrikkk)
 * Cleaned up a check in Bouner OnTileEdit where it checks for using the respective item when placing a tile to make it clearer. This change also fixed the issue in a previous commit where valid replace action was caught. Moved the check for max tile/wall types to the beginning of the method. (@Patrikkk)
 
 ## TShock 4.4.0 (Pre-release 11)
