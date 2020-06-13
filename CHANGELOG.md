@@ -4,6 +4,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 ## Upcoming changes
 * Installed new sprinklers!
+* Organized parameters by category and relevance in the `config.json` file. (@kubedzero)
 * Fix multiple holes in Bouncer OnTileData. (@Patrikkk, @hakusaro)
 	* Issue where players could replace tiles with banned tiles without permission. 
 	* Including replace action in TilePlace threshold incrementation, so players cannot bypass the threshold while replacing tiles/walls.
