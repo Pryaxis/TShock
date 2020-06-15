@@ -467,7 +467,7 @@ namespace TShockAPI
 
 				if (!args.Player.IsInRange(tileX, tileY))
 				{
-					if (action == EditAction.PlaceTile && (editData == TileID.Rope || editData == TileID.SilkRope || editData == TileID.VineRope || editData == TileID.WebRope))
+					if (action == EditAction.PlaceTile && (editData == TileID.Rope || editData == TileID.SilkRope || editData == TileID.VineRope || editData == TileID.WebRope || editData == TileID.MysticSnakeRope))
 					{
 						args.Handled = false;
 						return;
@@ -1644,7 +1644,8 @@ namespace TShockAPI
 			if ((type != TileID.Rope
 					|| type != TileID.SilkRope
 					|| type != TileID.VineRope
-					|| type != TileID.WebRope)
+					|| type != TileID.WebRope
+					|| type != TileID.MysticSnakeRope)
 					&& !args.Player.IsInRange(x, y))
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnPlaceObject rejected range checks from {0}", args.Player.Name);
