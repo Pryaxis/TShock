@@ -3,6 +3,8 @@
 This is the rolling changelog for TShock for Terraria. Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
 
 ## Upcoming changes
+* Snake charmer's flute should function normally now.
+* Prevented players from seeing the npc spawnrate change permission error on join.
 * Installed new sprinklers!
 * Organized parameters by category and relevance in the `config.json` file. (@kubedzero)
 * Fix multiple holes in Bouncer OnTileData. (@Patrikkk, @hakusaro)
