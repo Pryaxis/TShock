@@ -56,6 +56,13 @@ namespace TShockAPI.Handlers.NetModules
 
 			string permission = PowerToPermissionMap[powerType];
 
+			//prevent being told about the spawnrate permission on join until relogic fixes
+			if (!player.HasReceivedNPCPermissionError && powerType == CreativePowerTypes.SetSpawnRate)
+			{
+				player.HasReceivedNPCPermissionError = true;
+				return false;
+			}
+
 			if (!player.HasPermission(permission))
 			{
 				player.SendErrorMessage("You do not have permission to {0}.", PermissionToDescriptionMap[permission]);
