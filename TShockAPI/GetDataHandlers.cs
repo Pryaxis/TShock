@@ -1870,6 +1870,39 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		/// For use in an Emoji event.
+		/// </summary>
+		public class EmojiEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// The player index in the packet, who sends the emoji.
+			/// </summary>
+			public byte PlayerIndex { get; set; }
+			/// <summary>
+			/// The ID of the emoji, that is being received.
+			/// </summary>
+			public byte EmojiID { get; set; }
+		}
+		/// <summary>
+		/// Called when a player sends an emoji.
+		/// </summary>
+		public static HandlerList<EmojiEventArgs> Emoji = new HandlerList<EmojiEventArgs>();
+		private static bool OnEmoji(TSPlayer player, MemoryStream data, byte playerIndex, byte emojiID)
+		{
+			if (Emoji == null)
+				return false;
+
+			var args = new EmojiEventArgs
+			{
+				Player = player,
+				Data = data,
+				PlayerIndex = playerIndex,
+				EmojiID = emojiID
+			};
+			Emoji.Invoke(null, args);
+			return args.Handled;
+		}
+
 		/// <summary>
 		/// For use in a SyncTilePicking event.
 		/// </summary>
@@ -1912,40 +1945,6 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
-
-		/// For use in an Emoji event.
-		/// </summary>
-		public class EmojiEventArgs : GetDataHandledEventArgs
-		{
-			/// <summary>
-			/// The player index in the packet, who sends the emoji.
-			/// </summary>
-			public byte PlayerIndex { get; set; }
-			/// <summary>
-			/// The ID of the emoji, that is being received.
-			/// </summary>
-			public byte EmojiID { get; set; }
-		}
-		/// <summary>
-		/// Called when a player sends an emoji.
-		/// </summary>
-		public static HandlerList<EmojiEventArgs> Emoji = new HandlerList<EmojiEventArgs>();
-		private static bool OnEmoji(TSPlayer player, MemoryStream data, byte playerIndex, byte emojiID)
-		{
-			if (Emoji == null)
-				return false;
-
-			var args = new EmojiEventArgs
-			{
-				Player = player,
-				Data = data,
-				PlayerIndex = playerIndex,
-				EmojiID = emojiID
-			};
-			Emoji.Invoke(null, args);
-			return args.Handled;
-		}
-   
 		/// <summary>
 		/// For use in a LandBallInCup event.
 		/// </summary>
