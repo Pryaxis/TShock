@@ -21,6 +21,9 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Cleaned up a check in Bouner OnTileEdit where it checks for using the respective item when placing a tile to make it clearer. This change also fixed the issue in a previous commit where valid replace action was caught. Moved the check for max tile/wall types to the beginning of the method. (@Patrikkk)
 * Improved clarity for insufficient permission related error messages. (@moisterrific)
 * Remove redundant Boulder placement check that prevented placing chests on them, as it is no longer possible to place a chest on a boulder, so nothing crashes the server. "1.2.3: Boulders with Chests on them no longer crash the game if the boulder is hit." (@kevzhao2, @Patrikkk)
+* RequestTileEntity packet handling. (@Patrikkk)
+	* Implemented the OnRequestTileEntityInteraction even hook in GetDataHandler. (@Patrikkk)
+	* Created RequestTileEntityInteractionHandler which checks for building permissions when the player is attempting to open a display doll (Mannequin). This now prevents players to open a mannequin if they have no building permissions at the position of the Mannequin. 
 
 ## TShock 4.4.0 (Pre-release 11)
 * New permission `tshock.tp.pylon` to enable teleporting via Teleportation Pylons (@QuiCM)
