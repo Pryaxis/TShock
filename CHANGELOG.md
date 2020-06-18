@@ -20,6 +20,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Added pet license usage permissions to `trustedadmin` and `owner` groups. Do note that this has a high network usage and can be easily be abused so it is not recommended to give out this permission to lower level groups. (@moisterrific) 
 * Remove checks that prevented people placing personal storage tiles in SSC as the personal storage is synced with the server.(@Patrikkk)
 * Cleaned up a check in Bouner OnTileEdit where it checks for using the respective item when placing a tile to make it clearer. This change also fixed the issue in a previous commit where valid replace action was caught. Moved the check for max tile/wall types to the beginning of the method. (@Patrikkk)
+* Improved clarity for insufficient permission related error messages. (@moisterrific)
 
 ## TShock 4.4.0 (Pre-release 11)
 * New permission `tshock.tp.pylon` to enable teleporting via Teleportation Pylons (@QuiCM)
