@@ -112,6 +112,11 @@ namespace TShockAPI
 		}
 
 		/// <summary>
+		/// Used in preventing players from seeing the npc spawnrate permission error on join.
+		/// </summary>
+		internal bool HasReceivedNPCPermissionError { get; set; }
+
+		/// <summary>
 		/// The amount of tiles that the player has killed in the last second.
 		/// </summary>
 		public int TileKillThreshold { get; set; }
