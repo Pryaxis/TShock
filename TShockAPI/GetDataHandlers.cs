@@ -152,6 +152,7 @@ namespace TShockAPI
 					{ PacketTypes.PlayerHurtV2, HandlePlayerDamageV2 },
 					{ PacketTypes.PlayerDeathV2, HandlePlayerKillMeV2 },
 					{ PacketTypes.Emoji, HandleEmoji },
+					{ PacketTypes.RequestTileEntityInteraction, HandleRequestTileEntityInteraction },
 					{ PacketTypes.SyncTilePicking, HandleSyncTilePicking },
 					{ PacketTypes.SyncRevengeMarker, HandleSyncRevengeMarker },
 					{ PacketTypes.LandGolfBallInCup, HandleLandGolfBallInCup },
@@ -1900,6 +1901,39 @@ namespace TShockAPI
 				EmojiID = emojiID
 			};
 			Emoji.Invoke(null, args);
+			return args.Handled;
+		}
+
+		/// For use in an OnRequestTileEntityInteraction event.
+		/// </summary>
+		public class RequestTileEntityInteractionEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// The ID of the TileEntity that the player is requesting interaction with.
+			/// </summary>
+			public int TileEntityID { get; set; }
+			/// <summary>
+			/// The player index in the packet who requests interaction with the TileEntity.
+			/// </summary>
+			public byte PlayerIndex { get; set; }
+		}
+		/// <summary>
+		/// Called when a player requests interaction with a TileEntity.
+		/// </summary>
+		public static HandlerList<RequestTileEntityInteractionEventArgs> RequestTileEntityInteraction = new HandlerList<RequestTileEntityInteractionEventArgs>();
+		private static bool OnRequestTileEntityInteraction(TSPlayer player, MemoryStream data, int tileEntityID, byte playerIndex)
+		{
+			if (RequestTileEntityInteraction == null)
+				return false;
+
+			var args = new RequestTileEntityInteractionEventArgs
+			{
+				Player = player,
+				Data = data,
+				PlayerIndex = playerIndex,
+				TileEntityID = tileEntityID
+			};
+			RequestTileEntityInteraction.Invoke(null, args);
 			return args.Handled;
 		}
 
@@ -3697,6 +3731,17 @@ namespace TShockAPI
 			byte emojiID = args.Data.ReadInt8();
 
 			if (OnEmoji(args.Player, args.Data, playerIndex, emojiID))
+				return true;
+
+			return false;
+		}
+
+		private static bool HandleRequestTileEntityInteraction(GetDataHandlerArgs args)
+		{
+			int tileEntityID = args.Data.ReadInt32();
+			byte playerIndex = args.Data.ReadInt8();
+
+			if (OnRequestTileEntityInteraction(args.Player, args.Data, tileEntityID, playerIndex))
 				return true;
 
 			return false;
