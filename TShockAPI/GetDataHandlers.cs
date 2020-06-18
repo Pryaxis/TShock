@@ -2628,7 +2628,7 @@ namespace TShockAPI
 
 			if (Main.npc[id].townNPC && !args.Player.HasPermission(Permissions.hurttownnpc))
 			{
-				args.Player.SendErrorMessage("You do not have permission to hurt this NPC.");
+				args.Player.SendErrorMessage("You do not have permission to hurt Town NPCs.");
 				args.Player.SendData(PacketTypes.NpcUpdate, "", id);
 				TShock.Log.ConsoleDebug("GetDataHandlers / HandleNpcStrike rejected npc strike {0}", args.Player.Name);
 				return true;
@@ -3017,7 +3017,7 @@ namespace TShockAPI
 			if (type == 1 && TShock.Config.DisableDungeonGuardian)
 			{
 				TShock.Log.ConsoleDebug("GetDataHandlers / HandleSpecial rejected type 1 for {0}", args.Player.Name);
-				args.Player.SendMessage("The Dungeon Guardian returned you to your spawn point", Color.Purple);
+				args.Player.SendMessage("The Dungeon Guardian returned you to your spawn point.", Color.Purple);
 				args.Player.Spawn(PlayerSpawnContext.RecallFromItem);
 				return true;
 			}
@@ -3025,7 +3025,7 @@ namespace TShockAPI
 			if (type == 3 && !args.Player.HasPermission(Permissions.usesundial))
 			{
 				TShock.Log.ConsoleDebug("GetDataHandlers / HandleSpecial rejected enchanted sundial permission {0}", args.Player.Name);
-				args.Player.SendErrorMessage("You do not have permission to use the Enchanted Sundial!");
+				args.Player.SendErrorMessage("You do not have permission to use the Enchanted Sundial.");
 				return true;
 			}
 
@@ -3070,7 +3070,7 @@ namespace TShockAPI
 			if (!args.Player.HasPermission(Permissions.movenpc))
 			{
 				TShock.Log.ConsoleDebug("GetDataHandlers / UpdateNPCHome rejected no permission {0}", args.Player.Name);
-				args.Player.SendErrorMessage("You do not have permission to relocate NPCs.");
+				args.Player.SendErrorMessage("You do not have permission to relocate Town NPCs.");
 				args.Player.SendData(PacketTypes.UpdateNPCHome, "", id, Main.npc[id].homeTileX, Main.npc[id].homeTileY,
 					Convert.ToByte(Main.npc[id].homeless));
 				return true;
@@ -3097,14 +3097,14 @@ namespace TShockAPI
 			if (bosses.Contains(thingType) && !args.Player.HasPermission(Permissions.summonboss))
 			{
 				TShock.Log.ConsoleDebug("GetDataHandlers / HandleSpawnBoss rejected boss {0} {1}", args.Player.Name, thingType);
-				args.Player.SendErrorMessage("You do not have permission to summon a boss.");
+				args.Player.SendErrorMessage("You do not have permission to summon bosses.");
 				return true;
 			}
 
 			if (invasions.Contains(thingType) && !args.Player.HasPermission(Permissions.startinvasion))
 			{
 				TShock.Log.ConsoleDebug("GetDataHandlers / HandleSpawnBoss rejected invasion {0} {1}", args.Player.Name, thingType);
-				args.Player.SendErrorMessage("You do not have permission to start an invasion.");
+				args.Player.SendErrorMessage("You do not have permission to start invasions.");
 				return true;
 			}
 
@@ -3302,8 +3302,8 @@ namespace TShockAPI
 			if (type == 0 && !args.Player.HasPermission(Permissions.rod))
 			{
 				TShock.Log.ConsoleDebug("GetDataHandlers / HandleTeleport rejected rod type {0} {1}", args.Player.Name, type);
-				args.Player.SendErrorMessage("You do not have permission to teleport.");
-				args.Player.Teleport(args.TPlayer.position.X, args.TPlayer.position.Y);
+				args.Player.SendErrorMessage("You do not have permission to teleport using items."); // Was going to write using RoD but Hook of Disonnance and Potion of Return both use the same teleport packet as RoD. 
+				args.Player.Teleport(args.TPlayer.position.X, args.TPlayer.position.Y); // Suggest renaming rod permission unless someone plans to add separate perms for the other 2 tp items.
 				return true;
 			}
 
@@ -3326,7 +3326,7 @@ namespace TShockAPI
 				if (!args.Player.HasPermission(Permissions.wormhole))
 				{
 					TShock.Log.ConsoleDebug("GetDataHandlers / HandleTeleport rejected p2p wormhole permission {0} {1}", args.Player.Name, type);
-					args.Player.SendErrorMessage("You do not have permission to teleport.");
+					args.Player.SendErrorMessage("You do not have permission to teleport using Wormhole Potions.");
 					args.Player.Teleport(args.TPlayer.position.X, args.TPlayer.position.Y);
 					return true;
 				}
@@ -3597,7 +3597,7 @@ namespace TShockAPI
 			if (!args.Player.HasPermission(Permissions.startdd2))
 			{
 				TShock.Log.ConsoleDebug("GetDataHandlers / HandleOldOnesArmy rejected permissions {0}", args.Player.Name);
-				args.Player.SendErrorMessage("You do not have permission to start the Old One's Army event.");
+				args.Player.SendErrorMessage("You do not have permission to start the Old One's Army.");
 				return true;
 			}
 
