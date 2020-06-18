@@ -3,6 +3,11 @@
 This is the rolling changelog for TShock for Terraria. Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
 
 ## Upcoming changes
+* Fixed various bugs related to Snake Charmer's Flute. (@rustly)  
+	* The entirety of the snake now places.  
+	* The old snake now removes when placing a new snake.   
+	* Players are no longer disabled for breaking TilePlace/TileKill thresholds when modifying snakes.  
+* Prevented players from seeing the npc spawnrate change permission error on join. (@rustly)
 * Installed new sprinklers!
 * Organized parameters by category and relevance in the `config.json` file. (@kubedzero)
 * Fix multiple holes in Bouncer OnTileData. (@Patrikkk, @hakusaro)

@@ -299,7 +299,8 @@ namespace TShockAPI
 					}
 					// If the tile is a pickaxe tile and they aren't selecting a pickaxe, they're hacking.
 					// Item frames can be modified without pickaxe tile.
-					else if (tile.type != TileID.ItemFrame
+					//also add an exception for snake coils, they can be removed when the player places a new one or after x amount of time
+					else if (tile.type != TileID.ItemFrame && tile.type != TileID.MysticSnakeRope
 						&& !Main.tileAxe[tile.type] && !Main.tileHammer[tile.type] && tile.wall == 0 && args.Player.TPlayer.mount.Type != 8 && selectedItem.pick == 0 && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0)
 					{
 						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (pick) {0} {1} {2}", args.Player.Name, action, editData);
@@ -461,9 +462,10 @@ namespace TShockAPI
 					return;
 				}
 
-				if (!args.Player.IsInRange(tileX, tileY))
+				//make sure it isnt a snake coil related edit so it doesnt spam debug logs with range check failures
+				if ((action == EditAction.PlaceTile && editData != TileID.MysticSnakeRope) || (action == EditAction.KillTile && tile.type != TileID.MysticSnakeRope) && !args.Player.IsInRange(tileX, tileY))
 				{
-					if (action == EditAction.PlaceTile && (editData == TileID.Rope || editData == TileID.SilkRope || editData == TileID.VineRope || editData == TileID.WebRope))
+					if (action == EditAction.PlaceTile && (editData == TileID.Rope || editData == TileID.SilkRope || editData == TileID.VineRope || editData == TileID.WebRope || editData == TileID.MysticSnakeRope))
 					{
 						args.Handled = false;
 						return;
@@ -532,23 +534,27 @@ namespace TShockAPI
 					return;
 				}
 
-				if ((action == EditAction.PlaceTile || action == EditAction.ReplaceTile || action == EditAction.PlaceWall || action == EditAction.ReplaceWall) && !args.Player.HasPermission(Permissions.ignoreplacetiledetection))
+				//snake coil can allow massive amounts of tile edits so it gets an exception
+				if (!((action == EditAction.PlaceTile && editData == TileID.MysticSnakeRope) || (action == EditAction.KillTile && tile.type == TileID.MysticSnakeRope)))
 				{
-					args.Player.TilePlaceThreshold++;
-					var coords = new Vector2(tileX, tileY);
-					lock (args.Player.TilesCreated)
-						if (!args.Player.TilesCreated.ContainsKey(coords))
-							args.Player.TilesCreated.Add(coords, Main.tile[tileX, tileY]);
-				}
+					if ((action == EditAction.PlaceTile || action == EditAction.ReplaceTile || action == EditAction.PlaceWall || action == EditAction.ReplaceWall) && !args.Player.HasPermission(Permissions.ignoreplacetiledetection))
+					{
+						args.Player.TilePlaceThreshold++;
+						var coords = new Vector2(tileX, tileY);
+						lock (args.Player.TilesCreated)
+							if (!args.Player.TilesCreated.ContainsKey(coords))
+								args.Player.TilesCreated.Add(coords, Main.tile[tileX, tileY]);
+					}
 
-				if ((action == EditAction.KillTile  || action == EditAction.KillTileNoItem || action == EditAction.ReplaceTile ||  action == EditAction.KillWall || action == EditAction.ReplaceWall) && Main.tileSolid[Main.tile[tileX, tileY].type] &&
-					!args.Player.HasPermission(Permissions.ignorekilltiledetection))
-				{
-					args.Player.TileKillThreshold++;
-					var coords = new Vector2(tileX, tileY);
-					lock (args.Player.TilesDestroyed)
-						if (!args.Player.TilesDestroyed.ContainsKey(coords))
-							args.Player.TilesDestroyed.Add(coords, Main.tile[tileX, tileY]);
+					if ((action == EditAction.KillTile || action == EditAction.KillTileNoItem || action == EditAction.ReplaceTile || action == EditAction.KillWall || action == EditAction.ReplaceWall) && Main.tileSolid[Main.tile[tileX, tileY].type] &&
+						!args.Player.HasPermission(Permissions.ignorekilltiledetection))
+					{
+						args.Player.TileKillThreshold++;
+						var coords = new Vector2(tileX, tileY);
+						lock (args.Player.TilesDestroyed)
+							if (!args.Player.TilesDestroyed.ContainsKey(coords))
+								args.Player.TilesDestroyed.Add(coords, Main.tile[tileX, tileY]);
+					}
 				}
 				args.Handled = false;
 				return;
@@ -1640,7 +1646,8 @@ namespace TShockAPI
 			if ((type != TileID.Rope
 					|| type != TileID.SilkRope
 					|| type != TileID.VineRope
-					|| type != TileID.WebRope)
+					|| type != TileID.WebRope
+					|| type != TileID.MysticSnakeRope)
 					&& !args.Player.IsInRange(x, y))
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnPlaceObject rejected range checks from {0}", args.Player.Name);
