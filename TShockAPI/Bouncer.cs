@@ -383,14 +383,6 @@ namespace TShockAPI
 							args.Handled = true;
 							return;
 						}
-						if ((TShock.Utils.TilePlacementValid(tileX, tileY + 1) && Main.tile[tileX, tileY + 1].type == TileID.Boulder) ||
-							(TShock.Utils.TilePlacementValid(tileX + 1, tileY + 1) && Main.tile[tileX + 1, tileY + 1].type == TileID.Boulder))
-						{
-							TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (validplacement) {0} {1} {2}", args.Player.Name, action, editData);
-							args.Player.SendTileSquare(tileX, tileY, 3);
-							args.Handled = true;
-							return;
-						}
 					}
 				}
 				else if (action == EditAction.PlaceWire || action == EditAction.PlaceWire2 || action == EditAction.PlaceWire3)
