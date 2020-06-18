@@ -19,6 +19,10 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Fixed the issue where players were unable to place regular ropes because of the valid placement being caught in Bouncer OnTileEdit. (@Patrikkk)
 * Remove checks that prevented people placing personal storage tiles in SSC as the personal storage is synced with the server.(@Patrikkk)
 * Cleaned up a check in Bouner OnTileEdit where it checks for using the respective item when placing a tile to make it clearer. This change also fixed the issue in a previous commit where valid replace action was caught. Moved the check for max tile/wall types to the beginning of the method. (@Patrikkk)
+* Multiple modifications in Command.cs (@Patrikkk)
+	* `/itemban` - `/projban` - `/tileban` - Added a `default:` case to the commands so an invalid subcommand promts the player to enter the help subcommand to get more information on valid subcommands. (@Patrikkk)
+	* `/world` - Renamed to /worldinfo to be more accurate to it's function. Command now displays the world's `Seed`. Reformatted the world information so each line isn't repeatedly starting with "World". (@Patrikkk)
+	* `/who` - Changed the display format of the online players when the `-i` flag is used. From `PlayerName (ID: 0, ID: 0)` to `PlayerName (Index: 0, Account ID: 0)` for clarification. (@Patrikkk)
 
 ## TShock 4.4.0 (Pre-release 11)
 * New permission `tshock.tp.pylon` to enable teleporting via Teleportation Pylons (@QuiCM)
