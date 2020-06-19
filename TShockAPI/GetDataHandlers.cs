@@ -1960,6 +1960,10 @@ namespace TShockAPI
 			/// </summary>
 			public int TileEntityID { get; set; }
 			/// <summary>
+			/// The TEDisplayDoll object that is being modified.
+			/// </summary>
+			public TEDisplayDoll DisplayDollEntity { get; set; }
+			/// <summary>
 			/// The slot of the DisplayDoll that is being modified.
 			/// </summary>
 			public int Slot { get; set; }
@@ -1980,7 +1984,7 @@ namespace TShockAPI
 		/// Called when a player modifies a DisplayDoll (Mannequin) item slot.
 		/// </summary>
 		public static HandlerList<DisplayDollItemSyncEventArgs> DisplayDollItemSync = new HandlerList<DisplayDollItemSyncEventArgs>();
-		private static bool OnDisplayDollItemSync(TSPlayer player, MemoryStream data, byte playerIndex, int tileEntityID, int slot, bool isDye, Item oldItem, Item newItem)
+		private static bool OnDisplayDollItemSync(TSPlayer player, MemoryStream data, byte playerIndex, int tileEntityID, TEDisplayDoll displayDollEntity, int slot, bool isDye, Item oldItem, Item newItem)
 		{
 			if (DisplayDollItemSync == null)
 				return false;
@@ -1991,6 +1995,7 @@ namespace TShockAPI
 				Data = data,
 				PlayerIndex = playerIndex,
 				TileEntityID = tileEntityID,
+				DisplayDollEntity = displayDollEntity,
 				Slot = slot,
 				IsDye = isDye,
 				OldItem = oldItem,
@@ -3794,7 +3799,7 @@ namespace TShockAPI
 					return false;
 			}
 
-			if (OnDisplayDollItemSync(args.Player, args.Data, playerIndex, tileEntityID, slot, isDye, oldItem, newItem))
+			if (OnDisplayDollItemSync(args.Player, args.Data, playerIndex, tileEntityID, displayDoll, slot, isDye, oldItem, newItem))
 				return true;
 
 			return false;
