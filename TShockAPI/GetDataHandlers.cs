@@ -3797,11 +3797,10 @@ namespace TShockAPI
 
 				if (oldItem.type == 0 && newItem.type == 0)
 					return false;
+
+				if (OnDisplayDollItemSync(args.Player, args.Data, playerIndex, tileEntityID, displayDoll, slot, isDye, oldItem, newItem))
+					return true;
 			}
-
-			if (OnDisplayDollItemSync(args.Player, args.Data, playerIndex, tileEntityID, displayDoll, slot, isDye, oldItem, newItem))
-				return true;
-
 			return false;
 		}
 
