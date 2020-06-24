@@ -39,6 +39,7 @@ namespace TShockAPI
 		internal Handlers.SendTileSquareHandler STSHandler { get; set; }
 		internal Handlers.NetModules.NetModulePacketHandler NetModuleHandler { get; set; }
 		internal Handlers.EmojiHandler EmojiHandler { get; set; }
+		internal Handlers.DisplayDollItemSyncHandler DisplayDollItemSyncHandler { get; set; }
 		internal Handlers.LandGolfBallInCupHandler LandGolfBallInCupHandler { get; set; }
 		internal Handlers.SyncTilePickingHandler SyncTilePickingHandler { get; set; }
 
@@ -52,9 +53,12 @@ namespace TShockAPI
 			NetModuleHandler = new Handlers.NetModules.NetModulePacketHandler();
 			GetDataHandlers.ReadNetModule += NetModuleHandler.OnReceive;
 
+			DisplayDollItemSyncHandler = new Handlers.DisplayDollItemSyncHandler();
+			GetDataHandlers.DisplayDollItemSync += DisplayDollItemSyncHandler.OnReceive;
+
 			EmojiHandler = new Handlers.EmojiHandler();
 			GetDataHandlers.Emoji += EmojiHandler.OnReceive;
-      
+
 			LandGolfBallInCupHandler = new Handlers.LandGolfBallInCupHandler();
 			GetDataHandlers.LandGolfBallInCup += LandGolfBallInCupHandler.OnReceive;
 

@@ -3791,12 +3791,12 @@ namespace TShockAPI
 				ushort stack = args.Data.ReadUInt16();
 				int prefix = args.Data.ReadByte();
 
+				if (oldItem.type == 0 && newItem.type == 0)
+					return false;
+
 				newItem.SetDefaults(itemType);
 				newItem.stack = stack;
 				newItem.Prefix(prefix);
-
-				if (oldItem.type == 0 && newItem.type == 0)
-					return false;
 
 				if (OnDisplayDollItemSync(args.Player, args.Data, playerIndex, tileEntityID, displayDoll, slot, isDye, oldItem, newItem))
 					return true;
