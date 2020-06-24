@@ -1909,9 +1909,9 @@ namespace TShockAPI
 		public class RequestTileEntityInteractionEventArgs : GetDataHandledEventArgs
 		{
 			/// <summary>
-			/// The ID of the TileEntity that the player is requesting interaction with.
+			/// The TileEntity object that the player is requesting interaction with.
 			/// </summary>
-			public int TileEntityID { get; set; }
+			public TileEntity TileEntity { get; set; }
 			/// <summary>
 			/// The player index in the packet who requests interaction with the TileEntity.
 			/// </summary>
@@ -1921,7 +1921,7 @@ namespace TShockAPI
 		/// Called when a player requests interaction with a TileEntity.
 		/// </summary>
 		public static HandlerList<RequestTileEntityInteractionEventArgs> RequestTileEntityInteraction = new HandlerList<RequestTileEntityInteractionEventArgs>();
-		private static bool OnRequestTileEntityInteraction(TSPlayer player, MemoryStream data, int tileEntityID, byte playerIndex)
+		private static bool OnRequestTileEntityInteraction(TSPlayer player, MemoryStream data, TileEntity tileEntity, byte playerIndex)
 		{
 			if (RequestTileEntityInteraction == null)
 				return false;
@@ -1931,7 +1931,7 @@ namespace TShockAPI
 				Player = player,
 				Data = data,
 				PlayerIndex = playerIndex,
-				TileEntityID = tileEntityID
+				TileEntity = tileEntity
 			};
 			RequestTileEntityInteraction.Invoke(null, args);
 			return args.Handled;
@@ -3741,7 +3741,10 @@ namespace TShockAPI
 			int tileEntityID = args.Data.ReadInt32();
 			byte playerIndex = args.Data.ReadInt8();
 
-			if (OnRequestTileEntityInteraction(args.Player, args.Data, tileEntityID, playerIndex))
+			if (!TileEntity.ByID.TryGetValue(tileEntityID, out TileEntity tileEntity))
+				return false;
+
+			if (OnRequestTileEntityInteraction(args.Player, args.Data, tileEntity, playerIndex))
 				return true;
 
 			return false;
