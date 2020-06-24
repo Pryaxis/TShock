@@ -521,7 +521,7 @@ namespace TShockAPI
 			{
 				HelpText = "Changes the wind speed."
 			});
-			add(new Command(Permissions.worldinfo, WorldInfo, "world")
+			add(new Command(Permissions.worldinfo, WorldInfo, "worldinfo")
 			{
 				HelpText = "Shows information about the current world."
 			});
@@ -1155,9 +1155,11 @@ namespace TShockAPI
 
 		private static void WorldInfo(CommandArgs args)
 		{
-			args.Player.SendInfoMessage("World name: " + (TShock.Config.UseServerName ? TShock.Config.ServerName : Main.worldName));
-			args.Player.SendInfoMessage("World size: {0}x{1}", Main.maxTilesX, Main.maxTilesY);
-			args.Player.SendInfoMessage("World ID: " + Main.worldID);
+			args.Player.SendInfoMessage("Information of the currently running world");
+			args.Player.SendInfoMessage("Name: " + (TShock.Config.UseServerName ? TShock.Config.ServerName : Main.worldName));
+			args.Player.SendInfoMessage("Size: {0}x{1}", Main.maxTilesX, Main.maxTilesY);
+			args.Player.SendInfoMessage("ID: " + Main.worldID);
+			args.Player.SendInfoMessage("Seed: " + WorldGen.currentWorldSeed);
 		}
 
 		#endregion
@@ -3749,6 +3751,14 @@ namespace TShockAPI
 					}
 					#endregion
 					return;
+				default:
+					#region Default
+					{
+						args.Player.SendErrorMessage("Invalid subcommand! Type {0}itemban help for more information on valid subcommands.", Specifier);
+					}
+					#endregion
+					return;
+
 			}
 		}
 		#endregion Item Management
@@ -3919,6 +3929,13 @@ namespace TShockAPI
 					}
 					#endregion
 					return;
+				default:
+					#region Default
+					{
+						args.Player.SendErrorMessage("Invalid subcommand! Type {0}projban help for more information on valid subcommands.", Specifier);
+					}
+					#endregion
+					return;
 			}
 		}
 		#endregion Projectile Management
@@ -4085,6 +4102,13 @@ namespace TShockAPI
 								FooterFormat = "Type {0}tileban list {{0}} for more.".SFormat(Specifier),
 								NothingToDisplayString = "There are currently no banned tiles."
 							});
+					}
+					#endregion
+					return;
+				default:
+					#region Default
+					{
+						args.Player.SendErrorMessage("Invalid subcommand! Type {0}tileban help for more information on valid subcommands.", Specifier);
 					}
 					#endregion
 					return;
@@ -5066,7 +5090,7 @@ namespace TShockAPI
 				{
 					if (displayIdsRequested)
 					{
-						players.Add(String.Format("{0} (ID: {1}{2})", ply.Name, ply.Index, ply.Account != null ? ", ID: " + ply.Account.ID : ""));
+						players.Add(String.Format("{0} (Index: {1}{2})", ply.Name, ply.Index, ply.Account != null ? ", Account ID: " + ply.Account.ID : ""));
 					}
 					else
 					{
