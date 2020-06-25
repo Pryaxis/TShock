@@ -88,6 +88,7 @@
     <Compile Include="DB\ResearchDatastore.cs" />
     <Compile Include="DB\TileManager.cs" />
     <Compile Include="Extensions\ExceptionExt.cs" />
+    <Compile Include="Handlers\DisplayDollItemSyncHandler.cs" />
     <Compile Include="Handlers\IPacketHandler.cs" />
     <Compile Include="Handlers\NetModules\AmbienceHandler.cs" />
     <Compile Include="Handlers\NetModules\BestiaryHandler.cs" />
