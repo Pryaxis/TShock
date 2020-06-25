@@ -152,6 +152,7 @@ namespace TShockAPI
 					{ PacketTypes.PlayerHurtV2, HandlePlayerDamageV2 },
 					{ PacketTypes.PlayerDeathV2, HandlePlayerKillMeV2 },
 					{ PacketTypes.Emoji, HandleEmoji },
+					{ PacketTypes.TileEntityDisplayDollItemSync, HandleTileEntityDisplayDollItemSync },
 					{ PacketTypes.SyncTilePicking, HandleSyncTilePicking },
 					{ PacketTypes.SyncRevengeMarker, HandleSyncRevengeMarker },
 					{ PacketTypes.LandGolfBallInCup, HandleLandGolfBallInCup },
@@ -1945,7 +1946,65 @@ namespace TShockAPI
 			Emoji.Invoke(null, args);
 			return args.Handled;
 		}
-   
+
+		/// For use in a TileEntityDisplayDollItemSync event.
+		/// </summary>
+		public class DisplayDollItemSyncEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// The player index in the packet who modifies the DisplayDoll item slot.
+			/// </summary>
+			public byte PlayerIndex { get; set; }
+			/// <summary>
+			/// The ID of the TileEntity that is being modified.
+			/// </summary>
+			public int TileEntityID { get; set; }
+			/// <summary>
+			/// The TEDisplayDoll object that is being modified.
+			/// </summary>
+			public TEDisplayDoll DisplayDollEntity { get; set; }
+			/// <summary>
+			/// The slot of the DisplayDoll that is being modified.
+			/// </summary>
+			public int Slot { get; set; }
+			/// <summary>
+			/// Wether or not the slot that is being modified is a Dye slot.
+			/// </summary>
+			public bool IsDye { get; set; }
+			/// <summary>
+			/// The current item that is present in the slot before the modification.
+			/// </summary>
+			public Item OldItem { get; set; }
+			/// <summary>
+			/// The item that is about to replace the OldItem in the slot that is being modified.
+			/// </summary>
+			public Item NewItem { get; set; }
+		}
+		/// <summary>
+		/// Called when a player modifies a DisplayDoll (Mannequin) item slot.
+		/// </summary>
+		public static HandlerList<DisplayDollItemSyncEventArgs> DisplayDollItemSync = new HandlerList<DisplayDollItemSyncEventArgs>();
+		private static bool OnDisplayDollItemSync(TSPlayer player, MemoryStream data, byte playerIndex, int tileEntityID, TEDisplayDoll displayDollEntity, int slot, bool isDye, Item oldItem, Item newItem)
+		{
+			if (DisplayDollItemSync == null)
+				return false;
+
+			var args = new DisplayDollItemSyncEventArgs
+			{
+				Player = player,
+				Data = data,
+				PlayerIndex = playerIndex,
+				TileEntityID = tileEntityID,
+				DisplayDollEntity = displayDollEntity,
+				Slot = slot,
+				IsDye = isDye,
+				OldItem = oldItem,
+				NewItem = newItem
+			};
+			DisplayDollItemSync.Invoke(null, args);
+			return args.Handled;
+		}
+
 		/// <summary>
 		/// For use in a LandBallInCup event.
 		/// </summary>
@@ -3700,6 +3759,48 @@ namespace TShockAPI
 			if (OnEmoji(args.Player, args.Data, playerIndex, emojiID))
 				return true;
 
+			return false;
+		}
+
+		private static bool HandleTileEntityDisplayDollItemSync(GetDataHandlerArgs args)
+		{
+			byte playerIndex = args.Data.ReadInt8();
+			int tileEntityID = args.Data.ReadInt32();
+			int slot = args.Data.ReadByte();
+			bool isDye = false;
+			if (slot >= 8)
+			{
+				isDye = true;
+				slot -= 8;
+			}
+
+			Item newItem = new Item();
+			Item oldItem = new Item();
+
+			if (!TileEntity.ByID.TryGetValue(tileEntityID, out TileEntity tileEntity))
+				return false;
+
+			TEDisplayDoll displayDoll = tileEntity as TEDisplayDoll;
+			if (displayDoll != null)
+			{
+				oldItem = displayDoll._items[slot];
+				if (isDye)
+					oldItem = displayDoll._dyes[slot];
+
+				ushort itemType = args.Data.ReadUInt16();
+				ushort stack = args.Data.ReadUInt16();
+				int prefix = args.Data.ReadByte();
+
+				if (oldItem.type == 0 && newItem.type == 0)
+					return false;
+
+				newItem.SetDefaults(itemType);
+				newItem.stack = stack;
+				newItem.Prefix(prefix);
+
+				if (OnDisplayDollItemSync(args.Player, args.Data, playerIndex, tileEntityID, displayDoll, slot, isDye, oldItem, newItem))
+					return true;
+			}
 			return false;
 		}
 
