@@ -2,61 +2,70 @@
 
 This is the rolling changelog for TShock for Terraria. Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
 
+## How to add a changelog entry
+* Put your entry in terms of what you changed in the past mood. For example: "Changed the world by adding new grommets."
+  * Not "fix" or "change".
+  * The entry must start with a verb.
+  * End your sentence with a period.
+  * Write in complete sentences that are understandable by anyone who does not have experience programming, unless the change is related to programming.
+  * Do not insert tabs into this file, under any circumstances, ever.
+  * Do not forget to sign every line you change with your name. (@hakusaro)
+  * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change.
+
 ## Upcoming changes
 * Fixed various bugs related to Snake Charmer's Flute. (@rustly)  
-	* The entirety of the snake now places.  
-	* The old snake now removes when placing a new snake.   
-	* Players are no longer disabled for breaking TilePlace/TileKill thresholds when modifying snakes.  
+  * The entirety of the snake now places.  
+  * The old snake now removes when placing a new snake.
+  * Players are no longer disabled for breaking TilePlace/TileKill thresholds when modifying snakes.  
 * Prevented players from seeing the npc spawnrate change permission error on join. (@rustly)
 * Installed new sprinklers!
 * Organized parameters by category and relevance in the `config.json` file. (@kubedzero)
-* Fix multiple holes in Bouncer OnTileData. (@Patrikkk, @hakusaro)
-	* Issue where players could replace tiles with banned tiles without permission. 
-	* Including replace action in TilePlace threshold incrementation, so players cannot bypass the threshold while replacing tiles/walls.
-	* Including check for maxTileSets when player is replacing tiles, so players cannot send invalid tile data through the replace tile action.
-	* Including a check for ReplaceWall when the tile is a Breakable/CutTile.
+* Fixed multiple holes in Bouncer OnTileData. (@Patrikkk, @hakusaro)
+  * Issue where players could replace tiles with banned tiles without permission. 
+  * Including replace action in TilePlace threshold incrementation, so players cannot bypass the threshold while replacing tiles/walls.
+  * Including check for maxTileSets when player is replacing tiles, so players cannot send invalid tile data through the replace tile action.
+  * Including a check for ReplaceWall when the tile is a Breakable/CutTile.
 * Adding checks in Bouncer OnNewProjectile (@Patrikkk):
-	* For valid golf club and golf ball creation.
-	* Renamed stabProjectile to directionalProjectile for a more accurate naming.
-	* Adding staff projectiles to the directionalProjectiles Dictionary to include staffs in the valid projectile creation check.
-	* Adding GolfBallItemIDs list in Handlers.LandGolfBallInCupHandler.cs
-* Fixed an issue in the SendTileSquare handler that was rejecting valid tile objects (@QuiCM)
+  * For valid golf club and golf ball creation.
+  * Renamed stabProjectile to directionalProjectile for a more accurate naming.
+  * Adding staff projectiles to the directionalProjectiles Dictionary to include staffs in the valid projectile creation check.
+  * Adding GolfBallItemIDs list in Handlers.LandGolfBallInCupHandler.cs
+* Fixed an issue in the SendTileSquare handler that was rejecting valid tile objects. (@QuiCM)
 * Fixed the issue where players were unable to place regular ropes because of the valid placement being caught in Bouncer OnTileEdit. (@Patrikkk)
 * Added pet license usage permissions to `trustedadmin` and `owner` groups. Do note that this has a high network usage and can be easily be abused so it is not recommended to give out this permission to lower level groups. (@moisterrific) 
-* Remove checks that prevented people placing personal storage tiles in SSC as the personal storage is synced with the server.(@Patrikkk)
+* Removed checks that prevented people placing personal storage tiles in SSC as the personal storage is synced with the server. (@Patrikkk)
 * Cleaned up a check in Bouner OnTileEdit where it checks for using the respective item when placing a tile to make it clearer. This change also fixed the issue in a previous commit where valid replace action was caught. Moved the check for max tile/wall types to the beginning of the method. (@Patrikkk)
 * Improved clarity for insufficient permission related error messages. (@moisterrific)
-* Remove redundant Boulder placement check that prevented placing chests on them, as it is no longer possible to place a chest on a boulder, so nothing crashes the server. "1.2.3: Boulders with Chests on them no longer crash the game if the boulder is hit." (@kevzhao2, @Patrikkk)
-* Multiple modifications in Command.cs (@Patrikkk)
-	* `/itemban` - `/projban` - `/tileban` - Added a `default:` case to the commands so an invalid subcommand promts the player to enter the help subcommand to get more information on valid subcommands. (@Patrikkk)
-	* `/world` - Renamed to /worldinfo to be more accurate to it's function. Command now displays the world's `Seed`. Reformatted the world information so each line isn't repeatedly starting with "World". (@Patrikkk)
-	* `/who` - Changed the display format of the online players when the `-i` flag is used. From `PlayerName (ID: 0, ID: 0)` to `PlayerName (Index: 0, Account ID: 0)` for clarification. (@Patrikkk)
-* Adding DisplayDollItemSync event. An event that is called when a player modifies the slot of a DisplayDoll (Mannequin). This event provides information about the current item in the displaydoll, as well as the item that the player is about to set. (@Patrikkk)
-* Adding DisplayDollItemSyncHandler, which checks for building permissions of the player at the position of the DisplayDoll. (If they do not have permissions, it means they are hacking as they could not even open the doll in the first place.) (@Patrikkk)
-* RequestTileEntity packet handling. (@Patrikkk)
+* Removed redundant Boulder placement check that prevented placing chests on them, as it is no longer possible to place a chest on a boulder, so nothing crashes the server. "1.2.3: Boulders with Chests on them no longer crash the game if the boulder is hit." (@kevzhao2, @Patrikkk)
+* `/itemban` - `/projban` - `/tileban` - Added a `default:` case to the commands so an invalid subcommand promts the player to enter the help subcommand to get more information on valid subcommands. (@Patrikkk)
+* `/world` - Renamed to /worldinfo to be more accurate to it's function. Command now displays the world's `Seed`. Reformatted the world information so each line isn't repeatedly starting with "World". (@Patrikkk)
+* `/who` - Changed the display format of the online players when the `-i` flag is used. From `PlayerName (ID: 0, ID: 0)` to `PlayerName (Index: 0, Account ID: 0)` for clarification. (@Patrikkk)
+* Added DisplayDollItemSync event. An event that is called when a player modifies the slot of a DisplayDoll (Mannequin). This event provides information about the current item in the displaydoll, as well as the item that the player is about to set. (@Patrikkk)
+* Added DisplayDollItemSyncHandler, which checks for building permissions of the player at the position of the DisplayDoll. (If they do not have permissions, it means they are hacking as they could not even open the doll in the first place.) (@Patrikkk)
+* Added RequestTileEntity packet handling. (@Patrikkk)
 	* Implemented the OnRequestTileEntityInteraction even hook in GetDataHandler. (@Patrikkk)
 	* Created RequestTileEntityInteractionHandler which checks for building permissions when the player is attempting to open a display doll (Mannequin) or a Hat Rack. This now prevents players from opening a Mannequin or a Hat Rack if they have no building permissions at the position of these tile entities. As of 1.4.0.5, these are the only two items that use this packet. (@Patrikkk)
 
 ## TShock 4.4.0 (Pre-release 11)
-* New permission `tshock.tp.pylon` to enable teleporting via Teleportation Pylons (@QuiCM)
-* New permission `tshock.journey.research` to enable sharing research via item sacrifice (@QuiCM)
+* Added new permission `tshock.tp.pylon` to enable teleporting via Teleportation Pylons (@QuiCM)
+* Added new permission `tshock.journey.research` to enable sharing research via item sacrifice (@QuiCM)
 * Add Emoji event to GetDataHandler. This packet is received when a player tries to display an emote. (@Patrikkk)
-	* Adding EmojiHandler to handle an exploit. Adding `tshock.sendemoji` permission and checks. Added this permission to guest group by default. (@Patrikkk)
+  * Added EmojiHandler to handle an exploit. Adding `tshock.sendemoji` permission and checks. Added this permission to guest group by default. (@Patrikkk)
 * Handled SyncCavernMonsterType packet to prevent an exploit where players could modify the server's cavern monster types and make the server spawn any NPCs - including bosses - onto other players. (@Patrikkk)
 * Added LandGolfBallInCup event which is accessible for developers to work with, as well as LandGolfBallInCup handler to handle exploits where players could send direct packets to trigger and imitate golf ball cup landing anywhere in the game world. Added two public lists in Handlers.LandGolfBallInCupHandler: GolfBallProjectileIDs and GolfClubItemIDs. (@Patrikkk)
 * Added SyncTilePicking event. This is called when a player damages a tile. Implementing SyncTilePickingHandler and patching tile damaging related exploits. (Preventing player sending invalid world position data which disconnects other players.)
 * Fixed the issue where mobs could not be fished out during bloodmoon because of Bouncer checks. (@Patrikkk)
-	*Fixed the issue where certain fishing rods could not fish out NPCs due to a Bouncer check. (@Patrikkk)
+  * Fixed the issue where certain fishing rods could not fish out NPCs due to a Bouncer check. (@Patrikkk)
 * Update for OTAPI 2.0.0.37 and Terraria 1.4.0.5. (@hakusaro, @Patrikkk)
-* Add additional config options for automatically kicking clients from the server upon breaking anti-cheat thresholds. (@moisterrific)
-* Add pylon teleportation permission to default group, added `/spawn` permission to admin group, added the new journey mode research permission to trustedadmin, and moved all previous journey mode permissions from owner to trustedadmin. (@moisterrific)
+* Added additional config options for automatically kicking clients from the server upon breaking anti-cheat thresholds. (@moisterrific)
+* Added pylon teleportation permission to default group, added `/spawn` permission to admin group, added the new journey mode research permission to trustedadmin, and moved all previous journey mode permissions from owner to trustedadmin. (@moisterrific)
 
 ## TShock 4.4.0 (Pre-release 10)
-* Fix all rope coils. (@Olink)
+* Fixed all rope coils. (@Olink)
 * Fixed a longstanding issue with SendTileSquare that could result in desyncs and visual errors. (@QuiCM)
 * Fixed placement issues with Item Frames, Teleportation Pylons, etc. (@QuiCM)
-* Doors are good now for real probably (@QuiCM, @Hakusaro, @Olink)
-* Bump default max damage received cap to 42,000 to accommodate the Empress of Light's instant kill death amount. (@hakusaro, @moisterrific, @Irethia, @Ayrawei)
+* Fixed doors, and they are good now for real probably. (@QuiCM, @Hakusaro, @Olink)
+* Bumped default max damage received cap to 42,000 to accommodate the Empress of Light's instant kill death amount. (@hakusaro, @moisterrific, @Irethia, @Ayrawei)
 * Updated `/spawnboss` command to include Empress of Light, Queen Slime, and other additional bosses that have a health bar. (@moisterrific)
 
 ## TShock 4.4.0 (Pre-release 9)
