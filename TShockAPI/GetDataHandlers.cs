@@ -153,6 +153,7 @@ namespace TShockAPI
 					{ PacketTypes.PlayerDeathV2, HandlePlayerKillMeV2 },
 					{ PacketTypes.Emoji, HandleEmoji },
 					{ PacketTypes.TileEntityDisplayDollItemSync, HandleTileEntityDisplayDollItemSync },
+					{ PacketTypes.RequestTileEntityInteraction, HandleRequestTileEntityInteraction },
 					{ PacketTypes.SyncTilePicking, HandleSyncTilePicking },
 					{ PacketTypes.SyncRevengeMarker, HandleSyncRevengeMarker },
 					{ PacketTypes.LandGolfBallInCup, HandleLandGolfBallInCup },
@@ -1871,49 +1872,6 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
-		/// <summary>
-		/// For use in a SyncTilePicking event.
-		/// </summary>
-		public class SyncTilePickingEventArgs : GetDataHandledEventArgs
-		{
-			/// <summary>
-			/// The player index in the packet, who sends the tile picking data.
-			/// </summary>
-			public byte PlayerIndex { get; set; }
-			/// <summary>
-			/// The X world position of the tile that is being picked.
-			/// </summary>
-			public short TileX { get; set; }
-			/// <summary>
-			/// The Y world position of the tile that is being picked.
-			/// </summary>
-			public short TileY { get; set; }
-			/// <summary>
-			/// The damage that is being dealt on the tile.
-			/// </summary>
-			public byte TileDamage { get; set; }
-		}
-		/// <summary>
-		/// Called when a player hits and damages a tile.
-		/// </summary>
-		public static HandlerList<SyncTilePickingEventArgs> SyncTilePicking = new HandlerList<SyncTilePickingEventArgs>();
-		private static bool OnSyncTilePicking(TSPlayer player, MemoryStream data, byte playerIndex, short tileX, short tileY, byte tileDamage)
-		{
-			if (SyncTilePicking == null)
-				return false;
-
-			var args = new SyncTilePickingEventArgs
-			{
-				PlayerIndex = playerIndex,
-				TileX = tileX,
-				TileY = tileY,
-				TileDamage = tileDamage
-			};
-			SyncTilePicking.Invoke(null, args);
-			return args.Handled;
-		}
-
-
 		/// For use in an Emoji event.
 		/// </summary>
 		public class EmojiEventArgs : GetDataHandledEventArgs
@@ -2002,6 +1960,81 @@ namespace TShockAPI
 				NewItem = newItem
 			};
 			DisplayDollItemSync.Invoke(null, args);
+			return args.Handled;
+		}
+
+		/// For use in an OnRequestTileEntityInteraction event.
+		/// </summary>
+		public class RequestTileEntityInteractionEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// The TileEntity object that the player is requesting interaction with.
+			/// </summary>
+			public TileEntity TileEntity { get; set; }
+			/// <summary>
+			/// The player index in the packet who requests interaction with the TileEntity.
+			/// </summary>
+			public byte PlayerIndex { get; set; }
+		}
+		/// <summary>
+		/// Called when a player requests interaction with a TileEntity.
+		/// </summary>
+		public static HandlerList<RequestTileEntityInteractionEventArgs> RequestTileEntityInteraction = new HandlerList<RequestTileEntityInteractionEventArgs>();
+		private static bool OnRequestTileEntityInteraction(TSPlayer player, MemoryStream data, TileEntity tileEntity, byte playerIndex)
+		{
+			if (RequestTileEntityInteraction == null)
+				return false;
+
+			var args = new RequestTileEntityInteractionEventArgs
+			{
+				Player = player,
+				Data = data,
+				PlayerIndex = playerIndex,
+				TileEntity = tileEntity
+			};
+			RequestTileEntityInteraction.Invoke(null, args);
+			return args.Handled;
+		}
+
+		/// <summary>
+		/// For use in a SyncTilePicking event.
+		/// </summary>
+		public class SyncTilePickingEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// The player index in the packet, who sends the tile picking data.
+			/// </summary>
+			public byte PlayerIndex { get; set; }
+			/// <summary>
+			/// The X world position of the tile that is being picked.
+			/// </summary>
+			public short TileX { get; set; }
+			/// <summary>
+			/// The Y world position of the tile that is being picked.
+			/// </summary>
+			public short TileY { get; set; }
+			/// <summary>
+			/// The damage that is being dealt on the tile.
+			/// </summary>
+			public byte TileDamage { get; set; }
+		}
+		/// <summary>
+		/// Called when a player hits and damages a tile.
+		/// </summary>
+		public static HandlerList<SyncTilePickingEventArgs> SyncTilePicking = new HandlerList<SyncTilePickingEventArgs>();
+		private static bool OnSyncTilePicking(TSPlayer player, MemoryStream data, byte playerIndex, short tileX, short tileY, byte tileDamage)
+		{
+			if (SyncTilePicking == null)
+				return false;
+
+			var args = new SyncTilePickingEventArgs
+			{
+				PlayerIndex = playerIndex,
+				TileX = tileX,
+				TileY = tileY,
+				TileDamage = tileDamage
+			};
+			SyncTilePicking.Invoke(null, args);
 			return args.Handled;
 		}
 
@@ -3801,6 +3834,20 @@ namespace TShockAPI
 				if (OnDisplayDollItemSync(args.Player, args.Data, playerIndex, tileEntityID, displayDoll, slot, isDye, oldItem, newItem))
 					return true;
 			}
+			return false;
+		}
+
+		private static bool HandleRequestTileEntityInteraction(GetDataHandlerArgs args)
+		{
+			int tileEntityID = args.Data.ReadInt32();
+			byte playerIndex = args.Data.ReadInt8();
+
+			if (!TileEntity.ByID.TryGetValue(tileEntityID, out TileEntity tileEntity))
+				return false;
+
+			if (OnRequestTileEntityInteraction(args.Player, args.Data, tileEntity, playerIndex))
+				return true;
+
 			return false;
 		}
 

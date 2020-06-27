@@ -100,6 +100,7 @@
     <Compile Include="Handlers\NetModules\PylonHandler.cs" />
     <Compile Include="Handlers\EmojiHandler.cs" />
     <Compile Include="Handlers\LandGolfBallInCupHandler.cs" />
+    <Compile Include="Handlers\RequestTileEntityInteractionHandler.cs" />
     <Compile Include="Handlers\SendTileSquareHandler.cs" />
     <Compile Include="Handlers\SyncTilePickingHandler.cs" />
     <Compile Include="Hooks\AccountHooks.cs" />
