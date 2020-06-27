@@ -12,7 +12,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * Do not forget to sign every line you change with your name. (@hakusaro)
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change.
 
-## Upcoming changes
+## TShock 4.4.0 (Pre-release 12)
 * Fixed various bugs related to Snake Charmer's Flute. (@rustly)  
   * The entirety of the snake now places.  
   * The old snake now removes when placing a new snake.
@@ -43,8 +43,8 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Added DisplayDollItemSync event. An event that is called when a player modifies the slot of a DisplayDoll (Mannequin). This event provides information about the current item in the displaydoll, as well as the item that the player is about to set. (@Patrikkk)
 * Added DisplayDollItemSyncHandler, which checks for building permissions of the player at the position of the DisplayDoll. (If they do not have permissions, it means they are hacking as they could not even open the doll in the first place.) (@Patrikkk)
 * Added RequestTileEntity packet handling. (@Patrikkk)
-	* Implemented the OnRequestTileEntityInteraction even hook in GetDataHandler. (@Patrikkk)
-	* Created RequestTileEntityInteractionHandler which checks for building permissions when the player is attempting to open a display doll (Mannequin) or a Hat Rack. This now prevents players from opening a Mannequin or a Hat Rack if they have no building permissions at the position of these tile entities. As of 1.4.0.5, these are the only two items that use this packet. (@Patrikkk)
+  * Implemented the OnRequestTileEntityInteraction even hook in GetDataHandler. (@Patrikkk)
+  * Created RequestTileEntityInteractionHandler which checks for building permissions when the player is attempting to open a display doll (Mannequin) or a Hat Rack. This now prevents players from opening a Mannequin or a Hat Rack if they have no building permissions at the position of these tile entities. As of 1.4.0.5, these are the only two items that use this packet. (@Patrikkk)
 
 ## TShock 4.4.0 (Pre-release 11)
 * Added new permission `tshock.tp.pylon` to enable teleporting via Teleportation Pylons (@QuiCM)
