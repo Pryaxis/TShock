@@ -12,6 +12,8 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * Do not forget to sign every line you change with your name. (@hakusaro)
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change.
 
+## Upcoming changes
+
 ## TShock 4.4.0 (Pre-release 12)
 * Fixed various bugs related to Snake Charmer's Flute. (@rustly)  
   * The entirety of the snake now places.  
