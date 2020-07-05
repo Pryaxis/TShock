@@ -13,6 +13,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change.
 
 ## Upcoming changes
+* Added Gravedigger's Shovel support. (@Zennos)
 
 ## TShock 4.4.0 (Pre-release 12)
 * Fixed various bugs related to Snake Charmer's Flute. (@rustly)  
