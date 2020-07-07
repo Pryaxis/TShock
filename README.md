@@ -165,7 +165,7 @@ You need to re-run the patcher any time `OTAPI` updates. You need to rebuild `Te
           Mono JIT compiler version 5.0.1.1 (2017-02/5077205 Sun Sep 17 18:29:46 BST 2017)
           ...
 
-1. Proceed to the [unix build steps](#unix-build-steps) to continue.
+1. Proceed to the [unix build steps](#on-unix) to continue.
 
 #### On Linux
 
@@ -173,7 +173,7 @@ You need to re-run the patcher any time `OTAPI` updates. You need to rebuild `Te
 
 1. Follow the [official install instructions for mono](http://www.mono-project.com/download/). **DO** install `mono-complete` or you're missing components.
 
-1. Proceed to the [unix build steps](#unix-build-steps) to continue.
+1. Proceed to the [unix build steps](#on-unix) to continue.
 
 #### On Unix
 
