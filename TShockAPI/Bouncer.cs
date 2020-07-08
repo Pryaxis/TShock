@@ -305,7 +305,7 @@ namespace TShockAPI
 					// Item frames can be modified without pickaxe tile.
 					//also add an exception for snake coils, they can be removed when the player places a new one or after x amount of time
 					else if (tile.type != TileID.ItemFrame && tile.type != TileID.MysticSnakeRope
-						&& !Main.tileAxe[tile.type] && !Main.tileHammer[tile.type] && tile.wall == 0 && args.Player.TPlayer.mount.Type != 8 && selectedItem.pick == 0 && selectedItem.type != 4711 && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0)
+						&& !Main.tileAxe[tile.type] && !Main.tileHammer[tile.type] && tile.wall == 0 && args.Player.TPlayer.mount.Type != 8 && selectedItem.pick == 0 && selectedItem.type != ItemID.GravediggerShovel && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0)
 					{
 						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (pick) {0} {1} {2}", args.Player.Name, action, editData);
 						args.Player.SendTileSquare(tileX, tileY, 4);
