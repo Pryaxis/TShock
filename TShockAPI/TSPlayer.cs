@@ -35,6 +35,7 @@ using TShockAPI.Hooks;
 using TShockAPI.Net;
 using Timer = System.Timers.Timer;
 using System.Linq;
+using TShockAPI.ServerSideCharacters;
 
 namespace TShockAPI
 {
@@ -161,7 +162,13 @@ namespace TShockAPI
 		/// </summary>
 		public int RPPending = 0;
 
+		/// <summary>
+		/// Spawn position X
+		/// </summary>
 		public int sX = -1;
+		/// <summary>
+		/// Spawn position Y
+		/// </summary>
 		public int sY = -1;
 
 		/// <summary>
@@ -193,6 +200,9 @@ namespace TShockAPI
 		/// </summary>
 		public Group tempGroup = null;
 
+		/// <summary>
+		/// Time remaining in a temporary group
+		/// </summary>
 		public Timer tempGroupTimer;
 
 		private Group group = null;
@@ -373,9 +383,10 @@ namespace TShockAPI
 			Item[] voidVault = TPlayer.bank4.item;
 
 			Item trash = TPlayer.trashItem;
-			for (int i = 0; i < NetItem.MaxInventory; i++)
+			
+			for (int i = 0; i < NetItem.TotalSlots; i++)
 			{
-				if (i < NetItem.InventoryIndex.Item2)
+				if (i <= NetItem.FullInventoryGroup.End)
 				{
 					// From above: this is slots 0-58 in the inventory.
 					// 0-58
@@ -395,10 +406,10 @@ namespace TShockAPI
 						}
 					}
 				}
-				else if (i < NetItem.ArmorIndex.Item2)
+				else if (i <= NetItem.FullEquipmentAndVanityGroup.End)
 				{
 					// 59-78
-					var index = i - NetItem.ArmorIndex.Item1;
+					var index = i - NetItem.FullEquipmentAndVanityGroup.Start;
 					Item item = new Item();
 					if (armor[index] != null && armor[index].netID != 0)
 					{
@@ -415,10 +426,10 @@ namespace TShockAPI
 						}
 					}
 				}
-				else if (i < NetItem.DyeIndex.Item2)
+				else if (i <= NetItem.FullArmorAndVanityDyeGroup.End)
 				{
 					// 79-88
-					var index = i - NetItem.DyeIndex.Item1;
+					var index = i - NetItem.FullArmorAndVanityDyeGroup.Start;
 					Item item = new Item();
 					if (dye[index] != null && dye[index].netID != 0)
 					{
@@ -435,10 +446,10 @@ namespace TShockAPI
 						}
 					}
 				}
-				else if (i < NetItem.MiscEquipIndex.Item2)
+				else if (i <= NetItem.MiscEquipGroup.End)
 				{
 					// 89-93
-					var index = i - NetItem.MiscEquipIndex.Item1;
+					var index = i - NetItem.MiscEquipGroup.Start;
 					Item item = new Item();
 					if (miscEquips[index] != null && miscEquips[index].netID != 0)
 					{
@@ -455,10 +466,10 @@ namespace TShockAPI
 						}
 					}
 				}
-				else if (i < NetItem.MiscDyeIndex.Item2)
+				else if (i <= NetItem.MiscDyeGroup.End)
 				{
 					// 93-98
-					var index = i - NetItem.MiscDyeIndex.Item1;
+					var index = i - NetItem.MiscDyeGroup.Start;
 					Item item = new Item();
 					if (miscDyes[index] != null && miscDyes[index].netID != 0)
 					{
@@ -475,10 +486,10 @@ namespace TShockAPI
 						}
 					}
 				}
-				else if (i < NetItem.PiggyIndex.Item2)
+				else if (i <= NetItem.PiggyGroup.End)
 				{
 					// 98-138
-					var index = i - NetItem.PiggyIndex.Item1;
+					var index = i - NetItem.PiggyGroup.Start;
 					Item item = new Item();
 					if (piggy[index] != null && piggy[index].netID != 0)
 					{
@@ -496,10 +507,10 @@ namespace TShockAPI
 						}
 					}
 				}
-				else if (i < NetItem.SafeIndex.Item2)
+				else if (i <= NetItem.SafeGroup.End)
 				{
 					// 138-178
-					var index = i - NetItem.SafeIndex.Item1;
+					var index = i - NetItem.SafeGroup.Start;
 					Item item = new Item();
 					if (safe[index] != null && safe[index].netID != 0)
 					{
@@ -517,7 +528,7 @@ namespace TShockAPI
 						}
 					}
 				}
-				else if (i < NetItem.TrashIndex.Item2)
+				else if (i <= NetItem.TrashGroup.End)
 				{
 					// 178-179
 					Item item = new Item();
@@ -537,10 +548,10 @@ namespace TShockAPI
 						}
 					}
 				}
-				else if (i < NetItem.ForgeIndex.Item2)
+				else if (i <= NetItem.ForgeGroup.End)
 				{
 					// 179-220
-					var index = i - NetItem.ForgeIndex.Item1;
+					var index = i - NetItem.ForgeGroup.Start;
 					Item item = new Item();
 					if (forge[index] != null && forge[index].netID != 0)
 					{
@@ -558,10 +569,10 @@ namespace TShockAPI
 						}
 					}
 				}
-				else if (i < NetItem.VoidIndex.Item2)
+				else if (i <= NetItem.VoidGroup.End)
 				{
 					// 220-260
-					var index = i - NetItem.VoidIndex.Item1;
+					var index = i - NetItem.VoidGroup.Start;
 					Item item = new Item();
 					if (voidVault[index] != null && voidVault[index].netID != 0)
 					{
@@ -581,14 +592,9 @@ namespace TShockAPI
 				}
 
 			}
-
+			
 			return check;
 		}
-
-		/// <summary>
-		/// The player's server side inventory data.
-		/// </summary>
-		public PlayerData PlayerData;
 
 		/// <summary>
 		/// Whether the player needs to specify a password upon connection( either server or user account ).
@@ -882,10 +888,14 @@ namespace TShockAPI
 		{
 			get
 			{
-				for (int i = 3; i < 8; i++)
+				for (int i = NetItem.AccessoryGroup.Start; i < NetItem.AccessoryGroup.Count; i++)
 					yield return TPlayer.armor[i];
 			}
 		}
+
+		public ServerSidePlayerData SscData { get; set; }
+
+		public ServerSidePlayerData SscDataWhenJoined { get; set; }
 
 		/// <summary>
 		/// Saves the player's inventory to SSC
@@ -904,8 +914,7 @@ namespace TShockAPI
 					TShock.Log.ConsoleInfo("Skipping SSC Backup for " + Account.Name); // Debug Code
 					return true;
 				}
-				PlayerData.CopyCharacter(this);
-				TShock.CharacterDB.InsertPlayerData(this);
+				ServerSideCharacters.ServerSideCoordinator.SavePlayerData(this);
 				return true;
 			}
 			catch (Exception e)
@@ -913,29 +922,6 @@ namespace TShockAPI
 				TShock.Log.Error(e.Message);
 				return false;
 			}
-		}
-
-		/// <summary>
-		/// Sends the players server side character to client
-		/// </summary>
-		/// <returns>bool - True/false if it saved successfully</returns>
-		public bool SendServerCharacter()
-		{
-			if (!Main.ServerSideCharacter)
-			{
-				return false;
-			}
-			try
-			{
-				PlayerData.RestoreCharacter(this);
-				return true;
-			}
-			catch (Exception e)
-			{
-				TShock.Log.Error(e.Message);
-				return false;
-			}
-
 		}
 
 		/// <summary>
@@ -1012,7 +998,7 @@ namespace TShockAPI
 				bool flag = false;
 				if (RealPlayer)
 				{
-					for (int i = 0; i < 50; i++) //51 is trash can, 52-55 is coins, 56-59 is ammo
+					for (int i = 0; i < NetItem.InventorySlots; i++)
 					{
 						if (TPlayer.inventory[i] == null || !TPlayer.inventory[i].active || TPlayer.inventory[i].Name == "")
 						{
@@ -1024,11 +1010,6 @@ namespace TShockAPI
 				return flag;
 			}
 		}
-
-		/// <summary>
-		/// This contains the character data a player has when they join the server.
-		/// </summary>
-		public PlayerData DataWhenJoined { get; set; }
 
 		/// <summary>
 		/// Determines whether the player's storage contains the given key.
@@ -1092,17 +1073,6 @@ namespace TShockAPI
 		public void Logout()
 		{
 			PlayerHooks.OnPlayerLogout(this);
-			if (Main.ServerSideCharacter)
-			{
-				IsDisabledForSSC = true;
-				if (!IsDisabledPendingTrashRemoval && (!Dead || TPlayer.difficulty != 2))
-				{
-					PlayerData.CopyCharacter(this);
-					TShock.CharacterDB.InsertPlayerData(this);
-				}
-			}
-
-			PlayerData = new PlayerData(this);
 			Group = TShock.Groups.GetGroupByName(TShock.Config.DefaultGuestGroupName);
 			tempGroup = null;
 			if (tempGroupTimer != null)

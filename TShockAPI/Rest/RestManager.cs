@@ -29,6 +29,7 @@ using Rests;
 using Terraria;
 using TShockAPI.DB;
 using Newtonsoft.Json;
+using TShockAPI.Net;
 
 namespace TShockAPI
 {

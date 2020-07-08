@@ -817,8 +817,6 @@ namespace TShockAPI
 						(usingUUID && account.UUID == args.Player.UUID && !TShock.Config.DisableUUIDLogin &&
 						!String.IsNullOrWhiteSpace(args.Player.UUID)))
 				{
-					args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, account.ID);
-
 					var group = TShock.Groups.GetGroupByName(account.Group);
 
 					args.Player.Group = group;
@@ -826,16 +824,6 @@ namespace TShockAPI
 					args.Player.Account = account;
 					args.Player.IsLoggedIn = true;
 					args.Player.IsDisabledForSSC = false;
-
-					if (Main.ServerSideCharacter)
-					{
-						if (args.Player.HasPermission(Permissions.bypassssc))
-						{
-							args.Player.PlayerData.CopyCharacter(args.Player);
-							TShock.CharacterDB.InsertPlayerData(args.Player);
-						}
-						args.Player.PlayerData.RestoreCharacter(args.Player);
-					}
 					args.Player.LoginFailsBySsi = false;
 
 					if (args.Player.HasPermission(Permissions.ignorestackhackdetection))
@@ -1614,14 +1602,8 @@ namespace TShockAPI
 		{
 			if (Main.ServerSideCharacter)
 			{
+				ServerSideCharacters.ServerSideCoordinator.SaveAllPlayersData();
 				args.Player.SendSuccessMessage("SSC has been saved.");
-				foreach (TSPlayer player in TShock.Players)
-				{
-					if (player != null && player.IsLoggedIn && !player.IsDisabledPendingTrashRemoval)
-					{
-						TShock.CharacterDB.InsertPlayerData(player, true);
-					}
-				}
 			}
 		}
 
@@ -1652,23 +1634,13 @@ namespace TShockAPI
 			}
 
 			TSPlayer matchedPlayer = matchedPlayers[0];
-			if (matchedPlayer.IsLoggedIn)
-			{
-				args.Player.SendErrorMessage("Player \"{0}\" is already logged in.", matchedPlayer.Name);
-				return;
-			}
-			if (!matchedPlayer.LoginFailsBySsi)
-			{
-				args.Player.SendErrorMessage("Player \"{0}\" has to perform a /login attempt first.", matchedPlayer.Name);
-				return;
-			}
 			if (matchedPlayer.IsDisabledPendingTrashRemoval)
 			{
 				args.Player.SendErrorMessage("Player \"{0}\" has to reconnect first.", matchedPlayer.Name);
 				return;
 			}
 
-			TShock.CharacterDB.InsertPlayerData(matchedPlayer);
+			ServerSideCharacters.ServerSideCoordinator.ApplyServerSidePlayerData(matchedPlayer, temporaryData: matchedPlayer.SscDataWhenJoined);
 			args.Player.SendSuccessMessage("SSC of player \"{0}\" has been overriden.", matchedPlayer.Name);
 		}
 
@@ -1712,16 +1684,9 @@ namespace TShockAPI
 
 			if (targetPlayer.IsLoggedIn)
 			{
-				if (TShock.CharacterDB.InsertSpecificPlayerData(targetPlayer, targetPlayer.DataWhenJoined))
-				{
-					targetPlayer.DataWhenJoined.RestoreCharacter(targetPlayer);
-					targetPlayer.SendSuccessMessage("Your local character data has been uploaded to the server.");
-					args.Player.SendSuccessMessage("The player's character data was successfully uploaded.");
-				}
-				else
-				{
-					args.Player.SendErrorMessage("Failed to upload your character data, are you logged in to an account?");
-				}
+				TShock.CharacterDB.UpdatePlayerData(targetPlayer.SscDataWhenJoined, targetPlayer.Account.ID);
+				targetPlayer.SendSuccessMessage("Your local character data has been uploaded to the server.");
+				args.Player.SendSuccessMessage("The player's character data was successfully uploaded.");
 			}
 			else
 			{
@@ -1866,13 +1831,7 @@ namespace TShockAPI
 
 			if (Main.ServerSideCharacter)
 			{
-				foreach (TSPlayer player in TShock.Players)
-				{
-					if (player != null && player.IsLoggedIn && !player.IsDisabledPendingTrashRemoval)
-					{
-						player.SaveServerCharacter();
-					}
-				}
+				ServerSideCharacters.ServerSideCoordinator.SaveAllPlayersData();
 			}
 
 			string reason = ((args.Parameters.Count > 0) ? "Server shutting down: " + String.Join(" ", args.Parameters) : "Server shutting down!");
@@ -4158,10 +4117,7 @@ namespace TShockAPI
 		private static void Save(CommandArgs args)
 		{
 			SaveManager.Instance.SaveWorld(false);
-			foreach (TSPlayer tsply in TShock.Players.Where(tsply => tsply != null))
-			{
-				tsply.SaveServerCharacter();
-			}
+			ServerSideCharacters.ServerSideCoordinator.SaveAllPlayersData();
 		}
 
 		private static void Settle(CommandArgs args)
