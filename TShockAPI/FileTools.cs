@@ -108,7 +108,10 @@ namespace TShockAPI
 				TShock.Config = ConfigFile.Read(ConfigPath);
 				// Add all the missing config properties in the json file
 			}
-			TShock.Config.Write(ConfigPath);
+			else
+			{
+				TShock.Config.Write(ConfigPath);
+			}
 
 			if (File.Exists(ServerSideCharacterConfigPath))
 			{
@@ -127,8 +130,8 @@ namespace TShockAPI
 							new NetItem(-16, 1, 0)
 						}
 				};
+				TShock.ServerSideCharacterConfig.Write(ServerSideCharacterConfigPath);
 			}
-			TShock.ServerSideCharacterConfig.Write(ServerSideCharacterConfigPath);
 		}
 
 		/// <summary>

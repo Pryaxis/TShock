@@ -48,7 +48,8 @@ namespace TShockAPI.ServerSideCharacters
 
 		public static ServerSideConfig Read(string path)
 		{
-			using (var reader = new StreamReader(path))
+			using (var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+			using (var reader = new StreamReader(fileStream))
 			{
 				string txt = reader.ReadToEnd();
 				var config = JsonConvert.DeserializeObject<ServerSideConfig>(txt);
