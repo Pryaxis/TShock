@@ -46,13 +46,22 @@ namespace TShockAPI.ServerSideCharacters
 		[Description("The starting default inventory for new SSC.")] 
 		public List<NetItem> StartingInventory = new List<NetItem>();
 
-		public static ServerSideConfig Read(string path)
+		/// <summary>
+		/// Reads a server-side configuration file from a given path
+		/// </summary>
+		/// <param name="path">The path to the config file</param>
+		/// <param name="anyMissingFields">
+		/// Whether the config object has any new fields in it, meaning that the config file has to be
+		/// overwritten.
+		/// </param>
+		/// <returns>ConfigFile object</returns>
+		public static ServerSideConfig Read(string path, out bool anyMissingFields)
 		{
 			using (var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
 			using (var reader = new StreamReader(fileStream))
 			{
 				string txt = reader.ReadToEnd();
-				var config = JsonConvert.DeserializeObject<ServerSideConfig>(txt);
+				var config = FileTools.LoadConfigAndCheckForMissingFields<ServerSideConfig>(txt, out anyMissingFields);
 				return config;
 			}
 		}
