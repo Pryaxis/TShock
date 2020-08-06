@@ -602,14 +602,21 @@ namespace TShockAPI
 		/// Reads a configuration file from a given path
 		/// </summary>
 		/// <param name="path">string path</param>
-		/// <returns>ConfigFile object</returns>
-		public static ConfigFile Read(string path)
+		/// <param name="path">The path to the config file</param>
+		/// <param name="anyMissingFields">
+		/// Whether the config object has any new files in it, meaning that the config file has to be
+		/// overwritten.
+		/// </param>
+		public static ConfigFile Read(string path, out bool anyMissingFields)
 		{
 			if (!File.Exists(path))
+			{
+				anyMissingFields = true;
 				return new ConfigFile();
+			}
 			using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
 			{
-				return Read(fs);
+				return Read(fs, out anyMissingFields);
 			}
 		}
 
@@ -617,14 +624,17 @@ namespace TShockAPI
 		/// Reads the configuration file from a stream
 		/// </summary>
 		/// <param name="stream">stream</param>
+		/// <param name="anyMissingFields">
+		/// Whether the config object has any new fields in it, meaning that the config file has to be
+		/// overwritten.
+		/// </param>
 		/// <returns>ConfigFile object</returns>
-		public static ConfigFile Read(Stream stream)
+		public static ConfigFile Read(Stream stream, out bool anyMissingFields)
 		{
 			using (var sr = new StreamReader(stream))
 			{
-				var cf = JsonConvert.DeserializeObject<ConfigFile>(sr.ReadToEnd());
-				if (ConfigRead != null)
-					ConfigRead(cf);
+				var cf = FileTools.LoadConfigAndCheckForMissingFields<ConfigFile>(sr.ReadToEnd(), out anyMissingFields);
+				ConfigRead?.Invoke(cf);
 				return cf;
 			}
 		}

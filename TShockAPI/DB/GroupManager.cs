@@ -389,7 +389,7 @@ namespace TShockAPI.DB
 						}
 
 						// Read the config file to prevent the possible loss of any unsaved changes
-						TShock.Config = ConfigFile.Read(FileTools.ConfigPath);
+						TShock.Config = ConfigFile.Read(FileTools.ConfigPath, out bool writeConfig);
 						if (TShock.Config.DefaultGuestGroupName == oldGroup.Name)
 						{
 							TShock.Config.DefaultGuestGroupName = newGroup.Name;
@@ -399,7 +399,10 @@ namespace TShockAPI.DB
 						{
 							TShock.Config.DefaultRegistrationGroupName = newGroup.Name;
 						}
-						TShock.Config.Write(FileTools.ConfigPath);
+						if (writeConfig)
+						{
+							TShock.Config.Write(FileTools.ConfigPath);
+						}
 
 						// We also need to check if any users belong to the old group and automatically apply changes
 						using (var command = db.CreateCommand())

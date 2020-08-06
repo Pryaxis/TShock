@@ -16,9 +16,13 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using TShockAPI.ServerSideCharacters;
 
 namespace TShockAPI
@@ -103,20 +107,26 @@ namespace TShockAPI
 			CreateIfNot(MotdPath, MotdFormat);
 						
 			CreateIfNot(WhitelistPath);
+			bool writeConfig = true; // Default to true if the file doesn't exist
 			if (File.Exists(ConfigPath))
 			{
-				TShock.Config = ConfigFile.Read(ConfigPath);
-				// Add all the missing config properties in the json file
+				TShock.Config = ConfigFile.Read(ConfigPath, out writeConfig);
 			}
-			TShock.Config.Write(ConfigPath);
+			if (writeConfig)
+			{
+				// Add all the missing config properties in the json file
+				TShock.Config.Write(ConfigPath);
+			}
 
+			bool writeSSCConfig = true; // Default to true if the file doesn't exist
 			if (File.Exists(ServerSideCharacterConfigPath))
 			{
-				TShock.ServerSideCharacterConfig = ServerSideConfig.Read(ServerSideCharacterConfigPath);
-				// Add all the missing config properties in the json file
+				TShock.ServerSideCharacterConfig =
+					ServerSideConfig.Read(ServerSideCharacterConfigPath, out writeSSCConfig);
 			}
-			else
+			if (writeSSCConfig)
 			{
+				// Add all the missing config properties in the json file
 				TShock.ServerSideCharacterConfig = new ServerSideConfig
 				{
 					StartingInventory =
@@ -127,8 +137,8 @@ namespace TShockAPI
 							new NetItem(-16, 1, 0)
 						}
 				};
+				TShock.ServerSideCharacterConfig.Write(ServerSideCharacterConfigPath);
 			}
-			TShock.ServerSideCharacterConfig.Write(ServerSideCharacterConfigPath);
 		}
 
 		/// <summary>
@@ -162,6 +172,31 @@ namespace TShockAPI
 				}
 				return true;
 			}
+		}
+
+		/// <summary>
+		/// Parse some json text and also return whether any fields are missing from the json
+		/// </summary>
+		/// <typeparam name="T">The type of the config file object</typeparam>
+		/// <param name="json">The json text to parse</param>
+		/// <param name="anyMissingFields">Whether any fields are missing from the config</param>
+		/// <returns>The config object</returns>
+		internal static T LoadConfigAndCheckForMissingFields<T>(string json, out bool anyMissingFields)
+		{
+			JObject jObject = JObject.Parse(json);
+
+			anyMissingFields = false;
+			var configFields = new HashSet<string>(typeof(T).GetFields()
+				.Where(field => !field.IsStatic)
+				.Select(field => field.Name));
+			var jsonFields = new HashSet<string>(jObject
+				.Children()
+				.Select(field => field as JProperty)
+				.Where(field => field != null)
+				.Select(field => field.Name));
+			anyMissingFields = !configFields.SetEquals(jsonFields);
+
+			return jObject.ToObject<T>();
 		}
 	}
 }
