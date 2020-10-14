@@ -2099,7 +2099,7 @@ namespace TShockAPI
 			{ BuffID.ThornWhipNPCDebuff, 240  },    // BuffID: 315
 			{ BuffID.RainbowWhipNPCDebuff, 240  },  // BuffID: 316
 			{ BuffID.MaceWhipNPCDebuff, 240  },     // BuffID: 319
-			{ BuffID.GelBalloonBuff, 1800  }        // BuffID: 320
+			{ BuffID.GelBalloonBuff, 1800  },       // BuffID: 320
 			{ BuffID.OnFire3, 360 },		// BuffID: 323
 			{ BuffID.Frostburn2, 900 },		// BuffID: 324
 			{ BuffID.BoneWhipNPCDebuff, 240 }	// BuffID: 326
