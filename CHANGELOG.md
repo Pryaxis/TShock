@@ -13,6 +13,9 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change.
 
 ## Upcoming changes
+
+
+## TShock 4.4.0 (Pre-release 13)
 * Added Gravedigger's Shovel support. (@Zennos)
 * You can now start up multiple TShock servers at once without getting a startup error. (@ZakFahey)
 * Updated bouncer to include new Magma Stone, Frost Armor, and Spinal Tap inflicted npc debuffs to bouncer. (@Quinci135)
