@@ -13,7 +13,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change.
 
 ## Upcoming changes
-
+* Added Torch God's Favor support in SSC. (@Stealownz)
 
 ## TShock 4.4.0 (Pre-release 13)
 * Terraria v1.4.1.1
