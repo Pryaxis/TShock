@@ -2248,6 +2248,7 @@ namespace TShockAPI
 			BitsByte torchFlags = args.Data.ReadInt8();
 			bool usingBiomeTorches = torchFlags[0];
 			bool happyFunTorchTime = torchFlags[1];
+			bool unlockedBiomeTorches = torchFlags[2];
 
 			if (OnPlayerInfo(args.Player, args.Data, playerid, hair, skinVariant, difficulty, name))
 			{
@@ -2285,6 +2286,9 @@ namespace TShockAPI
 					args.Player.TPlayer.hideVisibleAccessory[i+8] = hideVisual2[i];
 				args.Player.TPlayer.hideMisc = hideMisc;
 				args.Player.TPlayer.extraAccessory = extraSlot;
+				args.Player.TPlayer.unlockedBiomeTorches = unlockedBiomeTorches;
+				args.Player.TPlayer.UsingBiomeTorches = unlockedBiomeTorches;
+
 				NetMessage.SendData((int)PacketTypes.PlayerInfo, -1, args.Player.Index, NetworkText.FromLiteral(args.Player.Name), args.Player.Index);
 				return true;
 			}

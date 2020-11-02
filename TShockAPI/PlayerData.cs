@@ -49,6 +49,7 @@ namespace TShockAPI
 		public Color? eyeColor;
 		public bool[] hideVisuals;
 		public int questsCompleted;
+		public int unlockedBiomeTorches;
 
 		public PlayerData(TSPlayer player)
 		{
@@ -114,6 +115,7 @@ namespace TShockAPI
 			this.skinColor = player.TPlayer.skinColor;
 			this.eyeColor = player.TPlayer.eyeColor;
 			this.questsCompleted = player.TPlayer.anglerQuestsFinished;
+			this.unlockedBiomeTorches = player.TPlayer.unlockedBiomeTorches ? 1 : 0;
 
 			Item[] inventory = player.TPlayer.inventory;
 			Item[] armor = player.TPlayer.armor;
@@ -234,6 +236,12 @@ namespace TShockAPI
 				player.TPlayer.hideVisibleAccessory = this.hideVisuals;
 			else
 				player.TPlayer.hideVisibleAccessory = new bool[player.TPlayer.hideVisibleAccessory.Length];
+
+			if (this.unlockedBiomeTorches != null)
+			{
+				player.TPlayer.unlockedBiomeTorches = this.unlockedBiomeTorches == 1 ? true : false;
+				player.TPlayer.UsingBiomeTorches = this.unlockedBiomeTorches == 1 ? true : false;
+			}
 
 			for (int i = 0; i < NetItem.MaxInventory; i++)
 			{
