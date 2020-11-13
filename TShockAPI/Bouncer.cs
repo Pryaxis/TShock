@@ -451,7 +451,7 @@ namespace TShockAPI
 
 				if (args.Player.IsBeingDisabled())
 				{
-					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from wire cutter from {0} {1} {2}", args.Player.Name, action, editData);
+					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from disable from {0} {1} {2}", args.Player.Name, action, editData);
 					args.Player.SendTileSquare(tileX, tileY, 4);
 					args.Handled = true;
 					return;
@@ -461,7 +461,9 @@ namespace TShockAPI
 					&& !args.Player.HasBuildPermission(tileX, tileY))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from ice/build from {0} {1} {2}", args.Player.Name, action, editData);
-					args.Player.SendTileSquare(tileX, tileY, 4);
+
+					GetRollbackRectSize(tileX, tileY, out byte width, out byte length, out int offsetY);
+					args.Player.SendTileRect((short)(tileX - width), (short)(tileY + offsetY), (byte)(width * 2), (byte)(length + 1));
 					args.Handled = true;
 					return;
 				}
@@ -570,6 +572,69 @@ namespace TShockAPI
 				args.Player.SendTileSquare(tileX, tileY, 4);
 				args.Handled = true;
 				return;
+			}
+		}
+
+		/// <summary>
+		/// Gets the size of the rectangle required to rollback all tiles impacted by a single tile.
+		/// Eg, rolling back the destruction of a tile that had a Safe on top would require rolling back the safe as well as the
+		/// tile that was destroyed
+		/// </summary>
+		/// <param name="tileX">X position of the initial tile</param>
+		/// <param name="tileY">Y position of the initial tile</param>
+		/// <param name="width">The calculated width of the rectangle</param>
+		/// <param name="length">The calculated length of the rectangle</param>
+		/// <param name="offsetY">The Y offset from the initial tile Y that the rectangle should begin at</param>
+		private void GetRollbackRectSize(int tileX, int tileY, out byte width, out byte length, out int offsetY)
+		{
+			CheckForTileObjectsAbove(out byte topWidth, out byte topLength, out offsetY);
+			CheckForTileObjectsBelow(out byte botWidth, out byte botLength);
+
+			// If no tile object exists around the given tile, width will be 1. Else the width of the largest tile object will be used
+			width = Math.Max((byte)1, Math.Max(topWidth, botWidth));
+			// If no tile object exists around the given tile, length will be 1. Else the sum of all tile object lengths will be used
+			length = Math.Max((byte)1, (byte)(topLength + botLength));
+
+			// Checks for the presence of tile objects above the tile being checked
+			void CheckForTileObjectsAbove(out byte objWidth, out byte objLength, out int yOffset)
+			{
+				objWidth = 0;
+				objLength = 0;
+				yOffset = 0;
+
+				if (tileY <= 0)
+				{
+					return;
+				}
+
+				ITile above = Main.tile[tileX, tileY - 1];
+				if (above.type < TileObjectData._data.Count && TileObjectData._data[above.type] != null)
+				{
+					TileObjectData data = TileObjectData._data[above.type];
+					objWidth = (byte)data.Width;
+					objLength = (byte)data.Height;
+					yOffset = -data.Height; //y offset is the negative of the height of the tile object
+				}
+			}
+
+			//Checks for the presence of tile objects below the tile being checked
+			void CheckForTileObjectsBelow(out byte objWidth, out byte objLength)
+			{
+				objWidth = 0;
+				objLength = 0;
+
+				if (tileY == Main.maxTilesY)
+				{
+					return;
+				}
+
+				ITile below = Main.tile[tileX, tileY + 1];
+				if (below.type < TileObjectData._data.Count && TileObjectData._data[below.type] != null)
+				{
+					TileObjectData data = TileObjectData._data[below.type];
+					objWidth = (byte)data.Width;
+					objLength = (byte)data.Height;
+				}
 			}
 		}
 
