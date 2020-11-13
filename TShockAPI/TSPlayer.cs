@@ -882,7 +882,7 @@ namespace TShockAPI
 		{
 			get
 			{
-				for (int i = 3; i < 8; i++)
+				for (int i = 3; i < 10; i++)
 					yield return TPlayer.armor[i];
 			}
 		}
