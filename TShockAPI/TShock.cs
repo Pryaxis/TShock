@@ -90,8 +90,6 @@ namespace TShockAPI
 		public static GroupManager Groups;
 		/// <summary>Users - Static reference to the user manager for accessing the user database system.</summary>
 		public static UserAccountManager UserAccounts;
-		/// <summary>Itembans - Static reference to the item ban system.</summary>
-		public static ItemManager Itembans;
 		/// <summary>ProjectileBans - Static reference to the projectile ban system.</summary>
 		public static ProjectileManagager ProjectileBans;
 		/// <summary>TileBans - Static reference to the tile ban system.</summary>
@@ -137,7 +135,7 @@ namespace TShockAPI
 		internal Bouncer Bouncer;
 
 		/// <summary>The TShock item ban system.</summary>
-		internal ItemBans ItemBans;
+		public static ItemBans ItemBans;
 
 		/// <summary>
 		/// TShock's Region subsystem.
@@ -321,7 +319,6 @@ namespace TShockAPI
 				Regions = new RegionManager(DB);
 				UserAccounts = new UserAccountManager(DB);
 				Groups = new GroupManager(DB);
-				Itembans = new ItemManager(DB);
 				ProjectileBans = new ProjectileManagager(DB);
 				TileBans = new TileManager(DB);
 				RememberedPos = new RememberedPosManager(DB);

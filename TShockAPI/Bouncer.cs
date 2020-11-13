@@ -710,7 +710,7 @@ namespace TShockAPI
 
 			Item item = new Item();
 			item.netDefaults(type);
-			if ((stacks > item.maxStack || stacks <= 0) || (TShock.Itembans.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), args.Player) && !args.Player.HasPermission(Permissions.allowdroppingbanneditems)))
+			if ((stacks > item.maxStack || stacks <= 0) || (TShock.ItemBans.DataModel.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), args.Player) && !args.Player.HasPermission(Permissions.allowdroppingbanneditems)))
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnItemDrop rejected from drop item ban check / max stack check / min stack check from {0}", args.Player.Name);
 				args.Player.SendData(PacketTypes.ItemDrop, "", id);
@@ -1311,7 +1311,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (!wasThereABombNearby && type == LiquidType.Lava && TShock.Itembans.ItemIsBanned("Lava Bucket", args.Player))
+				if (!wasThereABombNearby && type == LiquidType.Lava && TShock.ItemBans.DataModel.ItemIsBanned("Lava Bucket", args.Player))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected lava bucket from {0}", args.Player.Name);
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
@@ -1331,7 +1331,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (!wasThereABombNearby && type == LiquidType.Water && TShock.Itembans.ItemIsBanned("Water Bucket", args.Player))
+				if (!wasThereABombNearby && type == LiquidType.Water && TShock.ItemBans.DataModel.ItemIsBanned("Water Bucket", args.Player))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected bucket check 3 from {0}", args.Player.Name);
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
@@ -1351,7 +1351,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (!wasThereABombNearby && type == LiquidType.Honey && TShock.Itembans.ItemIsBanned("Honey Bucket", args.Player))
+				if (!wasThereABombNearby && type == LiquidType.Honey && TShock.ItemBans.DataModel.ItemIsBanned("Honey Bucket", args.Player))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected bucket check 5 from {0}", args.Player.Name);
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");

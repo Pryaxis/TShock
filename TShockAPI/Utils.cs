@@ -483,7 +483,7 @@ namespace TShockAPI
 			TShock.HandleCommandLinePostConfigLoad(Environment.GetCommandLineArgs());
 			TShock.Groups.LoadPermisions();
 			TShock.Regions.Reload();
-			TShock.Itembans.UpdateItemBans();
+			TShock.ItemBans.DataModel.UpdateItemBans();
 			TShock.ProjectileBans.UpdateBans();
 			TShock.TileBans.UpdateBans();
 		}

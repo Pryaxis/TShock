@@ -1312,8 +1312,8 @@ namespace TShockAPI
 		/// <returns>True or false, depending if the item passed the check or not.</returns>
 		public bool GiveItemCheck(int type, string name, int stack, int prefix = 0)
 		{
-			if ((TShock.Itembans.ItemIsBanned(name) && TShock.Config.PreventBannedItemSpawn) &&
-			    (TShock.Itembans.ItemIsBanned(name, this) || !TShock.Config.AllowAllowedGroupsToSpawnBannedItems))
+			if ((TShock.ItemBans.DataModel.ItemIsBanned(name) && TShock.Config.PreventBannedItemSpawn) &&
+			    (TShock.ItemBans.DataModel.ItemIsBanned(name, this) || !TShock.Config.AllowAllowedGroupsToSpawnBannedItems))
 				return false;
 
 			GiveItem(type, stack, prefix);
@@ -1803,7 +1803,7 @@ namespace TShockAPI
 		/// <returns>True if the player has permission to use the banned item.</returns>
 		public bool HasPermission(ItemBan bannedItem)
 		{
-			return TShock.Itembans.ItemIsBanned(bannedItem.Name, this);
+			return TShock.ItemBans.DataModel.ItemIsBanned(bannedItem.Name, this);
 		}
 
 		/// <summary>
