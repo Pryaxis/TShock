@@ -57,7 +57,10 @@ namespace TShockAPI
 		{
 			if (TShock.Config.RegionProtectGemLocks)
 			{
-				e.Handled = true;
+				if (!_regionManager.CanBuild(e.X, e.Y, e.Player))
+				{
+					e.Handled = true;
+				}
 			}
 		}
 

@@ -17,6 +17,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Added Torch God's Favor support in SSC. (@Stealownz)
 * SendTileSquare is now SendTileRect and can now send rectangles instead of squares. This is a breaking change (@QuiCM)
 * Destroying protected tiles underneath a tile object no longer causes the tile object to disappear for the client (@QuiCM)
+* 'RegionProtectGemLocks' config option now works correctly. Gems can now be placed in Gem Locks while this option is enabled (@QuiCM)
 
 ## TShock 4.4.0 (Pre-release 13)
 * Terraria v1.4.1.1
