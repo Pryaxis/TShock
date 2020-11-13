@@ -36,7 +36,7 @@ namespace TShockAPI
 	/// <summary>Bouncer is the TShock anti-hack and anti-cheat system.</summary>
 	internal sealed class Bouncer
 	{
-		internal Handlers.SendTileSquareHandler STSHandler { get; set; }
+		internal Handlers.SendTileRectHandler STSHandler { get; set; }
 		internal Handlers.NetModules.NetModulePacketHandler NetModuleHandler { get; set; }
 		internal Handlers.EmojiHandler EmojiHandler { get; set; }
 		internal Handlers.DisplayDollItemSyncHandler DisplayDollItemSyncHandler { get; set; }
@@ -48,8 +48,8 @@ namespace TShockAPI
 		/// <returns>A new Bouncer.</returns>
 		internal Bouncer()
 		{
-			STSHandler = new Handlers.SendTileSquareHandler();
-			GetDataHandlers.SendTileSquare += STSHandler.OnReceive;
+			STSHandler = new Handlers.SendTileRectHandler();
+			GetDataHandlers.SendTileRect += STSHandler.OnReceive;
 
 			NetModuleHandler = new Handlers.NetModules.NetModulePacketHandler();
 			GetDataHandlers.ReadNetModule += NetModuleHandler.OnReceive;

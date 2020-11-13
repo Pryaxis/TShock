@@ -105,7 +105,7 @@ namespace TShockAPI
 					{ PacketTypes.PlayerHp, HandlePlayerHp },
 					{ PacketTypes.Tile, HandleTile },
 					{ PacketTypes.DoorUse, HandleDoorUse },
-					{ PacketTypes.TileSendSquare, HandleSendTileSquare },
+					{ PacketTypes.TileSendSquare, HandleSendTileRect },
 					{ PacketTypes.ItemDrop, HandleItemDrop },
 					{ PacketTypes.ItemOwner, HandleItemOwner },
 					{ PacketTypes.ProjectileNew, HandleProjectileNew },
@@ -493,44 +493,57 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// For use in a SendTileSquare event
+		/// For use in a SendTileRect event
 		/// </summary>
-		public class SendTileSquareEventArgs : GetDataHandledEventArgs
+		public class SendTileRectEventArgs : GetDataHandledEventArgs
 		{
 			/// <summary>
-			/// Size of the area
+			/// X position of the rectangle
 			/// </summary>
-			public short Size { get; set; }
+			public short TileX { get; set; }
 
 			/// <summary>
-			/// A corner of the section
+			/// Y position of the rect
 			/// </summary>
-			public int TileX { get; set; }
+			public short TileY { get; set; }
 
 			/// <summary>
-			/// A corner of the section
+			/// Width of the rectangle
 			/// </summary>
-			public int TileY { get; set; }
+			public byte Width { get; set; }
+
+			/// <summary>
+			/// Length of the rectangle
+			/// </summary>
+			public byte Length { get; set; }
+
+			/// <summary>
+			/// Change type involved in the rectangle
+			/// </summary>
+			public TileChangeType ChangeType { get; set; }
 		}
+
 		/// <summary>
 		/// When the player sends a tile square
 		/// </summary>
-		public static HandlerList<SendTileSquareEventArgs> SendTileSquare = new HandlerList<SendTileSquareEventArgs>();
-		private static bool OnSendTileSquare(TSPlayer player, MemoryStream data, short size, int tilex, int tiley)
+		public static HandlerList<SendTileRectEventArgs> SendTileRect = new HandlerList<SendTileRectEventArgs>();
+		private static bool OnSendTileRect(TSPlayer player, MemoryStream data, short tilex, short tiley, byte width, byte length, TileChangeType changeType = TileChangeType.None)
 		{
-			if (SendTileSquare == null)
+			if (SendTileRect == null)
 				return false;
 
-			var args = new SendTileSquareEventArgs
+			var args = new SendTileRectEventArgs
 			{
 				Player = player,
 				Data = data,
-				Size = size,
 				TileX = tilex,
 				TileY = tiley,
+				Width = width,
+				Length = length,
+				ChangeType = changeType
 			};
 
-			SendTileSquare.Invoke(null, args);
+			SendTileRect.Invoke(null, args);
 			return args.Handled;
 		}
 
@@ -2618,23 +2631,25 @@ namespace TShockAPI
 			return false;
 		}
 
-		private static bool HandleSendTileSquare(GetDataHandlerArgs args)
+		private static bool HandleSendTileRect(GetDataHandlerArgs args)
 		{
 			var player = args.Player;
-			var size = args.Data.ReadInt16();
-			var changeType = TileChangeType.None;
-
-			bool hasChangeType = ((size & 0x7FFF) & 0x8000) != 0;
-			if (hasChangeType)
-			{
-				changeType = (TileChangeType)args.Data.ReadInt8();
-			}
 
 			var tileX = args.Data.ReadInt16();
 			var tileY = args.Data.ReadInt16();
+			var width = (byte)args.Data.ReadByte();
+			var length = (byte)args.Data.ReadByte();
+
+			var changeByte = (byte)args.Data.ReadByte();
+			var changeType = TileChangeType.None;
+			if (Enum.IsDefined(typeof(TileChangeType), changeByte))
+			{
+				changeType = (TileChangeType)changeByte;
+			}
+
 			var data = args.Data;
 
-			if (OnSendTileSquare(player, data, size, tileX, tileY))
+			if (OnSendTileRect(player, data, tileX, tileY, width, length, changeType))
 				return true;
 
 			return false;

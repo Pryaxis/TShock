@@ -12,9 +12,9 @@ using TShockAPI.Net;
 namespace TShockAPI.Handlers
 {
 	/// <summary>
-	/// Provides processors for handling Tile Square packets
+	/// Provides processors for handling Tile Rect packets
 	/// </summary>
-	public class SendTileSquareHandler : IPacketHandler<GetDataHandlers.SendTileSquareEventArgs>
+	public class SendTileRectHandler : IPacketHandler<GetDataHandlers.SendTileRectEventArgs>
 	{
 		/// <summary>
 		/// Maps grass-type blocks to flowers that can be grown on them with flower boots
@@ -53,11 +53,11 @@ namespace TShockAPI.Handlers
 		};
 
 		/// <summary>
-		/// Invoked when a SendTileSquare packet is received
+		/// Invoked when a SendTileRect packet is received
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="args"></param>
-		public void OnReceive(object sender, GetDataHandlers.SendTileSquareEventArgs args)
+		public void OnReceive(object sender, GetDataHandlers.SendTileRectEventArgs args)
 		{
 			// By default, we'll handle everything
 			args.Handled = true;
@@ -67,41 +67,42 @@ namespace TShockAPI.Handlers
 				return;
 			}
 
-			bool[,] processed = new bool[args.Size, args.Size];
-			NetTile[,] tiles = ReadNetTilesFromStream(args.Data, args.Size);
+			bool[,] processed = new bool[args.Width, args.Length];
+			NetTile[,] tiles = ReadNetTilesFromStream(args.Data, args.Width, args.Length);
 
-			Debug.VisualiseTileSetDiff(args.TileX, args.TileY, args.Size, args.Size, tiles);
+			Debug.VisualiseTileSetDiff(args.TileX, args.TileY, args.Width, args.Length, tiles);
 
-			IterateTileSquare(tiles, processed, args);
+			IterateTileRect(tiles, processed, args);
 
-			// Uncommenting this function will send the same tile square 10 blocks above you for visualisation. This will modify your world and overwrite existing blocks.
+			// Uncommenting this function will send the same tile rect 10 blocks above you for visualisation. This will modify your world and overwrite existing blocks.
 			// Use in test worlds only.
-			//Debug.DisplayTileSetInGame(tileX, tileY - 10, size, size, tiles, args.Player);
+			Debug.DisplayTileSetInGame(args.TileX, (short)(args.TileY - 10), args.Width, args.Length, tiles, args.Player);
 
 			// If we are handling this event then we have updated the server's Main.tile state the way we want it.
 			// At this point we should send our state back to the client so they remain in sync with the server
 			if (args.Handled == true)
 			{
-				args.Player.SendTileSquare(args.TileX, args.TileY, args.Size);
-				TShock.Log.ConsoleDebug("Bouncer / SendTileSquare reimplemented from carbonara from {0}", args.Player.Name);
+				args.Player.SendTileRect(args.TileX, args.TileY, args.Width, args.Length);
+				TShock.Log.ConsoleDebug("Bouncer / SendTileRect reimplemented from carbonara from {0}", args.Player.Name);
 			}
 		}
 
 		/// <summary>
-		/// Iterates over each tile in the tile square and performs processing on individual tiles or multi-tile Tile Objects
+		/// Iterates over each tile in the tile rectangle and performs processing on individual tiles or multi-tile Tile Objects
 		/// </summary>
 		/// <param name="tiles"></param>
 		/// <param name="processed"></param>
 		/// <param name="args"></param>
-		internal void IterateTileSquare(NetTile[,] tiles, bool[,] processed, GetDataHandlers.SendTileSquareEventArgs args)
+		internal void IterateTileRect(NetTile[,] tiles, bool[,] processed, GetDataHandlers.SendTileRectEventArgs args)
 		{
-			short size = args.Size;
 			int tileX = args.TileX;
 			int tileY = args.TileY;
+			byte width = args.Width;
+			byte length = args.Length;
 
-			for (int x = 0; x < size; x++)
+			for (int x = 0; x < width; x++)
 			{
-				for (int y = 0; y < size; y++)
+				for (int y = 0; y < length; y++)
 				{
 					// Do not process already processed tiles
 					if (processed[x, y])
@@ -137,8 +138,8 @@ namespace TShockAPI.Handlers
 					{
 						data = TileObjectData._data[newTile.Type];
 						NetTile[,] newTiles;
-						int width = data.Width;
-						int height = data.Height;
+						int objWidth = data.Width;
+						int objHeight = data.Height;
 						int offsetY = 0;
 
 						if (newTile.Type == TileID.TrapdoorClosed)
@@ -146,40 +147,40 @@ namespace TShockAPI.Handlers
 							// Trapdoors can modify a 2x3 space. When it closes it will have leftover tiles either on top or bottom.
 							// If we don't update these tiles, the trapdoor gets confused and disappears.
 							// So we capture all 6 possible tiles and offset ourselves 1 tile above the closed trapdoor to capture the entire 2x3 area
-							width = 2;
-							height = 3;
+							objWidth = 2;
+							objHeight = 3;
 							offsetY = -1;
 						}
 
-						// Ensure the tile object fits inside the square before processing it
-						if (!DoesTileObjectFitInTileSquare(x, y, width, height, size, offsetY, processed))
+						// Ensure the tile object fits inside the rect before processing it
+						if (!DoesTileObjectFitInTileRect(x, y, objWidth, objHeight, width, length, offsetY, processed))
 						{
 							continue;
 						}
 
-						newTiles = new NetTile[width, height];
+						newTiles = new NetTile[objWidth, objHeight];
 
-						for (int i = 0; i < width; i++)
+						for (int i = 0; i < objWidth; i++)
 						{
-							for (int j = 0; j < height; j++)
+							for (int j = 0; j < objHeight; j++)
 							{
 								newTiles[i, j] = tiles[x + i, y + j + offsetY];
 								processed[x + i, y + j + offsetY] = true;
 							}
 						}
-						ProcessTileObject(newTile.Type, realX, realY + offsetY, width, height, newTiles, args);
+						ProcessTileObject(newTile.Type, realX, realY + offsetY, objWidth, objHeight, newTiles, args);
 						continue;
 					}
 
 					// If the new tile does not have an associated tile object, process it as an individual tile
-					ProcessSingleTile(realX, realY, newTile, size, args);
+					ProcessSingleTile(realX, realY, newTile, width, length, args);
 					processed[x, y] = true;
 				}
 			}
 		}
 
 		/// <summary>
-		/// Processes a tile object consisting of multiple tiles from the tile square packet
+		/// Processes a tile object consisting of multiple tiles from the tile rect packet
 		/// </summary>
 		/// <param name="tileType">The tile type the object is comprised of</param>
 		/// <param name="newTiles">2D array of NetTile containing the new tiles properties</param>
@@ -187,20 +188,20 @@ namespace TShockAPI.Handlers
 		/// <param name="realY">Y position at the top left of the object</param>
 		/// <param name="width">Width of the tile object</param>
 		/// <param name="height">Height of the tile object</param>
-		/// <param name="args">SendTileSquareEventArgs containing event information</param>
-		internal void ProcessTileObject(int tileType, int realX, int realY, int width, int height, NetTile[,] newTiles, GetDataHandlers.SendTileSquareEventArgs args)
+		/// <param name="args">SendTileRectEventArgs containing event information</param>
+		internal void ProcessTileObject(int tileType, int realX, int realY, int width, int height, NetTile[,] newTiles, GetDataHandlers.SendTileRectEventArgs args)
 		{
 			// As long as the player has permission to build, we should allow a tile object to be placed
 			// More in depth checks should take place in handlers for the Place Object (79), Update Tile Entity (86), and Place Tile Entity (87) packets
 			if (!args.Player.HasBuildPermissionForTileObject(realX, realY, width, height))
 			{
-				TShock.Log.ConsoleDebug("Bouncer / SendTileSquare rejected from no permission for tile object from {0}", args.Player.Name);
+				TShock.Log.ConsoleDebug("Bouncer / SendTileRect rejected from no permission for tile object from {0}", args.Player.Name);
 				return;
 			}
 			
 			if (TShock.TileBans.TileIsBanned((short)tileType))
 			{
-				TShock.Log.ConsoleDebug("Bouncer / SendTileSquare rejected for banned tile");
+				TShock.Log.ConsoleDebug("Bouncer / SendTileRect rejected for banned tile");
 				return;
 			}
 
@@ -215,18 +216,19 @@ namespace TShockAPI.Handlers
 		}
 
 		/// <summary>
-		/// Processes a single tile from the tile square packet
+		/// Processes a single tile from the tile rect packet
 		/// </summary>
 		/// <param name="realX">X position at the top left of the object</param>
 		/// <param name="realY">Y position at the top left of the object</param>
 		/// <param name="newTile">The NetTile containing new tile properties</param>
-		/// <param name="squareSize">The size of the tile square being received</param>
-		/// <param name="args">SendTileSquareEventArgs containing event information</param>
-		internal void ProcessSingleTile(int realX, int realY, NetTile newTile, int squareSize, GetDataHandlers.SendTileSquareEventArgs args)
+		/// <param name="rectWidth">The width of the rectangle being processed</param>
+		/// <param name="rectLength">The length of the rectangle being processed</param>
+		/// <param name="args">SendTileRectEventArgs containing event information</param>
+		internal void ProcessSingleTile(int realX, int realY, NetTile newTile, byte rectWidth, byte rectLength, GetDataHandlers.SendTileRectEventArgs args)
 		{
-			// Some boots allow growing flowers on grass. This process sends a 1x1 tile square to grow the flowers
-			// The square size must be 1 and the player must have an accessory that allows growing flowers in order for this square to be valid
-			if (squareSize == 1 && args.Player.Accessories.Any(a => a != null && FlowerBootItems.Contains(a.type)))
+			// Some boots allow growing flowers on grass. This process sends a 1x1 tile rect to grow the flowers
+			// The rect size must be 1 and the player must have an accessory that allows growing flowers in order for this rect to be valid
+			if (rectWidth == 1 && rectLength == 1 && args.Player.Accessories.Any(a => a != null && FlowerBootItems.Contains(a.type)))
 			{
 				ProcessFlowerBoots(realX, realY, newTile, args);
 				return;
@@ -250,25 +252,25 @@ namespace TShockAPI.Handlers
 		}
 
 		/// <summary>
-		/// Applies changes to a tile if a tile square for flower-growing boots is valid
+		/// Applies changes to a tile if a tile rect for flower-growing boots is valid
 		/// </summary>
-		/// <param name="realX">The tile x position of the tile square packet - this is where the flowers are intending to grow</param>
-		/// <param name="realY">The tile y position of the tile square packet - this is where the flowers are intending to grow</param>
+		/// <param name="realX">The tile x position of the tile rect packet - this is where the flowers are intending to grow</param>
+		/// <param name="realY">The tile y position of the tile rect packet - this is where the flowers are intending to grow</param>
 		/// <param name="newTile">The NetTile containing information about the flowers that are being grown</param>
-		/// <param name="args">SendTileSquareEventArgs containing event information</param>
-		internal void ProcessFlowerBoots(int realX, int realY, NetTile newTile, GetDataHandlers.SendTileSquareEventArgs args)
+		/// <param name="args">SendTileRectEventArgs containing event information</param>
+		internal void ProcessFlowerBoots(int realX, int realY, NetTile newTile, GetDataHandlers.SendTileRectEventArgs args)
 		{
-			// We need to get the tile below the tile square to determine what grass types are allowed
+			// We need to get the tile below the tile rect to determine what grass types are allowed
 			if (!WorldGen.InWorld(realX, realY + 1))
 			{
-				// If the tile below the tile square isn't valid, we return here and don't update the server tile state
+				// If the tile below the tile rect isn't valid, we return here and don't update the server tile state
 				return;
 			}
 
 			ITile tile = Main.tile[realX, realY + 1];
 			if (!GrassToPlantMap.TryGetValue(tile.type, out List<ushort> plantTiles) && !plantTiles.Contains(newTile.Type))
 			{
-				// If the tile below the tile square isn't a valid plant tile (eg grass) then we don't update the server tile state
+				// If the tile below the tile rect isn't a valid plant tile (eg grass) then we don't update the server tile state
 				return;
 			}
 
@@ -305,13 +307,13 @@ namespace TShockAPI.Handlers
 				WallID.Sets.Conversion.NewWall4[tile.wall] && WallID.Sets.Conversion.NewWall4[newTile.Wall]
 			)
 			{
-				TShock.Log.ConsoleDebug("Bouncer / SendTileSquare processing a conversion update - [{0}|{1}] -> [{2}|{3}]", tile.type, tile.wall, newTile.Type, newTile.Wall);
+				TShock.Log.ConsoleDebug("Bouncer / SendTileRect processing a conversion update - [{0}|{1}] -> [{2}|{3}]", tile.type, tile.wall, newTile.Type, newTile.Wall);
 				UpdateServerTileState(tile, newTile);
 			}
 		}
 
 		/// <summary>
-		/// Updates a single tile's world state with a change from the tile square packet
+		/// Updates a single tile's world state with a change from the tile rect packet
 		/// </summary>
 		/// <param name="tile">The tile to update</param>
 		/// <param name="newTile">The NetTile containing the change</param>
@@ -370,7 +372,7 @@ namespace TShockAPI.Handlers
 
 			tile.slope(slope);
 
-			TShock.Log.ConsoleDebug("Bouncer / SendTileSquare updated a tile from type {0} to {1}", tile.type, newTile.Type);
+			TShock.Log.ConsoleDebug("Bouncer / SendTileRect updated a tile from type {0} to {1}", tile.type, newTile.Type);
 		}
 
 		/// <summary>
@@ -396,14 +398,15 @@ namespace TShockAPI.Handlers
 		/// Reads a set of NetTiles from a memory stream
 		/// </summary>
 		/// <param name="stream"></param>
-		/// <param name="size"></param>
+		/// <param name="width"></param>
+		/// <param name="length"></param>
 		/// <returns></returns>
-		static NetTile[,] ReadNetTilesFromStream(System.IO.MemoryStream stream, short size)
+		static NetTile[,] ReadNetTilesFromStream(System.IO.MemoryStream stream, byte width, byte length)
 		{
-			NetTile[,] tiles = new NetTile[size, size];
-			for (int x = 0; x < size; x++)
+			NetTile[,] tiles = new NetTile[width, length];
+			for (int x = 0; x < width; x++)
 			{
-				for (int y = 0; y < size; y++)
+				for (int y = 0; y < length; y++)
 				{
 					tiles[x, y] = new NetTile(stream);
 				}
@@ -413,37 +416,42 @@ namespace TShockAPI.Handlers
 		}
 
 		/// <summary>
-		/// Determines whether or not the tile square should be immediately accepted or rejected
+		/// Determines whether or not the tile rect should be immediately accepted or rejected
 		/// </summary>
 		/// <param name="args"></param>
 		/// <returns></returns>
-		static bool ShouldSkipProcessing(GetDataHandlers.SendTileSquareEventArgs args)
+		static bool ShouldSkipProcessing(GetDataHandlers.SendTileRectEventArgs args)
 		{
 			if (args.Player.HasPermission(Permissions.allowclientsideworldedit))
 			{
-				TShock.Log.ConsoleDebug("Bouncer / SendTileSquare accepted clientside world edit from {0}", args.Player.Name);
+				TShock.Log.ConsoleDebug("Bouncer / SendTileRect accepted clientside world edit from {0}", args.Player.Name);
 				args.Handled = false;
 				return true;
 			}
 
-			// 7x7 is the largest vanilla-sized tile square (used for lamp posts). Anything larger than this should not be sent by the vanilla game and should be rejected
-			if (args.Size > 7)
+			var rectSize = args.Width * args.Length;
+			if (rectSize > TShock.Config.TileRectangleSizeThreshold)
 			{
-				TShock.Log.ConsoleDebug("Bouncer / SendTileSquare rejected from non-vanilla tilemod from {0}", args.Player.Name);
+				TShock.Log.ConsoleDebug("Bouncer / SendTileRect rejected from non-vanilla tilemod from {0}", args.Player.Name);
+				if (TShock.Config.KickOnTileRectangleSizeThresholdBroken)
+				{
+					args.Player.Kick("Unexpected tile threshold reached");
+				}
+
 				return true;
 			}
 
 			if (args.Player.IsBouncerThrottled())
 			{
-				TShock.Log.ConsoleDebug("Bouncer / SendTileSquare rejected from throttle from {0}", args.Player.Name);
-				args.Player.SendTileSquare(args.TileX, args.TileY, args.Size);
+				TShock.Log.ConsoleDebug("Bouncer / SendTileRect rejected from throttle from {0}", args.Player.Name);
+				args.Player.SendTileRect(args.TileX, args.TileY, args.Length, args.Width);
 				return true;
 			}
 
 			if (args.Player.IsBeingDisabled())
 			{
-				TShock.Log.ConsoleDebug("Bouncer / SendTileSquare rejected from being disabled from {0}", args.Player.Name);
-				args.Player.SendTileSquare(args.TileX, args.TileY, args.Size);
+				TShock.Log.ConsoleDebug("Bouncer / SendTileRect rejected from being disabled from {0}", args.Player.Name);
+				args.Player.SendTileRect(args.TileX, args.TileY, args.Length, args.Width);
 				return true;
 			}
 
@@ -451,37 +459,38 @@ namespace TShockAPI.Handlers
 		}
 
 		/// <summary>
-		/// Checks if a tile object fits inside the dimensions of a tile square
+		/// Checks if a tile object fits inside the dimensions of a tile rectangle
 		/// </summary>
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <param name="width"></param>
 		/// <param name="height"></param>
-		/// <param name="size"></param>
+		/// <param name="rectWidth"></param>
+		/// <param name="rectLength"></param>
 		/// <param name="offsetY"></param>
 		/// <param name="processed"></param>
 		/// <returns></returns>
-		static bool DoesTileObjectFitInTileSquare(int x, int y, int width, int height, int size, int offsetY, bool[,] processed)
+		static bool DoesTileObjectFitInTileRect(int x, int y, int width, int height, short rectWidth, short rectLength, int offsetY, bool[,] processed)
 		{
-			// If the starting y position of this tile object is at (x, 0) and the y offset is negative, we'll be accessing tiles outside the square
+			// If the starting y position of this tile object is at (x, 0) and the y offset is negative, we'll be accessing tiles outside the rect
 			if (y + offsetY < 0)
 			{
-				TShock.Log.ConsoleDebug("Bouncer / SendTileSquareHandler - rejected tile object because object dimensions fall outside the tile square (negative y value)");
+				TShock.Log.ConsoleDebug("Bouncer / SendTileRectHandler - rejected tile object because object dimensions fall outside the tile rect (negative y value)");
 				return false;
 			}
 
-			if (x + width > size || y + height + offsetY > size)
+			if (x + width > rectWidth || y + height + offsetY > rectLength)
 			{
 				// This is ugly, but we want to mark all these tiles as processed so that we're not hitting this check multiple times for one dodgy tile object
-				for (int i = x; i < size; i++)
+				for (int i = x; i < rectWidth; i++)
 				{
-					for (int j = Math.Max(0, y + offsetY); j < size; j++) // This is also ugly. Using Math.Max to make sure y + offsetY >= 0
+					for (int j = Math.Max(0, y + offsetY); j < rectLength; j++) // This is also ugly. Using Math.Max to make sure y + offsetY >= 0
 					{
 						processed[i, j] = true;
 					}
 				}
 
-				TShock.Log.ConsoleDebug("Bouncer / SendTileSquareHandler - rejected tile object because object dimensions fall outside the tile square (excessive size)");
+				TShock.Log.ConsoleDebug("Bouncer / SendTileRectHandler - rejected tile object because object dimensions fall outside the tile rect (excessive size)");
 				return false;
 			}
 
@@ -493,8 +502,8 @@ namespace TShockAPI.Handlers
 			/// <summary>
 			/// Displays the difference in IDs between existing tiles and a set of NetTiles to the console
 			/// </summary>
-			/// <param name="tileX">X position at the top left of the square</param>
-			/// <param name="tileY">Y position at the top left of the square</param>
+			/// <param name="tileX">X position at the top left of the rect</param>
+			/// <param name="tileY">Y position at the top left of the rect</param>
 			/// <param name="width">Width of the NetTile set</param>
 			/// <param name="height">Height of the NetTile set</param>
 			/// <param name="newTiles">New tiles to be visualised</param>
@@ -527,15 +536,15 @@ namespace TShockAPI.Handlers
 			}
 
 			/// <summary>
-			/// Sends a tile square at the given (tileX, tileY) coordinate, using the given set of NetTiles information to update the tile square
+			/// Sends a tile rect at the given (tileX, tileY) coordinate, using the given set of NetTiles information to update the tile rect
 			/// </summary>
-			/// <param name="tileX">X position at the top left of the square</param>
-			/// <param name="tileY">Y position at the top left of the square</param>
+			/// <param name="tileX">X position at the top left of the rect</param>
+			/// <param name="tileY">Y position at the top left of the rect</param>
 			/// <param name="width">Width of the NetTile set</param>
 			/// <param name="height">Height of the NetTile set</param>
-			/// <param name="newTiles">New tiles to place in the square</param>
+			/// <param name="newTiles">New tiles to place in the rect</param>
 			/// <param name="player">Player to send the debug display to</param>
-			public static void DisplayTileSetInGame(int tileX, int tileY, int width, int height, NetTile[,] newTiles, TSPlayer player)
+			public static void DisplayTileSetInGame(short tileX, short tileY, byte width, byte height, NetTile[,] newTiles, TSPlayer player)
 			{
 				for (int x = 0; x < width; x++)
 				{
@@ -547,7 +556,7 @@ namespace TShockAPI.Handlers
 					UpdateServerTileState(Main.tile[tileX + x, tileY + height], new NetTile { Active = true, Type = 0 });
 				}
 
-				player.SendTileSquare(tileX, tileY, Math.Max(width, height) + 1);
+				player.SendTileRect(tileX, tileY, width, height);
 			}
 		}
 	}

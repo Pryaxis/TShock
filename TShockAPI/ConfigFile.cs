@@ -466,6 +466,13 @@ namespace TShockAPI
 		[Description("Whether or not to kick users when they surpass the HealOther threshold.")]
 		public bool KickOnHealOtherThresholdBroken = false;
 
+		/// <summary>Disables a player if this number of tiles is present in a Tile Rectangle packet</summary>
+		[Description("Disables a player if this number of tiles is present in a Tile Rectangle packet")]
+		public int TileRectangleSizeThreshold = 50;
+
+		/// <summary>Whether or not to kick users when they surpass the TileRectangleSize threshold.</summary>
+		[Description("Whether or not to kick users when they surpass the TileRectangleSize threshold.")]
+		public bool KickOnTileRectangleSizeThresholdBroken = false;
 		#endregion
 
 
