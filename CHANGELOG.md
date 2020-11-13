@@ -13,7 +13,10 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change.
 
 ## Upcoming changes
+* Terraria v1.4.1.2 (Thanks @Patrikkk and @DeathCradle <3)
 * Added Torch God's Favor support in SSC. (@Stealownz)
+* SendTileSquare is now SendTileRect and can now send rectangles instead of squares. This is a breaking change (@QuiCM)
+* Destroying protected tiles underneath a tile object no longer causes the tile object to disappear for the client (@QuiCM)
 
 ## TShock 4.4.0 (Pre-release 13)
 * Terraria v1.4.1.1
