@@ -76,7 +76,7 @@ namespace TShockAPI.Handlers
 
 			// Uncommenting this function will send the same tile rect 10 blocks above you for visualisation. This will modify your world and overwrite existing blocks.
 			// Use in test worlds only.
-			Debug.DisplayTileSetInGame(args.TileX, (short)(args.TileY - 10), args.Width, args.Length, tiles, args.Player);
+			//Debug.DisplayTileSetInGame(args.TileX, (short)(args.TileY - 10), args.Width, args.Length, tiles, args.Player);
 
 			// If we are handling this event then we have updated the server's Main.tile state the way we want it.
 			// At this point we should send our state back to the client so they remain in sync with the server
