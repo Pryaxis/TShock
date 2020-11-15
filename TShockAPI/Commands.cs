@@ -1267,328 +1267,271 @@ namespace TShockAPI
 
 		private static void Ban(CommandArgs args)
 		{
+			//Ban syntax:
+			// ban add <target> [reason] [duration] [flags (default: -a -u -ip)]
+			//						Valid flags: -a (ban account name), -u (ban UUID), -n (ban character name), -ip (ban IP address), -e (exact, ban the identifier provided as 'target')
+			//						Unless -e is passed to the command, <target> is assumed to be a player or player index.
+			// ban del <target>
+			//						Target is expected to be an identifier in the format 'identifier_prefix:identifier'. Eg acc:MyAccountName
+			// ban list [page]
+			//						Displays a paginated list of bans
+			// ban details <target>
+			//						Target is expected to be an identifier in the format 'identifier_prefix:identifier'. Eg acc:MyAccountName
+			//						Output: Banned Identifier - expiration
+			//								Reason: text
+			//								Banned by: name
+
+			void Help()
+			{
+				if (args.Parameters.Count > 1)
+				{
+					MoreHelp(args.Parameters[1].ToLower());
+					return;
+				}
+
+				args.Player.SendMessage("TShock Ban Help", Color.White);
+				args.Player.SendMessage("Available Ban commands:", Color.White);
+				args.Player.SendMessage("ban [c/FFAAAA:add] <target> [flags]", Color.White);
+				args.Player.SendMessage("ban [c/FFAAAA:del] <target>", Color.White);
+				args.Player.SendMessage("ban [c/FFAAAA:list]", Color.White);
+				args.Player.SendMessage("ban [c/FFAAAA:details] <target>", Color.White);
+				args.Player.SendMessage("For more info, use [c/AAAAFF:ban help] [c/FFAAAA:command]", Color.White);
+			}
+
+			void MoreHelp(string cmd)
+			{
+				switch (cmd)
+				{
+					case "add":
+						args.Player.SendMessage("", Color.White);
+						args.Player.SendMessage("Ban Add Syntax", Color.White);
+						args.Player.SendMessage("[c/AAAAFF:ban add] [c/FFAAAA:<target>] [[c/AAAAFF:reason]] [[c/FFAAFF:duration]] [[c/AAFFAA:flags]]", Color.White);
+						args.Player.SendMessage("- [c/FFAAFF:Duration]: uses the format [c/FFAAFF:0d0m0s] to determine the length of the ban. Eg a value of [c/FFAAFF:10d30m0s] would represent 10 days, 30 minutes, 0 seconds.", Color.White);
+						args.Player.SendMessage("- [c/AAFFAA:flags]: -a (account name), -u (UUID), -n (character name), -ip (IP address), -e (exact, [c/FFAAAA:target] will be treated as identifier)", Color.White);
+						args.Player.SendMessage("   Unless [c/AAFFAA:-e] is passed to the command, [c/FFAAAA:target] is assumed to be a player or player index", Color.White);
+						args.Player.SendMessage("   If no [c/AAFFAA:flags] are specified, the command uses [c/AAFFAA:-a -u -ip] by default.", Color.White);
+						args.Player.SendMessage("Example usage: [c/AAAAFF:ban add] [c/FFAAAA:ExamplePlayer] [c/AAAAFF:\"Cheating\"] 10d30m0s [c/AAFFAA:-a -u -ip]", Color.White);
+						break;
+
+					case "del":
+						args.Player.SendMessage("", Color.White);
+						args.Player.SendMessage("Ban Del Syntax", Color.White);
+						args.Player.SendMessage("[c/AAAAFF:ban del] [c/FFAAAA:target]", Color.White);
+						args.Player.SendMessage("- [c/FFAAAA:Target] is expected to be an identifier in the format 'identifier_prefix:identifier'. Eg [c/FFAAAA:acc:MyAccountName]", Color.White);
+						args.Player.SendMessage("Example usage: [c/AAAAFF:ban del] [c/FFAAAA:acc:ExampleAccount]", Color.White);
+						break;
+
+					case "list":
+						args.Player.SendMessage("", Color.White);
+						args.Player.SendMessage("Ban List Syntax", Color.White);
+						args.Player.SendMessage("[c/AAAAFF:ban list] [[c/FFAAFF:page]]", Color.White);
+						args.Player.SendMessage("- Lists active bans. Color trends towards green as the ban approaches expiration", Color.White);
+						args.Player.SendMessage("Example usage: [c/AAAAFF:ban list]", Color.White);
+						break;
+
+					case "details":
+						args.Player.SendMessage("", Color.White);
+						args.Player.SendMessage("Ban Details Syntax", Color.White);
+						args.Player.SendMessage("[c/AAAAFF:ban details] [c/FFAAAA:target]", Color.White);
+						args.Player.SendMessage("- [c/FFAAAA:Target] is expected to be an identifier in the format 'identifier_prefix:identifier'. Eg [c/FFAAAA:acc:MyAccountName]", Color.White);
+						args.Player.SendMessage("Example usage: [c/AAAAFF:ban details] [c/FFAAAA:acc:ExampleAccount]", Color.White);
+						break;
+
+					default:
+						args.Player.SendMessage("Unknown ban command. Try 'add', 'del', 'list', or 'details'", Color.White);
+						break;
+				}
+			}
+
+			void AddBan()
+			{
+				if (!args.Parameters.TryGetValue(1, out string target))
+				{
+					args.Player.SendMessage("Invalid Ban Add syntax. Refer to [c/AAAAFF:ban help add] for details on how to use the [c/AAAAFF:ban add] command", Color.White);
+					return;
+				}
+
+				bool exactTarget = args.Parameters.Any(p => p == "-e");
+				bool banAccount = args.Parameters.Any(p => p == "-a");
+				bool banUuid = args.Parameters.Any(p => p == "-u");
+				bool banName = args.Parameters.Any(p => p == "-n");
+				bool banIp = args.Parameters.Any(p => p == "-ip");
+
+				args.Parameters.TryGetValue(2, out string reason);
+				args.Parameters.TryGetValue(3, out string duration);
+				DateTime expiration = DateTime.MaxValue;
+
+				if (TShock.Utils.TryParseTime(duration, out int seconds))
+				{
+					expiration = DateTime.UtcNow.AddSeconds(seconds);
+				}
+
+				//If no flags were specified, default to account, uuid, and IP
+				if (!exactTarget && !banAccount && !banUuid && !banName && !banIp)
+				{
+					banAccount = banUuid = banIp = true;
+				}
+
+				if (exactTarget)
+				{
+					if (TShock.Bans.InsertBan(target, reason ?? "Banned", args.Player.Account.Name, DateTime.UtcNow, expiration) != null)
+					{
+						args.Player.SendSuccessMessage("Ban added.");
+					}
+					else
+					{
+						args.Player.SendErrorMessage("Failed to insert ban. Ban may already exist, or an error occured.");
+					}
+					return;
+				}
+
+				var players = TSPlayer.FindByNameOrID(target);
+
+				if (players.Count > 1)
+				{
+					args.Player.SendMultipleMatchError(players.Select(p => p.Name));
+					return;
+				}
+
+				if (players.Count < 1)
+				{
+					args.Player.SendErrorMessage("Could not find the target specified. Check that you have the correct spelling.");
+					return;
+				}
+
+				var player = players[0];
+				var identifiers = new List<string>();
+				string identifier;
+
+				if (banAccount)
+				{
+					if (player.Account != null)
+					{
+						identifier = $"{DB.Ban.Identifiers.Account}{player.Account.Name}";
+						if (TShock.Bans.InsertBan(identifier, reason, args.Player.Account.Name, DateTime.UtcNow, expiration) != null)
+						{
+							identifiers.Add(identifier);
+						}
+					}
+				}
+
+				if (banUuid)
+				{
+					identifier = $"{DB.Ban.Identifiers.UUID}{player.UUID}";
+					if (TShock.Bans.InsertBan($"{DB.Ban.Identifiers.UUID}{player.UUID}", reason, args.Player.Account.Name, DateTime.UtcNow, expiration) != null)
+					{
+						identifiers.Add(identifier);
+					}
+				}
+
+				if (banName)
+				{
+					identifier = $"{DB.Ban.Identifiers.Name}{player.Name}";
+					if (TShock.Bans.InsertBan($"{DB.Ban.Identifiers.Name}{player.Name}", reason, args.Player.Account.Name, DateTime.UtcNow, expiration) != null)
+					{
+						identifiers.Add(identifier);
+					}
+				}
+
+				if (banIp)
+				{
+					identifier = $"{DB.Ban.Identifiers.IP}{player.IP}";
+					if (TShock.Bans.InsertBan($"{DB.Ban.Identifiers.IP}{player.IP}", reason, args.Player.Account.Name, DateTime.UtcNow, expiration) != null)
+					{
+						identifiers.Add(identifier);
+					}
+				}
+
+				args.Player.SendSuccessMessage("Bans added for identifiers: ", string.Join(", ", identifiers));
+			}
+
+			void DelBan()
+			{
+				if (!args.Parameters.TryGetValue(1, out string target))
+				{
+					args.Player.SendMessage("Invalid Ban Del syntax. Refer to [c/AAAAFF:ban help del] for details on how to use the [c/AAAAFF:ban del] command", Color.White);
+					return;
+				}
+
+				if (TShock.Bans.RemoveBan(target))
+				{
+					args.Player.SendSuccessMessage("Ban removed.");
+				}
+				else
+				{
+					args.Player.SendErrorMessage("Failed to remove ban.");
+				}
+			}
+
+			void ListBans()
+			{
+				int pageNumber;
+				if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out pageNumber))
+				{
+					args.Player.SendMessage("Invalid Ban List syntax. Refer to [c/AAAAFF:ban help list] for details on how to use the [c/AAAAFF:ban list] command", Color.White);
+					return;
+				}
+
+				List<Ban> bans = TShock.Bans.GetAllBans();
+
+				var nameBans = from ban in bans
+							   select ban.Identifier;
+
+				PaginationTools.SendPage(args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(nameBans),
+					new PaginationTools.Settings
+					{
+						HeaderFormat = "Bans ({0}/{1}):",
+						FooterFormat = "Type {0}ban list {{0}} for more.".SFormat(Specifier),
+						NothingToDisplayString = "There are currently no bans."
+					});
+			}
+
+			void BanDetails()
+			{
+				if (!args.Parameters.TryGetValue(1, out string target))
+				{
+					args.Player.SendMessage("Invalid Ban Details syntax. Refer to [c/AAAAFF:ban help details] for details on how to use the [c/AAAAFF:ban details] command", Color.White);
+					return;
+				}
+
+				Ban ban = TShock.Bans.GetBanByIdentifier(target);
+
+				if (ban == null)
+				{
+					args.Player.SendErrorMessage("No ban found matching the given identifier");
+					return;
+				}
+
+				args.Player.SendMessage($"{ban.Identifier}", Color.White);
+				args.Player.SendMessage($"Reason: {ban.Reason}", Color.White);
+				args.Player.SendMessage($"Banned by: [c/AAFFAA:{ban.BanningUser}] at [c/AAAAFF:time]", Color.White);
+			}
+			
 			string subcmd = args.Parameters.Count == 0 ? "help" : args.Parameters[0].ToLower();
 			switch (subcmd)
 			{
-				case "add":
-					#region Add Ban
-					{
-						if (args.Parameters.Count < 2)
-						{
-							args.Player.SendErrorMessage("Invalid command. Format: {0}ban add <player> [time] [reason]", Specifier);
-							args.Player.SendErrorMessage("Example: {0}ban add Shank 10d Hacking and cheating", Specifier);
-							args.Player.SendErrorMessage("Example: {0}ban add Ash", Specifier);
-							args.Player.SendErrorMessage("Use the time 0 (zero) for a permanent ban.");
-							return;
-						}
-
-						// Used only to notify if a ban was successful and who the ban was about
-						bool success = false;
-						string targetGeneralizedName = "";
-
-						// Effective ban target assignment
-						List<TSPlayer> players = TSPlayer.FindByNameOrID(args.Parameters[1]);
-
-						// Bad case: Players contains more than 1 person so we can't ban them
-						if (players.Count > 1)
-						{
-							//Fail fast
-							args.Player.SendMultipleMatchError(players.Select(p => p.Name));
-							return;
-						}
-
-						UserAccount offlineUserAccount = TShock.UserAccounts.GetUserAccountByName(args.Parameters[1]);
-
-						// Storage variable to determine if the command executor is the server console
-						// If it is, we assume they have full control and let them override permission checks
-						bool callerIsServerConsole = args.Player is TSServerPlayer;
-
-						// The ban reason the ban is going to have
-						string banReason = "Unknown.";
-
-						// The default ban length
-						// 0 is permanent ban, otherwise temp ban
-						int banLengthInSeconds = 0;
-
-						// Figure out if param 2 is a time or 0 or garbage
-						if (args.Parameters.Count >= 3)
-						{
-							bool parsedOkay = false;
-							if (args.Parameters[2] != "0")
-							{
-								parsedOkay = TShock.Utils.TryParseTime(args.Parameters[2], out banLengthInSeconds);
-							}
-							else
-							{
-								parsedOkay = true;
-							}
-
-							if (!parsedOkay)
-							{
-								args.Player.SendErrorMessage("Invalid time format. Example: 10d 5h 3m 2s.");
-								args.Player.SendErrorMessage("Use 0 (zero) for a permanent ban.");
-								return;
-							}
-						}
-
-						// If a reason exists, use the given reason.
-						if (args.Parameters.Count > 3)
-						{
-							banReason = String.Join(" ", args.Parameters.Skip(3));
-						}
-
-						// Good case: Online ban for matching character.
-						if (players.Count == 1)
-						{
-							TSPlayer target = players[0];
-
-							if (target.HasPermission(Permissions.immunetoban) && !callerIsServerConsole)
-							{
-								args.Player.SendErrorMessage("Permission denied. Target {0} is immune to ban.", target.Name);
-								return;
-							}
-
-							targetGeneralizedName = target.Name;
-							success = TShock.Bans.AddBan(target.IP, target.Name, target.UUID, target.Account?.Name ?? "", banReason, false, args.Player.Account.Name,
-								banLengthInSeconds == 0 ? "" : DateTime.UtcNow.AddSeconds(banLengthInSeconds).ToString("s"));
-
-							// Since this is an online ban, we need to dc the player and tell them now.
-							if (success)
-							{
-								if (banLengthInSeconds == 0)
-								{
-									target.Disconnect(String.Format("Permanently banned for {0}", banReason));
-								}
-								else
-								{
-									target.Disconnect(String.Format("Banned for {0} seconds for {1}", banLengthInSeconds, banReason));
-								}
-							}
-						}
-
-						// Case: Players & user are invalid, could be IP?
-						// Note: Order matters. If this method is above the online player check,
-						// This enables you to ban an IP even if the player exists in the database as a player.
-						// You'll get two bans for the price of one, in theory, because both IP and user named IP will be banned.
-						// ??? edge cases are weird, but this is going to happen
-						// The only way around this is to either segregate off the IP code or do something else.
-						if (players.Count == 0)
-						{
-							// If the target is a valid IP...
-							string pattern = @"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$";
-							Regex r = new Regex(pattern, RegexOptions.IgnoreCase);
-							if (r.IsMatch(args.Parameters[1]))
-							{
-								targetGeneralizedName = "IP: " + args.Parameters[1];
-								success = TShock.Bans.AddBan(args.Parameters[1], "", "", "", banReason,
-									false, args.Player.Account.Name, banLengthInSeconds == 0 ? "" : DateTime.UtcNow.AddSeconds(banLengthInSeconds).ToString("s"));
-								if (success && offlineUserAccount != null)
-								{
-									args.Player.SendSuccessMessage("Target IP {0} was banned successfully.", targetGeneralizedName);
-									args.Player.SendErrorMessage("Note: An account named with this IP address also exists.");
-									args.Player.SendErrorMessage("Note: It will also be banned.");
-								}
-							}
-							else
-							{
-								// Apparently there is no way to not IP ban someone
-								// This means that where we would normally just ban a "character name" here
-								// We can't because it requires some IP as a primary key.
-								if (offlineUserAccount == null)
-								{
-									args.Player.SendErrorMessage("Unable to ban target {0}.", args.Parameters[1]);
-									args.Player.SendErrorMessage("Target is not a valid IP address, a valid online player, or a known offline user.");
-									return;
-								}
-							}
-
-						}
-
-						// Case: Offline ban
-						if (players.Count == 0 && offlineUserAccount != null)
-						{
-							// Catch: we don't know an offline player's last login character name
-							// This means that we're banning their *user name* on the assumption that
-							// user name == character name
-							// (which may not be true)
-							// This needs to be fixed in a future implementation.
-							targetGeneralizedName = offlineUserAccount.Name;
-
-							if (TShock.Groups.GetGroupByName(offlineUserAccount.Group).HasPermission(Permissions.immunetoban) &&
-								!callerIsServerConsole)
-							{
-								args.Player.SendErrorMessage("Permission denied. Target {0} is immune to ban.", targetGeneralizedName);
-								return;
-							}
-
-							if (offlineUserAccount.KnownIps == null)
-							{
-								args.Player.SendErrorMessage("Unable to ban target {0} because they have no valid IP to ban.", targetGeneralizedName);
-								return;
-							}
-
-							string lastIP = JsonConvert.DeserializeObject<List<string>>(offlineUserAccount.KnownIps).Last();
-
-							success =
-								TShock.Bans.AddBan(lastIP,
-									"", offlineUserAccount.UUID, offlineUserAccount.Name, banReason, false, args.Player.Account.Name,
-									banLengthInSeconds == 0 ? "" : DateTime.UtcNow.AddSeconds(banLengthInSeconds).ToString("s"));
-						}
-
-						if (success)
-						{
-							args.Player.SendSuccessMessage("{0} was successfully banned.", targetGeneralizedName);
-							args.Player.SendInfoMessage("Length: {0}", banLengthInSeconds == 0 ? "Permanent." : banLengthInSeconds + " seconds.");
-							args.Player.SendInfoMessage("Reason: {0}", banReason);
-							if (!args.Silent)
-							{
-								if (banLengthInSeconds == 0)
-								{
-									TSPlayer.All.SendErrorMessage("{0} was permanently banned by {1} for: {2}",
-										targetGeneralizedName, args.Player.Account.Name, banReason);
-								}
-								else
-								{
-									TSPlayer.All.SendErrorMessage("{0} was temp banned for {1} seconds by {2} for: {3}",
-										targetGeneralizedName, banLengthInSeconds, args.Player.Account.Name, banReason);
-								}
-							}
-						}
-						else
-						{
-							args.Player.SendErrorMessage("{0} was NOT banned due to a database error or other system problem.", targetGeneralizedName);
-							args.Player.SendErrorMessage("If this player is online, they have NOT been kicked.");
-							args.Player.SendErrorMessage("Check the system logs for details.");
-						}
-
-						return;
-					}
-					#endregion
-				case "del":
-					#region Delete ban
-					{
-						if (args.Parameters.Count != 2)
-						{
-							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}ban del <player>", Specifier);
-							return;
-						}
-
-						string plStr = args.Parameters[1];
-						Ban ban = TShock.Bans.GetBanByName(plStr, false);
-						if (ban != null)
-						{
-							if (TShock.Bans.RemoveBan(ban.Name, true))
-								args.Player.SendSuccessMessage("Unbanned {0} ({1}).", ban.Name, ban.IP);
-							else
-								args.Player.SendErrorMessage("Failed to unban {0} ({1}), check logs.", ban.Name, ban.IP);
-						}
-						else
-							args.Player.SendErrorMessage("No bans for {0} exist.", plStr);
-					}
-					#endregion
-					return;
-				case "delip":
-					#region Delete IP ban
-					{
-						if (args.Parameters.Count != 2)
-						{
-							args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}ban delip <ip>", Specifier);
-							return;
-						}
-
-						string ip = args.Parameters[1];
-						Ban ban = TShock.Bans.GetBanByIp(ip);
-						if (ban != null)
-						{
-							if (TShock.Bans.RemoveBan(ban.IP, false))
-								args.Player.SendSuccessMessage("Unbanned IP {0} ({1}).", ban.IP, ban.Name);
-							else
-								args.Player.SendErrorMessage("Failed to unban IP {0} ({1}), check logs.", ban.IP, ban.Name);
-						}
-						else
-							args.Player.SendErrorMessage("IP {0} is not banned.", ip);
-					}
-					#endregion
-					return;
 				case "help":
-					#region Help
-					{
-						int pageNumber;
-						if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out pageNumber))
-							return;
+					Help();
+					break;
 
-						var lines = new List<string>
-						{
-							"add <target> <time> [reason] - Bans a player or user account if the player is not online.",
-							"del <player> - Unbans a player.",
-							"delip <ip> - Unbans an IP.",
-							"list [page] - Lists all player bans.",
-							"listip [page] - Lists all IP bans."
-						};
+				case "add":
+					AddBan();
+					break;
 
-						PaginationTools.SendPage(args.Player, pageNumber, lines,
-							new PaginationTools.Settings
-							{
-								HeaderFormat = "Ban Sub-Commands ({0}/{1}):",
-								FooterFormat = "Type {0}ban help {{0}} for more sub-commands.".SFormat(Specifier)
-							}
-						);
-					}
-					#endregion
-					return;
+				case "del":
+					DelBan();
+					break;
+
 				case "list":
-					#region List bans
-					{
-						int pageNumber;
-						if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out pageNumber))
-						{
-							return;
-						}
+					ListBans();
+					break;
 
-						List<Ban> bans = TShock.Bans.GetBans();
+				case "details":
+					BanDetails();
+					break;
 
-						var nameBans = from ban in bans
-									   where !String.IsNullOrEmpty(ban.Name)
-									   select ban.Name;
-
-						PaginationTools.SendPage(args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(nameBans),
-							new PaginationTools.Settings
-							{
-								HeaderFormat = "Bans ({0}/{1}):",
-								FooterFormat = "Type {0}ban list {{0}} for more.".SFormat(Specifier),
-								NothingToDisplayString = "There are currently no bans."
-							});
-					}
-					#endregion
-					return;
-				case "listip":
-					#region List IP bans
-					{
-						int pageNumber;
-						if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out pageNumber))
-						{
-							return;
-						}
-
-						List<Ban> bans = TShock.Bans.GetBans();
-
-						var ipBans = from ban in bans
-									 where String.IsNullOrEmpty(ban.Name)
-									 select ban.IP;
-
-						PaginationTools.SendPage(args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(ipBans),
-							new PaginationTools.Settings
-							{
-								HeaderFormat = "IP Bans ({0}/{1}):",
-								FooterFormat = "Type {0}ban listip {{0}} for more.".SFormat(Specifier),
-								NothingToDisplayString = "There are currently no IP bans."
-							});
-					}
-					#endregion
-					return;
 				default:
-					args.Player.SendErrorMessage("Invalid subcommand! Type {0}ban help for more information.", Specifier);
-					return;
+					break;
 			}
 		}
 
