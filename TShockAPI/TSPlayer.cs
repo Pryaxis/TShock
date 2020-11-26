@@ -1638,11 +1638,11 @@ namespace TShockAPI
 				return true;
 			if (force || !HasPermission(Permissions.immunetoban))
 			{
-				TShock.Bans.InsertBan($"{DB.Ban.Identifiers.IP}{IP}", reason, adminUserName, DateTime.UtcNow, DateTime.MaxValue);
-				TShock.Bans.InsertBan($"{DB.Ban.Identifiers.IP}{UUID}", reason, adminUserName, DateTime.UtcNow, DateTime.MaxValue);
+				TShock.Bans.InsertBan($"{Identifiers.IP}{IP}", reason, adminUserName, DateTime.UtcNow, DateTime.MaxValue);
+				TShock.Bans.InsertBan($"{Identifiers.IP}{UUID}", reason, adminUserName, DateTime.UtcNow, DateTime.MaxValue);
 				if (Account != null)
 				{
-					TShock.Bans.InsertBan($"{DB.Ban.Identifiers.Account}{Account.Name}", reason, adminUserName, DateTime.UtcNow, DateTime.MaxValue);
+					TShock.Bans.InsertBan($"{Identifiers.Account}{Account.Name}", reason, adminUserName, DateTime.UtcNow, DateTime.MaxValue);
 				}
 
 				Disconnect(string.Format("Banned: {0}", reason));
