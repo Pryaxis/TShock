@@ -188,10 +188,10 @@ namespace TShockAPI.DB
 				typeof (Int32?),
 				(s, i) => s.IsDBNull(i) ? null : (object)s.GetInt32(i)
 			},
-			/*{
+			{
 				typeof (Int64),
 				(s, i) => s.GetInt64(i)
-			},*/
+			},
 			{
 				typeof (Int64?),
 				(s, i) => s.IsDBNull(i) ? null : (object)s.GetInt64(i)
