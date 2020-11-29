@@ -71,7 +71,7 @@ namespace TShockAPI.DB
 			database = db;
 
 			var table = new SqlTable("PlayerBans",
-									new SqlColumn("Id", MySqlDbType.Int32) { Primary = true, AutoIncrement = true },
+									new SqlColumn("TicketNumber", MySqlDbType.Int32) { Primary = true, AutoIncrement = true },
 									new SqlColumn("Identifier", MySqlDbType.Text),
 									new SqlColumn("Reason", MySqlDbType.Text),
 									new SqlColumn("BanningUser", MySqlDbType.Text),
@@ -125,17 +125,17 @@ namespace TShockAPI.DB
 
 					if (!string.IsNullOrWhiteSpace(ip))
 					{
-						InsertBan($"{Identifiers.IP}{ip}", reason, banningUser, start, end);
+						InsertBan($"{Identifier.IP}{ip}", reason, banningUser, start, end);
 					}
 
 					if (!string.IsNullOrWhiteSpace(account))
 					{
-						InsertBan($"{Identifiers.Account}{account}", reason, banningUser, start, end);
+						InsertBan($"{Identifier.Account}{account}", reason, banningUser, start, end);
 					}
 
 					if (!string.IsNullOrWhiteSpace(uuid))
 					{
-						InsertBan($"{Identifiers.UUID}{uuid}", reason, banningUser, start, end);
+						InsertBan($"{Identifier.UUID}{uuid}", reason, banningUser, start, end);
 					}
 				}
 			}
@@ -248,12 +248,12 @@ namespace TShockAPI.DB
 			int rowsModified;
 			if (fullDelete)
 			{
-				rowsModified = database.Query("DELETE FROM PlayerBans WHERE Id=@0", uniqueId);
+				rowsModified = database.Query("DELETE FROM PlayerBans WHERE TicketNumber=@0", uniqueId);
 				_bans.Remove(uniqueId);
 			}
 			else
 			{
-				rowsModified = database.Query("UPDATE PlayerBans SET Expiration=@0 WHERE Id=@1", DateTime.UtcNow.Ticks, uniqueId);
+				rowsModified = database.Query("UPDATE PlayerBans SET Expiration=@0 WHERE TicketNumber=@1", DateTime.UtcNow.Ticks, uniqueId);
 				_bans[uniqueId].ExpirationDateTime = DateTime.UtcNow;
 			}
 
@@ -272,11 +272,11 @@ namespace TShockAPI.DB
 				return Bans[id];
 			}
 
-			using (var reader = database.QueryReader("SELECT * FROM PlayerBans WHERE Id=@0", id))
+			using (var reader = database.QueryReader("SELECT * FROM PlayerBans WHERE TicketNumber=@0", id))
 			{
 				if (reader.Read())
 				{
-					var uniqueId = reader.Get<int>("Id");
+					var uniqueId = reader.Get<int>("TicketNumber");
 					var identifier = reader.Get<string>("Identifier");
 					var reason = reader.Get<string>("Reason");
 					var banningUser = reader.Get<string>("BanningUser");
@@ -308,7 +308,7 @@ namespace TShockAPI.DB
 			{
 				while (reader.Read())
 				{
-					var uniqueId = reader.Get<int>("Id");
+					var uniqueId = reader.Get<int>("TicketNumber");
 					var ident = reader.Get<string>("Identifier");
 					var id = reader.Get<string>("Identifier");
 					var reason = reader.Get<string>("Reason");
@@ -342,7 +342,7 @@ namespace TShockAPI.DB
 			{
 				while (reader.Read())
 				{
-					var uniqueId = reader.Get<int>("Id");
+					var uniqueId = reader.Get<int>("TicketNumber");
 					var identifier = reader.Get<string>("Identifier");
 					var reason = reader.Get<string>("Reason");
 					var banningUser = reader.Get<string>("BanningUser");
@@ -374,7 +374,7 @@ namespace TShockAPI.DB
 				{
 					while (reader.Read())
 					{
-						var uniqueId = reader.Get<int>("Id");
+						var uniqueId = reader.Get<int>("TicketNumber");
 						var identifier = reader.Get<string>("Identifier");
 						var reason = reader.Get<string>("Reason");
 						var banningUser = reader.Get<string>("BanningUser");
@@ -528,26 +528,68 @@ namespace TShockAPI.DB
 	}
 
 	/// <summary>
-	/// Contains constants for different identifier types known to TShock
+	/// Describes an identifier used by the ban system
 	/// </summary>
-	public static class Identifiers
+	public class Identifier
 	{
 		/// <summary>
-		/// IP identifier prefix constant
+		/// Identifiers currently registered
 		/// </summary>
-		public const string IP = "ip:";
+		public static List<Identifier> Available = new List<Identifier>();
+
 		/// <summary>
-		/// UUID identifier prefix constant
+		/// The prefix of the identifier. E.g, 'ip:'
 		/// </summary>
-		public const string UUID = "uuid:";
+		public string Prefix { get; }
 		/// <summary>
-		/// Player name identifier prefix constant
+		/// Short description of the identifier and its basic usage
 		/// </summary>
-		public const string Name = "name:";
+		public string Description { get; set; }
+
 		/// <summary>
-		/// User account identifier prefix constant
+		/// IP identifier
 		/// </summary>
-		public const string Account = "acc:";
+		public static Identifier IP = Register("ip:", $"An identifier for an IP Address in octet format. Eg., '{"127.0.0.1".Color(Utils.RedHighlight)}'.");
+		/// <summary>
+		/// UUID identifier
+		/// </summary>
+		public static Identifier UUID = Register("uuid:", "An identifier for a UUID.");
+		/// <summary>
+		/// Player name identifier
+		/// </summary>
+		public static Identifier Name = Register("name:", "An identifier for a character name.");
+		/// <summary>
+		/// User account identifier
+		/// </summary>
+		public static Identifier Account = Register("acc:", "An identifier for a TShock User Account name.");
+
+		private Identifier(string prefix, string description)
+		{
+			Prefix = prefix;
+			Description = description;
+		}
+
+		/// <summary>
+		/// Returns the identifier's prefix
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString()
+		{
+			return Prefix;
+		}
+
+		/// <summary>
+		/// Registers a new identifier with the given prefix and description
+		/// </summary>
+		/// <param name="prefix"></param>
+		/// <param name="description"></param>
+		public static Identifier Register(string prefix, string description)
+		{
+			var ident = new Identifier(prefix, description);
+			Available.Add(ident);
+
+			return ident;
+		}
 	}
 
 	/// <summary>
