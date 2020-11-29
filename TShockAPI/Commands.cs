@@ -1452,12 +1452,6 @@ namespace TShockAPI
 
 				var player = players[0];
 
-				if (player.HasPermission(Permissions.immunetoban))
-				{
-					args.Player.SendErrorMessage("That player is immune to bans.");
-					return;
-				}
-
 				string banReason = null;
 				void DoBan(string ident)
 				{
@@ -1478,23 +1472,23 @@ namespace TShockAPI
 				{
 					if (player.Account != null)
 					{
-						DoBan($"{Identifiers.Account}{player.Account.Name}");
+						DoBan($"{Identifier.Account}{player.Account.Name}");
 					}
 				}
 
 				if (banUuid)
 				{
-					DoBan($"{Identifiers.UUID}{player.UUID}");					
+					DoBan($"{Identifier.UUID}{player.UUID}");					
 				}
 
 				if (banName)
 				{
-					DoBan($"{Identifiers.Name}{player.Name}");
+					DoBan($"{Identifier.Name}{player.Name}");
 				}
 
 				if (banIp)
 				{
-					DoBan($"{Identifiers.IP}{player.IP}");
+					DoBan($"{Identifier.IP}{player.IP}");
 				}
 
 				//Using the ban reason to determine if a ban actually happened or not is messy, but it works
