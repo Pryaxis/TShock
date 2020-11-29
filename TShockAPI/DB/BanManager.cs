@@ -224,7 +224,7 @@ namespace TShockAPI.DB
 
 			if (!args.Valid)
 			{
-				string message = $"Ban was invalidated: {(args.Message ?? "no further information provided.")}";
+				string message = $"Ban was not valid: {(args.Message ?? "no further information provided.")}";
 				return new AddBanResult { Message = message };
 			}
 
@@ -327,7 +327,6 @@ namespace TShockAPI.DB
 				{
 					var ticketNumber = reader.Get<int>("TicketNumber");
 					var ident = reader.Get<string>("Identifier");
-					var id = reader.Get<string>("Identifier");
 					var reason = reader.Get<string>("Reason");
 					var banningUser = reader.Get<string>("BanningUser");
 					var date = reader.Get<long>("Date");
@@ -481,7 +480,7 @@ namespace TShockAPI.DB
 	}
 
 	/// <summary>
-	/// Event args used for formalized bans
+	/// Event args used for completed bans
 	/// </summary>
 	public class BanEventArgs : EventArgs
 	{
