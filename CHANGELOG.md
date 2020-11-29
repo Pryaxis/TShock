@@ -13,10 +13,10 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change.
 
 ## Upcoming Changes
-* Overhauled Bans system. Bans are now based on 'identifiers'.(@QuiCM)
-  * The old Bans table (`Bans`) has been deprecated. New bans will go in `PlayerBans`. Use `/ban convert` to convert to the new system. 
+* Overhauled Bans system. Bans are now based on 'identifiers'. (@QuiCM)
+  * The old Bans table (`Bans`) has been deprecated. New bans will go in `PlayerBans`. Old bans will be converted automatically to the new system.
   * All old ban routes in REST are now redirected. Please use `/v3/bans/*` for REST-based ban management.
-  * TShock recognizes and acts upon 4 main identifiers: UUID, IP, Player Name, Account name. This can be extended by plugins.
+  * TShock recognizes and acts upon 4 main identifiers: UUID, IP, Player Name, Account name. This can be extended by plugins. New identifiers can be added to the `ban help identifiers` output by registering them in `TShockAPI.DB.Identifier.Register(string, string)`
   * By default, bans are no longer removed upon expiry or 'deletion'. Instead, they remain in the system. A new ban for an indentifier can be added once an existing ban has expired.
 * Server Console now understands Terraria color codes (e.g., `[c/FF00FF:Words]`) and prints the colored text to the console. Note that console colors are limited and thus only approximations. (@QuiCM)
 * Fixed a bug in `/sudo` that prevented quoted arguments being forwarded properly. Example: `/sudo /user group "user name" "user group"` should now work correctly. (@QuiCM)
