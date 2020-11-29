@@ -479,7 +479,7 @@ namespace TShockAPI
 			UserAccounts.UpdateLogin(args.Player.Account);
 
 			//Check if this user has a recorded ban on their account
-			var ban = Bans.Bans.FirstOrDefault(b => b.Value.Identifier == $"{Identifiers.Account}{args.Player.Account.Name}" && Bans.IsValidBan(b.Value, args.Player)).Value;
+			var ban = Bans.Bans.FirstOrDefault(b => b.Value.Identifier == $"{Identifier.Account}{args.Player.Account.Name}" && Bans.IsValidBan(b.Value, args.Player)).Value;
 
 			//If they do and the ban is still valid, kick them
 			if (ban != null && !args.Player.HasPermission(Permissions.immunetoban))
@@ -1206,9 +1206,9 @@ namespace TShockAPI
 
 			List<string> identifiers = new List<string>
 			{
-				$"{Identifiers.UUID}{player.UUID}",
-				$"{Identifiers.Name}{player.Name}",
-				$"{Identifiers.IP}{player.IP}"
+				$"{Identifier.UUID}{player.UUID}",
+				$"{Identifier.Name}{player.Name}",
+				$"{Identifier.IP}{player.IP}"
 			};
 
 			Ban ban = Bans.Bans.FirstOrDefault(b => identifiers.Contains(b.Value.Identifier) && Bans.IsValidBan(b.Value, player)).Value;

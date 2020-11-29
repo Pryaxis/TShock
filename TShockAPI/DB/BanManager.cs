@@ -34,7 +34,7 @@ namespace TShockAPI.DB
 		private Dictionary<int, Ban> _bans;
 
 		/// <summary>
-		/// Dictionary of Bans, keyed on unique ban ID
+		/// Dictionary of Bans, keyed on ban ticket number
 		/// </summary>
 		public Dictionary<int, Ban> Bans
 		{
@@ -42,7 +42,7 @@ namespace TShockAPI.DB
 			{
 				if (_bans == null)
 				{
-					_bans = RetrieveAllBans().ToDictionary(b => b.UniqueId);
+					_bans = RetrieveAllBans().ToDictionary(b => b.TicketNumber);
 				}
 
 				return _bans;
@@ -92,6 +92,8 @@ namespace TShockAPI.DB
 				throw new Exception("Could not find a database library (probably Sqlite3.dll)");
 			}
 
+			TryConvertBans();
+
 			OnBanValidate += BanValidateCheck;
 			OnBanPreAdd += BanAddedCheck;
 		}
@@ -99,45 +101,60 @@ namespace TShockAPI.DB
 		/// <summary>
 		/// Converts bans from the old ban system to the new.
 		/// </summary>
-		public void ConvertBans()
+		public void TryConvertBans()
 		{
-			using (var reader = database.QueryReader("SELECT * FROM Bans"))
+			int res;
+			if (database.GetSqlType() == SqlType.Mysql)
 			{
-				while (reader.Read())
+				res = database.QueryScalar<int>("SELECT COUNT(name) FROM information_schema.tables WHERE table_schema = @0 and table_name = 'Bans'", TShock.Config.MySqlDbName);
+			}
+			else
+			{
+				res = database.QueryScalar<int>("SELECT COUNT(name) FROM sqlite_master WHERE type='table' AND name = 'Bans'");
+			}
+
+			if (res != 0)
+			{
+				using (var reader = database.QueryReader("SELECT * FROM Bans"))
 				{
-					var ip = reader.Get<string>("IP");
-					var uuid = reader.Get<string>("UUID");
-					var account = reader.Get<string>("AccountName");
-					var reason = reader.Get<string>("Reason");
-					var banningUser = reader.Get<string>("BanningUser");
-					var date = reader.Get<string>("Date");
-					var expiration = reader.Get<string>("Expiration");
-
-					if (!DateTime.TryParse(date, out DateTime start))
+					while (reader.Read())
 					{
-						start = DateTime.UtcNow;
-					}
+						var ip = reader.Get<string>("IP");
+						var uuid = reader.Get<string>("UUID");
+						var account = reader.Get<string>("AccountName");
+						var reason = reader.Get<string>("Reason");
+						var banningUser = reader.Get<string>("BanningUser");
+						var date = reader.Get<string>("Date");
+						var expiration = reader.Get<string>("Expiration");
 
-					if (!DateTime.TryParse(expiration, out DateTime end))
-					{
-						end = DateTime.MaxValue;
-					}
+						if (!DateTime.TryParse(date, out DateTime start))
+						{
+							start = DateTime.UtcNow;
+						}
 
-					if (!string.IsNullOrWhiteSpace(ip))
-					{
-						InsertBan($"{Identifier.IP}{ip}", reason, banningUser, start, end);
-					}
+						if (!DateTime.TryParse(expiration, out DateTime end))
+						{
+							end = DateTime.MaxValue;
+						}
 
-					if (!string.IsNullOrWhiteSpace(account))
-					{
-						InsertBan($"{Identifier.Account}{account}", reason, banningUser, start, end);
-					}
+						if (!string.IsNullOrWhiteSpace(ip))
+						{
+							InsertBan($"{Identifier.IP}{ip}", reason, banningUser, start, end);
+						}
 
-					if (!string.IsNullOrWhiteSpace(uuid))
-					{
-						InsertBan($"{Identifier.UUID}{uuid}", reason, banningUser, start, end);
+						if (!string.IsNullOrWhiteSpace(account))
+						{
+							InsertBan($"{Identifier.Account}{account}", reason, banningUser, start, end);
+						}
+
+						if (!string.IsNullOrWhiteSpace(uuid))
+						{
+							InsertBan($"{Identifier.UUID}{uuid}", reason, banningUser, start, end);
+						}
 					}
 				}
+
+				database.Query("DROP TABLE 'Bans'");
 			}
 		}
 
@@ -222,15 +239,15 @@ namespace TShockAPI.DB
 				query += "SELECT CAST(last_insert_rowid() as INT);";
 			}
 
-			int uniqueId = database.QueryScalar<int>(query, identifier, reason, banningUser, fromDate.Ticks, toDate.Ticks);
+			int ticketId = database.QueryScalar<int>(query, identifier, reason, banningUser, fromDate.Ticks, toDate.Ticks);
 
-			if (uniqueId == 0)
+			if (ticketId == 0)
 			{
 				return new AddBanResult { Message = "Database insert failed." };
 			}
 
-			Ban b = new Ban(uniqueId, identifier, reason, banningUser, fromDate, toDate);
-			_bans.Add(uniqueId, b);
+			Ban b = new Ban(ticketId, identifier, reason, banningUser, fromDate, toDate);
+			_bans.Add(ticketId, b);
 
 			OnBanPostAdd?.Invoke(this, new BanEventArgs { Ban = b });
 
@@ -240,28 +257,28 @@ namespace TShockAPI.DB
 		/// <summary>
 		/// Attempts to remove a ban. Returns true if the ban was removed or expired. False if the ban could not be removed or expired
 		/// </summary>
-		/// <param name="uniqueId">The unique ID of the ban to change</param>
+		/// <param name="ticketNumber">The ticket number of the ban to change</param>
 		/// <param name="fullDelete">If true, deletes the ban from the database. If false, marks the expiration time as now, rendering the ban expired. Defaults to false</param>
 		/// <returns></returns>
-		public bool RemoveBan(int uniqueId, bool fullDelete = false)
+		public bool RemoveBan(int ticketNumber, bool fullDelete = false)
 		{
 			int rowsModified;
 			if (fullDelete)
 			{
-				rowsModified = database.Query("DELETE FROM PlayerBans WHERE TicketNumber=@0", uniqueId);
-				_bans.Remove(uniqueId);
+				rowsModified = database.Query("DELETE FROM PlayerBans WHERE TicketNumber=@0", ticketNumber);
+				_bans.Remove(ticketNumber);
 			}
 			else
 			{
-				rowsModified = database.Query("UPDATE PlayerBans SET Expiration=@0 WHERE TicketNumber=@1", DateTime.UtcNow.Ticks, uniqueId);
-				_bans[uniqueId].ExpirationDateTime = DateTime.UtcNow;
+				rowsModified = database.Query("UPDATE PlayerBans SET Expiration=@0 WHERE TicketNumber=@1", DateTime.UtcNow.Ticks, ticketNumber);
+				_bans[ticketNumber].ExpirationDateTime = DateTime.UtcNow;
 			}
 
 			return rowsModified > 0;
 		}
 
 		/// <summary>
-		/// Retrieves a single ban from a unique ban ID
+		/// Retrieves a single ban from a ban's ticket number
 		/// </summary>
 		/// <param name="id"></param>
 		/// <returns></returns>
@@ -276,14 +293,14 @@ namespace TShockAPI.DB
 			{
 				if (reader.Read())
 				{
-					var uniqueId = reader.Get<int>("TicketNumber");
+					var ticketNumber = reader.Get<int>("TicketNumber");
 					var identifier = reader.Get<string>("Identifier");
 					var reason = reader.Get<string>("Reason");
 					var banningUser = reader.Get<string>("BanningUser");
 					var date = reader.Get<long>("Date");
 					var expiration = reader.Get<long>("Expiration");
 
-					return new Ban(uniqueId, identifier, reason, banningUser, date, expiration);
+					return new Ban(ticketNumber, identifier, reason, banningUser, date, expiration);
 				}
 			}
 
@@ -308,7 +325,7 @@ namespace TShockAPI.DB
 			{
 				while (reader.Read())
 				{
-					var uniqueId = reader.Get<int>("TicketNumber");
+					var ticketNumber = reader.Get<int>("TicketNumber");
 					var ident = reader.Get<string>("Identifier");
 					var id = reader.Get<string>("Identifier");
 					var reason = reader.Get<string>("Reason");
@@ -316,7 +333,7 @@ namespace TShockAPI.DB
 					var date = reader.Get<long>("Date");
 					var expiration = reader.Get<long>("Expiration");
 
-					yield return new Ban(uniqueId, ident, reason, banningUser, date, expiration);
+					yield return new Ban(ticketNumber, ident, reason, banningUser, date, expiration);
 				}
 			}
 		}
@@ -342,14 +359,14 @@ namespace TShockAPI.DB
 			{
 				while (reader.Read())
 				{
-					var uniqueId = reader.Get<int>("TicketNumber");
+					var ticketNumber = reader.Get<int>("TicketNumber");
 					var identifier = reader.Get<string>("Identifier");
 					var reason = reader.Get<string>("Reason");
 					var banningUser = reader.Get<string>("BanningUser");
 					var date = reader.Get<long>("Date");
 					var expiration = reader.Get<long>("Expiration");
 
-					yield return new Ban(uniqueId, identifier, reason, banningUser, date, expiration);
+					yield return new Ban(ticketNumber, identifier, reason, banningUser, date, expiration);
 				}
 			}
 		}
@@ -374,14 +391,14 @@ namespace TShockAPI.DB
 				{
 					while (reader.Read())
 					{
-						var uniqueId = reader.Get<int>("TicketNumber");
+						var ticketNumber = reader.Get<int>("TicketNumber");
 						var identifier = reader.Get<string>("Identifier");
 						var reason = reader.Get<string>("Reason");
 						var banningUser = reader.Get<string>("BanningUser");
 						var date = reader.Get<long>("Date");
 						var expiration = reader.Get<long>("Expiration");
 
-						var ban = new Ban(uniqueId, identifier, reason, banningUser, date, expiration);
+						var ban = new Ban(ticketNumber, identifier, reason, banningUser, date, expiration);
 						banlist.Add(ban);
 					}
 				}
@@ -443,9 +460,9 @@ namespace TShockAPI.DB
 		/// </summary>
 		AddedOldestToNewest,
 		/// <summary>
-		/// Bans will be sorted by their unique ID
+		/// Bans will be sorted by their ticket number
 		/// </summary>
-		UniqueId
+		TicketNumber
 	}
 
 	/// <summary>
@@ -600,7 +617,7 @@ namespace TShockAPI.DB
 		/// <summary>
 		/// A unique ID assigned to this ban
 		/// </summary>
-		public int UniqueId { get; set; }
+		public int TicketNumber { get; set; }
 
 		/// <summary>
 		/// An identifiable piece of information to ban
@@ -658,14 +675,14 @@ namespace TShockAPI.DB
 		/// <summary>
 		/// Initializes a new instance of the <see cref="TShockAPI.DB.Ban"/> class.
 		/// </summary>
-		/// <param name="uniqueId">Unique ID assigned to the ban</param>
+		/// <param name="ticketNumber">Unique ID assigned to the ban</param>
 		/// <param name="identifier">Identifier to apply the ban to</param>
 		/// <param name="reason">Reason for the ban</param>
 		/// <param name="banningUser">Account name that executed the ban</param>
 		/// <param name="start">System ticks at which the ban began</param>
 		/// <param name="end">System ticks at which the ban will end</param>
-		public Ban(int uniqueId, string identifier, string reason, string banningUser, long start, long end)
-			: this(uniqueId, identifier, reason, banningUser, new DateTime(start), new DateTime(end))
+		public Ban(int ticketNumber, string identifier, string reason, string banningUser, long start, long end)
+			: this(ticketNumber, identifier, reason, banningUser, new DateTime(start), new DateTime(end))
 		{
 		}
 
@@ -673,15 +690,15 @@ namespace TShockAPI.DB
 		/// <summary>
 		/// Initializes a new instance of the <see cref="TShockAPI.DB.Ban"/> class.
 		/// </summary>
-		/// <param name="uniqueId">Unique ID assigned to the ban</param>
+		/// <param name="ticketNumber">Unique ID assigned to the ban</param>
 		/// <param name="identifier">Identifier to apply the ban to</param>
 		/// <param name="reason">Reason for the ban</param>
 		/// <param name="banningUser">Account name that executed the ban</param>
 		/// <param name="start">DateTime at which the ban will start</param>
 		/// <param name="end">DateTime at which the ban will end</param>
-		public Ban(int uniqueId, string identifier, string reason, string banningUser, DateTime start, DateTime end)
+		public Ban(int ticketNumber, string identifier, string reason, string banningUser, DateTime start, DateTime end)
 		{
-			UniqueId = uniqueId;
+			TicketNumber = ticketNumber;
 			Identifier = identifier;
 			Reason = reason;
 			BanningUser = banningUser;
