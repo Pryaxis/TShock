@@ -1277,9 +1277,6 @@ namespace TShockAPI
 			//						Displays a paginated list of bans
 			// ban details <ban ID>
 			//						Target is expected to be a ban Unique ID
-			// ban convert
-			// ban-convert-confirm
-			//						Converts all old bans to new ban system.
 
 			void Help()
 			{
@@ -1580,19 +1577,6 @@ namespace TShockAPI
 
 				DisplayBanDetails(ban);
 			}
-
-			void ConvertBans()
-			{
-				args.Player.SendWarningMessage("This will convert all bans from the old ban system to the new identifier-based bans.");
-				args.Player.SendWarningMessage($"If you are sure you wish to proceed, please execute {"ban-convert-confirm".Color(Utils.WhiteHighlight)} to continue.");
-				args.Player.AddResponse("ban-convert-confirm", (obj) =>
-				{
-					TShock.Bans.TryConvertBans();
-
-					var cmdArgs = (CommandArgs)obj;
-					cmdArgs.Player.SendSuccessMessage("Bans have been converted.");
-				});
-			}
 			
 			string subcmd = args.Parameters.Count == 0 ? "help" : args.Parameters[0].ToLower();
 			switch (subcmd)
@@ -1615,10 +1599,6 @@ namespace TShockAPI
 
 				case "details":
 					BanDetails();
-					break;
-
-				case "convert":
-					ConvertBans();
 					break;
 
 				default:
