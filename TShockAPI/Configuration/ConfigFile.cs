@@ -8,12 +8,12 @@ namespace TShockAPI.Configuration
 	/// Implements <see cref="IConfigFile{TSettings}"/> to provide a generic config file containing some settings
 	/// </summary>
 	/// <typeparam name="TSettings"></typeparam>
-	public class ConfigFile<TSettings> : IConfigFile<TSettings>
+	public class ConfigFile<TSettings> : IConfigFile<TSettings> where TSettings : new()
 	{
 		/// <summary>
 		/// Settings managed by this config file
 		/// </summary>
-		public virtual TSettings Settings { get; set; }
+		public virtual TSettings Settings { get; set; } = new TSettings();
 
 		/// <summary>
 		/// Action invoked when the config file is read

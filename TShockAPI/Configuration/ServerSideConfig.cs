@@ -74,11 +74,6 @@ namespace TShockAPI.Configuration
 	public class ServerSideConfig : ConfigFile<SscSettings>
 	{
 		/// <summary>
-		/// Settings managed by this configuration object
-		/// </summary>
-		public override SscSettings Settings { get; set; } = new SscSettings();
-
-		/// <summary>
 		/// Dumps all configuration options to a text file in Markdown format
 		/// </summary>
 		public static void DumpDescriptions()

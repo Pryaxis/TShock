@@ -593,11 +593,6 @@ namespace TShockAPI.Configuration
 	public class TShockConfig : ConfigFile<TShockSettings>
 	{
 		/// <summary>
-		/// TShock settings managed by this configuration object
-		/// </summary>
-		public override TShockSettings Settings { get; set; } = new TShockSettings();
-
-		/// <summary>
 		/// Upgrades the configuration file from the old format if required, then reads and returns the currently configured <see cref="TShockSettings"/>
 		/// </summary>
 		/// <param name="json"></param>
