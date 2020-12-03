@@ -21,6 +21,9 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Server Console now understands Terraria color codes (e.g., `[c/FF00FF:Words]`) and prints the colored text to the console. Note that console colors are limited and thus only approximations. (@QuiCM)
 * Fixed a bug in `/sudo` that prevented quoted arguments being forwarded properly. Example: `/sudo /user group "user name" "user group"` should now work correctly. (@QuiCM)
 * Shutting down the server should now correctly display the shutdown message to players rather than 'Lost connection'. (@QuiCM)
+* For developers: TShock now provides `IConfigFile<TSettings>` and `ConfigFile<TSettings>` under the `TShockAPI.Configuration` namespace. No more needing to copy/pasting the same Read/Write code for your plugin configs. (@QuiCM)
+  * `ConfigFile<TSettings>` implements `Read` and `Write` for you.
+  * Check `TShockConfig` and `ServerSideConfig` for examples on how to use.
 
 ## TShock 4.4.0 (Pre-release 14)
 * Terraria v1.4.1.2 (Thanks @Patrikkk and @DeathCradle <3)
