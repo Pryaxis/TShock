@@ -38,12 +38,12 @@ using Terraria.Localization;
 using TerrariaApi.Server;
 using TShockAPI.DB;
 using TShockAPI.Hooks;
-using TShockAPI.ServerSideCharacters;
 using Terraria.Utilities;
 using Microsoft.Xna.Framework;
 using TShockAPI.Sockets;
 using TShockAPI.CLI;
 using TShockAPI.Localization;
+using TShockAPI.Configuration;
 
 namespace TShockAPI
 {
@@ -101,7 +101,7 @@ namespace TShockAPI
 		/// <summary>Contains the information about what research has been performed in Journey mode.</summary>
 		public static ResearchDatastore ResearchDatastore;
 		/// <summary>Config - Static reference to the config system, for accessing values set in users' config files.</summary>
-		public static ConfigFile Config { get; set; }
+		public static TShockConfig Config { get; set; }
 		/// <summary>ServerSideCharacterConfig - Static reference to the server side character config, for accessing values set by users to modify SSC.</summary>
 		public static ServerSideConfig ServerSideCharacterConfig;
 		/// <summary>DB - Static reference to the database.</summary>
@@ -180,11 +180,11 @@ namespace TShockAPI
 		public TShock(Main game)
 			: base(game)
 		{
-			Config = new ConfigFile();
+			Config = new TShockConfig();
 			ServerSideCharacterConfig = new ServerSideConfig();
-			ServerSideCharacterConfig.StartingInventory.Add(new NetItem(-15, 1, 0));
-			ServerSideCharacterConfig.StartingInventory.Add(new NetItem(-13, 1, 0));
-			ServerSideCharacterConfig.StartingInventory.Add(new NetItem(-16, 1, 0));
+			ServerSideCharacterConfig.Settings.StartingInventory.Add(new NetItem(-15, 1, 0));
+			ServerSideCharacterConfig.Settings.StartingInventory.Add(new NetItem(-13, 1, 0));
+			ServerSideCharacterConfig.Settings.StartingInventory.Add(new NetItem(-16, 1, 0));
 			Order = 0;
 			instance = this;
 		}
@@ -221,10 +221,10 @@ namespace TShockAPI
 				if (!Directory.Exists(SavePath))
 					Directory.CreateDirectory(SavePath);
 
-				ConfigFile.ConfigRead += OnConfigRead;
+				TShockConfig.OnConfigRead += OnConfigRead;
 				FileTools.SetupConfig();
 
-				Main.ServerSideCharacter = ServerSideCharacterConfig.Enabled;
+				Main.ServerSideCharacter = ServerSideCharacterConfig.Settings.Enabled;
 
 				//TSAPI previously would do this automatically, but the vanilla server wont
 				if (Netplay.ServerIP == null)
@@ -233,7 +233,7 @@ namespace TShockAPI
 				DateTime now = DateTime.Now;
 				// Log path was not already set by the command line parameter?
 				if (LogPath == LogPathDefault)
-					LogPath = Config.LogPath;
+					LogPath = Config.Settings.LogPath;
 				try
 				{
 					logFilename = Path.Combine(LogPath, now.ToString(LogFormat) + ".log");
@@ -262,25 +262,25 @@ namespace TShockAPI
 			// Further exceptions are written to TShock's log from now on.
 			try
 			{
-				if (Config.StorageType.ToLower() == "sqlite")
+				if (Config.Settings.StorageType.ToLower() == "sqlite")
 				{
-					string sql = Path.Combine(SavePath, Config.SqliteDBPath);
+					string sql = Path.Combine(SavePath, Config.Settings.SqliteDBPath);
 					Directory.CreateDirectory(Path.GetDirectoryName(sql));
 					DB = new SqliteConnection(string.Format("uri=file://{0},Version=3", sql));
 				}
-				else if (Config.StorageType.ToLower() == "mysql")
+				else if (Config.Settings.StorageType.ToLower() == "mysql")
 				{
 					try
 					{
-						var hostport = Config.MySqlHost.Split(':');
+						var hostport = Config.Settings.MySqlHost.Split(':');
 						DB = new MySqlConnection();
 						DB.ConnectionString =
 							String.Format("Server={0}; Port={1}; Database={2}; Uid={3}; Pwd={4};",
 								hostport[0],
 								hostport.Length > 1 ? hostport[1] : "3306",
-								Config.MySqlDbName,
-								Config.MySqlUsername,
-								Config.MySqlPassword
+								Config.Settings.MySqlDbName,
+								Config.Settings.MySqlUsername,
+								Config.Settings.MySqlPassword
 								);
 					}
 					catch (MySqlException ex)
@@ -294,7 +294,7 @@ namespace TShockAPI
 					throw new Exception("Invalid storage type");
 				}
 
-				if (Config.UseSqlLogs)
+				if (Config.Settings.UseSqlLogs)
 					Log = new SqlLog(DB, logFilename, LogClear);
 				else
 					Log = new TextLog(logFilename, LogClear);
@@ -312,8 +312,8 @@ namespace TShockAPI
 				HandleCommandLinePostConfigLoad(Environment.GetCommandLineArgs());
 
 				Backups = new BackupManager(Path.Combine(SavePath, "backups"));
-				Backups.KeepFor = Config.BackupKeepFor;
-				Backups.Interval = Config.BackupInterval;
+				Backups.KeepFor = Config.Settings.BackupKeepFor;
+				Backups.Interval = Config.Settings.BackupInterval;
 				Bans = new BanManager(DB);
 				Warps = new WarpManager(DB);
 				Regions = new RegionManager(DB);
@@ -324,7 +324,7 @@ namespace TShockAPI
 				RememberedPos = new RememberedPosManager(DB);
 				CharacterDB = new CharacterManager(DB);
 				ResearchDatastore = new ResearchDatastore(DB);
-				RestApi = new SecureRest(Netplay.ServerIP, Config.RestApiPort);
+				RestApi = new SecureRest(Netplay.ServerIP, Config.Settings.RestApiPort);
 				RestManager = new RestManager(RestApi);
 				RestManager.RegisterRestfulCommands();
 				Bouncer = new Bouncer();
@@ -332,7 +332,7 @@ namespace TShockAPI
 				ItemBans = new ItemBans(this, DB);
 
 				var geoippath = "GeoIP.dat";
-				if (Config.EnableGeoIP && File.Exists(geoippath))
+				if (Config.Settings.EnableGeoIP && File.Exists(geoippath))
 					Geo = new GeoIPCountry(geoippath);
 
 				Log.ConsoleInfo("TShock {0} ({1}) now running.", Version, VersionCodename);
@@ -368,14 +368,13 @@ namespace TShockAPI
 
 				EnglishLanguage.Initialize();
 
-				if (Config.RestApiEnabled)
+				if (Config.Settings.RestApiEnabled)
 					RestApi.Start();
 
-				Log.ConsoleInfo("AutoSave " + (Config.AutoSave ? "Enabled" : "Disabled"));
+				Log.ConsoleInfo("AutoSave " + (Config.Settings.AutoSave ? "Enabled" : "Disabled"));
 				Log.ConsoleInfo("Backups " + (Backups.Interval > 0 ? "Enabled" : "Disabled"));
 
-				if (Initialized != null)
-					Initialized();
+				Initialized?.Invoke();
 
 				Log.ConsoleInfo("Welcome to TShock for Terraria!");
 				Log.ConsoleInfo("TShock comes with no warranty & is free software.");
@@ -559,7 +558,7 @@ namespace TShockAPI
 
 			if (args.Chest != null)
 			{
-				if (Config.RegionProtectChests && !Regions.CanBuild((int)args.WorldPosition.X, (int)args.WorldPosition.Y, tsplr))
+				if (Config.Settings.RegionProtectChests && !Regions.CanBuild((int)args.WorldPosition.X, (int)args.WorldPosition.Y, tsplr))
 				{
 					args.Handled = true;
 					return;
@@ -580,7 +579,7 @@ namespace TShockAPI
 			if (args.Handled)
 				return;
 
-			if (Config.ForceXmas)
+			if (Config.Settings.ForceXmas)
 			{
 				args.Xmas = true;
 				args.Handled = true;
@@ -594,7 +593,7 @@ namespace TShockAPI
 			if (args.Handled)
 				return;
 
-			if (Config.ForceHalloween)
+			if (Config.Settings.ForceHalloween)
 			{
 				args.Halloween = true;
 				args.Handled = true;
@@ -630,7 +629,7 @@ namespace TShockAPI
 
 			if (e.IsTerminating)
 			{
-				if (Main.worldPathName != null && Config.SaveWorldOnCrash)
+				if (Main.worldPathName != null && Config.Settings.SaveWorldOnCrash)
 				{
 					Main.ActiveWorldFileData._path += ".crash";
 					SaveManager.Instance.SaveWorld();
@@ -768,7 +767,7 @@ namespace TShockAPI
 						if (int.TryParse(p, out port))
 						{
 							Netplay.ListenPort = port;
-							Config.ServerPort = port;
+							Config.Settings.ServerPort = port;
 							OverridePort = true;
 							Log.ConsoleInfo("Port overridden by startup argument. Set to " + port);
 						}
@@ -783,7 +782,7 @@ namespace TShockAPI
 						bool enabled;
 						if (bool.TryParse(e, out enabled))
 						{
-							Config.RestApiEnabled = enabled;
+							Config.Settings.RestApiEnabled = enabled;
 							Console.WriteLine("Startup parameter overrode REST enable.");
 						}
 					})
@@ -792,7 +791,7 @@ namespace TShockAPI
 					int restPort;
 					if (int.TryParse(p, out restPort))
 					{
-						Config.RestApiPort = restPort;
+						Config.Settings.RestApiPort = restPort;
 						Console.WriteLine("Startup parameter overrode REST port.");
 					}
 				})
@@ -801,7 +800,7 @@ namespace TShockAPI
 						int slots;
 						if (int.TryParse(p, out slots))
 						{
-							Config.MaxSlots = slots;
+							Config.Settings.MaxSlots = slots;
 							Console.WriteLine("Startup parameter overrode maximum player slot configuration value.");
 						}
 					});
@@ -826,7 +825,7 @@ namespace TShockAPI
 				//CLI defined password overrides a config password
 				_cliPassword = Netplay.ServerPassword;
 				Netplay.ServerPassword = "";
-				Config.ServerPassword = _cliPassword;
+				Config.Settings.ServerPassword = _cliPassword;
 			}
 
 			// Disable the auth system if "setup.lock" is present or a user account already exists
@@ -873,9 +872,9 @@ namespace TShockAPI
 			Utils.ComputeMaxStyles();
 			Utils.FixChestStacks();
 
-			if (Config.UseServerName)
+			if (Config.Settings.UseServerName)
 			{
-				Main.worldName = Config.ServerName;
+				Main.worldName = Config.Settings.ServerName;
 			}
 
 			UpdateManager = new UpdateManager();
@@ -900,7 +899,7 @@ namespace TShockAPI
 				LastCheck = DateTime.UtcNow;
 			}
 
-			if (Main.ServerSideCharacter && (DateTime.UtcNow - LastSave).TotalMinutes >= ServerSideCharacterConfig.ServerSideCharacterSave)
+			if (Main.ServerSideCharacter && (DateTime.UtcNow - LastSave).TotalMinutes >= ServerSideCharacterConfig.Settings.ServerSideCharacterSave)
 			{
 				foreach (TSPlayer player in Players)
 				{
@@ -918,11 +917,11 @@ namespace TShockAPI
 		/// <summary>OnSecondUpdate - Called effectively every second for all time based checks.</summary>
 		private void OnSecondUpdate()
 		{
-			DisableFlags flags = Config.DisableSecondUpdateLogs ? DisableFlags.WriteToConsole : DisableFlags.WriteToLogAndConsole;
+			DisableFlags flags = Config.Settings.DisableSecondUpdateLogs ? DisableFlags.WriteToConsole : DisableFlags.WriteToLogAndConsole;
 
-			if (Config.ForceTime != "normal")
+			if (Config.Settings.ForceTime != "normal")
 			{
-				switch (Config.ForceTime)
+				switch (Config.Settings.ForceTime)
 				{
 					case "day":
 						TSPlayer.Server.SetTime(true, 27000.0);
@@ -939,7 +938,7 @@ namespace TShockAPI
 				{
 					if (player.TilesDestroyed != null)
 					{
-						if (player.TileKillThreshold >= Config.TileKillThreshold)
+						if (player.TileKillThreshold >= Config.Settings.TileKillThreshold)
 						{
 							player.Disable("Reached TileKill threshold.", flags);
 							TSPlayer.Server.RevertTiles(player.TilesDestroyed);
@@ -956,7 +955,7 @@ namespace TShockAPI
 
 					if (player.TilesCreated != null)
 					{
-						if (player.TilePlaceThreshold >= Config.TilePlaceThreshold)
+						if (player.TilePlaceThreshold >= Config.Settings.TilePlaceThreshold)
 						{
 							player.Disable("Reached TilePlace threshold", flags);
 							lock (player.TilesCreated)
@@ -1000,7 +999,7 @@ namespace TShockAPI
 						}
 					}
 
-					if (player.TileLiquidThreshold >= Config.TileLiquidThreshold)
+					if (player.TileLiquidThreshold >= Config.Settings.TileLiquidThreshold)
 					{
 						player.Disable("Reached TileLiquid threshold", flags);
 					}
@@ -1009,7 +1008,7 @@ namespace TShockAPI
 						player.TileLiquidThreshold = 0;
 					}
 
-					if (player.ProjectileThreshold >= Config.ProjectileThreshold)
+					if (player.ProjectileThreshold >= Config.Settings.ProjectileThreshold)
 					{
 						player.Disable("Reached projectile threshold", flags);
 					}
@@ -1018,7 +1017,7 @@ namespace TShockAPI
 						player.ProjectileThreshold = 0;
 					}
 
-					if (player.PaintThreshold >= Config.TilePaintThreshold)
+					if (player.PaintThreshold >= Config.Settings.TilePaintThreshold)
 					{
 						player.Disable("Reached paint threshold", flags);
 					}
@@ -1027,7 +1026,7 @@ namespace TShockAPI
 						player.PaintThreshold = 0;
 					}
 
-					if (player.HealOtherThreshold >= TShock.Config.HealOtherThreshold)
+					if (player.HealOtherThreshold >= TShock.Config.Settings.HealOtherThreshold)
 					{
 						player.Disable("Reached HealOtherPlayer threshold", flags);
 					}
@@ -1093,19 +1092,19 @@ namespace TShockAPI
 		/// <returns>True if allowed, otherwise false</returns>
 		private bool OnCreep(int tileType)
 		{
-			if (!Config.AllowCrimsonCreep && (tileType == TileID.Dirt || tileType == TileID.CrimsonGrass
+			if (!Config.Settings.AllowCrimsonCreep && (tileType == TileID.Dirt || tileType == TileID.CrimsonGrass
 				|| TileID.Sets.Crimson[tileType]))
 			{
 				return false;
 			}
 
-			if (!Config.AllowCorruptionCreep && (tileType == TileID.Dirt || tileType == TileID.CorruptThorns
+			if (!Config.Settings.AllowCorruptionCreep && (tileType == TileID.Dirt || tileType == TileID.CorruptThorns
 				|| TileID.Sets.Corrupt[tileType]))
 			{
 				return false;
 			}
 
-			if (!Config.AllowHallowCreep && (TileID.Sets.Hallow[tileType]))
+			if (!Config.Settings.AllowHallowCreep && (TileID.Sets.Hallow[tileType]))
 			{
 				return false;
 			}
@@ -1117,7 +1116,7 @@ namespace TShockAPI
 		/// <param name="args">args - The StatueSpawnEventArgs object.</param>
 		private void OnStatueSpawn(StatueSpawnEventArgs args)
 		{
-			if (args.Within200 < Config.StatueSpawn200 && args.Within600 < Config.StatueSpawn600 && args.WorldWide < Config.StatueSpawnWorld)
+			if (args.Within200 < Config.Settings.StatueSpawn200 && args.Within600 < Config.Settings.StatueSpawn600 && args.WorldWide < Config.Settings.StatueSpawnWorld)
 			{
 				args.Handled = true;
 			}
@@ -1140,16 +1139,16 @@ namespace TShockAPI
 
 			var player = new TSPlayer(args.Who);
 
-			if (Utils.GetActivePlayerCount() + 1 > Config.MaxSlots + Config.ReservedSlots)
+			if (Utils.GetActivePlayerCount() + 1 > Config.Settings.MaxSlots + Config.Settings.ReservedSlots)
 			{
-				player.Kick(Config.ServerFullNoReservedReason, true, true, null, false);
+				player.Kick(Config.Settings.ServerFullNoReservedReason, true, true, null, false);
 				args.Handled = true;
 				return;
 			}
 
 			if (!FileTools.OnWhitelist(player.IP))
 			{
-				player.Kick(Config.WhitelistKickReason, true, true, null, false);
+				player.Kick(Config.Settings.WhitelistKickReason, true, true, null, false);
 				args.Handled = true;
 				return;
 			}
@@ -1160,7 +1159,7 @@ namespace TShockAPI
 				player.Country = code == null ? "N/A" : GeoIPCountry.GetCountryNameByCode(code);
 				if (code == "A1")
 				{
-					if (Config.KickProxyUsers)
+					if (Config.Settings.KickProxyUsers)
 					{
 						player.Kick("Connecting via a proxy is not allowed.", true, true, null, false);
 						args.Handled = true;
@@ -1182,7 +1181,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (Config.KickEmptyUUID && String.IsNullOrWhiteSpace(player.UUID))
+			if (Config.Settings.KickEmptyUUID && String.IsNullOrWhiteSpace(player.UUID))
 			{
 				player.Kick("Your client sent a blank UUID. Configure it to send one or use a different client.", true, true, null, false);
 				args.Handled = true;
@@ -1222,7 +1221,7 @@ namespace TShockAPI
 					CharacterDB.InsertPlayerData(tsplr);
 				}
 
-				if (Config.RememberLeavePos && !tsplr.LoginHarassed)
+				if (Config.Settings.RememberLeavePos && !tsplr.LoginHarassed)
 				{
 					RememberedPos.InsertLeavePos(tsplr.Name, tsplr.IP, (int)(tsplr.X / 16), (int)(tsplr.Y / 16));
 				}
@@ -1242,7 +1241,7 @@ namespace TShockAPI
 			// The last player will leave after this hook is executed.
 			if (Utils.GetActivePlayerCount() == 1)
 			{
-				if (Config.SaveWorldOnLastPlayerExit)
+				if (Config.Settings.SaveWorldOnLastPlayerExit)
 					SaveManager.Instance.SaveWorld();
 				Utils.SetConsoleTitle(true);
 			}
@@ -1290,7 +1289,7 @@ namespace TShockAPI
 				}
 			}
 
-			if ((text.StartsWith(Config.CommandSpecifier) || text.StartsWith(Config.CommandSilentSpecifier))
+			if ((text.StartsWith(Config.Settings.CommandSpecifier) || text.StartsWith(Config.Settings.CommandSilentSpecifier))
 				&& !string.IsNullOrWhiteSpace(text.Substring(1)))
 			{
 				try
@@ -1320,9 +1319,9 @@ namespace TShockAPI
 					tsplr.SendErrorMessage("You are muted!");
 					args.Handled = true;
 				}
-				else if (!TShock.Config.EnableChatAboveHeads)
+				else if (!TShock.Config.Settings.EnableChatAboveHeads)
 				{
-					text = String.Format(Config.ChatFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix,
+					text = String.Format(Config.Settings.ChatFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix,
 											 args.Text);
 					Hooks.PlayerHooks.OnPlayerChat(tsplr, args.Text, ref text);
 					Utils.Broadcast(text, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
@@ -1332,7 +1331,7 @@ namespace TShockAPI
 				{
 					Player ply = Main.player[args.Who];
 					string name = ply.name;
-					ply.name = String.Format(Config.ChatAboveHeadsFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix);
+					ply.name = String.Format(Config.Settings.ChatAboveHeadsFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix);
 					//Update the player's name to format text nicely. This needs to be done because Terraria automatically formats messages against our will
 					NetMessage.SendData((int)PacketTypes.PlayerInfo, -1, -1, NetworkText.FromLiteral(ply.name), args.Who, 0, 0, 0, 0);
 
@@ -1352,7 +1351,7 @@ namespace TShockAPI
 					NetMessage.SendData((int)PacketTypes.PlayerInfo, -1, -1, NetworkText.FromLiteral(name), args.Who, 0, 0, 0, 0);
 
 					string msg = String.Format("<{0}> {1}",
-						String.Format(Config.ChatAboveHeadsFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix),
+						String.Format(Config.Settings.ChatAboveHeadsFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix),
 						text
 					);
 
@@ -1388,8 +1387,8 @@ namespace TShockAPI
 
 			if (args.Command == "autosave")
 			{
-				Main.autoSave = Config.AutoSave = !Config.AutoSave;
-				Log.ConsoleInfo("AutoSave " + (Config.AutoSave ? "Enabled" : "Disabled"));
+				Main.autoSave = Config.Settings.AutoSave = !Config.Settings.AutoSave;
+				Log.ConsoleInfo("AutoSave " + (Config.Settings.AutoSave ? "Enabled" : "Disabled"));
 			}
 			else if (args.Command.StartsWith(Commands.Specifier) || args.Command.StartsWith(Commands.SilentSpecifier))
 			{
@@ -1456,28 +1455,28 @@ namespace TShockAPI
 
 			player.LoginMS = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 
-			if (Config.EnableGeoIP && TShock.Geo != null)
+			if (Config.Settings.EnableGeoIP && TShock.Geo != null)
 			{
 				Log.Info("{0} ({1}) from '{2}' group from '{3}' joined. ({4}/{5})", player.Name, player.IP,
 									   player.Group.Name, player.Country, TShock.Utils.GetActivePlayerCount(),
-									   TShock.Config.MaxSlots);
+									   TShock.Config.Settings.MaxSlots);
 				if (!player.SilentJoinInProgress)
 					Utils.Broadcast(string.Format("{0} ({1}) has joined.", player.Name, player.Country), Color.Yellow);
 			}
 			else
 			{
 				Log.Info("{0} ({1}) from '{2}' group joined. ({3}/{4})", player.Name, player.IP,
-									   player.Group.Name, TShock.Utils.GetActivePlayerCount(), TShock.Config.MaxSlots);
+									   player.Group.Name, TShock.Utils.GetActivePlayerCount(), TShock.Config.Settings.MaxSlots);
 				if (!player.SilentJoinInProgress)
 					Utils.Broadcast(player.Name + " has joined.", Color.Yellow);
 			}
 
-			if (Config.DisplayIPToAdmins)
+			if (Config.Settings.DisplayIPToAdmins)
 				Utils.SendLogs(string.Format("{0} has joined. IP: {1}", player.Name, player.IP), Color.Blue);
 
 			player.SendFileTextAsMessage(FileTools.MotdPath);
 
-			string pvpMode = Config.PvPMode.ToLowerInvariant();
+			string pvpMode = Config.Settings.PvPMode.ToLowerInvariant();
 			if (pvpMode == "always")
 			{
 				player.TPlayer.hostile = true;
@@ -1493,7 +1492,7 @@ namespace TShockAPI
 					player.SendErrorMessage(String.Format("Server side characters is enabled! Please {0}register or {0}login to play!", Commands.Specifier));
 					player.LoginHarassed = true;
 				}
-				else if (Config.RequireLogin)
+				else if (Config.Settings.RequireLogin)
 				{
 					player.SendErrorMessage("Please {0}register or {0}login to play!", Commands.Specifier);
 					player.LoginHarassed = true;
@@ -1502,7 +1501,7 @@ namespace TShockAPI
 
 			player.LastNetPosition = new Vector2(Main.spawnTileX * 16f, Main.spawnTileY * 16f);
 
-			if (Config.RememberLeavePos && (RememberedPos.GetLeavePos(player.Name, player.IP) != Vector2.Zero) && !player.LoginHarassed)
+			if (Config.Settings.RememberLeavePos && (RememberedPos.GetLeavePos(player.Name, player.IP) != Vector2.Zero) && !player.LoginHarassed)
 			{
 				player.RPPending = 3;
 				player.SendInfoMessage("You will be teleported to your last known location...");
@@ -1515,7 +1514,7 @@ namespace TShockAPI
 		/// <param name="e">e - The NpcStrikeEventArgs object.</param>
 		private void NpcHooks_OnStrikeNpc(NpcStrikeEventArgs e)
 		{
-			if (Config.InfiniteInvasion)
+			if (Config.Settings.InfiniteInvasion)
 			{
 				if (Main.invasionSize < 10)
 				{
@@ -1530,13 +1529,13 @@ namespace TShockAPI
 		{
 			//tombstone fix.
 			if (e.Info == 43 || (e.Info >= 201 && e.Info <= 205) || (e.Info >= 527 && e.Info <= 531))
-				if (Config.DisableTombstones)
+				if (Config.Settings.DisableTombstones)
 					e.Object.SetDefaults(0);
 			if (e.Info == 75)
-				if (Config.DisableClownBombs)
+				if (Config.Settings.DisableClownBombs)
 					e.Object.SetDefaults(0);
 			if (e.Info == 109)
-				if (Config.DisableSnowBalls)
+				if (Config.Settings.DisableSnowBalls)
 					e.Object.SetDefaults(0);
 		}
 
@@ -1587,37 +1586,37 @@ namespace TShockAPI
 		/// <param name="e">e - The HandledEventArgs object.</param>
 		private void OnStartHardMode(HandledEventArgs e)
 		{
-			if (Config.DisableHardmode)
+			if (Config.Settings.DisableHardmode)
 				e.Handled = true;
 		}
 
 		/// <summary>OnConfigRead - Fired when the config file has been read.</summary>
 		/// <param name="file">file - The config file object.</param>
-		public void OnConfigRead(ConfigFile file)
+		public void OnConfigRead(ConfigFile<TShockSettings> file)
 		{
-			NPC.defaultMaxSpawns = file.DefaultMaximumSpawns;
-			NPC.defaultSpawnRate = file.DefaultSpawnRate;
+			NPC.defaultMaxSpawns = file.Settings.DefaultMaximumSpawns;
+			NPC.defaultSpawnRate = file.Settings.DefaultSpawnRate;
 
-			Main.autoSave = file.AutoSave;
+			Main.autoSave = file.Settings.AutoSave;
 			if (Backups != null)
 			{
-				Backups.KeepFor = file.BackupKeepFor;
-				Backups.Interval = file.BackupInterval;
+				Backups.KeepFor = file.Settings.BackupKeepFor;
+				Backups.Interval = file.Settings.BackupInterval;
 			}
 			if (!OverridePort)
 			{
-				Netplay.ListenPort = file.ServerPort;
+				Netplay.ListenPort = file.Settings.ServerPort;
 			}
 
-			if (file.MaxSlots > Main.maxPlayers - file.ReservedSlots)
-				file.MaxSlots = Main.maxPlayers - file.ReservedSlots;
-			Main.maxNetPlayers = file.MaxSlots + file.ReservedSlots;
+			if (file.Settings.MaxSlots > Main.maxPlayers - file.Settings.ReservedSlots)
+				file.Settings.MaxSlots = Main.maxPlayers - file.Settings.ReservedSlots;
+			Main.maxNetPlayers = file.Settings.MaxSlots + file.Settings.ReservedSlots;
 
 			Netplay.ServerPassword = "";
 			if (!string.IsNullOrEmpty(_cliPassword))
 			{
 				//This prevents a config reload from removing/updating a CLI-defined password
-				file.ServerPassword = _cliPassword;
+				file.Settings.ServerPassword = _cliPassword;
 			}
 
 			Netplay.SpamCheck = false;

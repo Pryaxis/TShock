@@ -350,7 +350,7 @@ namespace TShockAPI
 			|| IsDisabledForStackDetection
 			|| IsDisabledForBannedWearable
 			|| IsDisabledPendingTrashRemoval
-			|| !IsLoggedIn && TShock.Config.RequireLogin;
+			|| !IsLoggedIn && TShock.Config.Settings.RequireLogin;
 		}
 
 		/// <summary>Checks to see if a player has hacked item stacks in their inventory, and messages them as it checks.</summary>
@@ -608,7 +608,7 @@ namespace TShockAPI
 		{
 			int rgX = Math.Abs(TileX - x);
 			int rgY = Math.Abs(TileY - y);
-			if (TShock.Config.RangeChecks && ((rgX > range) || (rgY > range)))
+			if (TShock.Config.Settings.RangeChecks && ((rgX > range) || (rgY > range)))
 			{
 				TShock.Log.ConsoleDebug("Rangecheck failed for {0} ({1}, {2}) (rg: {3}/{5}, {4}/{5})", Name, x, y, rgX, rgY, range);
 				return false;
@@ -636,12 +636,12 @@ namespace TShockAPI
 
 			// If the player has bypass on build protection or building is enabled; continue
 			// (General build protection takes precedence over spawn protection)
-			if (!TShock.Config.DisableBuild || HasPermission(Permissions.antibuild))
+			if (!TShock.Config.Settings.DisableBuild || HasPermission(Permissions.antibuild))
 			{
 				failure = BuildPermissionFailPoint.SpawnProtect;
 				// If they have spawn protect bypass, or it isn't spawn, or it isn't in spawn; continue
 				// (If they have spawn protect bypass, we don't care if it's spawn or not)
-				if (!TShock.Config.SpawnProtection || HasPermission(Permissions.editspawn) || !Utils.IsInSpawn(x, y))
+				if (!TShock.Config.Settings.SpawnProtection || HasPermission(Permissions.editspawn) || !Utils.IsInSpawn(x, y))
 				{
 					failure = BuildPermissionFailPoint.Regions;
 					// If they have build permission in this region, then they're allowed to continue
@@ -730,7 +730,7 @@ namespace TShockAPI
 		{
 			// The goal is to short circuit ASAP.
 			// A subsequent call to HasBuildPermission can figure this out if not explicitly ice.
-			if (!TShock.Config.AllowIce)
+			if (!TShock.Config.Settings.AllowIce)
 			{
 				return false;
 			}
@@ -1103,7 +1103,7 @@ namespace TShockAPI
 			}
 
 			PlayerData = new PlayerData(this);
-			Group = TShock.Groups.GetGroupByName(TShock.Config.DefaultGuestGroupName);
+			Group = TShock.Groups.GetGroupByName(TShock.Config.Settings.DefaultGuestGroupName);
 			tempGroup = null;
 			if (tempGroupTimer != null)
 			{
@@ -1312,8 +1312,8 @@ namespace TShockAPI
 		/// <returns>True or false, depending if the item passed the check or not.</returns>
 		public bool GiveItemCheck(int type, string name, int stack, int prefix = 0)
 		{
-			if ((TShock.ItemBans.DataModel.ItemIsBanned(name) && TShock.Config.PreventBannedItemSpawn) &&
-			    (TShock.ItemBans.DataModel.ItemIsBanned(name, this) || !TShock.Config.AllowAllowedGroupsToSpawnBannedItems))
+			if ((TShock.ItemBans.DataModel.ItemIsBanned(name) && TShock.Config.Settings.PreventBannedItemSpawn) &&
+			    (TShock.ItemBans.DataModel.ItemIsBanned(name, this) || !TShock.Config.Settings.AllowAllowedGroupsToSpawnBannedItems))
 				return false;
 
 			GiveItem(type, stack, prefix);
@@ -1502,7 +1502,7 @@ namespace TShockAPI
 						}
 					}
 
-					foo = foo.Replace("%map%", (TShock.Config.UseServerName ? TShock.Config.ServerName : Main.worldName));
+					foo = foo.Replace("%map%", (TShock.Config.Settings.UseServerName ? TShock.Config.Settings.ServerName : Main.worldName));
 					foo = foo.Replace("%players%", String.Join(",", players));
 
 					SendMessage(foo, lineColor);

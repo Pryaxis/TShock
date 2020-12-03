@@ -23,7 +23,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using TShockAPI.ServerSideCharacters;
 
 namespace TShockAPI
 {
@@ -110,7 +109,7 @@ namespace TShockAPI
 			bool writeConfig = true; // Default to true if the file doesn't exist
 			if (File.Exists(ConfigPath))
 			{
-				TShock.Config = ConfigFile.Read(ConfigPath, out writeConfig);
+				TShock.Config.Read(ConfigPath, out writeConfig);
 			}
 			if (writeConfig)
 			{
@@ -121,21 +120,21 @@ namespace TShockAPI
 			bool writeSSCConfig = true; // Default to true if the file doesn't exist
 			if (File.Exists(ServerSideCharacterConfigPath))
 			{
-				TShock.ServerSideCharacterConfig =
-					ServerSideConfig.Read(ServerSideCharacterConfigPath, out writeSSCConfig);
+				TShock.ServerSideCharacterConfig.Read(ServerSideCharacterConfigPath, out writeSSCConfig);
 			}
 			if (writeSSCConfig)
 			{
 				// Add all the missing config properties in the json file
-				TShock.ServerSideCharacterConfig = new ServerSideConfig
+				TShock.ServerSideCharacterConfig = new Configuration.ServerSideConfig
 				{
-					StartingInventory =
+					Settings = { StartingInventory =
 						new List<NetItem>
 						{
 							new NetItem(-15, 1, 0),
 							new NetItem(-13, 1, 0),
 							new NetItem(-16, 1, 0)
 						}
+					}
 				};
 				TShock.ServerSideCharacterConfig.Write(ServerSideCharacterConfigPath);
 			}
@@ -148,7 +147,7 @@ namespace TShockAPI
 		/// <returns>true/false</returns>
 		public static bool OnWhitelist(string ip)
 		{
-			if (!TShock.Config.EnableWhitelist)
+			if (!TShock.Config.Settings.EnableWhitelist)
 			{
 				return true;
 			}
@@ -173,20 +172,45 @@ namespace TShockAPI
 				return true;
 			}
 		}
+		
+		/// <summary>
+		/// Looks for a 'Settings' token in the json object. If one is not found, returns a new json object with all tokens of the previous object added
+		/// as children to a root 'Settings' token
+		/// </summary>
+		/// <param name="json"></param>
+		/// <returns></returns>
+		internal static JObject AttemptConfigUpgrade(string json)
+		{
+			JObject cfg = JObject.Parse(json);
+
+			if (cfg.SelectToken("Settings") == null)
+			{
+				JObject newCfg = new JObject
+				{
+					{ "Settings", cfg }
+				};
+				cfg = newCfg;
+			}
+
+			return cfg;
+		}
+
+		internal static TSettings LoadConfigAndCheckForMissingFields<TSettings>(string json, out bool anyMissingFields)
+		{
+			return LoadConfigAndCheckForMissingFields<TSettings>(JObject.Parse(json), out anyMissingFields);
+		}
 
 		/// <summary>
-		/// Parse some json text and also return whether any fields are missing from the json
+		/// Parses a JObject into a TSettings object, also emitting a bool indicating if any of the TSetting's fields were missing from the JObject
 		/// </summary>
-		/// <typeparam name="T">The type of the config file object</typeparam>
-		/// <param name="json">The json text to parse</param>
+		/// <typeparam name="TSettings">The type of the config file object</typeparam>
+		/// <param name="jObject">The json object to parse</param>
 		/// <param name="anyMissingFields">Whether any fields are missing from the config</param>
 		/// <returns>The config object</returns>
-		internal static T LoadConfigAndCheckForMissingFields<T>(string json, out bool anyMissingFields)
+		internal static TSettings LoadConfigAndCheckForMissingFields<TSettings>(JObject jObject, out bool anyMissingFields)
 		{
-			JObject jObject = JObject.Parse(json);
-
 			anyMissingFields = false;
-			var configFields = new HashSet<string>(typeof(T).GetFields()
+			var configFields = new HashSet<string>(typeof(Configuration.ConfigFile<TSettings>).GetFields()
 				.Where(field => !field.IsStatic)
 				.Select(field => field.Name));
 			var jsonFields = new HashSet<string>(jObject
@@ -196,7 +220,7 @@ namespace TShockAPI
 				.Select(field => field.Name));
 			anyMissingFields = !configFields.SetEquals(jsonFields);
 
-			return jObject.ToObject<T>();
+			return jObject.SelectToken("Settings").ToObject<TSettings>();
 		}
 	}
 }

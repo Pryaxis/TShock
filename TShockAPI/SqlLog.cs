@@ -48,7 +48,7 @@ namespace TShockAPI
 	{
 		private readonly IDbConnection _database;
 		private readonly TextLog _backupLog;
-		private readonly List<LogInfo> _failures = new List<LogInfo>(TShock.Config.RevertToTextLogsOnSqlFailures);
+		private readonly List<LogInfo> _failures = new List<LogInfo>(TShock.Config.Settings.RevertToTextLogsOnSqlFailures);
 		private bool _useTextLog;
 
 		public string FileName { get; set; }
@@ -211,7 +211,7 @@ namespace TShockAPI
 		/// <param name="message">The message to be written.</param>
 		public void ConsoleDebug(string message)
 		{
-			if (TShock.Config.DebugLogs)
+			if (TShock.Config.Settings.DebugLogs)
 			{
 				Console.WriteLine("Debug: " + message);
 				Write(message, TraceLevel.Verbose);
@@ -234,7 +234,7 @@ namespace TShockAPI
 		/// <param name="message">The message to be written.</param>
 		public void Debug(string message)
 		{
-			if (TShock.Config.DebugLogs)
+			if (TShock.Config.Settings.DebugLogs)
 				Write(message, TraceLevel.Verbose);
 		}
 
@@ -245,7 +245,7 @@ namespace TShockAPI
 		/// <param name="args">The format arguments.</param>
 		public void Debug(string format, params object[] args)
 		{
-			if (TShock.Config.DebugLogs)
+			if (TShock.Config.Settings.DebugLogs)
 				Debug(string.Format(format, args));
 		}
 
@@ -314,7 +314,7 @@ namespace TShockAPI
 				});
 			}
 
-			if (_failures.Count >= TShock.Config.RevertToTextLogsOnSqlFailures)
+			if (_failures.Count >= TShock.Config.Settings.RevertToTextLogsOnSqlFailures)
 			{
 				_useTextLog = true;
 				_backupLog.ConsoleError("SQL Logging disabled due to errors. Reverting to text logging.");

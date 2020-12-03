@@ -107,7 +107,7 @@ namespace TShockAPI.DB
 			int res;
 			if (database.GetSqlType() == SqlType.Mysql)
 			{
-				res = database.QueryScalar<int>("SELECT COUNT(name) FROM information_schema.tables WHERE table_schema = @0 and table_name = 'Bans'", TShock.Config.MySqlDbName);
+				res = database.QueryScalar<int>("SELECT COUNT(name) FROM information_schema.tables WHERE table_schema = @0 and table_name = 'Bans'", TShock.Config.Settings.MySqlDbName);
 			}
 			else
 			{

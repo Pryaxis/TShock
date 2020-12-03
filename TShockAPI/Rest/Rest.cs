@@ -153,7 +153,7 @@ namespace Rests
 				tokenBucketTimer = new Timer((e) =>
 				{
 					DegradeBucket();
-				}, null, TimeSpan.Zero, TimeSpan.FromMinutes(Math.Max(TShock.Config.RESTRequestBucketDecreaseIntervalMinutes, 1)));
+				}, null, TimeSpan.Zero, TimeSpan.FromMinutes(Math.Max(TShock.Config.Settings.RESTRequestBucketDecreaseIntervalMinutes, 1)));
 
 			}
 			catch (Exception ex)
@@ -356,7 +356,7 @@ namespace Rests
 		protected virtual object ExecuteCommand(RestCommand cmd, RestVerbs verbs, IParameterCollection parms, IRequest request, IHttpContext context)
 		{
 			object result = cmd.Execute(verbs, parms, request, context);
-			if (cmd.DoLog && TShock.Config.LogRest)
+			if (cmd.DoLog && TShock.Config.Settings.LogRest)
 			{
 				TShock.Log.ConsoleInfo("Anonymous requested REST endpoint: " + BuildRequestUri(cmd, verbs, parms, false));
 			}

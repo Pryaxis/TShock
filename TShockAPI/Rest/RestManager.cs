@@ -183,7 +183,7 @@ namespace TShockAPI
 		public void RegisterRestfulCommands()
 		{
 			// Server Commands
-			if (TShock.Config.EnableTokenEndpointAuthentication)
+			if (TShock.Config.Settings.EnableTokenEndpointAuthentication)
 			{
 				Rest.Register(new SecureRestCommand("/v2/server/status", ServerStatusV2));
 				Rest.Register(new SecureRestCommand("/v3/server/motd", ServerMotd));
@@ -398,15 +398,15 @@ namespace TShockAPI
 		{
 			var ret = new RestObject()
 			{
-				{"name", TShock.Config.ServerName},
+				{"name", TShock.Config.Settings.ServerName},
 				{"serverversion", Main.versionNumber},
 				{"tshockversion", TShock.VersionNum},
-				{"port", TShock.Config.ServerPort},
+				{"port", TShock.Config.Settings.ServerPort},
 				{"playercount", Main.player.Where(p => null != p && p.active).Count()},
-				{"maxplayers", TShock.Config.MaxSlots},
-				{"world", (TShock.Config.UseServerName ? TShock.Config.ServerName : Main.worldName)},
+				{"maxplayers", TShock.Config.Settings.MaxSlots},
+				{"world", (TShock.Config.Settings.UseServerName ? TShock.Config.Settings.ServerName : Main.worldName)},
 				{"uptime", (DateTime.Now - System.Diagnostics.Process.GetCurrentProcess().StartTime).ToString(@"d'.'hh':'mm':'ss")},
-				{"serverpassword", !string.IsNullOrEmpty(TShock.Config.ServerPassword)}
+				{"serverpassword", !string.IsNullOrEmpty(TShock.Config.Settings.ServerPassword)}
 			};
 
 			if (GetBool(args.Parameters["players"], false))
@@ -424,18 +424,18 @@ namespace TShockAPI
 			if (GetBool(args.Parameters["rules"], false))
 			{
 				var rules = new Dictionary<string, object>();
-				rules.Add("AutoSave", TShock.Config.AutoSave);
-				rules.Add("DisableBuild", TShock.Config.DisableBuild);
-				rules.Add("DisableClownBombs", TShock.Config.DisableClownBombs);
-				rules.Add("DisableDungeonGuardian", TShock.Config.DisableDungeonGuardian);
-				rules.Add("DisableInvisPvP", TShock.Config.DisableInvisPvP);
-				rules.Add("DisableSnowBalls", TShock.Config.DisableSnowBalls);
-				rules.Add("DisableTombstones", TShock.Config.DisableTombstones);
-				rules.Add("EnableWhitelist", TShock.Config.EnableWhitelist);
-				rules.Add("HardcoreOnly", TShock.Config.HardcoreOnly);
-				rules.Add("PvPMode", TShock.Config.PvPMode);
-				rules.Add("SpawnProtection", TShock.Config.SpawnProtection);
-				rules.Add("SpawnProtectionRadius", TShock.Config.SpawnProtectionRadius);
+				rules.Add("AutoSave", TShock.Config.Settings.AutoSave);
+				rules.Add("DisableBuild", TShock.Config.Settings.DisableBuild);
+				rules.Add("DisableClownBombs", TShock.Config.Settings.DisableClownBombs);
+				rules.Add("DisableDungeonGuardian", TShock.Config.Settings.DisableDungeonGuardian);
+				rules.Add("DisableInvisPvP", TShock.Config.Settings.DisableInvisPvP);
+				rules.Add("DisableSnowBalls", TShock.Config.Settings.DisableSnowBalls);
+				rules.Add("DisableTombstones", TShock.Config.Settings.DisableTombstones);
+				rules.Add("EnableWhitelist", TShock.Config.Settings.EnableWhitelist);
+				rules.Add("HardcoreOnly", TShock.Config.Settings.HardcoreOnly);
+				rules.Add("PvPMode", TShock.Config.Settings.PvPMode);
+				rules.Add("SpawnProtection", TShock.Config.Settings.SpawnProtection);
+				rules.Add("SpawnProtectionRadius", TShock.Config.Settings.SpawnProtectionRadius);
 				rules.Add("ServerSideInventory", Main.ServerSideCharacter);
 
 				ret.Add("rules", rules);
@@ -496,7 +496,7 @@ namespace TShockAPI
 
 			var group = args.Parameters["group"];
 			if (string.IsNullOrWhiteSpace(group))
-				group = TShock.Config.DefaultRegistrationGroupName;
+				group = TShock.Config.Settings.DefaultRegistrationGroupName;
 
 			var password = args.Parameters["password"];
 			if (string.IsNullOrWhiteSpace(password))
@@ -775,7 +775,7 @@ namespace TShockAPI
 			bool autoSave;
 			if (!bool.TryParse(args.Verbs["state"], out autoSave))
 				return RestInvalidParam("state");
-			TShock.Config.AutoSave = autoSave;
+			TShock.Config.Settings.AutoSave = autoSave;
 
 			var resp = RestResponse("AutoSave has been set to " + autoSave);
 			resp.Add("upgrade", "/v3/world/autosave");
@@ -791,11 +791,11 @@ namespace TShockAPI
 			bool autoSave;
 			if (!bool.TryParse(args.Parameters["state"], out autoSave))
 			{
-				return RestResponse($"Autosave is currently {(TShock.Config.AutoSave ? "enabled" : "disabled")}");
+				return RestResponse($"Autosave is currently {(TShock.Config.Settings.AutoSave ? "enabled" : "disabled")}");
 			}
-			TShock.Config.AutoSave = autoSave;
+			TShock.Config.Settings.AutoSave = autoSave;
 
-			return RestResponse($"AutoSave has been {(TShock.Config.AutoSave ? "enabled" : "disabled")}");
+			return RestResponse($"AutoSave has been {(TShock.Config.Settings.AutoSave ? "enabled" : "disabled")}");
 		}
 
 		[Description("Save the world.")]
@@ -840,7 +840,7 @@ namespace TShockAPI
 		{
 			return new RestObject()
 			{
-				{"name", (TShock.Config.UseServerName ? TShock.Config.ServerName : Main.worldName)},
+				{"name", (TShock.Config.Settings.UseServerName ? TShock.Config.Settings.ServerName : Main.worldName)},
 				{"size", Main.maxTilesX + "*" + Main.maxTilesY},
 				{"time", Main.time},
 				{"daytime", Main.dayTime},

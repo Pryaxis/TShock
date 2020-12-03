@@ -76,7 +76,7 @@ namespace TShockAPI
 		/// <param name="args">The standard event arguments.</param>
 		internal void OnSecondlyUpdate(EventArgs args)
 		{
-			DisableFlags disableFlags = TShock.Config.DisableSecondUpdateLogs ? DisableFlags.WriteToConsole : DisableFlags.WriteToLogAndConsole;
+			DisableFlags disableFlags = TShock.Config.Settings.DisableSecondUpdateLogs ? DisableFlags.WriteToConsole : DisableFlags.WriteToLogAndConsole;
 
 			foreach (TSPlayer player in TShock.Players)
 			{
@@ -153,7 +153,7 @@ namespace TShockAPI
 
 		internal void OnPlayerUpdate(object sender, PlayerUpdateEventArgs args)
 		{
-			DisableFlags disableFlags = TShock.Config.DisableSecondUpdateLogs ? DisableFlags.WriteToConsole : DisableFlags.WriteToLogAndConsole;
+			DisableFlags disableFlags = TShock.Config.Settings.DisableSecondUpdateLogs ? DisableFlags.WriteToConsole : DisableFlags.WriteToLogAndConsole;
 			bool useItem = args.Control.IsUsingItem;
 			TSPlayer player = args.Player;
 			string itemName = player.TPlayer.inventory[args.SelectedItem].Name;

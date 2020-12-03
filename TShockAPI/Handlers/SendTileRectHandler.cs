@@ -430,10 +430,10 @@ namespace TShockAPI.Handlers
 			}
 
 			var rectSize = args.Width * args.Length;
-			if (rectSize > TShock.Config.TileRectangleSizeThreshold)
+			if (rectSize > TShock.Config.Settings.TileRectangleSizeThreshold)
 			{
 				TShock.Log.ConsoleDebug("Bouncer / SendTileRect rejected from non-vanilla tilemod from {0}", args.Player.Name);
-				if (TShock.Config.KickOnTileRectangleSizeThresholdBroken)
+				if (TShock.Config.Settings.KickOnTileRectangleSizeThresholdBroken)
 				{
 					args.Player.Kick("Unexpected tile threshold reached");
 				}
@@ -509,7 +509,7 @@ namespace TShockAPI.Handlers
 			/// <param name="newTiles">New tiles to be visualised</param>
 			public static void VisualiseTileSetDiff(int tileX, int tileY, int width, int height, NetTile[,] newTiles)
 			{
-				if (TShock.Config.DebugLogs)
+				if (TShock.Config.Settings.DebugLogs)
 				{
 					char pad = '0';
 					for (int y = 0; y < height; y++)

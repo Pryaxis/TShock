@@ -199,7 +199,7 @@ namespace TShockAPI
 		/// </summary>
 		public static string Specifier
 		{
-			get { return string.IsNullOrWhiteSpace(TShock.Config.CommandSpecifier) ? "/" : TShock.Config.CommandSpecifier; }
+			get { return string.IsNullOrWhiteSpace(TShock.Config.Settings.CommandSpecifier) ? "/" : TShock.Config.Settings.CommandSpecifier; }
 		}
 
 		/// <summary>
@@ -207,7 +207,7 @@ namespace TShockAPI
 		/// </summary>
 		public static string SilentSpecifier
 		{
-			get { return string.IsNullOrWhiteSpace(TShock.Config.CommandSilentSpecifier) ? "." : TShock.Config.CommandSilentSpecifier; }
+			get { return string.IsNullOrWhiteSpace(TShock.Config.Settings.CommandSilentSpecifier) ? "." : TShock.Config.Settings.CommandSilentSpecifier; }
 		}
 
 		private delegate void AddChatCommand(string permission, CommandDelegate command, params string[] names);
@@ -756,10 +756,10 @@ namespace TShockAPI
 
 		private static void AttemptLogin(CommandArgs args)
 		{
-			if (args.Player.LoginAttempts > TShock.Config.MaximumLoginAttempts && (TShock.Config.MaximumLoginAttempts != -1))
+			if (args.Player.LoginAttempts > TShock.Config.Settings.MaximumLoginAttempts && (TShock.Config.Settings.MaximumLoginAttempts != -1))
 			{
 				TShock.Log.Warn(String.Format("{0} ({1}) had {2} or more invalid login attempts and was kicked automatically.",
-					args.Player.IP, args.Player.Name, TShock.Config.MaximumLoginAttempts));
+					args.Player.IP, args.Player.Name, TShock.Config.Settings.MaximumLoginAttempts));
 				args.Player.Kick("Too many invalid login attempts.");
 				return;
 			}
@@ -773,7 +773,7 @@ namespace TShockAPI
 			UserAccount account = TShock.UserAccounts.GetUserAccountByName(args.Player.Name);
 			string password = "";
 			bool usingUUID = false;
-			if (args.Parameters.Count == 0 && !TShock.Config.DisableUUIDLogin)
+			if (args.Parameters.Count == 0 && !TShock.Config.Settings.DisableUUIDLogin)
 			{
 				if (PlayerHooks.OnPlayerPreLogin(args.Player, args.Player.Name, ""))
 					return;
@@ -785,7 +785,7 @@ namespace TShockAPI
 					return;
 				password = args.Parameters[0];
 			}
-			else if (args.Parameters.Count == 2 && TShock.Config.AllowLoginAnyUsername)
+			else if (args.Parameters.Count == 2 && TShock.Config.Settings.AllowLoginAnyUsername)
 			{
 				if (String.IsNullOrEmpty(args.Parameters[0]))
 				{
@@ -814,7 +814,7 @@ namespace TShockAPI
 					args.Player.SendErrorMessage("A user account by that name does not exist.");
 				}
 				else if (account.VerifyPassword(password) ||
-						(usingUUID && account.UUID == args.Player.UUID && !TShock.Config.DisableUUIDLogin &&
+						(usingUUID && account.UUID == args.Player.UUID && !TShock.Config.Settings.DisableUUIDLogin &&
 						!String.IsNullOrWhiteSpace(args.Player.UUID)))
 				{
 					args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, account.ID);
@@ -847,7 +847,7 @@ namespace TShockAPI
 					args.Player.SendSuccessMessage("Authenticated as " + account.Name + " successfully.");
 
 					TShock.Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user: " + account.Name + ".");
-					if ((args.Player.LoginHarassed) && (TShock.Config.RememberLeavePos))
+					if ((args.Player.LoginHarassed) && (TShock.Config.Settings.RememberLeavePos))
 					{
 						if (TShock.RememberedPos.GetLeavePos(args.Player.Name, args.Player.IP) != Vector2.Zero)
 						{
@@ -863,7 +863,7 @@ namespace TShockAPI
 				}
 				else
 				{
-					if (usingUUID && !TShock.Config.DisableUUIDLogin)
+					if (usingUUID && !TShock.Config.Settings.DisableUUIDLogin)
 					{
 						args.Player.SendErrorMessage("UUID does not match this character!");
 					}
@@ -916,7 +916,7 @@ namespace TShockAPI
 						}
 						catch (ArgumentOutOfRangeException)
 						{
-							args.Player.SendErrorMessage("Password must be greater than or equal to " + TShock.Config.MinimumPasswordLength + " characters.");
+							args.Player.SendErrorMessage("Password must be greater than or equal to " + TShock.Config.Settings.MinimumPasswordLength + " characters.");
 						}
 					}
 					else
@@ -954,11 +954,11 @@ namespace TShockAPI
 					}
 					catch (ArgumentOutOfRangeException)
 					{
-						args.Player.SendErrorMessage("Password must be greater than or equal to " + TShock.Config.MinimumPasswordLength + " characters.");
+						args.Player.SendErrorMessage("Password must be greater than or equal to " + TShock.Config.Settings.MinimumPasswordLength + " characters.");
 						return;
 					}
 				}
-				else if (args.Parameters.Count == 2 && TShock.Config.AllowRegisterAnyUsername)
+				else if (args.Parameters.Count == 2 && TShock.Config.Settings.AllowRegisterAnyUsername)
 				{
 					account.Name = args.Parameters[0];
 					echoPassword = args.Parameters[1];
@@ -968,7 +968,7 @@ namespace TShockAPI
 					}
 					catch (ArgumentOutOfRangeException)
 					{
-						args.Player.SendErrorMessage("Password must be greater than or equal to " + TShock.Config.MinimumPasswordLength + " characters.");
+						args.Player.SendErrorMessage("Password must be greater than or equal to " + TShock.Config.Settings.MinimumPasswordLength + " characters.");
 						return;
 					}
 				}
@@ -978,7 +978,7 @@ namespace TShockAPI
 					return;
 				}
 
-				account.Group = TShock.Config.DefaultRegistrationGroupName; // FIXME -- we should get this from the DB. --Why?
+				account.Group = TShock.Config.Settings.DefaultRegistrationGroupName; // FIXME -- we should get this from the DB. --Why?
 				account.UUID = args.Player.UUID;
 
 				if (TShock.UserAccounts.GetUserAccountByName(account.Name) == null && account.Name != TSServerPlayer.AccountName) // Cheap way of checking for existance of a user
@@ -1025,7 +1025,7 @@ namespace TShockAPI
 				}
 				catch (ArgumentOutOfRangeException)
 				{
-					args.Player.SendErrorMessage("Password must be greater than or equal to " + TShock.Config.MinimumPasswordLength + " characters.");
+					args.Player.SendErrorMessage("Password must be greater than or equal to " + TShock.Config.Settings.MinimumPasswordLength + " characters.");
 					return;
 				}
 				account.Group = args.Parameters[3];
@@ -1096,7 +1096,7 @@ namespace TShockAPI
 				}
 				catch (ArgumentOutOfRangeException)
 				{
-					args.Player.SendErrorMessage("Password must be greater than or equal to " + TShock.Config.MinimumPasswordLength + " characters.");
+					args.Player.SendErrorMessage("Password must be greater than or equal to " + TShock.Config.Settings.MinimumPasswordLength + " characters.");
 				}
 			}
 			// Group changing requires a username or IP address, and a new group to set
@@ -1156,7 +1156,7 @@ namespace TShockAPI
 		private static void WorldInfo(CommandArgs args)
 		{
 			args.Player.SendInfoMessage("Information of the currently running world");
-			args.Player.SendInfoMessage("Name: " + (TShock.Config.UseServerName ? TShock.Config.ServerName : Main.worldName));
+			args.Player.SendInfoMessage("Name: " + (TShock.Config.Settings.UseServerName ? TShock.Config.Settings.ServerName : Main.worldName));
 			args.Player.SendInfoMessage("Size: {0}x{1}", Main.maxTilesX, Main.maxTilesY);
 			args.Player.SendInfoMessage("ID: " + Main.worldID);
 			args.Player.SendInfoMessage("Seed: " + WorldGen.currentWorldSeed);
@@ -1772,22 +1772,22 @@ namespace TShockAPI
 
 		private static void ForceHalloween(CommandArgs args)
 		{
-			TShock.Config.ForceHalloween = !TShock.Config.ForceHalloween;
+			TShock.Config.Settings.ForceHalloween = !TShock.Config.Settings.ForceHalloween;
 			Main.checkHalloween();
 			if (args.Silent)
-				args.Player.SendInfoMessage("{0}abled halloween mode!", (TShock.Config.ForceHalloween ? "en" : "dis"));
+				args.Player.SendInfoMessage("{0}abled halloween mode!", (TShock.Config.Settings.ForceHalloween ? "en" : "dis"));
 			else
-				TSPlayer.All.SendInfoMessage("{0} {1}abled halloween mode!", args.Player.Name, (TShock.Config.ForceHalloween ? "en" : "dis"));
+				TSPlayer.All.SendInfoMessage("{0} {1}abled halloween mode!", args.Player.Name, (TShock.Config.Settings.ForceHalloween ? "en" : "dis"));
 		}
 
 		private static void ForceXmas(CommandArgs args)
 		{
-			TShock.Config.ForceXmas = !TShock.Config.ForceXmas;
+			TShock.Config.Settings.ForceXmas = !TShock.Config.Settings.ForceXmas;
 			Main.checkXMas();
 			if (args.Silent)
-				args.Player.SendInfoMessage("{0}abled Christmas mode!", (TShock.Config.ForceXmas ? "en" : "dis"));
+				args.Player.SendInfoMessage("{0}abled Christmas mode!", (TShock.Config.Settings.ForceXmas ? "en" : "dis"));
 			else
-				TSPlayer.All.SendInfoMessage("{0} {1}abled Christmas mode!", args.Player.Name, (TShock.Config.ForceXmas ? "en" : "dis"));
+				TSPlayer.All.SendInfoMessage("{0} {1}abled Christmas mode!", args.Player.Name, (TShock.Config.Settings.ForceXmas ? "en" : "dis"));
 		}
 
 		private static void TempGroup(CommandArgs args)
@@ -1898,8 +1898,8 @@ namespace TShockAPI
 
 			TShock.Utils.Broadcast(
 				"(Server Broadcast) " + message,
-				Convert.ToByte(TShock.Config.BroadcastRGB[0]), Convert.ToByte(TShock.Config.BroadcastRGB[1]),
-				Convert.ToByte(TShock.Config.BroadcastRGB[2]));
+				Convert.ToByte(TShock.Config.Settings.BroadcastRGB[0]), Convert.ToByte(TShock.Config.Settings.BroadcastRGB[1]),
+				Convert.ToByte(TShock.Config.Settings.BroadcastRGB[2]));
 		}
 
 		private static void Off(CommandArgs args)
@@ -2395,7 +2395,7 @@ namespace TShockAPI
 				TSPlayer.All.SendData(PacketTypes.WorldInfo);
 				args.Player.SendSuccessMessage("Hardmode is now off.");
 			}
-			else if (!TShock.Config.DisableHardmode)
+			else if (!TShock.Config.Settings.DisableHardmode)
 			{
 				WorldGen.StartHardmode();
 				args.Player.SendSuccessMessage("Hardmode is now on.");
@@ -4192,7 +4192,7 @@ namespace TShockAPI
 				return;
 			}
 			string passwd = args.Parameters[0];
-			TShock.Config.ServerPassword = passwd;
+			TShock.Config.Settings.ServerPassword = passwd;
 			args.Player.SendSuccessMessage(string.Format("Server password has been changed to: {0}.", passwd));
 		}
 
@@ -4220,13 +4220,13 @@ namespace TShockAPI
 		{
 			if (args.Parameters.Count == 0)
 			{
-				args.Player.SendInfoMessage("Current maximum spawns: {0}", TShock.Config.DefaultMaximumSpawns);
+				args.Player.SendInfoMessage("Current maximum spawns: {0}", TShock.Config.Settings.DefaultMaximumSpawns);
 				return;
 			}
 
 			if (String.Equals(args.Parameters[0], "default", StringComparison.CurrentCultureIgnoreCase))
 			{
-				TShock.Config.DefaultMaximumSpawns = NPC.defaultMaxSpawns = 5;
+				TShock.Config.Settings.DefaultMaximumSpawns = NPC.defaultMaxSpawns = 5;
 				if (args.Silent)
 				{
 					args.Player.SendInfoMessage("Changed the maximum spawns to 5.");
@@ -4245,7 +4245,7 @@ namespace TShockAPI
 				return;
 			}
 
-			TShock.Config.DefaultMaximumSpawns = NPC.defaultMaxSpawns = maxSpawns;
+			TShock.Config.Settings.DefaultMaximumSpawns = NPC.defaultMaxSpawns = maxSpawns;
 			if (args.Silent)
 			{
 				args.Player.SendInfoMessage("Changed the maximum spawns to {0}.", maxSpawns);
@@ -4260,13 +4260,13 @@ namespace TShockAPI
 		{
 			if (args.Parameters.Count == 0)
 			{
-				args.Player.SendInfoMessage("Current spawn rate: {0}", TShock.Config.DefaultSpawnRate);
+				args.Player.SendInfoMessage("Current spawn rate: {0}", TShock.Config.Settings.DefaultSpawnRate);
 				return;
 			}
 
 			if (String.Equals(args.Parameters[0], "default", StringComparison.CurrentCultureIgnoreCase))
 			{
-				TShock.Config.DefaultSpawnRate = NPC.defaultSpawnRate = 600;
+				TShock.Config.Settings.DefaultSpawnRate = NPC.defaultSpawnRate = 600;
 				if (args.Silent)
 				{
 					args.Player.SendInfoMessage("Changed the spawn rate to 600.");
@@ -4284,7 +4284,7 @@ namespace TShockAPI
 				args.Player.SendWarningMessage("Invalid spawn rate!");
 				return;
 			}
-			TShock.Config.DefaultSpawnRate = NPC.defaultSpawnRate = spawnRate;
+			TShock.Config.Settings.DefaultSpawnRate = NPC.defaultSpawnRate = spawnRate;
 			if (args.Silent)
 			{
 				args.Player.SendInfoMessage("Changed the spawn rate to {0}.", spawnRate);
@@ -5008,14 +5008,14 @@ namespace TShockAPI
 
 		private static void ToggleAntiBuild(CommandArgs args)
 		{
-			TShock.Config.DisableBuild = !TShock.Config.DisableBuild;
-			TSPlayer.All.SendSuccessMessage(string.Format("Anti-build is now {0}.", (TShock.Config.DisableBuild ? "on" : "off")));
+			TShock.Config.Settings.DisableBuild = !TShock.Config.Settings.DisableBuild;
+			TSPlayer.All.SendSuccessMessage(string.Format("Anti-build is now {0}.", (TShock.Config.Settings.DisableBuild ? "on" : "off")));
 		}
 
 		private static void ProtectSpawn(CommandArgs args)
 		{
-			TShock.Config.SpawnProtection = !TShock.Config.SpawnProtection;
-			TSPlayer.All.SendSuccessMessage(string.Format("Spawn is now {0}.", (TShock.Config.SpawnProtection ? "protected" : "open")));
+			TShock.Config.Settings.SpawnProtection = !TShock.Config.Settings.SpawnProtection;
+			TSPlayer.All.SendSuccessMessage(string.Format("Spawn is now {0}.", (TShock.Config.Settings.SpawnProtection ? "protected" : "open")));
 		}
 
 		#endregion World Protection Commands
@@ -5121,7 +5121,7 @@ namespace TShockAPI
 				return;
 			}
 
-			args.Player.SendSuccessMessage("Online Players ({0}/{1})", TShock.Utils.GetActivePlayerCount(), TShock.Config.MaxSlots);
+			args.Player.SendSuccessMessage("Online Players ({0}/{1})", TShock.Utils.GetActivePlayerCount(), TShock.Config.Settings.MaxSlots);
 
 			var players = new List<string>();
 

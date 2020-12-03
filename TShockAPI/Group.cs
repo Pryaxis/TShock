@@ -340,11 +340,11 @@ namespace TShockAPI
 		public SuperAdminGroup()
 			: base("superadmin")
 		{
-			R = (byte)TShock.Config.SuperAdminChatRGB[0];
-			G = (byte)TShock.Config.SuperAdminChatRGB[1];
-			B = (byte)TShock.Config.SuperAdminChatRGB[2];
-			Prefix = TShock.Config.SuperAdminChatPrefix;
-			Suffix = TShock.Config.SuperAdminChatSuffix;
+			R = (byte)TShock.Config.Settings.SuperAdminChatRGB[0];
+			G = (byte)TShock.Config.Settings.SuperAdminChatRGB[1];
+			B = (byte)TShock.Config.Settings.SuperAdminChatRGB[2];
+			Prefix = TShock.Config.Settings.SuperAdminChatPrefix;
+			Suffix = TShock.Config.Settings.SuperAdminChatSuffix;
 		}
 
 		/// <summary>

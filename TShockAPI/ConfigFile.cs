@@ -28,6 +28,7 @@ using Rests;
 namespace TShockAPI
 {
 	/// <summary>The config file class, which contains the configuration for a server that is serialized into JSON and deserialized on load.</summary>
+	[Obsolete("Use TShockAPI.Configuration.TShockConfig", true)]
 	public class ConfigFile
 	{
 

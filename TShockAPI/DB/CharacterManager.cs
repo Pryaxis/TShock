@@ -126,7 +126,7 @@ namespace TShockAPI.DB
 		{
 			var inventory = new StringBuilder();
 
-			var items = new List<NetItem>(TShock.ServerSideCharacterConfig.StartingInventory);
+			var items = new List<NetItem>(TShock.ServerSideCharacterConfig.Settings.StartingInventory);
 			if (items.Count < NetItem.MaxInventory)
 				items.AddRange(new NetItem[NetItem.MaxInventory - items.Count]);
 
@@ -135,10 +135,10 @@ namespace TShockAPI.DB
 			{
 				database.Query("INSERT INTO tsCharacter (Account, Health, MaxHealth, Mana, MaxMana, Inventory, spawnX, spawnY, questsCompleted) VALUES (@0, @1, @2, @3, @4, @5, @6, @7, @8);",
 							   account.ID,
-							   TShock.ServerSideCharacterConfig.StartingHealth,
-							   TShock.ServerSideCharacterConfig.StartingHealth,
-							   TShock.ServerSideCharacterConfig.StartingMana,
-							   TShock.ServerSideCharacterConfig.StartingMana,
+							   TShock.ServerSideCharacterConfig.Settings.StartingHealth,
+							   TShock.ServerSideCharacterConfig.Settings.StartingHealth,
+							   TShock.ServerSideCharacterConfig.Settings.StartingMana,
+							   TShock.ServerSideCharacterConfig.Settings.StartingMana,
 							   initialItems,
 							   -1,
 							   -1,

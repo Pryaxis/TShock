@@ -496,7 +496,7 @@ namespace TShockAPI.DB
 				return;
 			}
 
-			if (currentWorkFactor < TShock.Config.BCryptWorkFactor)
+			if (currentWorkFactor < TShock.Config.Settings.BCryptWorkFactor)
 			{
 				try
 				{
@@ -513,13 +513,13 @@ namespace TShockAPI.DB
 		/// <param name="password">The plain text password to hash</param>
 		public void CreateBCryptHash(string password)
 		{
-			if (password.Trim().Length < Math.Max(4, TShock.Config.MinimumPasswordLength))
+			if (password.Trim().Length < Math.Max(4, TShock.Config.Settings.MinimumPasswordLength))
 			{
-				throw new ArgumentOutOfRangeException("password", "Password must be > " + TShock.Config.MinimumPasswordLength + " characters.");
+				throw new ArgumentOutOfRangeException("password", "Password must be > " + TShock.Config.Settings.MinimumPasswordLength + " characters.");
 			}
 			try
 			{
-				Password = BCrypt.Net.BCrypt.HashPassword(password.Trim(), TShock.Config.BCryptWorkFactor);
+				Password = BCrypt.Net.BCrypt.HashPassword(password.Trim(), TShock.Config.Settings.BCryptWorkFactor);
 			}
 			catch (ArgumentOutOfRangeException)
 			{
@@ -533,9 +533,9 @@ namespace TShockAPI.DB
 		/// <param name="workFactor">The work factor to use in generating the password hash</param>
 		public void CreateBCryptHash(string password, int workFactor)
 		{
-			if (password.Trim().Length < Math.Max(4, TShock.Config.MinimumPasswordLength))
+			if (password.Trim().Length < Math.Max(4, TShock.Config.Settings.MinimumPasswordLength))
 			{
-				throw new ArgumentOutOfRangeException("password", "Password must be > " + TShock.Config.MinimumPasswordLength + " characters.");
+				throw new ArgumentOutOfRangeException("password", "Password must be > " + TShock.Config.Settings.MinimumPasswordLength + " characters.");
 			}
 			Password = BCrypt.Net.BCrypt.HashPassword(password.Trim(), workFactor);
 		}
@@ -563,8 +563,8 @@ namespace TShockAPI.DB
 			if (bytes == null)
 				throw new NullReferenceException("bytes");
 			Func<HashAlgorithm> func;
-			if (!HashTypes.TryGetValue(TShock.Config.HashAlgorithm.ToLower(), out func))
-				throw new NotSupportedException("Hashing algorithm {0} is not supported".SFormat(TShock.Config.HashAlgorithm.ToLower()));
+			if (!HashTypes.TryGetValue(TShock.Config.Settings.HashAlgorithm.ToLower(), out func))
+				throw new NotSupportedException("Hashing algorithm {0} is not supported".SFormat(TShock.Config.Settings.HashAlgorithm.ToLower()));
 
 			using (var hash = func())
 			{

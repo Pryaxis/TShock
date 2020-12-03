@@ -49,7 +49,7 @@ namespace TShockAPI
 		/// </summary>
 		public void OnSaveWorld(WorldSaveEventArgs args)
 		{
-			if (TShock.Config.AnnounceSave)
+			if (TShock.Config.Settings.AnnounceSave)
 			{
 				// Protect against internal errors causing save failures
 				// These can be caused by an unexpected error such as a bad or out of date plugin
@@ -131,7 +131,7 @@ namespace TShockAPI
 								else
 									WorldFile.SaveWorld(task.resetTime);
 
-								if (TShock.Config.AnnounceSave)
+								if (TShock.Config.Settings.AnnounceSave)
 									TShock.Utils.Broadcast("World saved.", Color.Yellow);
 
 								TShock.Log.Info(string.Format("World saved at ({0})", Main.worldPathName));

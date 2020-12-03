@@ -59,7 +59,7 @@ namespace Rests
 				AppTokens.Add(t.Key, t.Value);
 			}
 
-			foreach (KeyValuePair<string, TokenData> t in TShock.Config.ApplicationRestTokens)
+			foreach (KeyValuePair<string, TokenData> t in TShock.Config.Settings.ApplicationRestTokens)
 			{
 				AppTokens.Add(t.Key, t.Value);
 			}
@@ -115,7 +115,7 @@ namespace Rests
 			int tokens = 0;
 			if (tokenBucket.TryGetValue(context.RemoteEndPoint.Address.ToString(), out tokens))
 			{
-				if (tokens >= TShock.Config.RESTMaximumRequestsPerInterval)
+				if (tokens >= TShock.Config.Settings.RESTMaximumRequestsPerInterval)
 				{
 					TShock.Log.ConsoleError("A REST login from {0} was blocked as it currently has {1} tokens", context.RemoteEndPoint.Address.ToString(), tokens);
 					tokenBucket[context.RemoteEndPoint.Address.ToString()] += 1; // Tokens over limit, increment by one and reject request
@@ -208,7 +208,7 @@ namespace Rests
 			}
 
 			object result = secureCmd.Execute(verbs, parms, tokenData, request, context);
-			if (cmd.DoLog && TShock.Config.LogRest)
+			if (cmd.DoLog && TShock.Config.Settings.LogRest)
 				TShock.Utils.SendLogs(string.Format(
 					"\"{0}\" requested REST endpoint: {1}", tokenData.Username, this.BuildRequestUri(cmd, verbs, parms, false)),
 					Color.PaleVioletRed);

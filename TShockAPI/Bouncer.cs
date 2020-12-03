@@ -164,7 +164,7 @@ namespace TShockAPI
 				if (args.Player.IsBeingDisabled())
 				{
 					// If the player has moved outside the disabled zone...
-					if (distance > TShock.Config.MaxRangeForDisabled)
+					if (distance > TShock.Config.Settings.MaxRangeForDisabled)
 					{
 						// We need to tell them they were disabled and why, then revert the change.
 						if (args.Player.IsDisabledForStackDetection)
@@ -177,11 +177,11 @@ namespace TShockAPI
 						}
 						else if (args.Player.IsDisabledForSSC)
 						{
-							args.Player.SendErrorMessage("Disabled. You need to {0}login to load your saved data.", TShock.Config.CommandSpecifier);
+							args.Player.SendErrorMessage("Disabled. You need to {0}login to load your saved data.", TShock.Config.Settings.CommandSpecifier);
 						}
-						else if (TShock.Config.RequireLogin && !args.Player.IsLoggedIn)
+						else if (TShock.Config.Settings.RequireLogin && !args.Player.IsLoggedIn)
 						{
-							args.Player.SendErrorMessage("Account needed! Please {0}register or {0}login to play!", TShock.Config.CommandSpecifier);
+							args.Player.SendErrorMessage("Account needed! Please {0}register or {0}login to play!", TShock.Config.Settings.CommandSpecifier);
 						}
 						else if (args.Player.IsDisabledPendingTrashRemoval)
 						{
@@ -257,7 +257,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (args.Player.Dead && TShock.Config.PreventDeadModification)
+				if (args.Player.Dead && TShock.Config.Settings.PreventDeadModification)
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (pdm) {0} {1} {2}", args.Player.Name, action, editData);
 					args.Player.SendTileSquare(tileX, tileY, 4);
@@ -345,7 +345,7 @@ namespace TShockAPI
 				}
 				else if (action == EditAction.PlaceTile || action == EditAction.ReplaceTile || action == EditAction.PlaceWall || action == EditAction.ReplaceWall)
 				{
-					if ((action == EditAction.PlaceTile && TShock.Config.PreventInvalidPlaceStyle) &&
+					if ((action == EditAction.PlaceTile && TShock.Config.Settings.PreventInvalidPlaceStyle) &&
 						(MaxPlaceStyles.ContainsKey(editData) && style > MaxPlaceStyles[editData]) &&
 						(ExtraneousPlaceStyles.ContainsKey(editData) && style > ExtraneousPlaceStyles[editData]))
 					{
@@ -436,7 +436,7 @@ namespace TShockAPI
 						return;
 					}
 				}
-				if (TShock.Config.AllowCutTilesAndBreakables && Main.tileCut[tile.type])
+				if (TShock.Config.Settings.AllowCutTilesAndBreakables && Main.tileCut[tile.type])
 				{
 					if (action == EditAction.KillWall || action == EditAction.ReplaceWall)
 					{
@@ -496,11 +496,11 @@ namespace TShockAPI
 					return;
 				}
 
-				if (args.Player.TileKillThreshold >= TShock.Config.TileKillThreshold)
+				if (args.Player.TileKillThreshold >= TShock.Config.Settings.TileKillThreshold)
 				{
-					if (TShock.Config.KickOnTileKillThresholdBroken)
+					if (TShock.Config.Settings.KickOnTileKillThresholdBroken)
 					{
-						args.Player.Kick(string.Format("Tile kill threshold exceeded {0}.", TShock.Config.TileKillThreshold));
+						args.Player.Kick(string.Format("Tile kill threshold exceeded {0}.", TShock.Config.Settings.TileKillThreshold));
 					}
 					else
 					{
@@ -514,11 +514,11 @@ namespace TShockAPI
 					return;
 				}
 
-				if (args.Player.TilePlaceThreshold >= TShock.Config.TilePlaceThreshold)
+				if (args.Player.TilePlaceThreshold >= TShock.Config.Settings.TilePlaceThreshold)
 				{
-					if (TShock.Config.KickOnTilePlaceThresholdBroken)
+					if (TShock.Config.Settings.KickOnTilePlaceThresholdBroken)
 					{
-						args.Player.Kick(string.Format("Tile place threshold exceeded {0}.", TShock.Config.TilePlaceThreshold));
+						args.Player.Kick(string.Format("Tile place threshold exceeded {0}.", TShock.Config.Settings.TilePlaceThreshold));
 					}
 					else
 					{
@@ -719,7 +719,7 @@ namespace TShockAPI
 			}
 
 			// TODO: Remove item ban part of this check
-			if ((Main.ServerSideCharacter) && (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond - args.Player.LoginMS < TShock.ServerSideCharacterConfig.LogonDiscardThreshold))
+			if ((Main.ServerSideCharacter) && (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond - args.Player.LoginMS < TShock.ServerSideCharacterConfig.Settings.LogonDiscardThreshold))
 			{
 				//Player is probably trying to sneak items onto the server in their hands!!!
 				TShock.Log.ConsoleInfo("Player {0} tried to sneak {1} onto the server!", args.Player.Name, item.Name);
@@ -771,10 +771,10 @@ namespace TShockAPI
 				return;
 			}
 
-			if (damage > TShock.Config.MaxProjDamage && !args.Player.HasPermission(Permissions.ignoredamagecap))
+			if (damage > TShock.Config.Settings.MaxProjDamage && !args.Player.HasPermission(Permissions.ignoredamagecap))
 			{
-				args.Player.Disable(String.Format("Projectile damage is higher than {0}.", TShock.Config.MaxProjDamage), DisableFlags.WriteToLogAndConsole);
-				TShock.Log.ConsoleDebug("Bouncer / OnNewProjectile rejected from projectile damage limit from {0} {1}/{2}", args.Player.Name, damage, TShock.Config.MaxProjDamage);
+				args.Player.Disable(String.Format("Projectile damage is higher than {0}.", TShock.Config.Settings.MaxProjDamage), DisableFlags.WriteToLogAndConsole);
+				TShock.Log.ConsoleDebug("Bouncer / OnNewProjectile rejected from projectile damage limit from {0} {1}/{2}", args.Player.Name, damage, TShock.Config.Settings.MaxProjDamage);
 				args.Player.RemoveProjectile(ident, owner);
 				args.Handled = true;
 				return;
@@ -836,7 +836,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (!TShock.Config.IgnoreProjUpdate && !args.Player.HasPermission(Permissions.ignoreprojectiledetection))
+			if (!TShock.Config.Settings.IgnoreProjUpdate && !args.Player.HasPermission(Permissions.ignoreprojectiledetection))
 			{
 				if (type == ProjectileID.BlowupSmokeMoonlord
 					|| type == ProjectileID.PhantasmalEye
@@ -863,11 +863,11 @@ namespace TShockAPI
 				// return;
 			}
 
-			if (args.Player.ProjectileThreshold >= TShock.Config.ProjectileThreshold)
+			if (args.Player.ProjectileThreshold >= TShock.Config.Settings.ProjectileThreshold)
 			{
-				if (TShock.Config.KickOnProjectileThresholdBroken)
+				if (TShock.Config.Settings.KickOnProjectileThresholdBroken)
 				{
-					args.Player.Kick(string.Format("Projectile update threshold exceeded {0}.", TShock.Config.ProjectileThreshold));
+					args.Player.Kick(string.Format("Projectile update threshold exceeded {0}.", TShock.Config.Settings.ProjectileThreshold));
 				}
 				else
 				{
@@ -875,7 +875,7 @@ namespace TShockAPI
 					args.Player.RemoveProjectile(ident, owner);
 				}
 				
-				TShock.Log.ConsoleDebug("Bouncer / OnNewProjectile rejected from projectile update threshold from {0} {1}/{2}", args.Player.Name, args.Player.ProjectileThreshold, TShock.Config.ProjectileThreshold);
+				TShock.Log.ConsoleDebug("Bouncer / OnNewProjectile rejected from projectile update threshold from {0} {1}/{2}", args.Player.Name, args.Player.ProjectileThreshold, TShock.Config.Settings.ProjectileThreshold);
 				TShock.Log.ConsoleDebug("If this player wasn't hacking, please report the projectile update threshold they were disabled for to TShock so we can improve this!");
 				args.Handled = true;
 				return;
@@ -891,7 +891,7 @@ namespace TShockAPI
 
 			if (!args.Player.HasPermission(Permissions.ignoreprojectiledetection))
 			{
-				if (type == ProjectileID.CrystalShard && TShock.Config.ProjIgnoreShrapnel) // Ignore crystal shards
+				if (type == ProjectileID.CrystalShard && TShock.Config.Settings.ProjIgnoreShrapnel) // Ignore crystal shards
 				{
 					TShock.Log.Debug("Ignoring shrapnel per config..");
 				}
@@ -930,19 +930,19 @@ namespace TShockAPI
 				return;
 			}
 
-			if (damage >= TShock.Config.MaxDamage && !args.Player.HasPermission(Permissions.ignoredamagecap))
+			if (damage >= TShock.Config.Settings.MaxDamage && !args.Player.HasPermission(Permissions.ignoredamagecap))
 			{
-				if (TShock.Config.KickOnDamageThresholdBroken)
+				if (TShock.Config.Settings.KickOnDamageThresholdBroken)
 				{
-					args.Player.Kick(string.Format("NPC damage exceeded {0}.", TShock.Config.MaxDamage));
+					args.Player.Kick(string.Format("NPC damage exceeded {0}.", TShock.Config.Settings.MaxDamage));
 				}
 				else
 				{
-					args.Player.Disable(String.Format("NPC damage exceeded {0}.", TShock.Config.MaxDamage), DisableFlags.WriteToLogAndConsole);
+					args.Player.Disable(String.Format("NPC damage exceeded {0}.", TShock.Config.Settings.MaxDamage), DisableFlags.WriteToLogAndConsole);
 					args.Player.SendData(PacketTypes.NpcUpdate, "", id);
 				}
 				
-				TShock.Log.ConsoleDebug("Bouncer / OnNPCStrike rejected from damage threshold from {0} {1}/{2}", args.Player.Name, damage, TShock.Config.MaxDamage);
+				TShock.Log.ConsoleDebug("Bouncer / OnNPCStrike rejected from damage threshold from {0} {1}/{2}", args.Player.Name, damage, TShock.Config.Settings.MaxDamage);
 				TShock.Log.ConsoleDebug("If this player wasn't hacking, please report the damage threshold they were disabled for to TShock so we can improve this!");
 				args.Handled = true;
 				return;
@@ -956,7 +956,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (TShock.Config.RangeChecks &&
+			if (TShock.Config.Settings.RangeChecks &&
 				!args.Player.IsInRange((int)(Main.npc[id].position.X / 16f), (int)(Main.npc[id].position.Y / 16f), 128))
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnNPCStrike rejected from range checks from {0}", args.Player.Name);
@@ -1029,7 +1029,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (!args.Player.HasBuildPermission(Main.chest[id].x, Main.chest[id].y) && TShock.Config.RegionProtectChests)
+			if (!args.Player.HasBuildPermission(Main.chest[id].x, Main.chest[id].y) && TShock.Config.Settings.RegionProtectChests)
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnChestItemChange rejected from region protection? from {0}", args.Player.Name);
 				args.Handled = true;
@@ -1063,7 +1063,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (!args.Player.HasBuildPermission(args.X, args.Y) && TShock.Config.RegionProtectChests)
+			if (!args.Player.HasBuildPermission(args.X, args.Y) && TShock.Config.Settings.RegionProtectChests)
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnChestOpen rejected from region check from {0}", args.Player.Name);
 				args.Handled = true;
@@ -1083,7 +1083,7 @@ namespace TShockAPI
 			int tileY = args.TileY;
 			int flag = args.Flag;
 
-			if (!TShock.Utils.TilePlacementValid(tileX, tileY) || (args.Player.Dead && TShock.Config.PreventDeadModification))
+			if (!TShock.Utils.TilePlacementValid(tileX, tileY) || (args.Player.Dead && TShock.Config.Settings.PreventDeadModification))
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnPlaceChest rejected from invalid check from {0}", args.Player.Name);
 				args.Handled = true;
@@ -1209,7 +1209,7 @@ namespace TShockAPI
 			byte amount = args.Amount;
 			LiquidType type = args.Type;
 
-			if (!TShock.Utils.TilePlacementValid(tileX, tileY) || (args.Player.Dead && TShock.Config.PreventDeadModification))
+			if (!TShock.Utils.TilePlacementValid(tileX, tileY) || (args.Player.Dead && TShock.Config.Settings.PreventDeadModification))
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected invalid check from {0}", args.Player.Name);
 				args.Handled = true;
@@ -1224,11 +1224,11 @@ namespace TShockAPI
 				return;
 			}
 
-			if (args.Player.TileLiquidThreshold >= TShock.Config.TileLiquidThreshold)
+			if (args.Player.TileLiquidThreshold >= TShock.Config.Settings.TileLiquidThreshold)
 			{
-				if (TShock.Config.KickOnTileLiquidThresholdBroken)
+				if (TShock.Config.Settings.KickOnTileLiquidThresholdBroken)
 				{
-					args.Player.Kick(string.Format("Reached TileLiquid threshold {0}.", TShock.Config.TileLiquidThreshold));
+					args.Player.Kick(string.Format("Reached TileLiquid threshold {0}.", TShock.Config.Settings.TileLiquidThreshold));
 				}
 				else
 				{
@@ -1236,7 +1236,7 @@ namespace TShockAPI
 					args.Player.SendTileSquare(tileX, tileY, 1);
 				}
 				
-				TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected from liquid threshold from {0} {1}/{2}", args.Player.Name, args.Player.TileLiquidThreshold, TShock.Config.TileLiquidThreshold);
+				TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected from liquid threshold from {0} {1}/{2}", args.Player.Name, args.Player.TileLiquidThreshold, TShock.Config.Settings.TileLiquidThreshold);
 				TShock.Log.ConsoleDebug("If this player wasn't hacking, please report the tile liquid threshold they were disabled for to TShock so we can improve this!");
 				args.Handled = true;
 				return;
@@ -1261,8 +1261,8 @@ namespace TShockAPI
 				}
 
 				var recentBombs = args.Player.RecentlyCreatedProjectiles.Where(p => projectileTypesThatPerformThisOperation.Contains(Main.projectile[p.Index].type));
-				wasThereABombNearby = recentBombs.Any(r => Math.Abs(args.TileX - (Main.projectile[r.Index].position.X / 16.0f)) < TShock.Config.BombExplosionRadius
-														&& Math.Abs(args.TileY - (Main.projectile[r.Index].position.Y / 16.0f)) < TShock.Config.BombExplosionRadius);
+				wasThereABombNearby = recentBombs.Any(r => Math.Abs(args.TileX - (Main.projectile[r.Index].position.X / 16.0f)) < TShock.Config.Settings.BombExplosionRadius
+														&& Math.Abs(args.TileY - (Main.projectile[r.Index].position.Y / 16.0f)) < TShock.Config.Settings.BombExplosionRadius);
 			}
 
 			// Liquid anti-cheat
@@ -1561,7 +1561,7 @@ namespace TShockAPI
 			// Why 0.2?
 			// @bartico6: Because heal other player only happens when you are using the spectre armor with the hood,
 			// and the healing you can do with that is 20% of your damage.
-			if (amount >= TShock.Config.MaxDamage * 0.2)
+			if (amount >= TShock.Config.Settings.MaxDamage * 0.2)
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnHealOtherPlayer 0.2 check from {0}", args.Player.Name);
 				args.Player.Disable("HealOtherPlayer cheat attempt!", DisableFlags.WriteToLogAndConsole);
@@ -1569,17 +1569,17 @@ namespace TShockAPI
 				return;
 			}
 
-			if (args.Player.HealOtherThreshold >= TShock.Config.HealOtherThreshold)
+			if (args.Player.HealOtherThreshold >= TShock.Config.Settings.HealOtherThreshold)
 			{
-				if (TShock.Config.KickOnHealOtherThresholdBroken)
+				if (TShock.Config.Settings.KickOnHealOtherThresholdBroken)
 				{
-					args.Player.Kick(string.Format("HealOtherPlayer threshold exceeded {0}.", TShock.Config.HealOtherThreshold));
+					args.Player.Kick(string.Format("HealOtherPlayer threshold exceeded {0}.", TShock.Config.Settings.HealOtherThreshold));
 				}
 				else 
 				{
 					args.Player.Disable("Reached HealOtherPlayer threshold.", DisableFlags.WriteToLogAndConsole);
 				}
-				TShock.Log.ConsoleDebug("Bouncer / OnHealOtherPlayer rejected heal other threshold from {0} {1}/{2}", args.Player.Name, args.Player.HealOtherThreshold, TShock.Config.HealOtherThreshold);
+				TShock.Log.ConsoleDebug("Bouncer / OnHealOtherPlayer rejected heal other threshold from {0} {1}/{2}", args.Player.Name, args.Player.HealOtherThreshold, TShock.Config.Settings.HealOtherThreshold);
 				TShock.Log.ConsoleDebug("If this player wasn't hacking, please report the HealOtherPlayer threshold they were disabled for to TShock so we can improve this!");
 				args.Handled = true;
 				return;
@@ -1658,7 +1658,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (args.Player.Dead && TShock.Config.PreventDeadModification)
+			if (args.Player.Dead && TShock.Config.Settings.PreventDeadModification)
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnPlaceObject rejected dead people don't do things from {0}", args.Player.Name);
 				args.Player.SendTileSquare(x, y, 4);
@@ -1725,9 +1725,9 @@ namespace TShockAPI
 				return;
 			}
 
-			if (args.Player.TilePlaceThreshold >= TShock.Config.TilePlaceThreshold)
+			if (args.Player.TilePlaceThreshold >= TShock.Config.Settings.TilePlaceThreshold)
 			{
-				TShock.Log.ConsoleDebug("Bouncer / OnPlaceObject rejected tile place threshold from {0} {1}/{2}", args.Player.Name, args.Player.TilePlaceThreshold, TShock.Config.TilePlaceThreshold);
+				TShock.Log.ConsoleDebug("Bouncer / OnPlaceObject rejected tile place threshold from {0} {1}/{2}", args.Player.Name, args.Player.TilePlaceThreshold, TShock.Config.Settings.TilePlaceThreshold);
 				args.Player.Disable("Reached TilePlace threshold.", DisableFlags.WriteToLogAndConsole);
 				args.Player.SendTileSquare(x, y, 4);
 				args.Handled = true;
@@ -1844,7 +1844,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (!TShock.Utils.TilePlacementValid(args.X, args.Y) || (args.Player.Dead && TShock.Config.PreventDeadModification))
+			if (!TShock.Utils.TilePlacementValid(args.X, args.Y) || (args.Player.Dead && TShock.Config.Settings.PreventDeadModification))
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnGemLockToggle invalid placement/deadmod from {0}", args.Player.Name);
 				args.Handled = true;
@@ -1892,7 +1892,7 @@ namespace TShockAPI
 				x = p.X;
 				y = p.Y;
 
-				if (!TShock.Utils.TilePlacementValid(x, y) || (args.Player.Dead && TShock.Config.PreventDeadModification))
+				if (!TShock.Utils.TilePlacementValid(x, y) || (args.Player.Dead && TShock.Config.Settings.PreventDeadModification))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnMassWireOperation rejected valid placement from {0}", args.Player.Name);
 					args.Handled = true;
@@ -1933,19 +1933,19 @@ namespace TShockAPI
 				return;
 			}
 
-			if (damage > TShock.Config.MaxDamage && !args.Player.HasPermission(Permissions.ignoredamagecap) && id != args.Player.Index)
+			if (damage > TShock.Config.Settings.MaxDamage && !args.Player.HasPermission(Permissions.ignoredamagecap) && id != args.Player.Index)
 			{
-				if (TShock.Config.KickOnDamageThresholdBroken)
+				if (TShock.Config.Settings.KickOnDamageThresholdBroken)
 				{
-					TShock.Log.ConsoleDebug("Bouncer / OnPlayerDamage rejected damage threshold from {0} {1}/{2}", args.Player.Name, damage, TShock.Config.MaxDamage);
-					args.Player.Kick(string.Format("Player damage exceeded {0}.", TShock.Config.MaxDamage));
+					TShock.Log.ConsoleDebug("Bouncer / OnPlayerDamage rejected damage threshold from {0} {1}/{2}", args.Player.Name, damage, TShock.Config.Settings.MaxDamage);
+					args.Player.Kick(string.Format("Player damage exceeded {0}.", TShock.Config.Settings.MaxDamage));
 					args.Handled = true;
 					return;
 				}
 				else
 				{
-					TShock.Log.ConsoleDebug("Bouncer / OnPlayerDamage rejected damage threshold2 from {0} {1}/{2}", args.Player.Name, damage, TShock.Config.MaxDamage);
-					args.Player.Disable(String.Format("Player damage exceeded {0}.", TShock.Config.MaxDamage), DisableFlags.WriteToLogAndConsole);
+					TShock.Log.ConsoleDebug("Bouncer / OnPlayerDamage rejected damage threshold2 from {0} {1}/{2}", args.Player.Name, damage, TShock.Config.Settings.MaxDamage);
+					args.Player.Disable(String.Format("Player damage exceeded {0}.", TShock.Config.Settings.MaxDamage), DisableFlags.WriteToLogAndConsole);
 				}
 				args.Player.SendData(PacketTypes.PlayerHp, "", id);
 				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
