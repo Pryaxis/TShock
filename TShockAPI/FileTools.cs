@@ -195,7 +195,7 @@ namespace TShockAPI
 			return cfg;
 		}
 
-		internal static TSettings LoadConfigAndCheckForMissingFields<TSettings>(string json, out bool anyMissingFields)
+		internal static TSettings LoadConfigAndCheckForMissingFields<TSettings>(string json, out bool anyMissingFields) where TSettings : new()
 		{
 			return LoadConfigAndCheckForMissingFields<TSettings>(JObject.Parse(json), out anyMissingFields);
 		}
@@ -207,7 +207,7 @@ namespace TShockAPI
 		/// <param name="jObject">The json object to parse</param>
 		/// <param name="anyMissingFields">Whether any fields are missing from the config</param>
 		/// <returns>The config object</returns>
-		internal static TSettings LoadConfigAndCheckForMissingFields<TSettings>(JObject jObject, out bool anyMissingFields)
+		internal static TSettings LoadConfigAndCheckForMissingFields<TSettings>(JObject jObject, out bool anyMissingFields) where TSettings : new()
 		{
 			anyMissingFields = false;
 			var configFields = new HashSet<string>(typeof(Configuration.ConfigFile<TSettings>).GetFields()
