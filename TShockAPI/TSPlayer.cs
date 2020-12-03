@@ -1636,11 +1636,15 @@ namespace TShockAPI
 		{
 			if (!ConnectionAlive)
 				return true;
-			if (force || !HasPermission(Permissions.immunetoban))
+			if (force)
 			{
-				string ip = IP;
-				string uuid = UUID;
-				TShock.Bans.AddBan(ip, Name, uuid, "", reason, false, adminUserName);
+				TShock.Bans.InsertBan($"{Identifier.IP}{IP}", reason, adminUserName, DateTime.UtcNow, DateTime.MaxValue);
+				TShock.Bans.InsertBan($"{Identifier.IP}{UUID}", reason, adminUserName, DateTime.UtcNow, DateTime.MaxValue);
+				if (Account != null)
+				{
+					TShock.Bans.InsertBan($"{Identifier.Account}{Account.Name}", reason, adminUserName, DateTime.UtcNow, DateTime.MaxValue);
+				}
+
 				Disconnect(string.Format("Banned: {0}", reason));
 				string verb = force ? "force " : "";
 				if (string.IsNullOrWhiteSpace(adminUserName))

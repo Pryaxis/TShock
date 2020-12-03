@@ -46,7 +46,6 @@ namespace TShockAPI.DB
 					com.CommandText = query;
 					for (int i = 0; i < args.Length; i++)
 						com.AddParameter("@" + i, args[i]);
-
 					return com.ExecuteNonQuery();
 				}
 			}
@@ -78,6 +77,39 @@ namespace TShockAPI.DB
 			catch (Exception ex)
 			{
 				throw new Exception("Fatal TShock initialization exception: failed to connect to MySQL database. See inner exception for details.", ex);
+			}
+		}
+
+		/// <summary>
+		/// Executes a query on a database, returning the first column of the first row of the result set.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="olddb">Database to query</param>
+		/// <param name="query">Query string with parameters as @0, @1, etc.</param>
+		/// <param name="args">Parameters to be put in the query</param>
+		/// <returns></returns>
+		public static T QueryScalar<T>(this IDbConnection olddb, string query, params object[] args)
+		{
+			using (var db = olddb.CloneEx())
+			{
+				db.Open();
+				using (var com = db.CreateCommand())
+				{
+					com.CommandText = query;
+					for (int i = 0; i < args.Length; i++)
+						com.AddParameter("@" + i, args[i]);
+
+					object output = com.ExecuteScalar();
+					if (output.GetType() != typeof(T))
+					{
+						if (typeof(IConvertible).IsAssignableFrom(output.GetType()))
+						{
+							return (T)Convert.ChangeType(output, typeof(T));
+						}
+					}
+
+					return (T)output;
+				}
 			}
 		}
 
@@ -210,12 +242,24 @@ namespace TShockAPI.DB
 		public static T Get<T>(this IDataReader reader, int column)
 		{
 			if (reader.IsDBNull(column))
-				return default(T);
+				return default;
 
 			if (ReadFuncs.ContainsKey(typeof(T)))
 				return (T)ReadFuncs[typeof(T)](reader, column);
 
-			throw new NotImplementedException();
+			Type t;
+			if (typeof(T) != (t = reader.GetFieldType(column)))
+			{
+				string columnName = reader.GetName(column);
+				throw new InvalidCastException($"Received type '{typeof(T).Name}', however column '{columnName}' expects type '{t.Name}'");
+			}
+
+			if (reader.IsDBNull(column))
+			{
+				return default;
+			}
+
+			return (T)reader.GetValue(column);
 		}
 	}
 

@@ -478,27 +478,7 @@ namespace TShockAPI
 			args.Player.Account.KnownIps = JsonConvert.SerializeObject(KnownIps, Formatting.Indented);
 			UserAccounts.UpdateLogin(args.Player.Account);
 
-			Ban potentialBan = Bans.GetBanByAccountName(args.Player.Account.Name);
-
-			if (potentialBan != null)
-			{
-				// A user just signed in successfully despite being banned by account name.
-				// We should fix the ban database so that all of their ban info is up to date.
-				Bans.AddBan(args.Player.IP, args.Player.Name, args.Player.UUID, args.Player.Account.Name,
-					potentialBan.Reason, false, potentialBan.BanningUser, potentialBan.Expiration);
-
-				// And then get rid of them.
-				if (potentialBan.Expiration == "")
-				{
-					args.Player.Kick(String.Format("Permanently banned by {0} for {1}", potentialBan.BanningUser
-						,potentialBan.Reason), true, true);
-				}
-				else
-				{
-					args.Player.Kick(String.Format("Still banned by {0} for {1}", potentialBan.BanningUser,
-						potentialBan.Reason), true, true);
-				}
-			}
+			Bans.CheckBan(args.Player);
 		}
 
 		/// <summary>OnAccountDelete - Internal hook fired on account delete.</summary>
@@ -816,7 +796,7 @@ namespace TShockAPI
 						Console.WriteLine("Startup parameter overrode REST port.");
 					}
 				})
-				.AddFlags(playerSet, (p)=>
+				.AddFlags(playerSet, (p) =>
 					{
 						int slots;
 						if (int.TryParse(p, out slots))
@@ -1100,7 +1080,7 @@ namespace TShockAPI
 			if (args.Handled)
 				return;
 
-			if(!OnCreep(args.Grass))
+			if (!OnCreep(args.Grass))
 			{
 				args.Handled = true;
 			}
@@ -1209,66 +1189,7 @@ namespace TShockAPI
 				return;
 			}
 
-			Ban ban = null;
-			if (Config.EnableBanOnUsernames)
-			{
-				var newban = Bans.GetBanByName(player.Name);
-				if (null != newban)
-					ban = newban;
-			}
-
-			if (Config.EnableIPBans && null == ban)
-			{
-				ban = Bans.GetBanByIp(player.IP);
-			}
-
-			if (Config.EnableUUIDBans && null == ban && !String.IsNullOrWhiteSpace(player.UUID))
-			{
-				ban = Bans.GetBanByUUID(player.UUID);
-			}
-
-			if (ban != null)
-			{
-				if (!Bans.RemoveBanIfExpired(ban))
-				{
-					DateTime exp;
-					if (!DateTime.TryParse(ban.Expiration, out exp))
-					{
-						player.Disconnect("Permanently banned for: " + ban.Reason);
-					}
-					else
-					{
-						TimeSpan ts = exp - DateTime.UtcNow;
-						int months = ts.Days / 30;
-						if (months > 0)
-						{
-							player.Disconnect(String.Format("You are banned for {0} month{1} and {2} day{3}: {4}",
-								months, months == 1 ? "" : "s", ts.Days, ts.Days == 1 ? "" : "s", ban.Reason));
-						}
-						else if (ts.Days > 0)
-						{
-							player.Disconnect(String.Format("You are banned for {0} day{1} and {2} hour{3}: {4}",
-								ts.Days, ts.Days == 1 ? "" : "s", ts.Hours, ts.Hours == 1 ? "" : "s", ban.Reason));
-						}
-						else if (ts.Hours > 0)
-						{
-							player.Disconnect(String.Format("You are banned for {0} hour{1} and {2} minute{3}: {4}",
-								ts.Hours, ts.Hours == 1 ? "" : "s", ts.Minutes, ts.Minutes == 1 ? "" : "s", ban.Reason));
-						}
-						else if (ts.Minutes > 0)
-						{
-							player.Disconnect(String.Format("You are banned for {0} minute{1} and {2} second{3}: {4}",
-								ts.Minutes, ts.Minutes == 1 ? "" : "s", ts.Seconds, ts.Seconds == 1 ? "" : "s", ban.Reason));
-						}
-						else
-						{
-							player.Disconnect(String.Format("You are banned for {0} second{1}: {2}",
-								ts.Seconds, ts.Seconds == 1 ? "" : "s", ban.Reason));
-						}
-					}
-					args.Handled = true;
-				}
-			}
+			Bans.CheckBan(player);
 		}
 
 		/// <summary>OnLeave - Called when a player leaves the server.</summary>
@@ -1647,7 +1568,8 @@ namespace TShockAPI
 								player.RecentlyCreatedProjectiles.RemoveAll(p => p.Index == e.number && p.Killed);
 							}
 
-							if (!player.RecentlyCreatedProjectiles.Any(p => p.Index == e.number)) {
+							if (!player.RecentlyCreatedProjectiles.Any(p => p.Index == e.number))
+							{
 								player.RecentlyCreatedProjectiles.Add(new GetDataHandlers.ProjectileStruct()
 								{
 									Index = e.number,

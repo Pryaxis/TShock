@@ -52,6 +52,7 @@ namespace TShockAPI
 		[Description("Prevents you from being kicked.")]
 		public static readonly string immunetokick = "tshock.admin.nokick";
 
+		[Obsolete("Ban immunity is no longer available.")]
 		[Description("Prevents you from being banned.")]
 		public static readonly string immunetoban = "tshock.admin.noban";
 

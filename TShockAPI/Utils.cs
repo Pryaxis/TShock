@@ -27,7 +27,6 @@ using System.Text.RegularExpressions;
 using Terraria;
 using Terraria.ID;
 using Terraria.Utilities;
-using TShockAPI.DB;
 using Microsoft.Xna.Framework;
 using Terraria.Localization;
 using TShockAPI.Localization;
@@ -39,6 +38,31 @@ namespace TShockAPI
 	/// </summary>
 	public class Utils
 	{
+		/// <summary>
+		/// Hex code for a blue pastel color
+		/// </summary>
+		public const string BoldHighlight = "AAAAFF";
+		/// <summary>
+		/// Hex code for a red pastel color
+		/// </summary>
+		public const string RedHighlight = "FFAAAA";
+		/// <summary>
+		/// Hex code for a green pastel color
+		/// </summary>
+		public const string GreenHighlight = "AAFFAA";
+		/// <summary>
+		/// Hex code for a pink pastel color
+		/// </summary>
+		public const string PinkHighlight = "FFAAFF";
+		/// <summary>
+		/// Hex code for a yellow pastel color
+		/// </summary>
+		public const string YellowHighlight = "FFFAAA";
+		/// <summary>
+		/// Hex code for a white highlight
+		/// </summary>
+		public const string WhiteHighlight = "FFFFFF";
+
 		/// <summary>
 		/// The lowest id for a prefix.
 		/// </summary>
@@ -465,7 +489,14 @@ namespace TShockAPI
 			if (save)
 				SaveManager.Instance.SaveWorld();
 
-			TSPlayer.All.Kick(reason, true, true, null, true);
+			foreach (var player in TShock.Players.Where(p => p != null))
+			{
+				if (player.IsLoggedIn)
+				{
+					player.SaveServerCharacter();
+				}
+				player.Disconnect(reason);
+			}
 
 			// Broadcast so console can see we are shutting down as well
 			TShock.Utils.Broadcast(reason, Color.Red);
@@ -530,6 +561,11 @@ namespace TShockAPI
 		public bool TryParseTime(string str, out int seconds)
 		{
 			seconds = 0;
+
+			if (string.IsNullOrWhiteSpace(str))
+			{
+				return false;
+			}
 
 			var sb = new StringBuilder(3);
 			for (int i = 0; i < str.Length; i++)
