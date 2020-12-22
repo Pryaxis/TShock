@@ -24,6 +24,8 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * For developers: TShock now provides `IConfigFile<TSettings>` and `ConfigFile<TSettings>` under the `TShockAPI.Configuration` namespace. No more needing to copy/pasting the same Read/Write code for your plugin configs. (@QuiCM)
   * `ConfigFile<TSettings>` implements `Read` and `Write` for you.
   * Check `TShockConfig` and `ServerSideConfig` for examples on how to use.
+* Added URI un-escaping on all inputs into REST. (@QuiCM)
+* Attempt to fix platinum coin pickup dupe. (Thanks @Quinci135)
 
 ## TShock 4.4.0 (Pre-release 14)
 * Terraria v1.4.1.2 (Thanks @Patrikkk and @DeathCradle <3)
