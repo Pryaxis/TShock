@@ -210,14 +210,17 @@ namespace TShockAPI
 		internal static TSettings LoadConfigAndCheckForMissingFields<TSettings>(JObject jObject, out bool anyMissingFields) where TSettings : new()
 		{
 			anyMissingFields = false;
-			var configFields = new HashSet<string>(typeof(Configuration.ConfigFile<TSettings>).GetFields()
+
+			var configFields = new HashSet<string>(typeof(TSettings).GetFields()
 				.Where(field => !field.IsStatic)
 				.Select(field => field.Name));
-			var jsonFields = new HashSet<string>(jObject
+
+			var jsonFields = new HashSet<string>(jObject.SelectToken("Settings")
 				.Children()
 				.Select(field => field as JProperty)
 				.Where(field => field != null)
 				.Select(field => field.Name));
+
 			anyMissingFields = !configFields.SetEquals(jsonFields);
 
 			return jObject.SelectToken("Settings").ToObject<TSettings>();
