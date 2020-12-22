@@ -272,7 +272,13 @@ namespace Rests
 			e.Response.Add(serverHeader);
 			var bytes = Encoding.UTF8.GetBytes(str);
 			e.Response.Body.Write(bytes, 0, bytes.Length);
+
 			e.Response.Status = HttpStatusCode.OK;
+
+			if (obj is RestObject rObj && Enum.TryParse(rObj.Status, out HttpStatusCode status))
+			{
+				e.Response.Status = status;
+			}
 		}
 
 		/// <summary>
