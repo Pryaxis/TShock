@@ -103,8 +103,8 @@ namespace Rests
 
 		private object NewTokenV2(RestRequestArgs args)
 		{
-			var user = args.Parameters["username"];
-			var pass = args.Parameters["password"];
+			var user = Uri.UnescapeDataString(args.Parameters["username"]);
+			var pass = Uri.UnescapeDataString(args.Parameters["password"]);
 			var context = args.Context;
 
 			return this.NewTokenInternal(user, pass, context);

@@ -1261,7 +1261,7 @@ namespace TShockAPI
 			return bool.TryParse(val, out ret) ? ret : def;
 		}
 
-		private object PlayerFind(IParameterCollection parameters)
+		private object PlayerFind(EscapedParameterCollection parameters)
 		{
 			string name = parameters["player"];
 			if (string.IsNullOrWhiteSpace(name))
@@ -1279,7 +1279,7 @@ namespace TShockAPI
 			}
 		}
 
-		private object UserFind(IParameterCollection parameters)
+		private object UserFind(EscapedParameterCollection parameters)
 		{
 			string name = parameters["user"];
 			if (string.IsNullOrWhiteSpace(name))
@@ -1314,7 +1314,7 @@ namespace TShockAPI
 			return account;
 		}
 
-		private object GroupFind(IParameterCollection parameters)
+		private object GroupFind(EscapedParameterCollection parameters)
 		{
 			var name = parameters["group"];
 			if (string.IsNullOrWhiteSpace(name))
@@ -1327,7 +1327,7 @@ namespace TShockAPI
 			return group;
 		}
 
-		private Dictionary<string, object> PlayerFilter(TSPlayer tsPlayer, IParameterCollection parameters, bool viewips = false)
+		private Dictionary<string, object> PlayerFilter(TSPlayer tsPlayer, EscapedParameterCollection parameters, bool viewips = false)
 		{
 			var player = new Dictionary<string, object>
 				{
@@ -1343,7 +1343,7 @@ namespace TShockAPI
 			{
 				player.Add("ip", tsPlayer.IP);
 			}
-			foreach (IParameter filter in parameters)
+			foreach (EscapedParameter filter in parameters)
 			{
 				if (player.ContainsKey(filter.Name) && !player[filter.Name].Equals(filter.Value))
 					return null;
@@ -1351,7 +1351,7 @@ namespace TShockAPI
 			return player;
 		}
 
-		private object PlayerSetMute(IParameterCollection parameters, bool mute)
+		private object PlayerSetMute(EscapedParameterCollection parameters, bool mute)
 		{
 			var ret = PlayerFind(parameters);
 			if (ret is RestObject)

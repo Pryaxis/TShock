@@ -29,9 +29,84 @@ using HttpServer.Headers;
 using Newtonsoft.Json;
 using TShockAPI;
 using HttpListener = HttpServer.HttpListener;
+using System.Collections;
 
 namespace Rests
 {
+	/// <summary>
+	/// Wraps an <see cref="IParameter"/>, providing URI-unescaping for its value
+	/// </summary>
+	public class EscapedParameter
+	{
+		private IParameter _parameter;
+
+		/// <summary>
+		/// Name of the parameter
+		/// </summary>
+		public string Name => _parameter.Name;
+		/// <summary>
+		/// URI-unescaped value of the parameter
+		/// </summary>
+		public string Value => Uri.UnescapeDataString(_parameter.Value);
+
+		/// <summary>
+		/// Constructs a new EscapedParameter wrapping the given <see cref="IParameter"/>
+		/// </summary>
+		/// <param name="parameter"></param>
+		public EscapedParameter(IParameter parameter)
+		{
+			_parameter = parameter;
+		}
+	}
+
+	/// <summary>
+	/// Wraps an <see cref="IParameterCollection"/>, providing URI-unescaping for the parameters in the collection
+	/// </summary>
+	public class EscapedParameterCollection : IEnumerable<EscapedParameter>
+	{
+		private readonly IParameterCollection _collection;
+
+		/// <summary>
+		/// Retrieve a parameter by name, returning the URI-unescaped value
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
+		public string this[string key]
+		{
+			get
+			{
+				string value = _collection[key];
+				return value == null ? value : Uri.UnescapeDataString(value);
+			}
+		}
+
+		/// <summary>
+		/// Constructs a new EscapedParameterCollection wrapping the given <see cref="IParameterCollection"/>
+		/// </summary>
+		/// <param name="collection"></param>
+		public EscapedParameterCollection(IParameterCollection collection)
+		{
+			_collection = collection;
+		}
+
+		/// <summary>
+		/// Returns an enumerator that can be used to iterate over this collection
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerator<EscapedParameter> GetEnumerator()
+		{
+			return GetEnumerator();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			foreach (IParameter param in _collection)
+			{
+				yield return new EscapedParameter(param);
+			}
+		}
+	}
+
 	/// <summary>
 	/// Rest command delegate
 	/// </summary>
@@ -51,7 +126,7 @@ namespace Rests
 		/// <summary>
 		/// Parameters sent in the request
 		/// </summary>
-		public IParameterCollection Parameters { get; private set; }
+		public EscapedParameterCollection Parameters { get; private set; }
 		/// <summary>
 		/// The HTTP request
 		/// </summary>
@@ -74,12 +149,8 @@ namespace Rests
 		/// <param name="request">The HTTP request</param>
 		/// <param name="context">The HTTP context</param>
 		public RestRequestArgs(RestVerbs verbs, IParameterCollection param, IRequest request, IHttpContext context)
+			: this(verbs, param, request, SecureRest.TokenData.None, context)
 		{
-			Verbs = verbs;
-			Parameters = param;
-			Request = request;
-			TokenData = SecureRest.TokenData.None;
-			Context = context;
 		}
 
 		/// <summary>
@@ -91,6 +162,19 @@ namespace Rests
 		/// <param name="tokenData">Token data used in the request</param>
 		/// <param name="context">The HTTP context</param>
 		public RestRequestArgs(RestVerbs verbs, IParameterCollection param, IRequest request, SecureRest.TokenData tokenData, IHttpContext context)
+			: this(verbs, new EscapedParameterCollection(param), request, tokenData, context)
+		{
+		}
+
+		/// <summary>
+		/// Creates a new instance of <see cref="RestRequestArgs"/> with the given verbs, escaped parameters, request, token data, and context.
+		/// </summary>
+		/// <param name="verbs"></param>
+		/// <param name="param"></param>
+		/// <param name="request"></param>
+		/// <param name="tokenData"></param>
+		/// <param name="context"></param>
+		public RestRequestArgs(RestVerbs verbs, EscapedParameterCollection param, IRequest request, SecureRest.TokenData tokenData, IHttpContext context)
 		{
 			Verbs = verbs;
 			Parameters = param;

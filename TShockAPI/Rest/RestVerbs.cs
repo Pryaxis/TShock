@@ -21,6 +21,9 @@ using System.Collections.Generic;
 
 namespace Rests
 {
+	/// <summary>
+	/// A dictionary collection of verbs used in a REST request
+	/// </summary>
 	[Serializable]
 	public class RestVerbs : Dictionary<string, string>
 	{
@@ -35,7 +38,9 @@ namespace Rests
 			{
 				string ret;
 				if (TryGetValue(key, out ret))
-					return ret;
+				{
+					return Uri.UnescapeDataString(ret);
+				}
 				return null;
 			}
 			set
