@@ -64,7 +64,7 @@ namespace TShockAPI
 
 		/// <summary>Whether or not the server should output debug level messages related to system operation.</summary>
 		[Description("Whether or not the server should output debug level messages related to system operation.")]
-		public bool DebugLogs = true;
+		public bool DebugLogs = false;
 
 		/// <summary>Prevents users from being able to login before they finish connecting.</summary>
 		[Description("Prevents users from being able to login before they finish connecting.")]
