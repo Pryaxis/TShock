@@ -588,7 +588,7 @@ namespace TShockAPI.Configuration
 		/// <returns></returns>
 		public override TShockSettings ConvertJson(string json, out bool incompleteSettings)
 		{
-			var settings = FileTools.LoadConfigAndCheckForMissingFields<TShockSettings>(json, out incompleteSettings);
+			var settings = FileTools.LoadConfigAndCheckForChanges<TShockSettings>(json, out incompleteSettings);
 
 			Settings = settings;
 			OnConfigRead?.Invoke(this);

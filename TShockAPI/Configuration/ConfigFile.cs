@@ -67,7 +67,7 @@ namespace TShockAPI.Configuration
 		/// <returns>Settings object</returns>
 		public virtual TSettings ConvertJson(string json, out bool incompleteSettings)
 		{
-			var settings = FileTools.LoadConfigAndCheckForMissingFields<TSettings>(json, out incompleteSettings);
+			var settings = FileTools.LoadConfigAndCheckForChanges<TSettings>(json, out incompleteSettings);
 
 			Settings = settings;
 			OnConfigRead?.Invoke(this);

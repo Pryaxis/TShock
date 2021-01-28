@@ -609,22 +609,18 @@ namespace TShockAPI
 		/// <summary>
 		/// Reads a configuration file from a given path
 		/// </summary>
-		/// <param name="path">string path</param>
 		/// <param name="path">The path to the config file</param>
-		/// <param name="anyMissingFields">
-		/// Whether the config object has any new files in it, meaning that the config file has to be
-		/// overwritten.
-		/// </param>
-		public static ConfigFile Read(string path, out bool anyMissingFields)
+		/// <param name="anyChanges"> Whether the config object required an upgrade or had unexpected fields added or missing</param>
+		public static ConfigFile Read(string path, out bool anyChanges)
 		{
 			if (!File.Exists(path))
 			{
-				anyMissingFields = true;
+				anyChanges = true;
 				return new ConfigFile();
 			}
 			using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
 			{
-				return Read(fs, out anyMissingFields);
+				return Read(fs, out anyChanges);
 			}
 		}
 
@@ -632,16 +628,13 @@ namespace TShockAPI
 		/// Reads the configuration file from a stream
 		/// </summary>
 		/// <param name="stream">stream</param>
-		/// <param name="anyMissingFields">
-		/// Whether the config object has any new fields in it, meaning that the config file has to be
-		/// overwritten.
-		/// </param>
+		/// <param name="anyChanges"> Whether the config object required an upgrade or had unexpected fields added or missing</param>
 		/// <returns>ConfigFile object</returns>
-		public static ConfigFile Read(Stream stream, out bool anyMissingFields)
+		public static ConfigFile Read(Stream stream, out bool anyChanges)
 		{
 			using (var sr = new StreamReader(stream))
 			{
-				var cf = FileTools.LoadConfigAndCheckForMissingFields<ConfigFile>(sr.ReadToEnd(), out anyMissingFields);
+				var cf = FileTools.LoadConfigAndCheckForChanges<ConfigFile>(sr.ReadToEnd(), out anyChanges);
 				ConfigRead?.Invoke(cf);
 				return cf;
 			}

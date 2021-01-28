@@ -197,7 +197,7 @@ namespace TShockAPI
 			return cfg;
 		}
 
-		internal static TSettings LoadConfigAndCheckForMissingFields<TSettings>(string json, out bool writeConfig) where TSettings : new()
+		internal static TSettings LoadConfigAndCheckForChanges<TSettings>(string json, out bool writeConfig) where TSettings : new()
 		{
 			//If an empty file is attempting to be loaded as a config, instead use an empty json object. Otherwise Newtonsoft throws an exception here
 			if (string.IsNullOrWhiteSpace(json))
@@ -205,7 +205,7 @@ namespace TShockAPI
 				json = "{}";
 			}
 
-			return LoadConfigAndCheckForMissingFields<TSettings>(JObject.Parse(json), out writeConfig);
+			return LoadConfigAndCheckForChanges<TSettings>(JObject.Parse(json), out writeConfig);
 		}
 
 		/// <summary>
@@ -215,7 +215,7 @@ namespace TShockAPI
 		/// <param name="jObject">The json object to parse</param>
 		/// <param name="writeConfig">Whether the config needs to be written to disk again</param>
 		/// <returns>The config object</returns>
-		internal static TSettings LoadConfigAndCheckForMissingFields<TSettings>(JObject jObject, out bool writeConfig) where TSettings : new()
+		internal static TSettings LoadConfigAndCheckForChanges<TSettings>(JObject jObject, out bool writeConfig) where TSettings : new()
 		{
 			JObject cfg = AttemptConfigUpgrade(jObject, out bool requiredUpgrade);
 
