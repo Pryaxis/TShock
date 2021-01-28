@@ -172,16 +172,17 @@ namespace TShockAPI
 				return true;
 			}
 		}
-		
+
 		/// <summary>
 		/// Looks for a 'Settings' token in the json object. If one is not found, returns a new json object with all tokens of the previous object added
 		/// as children to a root 'Settings' token
 		/// </summary>
-		/// <param name="json"></param>
+		/// <param name="cfg"></param>
+		/// <param name="requiredUpgrade"></param>
 		/// <returns></returns>
-		internal static JObject AttemptConfigUpgrade(string json)
+		internal static JObject AttemptConfigUpgrade(JObject cfg, out bool requiredUpgrade)
 		{
-			JObject cfg = JObject.Parse(json);
+			requiredUpgrade = false;
 
 			if (cfg.SelectToken("Settings") == null)
 			{
@@ -190,40 +191,51 @@ namespace TShockAPI
 					{ "Settings", cfg }
 				};
 				cfg = newCfg;
+				requiredUpgrade = true;
 			}
 
 			return cfg;
 		}
 
-		internal static TSettings LoadConfigAndCheckForMissingFields<TSettings>(string json, out bool anyMissingFields) where TSettings : new()
+		internal static TSettings LoadConfigAndCheckForMissingFields<TSettings>(string json, out bool writeConfig) where TSettings : new()
 		{
-			return LoadConfigAndCheckForMissingFields<TSettings>(JObject.Parse(json), out anyMissingFields);
+			//If an empty file is attempting to be loaded as a config, instead use an empty json object. Otherwise Newtonsoft throws an exception here
+			if (string.IsNullOrWhiteSpace(json))
+			{
+				json = "{}";
+			}
+
+			return LoadConfigAndCheckForMissingFields<TSettings>(JObject.Parse(json), out writeConfig);
 		}
 
 		/// <summary>
-		/// Parses a JObject into a TSettings object, also emitting a bool indicating if any of the TSetting's fields were missing from the JObject
+		/// Parses a JObject into a TSettings object, also emitting a bool indicating if the JObject was incomplete
 		/// </summary>
 		/// <typeparam name="TSettings">The type of the config file object</typeparam>
 		/// <param name="jObject">The json object to parse</param>
-		/// <param name="anyMissingFields">Whether any fields are missing from the config</param>
+		/// <param name="writeConfig">Whether the config needs to be written to disk again</param>
 		/// <returns>The config object</returns>
-		internal static TSettings LoadConfigAndCheckForMissingFields<TSettings>(JObject jObject, out bool anyMissingFields) where TSettings : new()
+		internal static TSettings LoadConfigAndCheckForMissingFields<TSettings>(JObject jObject, out bool writeConfig) where TSettings : new()
 		{
-			anyMissingFields = false;
+			JObject cfg = AttemptConfigUpgrade(jObject, out bool requiredUpgrade);
 
 			var configFields = new HashSet<string>(typeof(TSettings).GetFields()
 				.Where(field => !field.IsStatic)
 				.Select(field => field.Name));
 
-			var jsonFields = new HashSet<string>(jObject.SelectToken("Settings")
+			var jsonFields = new HashSet<string>(cfg.SelectToken("Settings")
 				.Children()
 				.Select(field => field as JProperty)
 				.Where(field => field != null)
 				.Select(field => field.Name));
 
-			anyMissingFields = !configFields.SetEquals(jsonFields);
+			bool missingFields = !configFields.SetEquals(jsonFields);
 
-			return jObject.SelectToken("Settings").ToObject<TSettings>();
+
+			//If the config file had to be upgraded or the fields in the given TSettings don't match the config, we'll want the config to be rewritten with the correct data
+			writeConfig = requiredUpgrade || missingFields;
+
+			return cfg.SelectToken("Settings").ToObject<TSettings>();
 		}
 	}
 }
