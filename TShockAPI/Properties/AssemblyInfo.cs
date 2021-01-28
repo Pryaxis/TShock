@@ -28,7 +28,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Re-Logic, Pryaxis & TShock Contributors")]
 [assembly: AssemblyProduct("TShockAPI")]
-[assembly: AssemblyCopyright("Copyright © Re-Logic, Pryaxis & TShock Contributors 2011-2020")]
+[assembly: AssemblyCopyright("Copyright © Re-Logic, Pryaxis & TShock Contributors 2011-2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

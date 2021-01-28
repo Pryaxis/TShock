@@ -12,7 +12,27 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * Do not forget to sign every line you change with your name. (@hakusaro)
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change.
 
-## Upcoming Changes
+## Upcoming changes
+* This could be you!
+
+## TShock 4.4.0 (Pre-release 16)
+* Patched protocol issue. Thanks to Off (@tlworks) and @bartico6 for contributions, including packet captures, packet analysis, exploit proof-of-concept testing, patch testing, and detailed reproduction steps. (@hakusaro)
+* Disabled debug by default. (@hakusaro)
+
+## TShock 4.4.0 (Pre-release 15)
+* Overhauled Bans system. Bans are now based on 'identifiers'. (@QuiCM)
+  * The old Bans table (`Bans`) has been deprecated. New bans will go in `PlayerBans`. Old bans will be converted automatically to the new system.
+  * All old ban routes in REST are now redirected. Please use `/v3/bans/*` for REST-based ban management.
+  * TShock recognizes and acts upon 4 main identifiers: UUID, IP, Player Name, Account name. This can be extended by plugins. New identifiers can be added to the `ban help identifiers` output by registering them in `TShockAPI.DB.Identifier.Register(string, string)`
+  * By default, bans are no longer removed upon expiry or 'deletion'. Instead, they remain in the system. A new ban for an indentifier can be added once an existing ban has expired.
+* Server Console now understands Terraria color codes (e.g., `[c/FF00FF:Words]`) and prints the colored text to the console. Note that console colors are limited and thus only approximations. (@QuiCM)
+* Fixed a bug in `/sudo` that prevented quoted arguments being forwarded properly. Example: `/sudo /user group "user name" "user group"` should now work correctly. (@QuiCM)
+* Shutting down the server should now correctly display the shutdown message to players rather than 'Lost connection'. (@QuiCM)
+* For developers: TShock now provides `IConfigFile<TSettings>` and `ConfigFile<TSettings>` under the `TShockAPI.Configuration` namespace. No more needing to copy/pasting the same Read/Write code for your plugin configs. (@QuiCM)
+  * `ConfigFile<TSettings>` implements `Read` and `Write` for you.
+  * Check `TShockConfig` and `ServerSideConfig` for examples on how to use.
+* Added URI un-escaping on all inputs into REST. (@QuiCM)
+* Attempt to fix platinum coin pickup dupe. (Thanks @Quinci135)
 
 ## TShock 4.4.0 (Pre-release 14)
 * Terraria v1.4.1.2 (Thanks @Patrikkk and @DeathCradle <3)

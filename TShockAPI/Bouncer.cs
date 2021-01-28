@@ -135,6 +135,30 @@ namespace TShockAPI
 			var pos = args.Position;
 			var vel = args.Velocity;
 
+			if (Single.IsInfinity(vel.X) || Single.IsInfinity(vel.Y))
+			{
+				TShock.Log.ConsoleInfo("Bouncer / OnPlayerUpdate force kicked (attempted to set velocity to infinity) from {0}", args.Player.Name);
+				args.Player.Kick("Detected DOOM set to ON position.", true, true);
+				args.Handled = true;
+				return;
+			}
+
+			if (Single.IsNaN(vel.X) || Single.IsNaN(vel.Y))
+			{
+				TShock.Log.ConsoleInfo("Bouncer / OnPlayerUpdate force kicked (attempted to set velocity to NaN) from {0}", args.Player.Name);
+				args.Player.Kick("Detected DOOM set to ON position.", true, true);
+				args.Handled = true;
+				return;
+			}
+
+			if (vel.X > 50000 || vel.Y > 50000 || vel.X < -50000 || vel.Y < -50000)
+			{
+				TShock.Log.ConsoleInfo("Bouncer / OnPlayerUpdate force kicked (attempted to set velocity +/- 50000) from {0}", args.Player.Name);
+				args.Player.Kick("Detected DOOM set to ON position.", true, true);
+				args.Handled = true;
+				return;
+			}
+
 			if (pos.X < 0 || pos.Y < 0 || pos.X >= Main.maxTilesX * 16 - 16 || pos.Y >= Main.maxTilesY * 16 - 16)
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnPlayerUpdate rejected from (position check) {0}", args.Player.Name);
