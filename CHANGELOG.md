@@ -12,7 +12,14 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * Do not forget to sign every line you change with your name. (@hakusaro)
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change.
 
-## Upcoming Changes
+## Upcoming changes
+* This could be you!
+
+## TShock 4.4.0 (Pre-release 16)
+* Patched protocol issue. Thanks to Off (@tlworks) and @bartico6 for contributions, including packet captures, packet analysis, exploit proof-of-concept testing, patch testing, and detailed reproduction steps. (@hakusaro)
+* Disabled debug by default. (@hakusaro)
+
+## TShock 4.4.0 (Pre-release 15)
 * Overhauled Bans system. Bans are now based on 'identifiers'. (@QuiCM)
   * The old Bans table (`Bans`) has been deprecated. New bans will go in `PlayerBans`. Old bans will be converted automatically to the new system.
   * All old ban routes in REST are now redirected. Please use `/v3/bans/*` for REST-based ban management.
