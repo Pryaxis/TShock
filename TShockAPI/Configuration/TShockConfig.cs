@@ -334,18 +334,6 @@ namespace TShockAPI.Configuration
 		[Description("The reason given when banning hardcore players on death.")]
 		public string HardcoreBanReason = "Death results in a ban";
 
-		/// <summary>Enables kicking banned users by matching their IP Address.</summary>
-		[Description("Enables kicking banned users by matching their IP Address.")]
-		public bool EnableIPBans = true;
-
-		/// <summary>Enables kicking banned users by matching their client UUID.</summary>
-		[Description("Enables kicking banned users by matching their client UUID.")]
-		public bool EnableUUIDBans = true;
-
-		/// <summary>Enables kicking banned users by matching their Character Name.</summary>
-		[Description("Enables kicking banned users by matching their Character Name.")]
-		public bool EnableBanOnUsernames;
-
 		/// <summary>If GeoIP is enabled, this will kick users identified as being under a proxy.</summary>
 		[Description("If GeoIP is enabled, this will kick users identified as being under a proxy.")]
 		public bool KickProxyUsers = true;
