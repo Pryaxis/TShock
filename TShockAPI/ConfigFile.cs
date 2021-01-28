@@ -56,7 +56,7 @@ namespace TShockAPI
 
 		/// <summary>Whether or not to use ServerName in place of the world name.</summary>
 		[Description("Whether or not to use ServerName in place of the world name.")]
-		public bool UseServerName = false;		
+		public bool UseServerName = false;
 
 		/// <summary>The path to the directory where logs should be written to.</summary>
 		[Description("The path to the directory where logs should be written to.")]
