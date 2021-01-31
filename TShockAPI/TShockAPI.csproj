@@ -68,7 +68,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="SharpRaven, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpRaven\lib\net45\SharpRaven.dll</HintPath>
+      <HintPath>..\packages\SharpRaven.2.4.0\lib\net45\SharpRaven.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
