@@ -44,6 +44,8 @@ using TShockAPI.Sockets;
 using TShockAPI.CLI;
 using TShockAPI.Localization;
 using TShockAPI.Configuration;
+using SharpRaven;
+using SharpRaven.Data;
 
 namespace TShockAPI
 {
@@ -141,6 +143,11 @@ namespace TShockAPI
 		/// TShock's Region subsystem.
 		/// </summary>
 		internal RegionHandler RegionSystem;
+
+		/// <summary>
+		/// The Sentry Raven client.
+		/// </summary>
+		internal static RavenClient sentry;
 
 		/// <summary>
 		/// Called after TShock is initialized. Useful for plugins that needs hooks before tshock but also depend on tshock being loaded.
@@ -370,6 +377,13 @@ namespace TShockAPI
 
 				if (Config.Settings.RestApiEnabled)
 					RestApi.Start();
+
+				if (Config.Settings.SendExceptionsAndOtherDebugInformationToPryaxisFromSentry)
+				{
+					var sentryDSN = "https://ea7f7ccbdf004b0d92ff7b921c2de099@o512745.ingest.sentry.io/5613545";
+
+					sentry = new RavenClient(sentryDSN);
+				}
 
 				Log.ConsoleInfo("AutoSave " + (Config.Settings.AutoSave ? "Enabled" : "Disabled"));
 				Log.ConsoleInfo("Backups " + (Backups.Interval > 0 ? "Enabled" : "Disabled"));
@@ -625,6 +639,11 @@ namespace TShockAPI
 					}
 				}
 				Log.Error(string.Join(", ", sb));
+			}
+
+			if (Config.Settings.SendExceptionsAndOtherDebugInformationToPryaxisFromSentry)
+			{
+				sentry.CaptureAsync(new SentryEvent((Exception) e.ExceptionObject));
 			}
 
 			if (e.IsTerminating)

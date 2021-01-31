@@ -55,6 +55,13 @@ namespace TShockAPI.Configuration
 		[Description("Allows stacks in chests to go beyond the stack limit during world loading.")]
 		public bool IgnoreChestStacksOnLoad = false;
 
+		/// <summary>Sends debug information to Pryaxis so that trusted users can review crashes and cheat detection faults.</summary>
+		[Description("Sends debug information to Pryaxis so that trusted users can review crashes and cheat detection faults.")]
+		public bool SendExceptionsAndOtherDebugInformationToPryaxisFromSentry = false;
+
+		/// <summary>Sets the server name sent to Sentry, if enabled.</summary>
+		[Description("Sets the server name sent with exceptions to Sentry, if Sentry is enabled.")]
+		public string SentryServerName = "Anonymous TShock Server";
 		#endregion
 
 

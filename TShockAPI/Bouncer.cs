@@ -880,6 +880,7 @@ namespace TShockAPI
 				else
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnNewProjectile please report to tshock about this! normally this is a reject from {0} {1}", args.Player.Name, type);
+					TShock.Utils.SentryLog("Bouncer / OnNewProjectile normal reject from {0}", type);
 					// args.Player.Disable(String.Format("Does not have projectile permission to update projectile. ({0})", type), DisableFlags.WriteToLogAndConsole);
 					// args.Player.RemoveProjectile(ident, owner);
 				}

@@ -30,6 +30,8 @@ using Terraria.Utilities;
 using Microsoft.Xna.Framework;
 using Terraria.Localization;
 using TShockAPI.Localization;
+using SharpRaven;
+using SharpRaven.Data;
 
 namespace TShockAPI
 {
@@ -1217,6 +1219,16 @@ namespace TShockAPI
 			Vector2 tile = new Vector2(x, y);
 			Vector2 spawn = new Vector2(Main.spawnTileX, Main.spawnTileY);
 			return Distance(spawn, tile) <= TShock.Config.Settings.SpawnProtectionRadius;
+		}
+
+		internal void SentryLog(Exception ex)
+		{
+			TShock.sentry.CaptureAsync(new SentryEvent(ex));
+		}
+
+		internal void SentryLog(string format, params object[] args)
+		{
+			TShock.sentry.CaptureAsync(new SentryEvent(string.Format(format, args)));
 		}
 
 		/// <summary>Computes the max styles...</summary>
