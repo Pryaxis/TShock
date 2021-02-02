@@ -777,6 +777,30 @@ namespace TShockAPI
 			short type = args.Type;
 			int index = args.Index;
 
+			if (Single.IsInfinity(vel.X) || Single.IsInfinity(vel.Y))
+			{
+				TShock.Log.ConsoleInfo("Bouncer / OnNewProjectile force kicked (attempted to set velocity to infinity) from {0}", args.Player.Name);
+				args.Player.Kick("This Steam account has been banned from playing on secure servers due to a cheating infraction.", true, true);
+				args.Handled = true;
+				return;
+			}
+
+			if (Single.IsNaN(vel.X) || Single.IsNaN(vel.Y))
+			{
+				TShock.Log.ConsoleInfo("Bouncer / OnNewProjectile force kicked (attempted to set velocity to NaN) from {0}", args.Player.Name);
+				args.Player.Kick("This Steam account has been banned from playing on secure servers due to a cheating infraction.", true, true);
+				args.Handled = true;
+				return;
+			}
+
+			if (vel.X > 50000 || vel.Y > 50000 || vel.X < -50000 || vel.Y < -50000)
+			{
+				TShock.Log.ConsoleInfo("Bouncer / OnNewProjectile force kicked (attempted to set velocity +/- 50000) from {0}", args.Player.Name);
+				args.Player.Kick("This Steam account has been banned from playing on secure servers due to a cheating infraction.", true, true);
+				args.Handled = true;
+				return;
+			}
+
 			if (index > Main.maxProjectiles)
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnNewProjectile rejected from above projectile limit from {0}", args.Player.Name);
