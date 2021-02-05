@@ -1,4 +1,11 @@
 <p align="center">
+<img width="200" src="https://yt3.ggpht.com/a/AATXAJwskznkJ6nZJKjO3XNgHnKffui1UEb0XtYYKA=s900-c-k-c0xffffffff-no-rj-mo"><br/>
+<h1 align="center">A modded TShock Server to fit our needs</h1>
+<h4 align="center">Head Admin: Beard | Admin/Developer: Bambino</h4>
+</p>
+<br/><br/>
+
+<p align="center">
   <img src="https://tshock.co/newlogo.png" alt="TShock for Terraria"><br />
   <a href="https://ci.appveyor.com/project/hakusaro/tshock">
     <img src="https://ci.appveyor.com/api/projects/status/chhe61q227lqdlg1?svg=true" alt="AppVeyor Build Status">
