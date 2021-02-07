@@ -1148,7 +1148,7 @@ namespace TShockAPI
 			args.Player.SendInfoMessage("Memory usage: " + Process.GetCurrentProcess().WorkingSet64);
 			args.Player.SendInfoMessage("Allocated memory: " + Process.GetCurrentProcess().VirtualMemorySize64);
 			args.Player.SendInfoMessage("Total processor time: " + Process.GetCurrentProcess().TotalProcessorTime);
-			args.Player.SendInfoMessage("WinVer: " + Environment.OSVersion);
+			args.Player.SendInfoMessage("Operating system: " + Environment.OSVersion);
 			args.Player.SendInfoMessage("Proc count: " + Environment.ProcessorCount);
 			args.Player.SendInfoMessage("Machine name: " + Environment.MachineName);
 		}
