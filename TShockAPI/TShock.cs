@@ -1540,15 +1540,18 @@ namespace TShockAPI
 				Log.Info("{0} ({1}) from '{2}' group from '{3}' joined. ({4}/{5})", player.Name, player.IP,
 									   player.Group.Name, player.Country, TShock.Utils.GetActivePlayerCount(),
 									   TShock.Config.MaxSlots);
+				//if (!player.SilentJoinInProgress)
+					//Utils.Broadcast(string.Format("{0} ({1}) has joined.", player.Name, player.Country), Color.Yellow);
+					//Keep Proxy Ban while not letting everyone know where players are from.
 				if (!player.SilentJoinInProgress)
-					Utils.Broadcast(string.Format("{0} ({1}) has joined.", player.Name, player.Country), Color.Yellow);
+					Utils.Broadcast($"[c/a60500:{player.Name}]" + " has joined.", 250, 200, 100);
 			}
 			else
 			{
 				Log.Info("{0} ({1}) from '{2}' group joined. ({3}/{4})", player.Name, player.IP,
 									   player.Group.Name, TShock.Utils.GetActivePlayerCount(), TShock.Config.MaxSlots);
 				if (!player.SilentJoinInProgress)
-					Utils.Broadcast(player.Name + " has joined.", Color.Yellow);
+					Utils.Broadcast($"[c/a60500:{player.Name}]" + " has joined.", 250, 200, 100);
 			}
 
 			if (Config.DisplayIPToAdmins)
@@ -1569,7 +1572,8 @@ namespace TShockAPI
 				if (Main.ServerSideCharacter)
 				{
 					player.IsDisabledForSSC = true;
-					player.SendErrorMessage(String.Format("Server side characters is enabled! Please {0}register or {0}login to play!", Commands.Specifier));
+					//Handled via iAgree
+					//player.SendErrorMessage(String.Format("Server side characters is enabled! Please {0}register or {0}login to play!", Commands.Specifier));
 					player.LoginHarassed = true;
 				}
 				else if (Config.RequireLogin)
