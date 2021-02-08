@@ -243,7 +243,7 @@ namespace TShockAPI
 			Rest.RegisterRedirect("/groups/update", "/v2/groups/update");
 
 
-			Rest.Register(new SecureRestCommand("/v2/server/broadcast", ServerBroadcast));
+			Rest.Register(new SecureRestCommand("/v2/server/broadcast", ServerBroadcast, RestPermissions.restbroadcast));
 			Rest.Register(new SecureRestCommand("/v3/server/reload", ServerReload, RestPermissions.restcfg));
 			Rest.Register(new SecureRestCommand("/v2/server/off", ServerOff, RestPermissions.restmaintenance));
 			Rest.Register(new SecureRestCommand("/v3/server/rawcmd", ServerCommandV3, RestPermissions.restrawcommand));
