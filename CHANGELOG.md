@@ -18,6 +18,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 ## TShock 4.4.0 (Pre-release 16)
 * Patched protocol issue. Thanks to Off (@tlworks) and @bartico6 for contributions, including packet captures, packet analysis, exploit proof-of-concept testing, patch testing, and detailed reproduction steps. (@hakusaro)
 * Disabled debug by default. (@hakusaro)
+* Changed "WinVer" field in `/serverinfo` to "Operating System". (@Terrabade)
 
 ## TShock 4.4.0 (Pre-release 15)
 * Overhauled Bans system. Bans are now based on 'identifiers'. (@QuiCM)
