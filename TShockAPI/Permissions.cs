@@ -319,6 +319,9 @@ namespace TShockAPI
 		[Description("User can grow plants.")]
 		public static readonly string grow = "tshock.world.grow";
 
+		[Description("User can grow evil biome plants.")]
+		public static readonly string growevil = "tshock.world.growevil";
+
 		[Description("User can change hardmode state.")]
 		public static readonly string hardmode = "tshock.world.hardmode";
 
