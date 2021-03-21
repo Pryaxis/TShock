@@ -303,11 +303,20 @@ namespace TShockAPI
 						args.Handled = true;
 						return;
 					}
+
+					if (selectedItem.placeStyle != style)
+					{
+						TShock.Log.ConsoleError(string.Format("Bouncer / OnTileEdit rejected from (placestyle) {0} {1} {2} placeStyle: {3} expectedStyle: {4}",
+							args.Player.Name, action, editData, style, selectedItem.placeStyle));
+						args.Player.SendTileSquare(tileX, tileY, 1);
+						args.Handled = true;
+						return;
+					}
 				}
 
 				if (action == EditAction.KillTile && !Main.tileCut[tile.type] && !breakableTiles.Contains(tile.type))
 				{
-					//TPlayer.mount.Type 8 => Drill Containment Unit.
+					// TPlayer.mount.Type 8 => Drill Containment Unit.
 
 					// If the tile is an axe tile and they aren't selecting an axe, they're hacking.
 					if (Main.tileAxe[tile.type] && ((args.Player.TPlayer.mount.Type != 8 && selectedItem.axe == 0) && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0))
@@ -327,7 +336,7 @@ namespace TShockAPI
 					}
 					// If the tile is a pickaxe tile and they aren't selecting a pickaxe, they're hacking.
 					// Item frames can be modified without pickaxe tile.
-					//also add an exception for snake coils, they can be removed when the player places a new one or after x amount of time
+					// also add an exception for snake coils, they can be removed when the player places a new one or after x amount of time
 					else if (tile.type != TileID.ItemFrame && tile.type != TileID.MysticSnakeRope
 						&& !Main.tileAxe[tile.type] && !Main.tileHammer[tile.type] && tile.wall == 0 && args.Player.TPlayer.mount.Type != 8 && selectedItem.pick == 0 && selectedItem.type != ItemID.GravediggerShovel && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0)
 					{
@@ -354,9 +363,9 @@ namespace TShockAPI
 				}
 				else if (CoilTileIds.Contains(editData))
 				{
-					/// Handle placement if the user is placing rope that comes from a ropecoil,
-					/// but have not created the ropecoil projectile recently or the projectile was not at the correct coordinate, or the tile that the projectile places does not match the rope it is suposed to place
-					/// projectile should be the same X coordinate as all tile places (Note by @Olink)
+					// Handle placement if the user is placing rope that comes from a ropecoil,
+					// but have not created the ropecoil projectile recently or the projectile was not at the correct coordinate, or the tile that the projectile places does not match the rope it is suposed to place
+					// projectile should be the same X coordinate as all tile places (Note by @Olink)
 					if (ropeCoilPlacements.ContainsKey(selectedItem.netID) &&
 						!args.Player.RecentlyCreatedProjectiles.Any(p => GetDataHandlers.projectileCreatesTile.ContainsKey(p.Type) && GetDataHandlers.projectileCreatesTile[p.Type] == editData &&
 						!p.Killed && Math.Abs((int)(Main.projectile[p.Index].position.X / 16f) - tileX) <= Math.Abs(Main.projectile[p.Index].velocity.X)))
@@ -1106,6 +1115,7 @@ namespace TShockAPI
 			int tileX = args.TileX;
 			int tileY = args.TileY;
 			int flag = args.Flag;
+			short style = args.Style;
 
 			if (!TShock.Utils.TilePlacementValid(tileX, tileY) || (args.Player.Dead && TShock.Config.Settings.PreventDeadModification))
 			{
@@ -1117,6 +1127,14 @@ namespace TShockAPI
 			if (args.Player.IsBeingDisabled())
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnPlaceChest rejected from disabled from {0}", args.Player.Name);
+				args.Player.SendTileSquare(tileX, tileY, 3);
+				args.Handled = true;
+				return;
+			}
+
+			if (args.Player.SelectedItem.placeStyle != style)
+			{
+				TShock.Log.ConsoleError(string.Format("Bouncer / OnPlaceChest / rejected from invalid place style from {0}", args.Player.Name));
 				args.Player.SendTileSquare(tileX, tileY, 3);
 				args.Handled = true;
 				return;
@@ -1630,8 +1648,6 @@ namespace TShockAPI
 			short y = args.Y;
 			short type = args.Type;
 			short style = args.Style;
-			byte alternate = args.Alternate;
-			bool direction = args.Direction;
 
 			if (type < 0 || type >= Main.maxTileSets)
 			{
@@ -1650,6 +1666,13 @@ namespace TShockAPI
 			if (y < 0 || y >= Main.maxTilesY)
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnPlaceObject rejected out of bounds tile y from {0}", args.Player.Name);
+				args.Handled = true;
+				return;
+			}
+
+			if (args.Player.SelectedItem.placeStyle != style)
+			{
+				TShock.Log.ConsoleError(string.Format("Bouncer / OnPlaceObject rejected object placement with invalid style from {0}", args.Player.Name));
 				args.Handled = true;
 				return;
 			}
