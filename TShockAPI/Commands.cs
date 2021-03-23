@@ -585,6 +585,11 @@ namespace TShockAPI
 			{
 				HelpText = "Sends a PM to a player."
 			});
+			add(new Command(Permissions.whisper, Wallow, "wallow")
+			{
+				AllowServer = false,
+				HelpText = "Toggles to either ignore or recieve whispers from other players."
+			});
 			add(new Command(Permissions.createdumps, CreateDumps, "dump-reference-data")
 			{
 				HelpText = "Creates a reference tables for Terraria data types and the TShock permission system in the server folder."
@@ -5283,14 +5288,15 @@ namespace TShockAPI
 			args.Player.SendFileTextAsMessage(FileTools.RulesPath);
 		}
 
-		private static void Whisper(CommandArgs args)
+		public static bool[] WDisabled { get; set; } = new bool[256];
+
+		public static void Whisper(CommandArgs args)
 		{
 			if (args.Parameters.Count < 2)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}whisper <player> <text>", Specifier);
+				args.Player.SendErrorMessage("Invalid syntax! Proper usage: /whisper <player> <text>");
 				return;
 			}
-
 			var players = TSPlayer.FindByNameOrID(args.Parameters[0]);
 			if (players.Count == 0)
 			{
@@ -5308,11 +5314,29 @@ namespace TShockAPI
 			{
 				var plr = players[0];
 				var msg = string.Join(" ", args.Parameters.ToArray(), 1, args.Parameters.Count - 1);
+				if (WDisabled[players[0].Index])
+				{
+					args.Player.SendErrorMessage("This player has disabled people from sending whispers!");
+					return;
+				}
 				plr.SendMessage(String.Format("<From {0}> {1}", args.Player.Name, msg), Color.MediumPurple);
 				args.Player.SendMessage(String.Format("<To {0}> {1}", plr.Name, msg), Color.MediumPurple);
 				plr.LastWhisper = args.Player;
 				args.Player.LastWhisper = plr;
 			}
+		}
+
+		public static void Wallow(CommandArgs args)
+		{
+			int index = args.Player.Index;
+			if (WDisabled[index])
+			{
+				args.Player.SendSuccessMessage("You will now recieve whispers from other players!");
+				WDisabled[index] = !WDisabled[index];
+				return;
+			}
+			WDisabled[index] = !WDisabled[index];
+			args.Player.SendSuccessMessage("You will now not recieve whispers from other players, type '/wallow' to recieve them again!");
 		}
 
 		private static void Reply(CommandArgs args)
@@ -6010,13 +6034,11 @@ namespace TShockAPI
 			}
 		}
 
-		private static void Grow(CommandArgs args)
+		public static void Grow(CommandArgs args)
 		{
-			if (args.Parameters.Count != 1)
-			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}grow <tree/epictree/mushroom/cactus/herb>", Specifier);
-				return;
-			}
+			bool growevilAmb = args.Player.HasPermission(Permissions.growevil);
+			string subcmd = args.Parameters.Count == 0 ? "help" : args.Parameters[0].ToLower();
+
 			var name = "Fail";
 			var x = args.Player.TileX;
 			var y = args.Player.TileY + 3;
@@ -6027,10 +6049,37 @@ namespace TShockAPI
 				return;
 			}
 
-			switch (args.Parameters[0].ToLower())
+			switch (subcmd)
 			{
-				case "tree":
-					for (int i = x - 1; i < x + 2; i++)
+				case "help":
+					{
+						if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out int pageNumber))
+							return;
+
+						var lines = new List<string>
+					{
+						"- Default trees :",
+						"     'basic', 'sakura', 'willow', 'boreal', 'mahogany', 'ebonwood', 'shadewood', 'pearlwood'.",
+						"- Palm trees :",
+						"     'palm', 'corruptpalm', 'crimsonpalm', 'hallowpalm'.",
+						"- Gem trees :",
+						"     'topaz', 'amethyst', 'sapphire', 'emerald', 'ruby', 'diamond', 'amber'.",
+						"- Misc :",
+						"     'cactus', 'herb', 'mushroom'."
+					};
+
+						PaginationTools.SendPage(args.Player, pageNumber, lines,
+								new PaginationTools.Settings
+								{
+									HeaderFormat = "Trees types & misc available to use. ({0}/{1}):",
+									FooterFormat = "Type {0}grow help {{0}} for more sub-commands.".SFormat(Commands.Specifier)
+								}
+							);
+					}
+					break;
+
+				case "basic":
+					for (int i = x - 2; i < x + 3; i++)
 					{
 						Main.tile[i, y].active(true);
 						Main.tile[i, y].type = 2;
@@ -6038,37 +6087,279 @@ namespace TShockAPI
 					}
 					Main.tile[x, y - 1].wall = 0;
 					WorldGen.GrowTree(x, y);
-					name = "Tree";
+					name = "Basic Tree";
 					break;
-				case "epictree":
-					for (int i = x - 1; i < x + 2; i++)
+
+				case "boreal":
+					for (int i = x - 2; i < x + 3; i++)
+					{
+						Main.tile[i, y].active(true);
+						Main.tile[i, y].type = 147;
+						Main.tile[i, y].wall = 0;
+					}
+					Main.tile[x, y - 1].wall = 0;
+					WorldGen.GrowTree(x, y);
+					name = "Boreal Tree";
+					break;
+
+				case "mahogany":
+					for (int i = x - 2; i < x + 3; i++)
+					{
+						Main.tile[i, y].active(true);
+						Main.tile[i, y].type = 60;
+						Main.tile[i, y].wall = 0;
+					}
+					Main.tile[x, y - 1].wall = 0;
+					WorldGen.GrowTree(x, y);
+					name = "Rich Mahogany";
+					break;
+
+				case "sakura":
+					for (int i = x - 2; i < x + 3; i++)
 					{
 						Main.tile[i, y].active(true);
 						Main.tile[i, y].type = 2;
 						Main.tile[i, y].wall = 0;
 					}
 					Main.tile[x, y - 1].wall = 0;
-					Main.tile[x, y - 1].liquid = 0;
-					Main.tile[x, y - 1].active(true);
-					WorldGen.GrowEpicTree(x, y);
-					name = "Epic Tree";
+					WorldGen.TryGrowingTreeByType(596, x, y);
+					name = "Sakura Tree";
 					break;
-				case "mushroom":
-					for (int i = x - 1; i < x + 2; i++)
+
+				case "willow":
+					for (int i = x - 2; i < x + 3; i++)
 					{
 						Main.tile[i, y].active(true);
-						Main.tile[i, y].type = 70;
+						Main.tile[i, y].type = 2;
 						Main.tile[i, y].wall = 0;
 					}
 					Main.tile[x, y - 1].wall = 0;
-					WorldGen.GrowShroom(x, y);
-					name = "Mushroom";
+					WorldGen.TryGrowingTreeByType(616, x, y);
+					name = "Willow Tree";
 					break;
+
+				case "shadewood":
+					if (growevilAmb)
+					{
+						for (int i = x - 2; i < x + 3; i++)
+						{
+							Main.tile[i, y].active(true);
+							Main.tile[i, y].type = 199;
+							Main.tile[i, y].wall = 0;
+						}
+						Main.tile[x, y - 1].wall = 0;
+						WorldGen.GrowTree(x, y);
+						name = "Shadewood tree";
+					}
+					else args.Player.SendErrorMessage("You do not have permission to grow this tree type");
+					break;
+
+				case "ebonwood":
+					if (growevilAmb)
+					{
+						for (int i = x - 2; i < x + 3; i++)
+						{
+							Main.tile[i, y].active(true);
+							Main.tile[i, y].type = 23;
+							Main.tile[i, y].wall = 0;
+						}
+						Main.tile[x, y - 1].wall = 0;
+						WorldGen.GrowTree(x, y);
+						name = "Ebonwood Tree";
+					}
+					else args.Player.SendErrorMessage("You do not have permission to grow this tree type");
+					break;
+
+				case "pearlwood":
+					if (growevilAmb)
+					{
+						for (int i = x - 2; i < x + 3; i++)
+						{
+							Main.tile[i, y].active(true);
+							Main.tile[i, y].type = 109;
+							Main.tile[i, y].wall = 0;
+						}
+						Main.tile[x, y - 1].wall = 0;
+						WorldGen.GrowTree(x, y);
+						name = "Pearlwood Tree";
+					}
+					else args.Player.SendErrorMessage("You do not have permission to grow this tree type");
+					break;
+
+				case "palm":
+					for (int i = x - 2; i < x + 3; i++)
+					{
+						Main.tile[i, y].active(true);
+						Main.tile[i, y].type = 53;
+						Main.tile[i, y].wall = 0;
+					}
+					for (int i = x - 2; i < x + 3; i++)
+					{
+						Main.tile[i, y + 1].active(true);
+						Main.tile[i, y + 1].type = 397;
+						Main.tile[i, y + 1].wall = 0;
+					}
+					Main.tile[x, y - 1].wall = 0;
+					WorldGen.GrowPalmTree(x, y);
+					name = "Desert Palm";
+					break;
+
+				case "hallowpalm":
+					if (growevilAmb)
+					{
+						for (int i = x - 2; i < x + 3; i++)
+						{
+							Main.tile[i, y].active(true);
+							Main.tile[i, y].type = 116;
+							Main.tile[i, y].wall = 0;
+						}
+						for (int i = x - 2; i < x + 3; i++)
+						{
+							Main.tile[i, y + 1].active(true);
+							Main.tile[i, y + 1].type = 402;
+							Main.tile[i, y + 1].wall = 0;
+						}
+						Main.tile[x, y - 1].wall = 0;
+						WorldGen.GrowPalmTree(x, y);
+						name = "Hallow Palm";
+					}
+					else args.Player.SendErrorMessage("You do not have permission to grow this tree type");
+					break;
+
+				case "crimsonpalm":
+					if (growevilAmb)
+					{
+						for (int i = x - 2; i < x + 3; i++)
+						{
+							Main.tile[i, y].active(true);
+							Main.tile[i, y].type = 234;
+							Main.tile[i, y].wall = 0;
+						}
+						for (int i = x - 2; i < x + 3; i++)
+						{
+							Main.tile[i, y + 1].active(true);
+							Main.tile[i, y + 1].type = 399;
+							Main.tile[i, y + 1].wall = 0;
+						}
+						Main.tile[x, y - 1].wall = 0;
+						WorldGen.GrowPalmTree(x, y);
+						name = "Crimson Palm";
+					}
+					else args.Player.SendErrorMessage("You do not have permission to grow this tree type");
+					break;
+
+				case "corruptpalm":
+					if (growevilAmb)
+					{
+						for (int i = x - 2; i < x + 3; i++)
+						{
+							Main.tile[i, y].active(true);
+							Main.tile[i, y].type = 112;
+							Main.tile[i, y].wall = 0;
+						}
+						for (int i = x - 2; i < x + 3; i++)
+						{
+							Main.tile[i, y + 1].active(true);
+							Main.tile[i, y + 1].type = 398;
+							Main.tile[i, y + 1].wall = 0;
+						}
+						Main.tile[x, y - 1].wall = 0;
+						WorldGen.GrowPalmTree(x, y);
+						name = "Corruption Palm";
+					}
+					else args.Player.SendErrorMessage("You do not have permission to grow this tree type");
+					break;
+
+				case "topaz":
+					for (int i = x - 2; i < x + 3; i++)
+					{
+						Main.tile[i, y].active(true);
+						Main.tile[i, y].type = 1;
+						Main.tile[i, y].wall = 0;
+					}
+					Main.tile[x, y - 1].wall = 0;
+					WorldGen.TryGrowingTreeByType(583, x, y);
+					name = "Topaz Gemtree";
+					break;
+
+				case "amethyst":
+					for (int i = x - 2; i < x + 3; i++)
+					{
+						Main.tile[i, y].active(true);
+						Main.tile[i, y].type = 1;
+						Main.tile[i, y].wall = 0;
+					}
+					Main.tile[x, y - 1].wall = 0;
+					WorldGen.TryGrowingTreeByType(584, x, y);
+					name = "Amethust Gemtree";
+					break;
+
+				case "sapphire":
+					for (int i = x - 2; i < x + 3; i++)
+					{
+						Main.tile[i, y].active(true);
+						Main.tile[i, y].type = 1;
+						Main.tile[i, y].wall = 0;
+					}
+					Main.tile[x, y - 1].wall = 0;
+					WorldGen.TryGrowingTreeByType(585, x, y);
+					name = "Sapphire Gemtree";
+					break;
+
+				case "emerald":
+					for (int i = x - 2; i < x + 3; i++)
+					{
+						Main.tile[i, y].active(true);
+						Main.tile[i, y].type = 1;
+						Main.tile[i, y].wall = 0;
+					}
+					Main.tile[x, y - 1].wall = 0;
+					WorldGen.TryGrowingTreeByType(586, x, y);
+					name = "Emerald Gemtree";
+					break;
+
+				case "ruby":
+					for (int i = x - 2; i < x + 3; i++)
+					{
+						Main.tile[i, y].active(true);
+						Main.tile[i, y].type = 1;
+						Main.tile[i, y].wall = 0;
+					}
+					Main.tile[x, y - 1].wall = 0;
+					WorldGen.TryGrowingTreeByType(587, x, y);
+					name = "Ruby Gemtree";
+					break;
+
+				case "diamond":
+					for (int i = x - 2; i < x + 3; i++)
+					{
+						Main.tile[i, y].active(true);
+						Main.tile[i, y].type = 1;
+						Main.tile[i, y].wall = 0;
+					}
+					Main.tile[x, y - 1].wall = 0;
+					WorldGen.TryGrowingTreeByType(588, x, y);
+					name = "Diamond Gemtree";
+					break;
+
+				case "amber":
+					for (int i = x - 2; i < x + 3; i++)
+					{
+						Main.tile[i, y].active(true);
+						Main.tile[i, y].type = 1;
+						Main.tile[i, y].wall = 0;
+					}
+					Main.tile[x, y - 1].wall = 0;
+					WorldGen.TryGrowingTreeByType(589, x, y);
+					name = "Amber Gemtree";
+					break;
+
 				case "cactus":
 					Main.tile[x, y].type = 53;
 					WorldGen.GrowCactus(x, y);
 					name = "Cactus";
 					break;
+
 				case "herb":
 					Main.tile[x, y].active(true);
 					Main.tile[x, y].frameX = 36;
@@ -6076,12 +6367,28 @@ namespace TShockAPI
 					WorldGen.GrowAlch(x, y);
 					name = "Herb";
 					break;
+
+				case "mushroom":
+					for (int i = x - 2; i < x + 3; i++)
+					{
+						Main.tile[i, y].active(true);
+						Main.tile[i, y].type = 70;
+						Main.tile[i, y].wall = 0;
+					}
+					Main.tile[x, y - 1].wall = 0;
+					WorldGen.GrowShroom(x, y);
+					name = "Glowing Mushroom Tree";
+					break;
+
 				default:
 					args.Player.SendErrorMessage("Unknown plant!");
 					return;
 			}
-			args.Player.SendTileSquare(x, y);
-			args.Player.SendSuccessMessage("Tried to grow a " + name + ".");
+			if (args.Parameters.Count == 1)
+			{
+				args.Player.SendTileSquare(x - 2, y - 20, 25);
+				args.Player.SendSuccessMessage("Tried to grow a " + name + ".");
+			}
 		}
 
 		private static void ToggleGodMode(CommandArgs args)
