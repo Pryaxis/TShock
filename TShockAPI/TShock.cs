@@ -890,6 +890,13 @@ namespace TShockAPI
 		/// <param name="args">args - EventArgs args</param>
 		private void OnUpdate(EventArgs args)
 		{
+			// This forces Terraria to actually continue to update
+			// even if there are no clients connected
+			if (ServerApi.ForceUpdate)
+			{
+				Netplay.HasClients = true;
+			}
+
 			if (Backups.IsBackupTime)
 				Backups.Backup();
 			//call these every second, not every update
