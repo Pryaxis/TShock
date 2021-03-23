@@ -22,6 +22,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Rewritten `/grow`, added every default tree type & changed the default help response. (@Nova4334)
   * Added a new permission: `tshock.world.growevil` to prevent players to grow evil biome trees, these trees spawn with evil biome blocks below them.
 * Introduced `/wallow` to disable or enable recieving whispers from other players. (@Nova4334)
+* Removed stoned & webbed from disabled status (@QuiCM)
 
 ## TShock 4.4.0 (Pre-release 15)
 * Overhauled Bans system. Bans are now based on 'identifiers'. (@QuiCM)
