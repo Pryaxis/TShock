@@ -2699,6 +2699,7 @@ namespace TShockAPI
 			float[] ai = new float[Projectile.maxAI];
 			for (int i = 0; i < Projectile.maxAI; ++i)
 				ai[i] = !bits.AI[i] ? 0.0f : args.Data.ReadSingle();
+			ushort bannerId = bits.HasBannerIdToRespondTo ? args.Data.ReadUInt16() : (ushort)0;
 			short dmg = bits.HasDamage ? args.Data.ReadInt16() : (short)0;
 			float knockback = bits.HasKnockback ? args.Data.ReadSingle() : 0.0f;
 			short origDmg = bits.HasOriginalDamage ? args.Data.ReadInt16() : (short)0;
