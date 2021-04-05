@@ -5434,7 +5434,7 @@ namespace TShockAPI
 						type = 170;
 				}
 				var ply = players[0];
-				int p = Projectile.NewProjectile(ply.TPlayer.position.X, ply.TPlayer.position.Y - 64f, 0f, -8f, type, 0, (float)0);
+				int p = Projectile.NewProjectile(Projectile.GetNoneSource(), ply.TPlayer.position.X, ply.TPlayer.position.Y - 64f, 0f, -8f, type, 0, (float)0);
 				Main.projectile[p].Kill();
 				args.Player.SendSuccessMessage("Launched Firework on {0}.", ply.Name);
 			}
