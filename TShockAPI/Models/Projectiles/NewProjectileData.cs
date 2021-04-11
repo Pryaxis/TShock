@@ -38,6 +38,12 @@ namespace TShockAPI.Models.Projectiles
 			}
 		}
 
+		public bool HasBannerIdToRespondTo
+		{
+			get => bitsbyte[3];
+			set => bitsbyte[3] = value;
+		}
+
 		/// <summary>
 		/// Gets or Sets the Damage flag on the backing field
 		/// </summary>
