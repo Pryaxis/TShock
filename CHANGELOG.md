@@ -15,6 +15,10 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 ## Upcoming changes
 * This could be you!
 
+## TShock 4.5.0
+* Updated OTAPI and TSAPI to Terraria 1.4.2.1. (@Stealownz, @DeathCradle)
+* Updated TShock with preliminary protocol support for Terraria 1.4.2.1. (@Stealownz)
+
 ## TShock 4.4.0 (Pre-release 16)
 * Patched protocol issue. Thanks to Off (@tlworks) and @bartico6 for contributions, including packet captures, packet analysis, exploit proof-of-concept testing, patch testing, and detailed reproduction steps. (@hakusaro)
 * Disabled debug by default. (@hakusaro)
