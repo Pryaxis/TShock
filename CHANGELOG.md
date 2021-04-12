@@ -16,7 +16,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * This could be you!
 
 ## TShock 4.5.0.1
-* Fixed typo in conversion from old to new ban system for MySQL hosted ban databases. (@DeathCradle)
+* Fixed conversion from old to new ban system for MySQL hosted ban databases. (@DeathCradle)
 
 ## TShock 4.5.0
 * Updated OTAPI and TSAPI to Terraria 1.4.2.1. (@Stealownz, @DeathCradle)
