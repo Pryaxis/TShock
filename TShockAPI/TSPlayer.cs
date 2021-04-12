@@ -1637,7 +1637,7 @@ namespace TShockAPI
 			if (force)
 			{
 				TShock.Bans.InsertBan($"{Identifier.IP}{IP}", reason, adminUserName, DateTime.UtcNow, DateTime.MaxValue);
-				TShock.Bans.InsertBan($"{Identifier.IP}{UUID}", reason, adminUserName, DateTime.UtcNow, DateTime.MaxValue);
+				TShock.Bans.InsertBan($"{Identifier.UUID}{UUID}", reason, adminUserName, DateTime.UtcNow, DateTime.MaxValue);
 				if (Account != null)
 				{
 					TShock.Bans.InsertBan($"{Identifier.Account}{Account.Name}", reason, adminUserName, DateTime.UtcNow, DateTime.MaxValue);
