@@ -95,15 +95,15 @@ namespace Rests
 		/// <returns></returns>
 		public IEnumerator<EscapedParameter> GetEnumerator()
 		{
-			return GetEnumerator();
-		}
-
-		IEnumerator IEnumerable.GetEnumerator()
-		{
 			foreach (IParameter param in _collection)
 			{
 				yield return new EscapedParameter(param);
 			}
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return this.GetEnumerator();
 		}
 	}
 
