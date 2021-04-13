@@ -13,12 +13,28 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change.
 
 ## Upcoming changes
-* This could be you!
+* Fixed server crash from `/v2/players/list` & other parameterised REST endpoints. (@QuiCM, reported by @ATFGK)
+* Added handling to the PlayerChat hook event. (@QuiCM - Thanks for the suggestion @Arthri)
+* Changed the spawnboss command to support silent command specifiers. (@QuiCM, suggested by @nojomyth-dev)
+
+## TShock 4.5.0.1
+* Fixed conversion from old to new ban system for MySQL hosted ban databases. (@DeathCradle, @ATFGK)
+* Fixed wrong identifier used for UUID bans. (@DeathCradle, @ATFGK)
+* Fixed conversion from sqlite bans due to locking issue. (@DeathCradle, @Kojirremer)
+
+## TShock 4.5.0
+* Updated OTAPI and TSAPI to Terraria 1.4.2.1. (@Stealownz, @DeathCradle)
+* Updated TShock with preliminary protocol support for Terraria 1.4.2.1. (@Stealownz)
 
 ## TShock 4.4.0 (Pre-release 16)
 * Patched protocol issue. Thanks to Off (@tlworks) and @bartico6 for contributions, including packet captures, packet analysis, exploit proof-of-concept testing, patch testing, and detailed reproduction steps. (@hakusaro)
 * Disabled debug by default. (@hakusaro)
 * Changed "WinVer" field in `/serverinfo` to "Operating System". (@Terrabade)
+* Rewritten `/grow`, added every default tree type & changed the default help response. (@Nova4334)
+  * Added a new permission: `tshock.world.growevil` to prevent players to grow evil biome trees, these trees spawn with evil biome blocks below them.
+* Introduced `/wallow` to disable or enable recieving whispers from other players. (@Nova4334)
+* Removed stoned & webbed from disabled status (@QuiCM)
+* Fix -forceupdate flag not forcing updates (@Quake)
 
 ## TShock 4.4.0 (Pre-release 15)
 * Overhauled Bans system. Bans are now based on 'identifiers'. (@QuiCM)

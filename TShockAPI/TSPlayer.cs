@@ -1557,8 +1557,6 @@ namespace TShockAPI
 		public virtual void Disable(string reason = "", DisableFlags flags = DisableFlags.WriteToLog)
 		{
 			LastThreat = DateTime.UtcNow;
-			SetBuff(BuffID.Frozen, 330, true);
-			SetBuff(BuffID.Stoned, 330, true);
 			SetBuff(BuffID.Webbed, 330, true);
 
 			if (ActiveChest != -1)
@@ -1639,7 +1637,7 @@ namespace TShockAPI
 			if (force)
 			{
 				TShock.Bans.InsertBan($"{Identifier.IP}{IP}", reason, adminUserName, DateTime.UtcNow, DateTime.MaxValue);
-				TShock.Bans.InsertBan($"{Identifier.IP}{UUID}", reason, adminUserName, DateTime.UtcNow, DateTime.MaxValue);
+				TShock.Bans.InsertBan($"{Identifier.UUID}{UUID}", reason, adminUserName, DateTime.UtcNow, DateTime.MaxValue);
 				if (Account != null)
 				{
 					TShock.Bans.InsertBan($"{Identifier.Account}{Account.Name}", reason, adminUserName, DateTime.UtcNow, DateTime.MaxValue);
