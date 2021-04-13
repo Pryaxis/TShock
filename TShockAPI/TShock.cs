@@ -1330,9 +1330,17 @@ namespace TShockAPI
 				{
 					text = String.Format(Config.Settings.ChatFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix,
 											 args.Text);
-					Hooks.PlayerHooks.OnPlayerChat(tsplr, args.Text, ref text);
-					Utils.Broadcast(text, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
+
+					//Invoke the PlayerChat hook. If this hook event is handled then we need to prevent sending the chat message
+					bool cancelChat = PlayerHooks.OnPlayerChat(tsplr, args.Text, ref text);
 					args.Handled = true;
+
+					if (cancelChat)
+					{
+						return;
+					}
+
+					Utils.Broadcast(text, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
 				}
 				else
 				{
@@ -1344,7 +1352,13 @@ namespace TShockAPI
 
 					//Give that poor player their name back :'c
 					ply.name = name;
-					PlayerHooks.OnPlayerChat(tsplr, args.Text, ref text);
+
+					bool cancelChat = PlayerHooks.OnPlayerChat(tsplr, args.Text, ref text);
+					if (cancelChat)
+					{
+						args.Handled = true;
+						return;
+					}
 
 					//This netpacket is used to send chat text from the server to clients, in this case on behalf of a client
 					Terraria.Net.NetPacket packet = Terraria.GameContent.NetModules.NetTextModule.SerializeServerMessage(
