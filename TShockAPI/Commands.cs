@@ -37,6 +37,7 @@ using OTAPI.Tile;
 using TShockAPI.Localization;
 using System.Text.RegularExpressions;
 using Terraria.DataStructures;
+using Terraria.GameContent.Creative;
 
 namespace TShockAPI
 {
@@ -543,6 +544,11 @@ namespace TShockAPI
 			add(new Command(Permissions.godmode, ToggleGodMode, "godmode")
 			{
 				HelpText = "Toggles godmode on a player."
+			});
+			add(new Command("", ForceUngod, "ungodme")
+			{
+				HelpText = "Removes godmode from your character.",
+				AllowServer = false
 			});
 			add(new Command(Permissions.heal, Heal, "heal")
 			{
@@ -6445,15 +6451,26 @@ namespace TShockAPI
 
 			playerToGod.GodMode = !playerToGod.GodMode;
 
-			if (playerToGod == args.Player)
-			{
-				args.Player.SendSuccessMessage(string.Format("You are {0} in god mode.", args.Player.GodMode ? "now" : "no longer"));
-			}
-			else
+			var godPower = CreativePowerManager.Instance.GetPower<CreativePowers.GodmodePower>();
+
+			godPower.SetEnabledState(playerToGod.Index, playerToGod.GodMode);
+
+			if (playerToGod != args.Player)
 			{
 				args.Player.SendSuccessMessage(string.Format("{0} is {1} in god mode.", playerToGod.Name, playerToGod.GodMode ? "now" : "no longer"));
-				playerToGod.SendSuccessMessage(string.Format("You are {0} in god mode.", playerToGod.GodMode ? "now" : "no longer"));
 			}
+
+			playerToGod.SendSuccessMessage(string.Format("You are {0} in god mode.", args.Player.GodMode ? "now" : "no longer"));
+			playerToGod.SendInfoMessage("Please make sure to disable godmode using /ungodme before disconnecting, otherwise your character may remain in godmode indefinitely, including singleplayer.");
+		}
+
+		private static void ForceUngod(CommandArgs args)
+		{
+			var godPower = CreativePowerManager.Instance.GetPower<CreativePowers.GodmodePower>();
+
+			godPower.SetEnabledState(args.Player.Index, false);
+
+			args.Player.SendSuccessMessage("Journey Godmode has been disabled on your character.");
 		}
 
 		#endregion Cheat Comamnds
