@@ -6469,6 +6469,8 @@ namespace TShockAPI
 			var godPower = CreativePowerManager.Instance.GetPower<CreativePowers.GodmodePower>();
 
 			godPower.SetEnabledState(args.Player.Index, false);
+
+			args.Player.SendSuccessMessage("Journey Godmode has been disabled on your character.");
 		}
 
 		#endregion Cheat Comamnds
