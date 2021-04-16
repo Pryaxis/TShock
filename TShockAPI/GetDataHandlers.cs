@@ -2570,11 +2570,6 @@ namespace TShockAPI
 				args.Player.TPlayer.statLifeMax = max;
 				args.Player.PlayerData.maxHealth = max;
 			}
-
-			if (args.Player.GodMode && (cur < max))
-			{
-				args.Player.Heal(args.TPlayer.statLifeMax2);
-			}
 			return false;
 		}
 
@@ -3732,12 +3727,6 @@ namespace TShockAPI
 
 			if (OnPlayerDamage(args.Player, args.Data, id, direction, dmg, pvp, crit, playerDeathReason))
 				return true;
-
-			if (TShock.Players[id].GodMode)
-			{
-				TShock.Log.ConsoleDebug("GetDataHandlers / HandlePlayerDamageV2 rejected (god mode on) {0}", args.Player.Name);
-				TShock.Players[id].Heal(args.TPlayer.statLifeMax);
-			}
 
 			return false;
 		}

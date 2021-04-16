@@ -16,6 +16,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Fixed server crash from `/v2/players/list` & other parameterised REST endpoints. (@QuiCM, reported by @ATFGK)
 * Added handling to the PlayerChat hook event. (@QuiCM - Thanks for the suggestion @Arthri)
 * Changed the spawnboss command to support silent command specifiers. (@QuiCM, suggested by @nojomyth-dev)
+* Changed `/godmode` to use Journey mode godmode. (@Stealownz, suggested by @tlworks, implementation hints from @0x3fcf1bbd)
 
 ## TShock 4.5.0.1
 * Fixed conversion from old to new ban system for MySQL hosted ban databases. (@DeathCradle, @ATFGK)

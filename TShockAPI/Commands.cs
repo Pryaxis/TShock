@@ -37,6 +37,7 @@ using OTAPI.Tile;
 using TShockAPI.Localization;
 using System.Text.RegularExpressions;
 using Terraria.DataStructures;
+using Terraria.GameContent.Creative;
 
 namespace TShockAPI
 {
@@ -6443,7 +6444,9 @@ namespace TShockAPI
 				playerToGod = args.Player;
 			}
 
-			playerToGod.GodMode = !playerToGod.GodMode;
+			CreativePowers.GodmodePower godmodePower = CreativePowerManager.Instance.GetPower<CreativePowers.GodmodePower>();
+			playerToGod.GodMode = !godmodePower.IsEnabledForPlayer(playerToGod.Index);
+			godmodePower.SetEnabledState(playerToGod.Index, playerToGod.GodMode);
 
 			if (playerToGod == args.Player)
 			{

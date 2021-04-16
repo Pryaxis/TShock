@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.IO.Streams;
+using Terraria.GameContent.Creative;
 using static TShockAPI.GetDataHandlers;
 
 namespace TShockAPI.Handlers.NetModules
@@ -34,6 +35,11 @@ namespace TShockAPI.Handlers.NetModules
 			if (!HasPermission(PowerType, player))
 			{
 				rejectPacket = true;
+				if (PowerType == CreativePowerTypes.Godmode)
+				{
+					CreativePowers.GodmodePower godmodePower = CreativePowerManager.Instance.GetPower<CreativePowers.GodmodePower>();
+					godmodePower.SetEnabledState(player.Index, false);
+				}
 				return;
 			}
 

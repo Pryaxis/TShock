@@ -35,6 +35,7 @@ using Rests;
 using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
+using Terraria.GameContent.Creative;
 using TerrariaApi.Server;
 using TShockAPI.DB;
 using TShockAPI.Hooks;
@@ -1237,6 +1238,12 @@ namespace TShockAPI
 				{
 					tsplr.tempGroupTimer.Stop();
 				}
+			}
+
+			CreativePowers.GodmodePower godmodePower = CreativePowerManager.Instance.GetPower<CreativePowers.GodmodePower>();
+			if (godmodePower.IsEnabledForPlayer(tsplr.Index))
+			{
+				godmodePower.SetEnabledState(tsplr.Index, false);
 			}
 
 			// Fire the OnPlayerLogout hook too, if the player was logged in and they have a TSPlayer object.
