@@ -5366,11 +5366,15 @@ namespace TShockAPI
 			{
 				args.Player.SendErrorMessage("You are muted.");
 			}
-			else if (args.Player.LastWhisper != null)
+			else if (args.Player.LastWhisper != null && args.Player.LastWhisper.Active)
 			{
 				var msg = string.Join(" ", args.Parameters);
 				args.Player.LastWhisper.SendMessage(String.Format("<From {0}> {1}", args.Player.Name, msg), Color.MediumPurple);
 				args.Player.SendMessage(String.Format("<To {0}> {1}", args.Player.LastWhisper.Name, msg), Color.MediumPurple);
+			}
+			else if (args.Player.LastWhisper != null)
+			{
+				args.Player.SendErrorMessage("The player you're attempting to reply to is no longer online.");
 			}
 			else
 			{
