@@ -1269,7 +1269,7 @@ namespace TShockAPI
 				string reason = args.Parameters.Count > 1
 									? String.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1))
 									: "Misbehaviour.";
-				if (!players[0].Kick(reason, !args.Player.RealPlayer, false, args.Player.Name))
+				if (!players[0].Kick(reason, !args.Player.RealPlayer, args.Silent, args.Player.Name))
 				{
 					args.Player.SendErrorMessage("You can't kick another admin!");
 				}
