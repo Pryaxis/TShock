@@ -5828,7 +5828,10 @@ namespace TShockAPI
 			}
 			if (done > 0)
 			{
-				TSPlayer.All.SendInfoMessage("{0} renamed the {1}.", args.Player.Name, args.Parameters[0]);
+				if (!args.Silent)
+				{
+					TSPlayer.All.SendInfoMessage("{0} renamed the {1}.", args.Player.Name, args.Parameters[0]);
+				}
 			}
 			else
 			{
