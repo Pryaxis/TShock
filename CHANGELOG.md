@@ -13,6 +13,9 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change.
 
 ## Upcoming changes
+* This could be you!
+
+## TShock 4.5.1
 * Fixed server crash from `/v2/players/list` & other parameterised REST endpoints. (@QuiCM, reported by @ATFGK)
 * Added handling to the PlayerChat hook event. (@QuiCM - Thanks for the suggestion @Arthri)
 * Changed the spawnboss command to support silent command specifiers. (@QuiCM, suggested by @nojomyth-dev)
