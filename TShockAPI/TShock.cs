@@ -44,6 +44,7 @@ using TShockAPI.Sockets;
 using TShockAPI.CLI;
 using TShockAPI.Localization;
 using TShockAPI.Configuration;
+using Terraria.GameContent.Creative;
 
 namespace TShockAPI
 {
@@ -1215,6 +1216,23 @@ namespace TShockAPI
 			}
 
 			Players[args.Who] = null;
+
+			//Reset toggle creative powers to default, preventing potential power transfer & desync on another user occupying this slot later.
+
+			foreach(var kv in CreativePowerManager.Instance._powersById)
+			{
+				var power = kv.Value;
+
+				//No need to reset sliders - those are reset manually by the game, most likely an oversight that toggles don't receive this treatment.
+
+				if (power is CreativePowers.APerPlayerTogglePower toggle)
+				{
+					if (toggle._perPlayerIsEnabled[args.Who] == toggle._defaultToggleState)
+						continue;
+
+					toggle.SetEnabledState(args.Who, toggle._defaultToggleState);
+				}
+			}
 
 			if (tsplr.ReceivedInfo)
 			{
