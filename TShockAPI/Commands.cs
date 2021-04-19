@@ -4356,19 +4356,31 @@ namespace TShockAPI
 			{
 				case "day":
 					TSPlayer.Server.SetTime(true, 0.0);
-					TSPlayer.All.SendInfoMessage("{0} set the time to 4:30.", args.Player.Name);
+					if (!args.Silent)
+					{
+						TSPlayer.All.SendInfoMessage("{0} set the time to 4:30.", args.Player.Name);
+					}
 					break;
 				case "night":
 					TSPlayer.Server.SetTime(false, 0.0);
-					TSPlayer.All.SendInfoMessage("{0} set the time to 19:30.", args.Player.Name);
+					if (!args.Silent)
+					{
+						TSPlayer.All.SendInfoMessage("{0} set the time to 19:30.", args.Player.Name);
+					}
 					break;
 				case "noon":
 					TSPlayer.Server.SetTime(true, 27000.0);
-					TSPlayer.All.SendInfoMessage("{0} set the time to 12:00.", args.Player.Name);
+					if (!args.Silent)
+					{
+						TSPlayer.All.SendInfoMessage("{0} set the time to 12:00.", args.Player.Name);
+					}
 					break;
 				case "midnight":
 					TSPlayer.Server.SetTime(false, 16200.0);
-					TSPlayer.All.SendInfoMessage("{0} set the time to 0:00.", args.Player.Name);
+					if (!args.Silent)
+					{
+						TSPlayer.All.SendInfoMessage("{0} set the time to 0:00.", args.Player.Name);
+					}
 					break;
 				default:
 					string[] array = args.Parameters[0].Split(':');
@@ -4400,7 +4412,10 @@ namespace TShockAPI
 					{
 						TSPlayer.Server.SetTime(true, (double)(time * 3600.0m));
 					}
-					TSPlayer.All.SendInfoMessage("{0} set the time to {1}:{2:D2}.", args.Player.Name, hours, minutes);
+					if (!args.Silent)
+					{
+						TSPlayer.All.SendInfoMessage("{0} set the time to {1}:{2:D2}.", args.Player.Name, hours, minutes);
+					}
 					break;
 			}
 		}
