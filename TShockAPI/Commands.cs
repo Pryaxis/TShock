@@ -6070,9 +6070,12 @@ namespace TShockAPI
 					args.Player.SendSuccessMessage(string.Format("You have buffed {0} with {1}({2}) for {3} seconds!",
 														  foundplr[0].Name, TShock.Utils.GetBuffName(id),
 														  TShock.Utils.GetBuffDescription(id), (time)));
-					foundplr[0].SendSuccessMessage(string.Format("{0} has buffed you with {1}({2}) for {3} seconds!",
-														  args.Player.Name, TShock.Utils.GetBuffName(id),
-														  TShock.Utils.GetBuffDescription(id), (time)));
+					if (!args.Silent)
+					{
+						foundplr[0].SendSuccessMessage(string.Format("{0} has buffed you with {1}({2}) for {3} seconds!",
+															  args.Player.Name, TShock.Utils.GetBuffName(id),
+															  TShock.Utils.GetBuffDescription(id), (time)));
+					}
 				}
 				else
 					args.Player.SendErrorMessage("Invalid buff ID!");
