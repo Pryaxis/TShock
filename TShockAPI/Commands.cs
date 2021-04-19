@@ -2740,6 +2740,12 @@ namespace TShockAPI
 
 		private static void TP(CommandArgs args)
 		{
+			if (args.Silent && !args.Player.HasPermission(Permissions.tpsilent))
+			{
+				args.Player.SendErrorMessage("You do not have permission to run teleport silently.");
+				return;
+			}
+
 			if (args.Parameters.Count != 1 && args.Parameters.Count != 2)
 			{
 				if (args.Player.HasPermission(Permissions.tpothers))
@@ -2806,17 +2812,17 @@ namespace TShockAPI
 							{
 								if (args.Player != source)
 								{
-									if (args.Player.HasPermission(Permissions.tpsilent))
-										source.SendSuccessMessage("You were teleported to {0}.", target.Name);
-									else
+									if (!args.Silent)
+									{
 										source.SendSuccessMessage("{0} teleported you to {1}.", args.Player.Name, target.Name);
+									}
 								}
 								if (args.Player != target)
 								{
-									if (args.Player.HasPermission(Permissions.tpsilent))
-										target.SendInfoMessage("{0} was teleported to you.", source.Name);
-									if (!args.Player.HasPermission(Permissions.tpsilent))
+									if (!args.Silent)
+									{
 										target.SendInfoMessage("{0} teleported {1} to you.", args.Player.Name, source.Name);
+									}
 								}
 							}
 						}
@@ -2846,17 +2852,17 @@ namespace TShockAPI
 					{
 						if (args.Player != source)
 						{
-							if (args.Player.HasPermission(Permissions.tpsilent))
-								source.SendSuccessMessage("You were teleported to {0}.", target.Name);
-							else
+							if (!args.Silent)
+							{
 								source.SendSuccessMessage("{0} teleported you to {1}.", args.Player.Name, target.Name);
+							}
 						}
 						if (args.Player != target)
 						{
-							if (args.Player.HasPermission(Permissions.tpsilent))
-								target.SendInfoMessage("{0} was teleported to you.", source.Name);
-							if (!args.Player.HasPermission(Permissions.tpsilent))
+							if (!args.Silent)
+							{
 								target.SendInfoMessage("{0} teleported {1} to you.", args.Player.Name, source.Name);
+							}
 						}
 					}
 				}
@@ -2865,6 +2871,11 @@ namespace TShockAPI
 
 		private static void TPHere(CommandArgs args)
 		{
+			if (args.Silent && !args.Player.HasPermission(Permissions.tpsilent))
+			{
+				args.Player.SendErrorMessage("You do not have permission to run tphere silently.");
+				return;
+			}
 			if (args.Parameters.Count < 1)
 			{
 				if (args.Player.HasPermission(Permissions.tpallothers))
@@ -2889,7 +2900,7 @@ namespace TShockAPI
 					{
 						if (Main.player[i].active && (Main.player[i] != args.TPlayer))
 						{
-							if (TShock.Players[i].Teleport(args.TPlayer.position.X, args.TPlayer.position.Y))
+							if (TShock.Players[i].Teleport(args.TPlayer.position.X, args.TPlayer.position.Y) && !args.Silent)
 								TShock.Players[i].SendSuccessMessage(String.Format("You were teleported to {0}.", args.Player.Name));
 						}
 					}
@@ -2905,7 +2916,10 @@ namespace TShockAPI
 				var plr = players[0];
 				if (plr.Teleport(args.TPlayer.position.X, args.TPlayer.position.Y))
 				{
-					plr.SendInfoMessage("You were teleported to {0}.", args.Player.Name);
+					if (!args.Silent)
+					{
+						plr.SendInfoMessage("You were teleported to {0}.", args.Player.Name);
+					}
 					args.Player.SendSuccessMessage("Teleported {0} to yourself.", plr.Name);
 				}
 			}
