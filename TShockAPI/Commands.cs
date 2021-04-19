@@ -5309,8 +5309,6 @@ namespace TShockAPI
 			args.Player.SendFileTextAsMessage(FileTools.RulesPath);
 		}
 
-		public static bool[] WDisabled { get; set; } = new bool[256];
-
 		public static void Whisper(CommandArgs args)
 		{
 			if (args.Parameters.Count < 2)
@@ -5334,12 +5332,12 @@ namespace TShockAPI
 			else
 			{
 				var plr = players[0];
-				var msg = string.Join(" ", args.Parameters.ToArray(), 1, args.Parameters.Count - 1);
-				if (WDisabled[players[0].Index])
+				if (!plr.AcceptingWhispers)
 				{
-					args.Player.SendErrorMessage("This player has disabled people from sending whispers!");
+					args.Player.SendErrorMessage("This player is not accepting whispers.");
 					return;
 				}
+				var msg = string.Join(" ", args.Parameters.ToArray(), 1, args.Parameters.Count - 1);
 				plr.SendMessage(String.Format("<From {0}> {1}", args.Player.Name, msg), Color.MediumPurple);
 				args.Player.SendMessage(String.Format("<To {0}> {1}", plr.Name, msg), Color.MediumPurple);
 				plr.LastWhisper = args.Player;
@@ -5347,17 +5345,11 @@ namespace TShockAPI
 			}
 		}
 
-		public static void Wallow(CommandArgs args)
+		private static void Wallow(CommandArgs args)
 		{
-			int index = args.Player.Index;
-			if (WDisabled[index])
-			{
-				args.Player.SendSuccessMessage("You will now recieve whispers from other players!");
-				WDisabled[index] = !WDisabled[index];
-				return;
-			}
-			WDisabled[index] = !WDisabled[index];
-			args.Player.SendSuccessMessage("You will now not recieve whispers from other players, type '/wallow' to recieve them again!");
+			args.Player.AcceptingWhispers = !args.Player.AcceptingWhispers;
+			args.Player.SendSuccessMessage($"You {(args.Player.AcceptingWhispers ? "may now" : "will no longer")} receive whispers from other players.");
+			args.Player.SendSuccessMessage($"You can toggle this with the '{Specifier}wallow' command.");
 		}
 
 		private static void Reply(CommandArgs args)
@@ -5368,6 +5360,11 @@ namespace TShockAPI
 			}
 			else if (args.Player.LastWhisper != null && args.Player.LastWhisper.Active)
 			{
+				if (!args.Player.LastWhisper.AcceptingWhispers)
+				{
+					args.Player.SendErrorMessage("This player is not accepting whispers.");
+					return;
+				}
 				var msg = string.Join(" ", args.Parameters);
 				args.Player.LastWhisper.SendMessage(String.Format("<From {0}> {1}", args.Player.Name, msg), Color.MediumPurple);
 				args.Player.SendMessage(String.Format("<To {0}> {1}", args.Player.LastWhisper.Name, msg), Color.MediumPurple);
