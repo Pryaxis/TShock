@@ -5961,7 +5961,10 @@ namespace TShockAPI
 			else
 			{
 				args.Player.SendSuccessMessage(string.Format("You just healed {0}", playerToHeal.Name));
-				playerToHeal.SendSuccessMessage(string.Format("{0} just healed you!", args.Player.Name));
+				if (!args.Silent)
+				{
+					playerToHeal.SendSuccessMessage(string.Format("{0} just healed you!", args.Player.Name));
+				}
 			}
 		}
 
