@@ -1522,7 +1522,7 @@ namespace TShockAPI
 
 				if (banResult?.Ban != null)
 				{
-					player.Disconnect($"You have been banned: {banResult.Ban.Reason}.");
+					player.Disconnect($"#{banResult.Ban.TicketNumber} - You have been banned: {banResult.Ban.Reason}.");
 				}
 			}
 

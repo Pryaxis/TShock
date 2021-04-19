@@ -205,12 +205,12 @@ namespace TShockAPI.DB
 			{
 				if (ban.ExpirationDateTime == DateTime.MaxValue)
 				{
-					player.Disconnect("You are banned: " + ban.Reason);
+					player.Disconnect($"#{ban.TicketNumber} - You are banned: {ban.Reason}");
 					return true;
 				}
 
 				TimeSpan ts = ban.ExpirationDateTime - DateTime.UtcNow;
-				player.Disconnect($"You are banned: {ban.Reason} ({ban.GetPrettyExpirationString()} remaining)");
+				player.Disconnect($"#{ban.TicketNumber} - You are banned: {ban.Reason} ({ban.GetPrettyExpirationString()} remaining)");
 				return true;
 			}
 
