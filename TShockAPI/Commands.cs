@@ -37,6 +37,7 @@ using OTAPI.Tile;
 using TShockAPI.Localization;
 using System.Text.RegularExpressions;
 using Terraria.DataStructures;
+using Terraria.GameContent.Creative;
 
 namespace TShockAPI
 {
@@ -1522,7 +1523,7 @@ namespace TShockAPI
 
 				if (banResult?.Ban != null)
 				{
-					player.Disconnect($"You have been banned: {banResult.Ban.Reason}.");
+					player.Disconnect($"#{banResult.Ban.TicketNumber} - You have been banned: {banResult.Ban.Reason}.");
 				}
 			}
 
@@ -5303,8 +5304,6 @@ namespace TShockAPI
 			args.Player.SendFileTextAsMessage(FileTools.RulesPath);
 		}
 
-		public static bool[] WDisabled { get; set; } = new bool[256];
-
 		public static void Whisper(CommandArgs args)
 		{
 			if (args.Parameters.Count < 2)
@@ -5328,12 +5327,12 @@ namespace TShockAPI
 			else
 			{
 				var plr = players[0];
-				var msg = string.Join(" ", args.Parameters.ToArray(), 1, args.Parameters.Count - 1);
-				if (WDisabled[players[0].Index])
+				if (!plr.AcceptingWhispers)
 				{
-					args.Player.SendErrorMessage("This player has disabled people from sending whispers!");
+					args.Player.SendErrorMessage("This player is not accepting whispers.");
 					return;
 				}
+				var msg = string.Join(" ", args.Parameters.ToArray(), 1, args.Parameters.Count - 1);
 				plr.SendMessage(String.Format("<From {0}> {1}", args.Player.Name, msg), Color.MediumPurple);
 				args.Player.SendMessage(String.Format("<To {0}> {1}", plr.Name, msg), Color.MediumPurple);
 				plr.LastWhisper = args.Player;
@@ -5341,17 +5340,11 @@ namespace TShockAPI
 			}
 		}
 
-		public static void Wallow(CommandArgs args)
+		private static void Wallow(CommandArgs args)
 		{
-			int index = args.Player.Index;
-			if (WDisabled[index])
-			{
-				args.Player.SendSuccessMessage("You will now recieve whispers from other players!");
-				WDisabled[index] = !WDisabled[index];
-				return;
-			}
-			WDisabled[index] = !WDisabled[index];
-			args.Player.SendSuccessMessage("You will now not recieve whispers from other players, type '/wallow' to recieve them again!");
+			args.Player.AcceptingWhispers = !args.Player.AcceptingWhispers;
+			args.Player.SendSuccessMessage($"You {(args.Player.AcceptingWhispers ? "may now" : "will no longer")} receive whispers from other players.");
+			args.Player.SendSuccessMessage($"You can toggle this with the '{Specifier}wallow' command.");
 		}
 
 		private static void Reply(CommandArgs args)
@@ -5360,11 +5353,20 @@ namespace TShockAPI
 			{
 				args.Player.SendErrorMessage("You are muted.");
 			}
-			else if (args.Player.LastWhisper != null)
+			else if (args.Player.LastWhisper != null && args.Player.LastWhisper.Active)
 			{
+				if (!args.Player.LastWhisper.AcceptingWhispers)
+				{
+					args.Player.SendErrorMessage("This player is not accepting whispers.");
+					return;
+				}
 				var msg = string.Join(" ", args.Parameters);
 				args.Player.LastWhisper.SendMessage(String.Format("<From {0}> {1}", args.Player.Name, msg), Color.MediumPurple);
 				args.Player.SendMessage(String.Format("<To {0}> {1}", args.Player.LastWhisper.Name, msg), Color.MediumPurple);
+			}
+			else if (args.Player.LastWhisper != null)
+			{
+				args.Player.SendErrorMessage("The player you're attempting to reply to is no longer online.");
 			}
 			else
 			{
@@ -6445,14 +6447,18 @@ namespace TShockAPI
 
 			playerToGod.GodMode = !playerToGod.GodMode;
 
-			if (playerToGod == args.Player)
-			{
-				args.Player.SendSuccessMessage(string.Format("You are {0} in god mode.", args.Player.GodMode ? "now" : "no longer"));
-			}
-			else
+			var godPower = CreativePowerManager.Instance.GetPower<CreativePowers.GodmodePower>();
+
+			godPower.SetEnabledState(playerToGod.Index, playerToGod.GodMode);
+
+			if (playerToGod != args.Player)
 			{
 				args.Player.SendSuccessMessage(string.Format("{0} is {1} in god mode.", playerToGod.Name, playerToGod.GodMode ? "now" : "no longer"));
-				playerToGod.SendSuccessMessage(string.Format("You are {0} in god mode.", playerToGod.GodMode ? "now" : "no longer"));
+			}
+
+			if (!args.Silent || (playerToGod == args.Player))
+			{
+				playerToGod.SendSuccessMessage(string.Format("You are {0} in god mode.", args.Player.GodMode ? "now" : "no longer"));
 			}
 		}
 

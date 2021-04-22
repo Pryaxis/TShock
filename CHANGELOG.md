@@ -13,9 +13,19 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change.
 
 ## Upcoming changes
+
+## TShock 4.5.2
+* Added preliminary support for Terraria 1.4.2.2. (@hakusaro)
+* Removed `/ungodme` and godmode warning (no longer necessary). Also, godmode now supports silent commands. (@hakusaro)
+
+## TShock 4.5.1
 * Fixed server crash from `/v2/players/list` & other parameterised REST endpoints. (@QuiCM, reported by @ATFGK)
 * Added handling to the PlayerChat hook event. (@QuiCM - Thanks for the suggestion @Arthri)
 * Changed the spawnboss command to support silent command specifiers. (@QuiCM, suggested by @nojomyth-dev)
+* Updated /godmode to use Journey Mode's Godmode power instead of healing on damage. (requested by @tlworks, backported by @bartico6, implemented preemptive bugfix for creative powers mentioned by @Stealownz)
+* Fixed /r attempting to send messages to players that have since disconnected. (@bartico6, reported by @Arthri)
+* Added ban ticket ID to ban messages (@QuiCM, suggested by @Bippity)
+* Refactored /wallow command. /reply no longer bypasses /wallow (@QuiCM)
 
 ## TShock 4.5.0.1
 * Fixed conversion from old to new ban system for MySQL hosted ban databases. (@DeathCradle, @ATFGK)

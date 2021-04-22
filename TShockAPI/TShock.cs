@@ -44,6 +44,7 @@ using TShockAPI.Sockets;
 using TShockAPI.CLI;
 using TShockAPI.Localization;
 using TShockAPI.Configuration;
+using Terraria.GameContent.Creative;
 
 namespace TShockAPI
 {
@@ -57,7 +58,7 @@ namespace TShockAPI
 		/// <summary>VersionNum - The version number the TerrariaAPI will return back to the API. We just use the Assembly info.</summary>
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
 		/// <summary>VersionCodename - The version codename is displayed when the server starts. Inspired by software codenames conventions.</summary>
-		public static readonly string VersionCodename = "Stealownz + DeathCradle edition";
+		public static readonly string VersionCodename = "April Lyrids edition";
 
 		/// <summary>SavePath - This is the path TShock saves its data in. This path is relative to the TerrariaServer.exe (not in ServerPlugins).</summary>
 		public static string SavePath = "tshock";
@@ -1215,6 +1216,23 @@ namespace TShockAPI
 			}
 
 			Players[args.Who] = null;
+
+			//Reset toggle creative powers to default, preventing potential power transfer & desync on another user occupying this slot later.
+
+			foreach(var kv in CreativePowerManager.Instance._powersById)
+			{
+				var power = kv.Value;
+
+				//No need to reset sliders - those are reset manually by the game, most likely an oversight that toggles don't receive this treatment.
+
+				if (power is CreativePowers.APerPlayerTogglePower toggle)
+				{
+					if (toggle._perPlayerIsEnabled[args.Who] == toggle._defaultToggleState)
+						continue;
+
+					toggle.SetEnabledState(args.Who, toggle._defaultToggleState);
+				}
+			}
 
 			if (tsplr.ReceivedInfo)
 			{
