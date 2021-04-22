@@ -44,6 +44,7 @@ using TShockAPI.Sockets;
 using TShockAPI.CLI;
 using TShockAPI.Localization;
 using TShockAPI.Configuration;
+using Terraria.GameContent.Creative;
 
 namespace TShockAPI
 {
@@ -57,7 +58,7 @@ namespace TShockAPI
 		/// <summary>VersionNum - The version number the TerrariaAPI will return back to the API. We just use the Assembly info.</summary>
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
 		/// <summary>VersionCodename - The version codename is displayed when the server starts. Inspired by software codenames conventions.</summary>
-		public static readonly string VersionCodename = "Now with less velocity, thanks to Off + Quake. Usual thanks to Chris/White <3";
+		public static readonly string VersionCodename = "April Lyrids edition";
 
 		/// <summary>SavePath - This is the path TShock saves its data in. This path is relative to the TerrariaServer.exe (not in ServerPlugins).</summary>
 		public static string SavePath = "tshock";
@@ -890,6 +891,13 @@ namespace TShockAPI
 		/// <param name="args">args - EventArgs args</param>
 		private void OnUpdate(EventArgs args)
 		{
+			// This forces Terraria to actually continue to update
+			// even if there are no clients connected
+			if (ServerApi.ForceUpdate)
+			{
+				Netplay.HasClients = true;
+			}
+
 			if (Backups.IsBackupTime)
 				Backups.Backup();
 			//call these every second, not every update
@@ -1209,6 +1217,23 @@ namespace TShockAPI
 
 			Players[args.Who] = null;
 
+			//Reset toggle creative powers to default, preventing potential power transfer & desync on another user occupying this slot later.
+
+			foreach(var kv in CreativePowerManager.Instance._powersById)
+			{
+				var power = kv.Value;
+
+				//No need to reset sliders - those are reset manually by the game, most likely an oversight that toggles don't receive this treatment.
+
+				if (power is CreativePowers.APerPlayerTogglePower toggle)
+				{
+					if (toggle._perPlayerIsEnabled[args.Who] == toggle._defaultToggleState)
+						continue;
+
+					toggle.SetEnabledState(args.Who, toggle._defaultToggleState);
+				}
+			}
+
 			if (tsplr.ReceivedInfo)
 			{
 				if (!tsplr.SilentKickInProgress && tsplr.State >= 3)
@@ -1323,9 +1348,17 @@ namespace TShockAPI
 				{
 					text = String.Format(Config.Settings.ChatFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix,
 											 args.Text);
-					Hooks.PlayerHooks.OnPlayerChat(tsplr, args.Text, ref text);
-					Utils.Broadcast(text, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
+
+					//Invoke the PlayerChat hook. If this hook event is handled then we need to prevent sending the chat message
+					bool cancelChat = PlayerHooks.OnPlayerChat(tsplr, args.Text, ref text);
 					args.Handled = true;
+
+					if (cancelChat)
+					{
+						return;
+					}
+
+					Utils.Broadcast(text, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
 				}
 				else
 				{
@@ -1337,7 +1370,13 @@ namespace TShockAPI
 
 					//Give that poor player their name back :'c
 					ply.name = name;
-					PlayerHooks.OnPlayerChat(tsplr, args.Text, ref text);
+
+					bool cancelChat = PlayerHooks.OnPlayerChat(tsplr, args.Text, ref text);
+					if (cancelChat)
+					{
+						args.Handled = true;
+						return;
+					}
 
 					//This netpacket is used to send chat text from the server to clients, in this case on behalf of a client
 					Terraria.Net.NetPacket packet = Terraria.GameContent.NetModules.NetTextModule.SerializeServerMessage(

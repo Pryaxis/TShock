@@ -37,6 +37,7 @@ using OTAPI.Tile;
 using TShockAPI.Localization;
 using System.Text.RegularExpressions;
 using Terraria.DataStructures;
+using Terraria.GameContent.Creative;
 
 namespace TShockAPI
 {
@@ -584,6 +585,11 @@ namespace TShockAPI
 			add(new Command(Permissions.whisper, Whisper, "whisper", "w", "tell")
 			{
 				HelpText = "Sends a PM to a player."
+			});
+			add(new Command(Permissions.whisper, Wallow, "wallow")
+			{
+				AllowServer = false,
+				HelpText = "Toggles to either ignore or recieve whispers from other players."
 			});
 			add(new Command(Permissions.createdumps, CreateDumps, "dump-reference-data")
 			{
@@ -1148,7 +1154,7 @@ namespace TShockAPI
 			args.Player.SendInfoMessage("Memory usage: " + Process.GetCurrentProcess().WorkingSet64);
 			args.Player.SendInfoMessage("Allocated memory: " + Process.GetCurrentProcess().VirtualMemorySize64);
 			args.Player.SendInfoMessage("Total processor time: " + Process.GetCurrentProcess().TotalProcessorTime);
-			args.Player.SendInfoMessage("WinVer: " + Environment.OSVersion);
+			args.Player.SendInfoMessage("Operating system: " + Environment.OSVersion);
 			args.Player.SendInfoMessage("Proc count: " + Environment.ProcessorCount);
 			args.Player.SendInfoMessage("Machine name: " + Environment.MachineName);
 		}
@@ -1517,7 +1523,7 @@ namespace TShockAPI
 
 				if (banResult?.Ban != null)
 				{
-					player.Disconnect($"You have been banned: {banResult.Ban.Reason}.");
+					player.Disconnect($"#{banResult.Ban.TicketNumber} - You have been banned: {banResult.Ban.Reason}.");
 				}
 			}
 
@@ -2421,6 +2427,8 @@ namespace TShockAPI
 				return;
 			}
 
+			string message = "{0} spawned {1} {2} time(s)";
+			string spawnName;
 			NPC npc = new NPC();
 			switch (args.Parameters[0].ToLower())
 			{
@@ -2433,87 +2441,89 @@ namespace TShockAPI
 						npc.SetDefaults(i);
 						TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
 					}
-					TSPlayer.All.SendSuccessMessage("{0} has spawned all bosses {1} time(s).", args.Player.Name, amount);
-					return;
+					spawnName = "all bosses";
+					break;
+
 				case "brain":
 				case "brain of cthulhu":
 				case "boc":
 					npc.SetDefaults(266);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
-					TSPlayer.All.SendSuccessMessage("{0} has spawned the Brain of Cthulhu {1} time(s).", args.Player.Name, amount);
-					return;
+					spawnName = "the Brain of Cthulhu";
+					break;
+
 				case "destroyer":
 					npc.SetDefaults(134);
 					TSPlayer.Server.SetTime(false, 0.0);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
-					TSPlayer.All.SendSuccessMessage("{0} has spawned the Destroyer {1} time(s).", args.Player.Name, amount);
-					return;
+					spawnName = "the Destroyer";
+					break;
 				case "duke":
 				case "duke fishron":
 				case "fishron":
 					npc.SetDefaults(370);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
-					TSPlayer.All.SendSuccessMessage("{0} has spawned Duke Fishron {1} time(s).", args.Player.Name, amount);
-					return;
+					spawnName = "Duke Fishron";
+					break;
 				case "eater":
 				case "eater of worlds":
 				case "eow":
 					npc.SetDefaults(13);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
-					TSPlayer.All.SendSuccessMessage("{0} has spawned the Eater of Worlds {1} time(s).", args.Player.Name, amount);
-					return;
+					spawnName = "the Eater of Worlds";
+					break;
 				case "eye":
 				case "eye of cthulhu":
 				case "eoc":
 					npc.SetDefaults(4);
 					TSPlayer.Server.SetTime(false, 0.0);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
-					TSPlayer.All.SendSuccessMessage("{0} has spawned the Eye of Cthulhu {1} time(s).", args.Player.Name, amount);
-					return;
+					spawnName = "the Eye of Cthulhu";
+					break;
 				case "golem":
 					npc.SetDefaults(245);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
-					TSPlayer.All.SendSuccessMessage("{0} has spawned Golem {1} time(s).", args.Player.Name, amount);
-					return;
+					spawnName = "the Golem";
+					break;
 				case "king":
 				case "king slime":
 				case "ks":
 					npc.SetDefaults(50);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
-					TSPlayer.All.SendSuccessMessage("{0} has spawned King Slime {1} time(s).", args.Player.Name, amount);
-					return;
+					spawnName = "the King Slime";
+					break;
 				case "plantera":
 					npc.SetDefaults(262);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
-					TSPlayer.All.SendSuccessMessage("{0} has spawned Plantera {1} time(s).", args.Player.Name, amount);
-					return;
+					spawnName = "Plantera";
+					break;
 				case "prime":
 				case "skeletron prime":
 					npc.SetDefaults(127);
 					TSPlayer.Server.SetTime(false, 0.0);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
-					TSPlayer.All.SendSuccessMessage("{0} has spawned Skeletron Prime {1} time(s).", args.Player.Name, amount);
-					return;
+					spawnName = "Skeletron Prime";
+					break;
 				case "queen bee":
 				case "qb":
 					npc.SetDefaults(222);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
-					TSPlayer.All.SendSuccessMessage("{0} has spawned Queen Bee {1} time(s).", args.Player.Name, amount);
-					return;
+					spawnName = "the Queen Bee";
+					break;
 				case "skeletron":
 					npc.SetDefaults(35);
 					TSPlayer.Server.SetTime(false, 0.0);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
-					TSPlayer.All.SendSuccessMessage("{0} has spawned Skeletron {1} time(s).", args.Player.Name, amount);
-					return;
+					spawnName = "Skeletron";
+					break;
 				case "twins":
 					TSPlayer.Server.SetTime(false, 0.0);
 					npc.SetDefaults(125);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
 					npc.SetDefaults(126);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
-					TSPlayer.All.SendSuccessMessage("{0} has spawned the Twins {1} time(s).", args.Player.Name, amount);
-					return;
+					spawnName = "the Twins";
+					break;
 				case "wof":
 				case "wall of flesh":
 					if (Main.wofNPCIndex != -1)
@@ -2527,102 +2537,113 @@ namespace TShockAPI
 						return;
 					}
 					NPC.SpawnWOF(new Vector2(args.Player.X, args.Player.Y));
-					TSPlayer.All.SendSuccessMessage("{0} has spawned the Wall of Flesh.", args.Player.Name);
-					return;
+					spawnName = "the Wall of Flesh";
+					break;
 				case "moon":
 				case "moon lord":
 				case "ml":
 					npc.SetDefaults(398);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
-					TSPlayer.All.SendSuccessMessage("{0} has spawned the Moon Lord {1} time(s).", args.Player.Name, amount);
-					return;
+					spawnName = "the Moon Lord";
+					break;
 				case "empress":
 				case "empress of light":
 				case "eol":
 					npc.SetDefaults(636);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
-					TSPlayer.All.SendSuccessMessage("{0} has spawned the Empress of Light {1} time(s).", args.Player.Name, amount);
-					return;
+					spawnName = "the Empress of Light";
+					break;
 				case "queen slime":
 				case "qs":
 					npc.SetDefaults(657);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
-					TSPlayer.All.SendSuccessMessage("{0} has spawned Queen Slime {1} time(s).", args.Player.Name, amount);
-					return;
+					spawnName = "the Queen Slime";
+					break;
 				case "lunatic":
 				case "lunatic cultist":
 				case "cultist":
 				case "lc":
 					npc.SetDefaults(439);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
-					TSPlayer.All.SendSuccessMessage("{0} has spawned the Lunatic Cultist {1} time(s).", args.Player.Name, amount);
-					return;
+					spawnName = "the Lunatic Cultist";
+					break;
 				case "betsy":
 					npc.SetDefaults(551);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
-					TSPlayer.All.SendSuccessMessage("{0} has spawned Betsy {1} time(s).", args.Player.Name, amount);
-					return;
+					spawnName = "Betsy";
+					break;
 				case "flying dutchman":
 				case "flying":
 				case "dutchman":
 					npc.SetDefaults(491);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
-					TSPlayer.All.SendSuccessMessage("{0} has spawned the Flying Dutchman {1} time(s).", args.Player.Name, amount);
-					return;
+					spawnName = "the Flying Dutchman";
+					break;
 				case "mourning wood":
 					npc.SetDefaults(325);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
-					TSPlayer.All.SendSuccessMessage("{0} has spawned Mourning Wood {1} time(s).", args.Player.Name, amount);
-					return;
+					spawnName = "Mourning Wood";
+					break;
 				case "pumpking":
 					npc.SetDefaults(327);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
-					TSPlayer.All.SendSuccessMessage("{0} has spawned Pumpking {1} time(s).", args.Player.Name, amount);
-					return;
+					spawnName = "the Pumpking";
+					break;
 				case "everscream":
 					npc.SetDefaults(344);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
-					TSPlayer.All.SendSuccessMessage("{0} has spawned Everscream {1} time(s).", args.Player.Name, amount);
-					return;
+					spawnName = "Everscream";
+					break;
 				case "santa-nk1":
 				case "santa":
 					npc.SetDefaults(346);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
-					TSPlayer.All.SendSuccessMessage("{0} has spawned Santa-NK1 {1} time(s).", args.Player.Name, amount);
-					return;
+					spawnName = "Santa-NK1";
+					break;
 				case "ice queen":
 					npc.SetDefaults(345);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
-					TSPlayer.All.SendSuccessMessage("{0} has spawned the Ice Queen {1} time(s).", args.Player.Name, amount);
-					return;
+					spawnName = "the Ice Queen";
+					break;
 				case "martian saucer":
 					npc.SetDefaults(392);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
-					TSPlayer.All.SendSuccessMessage("{0} has spawned the Martian Saucer {1} time(s).", args.Player.Name, amount);
-					return;
+					spawnName = "a Martian Saucer";
+					break;
 				case "solar pillar":
 					npc.SetDefaults(517);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
-					TSPlayer.All.SendSuccessMessage("{0} has spawned the Solar Pillar {1} time(s).", args.Player.Name, amount);
-					return;
+					spawnName = "a Solar Pillar";
+					break;
 				case "nebula pillar": 
 					npc.SetDefaults(507);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
-					TSPlayer.All.SendSuccessMessage("{0} has spawned the Nebula Pillar {1} time(s).", args.Player.Name, amount);
-					return;
+					spawnName = "a Nebula Pillar";
+					break;
 				case "vortex pillar":
 					npc.SetDefaults(422);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
-					TSPlayer.All.SendSuccessMessage("{0} has spawned the Vortex Pillar {1} time(s).", args.Player.Name, amount);
-					return;
+					spawnName = "a Vortex Pillar";
+					break;
 				case "stardust pillar":
 					npc.SetDefaults(493);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
-					TSPlayer.All.SendSuccessMessage("{0} has spawned the Stardust Pillar {1} time(s).", args.Player.Name, amount);
-					return;
+					spawnName = "a Stardust Pillar";
+					break;
 				default:
 					args.Player.SendErrorMessage("Invalid boss type!");
 					return;
+			}
+
+			if (args.Silent)
+			{
+				//"You spawned <spawn name> <x> time(s)"
+				args.Player.SendSuccessMessage(message, "You", spawnName, amount);
+			}
+			else
+			{
+				//"<player> spawned <spawn name> <x> time(s)"
+				TSPlayer.All.SendSuccessMessage(message, args.Player.Name, spawnName, amount);
 			}
 		}
 
@@ -5283,14 +5304,13 @@ namespace TShockAPI
 			args.Player.SendFileTextAsMessage(FileTools.RulesPath);
 		}
 
-		private static void Whisper(CommandArgs args)
+		public static void Whisper(CommandArgs args)
 		{
 			if (args.Parameters.Count < 2)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}whisper <player> <text>", Specifier);
+				args.Player.SendErrorMessage("Invalid syntax! Proper usage: /whisper <player> <text>");
 				return;
 			}
-
 			var players = TSPlayer.FindByNameOrID(args.Parameters[0]);
 			if (players.Count == 0)
 			{
@@ -5307,6 +5327,11 @@ namespace TShockAPI
 			else
 			{
 				var plr = players[0];
+				if (!plr.AcceptingWhispers)
+				{
+					args.Player.SendErrorMessage("This player is not accepting whispers.");
+					return;
+				}
 				var msg = string.Join(" ", args.Parameters.ToArray(), 1, args.Parameters.Count - 1);
 				plr.SendMessage(String.Format("<From {0}> {1}", args.Player.Name, msg), Color.MediumPurple);
 				args.Player.SendMessage(String.Format("<To {0}> {1}", plr.Name, msg), Color.MediumPurple);
@@ -5315,17 +5340,33 @@ namespace TShockAPI
 			}
 		}
 
+		private static void Wallow(CommandArgs args)
+		{
+			args.Player.AcceptingWhispers = !args.Player.AcceptingWhispers;
+			args.Player.SendSuccessMessage($"You {(args.Player.AcceptingWhispers ? "may now" : "will no longer")} receive whispers from other players.");
+			args.Player.SendSuccessMessage($"You can toggle this with the '{Specifier}wallow' command.");
+		}
+
 		private static void Reply(CommandArgs args)
 		{
 			if (args.Player.mute)
 			{
 				args.Player.SendErrorMessage("You are muted.");
 			}
-			else if (args.Player.LastWhisper != null)
+			else if (args.Player.LastWhisper != null && args.Player.LastWhisper.Active)
 			{
+				if (!args.Player.LastWhisper.AcceptingWhispers)
+				{
+					args.Player.SendErrorMessage("This player is not accepting whispers.");
+					return;
+				}
 				var msg = string.Join(" ", args.Parameters);
 				args.Player.LastWhisper.SendMessage(String.Format("<From {0}> {1}", args.Player.Name, msg), Color.MediumPurple);
 				args.Player.SendMessage(String.Format("<To {0}> {1}", args.Player.LastWhisper.Name, msg), Color.MediumPurple);
+			}
+			else if (args.Player.LastWhisper != null)
+			{
+				args.Player.SendErrorMessage("The player you're attempting to reply to is no longer online.");
 			}
 			else
 			{
@@ -5410,7 +5451,7 @@ namespace TShockAPI
 						type = 170;
 				}
 				var ply = players[0];
-				int p = Projectile.NewProjectile(ply.TPlayer.position.X, ply.TPlayer.position.Y - 64f, 0f, -8f, type, 0, (float)0);
+				int p = Projectile.NewProjectile(Projectile.GetNoneSource(), ply.TPlayer.position.X, ply.TPlayer.position.Y - 64f, 0f, -8f, type, 0, (float)0);
 				Main.projectile[p].Kill();
 				args.Player.SendSuccessMessage("Launched Firework on {0}.", ply.Name);
 			}
@@ -6010,13 +6051,11 @@ namespace TShockAPI
 			}
 		}
 
-		private static void Grow(CommandArgs args)
+		public static void Grow(CommandArgs args)
 		{
-			if (args.Parameters.Count != 1)
-			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}grow <tree/epictree/mushroom/cactus/herb>", Specifier);
-				return;
-			}
+			bool growevilAmb = args.Player.HasPermission(Permissions.growevil);
+			string subcmd = args.Parameters.Count == 0 ? "help" : args.Parameters[0].ToLower();
+
 			var name = "Fail";
 			var x = args.Player.TileX;
 			var y = args.Player.TileY + 3;
@@ -6027,10 +6066,37 @@ namespace TShockAPI
 				return;
 			}
 
-			switch (args.Parameters[0].ToLower())
+			switch (subcmd)
 			{
-				case "tree":
-					for (int i = x - 1; i < x + 2; i++)
+				case "help":
+					{
+						if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out int pageNumber))
+							return;
+
+						var lines = new List<string>
+					{
+						"- Default trees :",
+						"     'basic', 'sakura', 'willow', 'boreal', 'mahogany', 'ebonwood', 'shadewood', 'pearlwood'.",
+						"- Palm trees :",
+						"     'palm', 'corruptpalm', 'crimsonpalm', 'hallowpalm'.",
+						"- Gem trees :",
+						"     'topaz', 'amethyst', 'sapphire', 'emerald', 'ruby', 'diamond', 'amber'.",
+						"- Misc :",
+						"     'cactus', 'herb', 'mushroom'."
+					};
+
+						PaginationTools.SendPage(args.Player, pageNumber, lines,
+								new PaginationTools.Settings
+								{
+									HeaderFormat = "Trees types & misc available to use. ({0}/{1}):",
+									FooterFormat = "Type {0}grow help {{0}} for more sub-commands.".SFormat(Commands.Specifier)
+								}
+							);
+					}
+					break;
+
+				case "basic":
+					for (int i = x - 2; i < x + 3; i++)
 					{
 						Main.tile[i, y].active(true);
 						Main.tile[i, y].type = 2;
@@ -6038,37 +6104,279 @@ namespace TShockAPI
 					}
 					Main.tile[x, y - 1].wall = 0;
 					WorldGen.GrowTree(x, y);
-					name = "Tree";
+					name = "Basic Tree";
 					break;
-				case "epictree":
-					for (int i = x - 1; i < x + 2; i++)
+
+				case "boreal":
+					for (int i = x - 2; i < x + 3; i++)
+					{
+						Main.tile[i, y].active(true);
+						Main.tile[i, y].type = 147;
+						Main.tile[i, y].wall = 0;
+					}
+					Main.tile[x, y - 1].wall = 0;
+					WorldGen.GrowTree(x, y);
+					name = "Boreal Tree";
+					break;
+
+				case "mahogany":
+					for (int i = x - 2; i < x + 3; i++)
+					{
+						Main.tile[i, y].active(true);
+						Main.tile[i, y].type = 60;
+						Main.tile[i, y].wall = 0;
+					}
+					Main.tile[x, y - 1].wall = 0;
+					WorldGen.GrowTree(x, y);
+					name = "Rich Mahogany";
+					break;
+
+				case "sakura":
+					for (int i = x - 2; i < x + 3; i++)
 					{
 						Main.tile[i, y].active(true);
 						Main.tile[i, y].type = 2;
 						Main.tile[i, y].wall = 0;
 					}
 					Main.tile[x, y - 1].wall = 0;
-					Main.tile[x, y - 1].liquid = 0;
-					Main.tile[x, y - 1].active(true);
-					WorldGen.GrowEpicTree(x, y);
-					name = "Epic Tree";
+					WorldGen.TryGrowingTreeByType(596, x, y);
+					name = "Sakura Tree";
 					break;
-				case "mushroom":
-					for (int i = x - 1; i < x + 2; i++)
+
+				case "willow":
+					for (int i = x - 2; i < x + 3; i++)
 					{
 						Main.tile[i, y].active(true);
-						Main.tile[i, y].type = 70;
+						Main.tile[i, y].type = 2;
 						Main.tile[i, y].wall = 0;
 					}
 					Main.tile[x, y - 1].wall = 0;
-					WorldGen.GrowShroom(x, y);
-					name = "Mushroom";
+					WorldGen.TryGrowingTreeByType(616, x, y);
+					name = "Willow Tree";
 					break;
+
+				case "shadewood":
+					if (growevilAmb)
+					{
+						for (int i = x - 2; i < x + 3; i++)
+						{
+							Main.tile[i, y].active(true);
+							Main.tile[i, y].type = 199;
+							Main.tile[i, y].wall = 0;
+						}
+						Main.tile[x, y - 1].wall = 0;
+						WorldGen.GrowTree(x, y);
+						name = "Shadewood tree";
+					}
+					else args.Player.SendErrorMessage("You do not have permission to grow this tree type");
+					break;
+
+				case "ebonwood":
+					if (growevilAmb)
+					{
+						for (int i = x - 2; i < x + 3; i++)
+						{
+							Main.tile[i, y].active(true);
+							Main.tile[i, y].type = 23;
+							Main.tile[i, y].wall = 0;
+						}
+						Main.tile[x, y - 1].wall = 0;
+						WorldGen.GrowTree(x, y);
+						name = "Ebonwood Tree";
+					}
+					else args.Player.SendErrorMessage("You do not have permission to grow this tree type");
+					break;
+
+				case "pearlwood":
+					if (growevilAmb)
+					{
+						for (int i = x - 2; i < x + 3; i++)
+						{
+							Main.tile[i, y].active(true);
+							Main.tile[i, y].type = 109;
+							Main.tile[i, y].wall = 0;
+						}
+						Main.tile[x, y - 1].wall = 0;
+						WorldGen.GrowTree(x, y);
+						name = "Pearlwood Tree";
+					}
+					else args.Player.SendErrorMessage("You do not have permission to grow this tree type");
+					break;
+
+				case "palm":
+					for (int i = x - 2; i < x + 3; i++)
+					{
+						Main.tile[i, y].active(true);
+						Main.tile[i, y].type = 53;
+						Main.tile[i, y].wall = 0;
+					}
+					for (int i = x - 2; i < x + 3; i++)
+					{
+						Main.tile[i, y + 1].active(true);
+						Main.tile[i, y + 1].type = 397;
+						Main.tile[i, y + 1].wall = 0;
+					}
+					Main.tile[x, y - 1].wall = 0;
+					WorldGen.GrowPalmTree(x, y);
+					name = "Desert Palm";
+					break;
+
+				case "hallowpalm":
+					if (growevilAmb)
+					{
+						for (int i = x - 2; i < x + 3; i++)
+						{
+							Main.tile[i, y].active(true);
+							Main.tile[i, y].type = 116;
+							Main.tile[i, y].wall = 0;
+						}
+						for (int i = x - 2; i < x + 3; i++)
+						{
+							Main.tile[i, y + 1].active(true);
+							Main.tile[i, y + 1].type = 402;
+							Main.tile[i, y + 1].wall = 0;
+						}
+						Main.tile[x, y - 1].wall = 0;
+						WorldGen.GrowPalmTree(x, y);
+						name = "Hallow Palm";
+					}
+					else args.Player.SendErrorMessage("You do not have permission to grow this tree type");
+					break;
+
+				case "crimsonpalm":
+					if (growevilAmb)
+					{
+						for (int i = x - 2; i < x + 3; i++)
+						{
+							Main.tile[i, y].active(true);
+							Main.tile[i, y].type = 234;
+							Main.tile[i, y].wall = 0;
+						}
+						for (int i = x - 2; i < x + 3; i++)
+						{
+							Main.tile[i, y + 1].active(true);
+							Main.tile[i, y + 1].type = 399;
+							Main.tile[i, y + 1].wall = 0;
+						}
+						Main.tile[x, y - 1].wall = 0;
+						WorldGen.GrowPalmTree(x, y);
+						name = "Crimson Palm";
+					}
+					else args.Player.SendErrorMessage("You do not have permission to grow this tree type");
+					break;
+
+				case "corruptpalm":
+					if (growevilAmb)
+					{
+						for (int i = x - 2; i < x + 3; i++)
+						{
+							Main.tile[i, y].active(true);
+							Main.tile[i, y].type = 112;
+							Main.tile[i, y].wall = 0;
+						}
+						for (int i = x - 2; i < x + 3; i++)
+						{
+							Main.tile[i, y + 1].active(true);
+							Main.tile[i, y + 1].type = 398;
+							Main.tile[i, y + 1].wall = 0;
+						}
+						Main.tile[x, y - 1].wall = 0;
+						WorldGen.GrowPalmTree(x, y);
+						name = "Corruption Palm";
+					}
+					else args.Player.SendErrorMessage("You do not have permission to grow this tree type");
+					break;
+
+				case "topaz":
+					for (int i = x - 2; i < x + 3; i++)
+					{
+						Main.tile[i, y].active(true);
+						Main.tile[i, y].type = 1;
+						Main.tile[i, y].wall = 0;
+					}
+					Main.tile[x, y - 1].wall = 0;
+					WorldGen.TryGrowingTreeByType(583, x, y);
+					name = "Topaz Gemtree";
+					break;
+
+				case "amethyst":
+					for (int i = x - 2; i < x + 3; i++)
+					{
+						Main.tile[i, y].active(true);
+						Main.tile[i, y].type = 1;
+						Main.tile[i, y].wall = 0;
+					}
+					Main.tile[x, y - 1].wall = 0;
+					WorldGen.TryGrowingTreeByType(584, x, y);
+					name = "Amethust Gemtree";
+					break;
+
+				case "sapphire":
+					for (int i = x - 2; i < x + 3; i++)
+					{
+						Main.tile[i, y].active(true);
+						Main.tile[i, y].type = 1;
+						Main.tile[i, y].wall = 0;
+					}
+					Main.tile[x, y - 1].wall = 0;
+					WorldGen.TryGrowingTreeByType(585, x, y);
+					name = "Sapphire Gemtree";
+					break;
+
+				case "emerald":
+					for (int i = x - 2; i < x + 3; i++)
+					{
+						Main.tile[i, y].active(true);
+						Main.tile[i, y].type = 1;
+						Main.tile[i, y].wall = 0;
+					}
+					Main.tile[x, y - 1].wall = 0;
+					WorldGen.TryGrowingTreeByType(586, x, y);
+					name = "Emerald Gemtree";
+					break;
+
+				case "ruby":
+					for (int i = x - 2; i < x + 3; i++)
+					{
+						Main.tile[i, y].active(true);
+						Main.tile[i, y].type = 1;
+						Main.tile[i, y].wall = 0;
+					}
+					Main.tile[x, y - 1].wall = 0;
+					WorldGen.TryGrowingTreeByType(587, x, y);
+					name = "Ruby Gemtree";
+					break;
+
+				case "diamond":
+					for (int i = x - 2; i < x + 3; i++)
+					{
+						Main.tile[i, y].active(true);
+						Main.tile[i, y].type = 1;
+						Main.tile[i, y].wall = 0;
+					}
+					Main.tile[x, y - 1].wall = 0;
+					WorldGen.TryGrowingTreeByType(588, x, y);
+					name = "Diamond Gemtree";
+					break;
+
+				case "amber":
+					for (int i = x - 2; i < x + 3; i++)
+					{
+						Main.tile[i, y].active(true);
+						Main.tile[i, y].type = 1;
+						Main.tile[i, y].wall = 0;
+					}
+					Main.tile[x, y - 1].wall = 0;
+					WorldGen.TryGrowingTreeByType(589, x, y);
+					name = "Amber Gemtree";
+					break;
+
 				case "cactus":
 					Main.tile[x, y].type = 53;
 					WorldGen.GrowCactus(x, y);
 					name = "Cactus";
 					break;
+
 				case "herb":
 					Main.tile[x, y].active(true);
 					Main.tile[x, y].frameX = 36;
@@ -6076,12 +6384,28 @@ namespace TShockAPI
 					WorldGen.GrowAlch(x, y);
 					name = "Herb";
 					break;
+
+				case "mushroom":
+					for (int i = x - 2; i < x + 3; i++)
+					{
+						Main.tile[i, y].active(true);
+						Main.tile[i, y].type = 70;
+						Main.tile[i, y].wall = 0;
+					}
+					Main.tile[x, y - 1].wall = 0;
+					WorldGen.GrowShroom(x, y);
+					name = "Glowing Mushroom Tree";
+					break;
+
 				default:
 					args.Player.SendErrorMessage("Unknown plant!");
 					return;
 			}
-			args.Player.SendTileSquare(x, y);
-			args.Player.SendSuccessMessage("Tried to grow a " + name + ".");
+			if (args.Parameters.Count == 1)
+			{
+				args.Player.SendTileSquare(x - 2, y - 20, 25);
+				args.Player.SendSuccessMessage("Tried to grow a " + name + ".");
+			}
 		}
 
 		private static void ToggleGodMode(CommandArgs args)
@@ -6123,14 +6447,18 @@ namespace TShockAPI
 
 			playerToGod.GodMode = !playerToGod.GodMode;
 
-			if (playerToGod == args.Player)
-			{
-				args.Player.SendSuccessMessage(string.Format("You are {0} in god mode.", args.Player.GodMode ? "now" : "no longer"));
-			}
-			else
+			var godPower = CreativePowerManager.Instance.GetPower<CreativePowers.GodmodePower>();
+
+			godPower.SetEnabledState(playerToGod.Index, playerToGod.GodMode);
+
+			if (playerToGod != args.Player)
 			{
 				args.Player.SendSuccessMessage(string.Format("{0} is {1} in god mode.", playerToGod.Name, playerToGod.GodMode ? "now" : "no longer"));
-				playerToGod.SendSuccessMessage(string.Format("You are {0} in god mode.", playerToGod.GodMode ? "now" : "no longer"));
+			}
+
+			if (!args.Silent || (playerToGod == args.Player))
+			{
+				playerToGod.SendSuccessMessage(string.Format("You are {0} in god mode.", args.Player.GodMode ? "now" : "no longer"));
 			}
 		}
 

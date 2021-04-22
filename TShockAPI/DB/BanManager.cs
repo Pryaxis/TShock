@@ -37,18 +37,7 @@ namespace TShockAPI.DB
 		/// <summary>
 		/// Readonly dictionary of Bans, keyed on ban ticket number.
 		/// </summary>
-		public ReadOnlyDictionary<int, Ban> Bans
-		{
-			get
-			{
-				if (_bans == null)
-				{
-					_bans = RetrieveAllBans().ToDictionary(b => b.TicketNumber);
-				}
-
-				return new ReadOnlyDictionary<int, Ban>(_bans);
-			}
-		}
+		public ReadOnlyDictionary<int, Ban> Bans => new ReadOnlyDictionary<int, Ban>(_bans);
 
 		/// <summary>
 		/// Event invoked when a ban is checked for validity
@@ -93,10 +82,22 @@ namespace TShockAPI.DB
 				throw new Exception("Could not find a database library (probably Sqlite3.dll)");
 			}
 
+			EnsureBansCollection();
 			TryConvertBans();
 
 			OnBanValidate += BanValidateCheck;
 			OnBanPreAdd += BanAddedCheck;
+		}
+
+		/// <summary>
+		/// Ensures the <see cref="_bans"/> collection is ready to use.
+		/// </summary>
+		private void EnsureBansCollection()
+		{
+			if (_bans == null)
+			{
+				_bans = RetrieveAllBans().ToDictionary(b => b.TicketNumber);
+			}
 		}
 
 		/// <summary>
@@ -107,7 +108,7 @@ namespace TShockAPI.DB
 			int res;
 			if (database.GetSqlType() == SqlType.Mysql)
 			{
-				res = database.QueryScalar<int>("SELECT COUNT(name) FROM information_schema.tables WHERE table_schema = @0 and table_name = 'Bans'", TShock.Config.Settings.MySqlDbName);
+				res = database.QueryScalar<int>("SELECT COUNT(table_name) FROM information_schema.tables WHERE table_schema = @0 and table_name = 'Bans'", TShock.Config.Settings.MySqlDbName);
 			}
 			else
 			{
@@ -116,6 +117,7 @@ namespace TShockAPI.DB
 
 			if (res != 0)
 			{
+				var bans = new List<BanPreAddEventArgs>();
 				using (var reader = database.QueryReader("SELECT * FROM Bans"))
 				{
 					while (reader.Read())
@@ -140,22 +142,46 @@ namespace TShockAPI.DB
 
 						if (!string.IsNullOrWhiteSpace(ip))
 						{
-							InsertBan($"{Identifier.IP}{ip}", reason, banningUser, start, end);
+							bans.Add(new BanPreAddEventArgs
+							{
+								Identifier = $"{Identifier.IP}{ip}",
+								Reason = reason,
+								BanningUser = banningUser,
+								BanDateTime = start,
+								ExpirationDateTime = end
+							});
 						}
 
 						if (!string.IsNullOrWhiteSpace(account))
 						{
-							InsertBan($"{Identifier.Account}{account}", reason, banningUser, start, end);
+							bans.Add(new BanPreAddEventArgs
+							{
+								Identifier = $"{Identifier.Account}{account}",
+								Reason = reason,
+								BanningUser = banningUser,
+								BanDateTime = start,
+								ExpirationDateTime = end
+							});
 						}
 
 						if (!string.IsNullOrWhiteSpace(uuid))
 						{
-							InsertBan($"{Identifier.UUID}{uuid}", reason, banningUser, start, end);
+							bans.Add(new BanPreAddEventArgs
+							{
+								Identifier = $"{Identifier.UUID}{uuid}",
+								Reason = reason,
+								BanningUser = banningUser,
+								BanDateTime = start,
+								ExpirationDateTime = end
+							});
 						}
 					}
 				}
 
-				database.Query("DROP TABLE 'Bans'");
+				foreach (var ban in bans)
+					InsertBan(ban);
+
+				database.Query("DROP TABLE Bans");
 			}
 		}
 
@@ -179,12 +205,12 @@ namespace TShockAPI.DB
 			{
 				if (ban.ExpirationDateTime == DateTime.MaxValue)
 				{
-					player.Disconnect("You are banned: " + ban.Reason);
+					player.Disconnect($"#{ban.TicketNumber} - You are banned: {ban.Reason}");
 					return true;
 				}
 
 				TimeSpan ts = ban.ExpirationDateTime - DateTime.UtcNow;
-				player.Disconnect($"You are banned: {ban.Reason} ({ban.GetPrettyExpirationString()} remaining)");
+				player.Disconnect($"#{ban.TicketNumber} - You are banned: {ban.Reason} ({ban.GetPrettyExpirationString()} remaining)");
 				return true;
 			}
 
@@ -232,7 +258,7 @@ namespace TShockAPI.DB
 				args.Message = args.Valid ? null : "a current ban for this identifier already exists.";
 			}
 		}
-		
+
 		/// <summary>
 		/// Adds a new ban for the given identifier. Returns a Ban object if the ban was added, else null
 		/// </summary>
@@ -252,7 +278,16 @@ namespace TShockAPI.DB
 				BanDateTime = fromDate,
 				ExpirationDateTime = toDate
 			};
+			return InsertBan(args);
+		}
 
+		/// <summary>
+		/// Adds a new ban for the given data. Returns a Ban object if the ban was added, else null
+		/// </summary>
+		/// <param name="args">A predefined instance of <see cref="BanPreAddEventArgs"/></param>
+		/// <returns></returns>
+		public AddBanResult InsertBan(BanPreAddEventArgs args)
+		{
 			OnBanPreAdd?.Invoke(this, args);
 
 			if (!args.Valid)
@@ -265,21 +300,21 @@ namespace TShockAPI.DB
 
 			if (database.GetSqlType() == SqlType.Mysql)
 			{
-				query += "SELECT CAST(LAST_INSERT_ID() as INT);";
+				query += "SELECT LAST_INSERT_ID();";
 			}
 			else
 			{
 				query += "SELECT CAST(last_insert_rowid() as INT);";
 			}
 
-			int ticketId = database.QueryScalar<int>(query, identifier, reason, banningUser, fromDate.Ticks, toDate.Ticks);
+			int ticketId = database.QueryScalar<int>(query, args.Identifier, args.Reason, args.BanningUser, args.BanDateTime.Ticks, args.ExpirationDateTime.Ticks);
 
 			if (ticketId == 0)
 			{
 				return new AddBanResult { Message = "Database insert failed." };
 			}
 
-			Ban b = new Ban(ticketId, identifier, reason, banningUser, fromDate, toDate);
+			Ban b = new Ban(ticketId, args.Identifier, args.Reason, args.BanningUser, args.BanDateTime, args.ExpirationDateTime);
 			_bans.Add(ticketId, b);
 
 			OnBanPostAdd?.Invoke(this, new BanEventArgs { Ban = b });

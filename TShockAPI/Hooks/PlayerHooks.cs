@@ -449,14 +449,16 @@ namespace TShockAPI.Hooks
 		/// <param name="ply">The player firing the event.</param>
 		/// <param name="rawtext">The raw chat text sent by the player.</param>
 		/// <param name="tshockText">The chat text after being formatted.</param>
-		public static void OnPlayerChat(TSPlayer ply, string rawtext, ref string tshockText)
+		public static bool OnPlayerChat(TSPlayer ply, string rawtext, ref string tshockText)
 		{
 			if (PlayerChat == null)
-				return;
+				return false;
 
 			var args = new PlayerChatEventArgs {Player = ply, RawText = rawtext, TShockFormattedText = tshockText};
 			PlayerChat(args);
 			tshockText = args.TShockFormattedText;
+
+			return args.Handled;
 		}
 
 		/// <summary>

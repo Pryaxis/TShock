@@ -939,12 +939,16 @@ namespace TShockAPI
 			/// The Y coordinate
 			/// </summary>
 			public int TileY { get; set; }
+			/// <summary>
+			/// Place style used
+			/// </summary>
+			public short Style { get; set; }
 		}
 		/// <summary>
 		/// When a chest is added or removed from the world.
 		/// </summary>
 		public static HandlerList<PlaceChestEventArgs> PlaceChest = new HandlerList<PlaceChestEventArgs>();
-		private static bool OnPlaceChest(TSPlayer player, MemoryStream data, int flag, int tilex, int tiley)
+		private static bool OnPlaceChest(TSPlayer player, MemoryStream data, int flag, int tilex, int tiley, short style)
 		{
 			if (PlaceChest == null)
 				return false;
@@ -956,6 +960,7 @@ namespace TShockAPI
 				Flag = flag,
 				TileX = tilex,
 				TileY = tiley,
+				Style = style
 			};
 			PlaceChest.Invoke(null, args);
 			return args.Handled;
@@ -2571,10 +2576,6 @@ namespace TShockAPI
 				args.Player.PlayerData.maxHealth = max;
 			}
 
-			if (args.Player.GodMode && (cur < max))
-			{
-				args.Player.Heal(args.TPlayer.statLifeMax2);
-			}
 			return false;
 		}
 
@@ -2699,6 +2700,7 @@ namespace TShockAPI
 			float[] ai = new float[Projectile.maxAI];
 			for (int i = 0; i < Projectile.maxAI; ++i)
 				ai[i] = !bits.AI[i] ? 0.0f : args.Data.ReadSingle();
+			ushort bannerId = bits.HasBannerIdToRespondTo ? args.Data.ReadUInt16() : (ushort)0;
 			short dmg = bits.HasDamage ? args.Data.ReadInt16() : (short)0;
 			float knockback = bits.HasKnockback ? args.Data.ReadSingle() : 0.0f;
 			short origDmg = bits.HasOriginalDamage ? args.Data.ReadInt16() : (short)0;
@@ -2884,9 +2886,9 @@ namespace TShockAPI
 			int flag = args.Data.ReadByte();
 			int tileX = args.Data.ReadInt16();
 			int tileY = args.Data.ReadInt16();
-			args.Data.ReadInt16(); // Ignore style
+			short style = args.Data.ReadInt16();
 
-			if (OnPlaceChest(args.Player, args.Data, flag, tileX, tileY))
+			if (OnPlaceChest(args.Player, args.Data, flag, tileX, tileY, style))
 				return true;
 
 			return false;
@@ -3731,12 +3733,6 @@ namespace TShockAPI
 
 			if (OnPlayerDamage(args.Player, args.Data, id, direction, dmg, pvp, crit, playerDeathReason))
 				return true;
-
-			if (TShock.Players[id].GodMode)
-			{
-				TShock.Log.ConsoleDebug("GetDataHandlers / HandlePlayerDamageV2 rejected (god mode on) {0}", args.Player.Name);
-				TShock.Players[id].Heal(args.TPlayer.statLifeMax);
-			}
 
 			return false;
 		}
