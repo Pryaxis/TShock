@@ -1,4 +1,4 @@
-﻿/*
+/*
 TShock, a server mod for Terraria
 Copyright (C) 2011-2019 Pryaxis & TShock Contributors
 
@@ -626,7 +626,10 @@ namespace TShockAPI
 			{
 				HelpText = "Shows the server's rules."
 			});
-
+			add(new Command(Echo, "echo")
+			{
+				HelpText = "Echo"
+			});
 			TShockCommands = new ReadOnlyCollection<Command>(tshockCommands);
 		}
 
@@ -1171,6 +1174,17 @@ namespace TShockAPI
 			args.Player.SendInfoMessage("Size: {0}x{1}", Main.maxTilesX, Main.maxTilesY);
 			args.Player.SendInfoMessage("ID: " + Main.worldID);
 			args.Player.SendInfoMessage("Seed: " + WorldGen.currentWorldSeed);
+		}
+
+		private static void Echo(CommandArgs args)
+		{
+			var str = String.Join(" ", args.Parameters.ToArray());
+			// args.Player.SendData(PacketTypes.CreateCombatTextExtended, String.Join(" ", args.Parameters.ToArray()), (int) Color.Red.PackedValue, args.Player.X, args.Player.Y + 20);
+			// args.Player.SendData(PacketTypes.SmartTextMessage, str, 0, (int) 255, (int) 0, (int) 0, 460);
+			int statusMax = (Netplay.Clients[args.Player.Index].StatusMax += 200);
+			args.Player.SendData(PacketTypes.Status, "\n\n\n\n\n\n\n\n\n\n\n\n" + str + "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n" , statusMax, new BitsByte(true, true));
+			// args.Player.SendData(PacketTypes.Status, str, statusMax, new BitsByte(false, false));
+			return;
 		}
 
 		#endregion
@@ -2182,6 +2196,7 @@ namespace TShockAPI
 				{
 					args.Player.SendErrorMessage("Invalid syntax! Proper syntax:  {0}worldevent invasion [invasion type] [invasion wave]", Specifier);
 					args.Player.SendErrorMessage("Valid invasion types: {0}", String.Join(", ", _validInvasions));
+					args.Player.SendErrorMessage("Note: Silent invasions will not produce any output.");
 					return;
 				}
 
@@ -2190,19 +2205,28 @@ namespace TShockAPI
 				{
 					case "goblin":
 					case "goblins":
-						TSPlayer.All.SendInfoMessage("{0} has started a goblin army invasion.", args.Player.Name);
+						if (!args.Silent)
+						{
+							TSPlayer.All.SendInfoMessage("{0} has started a goblin army invasion.", args.Player.Name);
+						}
 						TShock.Utils.StartInvasion(1);
 						break;
 
 					case "snowman":
 					case "snowmen":
-						TSPlayer.All.SendInfoMessage("{0} has started a snow legion invasion.", args.Player.Name);
+						if (!args.Silent)
+						{
+							TSPlayer.All.SendInfoMessage("{0} has started a snow legion invasion.", args.Player.Name);
+						}
 						TShock.Utils.StartInvasion(2);
 						break;
 
 					case "pirate":
 					case "pirates":
-						TSPlayer.All.SendInfoMessage("{0} has started a pirate invasion.", args.Player.Name);
+						if (!args.Silent)
+						{
+							TSPlayer.All.SendInfoMessage("{0} has started a pirate invasion.", args.Player.Name);
+						}
 						TShock.Utils.StartInvasion(3);
 						break;
 
@@ -2221,7 +2245,10 @@ namespace TShockAPI
 						Main.bloodMoon = false;
 						NPC.waveKills = 0f;
 						NPC.waveNumber = wave;
-						TSPlayer.All.SendInfoMessage("{0} started the pumpkin moon at wave {1}!", args.Player.Name, wave);
+						if (!args.Silent)
+						{
+							TSPlayer.All.SendInfoMessage("{0} started the pumpkin moon at wave {1}!", args.Player.Name, wave);
+						}
 						break;
 
 					case "frost":
@@ -2239,12 +2266,18 @@ namespace TShockAPI
 						Main.bloodMoon = false;
 						NPC.waveKills = 0f;
 						NPC.waveNumber = wave;
-						TSPlayer.All.SendInfoMessage("{0} started the frost moon at wave {1}!", args.Player.Name, wave);
+						if (!args.Silent)
+						{
+							TSPlayer.All.SendInfoMessage("{0} started the frost moon at wave {1}!", args.Player.Name, wave);
+						}
 						break;
 
 					case "martian":
 					case "martians":
-						TSPlayer.All.SendInfoMessage("{0} has started a martian invasion.", args.Player.Name);
+						if (!args.Silent)
+						{
+							TSPlayer.All.SendInfoMessage("{0} has started a martian invasion.", args.Player.Name);
+						}
 						TShock.Utils.StartInvasion(4);
 						break;
 
@@ -2256,11 +2289,17 @@ namespace TShockAPI
 			else if (DD2Event.Ongoing)
 			{
 				DD2Event.StopInvasion();
-				TSPlayer.All.SendInfoMessage("{0} has ended the Old One's Army event.", args.Player.Name);
+				if (!args.Silent)
+				{
+					TSPlayer.All.SendInfoMessage("{0} has ended the Old One's Army event.", args.Player.Name);
+				}
 			}
 			else
 			{
-				TSPlayer.All.SendInfoMessage("{0} has ended the invasion.", args.Player.Name);
+				if (!args.Silent)
+				{
+					TSPlayer.All.SendInfoMessage("{0} has ended the invasion.", args.Player.Name);
+				}
 				Main.invasionSize = 0;
 			}
 		}
@@ -2270,12 +2309,18 @@ namespace TShockAPI
 			if (Terraria.GameContent.Events.Sandstorm.Happening)
 			{
 				Terraria.GameContent.Events.Sandstorm.StopSandstorm();
-				TSPlayer.All.SendInfoMessage("{0} stopped the sandstorm.", args.Player.Name);
+				if (!args.Silent)
+				{
+					TSPlayer.All.SendInfoMessage("{0} stopped the sandstorm.", args.Player.Name);
+				}
 			}
 			else
 			{
 				Terraria.GameContent.Events.Sandstorm.StartSandstorm();
-				TSPlayer.All.SendInfoMessage("{0} started a sandstorm.", args.Player.Name);
+				if (!args.Silent)
+				{
+					TSPlayer.All.SendInfoMessage("{0} started a sandstorm.", args.Player.Name);
+				}
 			}
 		}
 
