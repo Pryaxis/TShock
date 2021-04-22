@@ -13,7 +13,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change.
 
 ## Upcoming changes
-* This could be you!
+* Added preliminary support for Terraria 1.4.2.2. (@hakusaro)
 
 ## TShock 4.5.1
 * Fixed server crash from `/v2/players/list` & other parameterised REST endpoints. (@QuiCM, reported by @ATFGK)
