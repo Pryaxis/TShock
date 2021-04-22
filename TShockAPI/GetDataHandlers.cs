@@ -939,12 +939,16 @@ namespace TShockAPI
 			/// The Y coordinate
 			/// </summary>
 			public int TileY { get; set; }
+			/// <summary>
+			/// Place style used
+			/// </summary>
+			public short Style { get; set; }
 		}
 		/// <summary>
 		/// When a chest is added or removed from the world.
 		/// </summary>
 		public static HandlerList<PlaceChestEventArgs> PlaceChest = new HandlerList<PlaceChestEventArgs>();
-		private static bool OnPlaceChest(TSPlayer player, MemoryStream data, int flag, int tilex, int tiley)
+		private static bool OnPlaceChest(TSPlayer player, MemoryStream data, int flag, int tilex, int tiley, short style)
 		{
 			if (PlaceChest == null)
 				return false;
@@ -956,6 +960,7 @@ namespace TShockAPI
 				Flag = flag,
 				TileX = tilex,
 				TileY = tiley,
+				Style = style
 			};
 			PlaceChest.Invoke(null, args);
 			return args.Handled;
@@ -2881,9 +2886,9 @@ namespace TShockAPI
 			int flag = args.Data.ReadByte();
 			int tileX = args.Data.ReadInt16();
 			int tileY = args.Data.ReadInt16();
-			args.Data.ReadInt16(); // Ignore style
+			short style = args.Data.ReadInt16();
 
-			if (OnPlaceChest(args.Player, args.Data, flag, tileX, tileY))
+			if (OnPlaceChest(args.Player, args.Data, flag, tileX, tileY, style))
 				return true;
 
 			return false;
