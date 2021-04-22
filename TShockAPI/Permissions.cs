@@ -271,6 +271,15 @@ namespace TShockAPI
 
 		[Description("User can use pylons to teleport")]
 		public static readonly string pylon = "tshock.tp.pylon";
+
+		[Description("User can use Teleportation Potions.")]
+		public static readonly string tppotion = "tshock.tp.tppotion";
+
+		[Description("User can use the Magic Conch.")]
+		public static readonly string magicconch = "tshock.tp.magicconch";
+
+		[Description("User can use the Demon Conch.")]
+		public static readonly string demonconch = "tshock.tp.demonconch";
 		#endregion
 
 		#region tshock.world nodes
