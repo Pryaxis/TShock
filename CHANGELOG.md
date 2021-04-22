@@ -17,6 +17,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 ## TShock 4.5.2
 * Added preliminary support for Terraria 1.4.2.2. (@hakusaro)
 * Removed `/ungodme` and godmode warning (no longer necessary). Also, godmode now supports silent commands. (@hakusaro)
+* Added permission 'tshock.rest.broadcast' to the /v2/server/broadcast REST endpoint. (@TheBambino)
 
 ## TShock 4.5.1
 * Fixed server crash from `/v2/players/list` & other parameterised REST endpoints. (@QuiCM, reported by @ATFGK)
