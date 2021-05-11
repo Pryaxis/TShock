@@ -134,6 +134,7 @@ namespace TShockAPI
 					{ PacketTypes.Teleport, HandleTeleport },
 					{ PacketTypes.PlayerHealOther, HandleHealOther },
 					{ PacketTypes.CatchNPC, HandleCatchNpc },
+					{ PacketTypes.TeleportationPotion, HandleTeleportationPotion },
 					{ PacketTypes.CompleteAnglerQuest, HandleCompleteAnglerQuest },
 					{ PacketTypes.NumberOfAnglerQuestsCompleted, HandleNumberOfAnglerQuestsCompleted },
 					{ PacketTypes.PlaceObject, HandlePlaceObject },
@@ -3470,6 +3471,44 @@ namespace TShockAPI
 				Main.npc[npcID].active = true;
 				NetMessage.SendData((int)PacketTypes.NpcUpdate, -1, -1, NetworkText.Empty, npcID);
 				return true;
+			}
+
+			return false;
+		}
+
+		private static bool HandleTeleportationPotion(GetDataHandlerArgs args)
+		{
+			var type = args.Data.ReadByte();
+
+			void Fail(string tpItem)
+			{
+				TShock.Log.ConsoleDebug("GetDataHandlers / HandleTeleportationPotion rejected permissions {0} {1}", args.Player.Name, type);
+				args.Player.SendErrorMessage("You do not have permission to teleport using {0}.", tpItem);
+			}
+
+			switch (type)
+			{
+				case 0: // Teleportation Potion
+					if (!args.Player.HasPermission(Permissions.tppotion))
+					{
+						Fail("Teleportation Potions");
+						return true;
+					}
+					break;
+				case 1: // Magic Conch
+					if (!args.Player.HasPermission(Permissions.magicconch))
+					{
+						Fail("the Magic Conch");
+						return true;
+					}
+					break;
+				case 2: // Demon Conch
+					if (!args.Player.HasPermission(Permissions.demonconch))
+					{
+						Fail("the Demon Conch");
+						return true;
+					}
+					break;
 			}
 
 			return false;
