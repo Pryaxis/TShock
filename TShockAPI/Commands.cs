@@ -5961,11 +5961,11 @@ namespace TShockAPI
 		{
 			if (args.Parameters.Count < 1 || args.Parameters.Count > 2)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}buff <buff id/name> [time(seconds)]", Specifier);
+				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}buff <buff name or ID> [time in seconds]", Specifier);
 				return;
 			}
 			int id = 0;
-			int time = 60;
+			int time = 35791393;
 			if (!int.TryParse(args.Parameters[0], out id))
 			{
 				var found = TShock.Utils.GetBuffByName(args.Parameters[0]);
@@ -5989,7 +5989,7 @@ namespace TShockAPI
 				if (time < 0 || time > 35791393)
 					time = 35791393;
 				args.Player.SetBuff(id, time * 60);
-				args.Player.SendSuccessMessage(string.Format("You have buffed yourself with {0}({1}) for {2} seconds!",
+				args.Player.SendSuccessMessage(string.Format("You have buffed yourself with {0} ({1}) for {2} seconds!",
 													  TShock.Utils.GetBuffName(id), TShock.Utils.GetBuffDescription(id), (time)));
 			}
 			else
