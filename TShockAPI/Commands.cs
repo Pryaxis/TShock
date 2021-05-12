@@ -5985,8 +5985,9 @@ namespace TShockAPI
 				int.TryParse(args.Parameters[1], out time);
 			if (id > 0 && id < Main.maxBuffTypes)
 			{
-				if (time < 0 || time > int.MaxValue)
-					time = 60;
+				// Max possible buff duration as of 1.4.2.2 is 35791393 seconds (415 days).
+				if (time < 0 || time > 35791393)
+					time = 35791393;
 				args.Player.SetBuff(id, time * 60);
 				args.Player.SendSuccessMessage(string.Format("You have buffed yourself with {0}({1}) for {2} seconds!",
 													  TShock.Utils.GetBuffName(id), TShock.Utils.GetBuffDescription(id), (time)));
