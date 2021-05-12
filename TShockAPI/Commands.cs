@@ -5985,7 +5985,7 @@ namespace TShockAPI
 				int.TryParse(args.Parameters[1], out time);
 			if (id > 0 && id < Main.maxBuffTypes)
 			{
-				if (time < 0 || time > short.MaxValue)
+				if (time < 0 || time > int.MaxValue)
 					time = 60;
 				args.Player.SetBuff(id, time * 60);
 				args.Player.SendSuccessMessage(string.Format("You have buffed yourself with {0}({1}) for {2} seconds!",
