@@ -1605,10 +1605,13 @@ namespace TShockAPI
 			// and the healing you can do with that is 20% of your damage.
 			if (amount >= TShock.Config.Settings.MaxDamage * 0.2)
 			{
+				if (!args.Player.HasPermission(Permissions.ignoredamagecap)
+				{
 				TShock.Log.ConsoleDebug("Bouncer / OnHealOtherPlayer 0.2 check from {0}", args.Player.Name);
 				args.Player.Disable("HealOtherPlayer cheat attempt!", DisableFlags.WriteToLogAndConsole);
 				args.Handled = true;
 				return;
+				}
 			}
 
 			if (args.Player.HealOtherThreshold >= TShock.Config.Settings.HealOtherThreshold)
