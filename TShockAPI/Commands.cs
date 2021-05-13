@@ -5961,7 +5961,7 @@ namespace TShockAPI
 		{
 			if (args.Parameters.Count < 1 || args.Parameters.Count > 2)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}buff <required: buff name or ID> [optional: time in seconds]", Specifier);
+				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}buff <buff name or ID> [time in seconds]", Specifier);
 				return;
 			}
 			int id = 0;
