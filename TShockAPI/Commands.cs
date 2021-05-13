@@ -5961,11 +5961,12 @@ namespace TShockAPI
 		{
 			if (args.Parameters.Count < 1 || args.Parameters.Count > 2)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}buff <buff name or ID> [time in seconds]", Specifier);
+				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}buff <required: buff name or ID> [optional: time in seconds]", Specifier);
 				return;
 			}
 			int id = 0;
-			int time = 35791393;
+			int time = 60;
+			var timeLimit = (int.MaxValue / 60) - 1
 			if (!int.TryParse(args.Parameters[0], out id))
 			{
 				var found = TShock.Utils.GetBuffByName(args.Parameters[0]);
@@ -5986,8 +5987,8 @@ namespace TShockAPI
 			if (id > 0 && id < Main.maxBuffTypes)
 			{
 				// Max possible buff duration as of 1.4.2.2 is 35791393 seconds (415 days).
-				if (time < 0 || time > 35791393)
-					time = 35791393;
+				if (time < 0 || time > timeLimit)
+					time = timeLimit;
 				args.Player.SetBuff(id, time * 60);
 				args.Player.SendSuccessMessage(string.Format("You have buffed yourself with {0} ({1}) for {2} seconds!",
 													  TShock.Utils.GetBuffName(id), TShock.Utils.GetBuffDescription(id), (time)));
