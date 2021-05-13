@@ -5966,7 +5966,7 @@ namespace TShockAPI
 			}
 			int id = 0;
 			int time = 60;
-			var timeLimit = (int.MaxValue / 60) - 1
+			var timeLimit = (int.MaxValue / 60) - 1;
 			if (!int.TryParse(args.Parameters[0], out id))
 			{
 				var found = TShock.Utils.GetBuffByName(args.Parameters[0]);
