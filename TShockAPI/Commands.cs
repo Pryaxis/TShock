@@ -531,7 +531,7 @@ namespace TShockAPI
 			add(new Command(Permissions.buff, Buff, "buff")
 			{
 				AllowServer = false,
-				HelpText = "Gives yourself a buff for an amount of time."
+				HelpText = "Gives yourself a buff or debuff for an amount of time. Putting -1 for time will set it to 415 days."
 			});
 			add(new Command(Permissions.clear, Clear, "clear")
 			{
