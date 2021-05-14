@@ -395,7 +395,7 @@ namespace TShockAPI
 			});
 			add(new Command(Permissions.renamenpc, RenameNPC, "renamenpc")
 			{
-				HelpText = "Renames an NPC."
+				HelpText = "Renames an NPC. New name should be less than 200 characters."
 			});
 			add(new Command(Permissions.maxspawns, MaxSpawns, "maxspawns")
 			{
@@ -5770,7 +5770,7 @@ namespace TShockAPI
 		{
 			if (args.Parameters.Count != 2)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}renameNPC <guide, nurse, etc.> <newname>", Specifier);
+				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}renameNPC <guide, nurse, etc.> <new name>", Specifier);
 				return;
 			}
 			int npcId = 0;
@@ -5779,7 +5779,7 @@ namespace TShockAPI
 				List<NPC> npcs = TShock.Utils.GetNPCByIdOrName(args.Parameters[0]);
 				if (npcs.Count == 0)
 				{
-					args.Player.SendErrorMessage("Invalid mob type!");
+					args.Player.SendErrorMessage("Invalid NPC type!");
 					return;
 				}
 				else if (npcs.Count > 1)
@@ -5789,7 +5789,7 @@ namespace TShockAPI
 				}
 				else if (args.Parameters[1].Length > 200)
 				{
-					args.Player.SendErrorMessage("New name is too large!");
+					args.Player.SendErrorMessage("New name is too long! Please keep it under 200 characters.");
 					return;
 				}
 				else
@@ -5798,6 +5798,7 @@ namespace TShockAPI
 				}
 			}
 			int done = 0;
+			string npcType = "";
 			for (int i = 0; i < Main.npc.Length; i++)
 			{
 				if (Main.npc[i].active && ((npcId == 0 && !Main.npc[i].townNPC) || (Main.npc[i].netID == npcId && Main.npc[i].townNPC)))
@@ -5805,15 +5806,23 @@ namespace TShockAPI
 					Main.npc[i].GivenName = args.Parameters[1];
 					NetMessage.SendData(56, -1, -1, NetworkText.FromLiteral(args.Parameters[1]), i, 0f, 0f, 0f, 0);
 					done++;
+					npcType = Main.npc[i].TypeName;
 				}
 			}
 			if (done > 0)
 			{
-				TSPlayer.All.SendInfoMessage("{0} renamed the {1}.", args.Player.Name, args.Parameters[0]);
+				if (args.Silent)
+				{
+					TSPlayer.All.SendInfoMessage("Renamed the {0}.", npcType);
+				}
+				else
+				{
+					TSPlayer.All.SendInfoMessage("{0} renamed the {1}.", args.Player.Name, npcType);
+				}
 			}
 			else
 			{
-				args.Player.SendErrorMessage("Could not rename {0}!", args.Parameters[0]);
+				args.Player.SendErrorMessage("Cannot rename that NPC!");
 			}
 		}
 
