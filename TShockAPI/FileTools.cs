@@ -29,7 +29,7 @@ namespace TShockAPI
 	public class FileTools
 	{
 		private const string MotdFormat =
-			"This is [c/FF0000:%map%] on [c/00FFFF:TShock for Terraria].\n[c/00FF00:Current players:] [c/FFFF00:%players%]\nType [c/FF0000:/help] for a list of commands.\n";
+			"This is [c/FF0000:%map%] on [c/00FFFF:TShock for Terraria].\n[c/00FF00:Current players:] [c/FFFF00:%players%]\nType [c/FF0000:%specifier%help] for a list of commands.\n";
 		/// <summary>
 		/// Path to the file containing the rules.
 		/// </summary>
