@@ -68,7 +68,7 @@ namespace TShockAPI
 		/// <summary>LogFormat - This is the log format, which is never set again.</summary>
 		private static string LogFormat = LogFormatDefault;
 		/// <summary>LogPathDefault - The default log path.</summary>
-		private const string LogPathDefault = "tshock";
+		private const string LogPathDefault = "tshock/logs";
 		/// <summary>This is the log path, which is initially set to the default log path, and then to the config file log path later.</summary>
 		private static string LogPath = LogPathDefault;
 		/// <summary>LogClear - Determines whether or not the log file should be cleared on initialization.</summary>
