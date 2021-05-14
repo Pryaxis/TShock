@@ -539,7 +539,7 @@ namespace TShockAPI
 			});
 			add(new Command(Permissions.buffplayer, GBuff, "gbuff", "buffplayer")
 			{
-				HelpText = "Gives another player a buff for an amount of time."
+				HelpText = "Gives another player a buff or debuff for an amount of time. Putting -1 for time will set it to 415 days."
 			});
 			add(new Command(Permissions.godmode, ToggleGodMode, "godmode")
 			{
@@ -6001,11 +6001,12 @@ namespace TShockAPI
 		{
 			if (args.Parameters.Count < 2 || args.Parameters.Count > 3)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}gbuff <player> <buff id/name> [time(seconds)]", Specifier);
+				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}gbuff <player> <buff name or ID> [time in seconds]", Specifier);
 				return;
 			}
 			int id = 0;
 			int time = 60;
+			var timeLimit = (int.MaxValue / 60) - 1;
 			var foundplr = TSPlayer.FindByNameOrID(args.Parameters[0]);
 			if (foundplr.Count == 0)
 			{
@@ -6038,13 +6039,13 @@ namespace TShockAPI
 					int.TryParse(args.Parameters[2], out time);
 				if (id > 0 && id < Main.maxBuffTypes)
 				{
-					if (time < 0 || time > short.MaxValue)
-						time = 60;
+					if (time < 0 || time > timeLimit)
+						time = timeLimit;
 					foundplr[0].SetBuff(id, time * 60);
-					args.Player.SendSuccessMessage(string.Format("You have buffed {0} with {1}({2}) for {3} seconds!",
+					args.Player.SendSuccessMessage(string.Format("You have buffed {0} with {1} ({2}) for {3} seconds!",
 														  foundplr[0].Name, TShock.Utils.GetBuffName(id),
 														  TShock.Utils.GetBuffDescription(id), (time)));
-					foundplr[0].SendSuccessMessage(string.Format("{0} has buffed you with {1}({2}) for {3} seconds!",
+					foundplr[0].SendSuccessMessage(string.Format("{0} has buffed you with {1} ({2}) for {3} seconds!",
 														  args.Player.Name, TShock.Utils.GetBuffName(id),
 														  TShock.Utils.GetBuffDescription(id), (time)));
 				}
