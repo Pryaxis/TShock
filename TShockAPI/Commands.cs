@@ -5054,13 +5054,27 @@ namespace TShockAPI
 		private static void ToggleAntiBuild(CommandArgs args)
 		{
 			TShock.Config.Settings.DisableBuild = !TShock.Config.Settings.DisableBuild;
-			TSPlayer.All.SendSuccessMessage(string.Format("Anti-build is now {0}.", (TShock.Config.Settings.DisableBuild ? "on" : "off")));
+			if (args.Silent)
+			{
+				args.Player.SendSuccessMessage(string.Format("You turned {0} anti-build.", (TShock.Config.Settings.DisableBuild ? "on" : "off")));
+			}
+			else
+			{
+				TSPlayer.All.SendInfoMessage(string.Format("{0} turned {1} anti-build.", args.Player.Name, (TShock.Config.Settings.DisableBuild ? "on" : "off")));
+			}
 		}
 
 		private static void ProtectSpawn(CommandArgs args)
 		{
 			TShock.Config.Settings.SpawnProtection = !TShock.Config.Settings.SpawnProtection;
-			TSPlayer.All.SendSuccessMessage(string.Format("Spawn is now {0}.", (TShock.Config.Settings.SpawnProtection ? "protected" : "open")));
+			if (args.Silent)
+			{
+				args.Player.SendSuccessMessage(string.Format("You turned {0} spawn protection.", (TShock.Config.Settings.SpawnProtection ? "on" : "off")));
+			}
+			else
+			{
+				TSPlayer.All.SendInfoMessage(string.Format("{0} turned {1} spawn protection.", args.Player.Name, (TShock.Config.Settings.SpawnProtection ? "on" : "off")));
+			}
 		}
 
 		#endregion World Protection Commands
