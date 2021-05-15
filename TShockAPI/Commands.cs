@@ -2399,12 +2399,26 @@ namespace TShockAPI
 			{
 				Main.hardMode = false;
 				TSPlayer.All.SendData(PacketTypes.WorldInfo);
-				args.Player.SendSuccessMessage("Hardmode is now off.");
+				if (args.Silent)
+				{
+					args.Player.SendSuccessMessage("You turned off Hardmode.");
+				}
+				else
+				{
+					TSPlayer.All.SendInfoMessage("{0} turned off Hardmode.", args.Player.Name);
+				}
 			}
 			else if (!TShock.Config.Settings.DisableHardmode)
 			{
 				WorldGen.StartHardmode();
-				args.Player.SendSuccessMessage("Hardmode is now on.");
+				if (args.Silent)
+				{
+					args.Player.SendSuccessMessage("You turned on Hardmode.");
+				}
+				else
+				{
+					TSPlayer.All.SendInfoMessage("{0} turned on Hardmode.", args.Player.Name);
+				}
 			}
 			else
 			{
