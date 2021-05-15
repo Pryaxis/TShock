@@ -4422,8 +4422,32 @@ namespace TShockAPI
 					damage = TShock.Utils.Clamp(damage, 15, 0);
 				}
 				plr.DamagePlayer(damage);
-				TSPlayer.All.SendInfoMessage("{0} slapped {1} for {2} damage.", args.Player.Name, plr.Name, damage);
-				TShock.Log.Info("{0} slapped {1} for {2} damage.", args.Player.Name, plr.Name, damage);
+				
+				var gender = args.Player.TPlayer.Male ? "himself" : "herself";
+				if (plr == args.Player)
+				{
+					if (!args.Silent)
+					{
+						TSPlayer.All.SendInfoMessage("{0} slapped {1} for {2} damage.", args.Player.Name, gender, damage);
+						TShock.Log.Info("{0} slapped {1} for {2} damage.", args.Player.Name, gender, damage);
+					}
+					else
+						args.Player.SendSuccessMessage("You slapped yourself for {0} damage.", damage);
+						TShock.Log.Info("{0} slapped {1} for {2} damage.", args.Player.Name, gender, damage);
+				}
+				else
+				{
+					if (args.Silent)
+					{
+						args.Player.SendSuccessMessage("You slapped {0} for {1} damage.", plr.Name, damage);
+						TShock.Log.Info("{0} slapped {1} for {2} damage.", args.Player.Name, plr.Name, damage);
+					}
+					else
+					{
+						TSPlayer.All.SendInfoMessage("{0} slapped {1} for {2} damage.", args.Player.Name, plr.Name, damage);
+						TShock.Log.Info("{0} slapped {1} for {2} damage.", args.Player.Name, plr.Name, damage);
+					}
+				}
 			}
 		}
 
