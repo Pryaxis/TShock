@@ -4469,7 +4469,14 @@ namespace TShockAPI
 			Main.windSpeedCurrent = speed;
 			Main.windSpeedTarget = speed;
 			TSPlayer.All.SendData(PacketTypes.WorldInfo);
-			TSPlayer.All.SendInfoMessage("{0} changed the wind speed to {1}.", args.Player.Name, speed);
+			if (args.Silent)
+			{
+				args.Player.SendSuccessMessage("You changed the wind speed to {0}.", speed);
+			}
+			else
+			{
+				TSPlayer.All.SendInfoMessage("{0} changed the wind speed to {1}.", args.Player.Name, speed);
+			}
 		}
 
 		#endregion Time/PvpFun Commands
