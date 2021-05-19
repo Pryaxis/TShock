@@ -77,7 +77,10 @@ namespace TShockAPI.DB
 						Permissions.whisper,
 						Permissions.wormhole,
 						Permissions.canpaint,
-						Permissions.pylon));
+						Permissions.pylon,
+						Permissions.tppotion,
+						Permissions.magicconch,
+						Permissions.demonconch));
 
 				AddDefaultGroup("vip", "default",
 					string.Join(",",
