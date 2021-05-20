@@ -1,0 +1,21 @@
+name: Danger
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [synchronize, edited, opened, reopened]
+jobs:
+  run:
+    name: Run danger checks
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 100
+        submodules: 'recursive'
+    - name: Install danger
+      run: |
+        sudo gem install danger
+    - name: Run danger
+      env:
+        DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: danger
