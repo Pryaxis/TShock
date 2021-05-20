@@ -5813,7 +5813,7 @@ namespace TShockAPI
 			{
 				if (args.Silent)
 				{
-					TSPlayer.All.SendInfoMessage("Renamed the {0}.", npcType);
+					args.Player.SendSuccessMessage("You renamed the {0}.", npcType);
 				}
 				else
 				{
