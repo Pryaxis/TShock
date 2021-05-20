@@ -17,6 +17,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * `tshock.tp.tppotion`, `tshock.tp.magicconch`, and `tshock.tp.demonconch` respectively.
 * Updated HealOtherPlayer damage check to make more sense by respecting `ignoredamagecap` permission. (@moisterrific)
 * Added preliminary support for Terraria 1.4.2.3 (@moisterrific, @Moneylover3246, @DeathCradle)
+* Added celebration mk2 explosive to explosives ItemID set in TSAPI. Solves #2304. (@Quinci135)
 
 ## TShock 4.5.2
 * Added preliminary support for Terraria 1.4.2.2. (@hakusaro)
