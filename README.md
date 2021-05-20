@@ -85,7 +85,7 @@ On [AppVeyor](https://ci.appveyor.com/project/hakusaro/tshock/), click on histor
 
 On [GitHub](https://github.com/Pryaxis/TShock/), click on the actions tab, then click on "build server" on the commit or branch you want. If it was successful, you can download either the experimental release or debug artifacts.
 
-For old builds from Travis CI, you can still get them (for now) from us directly, on [our Travis CI artifact mirror](https://travis.tshock.co/). Please note that these builds should be considered legacy and for archival purposes only. If you need them in the long term, please raise an issue explaining why before they are removed.
+These instructions are also available as a [video tutorial on Streamable](https://streamable.com/i9mfh9).
 
 ## Developer's Guide
 
