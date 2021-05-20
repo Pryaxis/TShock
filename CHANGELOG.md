@@ -17,6 +17,12 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * `tshock.tp.tppotion`, `tshock.tp.magicconch`, and `tshock.tp.demonconch` respectively.
 * Updated HealOtherPlayer damage check to make more sense by respecting `ignoredamagecap` permission. (@moisterrific)
 * Updated `/renamenpc` to support silent command specifier and improved message clarity. (@moisterrific)
+* Added preliminary support for Terraria 1.4.2.3 (@moisterrific, @Moneylover3246, @DeathCradle)
+* Added celebration mk2 explosive to explosives ItemID set in TSAPI. Solves #2304. (@Quinci135)
+* TShock now writes its log files to the `logs` folder inside the `tshock` folder by default, as opposed to just the `tshock` folder. (@QuiCM)
+* The default MOTD is now prettier. The MOTD format can now contain `%specifier%` to send the command specifier. (@moisterrific)
+* The buff commands now support `-1` as a time option to set buffs that last 415 days (the maximum buff time the game supports). (@moisterrific)
+* TShock defaults to saving backups every 10 minutes, and defaults to keeping backups for 4 hours. (@hakusaro)
 
 ## TShock 4.5.2
 * Added preliminary support for Terraria 1.4.2.2. (@hakusaro)

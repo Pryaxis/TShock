@@ -93,11 +93,11 @@ namespace TShockAPI
 
 		/// <summary>The interval between backups, in minutes. Backups are stored in the tshock/backups folder.</summary>
 		[Description("The interval between backups, in minutes. Backups are stored in the tshock/backups folder.")]
-		public int BackupInterval;
+		public int BackupInterval = 10;
 
 		/// <summary>For how long backups are kept in minutes.</summary>
 		[Description("For how long backups are kept in minutes.\neg. 2880 = 2 days.")]
-		public int BackupKeepFor = 60;
+		public int BackupKeepFor = 240;
 
 		/// <summary>Whether or not to save the world if the server crashes from an unhandled exception.</summary>
 		[Description("Whether or not to save the world if the server crashes from an unhandled exception.")]
