@@ -20,6 +20,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Added celebration mk2 explosive to explosives ItemID set in TSAPI. Solves #2304. (@Quinci135)
 * TShock now writes its log files to the `logs` folder inside the `tshock` folder by default, as opposed to just the `tshock` folder. (@QuiCM)
 * The default MOTD is now prettier. The MOTD format can now contain `%specifier%` to send the command specifier. (@moisterrific)
+* The buff commands now support `-1` as a time option to set buffs that last 415 days (the maximum buff time the game supports). (@moisterrific)
 
 ## TShock 4.5.2
 * Added preliminary support for Terraria 1.4.2.2. (@hakusaro)
