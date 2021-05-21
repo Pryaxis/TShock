@@ -66,6 +66,12 @@ namespace TShockAPI.Configuration
 		/// </summary>
 		[Description("The starting default inventory for new players when SSC is enabled.")]
 		public List<NetItem> StartingInventory = new List<NetItem>();
+
+		/// <summary>
+		/// Warns players that they have the bypass SSC permission enabled. To disable warning, turn this off.
+		/// </summary>
+		[Description("Warns players and the console if a player has the tshock.ignore.ssc permission with data in the SSC table.")]
+		public bool WarnPlayersAboutBypassPermission = true;
 	}
 
 	/// <summary>

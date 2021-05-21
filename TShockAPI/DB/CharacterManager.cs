@@ -167,7 +167,7 @@ namespace TShockAPI.DB
 
 			if (player.HasPermission(Permissions.bypassssc) && !fromCommand)
 			{
-				TShock.Log.ConsoleInfo("Skipping SSC Backup for " + player.Account.Name); // Debug code
+				TShock.Log.ConsoleInfo("Skipping SSC save (due to tshock.ignore.ssc) for " + player.Account.Name);
 				return false;
 			}
 
@@ -237,7 +237,7 @@ namespace TShockAPI.DB
 
 			if (player.HasPermission(Permissions.bypassssc))
 			{
-				TShock.Log.ConsoleInfo("Skipping SSC Backup for " + player.Account.Name); // Debug code
+				TShock.Log.ConsoleInfo("Skipping SSC save (due to tshock.ignore.ssc) for " + player.Account.Name);
 				return true;
 			}
 
