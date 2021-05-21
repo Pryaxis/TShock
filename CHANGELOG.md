@@ -24,6 +24,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * The default MOTD is now prettier. The MOTD format can now contain `%specifier%` to send the command specifier. (@moisterrific)
 * The buff commands now support `-1` as a time option to set buffs that last 415 days (the maximum buff time the game supports). (@moisterrific)
 * TShock defaults to saving backups every 10 minutes, and defaults to keeping backups for 4 hours. (@hakusaro)
+* Updated SSC bypass messaging. Now, when you connect, you're told if you're bypassing SSC. Console logging has been improved to warn when players are not being saved due to the bypass SSC permission. To turn this warning off, change `WarnPlayersAboutBypassPermission` to `false` in the `sscconfig.json` file. (@hakusaro)
 * Fix oversight & exploit allowing crafted SendTileRectangle packets to perform large-scale world griefing (@bartico6)
 
 ## TShock 4.5.2
