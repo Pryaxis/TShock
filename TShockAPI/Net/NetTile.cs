@@ -37,8 +37,6 @@ namespace TShockAPI.Net
 		public bool Wire2 { get; set; }
 		public bool Wire3 { get; set; }
 		public bool Wire4 { get; set; }
-		public byte HalfBrick { get; set; }
-		public byte Actuator { get; set; }
 		public bool Inactive { get; set; }
 		public bool IsHalf { get; set; }
 		public bool IsActuator { get; set; }
@@ -85,8 +83,6 @@ namespace TShockAPI.Net
 			Wire2 = false;
 			Wire3 = false;
 			Wire4 = false;
-			HalfBrick = 0;
-			Actuator = 0;
 			Inactive = false;
 			TileColor = 0;
 			WallColor = 0;

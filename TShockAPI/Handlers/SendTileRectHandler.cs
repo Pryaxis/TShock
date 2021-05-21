@@ -238,12 +238,12 @@ namespace TShockAPI.Handlers
 
 			if (tile.type == TileID.LandMine && !newTile.Active)
 			{
-				UpdateServerTileState(tile, newTile);
+				UpdateServerTileState(tile, newTile, TileDataType.Tile);
 			}
 
 			if (tile.type == TileID.WirePipe)
 			{
-				UpdateServerTileState(tile, newTile);
+				UpdateServerTileState(tile, newTile, TileDataType.Tile);
 			}
 
 			ProcessConversionSpreads(Main.tile[realX, realY], newTile);
@@ -274,7 +274,7 @@ namespace TShockAPI.Handlers
 				return;
 			}
 
-			UpdateServerTileState(Main.tile[realX, realY], newTile);
+			UpdateServerTileState(Main.tile[realX, realY], newTile, TileDataType.Tile);
 		}
 
 		/// <summary>
@@ -295,8 +295,14 @@ namespace TShockAPI.Handlers
 				TileID.Sets.Conversion.HardenedSand[tile.type] && TileID.Sets.Conversion.HardenedSand[newTile.Type] ||
 				TileID.Sets.Conversion.Thorn[tile.type] && TileID.Sets.Conversion.Thorn[newTile.Type] ||
 				TileID.Sets.Conversion.Moss[tile.type] && TileID.Sets.Conversion.Moss[newTile.Type] ||
-				TileID.Sets.Conversion.MossBrick[tile.type] && TileID.Sets.Conversion.MossBrick[newTile.Type] ||
-				WallID.Sets.Conversion.Stone[tile.wall] && WallID.Sets.Conversion.Stone[newTile.Wall] ||
+				TileID.Sets.Conversion.MossBrick[tile.type] && TileID.Sets.Conversion.MossBrick[newTile.Type]
+			)
+			{
+				TShock.Log.ConsoleDebug("Bouncer / SendTileRect processing a tile conversion update - [{0}] -> [{1}]", tile.type, newTile.Type);
+				UpdateServerTileState(tile, newTile, TileDataType.Tile);
+			}
+
+			if(WallID.Sets.Conversion.Stone[tile.wall] && WallID.Sets.Conversion.Stone[newTile.Wall] ||
 				WallID.Sets.Conversion.Grass[tile.wall] && WallID.Sets.Conversion.Grass[newTile.Wall] ||
 				WallID.Sets.Conversion.Sandstone[tile.wall] && WallID.Sets.Conversion.Sandstone[newTile.Wall] ||
 				WallID.Sets.Conversion.HardenedSand[tile.wall] && WallID.Sets.Conversion.HardenedSand[newTile.Wall] ||
@@ -307,8 +313,75 @@ namespace TShockAPI.Handlers
 				WallID.Sets.Conversion.NewWall4[tile.wall] && WallID.Sets.Conversion.NewWall4[newTile.Wall]
 			)
 			{
-				TShock.Log.ConsoleDebug("Bouncer / SendTileRect processing a conversion update - [{0}|{1}] -> [{2}|{3}]", tile.type, tile.wall, newTile.Type, newTile.Wall);
-				UpdateServerTileState(tile, newTile);
+				TShock.Log.ConsoleDebug("Bouncer / SendTileRect processing a wall conversion update - [{0}] -> [{1}]", tile.wall, newTile.Wall);
+				UpdateServerTileState(tile, newTile, TileDataType.Wall);
+			}
+		}
+
+		/// <summary>
+		/// Updates a single tile's world state with a set of changes from the networked tile state
+		/// </summary>
+		/// <param name="tile">The tile to update</param>
+		/// <param name="newTile">The NetTile containing the change</param>
+		/// <param name="data">The type of data to merge into world state</param>
+		public static void UpdateServerTileState(ITile tile, NetTile newTile, TileDataType data)
+		{
+			if ((data & TileDataType.Tile) != 0)
+			{
+				tile.active(newTile.Active);
+				tile.type = newTile.Type;
+
+				if (newTile.FrameImportant)
+				{
+					tile.frameX = newTile.FrameX;
+					tile.frameY = newTile.FrameY;
+				}
+				else if (tile.type != newTile.Type || !tile.active())
+				{
+					tile.frameX = -1;
+					tile.frameY = -1;
+				}
+			}
+
+			if ((data & TileDataType.Wall) != 0)
+			{
+				tile.wall = newTile.Wall;
+			}
+
+			if ((data & TileDataType.TilePaint) != 0)
+			{
+				tile.color(newTile.TileColor);
+			}
+
+			if((data & TileDataType.WallPaint) != 0)
+			{
+				tile.wallColor(newTile.WallColor);
+			}
+
+			if((data & TileDataType.Liquid) != 0)
+			{
+				tile.liquid = newTile.Liquid;
+				tile.liquidType(newTile.LiquidType);
+			}
+
+			if((data & TileDataType.Slope) != 0)
+			{
+				tile.halfBrick(newTile.IsHalf);
+				tile.slope((byte)((newTile.Slope ? 1 : 0) + (newTile.Slope2 ? 2 : 0) + (newTile.Slope3 ? 4 : 0)));
+			}
+
+			if((data & TileDataType.Wiring) != 0)
+			{
+				tile.wire(newTile.Wire);
+				tile.wire2(newTile.Wire2);
+				tile.wire3(newTile.Wire3);
+				tile.wire4(newTile.Wire4);
+			}
+
+			if((data & TileDataType.Actuator) != 0)
+			{
+				tile.actuator(newTile.IsActuator);
+				tile.inActive(newTile.Inactive);
 			}
 		}
 
@@ -376,7 +449,7 @@ namespace TShockAPI.Handlers
 		}
 
 		/// <summary>
-		/// Performs <see cref="UpdateServerTileState(ITile, NetTile)"/> on multiple tiles
+		/// Performs <see cref="UpdateServerTileState(ITile, NetTile, TileDataType)"/> on multiple tiles
 		/// </summary>
 		/// <param name="x"></param>
 		/// <param name="y"></param>
@@ -389,7 +462,7 @@ namespace TShockAPI.Handlers
 			{
 				for (int j = 0; j < height; j++)
 				{
-					UpdateServerTileState(Main.tile[x + i, y + j], newTiles[i, j]);
+					UpdateServerTileState(Main.tile[x + i, y + j], newTiles[i, j], TileDataType.Tile);
 				}
 			}
 		}
@@ -553,7 +626,7 @@ namespace TShockAPI.Handlers
 						UpdateServerTileState(Main.tile[tileX + x, tileY + y], newTiles[x, y]);
 					}
 					//Add a line of dirt blocks at the bottom for safety
-					UpdateServerTileState(Main.tile[tileX + x, tileY + height], new NetTile { Active = true, Type = 0 });
+					UpdateServerTileState(Main.tile[tileX + x, tileY + height], new NetTile { Active = true, Type = 0 }, TileDataType.All);
 				}
 
 				player.SendTileRect(tileX, tileY, width, height);
