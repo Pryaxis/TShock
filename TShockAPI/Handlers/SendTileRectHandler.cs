@@ -1,12 +1,15 @@
 ﻿using OTAPI.Tile;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent.Tile_Entities;
 using Terraria.ID;
 using Terraria.ObjectData;
+
 using TShockAPI.Net;
 
 namespace TShockAPI.Handlers
@@ -198,7 +201,7 @@ namespace TShockAPI.Handlers
 				TShock.Log.ConsoleDebug("Bouncer / SendTileRect rejected from no permission for tile object from {0}", args.Player.Name);
 				return;
 			}
-			
+
 			if (TShock.TileBans.TileIsBanned((short)tileType))
 			{
 				TShock.Log.ConsoleDebug("Bouncer / SendTileRect rejected for banned tile");
@@ -302,7 +305,7 @@ namespace TShockAPI.Handlers
 				UpdateServerTileState(tile, newTile, TileDataType.Tile);
 			}
 
-			if(WallID.Sets.Conversion.Stone[tile.wall] && WallID.Sets.Conversion.Stone[newTile.Wall] ||
+			if (WallID.Sets.Conversion.Stone[tile.wall] && WallID.Sets.Conversion.Stone[newTile.Wall] ||
 				WallID.Sets.Conversion.Grass[tile.wall] && WallID.Sets.Conversion.Grass[newTile.Wall] ||
 				WallID.Sets.Conversion.Sandstone[tile.wall] && WallID.Sets.Conversion.Sandstone[newTile.Wall] ||
 				WallID.Sets.Conversion.HardenedSand[tile.wall] && WallID.Sets.Conversion.HardenedSand[newTile.Wall] ||
