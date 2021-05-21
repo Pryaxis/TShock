@@ -323,10 +323,13 @@ namespace TShockAPI.Handlers
 		/// </summary>
 		/// <param name="tile">The tile to update</param>
 		/// <param name="newTile">The NetTile containing the change</param>
-		/// <param name="data">The type of data to merge into world state</param>
-		public static void UpdateServerTileState(ITile tile, NetTile newTile, TileDataType data)
+		/// <param name="updateType">The type of data to merge into world state</param>
+		public static void UpdateServerTileState(ITile tile, NetTile newTile, TileDataType updateType)
 		{
-			if ((data & TileDataType.Tile) != 0)
+			//This logic (updateType & TDT.Tile) != 0 is the way Terraria does it (see: Tile.cs/Clear(TileDataType))
+			//& is not a typo - we're performing a binary AND test to see if a given flag is set.
+
+			if ((updateType & TileDataType.Tile) != 0)
 			{
 				tile.active(newTile.Active);
 				tile.type = newTile.Type;
@@ -338,39 +341,40 @@ namespace TShockAPI.Handlers
 				}
 				else if (tile.type != newTile.Type || !tile.active())
 				{
+					//This is vanilla logic - if the tile changed types (or wasn't active) the frame values might not be valid - so we reset them to -1.
 					tile.frameX = -1;
 					tile.frameY = -1;
 				}
 			}
 
-			if ((data & TileDataType.Wall) != 0)
+			if ((updateType & TileDataType.Wall) != 0)
 			{
 				tile.wall = newTile.Wall;
 			}
 
-			if ((data & TileDataType.TilePaint) != 0)
+			if ((updateType & TileDataType.TilePaint) != 0)
 			{
 				tile.color(newTile.TileColor);
 			}
 
-			if((data & TileDataType.WallPaint) != 0)
+			if ((updateType & TileDataType.WallPaint) != 0)
 			{
 				tile.wallColor(newTile.WallColor);
 			}
 
-			if((data & TileDataType.Liquid) != 0)
+			if ((updateType & TileDataType.Liquid) != 0)
 			{
 				tile.liquid = newTile.Liquid;
 				tile.liquidType(newTile.LiquidType);
 			}
 
-			if((data & TileDataType.Slope) != 0)
+			if ((updateType & TileDataType.Slope) != 0)
 			{
 				tile.halfBrick(newTile.IsHalf);
-				tile.slope((byte)((newTile.Slope ? 1 : 0) + (newTile.Slope2 ? 2 : 0) + (newTile.Slope3 ? 4 : 0)));
+				tile.slope(newTile.Slope);
 			}
 
-			if((data & TileDataType.Wiring) != 0)
+			if ((updateType & TileDataType.Wiring) != 0)
 			{
 				tile.wire(newTile.Wire);
 				tile.wire2(newTile.Wire2);
@@ -378,7 +382,7 @@ namespace TShockAPI.Handlers
 				tile.wire4(newTile.Wire4);
 			}
 
-			if((data & TileDataType.Actuator) != 0)
+			if ((updateType & TileDataType.Actuator) != 0)
 			{
 				tile.actuator(newTile.IsActuator);
 				tile.inActive(newTile.Inactive);
