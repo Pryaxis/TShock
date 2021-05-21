@@ -386,69 +386,6 @@ namespace TShockAPI.Handlers
 		}
 
 		/// <summary>
-		/// Updates a single tile's world state with a change from the tile rect packet
-		/// </summary>
-		/// <param name="tile">The tile to update</param>
-		/// <param name="newTile">The NetTile containing the change</param>
-		public static void UpdateServerTileState(ITile tile, NetTile newTile)
-		{
-			tile.active(newTile.Active);
-			tile.type = newTile.Type;
-
-			if (newTile.FrameImportant)
-			{
-				tile.frameX = newTile.FrameX;
-				tile.frameY = newTile.FrameY;
-			}
-
-			if (newTile.HasWall)
-			{
-				tile.wall = newTile.Wall;
-			}
-
-			if (newTile.HasLiquid)
-			{
-				tile.liquid = newTile.Liquid;
-				tile.liquidType(newTile.LiquidType);
-			}
-
-			tile.wire(newTile.Wire);
-			tile.wire2(newTile.Wire2);
-			tile.wire3(newTile.Wire3);
-			tile.wire4(newTile.Wire4);
-
-			tile.halfBrick(newTile.IsHalf);
-
-			if (newTile.HasColor)
-			{
-				tile.color(newTile.TileColor);
-			}
-
-			if (newTile.HasWallColor)
-			{
-				tile.wallColor(newTile.WallColor);
-			}
-
-			byte slope = 0;
-			if (newTile.Slope)
-			{
-				slope += 1;
-			}
-			if (newTile.Slope2)
-			{
-				slope += 2;
-			}
-			if (newTile.Slope3)
-			{
-				slope += 4;
-			}
-
-			tile.slope(slope);
-
-			TShock.Log.ConsoleDebug("Bouncer / SendTileRect updated a tile from type {0} to {1}", tile.type, newTile.Type);
-		}
-
-		/// <summary>
 		/// Performs <see cref="UpdateServerTileState(ITile, NetTile, TileDataType)"/> on multiple tiles
 		/// </summary>
 		/// <param name="x"></param>
@@ -623,7 +560,7 @@ namespace TShockAPI.Handlers
 				{
 					for (int y = 0; y < height; y++)
 					{
-						UpdateServerTileState(Main.tile[tileX + x, tileY + y], newTiles[x, y]);
+						UpdateServerTileState(Main.tile[tileX + x, tileY + y], newTiles[x, y], TileDataType.All);
 					}
 					//Add a line of dirt blocks at the bottom for safety
 					UpdateServerTileState(Main.tile[tileX + x, tileY + height], new NetTile { Active = true, Type = 0 }, TileDataType.All);
