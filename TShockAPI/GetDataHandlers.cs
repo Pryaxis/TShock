@@ -2306,7 +2306,7 @@ namespace TShockAPI
 				args.Player.TPlayer.hideMisc = hideMisc;
 				args.Player.TPlayer.extraAccessory = extraSlot;
 				args.Player.TPlayer.unlockedBiomeTorches = unlockedBiomeTorches;
-				args.Player.TPlayer.UsingBiomeTorches = unlockedBiomeTorches;
+				args.Player.TPlayer.UsingBiomeTorches = usingBiomeTorches;
 
 				NetMessage.SendData((int)PacketTypes.PlayerInfo, -1, args.Player.Index, NetworkText.FromLiteral(args.Player.Name), args.Player.Index);
 				return true;

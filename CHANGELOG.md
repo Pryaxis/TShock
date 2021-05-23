@@ -13,6 +13,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change.
 
 ## Upcoming changes
+* Fixed ridiculous typo in `GetDataHandlers` which caused TShock to read the wrong field in the packet for `usingBiomeTorches`. (@hakusaro, @Arthri)
 
 ## TShock 4.5.3
 * Added permissions for using Teleportation Potions, Magic Conch, and Demon Conch. (@drunderscore)
