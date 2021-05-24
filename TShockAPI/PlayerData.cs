@@ -50,7 +50,7 @@ namespace TShockAPI
 		public bool[] hideVisuals;
 		public int questsCompleted;
 		public int usingBiomeTorches;
-		public int happyFunTorchTime = 1;
+		public int happyFunTorchTime;
 		public int unlockedBiomeTorches;
 
 		public PlayerData(TSPlayer player)
