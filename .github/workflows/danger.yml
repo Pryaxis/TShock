@@ -4,18 +4,19 @@ on:
   pull_request:
     types: [synchronize, edited, opened, reopened]
 jobs:
-  run:
-    name: Run danger checks
+  build:
+    name: Run changelog check
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 100
-        submodules: 'recursive'
-    - name: Install danger
-      run: |
-        sudo gem install danger
-    - name: Run danger
-      env:
-        DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: danger
+      - uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+      - name: Changelog check
+        uses: Zomzog/changelog-checker@564f4aa7a062e7498bd253f616569f02fb024c06
+        with:
+          fileName: CHANGELOG.md
+          noChangelogLabel: Blocked
+          checkNotification: Simple
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

@@ -906,7 +906,7 @@ namespace TShockAPI
 			{
 				if (HasPermission(Permissions.bypassssc))
 				{
-					TShock.Log.ConsoleInfo("Skipping SSC Backup for " + Account.Name); // Debug Code
+					TShock.Log.ConsoleInfo("Skipping SSC save (due to tshock.ignore.ssc) for " + Account.Name);
 					return true;
 				}
 				PlayerData.CopyCharacter(this);

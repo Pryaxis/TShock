@@ -13,6 +13,9 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change.
 
 ## Upcoming changes
+* Fixed ridiculous typo in `GetDataHandlers` which caused TShock to read the wrong field in the packet for `usingBiomeTorches`. (@hakusaro, @Arthri)
+
+## TShock 4.5.3
 * Added permissions for using Teleportation Potions, Magic Conch, and Demon Conch. (@drunderscore)
   * `tshock.tp.tppotion`, `tshock.tp.magicconch`, and `tshock.tp.demonconch` respectively.
 * Updated HealOtherPlayer damage check to make more sense by respecting `ignoredamagecap` permission. (@moisterrific)
@@ -23,6 +26,8 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * The default MOTD is now prettier. The MOTD format can now contain `%specifier%` to send the command specifier. (@moisterrific)
 * The buff commands now support `-1` as a time option to set buffs that last 415 days (the maximum buff time the game supports). (@moisterrific)
 * TShock defaults to saving backups every 10 minutes, and defaults to keeping backups for 4 hours. (@hakusaro)
+* Updated SSC bypass messaging. Now, when you connect, you're told if you're bypassing SSC. Console logging has been improved to warn when players are not being saved due to the bypass SSC permission. To turn this warning off, change `WarnPlayersAboutBypassPermission` to `false` in the `sscconfig.json` file. (@hakusaro)
+* Fix oversight & exploit allowing specially crafted SendTileRectangle packets to perform large-scale world griefing. In addition, `NetTile.Slope` is now the native value (byte), and accessor methods `Slope1`, `Slope2`, and `Slope3` can be used to get the old style of values out. `HalfBrick` and `Actuator` were removed from `NetTile` because these were initialized to zero and never changed or used. (@bartico6)
 
 ## TShock 4.5.2
 * Added preliminary support for Terraria 1.4.2.2. (@hakusaro)

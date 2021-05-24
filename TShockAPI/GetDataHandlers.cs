@@ -2306,7 +2306,7 @@ namespace TShockAPI
 				args.Player.TPlayer.hideMisc = hideMisc;
 				args.Player.TPlayer.extraAccessory = extraSlot;
 				args.Player.TPlayer.unlockedBiomeTorches = unlockedBiomeTorches;
-				args.Player.TPlayer.UsingBiomeTorches = unlockedBiomeTorches;
+				args.Player.TPlayer.UsingBiomeTorches = usingBiomeTorches;
 
 				NetMessage.SendData((int)PacketTypes.PlayerInfo, -1, args.Player.Index, NetworkText.FromLiteral(args.Player.Name), args.Player.Index);
 				return true;
@@ -2411,6 +2411,12 @@ namespace TShockAPI
 					{
 						if (args.Player.HasPermission(Permissions.bypassssc))
 						{
+							if (args.Player.PlayerData.exists && TShock.ServerSideCharacterConfig.Settings.WarnPlayersAboutBypassPermission)
+							{
+								args.Player.SendWarningMessage("Bypass SSC is enabled for your account. SSC data will not be loaded or saved.");
+								TShock.Log.ConsoleInfo(args.Player.Name + " has SSC data in the database, but has the tshock.ignore.ssc permission. This means their SSC data is being ignored.");
+								TShock.Log.ConsoleInfo("You may wish to consider removing the tshock.ignore.ssc permission or negating it for this player.");
+							}
 							args.Player.PlayerData.CopyCharacter(args.Player);
 							TShock.CharacterDB.InsertPlayerData(args.Player);
 						}
