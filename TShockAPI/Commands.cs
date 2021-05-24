@@ -2391,6 +2391,7 @@ namespace TShockAPI
 
 			Main.GameMode = mode;
 			args.Player.SendSuccessMessage("World mode set to {0}", _worldModes.Keys.ElementAt(mode));
+			TSPlayer.All.SendData(PacketTypes.WorldInfo);
 		}
 
 		private static void Hardmode(CommandArgs args)
