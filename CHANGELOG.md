@@ -17,6 +17,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Fixed torchgod settings to include whether or not torchgod has been fought by the player before and respect `usingBiomeTorches` setting. (@Quinci135)
 * Fixed /worldmode not synchronising data to players after updating the world state (@bartico6, @Arthri)
 * Added `OnSendNetData` hook to TSAPI, which enables developers to intercept traffic being sent from the server to clients. (@Stealownz)
+* Added warnings for conditions where a password is set at runtime but can be bypassed. The thinking is that if a user sets a password when they're booting the server, that's what they expect to be the password. The only thing is that sometimes, other config options can basically defeat this as a security feature. The goal is just to communicate more and make things clearer. The server also warns users when UUID login is enabled, because it can be confusing and insecure. (@hakusaro, @Onusai)
 
 ## TShock 4.5.3
 * Added permissions for using Teleportation Potions, Magic Conch, and Demon Conch. (@drunderscore)
