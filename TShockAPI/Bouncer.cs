@@ -1537,7 +1537,7 @@ namespace TShockAPI
 				if (npc.townNPC && npc.netID != NPCID.Guide && npc.netID != NPCID.Clothier)
 				{
 					if (type != BuffID.Lovestruck && type != BuffID.Stinky && type != BuffID.DryadsWard &&
-						type != BuffID.Wet && type != BuffID.Slimed && type != BuffID.GelBalloonBuff)
+						type != BuffID.Wet && type != BuffID.Slimed && type != BuffID.GelBalloonBuff && type != BuffID.Frostburn2)
 					{
 						detectedNPCBuffTimeCheat = true;
 					}
@@ -1550,8 +1550,8 @@ namespace TShockAPI
 
 			if (detectedNPCBuffTimeCheat)
 			{
-				TShock.Log.ConsoleDebug("Bouncer / OnNPCAddBuff rejected abnormal buff ({1}) from {0}", args.Player.Name, type);
-				args.Player.Kick($"Added buff to NPC abnormally.", true);
+				TShock.Log.ConsoleDebug("Bouncer / OnNPCAddBuff rejected abnormal buff ({0}) added to {1} ({2}) from {3}.", type, npc.TypeName, npc.netID, args.Player.Name);
+				args.Player.Kick($"Added buff to {npc.TypeName} NPC abnormally.", true);
 				args.Handled = true;
 			}
 		}
