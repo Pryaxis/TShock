@@ -92,7 +92,7 @@ namespace TShockAPI
 				TSPlayer player = TShock.Players[plrID];
 				if (player != null && player.Active)
 				{
-					return new List<TSPlayer> { player };
+					found.Add(player);
 				}
 			}
 
@@ -101,9 +101,6 @@ namespace TShockAPI
 			{
 				if (player != null)
 				{
-					// Must be an EXACT match
-					if (player.Name == plr)
-						return new List<TSPlayer> { player };
 					if (player.Name.ToLower().StartsWith(plrLower))
 						found.Add(player);
 				}
