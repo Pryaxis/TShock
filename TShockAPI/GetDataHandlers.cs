@@ -2282,6 +2282,14 @@ namespace TShockAPI
 				args.Player.Kick("You have been Bounced.", true, true);
 				return true;
 			}
+
+			if (name.Trim().StartsWith("tsi:") || name.Trim().StartsWith("tsn:"))
+			{
+				TShock.Log.ConsoleDebug("GetDataHandlers / rejecting player for name prefix starting with tsi: or tsn:.");
+				args.Player.Kick("Illegal name: prefixes tsi: and tsn: are forbidden.", true, true);
+				return true;
+			}
+
 			if (args.Player.ReceivedInfo)
 			{
 				// Since Terraria 1.2.3 these character properties can change ingame.
