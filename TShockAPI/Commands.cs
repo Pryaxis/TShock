@@ -5787,7 +5787,7 @@ namespace TShockAPI
 					args.Player.SendMultipleMatchError(npcs.Select(n => $"{n.FullName}({n.type})"));
 					return;
 				}
-				else if (args.Parameters[1].Length > 200)
+				else if (args.Parameters[1].Length >= 200)
 				{
 					args.Player.SendErrorMessage("New name is too long! Please keep it under 200 characters.");
 					return;
@@ -5822,7 +5822,7 @@ namespace TShockAPI
 			}
 			else
 			{
-				args.Player.SendErrorMessage("Cannot rename that NPC!");
+				args.Player.SendErrorMessage("Unable to rename that NPC!");
 			}
 		}
 
