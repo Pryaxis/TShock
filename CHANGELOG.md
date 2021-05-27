@@ -17,6 +17,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Fixed torchgod settings to include whether or not torchgod has been fought by the player before and respect `usingBiomeTorches` setting. (@Quinci135)
 * Fixed /worldmode not synchronising data to players after updating the world state (@bartico6, @Arthri)
 * Added `OnSendNetData` hook to TSAPI, which enables developers to intercept traffic being sent from the server to clients. (@Stealownz)
+* Fixed Torch God's Favor biome torch placement being rejected by the server. (@moisterrific)
 
 ## TShock 4.5.3
 * Added permissions for using Teleportation Potions, Magic Conch, and Demon Conch. (@drunderscore)
