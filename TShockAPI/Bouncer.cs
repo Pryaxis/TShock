@@ -304,25 +304,14 @@ namespace TShockAPI
 						return;
 					}
 					
-					if (args.Player.TPlayer.unlockedBiomeTorches && args.Player.TPlayer.UsingBiomeTorches 
-					    && selectedItem.type == ItemID.Torch && editData == TileID.Torches)
+					if ((args.Player.TPlayer.BiomeTorchHoldStyle(style) != args.Player.TPlayer.BiomeTorchPlaceStyle(style))
+						&& (selectedItem.placeStyle != style))
 					{
-						if (style != TorchID.Demon 
-						    && style != TorchID.Ice
-						    && style != TorchID.Bone
-						    && style != TorchID.Desert 
-						    && style != TorchID.Corrupt
-						    && style != TorchID.Crimson
-						    && style != TorchID.Hallowed
-						    && style != TorchID.Jungle
-						    && selectedItem.placeStyle != style)
-						{
-							TShock.Log.ConsoleError(string.Format("Bouncer / OnTileEdit rejected from (placestyle) {0} {1} {2} placeStyle: {3} expectedStyle: {4}",
-							args.Player.Name, action, editData, style, selectedItem.placeStyle));
-							args.Player.SendTileSquare(tileX, tileY, 1);
-							args.Handled = true;
-							return;
-						}
+						TShock.Log.ConsoleError("Bouncer / OnTileEdit rejected from (placestyle) {0} {1} {2} placeStyle: {3} expectedStyle: {4}",
+						args.Player.Name, action, editData, style, selectedItem.placeStyle);
+						args.Player.SendTileSquare(tileX, tileY, 1);
+						args.Handled = true;
+						return;
 					}
 				}
 
