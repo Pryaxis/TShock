@@ -39,6 +39,7 @@ namespace TShockAPI
 		internal Handlers.SendTileRectHandler STSHandler { get; set; }
 		internal Handlers.NetModules.NetModulePacketHandler NetModuleHandler { get; set; }
 		internal Handlers.EmojiHandler EmojiHandler { get; set; }
+		internal Handlers.IllegalPerSe.EmojiPlayerMismatch EmojiPlayerMismatch { get; set; }
 		internal Handlers.DisplayDollItemSyncHandler DisplayDollItemSyncHandler { get; set; }
 		internal Handlers.RequestTileEntityInteractionHandler RequestTileEntityInteractionHandler { get; set; }
 		internal Handlers.LandGolfBallInCupHandler LandGolfBallInCupHandler { get; set; }
@@ -53,6 +54,9 @@ namespace TShockAPI
 
 			NetModuleHandler = new Handlers.NetModules.NetModulePacketHandler();
 			GetDataHandlers.ReadNetModule += NetModuleHandler.OnReceive;
+
+			EmojiPlayerMismatch = new Handlers.IllegalPerSe.EmojiPlayerMismatch();
+			GetDataHandlers.Emoji += EmojiPlayerMismatch.OnReceive;
 
 			EmojiHandler = new Handlers.EmojiHandler();
 			GetDataHandlers.Emoji += EmojiHandler.OnReceive;
