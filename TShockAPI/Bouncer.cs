@@ -36,14 +36,14 @@ namespace TShockAPI
 	/// <summary>Bouncer is the TShock anti-hack and anti-cheat system.</summary>
 	internal sealed class Bouncer
 	{
-		internal Handlers.SendTileRectHandler STSHandler { get; set; }
-		internal Handlers.NetModules.NetModulePacketHandler NetModuleHandler { get; set; }
-		internal Handlers.EmojiHandler EmojiHandler { get; set; }
-		internal Handlers.IllegalPerSe.EmojiPlayerMismatch EmojiPlayerMismatch { get; set; }
-		internal Handlers.DisplayDollItemSyncHandler DisplayDollItemSyncHandler { get; set; }
-		internal Handlers.RequestTileEntityInteractionHandler RequestTileEntityInteractionHandler { get; set; }
-		internal Handlers.LandGolfBallInCupHandler LandGolfBallInCupHandler { get; set; }
-		internal Handlers.SyncTilePickingHandler SyncTilePickingHandler { get; set; }
+		internal Handlers.SendTileRectHandler STSHandler { get; private set; }
+		internal Handlers.NetModules.NetModulePacketHandler NetModuleHandler { get; private set; }
+		internal Handlers.EmojiHandler EmojiHandler { get; private set; }
+		internal Handlers.IllegalPerSe.EmojiPlayerMismatch EmojiPlayerMismatch { get; private set; }
+		internal Handlers.DisplayDollItemSyncHandler DisplayDollItemSyncHandler { get; private set; }
+		internal Handlers.RequestTileEntityInteractionHandler RequestTileEntityInteractionHandler { get; private set; }
+		internal Handlers.LandGolfBallInCupHandler LandGolfBallInCupHandler { get; private set; }
+		internal Handlers.SyncTilePickingHandler SyncTilePickingHandler { get; private set; }
 
 		/// <summary>Constructor call initializes Bouncer and related functionality.</summary>
 		/// <returns>A new Bouncer.</returns>
