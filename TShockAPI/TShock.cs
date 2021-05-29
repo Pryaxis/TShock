@@ -824,9 +824,44 @@ namespace TShockAPI
 			if (!string.IsNullOrEmpty(Netplay.ServerPassword))
 			{
 				//CLI defined password overrides a config password
+				if (!string.IsNullOrEmpty(Config.Settings.ServerPassword))
+				{
+					Log.ConsoleError("!!! The server password in config.json was overridden by the interactive prompt and will be ignored.");
+				}
+
+				if (!Config.Settings.DisableUUIDLogin)
+				{
+					Log.ConsoleError("!!! UUID login is enabled. If a user's UUID matches an account, the server password will be bypassed.");
+					Log.ConsoleError("!!! > Set DisableUUIDLogin to true in the config file and /reload if this is a problem.");
+				}
+
+				if (!Config.Settings.DisableLoginBeforeJoin)
+				{
+					Log.ConsoleError("!!! Login before join is enabled. Existing accounts can login & the server password will be bypassed.");
+					Log.ConsoleError("!!! > Set DisableLoginBeforeJoin to true in the config file and /reload if this is a problem.");
+				}
+
 				_cliPassword = Netplay.ServerPassword;
 				Netplay.ServerPassword = "";
 				Config.Settings.ServerPassword = _cliPassword;
+			}
+			else
+			{
+				if (!string.IsNullOrEmpty(Config.Settings.ServerPassword))
+				{
+					Log.ConsoleInfo("A password for this server was set in config.json and is being used.");
+				}
+			}
+
+			if (!Config.Settings.DisableLoginBeforeJoin)
+			{
+				Log.ConsoleInfo("Login before join enabled. Users may be prompted for an account specific password instead of a server password on connect.");
+			}
+
+			if (!Config.Settings.DisableUUIDLogin)
+			{
+				Log.ConsoleInfo("Login using UUID enabled. Users automatically login via UUID.");
+				Log.ConsoleInfo("A malicious server can easily steal a user's UUID. You may consider turning this option off if you run a public server.");
 			}
 
 			// Disable the auth system if "setup.lock" is present or a user account already exists
