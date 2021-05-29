@@ -17,6 +17,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Fixed torchgod settings to include whether or not torchgod has been fought by the player before and respect `usingBiomeTorches` setting. (@Quinci135)
 * Fixed /worldmode not synchronising data to players after updating the world state (@bartico6, @Arthri)
 * Added `OnSendNetData` hook to TSAPI, which enables developers to intercept traffic being sent from the server to clients. (@Stealownz)
+* Fixed false positive `OnNPCAddBuff` detection when throwing rotten eggs at town NPCs while wearing Frost armor set. (@moisterrific)
 * Moved the emoji player index check into a new class of handlers called `IllegalPerSe`, which is designed to help isolate parts of TShock and make it so that "protocol violations" are treated separately from heuristic based anti-cheat checks. (@hakusaro)
 
 ## TShock 4.5.3
