@@ -494,6 +494,50 @@ namespace TShockAPI
 		}
 
 		/// <summary>
+		/// DoorUseEventArgs - the arguments for a DoorUse event
+		/// </summary>
+		public class DoorUseEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// X - The x position of the door being used
+			/// </summary>
+			public short X { get; set; }
+			/// <summary>
+			/// Y - The y position of the door being used
+			/// </summary>
+			public short Y { get; set; }
+			/// <summary>
+			/// Direction - Information about which way the door opens or where the player is relative to the door
+			/// </summary>
+			public byte Direction { get; set; }
+			/// <summary>
+			/// Action - The type of thing happening to the door
+			/// </summary>
+			public DoorAction Action { get; set; }
+		}
+
+		/// <summary>
+		/// DoorUse - called when a door is opened or closed (normal or trap)
+		/// </summary>
+		public static HandlerList<DoorUseEventArgs> DoorUse = new HandlerList<DoorUseEventArgs>();
+		private static bool OnDoorUse(TSPlayer ply, MemoryStream data, short x, short y, byte direction, DoorAction action)
+		{
+			if (DoorUse == null)
+				return false;
+
+			var args = new DoorUseEventArgs
+			{
+				Player = ply,
+				X = x,
+				Y = y,
+				Direction = direction,
+				Action = action
+			};
+			DoorUse.Invoke(null, args);
+			return args.Handled;
+		}
+
+		/// <summary>
 		/// For use in a SendTileRect event
 		/// </summary>
 		public class SendTileRectEventArgs : GetDataHandledEventArgs
@@ -2618,10 +2662,17 @@ namespace TShockAPI
 
 		private static bool HandleDoorUse(GetDataHandlerArgs args)
 		{
-			byte type = (byte)args.Data.ReadByte();
+			byte action = (byte)args.Data.ReadByte();
 			short x = args.Data.ReadInt16();
 			short y = args.Data.ReadInt16();
-			args.Data.ReadByte(); //Ignore direction
+			byte direction = (byte)args.Data.ReadByte(); //Ignore direction
+
+			DoorAction doorAction = (DoorAction)action;
+
+			if (OnDoorUse(args.Player, args.Data, x, y, direction, doorAction))
+				return true;
+
+			ushort tileType = Main.tile[x, y].type;
 
 			if (x >= Main.maxTilesX || y >= Main.maxTilesY || x < 0 || y < 0) // Check for out of range
 			{
@@ -2629,13 +2680,12 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (type < 0 || type > 5)
+			if (action < 0 || action > 5)
 			{
 				TShock.Log.ConsoleDebug("GetDataHandlers / HandleDoorUse rejected type 0 5 check {0}", args.Player.Name);
 				return true;
 			}
 
-			ushort tileType = Main.tile[x, y].type;
 
 			if (tileType != TileID.ClosedDoor && tileType != TileID.OpenDoor
 			                                  && tileType != TileID.TallGateClosed && tileType != TileID.TallGateOpen
@@ -3993,6 +4043,16 @@ namespace TShockAPI
 			args.Player.Kick("Exploit attempt detected!");
 			TShock.Log.ConsoleDebug($"HandleSyncCavernMonsterType: Player is trying to modify NPC cavernMonsterType; this is a crafted packet! - From {args.Player.Name}");
 			return true;
+		}
+
+		public enum DoorAction
+		{
+			OpenDoor = 0,
+			CloseDoor,
+			OpenTrapdoor,
+			CloseTrapdoor,
+			OpenTallGate,
+			CloseTallGate
 		}
 
 		public enum EditAction
