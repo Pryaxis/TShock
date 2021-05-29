@@ -71,7 +71,7 @@ _These instructions assume Windows. If you're setting up on Linux or macOS, plea
 
 1. Use the in-game command `/user add [account name] [password] owner` (example: `/user add shank lovely-ashes owner`) to create an account. This gives you owner rights on your server, which you can configure more to your liking later.
 
-1. Login to your newly created account with `/login [account name] [password]` (example: `/login shank lovely-ashes`). You should see a login success message.
+1. Login to your newly created account with `/login [account name] [password]` (example: `/login shank grilled-cheese`). You should see a login success message.
 
 1. Turn off the setup system with `/setup` and your server is setup for initial use. TShock also created several files inside a new `tshock` folder. These files include `config.json` (our big configuration file), `sscconfig.json` (the server side characters configuration file), and `tshock.sqlite`. Don't lose your `tshock.sqlite` or you'll have to re-setup TShock.
 
@@ -111,14 +111,14 @@ Let's get started.
 
 ### Building
 
-You need to get the source code. Using git, [clone this repository](https://help.github.com/articles/cloning-a-repository/). 
+You need to get the source code. Using git, [clone this repository](https://help.github.com/articles/cloning-a-repository/).
 
 The next set of instructions are the technical details to setup both the Terraria Server API and TShock. More importantly, the Terraria API steps here are written under the assumption that you are building TShock primarily. Before you start, you need to **initialize the git submodules** and then **update them**. You need to use the following commands to do this.
 
           $ git submodule init
           $ git submodule update
 
-If you're using [GitHub Desktop](https://desktop.github.com), you need to perform additional steps. After cloning the TShock repository, go to the `Repository` menu and select `Open in Command Prompt`. If you don't have Git (not GitHub Desktop) installed, you can follow the prompts to to install Git for your command line. Once Git is installed, use this same process to get to the command prompt. Then, run the above commands. 
+If you're using [GitHub Desktop](https://desktop.github.com), you need to perform additional steps. After cloning the TShock repository, go to the `Repository` menu and select `Open in Command Prompt`. If you don't have Git (not GitHub Desktop) installed, you can follow the prompts to to install Git for your command line. Once Git is installed, use this same process to get to the command prompt. Then, run the above commands.
 
 #### On Windows
 
@@ -140,7 +140,7 @@ On Windows, you need to install [Visual Studio Community Edition](https://www.vi
 
 1. Build the solution in either debug or release mode, depending on your preference.
 
-1. Close `TShock.4.OTAPI.sln` in Visual Studio. 
+1. Close `TShock.4.OTAPI.sln` in Visual Studio.
 
 You need to re-run the patcher any time `OTAPI` updates. You need to rebuild `TerrariaServerAPI` any time that the submodule in `TShock` gets changed, if you're doing this from inside the TShock repo. You also need to update the submodules (`git submodule update`) if they're out of date on a pull too.
 
@@ -247,6 +247,7 @@ Need help? Join us on [Telegram](https://t.me/pryaxis) or [Discord](https://disc
 > Do not attempt to circumvent or bypass the code of conduct by using clever logic or reasoning (e.g., insulting Facepunch members, because they weren't directly mentioned here).
 
 ## Contributors
+Note: This list is out of date. All contributors [listed on the GitHub graph](https://github.com/Pryaxis/TShock/graphs/contributors) should be listed here.
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 
