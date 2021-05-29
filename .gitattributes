@@ -3,3 +3,4 @@
 *.sln text eol=crlf
 *.csproj text eol=crlf
 *.vsmdi text eol=crlf
+CHANGELOG.md merge=union
