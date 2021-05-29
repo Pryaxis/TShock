@@ -2665,7 +2665,7 @@ namespace TShockAPI
 			byte action = (byte)args.Data.ReadByte();
 			short x = args.Data.ReadInt16();
 			short y = args.Data.ReadInt16();
-			byte direction = (byte)args.Data.ReadByte(); //Ignore direction
+			byte direction = (byte)args.Data.ReadByte();
 
 			DoorAction doorAction = (DoorAction)action;
 
