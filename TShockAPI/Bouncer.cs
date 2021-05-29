@@ -308,7 +308,7 @@ namespace TShockAPI
 					&& (selectedItem.placeStyle != style))
 					{
 						TShock.Log.ConsoleError("Bouncer / OnTileEdit rejected from (placestyle) {0} {1} {2} placeStyle: {3} expectedStyle: {4}",
-						args.Player.Name, action, editData, style, selectedItem.placeStyle);
+							args.Player.Name, action, editData, style, selectedItem.placeStyle);
 						args.Player.SendTileSquare(tileX, tileY, 1);
 						args.Handled = true;
 						return;
