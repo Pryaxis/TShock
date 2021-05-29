@@ -1,4 +1,4 @@
-# Security Policy
+# Security policy
 
 TShock aims to improve Terraria's multiplayer security. Security issues
 for us are a little different compared to other projects.
@@ -10,8 +10,7 @@ fixes as appropriate. Depending on the nature of the issue, we will
 either issue an update and note the issue in the changelog, or
 coordinate a case specific security response.
 
-For example, in [GHSA-q776-cv3j-4q6m]
-(https://github.com/Pryaxis/TShock/security/advisories/GHSA-q776-cv3j-4q6m),
+For example, in [GHSA-q776-cv3j-4q6m](https://github.com/Pryaxis/TShock/security/advisories/GHSA-q776-cv3j-4q6m),
 we gave many server operators advanced warning about the issue,
 provided server specific patch guidance, and announced the disclosure
 in a predictable way. This is because the issue was primarily one
