@@ -106,6 +106,7 @@
     <Compile Include="Handlers\RequestTileEntityInteractionHandler.cs" />
     <Compile Include="Handlers\SendTileRectHandler.cs" />
     <Compile Include="Handlers\SyncTilePickingHandler.cs" />
+    <Compile Include="Handlers\IllegalPerSe\EmojiPlayerMismatch.cs" />
     <Compile Include="Hooks\AccountHooks.cs" />
     <Compile Include="Hooks\GeneralHooks.cs" />
     <Compile Include="Hooks\PlayerHooks.cs" />

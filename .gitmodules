@@ -1,4 +1,4 @@
-[submodule "TerrariaServerAPI"]
+[submodule "TShockScaffoldAPI"]
 	path = TerrariaServerAPI
 	url = https://github.com/NyxStudios/TerrariaAPI-Server.git
 	ignore = dirty

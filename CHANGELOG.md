@@ -13,7 +13,32 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change.
 
 ## Upcoming changes
-* This could be you!
+* Fixed ridiculous typo in `GetDataHandlers` which caused TShock to read the wrong field in the packet for `usingBiomeTorches`. (@hakusaro, @Arthri)
+* Fixed torchgod settings to include whether or not torchgod has been fought by the player before and respect `usingBiomeTorches` setting. (@Quinci135)
+* Fixed /worldmode not synchronising data to players after updating the world state (@bartico6, @Arthri)
+* Added `OnSendNetData` hook to TSAPI, which enables developers to intercept traffic being sent from the server to clients. (@Stealownz)
+* Fixed false positive `OnNPCAddBuff` detection when throwing rotten eggs at town NPCs while wearing Frost armor set. (@moisterrific)
+* Moved the emoji player index check into a new class of handlers called `IllegalPerSe`, which is designed to help isolate parts of TShock and make it so that "protocol violations" are treated separately from heuristic based anti-cheat checks. (@hakusaro)
+* Changed `TSPlayer.FindByNameOrID` so that it will continue searching for players and return a list of many players whem ambiguous matches exist in all cases. Specifically, this avoids a scenario where a griefer names themselves `1` and is difficult to enact justice on, because their name will not be found by the matching system used to kick players. To help with ambiguity, this method now processes requests with prefixes `tsi:` and `tsn:`. `tsi:[number]` will process the search as looking for an exact player by ID. `tsn:` will process the search as looking for an exact name, case sensitive. In both cases, the system will return an exact result in the "old-style" result, i.e., a `List<TSPlayer>` with exactly one result. For example, `/kick tsid:1` will match the player with the ID `1`. `/kick tsn:1` will match the username `1`. In addition, players who attempt to join the server with the name prefixes `tsn:` and `tsi:` will be rejected for having invalid names. (@hakusaro, @Onusai)
+* Added warnings for conditions where a password is set at runtime but can be bypassed. The thinking is that if a user sets a password when they're booting the server, that's what they expect to be the password. The only thing is that sometimes, other config options can basically defeat this as a security feature. The goal is just to communicate more and make things clearer. The server also warns users when UUID login is enabled, because it can be confusing and insecure. (@hakusaro, @Onusai)
+
+## TShock 4.5.3
+* Added permissions for using Teleportation Potions, Magic Conch, and Demon Conch. (@drunderscore)
+  * `tshock.tp.tppotion`, `tshock.tp.magicconch`, and `tshock.tp.demonconch` respectively.
+* Updated HealOtherPlayer damage check to make more sense by respecting `ignoredamagecap` permission. (@moisterrific)
+* Added preliminary support for Terraria 1.4.2.3 (@moisterrific, @Moneylover3246, @DeathCradle)
+* Added celebration mk2 explosive to explosives ItemID set in TSAPI. Solves #2304. (@Quinci135)
+* TShock now writes its log files to the `logs` folder inside the `tshock` folder by default, as opposed to just the `tshock` folder. (@QuiCM)
+* The default MOTD is now prettier. The MOTD format can now contain `%specifier%` to send the command specifier. (@moisterrific)
+* The buff commands now support `-1` as a time option to set buffs that last 415 days (the maximum buff time the game supports). (@moisterrific)
+* TShock defaults to saving backups every 10 minutes, and defaults to keeping backups for 4 hours. (@hakusaro)
+* Updated SSC bypass messaging. Now, when you connect, you're told if you're bypassing SSC. Console logging has been improved to warn when players are not being saved due to the bypass SSC permission. To turn this warning off, change `WarnPlayersAboutBypassPermission` to `false` in the `sscconfig.json` file. (@hakusaro)
+* Fix oversight & exploit allowing specially crafted SendTileRectangle packets to perform large-scale world griefing. In addition, `NetTile.Slope` is now the native value (byte), and accessor methods `Slope1`, `Slope2`, and `Slope3` can be used to get the old style of values out. `HalfBrick` and `Actuator` were removed from `NetTile` because these were initialized to zero and never changed or used. (@bartico6)
+
+## TShock 4.5.2
+* Added preliminary support for Terraria 1.4.2.2. (@hakusaro)
+* Removed `/ungodme` and godmode warning (no longer necessary). Also, godmode now supports silent commands. (@hakusaro)
+* Added permission 'tshock.rest.broadcast' to the /v2/server/broadcast REST endpoint. (@TheBambino)
 
 ## TShock 4.5.1
 * Fixed server crash from `/v2/players/list` & other parameterised REST endpoints. (@QuiCM, reported by @ATFGK)

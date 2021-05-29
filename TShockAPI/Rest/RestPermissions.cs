@@ -67,6 +67,9 @@ namespace Rests
 		[Description("REST user can reload configurations, save the world and set auto save settings.")]
 		public const string restcfg = "tshock.rest.cfg";
 
+		[Description("REST user can send server broadcast messages.")]
+		public const string restbroadcast = "tshock.rest.broadcast";
+
 		[Description("REST user can kick players.")]
 		public const string restkick = "tshock.rest.kick";
 

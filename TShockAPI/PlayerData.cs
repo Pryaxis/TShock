@@ -49,6 +49,8 @@ namespace TShockAPI
 		public Color? eyeColor;
 		public bool[] hideVisuals;
 		public int questsCompleted;
+		public int usingBiomeTorches;
+		public int happyFunTorchTime;
 		public int unlockedBiomeTorches;
 
 		public PlayerData(TSPlayer player)
@@ -115,6 +117,8 @@ namespace TShockAPI
 			this.skinColor = player.TPlayer.skinColor;
 			this.eyeColor = player.TPlayer.eyeColor;
 			this.questsCompleted = player.TPlayer.anglerQuestsFinished;
+			this.usingBiomeTorches = player.TPlayer.UsingBiomeTorches ? 1 : 0;
+			this.happyFunTorchTime = player.TPlayer.happyFunTorchTime ? 1 : 0;
 			this.unlockedBiomeTorches = player.TPlayer.unlockedBiomeTorches ? 1 : 0;
 
 			Item[] inventory = player.TPlayer.inventory;
@@ -210,6 +214,9 @@ namespace TShockAPI
 			player.sY = this.spawnY;
 			player.TPlayer.hairDye = this.hairDye;
 			player.TPlayer.anglerQuestsFinished = this.questsCompleted;
+			player.TPlayer.UsingBiomeTorches = this.usingBiomeTorches == 1;
+			player.TPlayer.happyFunTorchTime = this.happyFunTorchTime == 1;
+			player.TPlayer.unlockedBiomeTorches = this.unlockedBiomeTorches == 1;
 
 			if (extraSlot != null)
 				player.TPlayer.extraAccessory = extraSlot.Value == 1 ? true : false;
@@ -236,12 +243,6 @@ namespace TShockAPI
 				player.TPlayer.hideVisibleAccessory = this.hideVisuals;
 			else
 				player.TPlayer.hideVisibleAccessory = new bool[player.TPlayer.hideVisibleAccessory.Length];
-
-			if (this.unlockedBiomeTorches != null)
-			{
-				player.TPlayer.unlockedBiomeTorches = this.unlockedBiomeTorches == 1 ? true : false;
-				player.TPlayer.UsingBiomeTorches = this.unlockedBiomeTorches == 1 ? true : false;
-			}
 
 			for (int i = 0; i < NetItem.MaxInventory; i++)
 			{

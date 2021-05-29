@@ -134,6 +134,7 @@ namespace TShockAPI
 					{ PacketTypes.Teleport, HandleTeleport },
 					{ PacketTypes.PlayerHealOther, HandleHealOther },
 					{ PacketTypes.CatchNPC, HandleCatchNpc },
+					{ PacketTypes.TeleportationPotion, HandleTeleportationPotion },
 					{ PacketTypes.CompleteAnglerQuest, HandleCompleteAnglerQuest },
 					{ PacketTypes.NumberOfAnglerQuestsCompleted, HandleNumberOfAnglerQuestsCompleted },
 					{ PacketTypes.PlaceObject, HandlePlaceObject },
@@ -939,12 +940,16 @@ namespace TShockAPI
 			/// The Y coordinate
 			/// </summary>
 			public int TileY { get; set; }
+			/// <summary>
+			/// Place style used
+			/// </summary>
+			public short Style { get; set; }
 		}
 		/// <summary>
 		/// When a chest is added or removed from the world.
 		/// </summary>
 		public static HandlerList<PlaceChestEventArgs> PlaceChest = new HandlerList<PlaceChestEventArgs>();
-		private static bool OnPlaceChest(TSPlayer player, MemoryStream data, int flag, int tilex, int tiley)
+		private static bool OnPlaceChest(TSPlayer player, MemoryStream data, int flag, int tilex, int tiley, short style)
 		{
 			if (PlaceChest == null)
 				return false;
@@ -956,6 +961,7 @@ namespace TShockAPI
 				Flag = flag,
 				TileX = tilex,
 				TileY = tiley,
+				Style = style
 			};
 			PlaceChest.Invoke(null, args);
 			return args.Handled;
@@ -2276,6 +2282,14 @@ namespace TShockAPI
 				args.Player.Kick("You have been Bounced.", true, true);
 				return true;
 			}
+
+			if (name.Trim().StartsWith("tsi:") || name.Trim().StartsWith("tsn:"))
+			{
+				TShock.Log.ConsoleDebug("GetDataHandlers / rejecting player for name prefix starting with tsi: or tsn:.");
+				args.Player.Kick("Illegal name: prefixes tsi: and tsn: are forbidden.", true, true);
+				return true;
+			}
+
 			if (args.Player.ReceivedInfo)
 			{
 				// Since Terraria 1.2.3 these character properties can change ingame.
@@ -2299,8 +2313,9 @@ namespace TShockAPI
 					args.Player.TPlayer.hideVisibleAccessory[i+8] = hideVisual2[i];
 				args.Player.TPlayer.hideMisc = hideMisc;
 				args.Player.TPlayer.extraAccessory = extraSlot;
+				args.Player.TPlayer.UsingBiomeTorches = usingBiomeTorches;
+				args.Player.TPlayer.happyFunTorchTime = happyFunTorchTime;
 				args.Player.TPlayer.unlockedBiomeTorches = unlockedBiomeTorches;
-				args.Player.TPlayer.UsingBiomeTorches = unlockedBiomeTorches;
 
 				NetMessage.SendData((int)PacketTypes.PlayerInfo, -1, args.Player.Index, NetworkText.FromLiteral(args.Player.Name), args.Player.Index);
 				return true;
@@ -2405,6 +2420,12 @@ namespace TShockAPI
 					{
 						if (args.Player.HasPermission(Permissions.bypassssc))
 						{
+							if (args.Player.PlayerData.exists && TShock.ServerSideCharacterConfig.Settings.WarnPlayersAboutBypassPermission)
+							{
+								args.Player.SendWarningMessage("Bypass SSC is enabled for your account. SSC data will not be loaded or saved.");
+								TShock.Log.ConsoleInfo(args.Player.Name + " has SSC data in the database, but has the tshock.ignore.ssc permission. This means their SSC data is being ignored.");
+								TShock.Log.ConsoleInfo("You may wish to consider removing the tshock.ignore.ssc permission or negating it for this player.");
+							}
 							args.Player.PlayerData.CopyCharacter(args.Player);
 							TShock.CharacterDB.InsertPlayerData(args.Player);
 						}
@@ -2881,9 +2902,9 @@ namespace TShockAPI
 			int flag = args.Data.ReadByte();
 			int tileX = args.Data.ReadInt16();
 			int tileY = args.Data.ReadInt16();
-			args.Data.ReadInt16(); // Ignore style
+			short style = args.Data.ReadInt16();
 
-			if (OnPlaceChest(args.Player, args.Data, flag, tileX, tileY))
+			if (OnPlaceChest(args.Player, args.Data, flag, tileX, tileY, style))
 				return true;
 
 			return false;
@@ -3465,6 +3486,44 @@ namespace TShockAPI
 				Main.npc[npcID].active = true;
 				NetMessage.SendData((int)PacketTypes.NpcUpdate, -1, -1, NetworkText.Empty, npcID);
 				return true;
+			}
+
+			return false;
+		}
+
+		private static bool HandleTeleportationPotion(GetDataHandlerArgs args)
+		{
+			var type = args.Data.ReadByte();
+
+			void Fail(string tpItem)
+			{
+				TShock.Log.ConsoleDebug("GetDataHandlers / HandleTeleportationPotion rejected permissions {0} {1}", args.Player.Name, type);
+				args.Player.SendErrorMessage("You do not have permission to teleport using {0}.", tpItem);
+			}
+
+			switch (type)
+			{
+				case 0: // Teleportation Potion
+					if (!args.Player.HasPermission(Permissions.tppotion))
+					{
+						Fail("Teleportation Potions");
+						return true;
+					}
+					break;
+				case 1: // Magic Conch
+					if (!args.Player.HasPermission(Permissions.magicconch))
+					{
+						Fail("the Magic Conch");
+						return true;
+					}
+					break;
+				case 2: // Demon Conch
+					if (!args.Player.HasPermission(Permissions.demonconch))
+					{
+						Fail("the Demon Conch");
+						return true;
+					}
+					break;
 			}
 
 			return false;

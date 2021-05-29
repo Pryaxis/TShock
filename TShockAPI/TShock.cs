@@ -58,7 +58,7 @@ namespace TShockAPI
 		/// <summary>VersionNum - The version number the TerrariaAPI will return back to the API. We just use the Assembly info.</summary>
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
 		/// <summary>VersionCodename - The version codename is displayed when the server starts. Inspired by software codenames conventions.</summary>
-		public static readonly string VersionCodename = "Stealownz + DeathCradle edition";
+		public static readonly string VersionCodename = "Blood Moon edition";
 
 		/// <summary>SavePath - This is the path TShock saves its data in. This path is relative to the TerrariaServer.exe (not in ServerPlugins).</summary>
 		public static string SavePath = "tshock";
@@ -68,7 +68,7 @@ namespace TShockAPI
 		/// <summary>LogFormat - This is the log format, which is never set again.</summary>
 		private static string LogFormat = LogFormatDefault;
 		/// <summary>LogPathDefault - The default log path.</summary>
-		private const string LogPathDefault = "tshock";
+		private const string LogPathDefault = "tshock/logs";
 		/// <summary>This is the log path, which is initially set to the default log path, and then to the config file log path later.</summary>
 		private static string LogPath = LogPathDefault;
 		/// <summary>LogClear - Determines whether or not the log file should be cleared on initialization.</summary>
@@ -824,9 +824,44 @@ namespace TShockAPI
 			if (!string.IsNullOrEmpty(Netplay.ServerPassword))
 			{
 				//CLI defined password overrides a config password
+				if (!string.IsNullOrEmpty(Config.Settings.ServerPassword))
+				{
+					Log.ConsoleError("!!! The server password in config.json was overridden by the interactive prompt and will be ignored.");
+				}
+
+				if (!Config.Settings.DisableUUIDLogin)
+				{
+					Log.ConsoleError("!!! UUID login is enabled. If a user's UUID matches an account, the server password will be bypassed.");
+					Log.ConsoleError("!!! > Set DisableUUIDLogin to true in the config file and /reload if this is a problem.");
+				}
+
+				if (!Config.Settings.DisableLoginBeforeJoin)
+				{
+					Log.ConsoleError("!!! Login before join is enabled. Existing accounts can login & the server password will be bypassed.");
+					Log.ConsoleError("!!! > Set DisableLoginBeforeJoin to true in the config file and /reload if this is a problem.");
+				}
+
 				_cliPassword = Netplay.ServerPassword;
 				Netplay.ServerPassword = "";
 				Config.Settings.ServerPassword = _cliPassword;
+			}
+			else
+			{
+				if (!string.IsNullOrEmpty(Config.Settings.ServerPassword))
+				{
+					Log.ConsoleInfo("A password for this server was set in config.json and is being used.");
+				}
+			}
+
+			if (!Config.Settings.DisableLoginBeforeJoin)
+			{
+				Log.ConsoleInfo("Login before join enabled. Users may be prompted for an account specific password instead of a server password on connect.");
+			}
+
+			if (!Config.Settings.DisableUUIDLogin)
+			{
+				Log.ConsoleInfo("Login using UUID enabled. Users automatically login via UUID.");
+				Log.ConsoleInfo("A malicious server can easily steal a user's UUID. You may consider turning this option off if you run a public server.");
 			}
 
 			// Disable the auth system if "setup.lock" is present or a user account already exists

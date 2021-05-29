@@ -37,16 +37,33 @@ namespace TShockAPI.Net
 		public bool Wire2 { get; set; }
 		public bool Wire3 { get; set; }
 		public bool Wire4 { get; set; }
-		public byte HalfBrick { get; set; }
-		public byte Actuator { get; set; }
 		public bool Inactive { get; set; }
 		public bool IsHalf { get; set; }
 		public bool IsActuator { get; set; }
 		public byte TileColor { get; set; }
 		public byte WallColor { get; set; }
-		public bool Slope { get; set; }
+		public bool Slope1 { get; set; }
 		public bool Slope2 { get; set; }
 		public bool Slope3 { get; set; }
+
+		public byte Slope
+		{
+			get
+			{
+				byte sl = 0;
+
+				if (Slope1)
+					sl += 1;
+
+				if (Slope2)
+					sl += 2;
+
+				if (Slope3)
+					sl += 4;
+
+				return sl;
+			}
+		}
 
 	public bool HasColor
 		{
@@ -85,14 +102,13 @@ namespace TShockAPI.Net
 			Wire2 = false;
 			Wire3 = false;
 			Wire4 = false;
-			HalfBrick = 0;
-			Actuator = 0;
 			Inactive = false;
 			TileColor = 0;
 			WallColor = 0;
 			Lighted = false;
-			Slope = false;
+			Slope1 = false;
 			Slope2 = false;
+			Slope3 = false;
 		}
 
 		public NetTile(Stream stream)
@@ -124,9 +140,7 @@ namespace TShockAPI.Net
 				bits[6] = true;
 
 			if (Inactive)
-			{
 				bits[7] = true;
-			}
 
 			stream.WriteInt8((byte) bits);
 
@@ -144,7 +158,7 @@ namespace TShockAPI.Net
 			if (HasWallColor)
 				bits[3] = true;
 
-			if (Slope)
+			if (Slope1)
 				bits[4] = true;
 
 			if (Slope2)
@@ -195,7 +209,7 @@ namespace TShockAPI.Net
 
 			Wire2 = flags2[0];
 			Wire3 = flags2[1];
-			Slope = flags2[4];
+			Slope1 = flags2[4];
 			Slope2 = flags2[5];
 			Slope3 = flags2[6];
 			Wire4 = flags2[7];
