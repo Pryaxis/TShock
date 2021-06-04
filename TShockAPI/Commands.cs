@@ -5967,7 +5967,7 @@ namespace TShockAPI
 						int.TryParse(args.Parameters[0], out amount);
 						if (amount < 1 || amount > maxHp)
 						{
-							amount = maxHp;
+							amount = maxHp - currentHp;
 							playerToHeal.Heal(amount);
 						}
 						else
