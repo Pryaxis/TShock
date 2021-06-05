@@ -23,6 +23,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Added warnings for conditions where a password is set at runtime but can be bypassed. The thinking is that if a user sets a password when they're booting the server, that's what they expect to be the password. The only thing is that sometimes, other config options can basically defeat this as a security feature. The goal is just to communicate more and make things clearer. The server also warns users when UUID login is enabled, because it can be confusing and insecure. (@hakusaro, @Onusai)
 * Fixed Torch God's Favor biome torch placement being rejected by the server. (@moisterrific)
 * Backups created by the backup manager now use ISO8601-style timestamps. I say "style" because it's impossible to implement ISO8601 or RFC3389 dates in a filename on most modern filesystems. So instead of the proper ISO separators, we've got dashes and dots. (@hakusaro, change sponsored by @drunderscore)
+* Added hook for `OnDoorUse` (`DoorUse`) and associated `DoorUseEventArgs` fired when a door is used. Also added `GetDataHandlers.DoorAction` enum for determining the action of a door. (@hakusaro)
 
 ## TShock 4.5.3
 * Added permissions for using Teleportation Potions, Magic Conch, and Demon Conch. (@drunderscore)
