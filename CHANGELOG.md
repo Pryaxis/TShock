@@ -24,6 +24,8 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Fixed Torch God's Favor biome torch placement being rejected by the server. (@moisterrific)
 * Backups created by the backup manager now use ISO8601-style timestamps. I say "style" because it's impossible to implement ISO8601 or RFC3389 dates in a filename on most modern filesystems. So instead of the proper ISO separators, we've got dashes and dots. (@hakusaro, change sponsored by @drunderscore)
 * Added hook for `OnDoorUse` (`DoorUse`) and associated `DoorUseEventArgs` fired when a door is used. Also added `GetDataHandlers.DoorAction` enum for determining the action of a door. (@hakusaro)
+* Disallow loading of the AutoRegister plugin version 1.2.0 or lower. Versions of this plugin at or equal to 1.2.0 use low entropy material to create passwords. This effectively means that it's possible for any user to be easily impersonated on a server running AutoRegister by simply convincing a user to join a malicious server, even when UUID login is disabled. (@hakusaro)
+* Disallow loading of [another plugin due to a security issue](https://github.com/Pryaxis/Plugins/security/advisories/GHSA-qj59-99v9-3gww). Due to the importance of this issue and severity, information is not available in the changelog. (@hakusaro)
 
 ## TShock 4.5.3
 * Added permissions for using Teleportation Potions, Magic Conch, and Demon Conch. (@drunderscore)
