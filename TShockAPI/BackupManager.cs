@@ -70,8 +70,7 @@ namespace TShockAPI
 
 				if (TShock.Config.Settings.ShowBackupAutosaveMessages)
 				{
-					TSPlayer.All.SendInfoMessage("Server map saving, potential lag spike.");
-					
+					TSPlayer.All.SendInfoMessage("Server map saving...");
 				}
 				Console.WriteLine("Backing up world...");
 
