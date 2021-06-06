@@ -549,7 +549,7 @@ namespace TShockAPI
 			{
 				HelpText = "Heals a player in HP and MP."
 			});
-			add(new Command(Permissions.kill, Kill, "kill")
+			add(new Command(Permissions.kill, Kill, "kill", "slay")
 			{
 				HelpText = "Kills another player."
 			});
