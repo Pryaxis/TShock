@@ -541,7 +541,7 @@ namespace TShockAPI
 			{
 				HelpText = "Gives another player a buff or debuff for an amount of time. Putting -1 for time will set it to 415 days."
 			});
-			add(new Command(Permissions.godmode, ToggleGodMode, "godmode")
+			add(new Command(Permissions.godmode, ToggleGodMode, "godmode", "god")
 			{
 				HelpText = "Toggles godmode on a player."
 			});
