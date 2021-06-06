@@ -70,5 +70,5 @@ packages/*
 # Private key files #
 scripts/ssh_private_key
 
-# The user specific Obsidian config
+# The user specific Obsidian config #
 docs/.obsidian/*
