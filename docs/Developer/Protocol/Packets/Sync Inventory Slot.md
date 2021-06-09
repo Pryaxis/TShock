@@ -1,4 +1,5 @@
 ###### ID 5
+###### Server <-> Client
 | Description | Type |
 |-------------|------|
 | Player ID          | byte |
