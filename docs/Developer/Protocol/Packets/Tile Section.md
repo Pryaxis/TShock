@@ -33,7 +33,7 @@ For every tile, **y by x**:
 | Frame Y[^5]                 | short |
 | Wall ID[^6]                 | byte |
 | Liquid Amount[^7]           | byte |
-| Upper Wall ID[^8]          | byte |
+| Upper Wall ID[^8]           | byte |
 
 [^1]: Only present if `Has Header 2` bit is set on [[#Header1]]
 [^2]: Only present if `Has Header 3` bit is set on [[#Header2]]

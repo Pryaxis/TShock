@@ -1,5 +1,5 @@
 | Description | Type |
 |-------------|------|
-| Red         | byte |
-| Green       | byte |
-| Blue        | byte |
+| Red   | byte |
+| Green | byte |
+| Blue  | byte |

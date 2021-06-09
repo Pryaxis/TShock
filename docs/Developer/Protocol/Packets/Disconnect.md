@@ -2,4 +2,4 @@
 ###### Server -> Client
 | Description | Type |
 |-------------|------|
-| Reason      | [[Network Text]] |
+| Reason | [[Network Text]] |

@@ -2,4 +2,4 @@
 ###### Server -> Client
 | Description | Type |
 |-------------|------|
-| Player ID   | byte |
+| Player ID | byte |

@@ -2,5 +2,5 @@ Terraria uses the built-in .NET types `System.IO.BinaryReader` and `System.IO.Bi
 
 | Description | Type |
 |-------------|------|
-| Length      | 7-bit encoded int |
-| Characters  | `byte[Length]` |
+| Length     | 7-bit encoded int |
+| Characters | `byte[Length]` |

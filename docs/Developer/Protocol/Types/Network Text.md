@@ -1,6 +1,6 @@
 | Description | Type |
 |-------------|------|
-| [[#Modes\|Mode]]  | byte |
+| [[#Modes\|Mode]]        | byte |
 | Text                    | [[String]] |
 | Substitutions Length[^1] | byte |
 | Substitutions[^1]        | `NetworkText[Substitutions Length]` |
