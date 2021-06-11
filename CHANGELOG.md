@@ -16,6 +16,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Changed the world autosave message so that it no longer warns of a "potential lag spike." (@hakusaro)
 * Added `/slay` as an alias for `/kill` to be more consistent with other server mods. (@hakusaro)
 * Added `/god` as an alias for `/godmode` to be more consistent with other server mods. (@hakusaro)
+* Fixed ridiculous typo in `Amethyst Gemtree` text. (@hakusaro)
 
 ## TShock 4.5.4
 * Fixed ridiculous typo in `GetDataHandlers` which caused TShock to read the wrong field in the packet for `usingBiomeTorches`. (@hakusaro, @Arthri)

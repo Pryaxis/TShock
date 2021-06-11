@@ -6312,7 +6312,7 @@ namespace TShockAPI
 					}
 					Main.tile[x, y - 1].wall = 0;
 					WorldGen.TryGrowingTreeByType(584, x, y);
-					name = "Amethust Gemtree";
+					name = "Amethyst Gemtree";
 					break;
 
 				case "sapphire":
