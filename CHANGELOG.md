@@ -18,6 +18,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Added `/god` as an alias for `/godmode` to be more consistent with other server mods. (@hakusaro)
 * Fixed ridiculous typo in `Amethyst Gemtree` text. (@hakusaro)
 * Fixed `CTRL + C` / interactive console interrupt not safely shutting down the server. Now, interrupts will cause a safe shutdown (saving the world and disconnecting all players before fully shutting down). Previously, interrupts caused an unsafe shutdown (not saving the world). (@hakusaro)
+* Changed "success message" color to `Color.LimeGreen` instead of `Color.Green`. `Color.Green` looks ugly. `Color.LimeGreen` looks less ugly but isn't as offensively bright as pure green. (@hakusaro)
 
 ## TShock 4.5.4
 * Fixed ridiculous typo in `GetDataHandlers` which caused TShock to read the wrong field in the packet for `usingBiomeTorches`. (@hakusaro, @Arthri)

@@ -1379,7 +1379,7 @@ namespace TShockAPI
 		/// <param name="msg">The message.</param>
 		public virtual void SendSuccessMessage(string msg)
 		{
-			SendMessage(msg, Color.Green);
+			SendMessage(msg, Color.LimeGreen);
 		}
 
 		/// <summary>
