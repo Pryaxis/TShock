@@ -3137,7 +3137,7 @@ namespace TShockAPI
 				string warpName = args.Parameters[2];
 				var warp = TShock.Warps.Find(warpName);
 				var plr = foundplr[0];
-				if (warp.Position != Point.Zero)
+				if (warp != null)
 				{
 					if (plr.Teleport(warp.Position.X * 16, warp.Position.Y * 16))
 					{

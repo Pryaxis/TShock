@@ -22,6 +22,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Changed the default respawn timer to 10 seconds, so as to not desynchronize from the game by default. (@hakusaro)
 * Fixed `/home` allowing players to bypass the respawn timer. (@hakusaro, @moisterrific, @Arthri)
 * Added the config option `SuppressPermissionFailureNotices`. When set to `true`, the server will not send warning messages to players when they fail a build permission check from `TSPlayer.HasBuildPermission` (even if `shouldWarnPlayer` is set to true. (@hakusaro)
+* Fixed `/warp send` failing a nullcheck if the warp didn't exist. The previous behavior may have always been buggy or broken. In other words, sending someone to a warp that doesn't exist should result in a nicer error. (@hakusaro, @punchready)
 
 ## TShock 4.5.4
 * Fixed ridiculous typo in `GetDataHandlers` which caused TShock to read the wrong field in the packet for `usingBiomeTorches`. (@hakusaro, @Arthri)
