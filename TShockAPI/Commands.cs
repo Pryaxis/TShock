@@ -3498,7 +3498,7 @@ namespace TShockAPI
 
 						try
 						{
-							string response = TShock.Groups.DeleteGroup(args.Parameters[1]);
+							string response = TShock.Groups.DeleteGroup(args.Parameters[1], true);
 							if (response.Length > 0)
 							{
 								args.Player.SendSuccessMessage(response);
@@ -3506,7 +3506,7 @@ namespace TShockAPI
 						}
 						catch (GroupManagerException ex)
 						{
-							args.Player.SendErrorMessage(ex.ToString());
+							args.Player.SendErrorMessage(ex.Message);
 						}
 					}
 					#endregion
@@ -3542,7 +3542,7 @@ namespace TShockAPI
 						}
 						catch (GroupManagerException ex)
 						{
-							args.Player.SendErrorMessage(ex.ToString());
+							args.Player.SendErrorMessage(ex.Message);
 						}
 					}
 					#endregion
