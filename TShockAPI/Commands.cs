@@ -2724,6 +2724,11 @@ namespace TShockAPI
 
 		private static void Home(CommandArgs args)
 		{
+			if (args.Player.Dead)
+			{
+				args.Player.SendErrorMessage("You are dead.");
+				return;
+			}
 			args.Player.Spawn(PlayerSpawnContext.RecallFromItem);
 			args.Player.SendSuccessMessage("Teleported to your spawnpoint.");
 		}
