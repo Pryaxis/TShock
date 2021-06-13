@@ -24,6 +24,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Added the config option `SuppressPermissionFailureNotices`. When set to `true`, the server will not send warning messages to players when they fail a build permission check from `TSPlayer.HasBuildPermission` (even if `shouldWarnPlayer` is set to true. (@hakusaro)
 * Fixed `/warp send` failing a nullcheck if the warp didn't exist. The previous behavior may have always been buggy or broken. In other words, sending someone to a warp that doesn't exist should result in a nicer error. (@hakusaro, @punchready)
 * Fixed `/group del` allowing server operators to delete the default group that guests are put into. This is a really critical group and the server doesn't behave correctly when it happens. As a result, it's better to prevent this from happening than not. Additionally, `GroupManagerException`s will be thrown if this is attempted programmatically. Finally, if the exception is thrown in response to `/group del` (or if any other exception is thrown that the command handler can handle), the stack trace will no longer be present. Fixes [#2165](https://github.com/Pryaxis/TShock/issues/2165). (@hakusaro, @DeveloperLuxo, @Rozen4334, @moisterrific, @bartico6, @Quinci135)
+* Removed the old `ConfigFile` class. (@hakusaro, @bartico6)
 
 ## TShock 4.5.4
 * Fixed ridiculous typo in `GetDataHandlers` which caused TShock to read the wrong field in the packet for `usingBiomeTorches`. (@hakusaro, @Arthri)
