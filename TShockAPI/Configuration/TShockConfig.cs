@@ -443,6 +443,10 @@ namespace TShockAPI.Configuration
 		/// <summary>Whether or not to kick users when they surpass the TileRectangleSize threshold.</summary>
 		[Description("Whether or not to kick users when they surpass the TileRectangleSize threshold.")]
 		public bool KickOnTileRectangleSizeThresholdBroken = false;
+
+		/// <summary>Whether or not the server should suppress build permission failure warnings from regions, spawn point, or server edit failure.</summary>
+		[Description("Whether or not the server should suppress build permission failure warnings from regions, spawn point, or server edit failure.")]
+		public bool SuppressPermissionFailureNotices = false;
 		#endregion
 
 

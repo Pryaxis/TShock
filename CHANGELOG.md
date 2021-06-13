@@ -20,7 +20,9 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Fixed `CTRL + C` / interactive console interrupt not safely shutting down the server. Now, interrupts will cause a safe shutdown (saving the world and disconnecting all players before fully shutting down). Previously, interrupts caused an unsafe shutdown (not saving the world). (@hakusaro)
 * Changed "success message" color to `Color.LimeGreen` instead of `Color.Green`. `Color.Green` looks ugly. `Color.LimeGreen` looks less ugly but isn't as offensively bright as pure green. (@hakusaro)
 * Changed the default respawn timer to 10 seconds, so as to not desynchronize from the game by default. (@hakusaro)
-* Fixed `/home` allowing players to bypass the respawn timer. (@hakusaro)
+* Fixed `/home` allowing players to bypass the respawn timer. (@hakusaro, @moisterrific, @Arthri)
+* Added the config option `SuppressPermissionFailureNotices`. When set to `true`, the server will not send warning messages to players when they fail a build permission check from `TSPlayer.HasBuildPermission` (even if `shouldWarnPlayer` is set to true. (@hakusaro)
+
 ## TShock 4.5.4
 * Fixed ridiculous typo in `GetDataHandlers` which caused TShock to read the wrong field in the packet for `usingBiomeTorches`. (@hakusaro, @Arthri)
 * Fixed torchgod settings to include whether or not torchgod has been fought by the player before and respect `usingBiomeTorches` setting. (@Quinci135)
