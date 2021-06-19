@@ -27,6 +27,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Removed the old `ConfigFile` class. If you are updating a plugin, you should use `TShock.Config.Settings` instead of the accessor you were using. This is typically a really easy change. For most plugin authors, updating to the new config format is as simple as changing the reference to the old static config to point to the new location. If you were using this for your own configs, you should swap to using a `IConfigFile` (see `TShockAPI.Configuration.ConfigFile`). (@hakusaro, @bartico6)
 * Added `Main.worldPathName` to `/worldinfo` command. Now, if you need to see what the location on disk for your world file is, you can simply run `/worldinfo` to find out. This is particularly helpful on Linux and macOS, where the world path isn't obvious. (@hakusaro)
 * Correct rejection message in LandGolfBallInCupHandler to output the proper expected player id. (@drunderscore)
+* Clarified the error mesage that the console is presented if a rate-limit is reached over REST to indicate that "tokens" actually refers to rate-limit tokens, and not auth tokens, and added a hint as to what config setting determines this. (@hakusaro, @patsore)
 
 ## TShock 4.5.4
 * Fixed ridiculous typo in `GetDataHandlers` which caused TShock to read the wrong field in the packet for `usingBiomeTorches`. (@hakusaro, @Arthri)
