@@ -42,7 +42,8 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
+    <Optimize>true</Optimize>    <Reference Include="HttpServer">
+
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE;COMPAT_SIGS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -54,7 +55,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BCrypt.Net, Version=0.1.4141.31969, Culture=neutral, PublicKeyToken=f3bc8f8c31beeb49, processorArchitecture=MSIL">
-      <HintPath>..\..\..\assembly\TShock.4.5.3.Terraria.1.4.2.3a\BCrypt.Net.dll</HintPath>
+      <HintPath>..\packages\BCrypt.Net.0.1.0\lib\net35\BCrypt.Net.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="HttpServer">
@@ -64,24 +65,20 @@
       <HintPath>..\prebuilts\Mono.Data.Sqlite.dll</HintPath>
     </Reference>
     <Reference Include="MySql.Data, Version=6.9.8.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <HintPath>..\..\..\assembly\TShock.4.5.3.Terraria.1.4.2.3a\MySql.Data.dll</HintPath>
+      <HintPath>..\packages\MySql.Data.6.9.8\lib\net45\MySql.Data.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\..\assembly\TShock.4.5.3.Terraria.1.4.2.3a\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="OTAPI">
       <SpecificVersion>False</SpecificVersion>
       <HintPath Condition="Exists('..\TerrariaServerAPI\TerrariaServerAPI\bin\$(ConfigurationName)\OTAPI.dll')">..\TerrariaServerAPI\TerrariaServerAPI\bin\$(ConfigurationName)\OTAPI.dll</HintPath>
-      <HintPath>..\..\..\assembly\TShock.4.5.3.Terraria.1.4.2.3a\OTAPI.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Web" />
-    <Reference Include="TerrariaServer">
-      <HintPath>..\..\..\assembly\TShock.4.5.3.Terraria.1.4.2.3a\TerrariaServer.exe</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BackupManager.cs" />
