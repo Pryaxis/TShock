@@ -2813,12 +2813,21 @@ namespace TShockAPI
 				return true;
 			}
 			
-			if (Main.npc[id].netID == NPCID.EmpressButterfly && !args.Player.HasPermission(Permissions.summonboss))
+			if (Main.npc[id].netID == NPCID.EmpressButterfly)
 			{
-				args.Player.SendErrorMessage("You do not have permission to summon the Empress of Light.");
-				args.Player.SendData(PacketTypes.NpcUpdate, "", id);
-				TShock.Log.ConsoleDebug($"GetDataHandlers / HandleNpcStrike rejected EoL summon from {args.Player.Name}");
-				return true;
+				if (!args.Player.HasPermission(Permissions.summonboss))
+				{
+					args.Player.SendErrorMessage("You do not have permission to summon the Empress of Light.");
+					args.Player.SendData(PacketTypes.NpcUpdate, "", id);
+					TShock.Log.ConsoleDebug($"GetDataHandlers / HandleNpcStrike rejected EoL summon from {args.Player.Name}");
+					return true;
+				}
+				else if (!TShock.Config.Settings.AnonymousBossInvasions)
+				{
+					TShock.Utils.Broadcast(string.Format($"{args.Player.Name} summoned the Empress of Light!"), 175, 75, 255);
+				}
+				else
+					TShock.Utils.SendLogs(string.Format($"{args.Player.Name} summoned the Empress of Light!"), Color.PaleVioletRed, args.Player);
 			}
 			return false;
 		}
@@ -3214,14 +3223,18 @@ namespace TShockAPI
 				{
 					TShock.Log.ConsoleDebug($"GetDataHandlers / HandleSpecial rejected enchanted sundial permission {args.Player.Name}");
 					args.Player.SendErrorMessage("You do not have permission to use the Enchanted Sundial.");
-					return true;
 				}
 				else if (TShock.Config.Settings.ForceTime != "normal")
 				{
-					TShock.Log.ConsoleDebug($"GetDataHandlers / HandleSpecial rejected enchanted sundial permission (ForceTime) { args.Player.Name}");
-					args.Player.SendErrorMessage($"You must set ForceTime to normal via config to use the Enchanted Sundial.");
-					return true;
+					TShock.Log.ConsoleDebug($"GetDataHandlers / HandleSpecial rejected enchanted sundial permission (ForceTime) {args.Player.Name}");
+					if (!args.Player.HasPermission(Permissions.cfgreload))
+					{
+						args.Player.SendErrorMessage("You cannot use the Enchanted Sundial because time is stopped.");
+					}
+					else
+						args.Player.SendErrorMessage("You must set ForceTime to normal via config to use the Enchanted Sundial.");
 				}
+				return true;
 			}
 
 			return false;
