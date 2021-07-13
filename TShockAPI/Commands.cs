@@ -825,9 +825,9 @@ namespace TShockAPI
 				{
 					var group = TShock.Groups.GetGroupByName(account.Group);
 
-					if (group == null)
+					if (!TShock.Utils.AssertGroupValid(args.Player, group, false))
 					{
-						args.Player.SendErrorMessage("Login failed: The account references a group that doesn't exist.");
+						args.Player.SendErrorMessage("Login attempt failed - see the message above.");
 						return;
 					}
 
