@@ -387,8 +387,8 @@ namespace TShockAPI
 			}
 			catch (Exception ex)
 			{
-				Log.Error("Fatal Startup Exception");
-				Log.Error(ex.ToString());
+				Log.ConsoleError("Fatal Startup Exception");
+				Log.ConsoleError(ex.ToString());
 				Environment.Exit(1);
 			}
 		}
