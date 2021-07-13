@@ -322,6 +322,7 @@ namespace TShockAPI
 				Regions = new RegionManager(DB);
 				UserAccounts = new UserAccountManager(DB);
 				Groups = new GroupManager(DB);
+				Groups.EnsureCoreGroupsPresent();
 				ProjectileBans = new ProjectileManagager(DB);
 				TileBans = new TileManager(DB);
 				RememberedPos = new RememberedPosManager(DB);

@@ -212,6 +212,17 @@ namespace TShockAPI
 			} while (TilePlacementValid(tileX, tileY) && TileSolid(tileX, tileY));
 		}
 
+		public bool AssertGroupValid(TSPlayer player, Group group)
+        {
+			if (group == null)
+			{
+				player.Disconnect("Your account's group could not be found. Please contact server administrators about this.");
+				return false;
+			}
+
+			return true;
+		}
+
 		/// <summary>
 		/// Determines if a tile is valid.
 		/// </summary>
