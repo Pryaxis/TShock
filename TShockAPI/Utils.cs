@@ -212,6 +212,12 @@ namespace TShockAPI
 			} while (TilePlacementValid(tileX, tileY) && TileSolid(tileX, tileY));
 		}
 
+		/// <summary>
+		/// Asserts that the group reference can be safely assigned to the player object.
+		/// </summary>
+		/// <param name="player"></param>
+		/// <param name="group"></param>
+		/// <returns></returns>
 		public bool AssertGroupValid(TSPlayer player, Group group)
         {
 			if (group == null)

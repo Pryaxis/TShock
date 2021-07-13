@@ -825,8 +825,11 @@ namespace TShockAPI
 				{
 					var group = TShock.Groups.GetGroupByName(account.Group);
 
-					if (!TShock.Utils.AssertGroupValid(args.Player, group))
+					if (group == null)
+					{
+						args.Player.SendErrorMessage("Login failed: The account references a group that doesn't exist.");
 						return;
+					}
 
 					args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, account.ID);
 
