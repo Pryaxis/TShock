@@ -14,6 +14,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 ## Upcoming changes
 * Fixed SendTileRectHandler not sending tile rect updates like Pylons/Mannequins to other clients. (@Stealownz)
+* Introduced `SoftcoreOnly` config option to allow only softcore characters to connect. (@drunderscore)
 
 ## TShock 4.5.5
 * Changed the world autosave message so that it no longer warns of a "potential lag spike." (@hakusaro)
