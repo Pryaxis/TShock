@@ -1526,8 +1526,10 @@ namespace TShockAPI
 					}
 
 					foo = foo.Replace("%map%", (TShock.Config.Settings.UseServerName ? TShock.Config.Settings.ServerName : Main.worldName));
-					foo = foo.Replace("%players%", String.Join(",", players));
+					foo = foo.Replace("%players%", String.Join(", ", players));
 					foo = foo.Replace("%specifier%", TShock.Config.Settings.CommandSpecifier);
+					foo = foo.Replace("%onlineplayers%", TShock.Utils.GetActivePlayerCount().ToString());
+					foo = foo.Replace("%serverslots%", TShock.Config.Settings.MaxSlots.ToString());
 
 					SendMessage(foo, lineColor);
 				}

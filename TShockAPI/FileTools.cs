@@ -29,7 +29,7 @@ namespace TShockAPI
 	public class FileTools
 	{
 		private const string MotdFormat =
-			"Welcome to [c/ffff00:%map%] on [c/7ddff8:T][c/81dbf6:S][c/86d7f4:h][c/8ad3f3:o][c/8ecef1:c][c/93caef:k] for [c/55d284:T][c/62d27a:e][c/6fd16f:r][c/7cd165:r][c/89d15a:a][c/95d150:r][c/a4d145:i][c/b1d03b:a].\n[c/FFFFFF:Online player(s):] [c/FFFF00:%players%]\nType [c/55D284:%specifier%][c/62D27A:h][c/6FD16F:e][c/7CD165:l][c/89D15A:p] for a list of commands.\n";
+			"Welcome to [c/ffff00:%map%] on [c/7ddff8:T][c/81dbf6:S][c/86d7f4:h][c/8ad3f3:o][c/8ecef1:c][c/93caef:k] for [c/55d284:T][c/62d27a:e][c/6fd16f:r][c/7cd165:r][c/89d15a:a][c/95d150:r][c/a4d145:i][c/b1d03b:a].\n[c/FFFFFF:Online players (%onlineplayers%/%serverslots%):] [c/FFFF00:%players%]\nType [c/55D284:%specifier%][c/62D27A:h][c/6FD16F:e][c/7CD165:l][c/89D15A:p] for a list of commands.\n";
 		/// <summary>
 		/// Path to the file containing the rules.
 		/// </summary>
