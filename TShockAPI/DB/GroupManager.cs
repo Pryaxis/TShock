@@ -425,14 +425,14 @@ namespace TShockAPI.DB
 					}
 					catch (Exception ex)
 					{
-						TShock.Log.Error($"An exception has occured during database transaction: {ex.Message}");
+						TShock.Log.Error($"An exception has occurred during database transaction: {ex.Message}");
 						try
 						{
 							transaction.Rollback();
 						}
 						catch (Exception rollbackEx)
 						{
-							TShock.Log.Error($"An exception has occured during database rollback: {rollbackEx.Message}");
+							TShock.Log.Error($"An exception has occurred during database rollback: {rollbackEx.Message}");
 						}
 					}
 				}

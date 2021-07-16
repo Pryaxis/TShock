@@ -11,7 +11,7 @@ namespace TShockAPI.Handlers.NetModules
 	public class PylonHandler : INetModuleHandler
 	{
 		/// <summary>
-		/// Event occuring
+		/// Event occurring
 		/// </summary>
 		public SubPacketType PylonEventType { get; set; }
 		/// <summary>

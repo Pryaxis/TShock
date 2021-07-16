@@ -1117,7 +1117,7 @@ namespace TShockAPI
 		[Permission(RestPermissions.restmanagegroups)]
 		[Noun("group", true, "The name of the new group.", typeof(String))]
 		[Noun("parent", false, "The name of the parent group.", typeof(String))]
-		[Noun("permissions", false, "A comma seperated list of permissions for the new group.", typeof(String))]
+		[Noun("permissions", false, "A comma separated list of permissions for the new group.", typeof(String))]
 		[Noun("chatcolor", false, "A r,g,b string representing the color for this groups chat.", typeof(String))]
 		[Token]
 		private object GroupCreate(RestRequestArgs args)
@@ -1142,7 +1142,7 @@ namespace TShockAPI
 		[Noun("group", true, "The name of the group to modify.", typeof(String))]
 		[Noun("parent", false, "The name of the new parent for this group.", typeof(String))]
 		[Noun("chatcolor", false, "The new chat color r,g,b.", typeof(String))]
-		[Noun("permissions", false, "The new comma seperated list of permissions.", typeof(String))]
+		[Noun("permissions", false, "The new comma separated list of permissions.", typeof(String))]
 		[Token]
 		private object GroupUpdate(RestRequestArgs args)
 		{
