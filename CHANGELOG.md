@@ -12,6 +12,9 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * Do not forget to sign every line you change with your name. (@hakusaro)
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change.
 
+## Upcoming changes
+* Improved the `/grow` command to reduce code duplication, use `TileID` constants for less ambiguous types. (@drunderscore)
+
 ## TShock 4.5.12
 * Fixed the ability to spawn Zenith projectile with non-original items. (@AgaSpace)
 * Added hook `GetDataHandlers.OnNpcTalk` for NpcTalk and a handler for it that stops unregistered and logged out players from interacting with NPCs, preventing them from smuggling or duplicating items via NPC item slots. (@tru321)
