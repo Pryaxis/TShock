@@ -456,6 +456,13 @@ namespace TShockAPI.DB
 				return "Error: Group doesn't exist.";
 			}
 
+			if (name == Group.DefaultGroup.Name)
+			{
+				if (exceptions)
+					throw new GroupManagerException("Unable to remove default guest group.");
+				return "Error: Unable to remove the default guest group.";
+			}
+
 			if (database.Query("DELETE FROM GroupList WHERE GroupName=@0", name) == 1)
 			{
 				groups.Remove(TShock.Groups.GetGroupByName(name));

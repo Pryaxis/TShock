@@ -45,7 +45,7 @@ namespace TShockAPI.Configuration
 
 		/// <summary>Whether or not the server should output debug level messages related to system operation.</summary>
 		[Description("Whether or not the server should output debug level messages related to system operation.")]
-		public bool DebugLogs = true;
+		public bool DebugLogs = false;
 
 		/// <summary>Prevents users from being able to login before they finish connecting.</summary>
 		[Description("Prevents users from being able to login before they finish connecting.")]
@@ -74,11 +74,11 @@ namespace TShockAPI.Configuration
 
 		/// <summary>The interval between backups, in minutes. Backups are stored in the tshock/backups folder.</summary>
 		[Description("The interval between backups, in minutes. Backups are stored in the tshock/backups folder.")]
-		public int BackupInterval;
+		public int BackupInterval = 10;
 
 		/// <summary>For how long backups are kept in minutes.</summary>
 		[Description("For how long backups are kept in minutes.\neg. 2880 = 2 days.")]
-		public int BackupKeepFor = 60;
+		public int BackupKeepFor = 240;
 
 		/// <summary>Whether or not to save the world if the server crashes from an unhandled exception.</summary>
 		[Description("Whether or not to save the world if the server crashes from an unhandled exception.")]
@@ -243,7 +243,7 @@ namespace TShockAPI.Configuration
 
 		/// <summary>The number of seconds a player must wait before being respawned. Cannot be longer than normal value now. Use at your own risk.</summary>
 		[Description("The number of seconds a player must wait before being respawned. Cannot be longer than normal value now. Use at your own risk.")]
-		public int RespawnSeconds = 5;
+		public int RespawnSeconds = 10;
 
 		/// <summary>The number of seconds a player must wait before being respawned if there is a boss nearby. Cannot be longer than normal value now. Use at your own risk.</summary>
 		[Description("The number of seconds a player must wait before being respawned if there is a boss nearby. Cannot be longer than normal value now. Use at your own risk.")]
@@ -443,6 +443,10 @@ namespace TShockAPI.Configuration
 		/// <summary>Whether or not to kick users when they surpass the TileRectangleSize threshold.</summary>
 		[Description("Whether or not to kick users when they surpass the TileRectangleSize threshold.")]
 		public bool KickOnTileRectangleSizeThresholdBroken = false;
+
+		/// <summary>Whether or not the server should suppress build permission failure warnings from regions, spawn point, or server edit failure.</summary>
+		[Description("Whether or not the server should suppress build permission failure warnings from regions, spawn point, or server edit failure.")]
+		public bool SuppressPermissionFailureNotices = false;
 		#endregion
 
 

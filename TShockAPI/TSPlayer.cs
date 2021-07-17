@@ -687,19 +687,21 @@ namespace TShockAPI
 			}
 
 			// If they should be warned, warn them.
-			switch (failure)
+			if (!TShock.Config.Settings.SuppressPermissionFailureNotices)
 			{
-				case BuildPermissionFailPoint.GeneralBuild:
-					SendErrorMessage("You do not have permission to build on this server.");
-					break;
-				case BuildPermissionFailPoint.SpawnProtect:
-					SendErrorMessage("You do not have permission to build in the spawn point.");
-					break;
-				case BuildPermissionFailPoint.Regions:
-					SendErrorMessage("You do not have permission to build in this region.");
-					break;
+				switch (failure)
+				{
+					case BuildPermissionFailPoint.GeneralBuild:
+						SendErrorMessage("You do not have permission to build on this server.");
+						break;
+					case BuildPermissionFailPoint.SpawnProtect:
+						SendErrorMessage("You do not have permission to build in the spawn point.");
+						break;
+					case BuildPermissionFailPoint.Regions:
+						SendErrorMessage("You do not have permission to build in this region.");
+						break;
+				}
 			}
-
 			// Set the last warning time to now.
 			lastPermissionWarning = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 
@@ -1379,7 +1381,7 @@ namespace TShockAPI
 		/// <param name="msg">The message.</param>
 		public virtual void SendSuccessMessage(string msg)
 		{
-			SendMessage(msg, Color.Green);
+			SendMessage(msg, Color.LimeGreen);
 		}
 
 		/// <summary>
@@ -1524,8 +1526,10 @@ namespace TShockAPI
 					}
 
 					foo = foo.Replace("%map%", (TShock.Config.Settings.UseServerName ? TShock.Config.Settings.ServerName : Main.worldName));
-					foo = foo.Replace("%players%", String.Join(",", players));
+					foo = foo.Replace("%players%", String.Join(", ", players));
 					foo = foo.Replace("%specifier%", TShock.Config.Settings.CommandSpecifier);
+					foo = foo.Replace("%onlineplayers%", TShock.Utils.GetActivePlayerCount().ToString());
+					foo = foo.Replace("%serverslots%", TShock.Config.Settings.MaxSlots.ToString());
 
 					SendMessage(foo, lineColor);
 				}

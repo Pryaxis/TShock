@@ -62,7 +62,7 @@ namespace TShockAPI
 				string worldname = Main.worldPathName;
 				string name = Path.GetFileName(worldname);
 
-				Main.ActiveWorldFileData._path = Path.Combine(BackupPath, string.Format("{0}.{1:dd.MM.yy-HH.mm.ss}.bak", name, DateTime.UtcNow));
+				Main.ActiveWorldFileData._path = Path.Combine(BackupPath, string.Format("{0}.{1:yyyy-MM-ddTHH.mm.ssZ}.bak", name, DateTime.UtcNow));
 
 				string worldpath = Path.GetDirectoryName(Main.worldPathName);
 				if (worldpath != null && !Directory.Exists(worldpath))
@@ -70,8 +70,7 @@ namespace TShockAPI
 
 				if (TShock.Config.Settings.ShowBackupAutosaveMessages)
 				{
-					TSPlayer.All.SendInfoMessage("Server map saving, potential lag spike.");
-					
+					TSPlayer.All.SendInfoMessage("Server map saving...");
 				}
 				Console.WriteLine("Backing up world...");
 

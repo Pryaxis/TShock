@@ -214,6 +214,8 @@ namespace TShockAPI
 
 			TerrariaApi.Reporting.CrashReporter.HeapshotRequesting += CrashReporter_HeapshotRequesting;
 
+			Console.CancelKeyPress += new ConsoleCancelEventHandler(ConsoleCancelHandler);
+
 			try
 			{
 				CliParser.Reset();
@@ -636,6 +638,20 @@ namespace TShockAPI
 					SaveManager.Instance.SaveWorld();
 				}
 			}
+		}
+
+		/// <summary> ConsoleCancelHandler - Handles when Ctrl + C is sent to the server for a safe shutdown. </summary>
+		/// <param name="sender">The sender</param>
+		/// <param name="args">The ConsoleCancelEventArgs associated with the event.</param>
+		private void ConsoleCancelHandler(object sender, ConsoleCancelEventArgs args)
+		{
+			// Cancel the default behavior
+			args.Cancel = true;
+
+			Log.ConsoleInfo("Interrupt received. Saving the world and shutting down.");
+
+			// Perform a safe shutdown
+			TShock.Utils.StopServer(true, "Server console interrupted!");
 		}
 
 		/// <summary>HandleCommandLine - Handles the command line parameters passed to the server.</summary>
