@@ -32,6 +32,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Added `summonboss` permission check for Prismatic Lacewing. Players who do not have said permission will be unable to kill this critter, as it will summon the Empress of Light. Also added support for the `AnonymousBossInvasions` config option, if this is set to `false` it will now broadcast the name of the player who summoned her. (@moisterrific)
 * Added `ForceTime` config setting check for Enchanted Sundial usage. If `ForceTime` is set to anything other than `normal`, Sundial use will be rejected as this would lead to very janky game behavior. Additionally, players with `cfgreload` permission will be advised  to change it back to `normal` in order to use sundial. (@moisterrific, @bartico6)
 * Added `%onlineplayers%` and `%serverslots%` placeholders for MOTD. The default MOTD message was also updated to use this. (@moisterrific, @bartico6)
+* Added a notification message and silent command support for permanently changing a target player's user group. Now players who received a group change will be notified of their new group if they are currently online. (@moisterrific)
 
 ## TShock 4.5.4
 * Fixed ridiculous typo in `GetDataHandlers` which caused TShock to read the wrong field in the packet for `usingBiomeTorches`. (@hakusaro, @Arthri)
