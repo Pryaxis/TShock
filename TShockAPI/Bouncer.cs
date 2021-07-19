@@ -310,7 +310,9 @@ namespace TShockAPI
 
 					var torchPlaceStyle = args.Player.TPlayer.UsingBiomeTorches
 						? args.Player.TPlayer.BiomeTorchPlaceStyle(0) // using non-0 returns that number
-						: selectedItem.placeStyle;
+						: editData == TileID.MinecartTrack && style == 2 && args.Player.TPlayer.direction == 1 // Booster Right Track
+							? 3
+							: selectedItem.placeStyle;
 					if (torchPlaceStyle != style)
 					{
 						TShock.Log.ConsoleError("Bouncer / OnTileEdit rejected from (placestyle) {0} {1} {2} placeStyle: {3} expectedStyle: {4}",
@@ -385,9 +387,11 @@ namespace TShockAPI
 				}
 				else if (action == EditAction.PlaceTile || action == EditAction.ReplaceTile || action == EditAction.PlaceWall || action == EditAction.ReplaceWall)
 				{
+					var isInvalidPlaceStyle = ExtraneousPlaceStyles.ContainsKey(editData)
+						? style > ExtraneousPlaceStyles[editData]
+						: MaxPlaceStyles.ContainsKey(editData) && style > MaxPlaceStyles[editData];
 					if ((action == EditAction.PlaceTile && TShock.Config.Settings.PreventInvalidPlaceStyle) &&
-						((MaxPlaceStyles.ContainsKey(editData) && style > MaxPlaceStyles[editData]) ||
-						(ExtraneousPlaceStyles.ContainsKey(editData) && style > ExtraneousPlaceStyles[editData])))
+						isInvalidPlaceStyle)
 					{
 						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (ms1) {0} {1} {2}", args.Player.Name, action, editData);
 						args.Player.SendTileSquare(tileX, tileY, 4);
