@@ -308,15 +308,15 @@ namespace TShockAPI
 						return;
 					}
 
-					var torchPlaceStyle = args.Player.TPlayer.UsingBiomeTorches
+					var correctedPlaceStyle = args.Player.TPlayer.UsingBiomeTorches
 						? args.Player.TPlayer.BiomeTorchPlaceStyle(0) // using non-0 returns that number
 						: editData == TileID.MinecartTrack && style == 2 && args.Player.TPlayer.direction == 1 // Booster Right Track
 							? 3
 							: selectedItem.placeStyle;
-					if (torchPlaceStyle != style)
+					if (correctedPlaceStyle != style)
 					{
 						TShock.Log.ConsoleError("Bouncer / OnTileEdit rejected from (placestyle) {0} {1} {2} placeStyle: {3} expectedStyle: {4}",
-							args.Player.Name, action, editData, style, selectedItem.placeStyle);
+							args.Player.Name, action, editData, style, correctedPlaceStyle);
 						args.Player.SendTileSquare(tileX, tileY, 1);
 						args.Handled = true;
 						return;
