@@ -308,18 +308,42 @@ namespace TShockAPI
 						return;
 					}
 
-					var correctedPlaceStyle = args.Player.TPlayer.UsingBiomeTorches
-						? args.Player.TPlayer.BiomeTorchPlaceStyle(0) // using non-0 returns that number
-						: editData == TileID.MinecartTrack && style == 2 && args.Player.TPlayer.direction == 1 // Booster Right Track
-							? 3
-							: selectedItem.placeStyle;
-					if (correctedPlaceStyle != style)
+					var createTile = selectedItem.createTile;
+					var placeStyle = selectedItem.placeStyle;
+					if (placeStyle != style)
 					{
-						TShock.Log.ConsoleError("Bouncer / OnTileEdit rejected from (placestyle) {0} {1} {2} placeStyle: {3} expectedStyle: {4}",
-							args.Player.Name, action, editData, style, correctedPlaceStyle);
-						args.Player.SendTileSquare(tileX, tileY, 1);
-						args.Handled = true;
-						return;
+						var tplayer = args.Player.TPlayer;
+						if (createTile == TileID.Torches && placeStyle == TorchID.Torch && tplayer.unlockedBiomeTorches)
+						{
+							// BiomeTorchPlaceStyle checks if the player has biome torches activated
+							// but biome torches activation isn't broadcasted when it's toggled
+							var usingBiomeTorches = tplayer.UsingBiomeTorches;
+							if (!usingBiomeTorches)
+							{
+								tplayer.UsingBiomeTorches = true;
+							}
+							var biomeTorchStyle = tplayer.BiomeTorchPlaceStyle(placeStyle);
+							if (!usingBiomeTorches)
+							{
+								tplayer.UsingBiomeTorches = usingBiomeTorches;
+							}
+							if (style != biomeTorchStyle)
+							{
+								TShock.Log.ConsoleError("Bouncer / OnTileEdit rejected from (placestyle) {0} {1} {2} placeStyle: {3} expectedStyle: 0 or {4}",
+									args.Player.Name, action, editData, style, biomeTorchStyle);
+								args.Player.SendTileSquare(tileX, tileY, 1);
+								args.Handled = true;
+								return;
+							}
+						}
+						else if (createTile != TileID.MinecartTrack || placeStyle != 2 || args.Player.TPlayer.direction != 1 || style != 3)
+						{
+							TShock.Log.ConsoleError("Bouncer / OnTileEdit rejected from (placestyle) {0} {1} {2} placeStyle: {3} expectedStyle: {4}",
+								args.Player.Name, action, editData, style, placeStyle);
+							args.Player.SendTileSquare(tileX, tileY, 1);
+							args.Handled = true;
+							return;
+						}
 					}
 				}
 
