@@ -386,8 +386,8 @@ namespace TShockAPI
 				else if (action == EditAction.PlaceTile || action == EditAction.ReplaceTile || action == EditAction.PlaceWall || action == EditAction.ReplaceWall)
 				{
 					if ((action == EditAction.PlaceTile && TShock.Config.Settings.PreventInvalidPlaceStyle) &&
-						(MaxPlaceStyles.ContainsKey(editData) && style > MaxPlaceStyles[editData]) &&
-						(ExtraneousPlaceStyles.ContainsKey(editData) && style > ExtraneousPlaceStyles[editData]))
+						((MaxPlaceStyles.ContainsKey(editData) && style > MaxPlaceStyles[editData]) ||
+						(ExtraneousPlaceStyles.ContainsKey(editData) && style > ExtraneousPlaceStyles[editData])))
 					{
 						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (ms1) {0} {1} {2}", args.Player.Name, action, editData);
 						args.Player.SendTileSquare(tileX, tileY, 4);
