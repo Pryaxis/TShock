@@ -1000,9 +1000,9 @@ namespace TShockAPI
 					args.Player.SendSuccessMessage("Account \"{0}\" has been registered.", account.Name);
 					args.Player.SendSuccessMessage("Your password is {0}.", echoPassword);
 					if (TShock.Config.Settings.DisableUUIDLogin && !TShock.Config.Settings.AllowLoginAnyUsername)
-						args.Player.SendInfoMessage($"Type {Specifier}login <password> to sign in to your account.");
+						args.Player.SendInfoMessage($"Type {Specifier}login {echoPassword} to sign in to your account.");
 					else if (TShock.Config.Settings.DisableUUIDLogin && TShock.Config.Settings.AllowLoginAnyUsername)
-						args.Player.SendInfoMessage($"Type {Specifier}login <username> <password> to sign in to your account.");
+						args.Player.SendInfoMessage($"Type {Specifier}login \"{account.Name}\" {echoPassword} to sign in to your account.");
 					else
 					{
 						args.Player.SendInfoMessage($"Type {Specifier}login to sign in to your account.");
