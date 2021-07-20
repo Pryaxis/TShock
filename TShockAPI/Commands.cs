@@ -807,9 +807,17 @@ namespace TShockAPI
 			}
 			else
 			{
-				args.Player.SendErrorMessage("Syntax: {0}login - Logs in using your UUID and character name", Specifier);
-				args.Player.SendErrorMessage("        {0}login <password> - Logs in using your password and character name", Specifier);
-				args.Player.SendErrorMessage("        {0}login <username> <password> - Logs in using your username and password", Specifier);
+				if (TShock.Config.Settings.DisableUUIDLogin && !TShock.Config.Settings.AllowLoginAnyUsername)
+					args.Player.SendErrorMessage($"Syntax: {Specifier}login <password> - Logs in using your password and character name");
+				else if (TShock.Config.Settings.DisableUUIDLogin && TShock.Config.Settings.AllowLoginAnyUsername)
+				{
+					args.Player.SendErrorMessage($"Syntax: {Specifier}login <password> - Logs in using your password and character name");
+					args.Player.SendErrorMessage($"         {Specifier}login <username> <password> - Logs in using your username and password");
+				}
+				else
+				{
+					args.Player.SendErrorMessage($"Syntax: {Specifier}login - Logs in using your UUID and character name");
+				}
 				args.Player.SendErrorMessage("If you forgot your password, there is no way to recover it.");
 				return;
 			}
@@ -991,6 +999,14 @@ namespace TShockAPI
 				{
 					args.Player.SendSuccessMessage("Account \"{0}\" has been registered.", account.Name);
 					args.Player.SendSuccessMessage("Your password is {0}.", echoPassword);
+					if (TShock.Config.Settings.DisableUUIDLogin && !TShock.Config.Settings.AllowLoginAnyUsername)
+						args.Player.SendInfoMessage($"Type {Specifier}login <password> to sign in to your account.");
+					else if (TShock.Config.Settings.DisableUUIDLogin && TShock.Config.Settings.AllowLoginAnyUsername)
+						args.Player.SendInfoMessage($"Type {Specifier}login <username> <password> to sign in to your account.");
+					else
+					{
+						args.Player.SendInfoMessage($"Type {Specifier}login to sign in to your account.");
+					}
 					TShock.UserAccounts.AddUserAccount(account);
 					TShock.Log.ConsoleInfo("{0} registered an account: \"{1}\".", args.Player.Name, account.Name);
 				}
