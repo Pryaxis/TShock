@@ -1562,6 +1562,16 @@ namespace TShockAPI
 			Main.player[Index].team = team;
 			NetMessage.SendData((int)PacketTypes.PlayerTeam, -1, -1, NetworkText.Empty, Index);
 		}
+		
+		/// <summary>
+		/// Sets the player's pvp.
+		/// </summary>
+		/// <param name="mode">The state of the pvp mode.</param>
+		public virtual void SetPvP(bool mode)
+		{
+			Main.player[Index].hostile = mode;
+			NetMessage.SendData((int)PacketTypes.TogglePvp, -1, -1, NetworkText.Empty, Index);
+		}
 
 		private DateTime LastDisableNotification = DateTime.UtcNow;
 
@@ -1735,6 +1745,83 @@ namespace TShockAPI
 				return;
 
 			SendData(PacketTypes.PlayerAddBuff, number: Index, number2: type, number3: time);
+		}
+		
+		/// <summary>
+		/// Removes specified buff by index in the buffType array.
+		/// </summary>
+		/// <param name="index">Index in array.</param>
+		/// <param name="client">Will this be sent to all players.</param>
+		public virtual void DelBuff(int index, bool client)
+		{
+			if (index >= TPlayer.buffType.Length)
+				throw new ArgumentOutOfRangeException("index");
+			else if (index < 0)
+				throw new ArgumentOutOfRangeException("index");
+
+			TPlayer.DelBuff(index);
+			UpdateBuffs(client);
+		}
+		/// <summary>
+		/// Removes specified buff by index in the buffType array.
+		/// </summary>
+		/// <param name="index">Index in array.</param>
+		public virtual void DelBuff(int index)
+		{
+			if (index >= TPlayer.buffType.Length)
+				throw new ArgumentOutOfRangeException("index");
+			else if (index < 0)
+				throw new ArgumentOutOfRangeException("index");
+
+			TPlayer.DelBuff(index);
+		}
+
+		/// <summary>
+		/// Removes specified buff from the player.
+		/// </summary>
+		/// <param name="type">The identifier of the buff that will be removed from the player.</param>
+		/// <param name="client">Will this be sent to all players.</param>
+		public virtual void ClearBuff(int type, bool client)
+		{
+			if (type >= BuffID.Count)
+				throw new ArgumentOutOfRangeException("type");
+			if (type < 0)
+				throw new ArgumentOutOfRangeException("type");
+
+			TPlayer.ClearBuff(type);
+			UpdateBuffs(client);
+		}
+		/// <summary>
+		/// Removes specified buff from the player.
+		/// </summary>
+		/// <param name="type">The identifier of the buff that will be removed from the player.</param>
+		public virtual void ClearBuff(int type)
+		{
+			if (type >= BuffID.Count)
+				throw new ArgumentOutOfRangeException("type");
+			if (type < 0)
+				throw new ArgumentOutOfRangeException("type");
+
+			TPlayer.ClearBuff(type);
+		}
+
+		/// <summary>
+		/// Synchronizes server buffs with player buffs. 
+		/// </summary>
+		/// <param name="client">Will this be sent to all players.</param>
+		public virtual void UpdateBuffs(bool client = false)
+		{
+			if (Main.ServerSideCharacter)
+			{
+				if (client)
+					All.SendData(PacketTypes.PlayerBuff, "", Index);
+				else
+					SendData(PacketTypes.PlayerBuff, "", Index);
+			}
+			else
+			{
+				throw new Exception("You need to use a server with SSC mode.");
+			}
 		}
 
 		//Todo: Separate this into a few functions. SendTo, SendToAll, etc
