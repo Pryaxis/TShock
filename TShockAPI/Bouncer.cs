@@ -315,8 +315,17 @@ namespace TShockAPI
 						var tplayer = args.Player.TPlayer;
 						if (createTile == TileID.Torches && placeStyle == TorchID.Torch && tplayer.unlockedBiomeTorches)
 						{
-							// BiomeTorchPlaceStyle checks if the player has biome torches activated
-							// but biome torches activation isn't broadcasted when it's toggled
+							// The torch is a default torch, so biome torches apply to it
+							// The player has also used Torch God's Favor, they can use biome torches
+
+							// The server isn't notified when the player turns on biome torches.
+							// So on the client it can be on, while on the server it's off.
+							// BiomeTorchPlaceStyle returns placeStyle as-is if biome torches is off.
+							// Because of the uncertainty, we:
+							// 1. Ensure that UsingBiomeTorches is on, so we can get the correct
+							// value from BiomeTorchPlaceStyle.
+							// 2. Check if the torch is either 0 or the biome torch since we aren't
+							// sure if the player has biome torches on
 							var usingBiomeTorches = tplayer.UsingBiomeTorches;
 							if (!usingBiomeTorches)
 							{
