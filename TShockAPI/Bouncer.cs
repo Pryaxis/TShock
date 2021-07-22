@@ -346,7 +346,7 @@ namespace TShockAPI
 							}
 						}
 						// Checks if the player is trying to place a booster track facing right
-						else if (createTile != TileID.MinecartTrack || placeStyle != 2 || args.Player.TPlayer.direction != 1 || style != 3)
+						else if (createTile != ItemID.BoosterTrack || args.Player.TPlayer.direction != 1 || style != 3)
 						{
 							TShock.Log.ConsoleError("Bouncer / OnTileEdit rejected from (placestyle) {0} {1} {2} placeStyle: {3} expectedStyle: {4}",
 								args.Player.Name, action, editData, style, placeStyle);
