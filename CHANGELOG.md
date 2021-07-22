@@ -29,7 +29,12 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Correct rejection message in LandGolfBallInCupHandler to output the proper expected player id. (@drunderscore)
 * Clarified the error mesage that the console is presented if a rate-limit is reached over REST to indicate that "tokens" actually refers to rate-limit tokens, and not auth tokens, and added a hint as to what config setting determines this. (@hakusaro, @patsore)
 * Fixed an issue where, when the console was redirected, input was disabled and commands didn't work, in TSAPI. You can now pass `-disable-commands` to disable the input thread, but by default, it will be enabled. Fixes [#1450](https://github.com/Pryaxis/TShock/issues/1450). (@DeathCradle, @QuiCM)
-* Properly sanitized packet tile coordinates that could be used to DoS attack a server. This was assigned [GHSA-jq4j-v8pr-jv7j](https://github.com/Pryaxis/TShock/security/advisories/GHSA-jq4j-v8pr-jv7j). (@drunderscore)
+* Fixed Bouncer inconsistently using `TilePlacementValid` when validating tile coordinates, which could cause a DoS attack due to unexpectedly large world framing. The list below shows the corrected methods within Bouncer. This was assigned [GHSA-jq4j-v8pr-jv7j](https://github.com/Pryaxis/Plugins/security/advisories/GHSA-jq4j-v8pr-jv7j). (@drunderscore)
+  * `OnTileEdit`: The check was moved to be the first, and will no longer `SendTileSquare` upon failure.
+  * `OnPlaceObject`: The check was moved to be the first, and will no longer `SendTileSquare` upon failure.
+  * `OnPlaceTileEntity`: The check was newly added.
+  * `OnPlaceItemFrame`: The check was newly added.
+  * `OnFoodPlatterTryPlacing`: The check was newly added.
 
 ## TShock 4.5.4
 * Fixed ridiculous typo in `GetDataHandlers` which caused TShock to read the wrong field in the packet for `usingBiomeTorches`. (@hakusaro, @Arthri)
