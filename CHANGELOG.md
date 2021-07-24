@@ -13,7 +13,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change.
 
 ## Upcoming changes
-* This could be you!
+* Fixed SendTileRectHandler not sending tile rect updates like Pylons/Mannequins to other clients. (@Stealownz)
 
 ## TShock 4.5.5
 * Changed the world autosave message so that it no longer warns of a "potential lag spike." (@hakusaro)
