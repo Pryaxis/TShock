@@ -1627,6 +1627,9 @@ namespace TShockAPI
 			if (e.Info == 109)
 				if (Config.Settings.DisableSnowBalls)
 					e.Object.SetDefaults(0);
+			if (e.Info == ProjectileID.BombSkeletronPrime)
+				if (Config.Settings.DisablePrimeBombs)
+					e.Object.SetDefaults(0);
 		}
 
 		/// <summary>NetHooks_SendData - Fired when the server sends data.</summary>
