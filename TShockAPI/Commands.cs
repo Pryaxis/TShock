@@ -998,7 +998,7 @@ namespace TShockAPI
 					args.Player.SendSuccessMessage("Your password is {0}.", echoPassword);
 					
 					if (!TShock.Config.Settings.DisableUUIDLogin)
-						args.Player.SendMessage($"Type {Specifier}login to sign in to your account.", Color.White);
+						args.Player.SendMessage($"Type {Specifier}login to sign in to your account using your UUID.", Color.White);
 
 					if (TShock.Config.Settings.AllowLoginAnyUsername)
 						args.Player.SendMessage($"Type {Specifier}login \"{account.Name.Color(Utils.GreenHighlight)}\" {echoPassword.Color(Utils.BoldHighlight)} to sign in to your account.", Color.White);
