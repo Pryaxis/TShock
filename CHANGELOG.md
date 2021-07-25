@@ -13,7 +13,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change.
 
 ## Upcoming changes
-* Improved `/login` related error messages and made the `/register` process more friendly for players new to TShock. (@moisterrific)
+* Changed `/login` and `/register` provide login help depending on if UUID login is enabled or disabled, and whether or not a player can login via any username or not. (@moisterrific)
 
 ## TShock 4.5.5
 * Changed the world autosave message so that it no longer warns of a "potential lag spike." (@hakusaro)
