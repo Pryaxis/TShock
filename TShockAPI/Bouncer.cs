@@ -337,7 +337,7 @@ namespace TShockAPI
 							{
 								tplayer.UsingBiomeTorches = usingBiomeTorches;
 							}
-							if (style != biomeTorchStyle)
+							if (style != TorchID.Torch || style != biomeTorchStyle)
 							{
 								TShock.Log.ConsoleError("Bouncer / OnTileEdit rejected from (placestyle) {0} {1} {2} placeStyle: {3} expectedStyle: 0 or {4}",
 									args.Player.Name, action, editData, style, biomeTorchStyle);
