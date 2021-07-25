@@ -315,7 +315,8 @@ namespace TShockAPI
 						var tplayer = args.Player.TPlayer;
 						if (createTile == TileID.Torches && placeStyle == TorchID.Torch && tplayer.unlockedBiomeTorches)
 						{
-							// The torch is a default torch, so biome torches apply to it
+							// Biome Torches only work on the default torch(placeStyle/TorchID: 0)
+							// This torch is the default one
 							// The player has also used Torch God's Favor, they can use biome torches
 
 							// The server isn't notified when the player turns on biome torches.
