@@ -1618,13 +1618,13 @@ namespace TShockAPI
 		private void OnProjectileSetDefaults(SetDefaultsEventArgs<Projectile, int> e)
 		{
 			//tombstone fix.
-			if (e.Info == 43 || (e.Info >= 201 && e.Info <= 205) || (e.Info >= 527 && e.Info <= 531))
+			if (e.Info == ProjectileID.Tombstone || (e.Info >= ProjectileID.GraveMarker && e.Info <= ProjectileID.Obelisk) || (e.Info >= ProjectileID.RichGravestone1 && e.Info <= ProjectileID.RichGravestone5))
 				if (Config.Settings.DisableTombstones)
 					e.Object.SetDefaults(0);
-			if (e.Info == 75)
+			if (e.Info == ProjectileID.HappyBomb)
 				if (Config.Settings.DisableClownBombs)
 					e.Object.SetDefaults(0);
-			if (e.Info == 109)
+			if (e.Info == ProjectileID.SnowBallHostile)
 				if (Config.Settings.DisableSnowBalls)
 					e.Object.SetDefaults(0);
 			if (e.Info == ProjectileID.BombSkeletronPrime)
