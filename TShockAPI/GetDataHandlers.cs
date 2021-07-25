@@ -346,7 +346,7 @@ namespace TShockAPI
 			/// </summary>
 			public Vector2 Velocity { get; set; }
 			/// <summary>
-			/// Original poisition of the player when using Potion of Return.
+			/// Original position of the player when using Potion of Return.
 			/// </summary>
 			public Vector2? OriginalPos { get; set; }
 			/// <summary>
@@ -770,7 +770,7 @@ namespace TShockAPI
 		{
 			/// <summary>The projectile's identity...?</summary>
 			public int ProjectileIdentity;
-			/// <summary>The the player index of the projectile's owner (Main.players).</summary>
+			/// <summary>The player index of the projectile's owner (Main.players).</summary>
 			public byte ProjectileOwner;
 			/// <summary>The index of the projectile in Main.projectile.</summary>
 			public int ProjectileIndex;
@@ -1846,7 +1846,7 @@ namespace TShockAPI
 			/// </summary>
 			public byte ID { get; set; }
 			/// <summary>
-			/// The direction the damage is occuring from
+			/// The direction the damage is occurring from
 			/// </summary>
 			public byte Direction { get; set; }
 			/// <summary>
@@ -1902,7 +1902,7 @@ namespace TShockAPI
 			/// </summary>
 			public byte Direction { get; set; }
 			/// <summary>
-			/// Amount of damage delt
+			/// Amount of damage dealt
 			/// </summary>
 			public short Damage { get; set; }
 			/// <summary>
@@ -1989,7 +1989,7 @@ namespace TShockAPI
 			/// </summary>
 			public int Slot { get; set; }
 			/// <summary>
-			/// Wether or not the slot that is being modified is a Dye slot.
+			/// Whether or not the slot that is being modified is a Dye slot.
 			/// </summary>
 			public bool IsDye { get; set; }
 			/// <summary>

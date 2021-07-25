@@ -14,6 +14,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 ## Upcoming changes
 * Fixed SendTileRectHandler not sending tile rect updates like Pylons/Mannequins to other clients. (@Stealownz)
+* Fix some typos that have been in the repository for over a lustrum. (@Killia0)
 * Added a `tshock.npc.summonboss` permission check for Lunatic Cultist, players who do not have this permission will not be able to kill Cultist Archers/Devotees to summon the Lunatic Cultist. (@moisterrific)
 
 ## TShock 4.5.5
