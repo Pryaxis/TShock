@@ -15,7 +15,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 ## Upcoming changes
 * Fixed SendTileRectHandler not sending tile rect updates like Pylons/Mannequins to other clients. (@Stealownz)
 * Fix some typos that have been in the repository for over a lustrum. (@Killia0)
-* Changed `/login` and `/register` provide login help depending on if UUID login is enabled or disabled, and whether or not a player can login via any username or not. (@moisterrific)
+* Changed `/login` and `/register` to provide login help depending on if UUID login is enabled or disabled, and whether or not a player can login via any username or not. (@moisterrific)
 
 ## TShock 4.5.5
 * Changed the world autosave message so that it no longer warns of a "potential lag spike." (@hakusaro)
