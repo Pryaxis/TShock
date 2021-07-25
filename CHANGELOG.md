@@ -13,6 +13,9 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change.
 
 ## Upcoming changes
+* Fixed SendTileRectHandler not sending tile rect updates like Pylons/Mannequins to other clients. (@Stealownz)
+
+## TShock 4.5.5
 * Changed the world autosave message so that it no longer warns of a "potential lag spike." (@hakusaro)
 * Added `/slay` as an alias for `/kill` to be more consistent with other server mods. (@hakusaro)
 * Added `/god` as an alias for `/godmode` to be more consistent with other server mods. (@hakusaro)
@@ -32,6 +35,12 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Added `summonboss` permission check for Empress of Light and Lunatic Cultist. Players who do not have this permission will be unable to kill Prismatic Lacewings, Cultist Devotees, and Cultist Archers. Also added support for the `AnonymousBossInvasions` config option for summoning Empress of Light, if this is set to `false` it will now broadcast the name of the player who summoned her. (@moisterrific)
 * Added `ForceTime` config setting check for Enchanted Sundial usage. If `ForceTime` is set to anything other than `normal`, Sundial use will be rejected as this would lead to very janky game behavior. Additionally, players with `cfgreload` permission will be advised  to change it back to `normal` in order to use sundial. (@moisterrific, @bartico6)
 * Added `%onlineplayers%` and `%serverslots%` placeholders for MOTD. The default MOTD message was also updated to use this. (@moisterrific, @bartico6)
+* Fixed Bouncer inconsistently using `TilePlacementValid` when validating tile coordinates, which could cause a DoS attack due to unexpectedly large world framing. The list below shows the corrected methods within Bouncer. This was assigned [GHSA-jq4j-v8pr-jv7j](https://github.com/Pryaxis/TShock/security/advisories/GHSA-jq4j-v8pr-jv7j). (@drunderscore)
+  * `OnTileEdit`: The check was moved to be the first, and will no longer `SendTileSquare` upon failure.
+  * `OnPlaceObject`: The check was moved to be the first, and will no longer `SendTileSquare` upon failure.
+  * `OnPlaceTileEntity`: The check was newly added.
+  * `OnPlaceItemFrame`: The check was newly added.
+  * `OnFoodPlatterTryPlacing`: The check was newly added.
 
 ## TShock 4.5.4
 * Fixed ridiculous typo in `GetDataHandlers` which caused TShock to read the wrong field in the packet for `usingBiomeTorches`. (@hakusaro, @Arthri)
