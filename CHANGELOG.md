@@ -14,6 +14,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 ## Upcoming changes
 * Fixed SendTileRectHandler not sending tile rect updates like Pylons/Mannequins to other clients. (@Stealownz)
+* Fix some typos that have been in the repository for over a lustrum. (@Killia0)
 * Added a notification message and silent command support for permanently changing a target player's user group. Now players who received a group change will be notified of their new group if they are currently online. (@moisterrific, @QuiCM)
 
 ## TShock 4.5.5
