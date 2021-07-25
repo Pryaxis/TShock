@@ -1724,7 +1724,7 @@ namespace TShockAPI
 				return;
 			}
 
-			// This is neccessary to check in order to prevent special tiles such as
+			// This is necessary to check in order to prevent special tiles such as
 			// queen bee larva, paintings etc that use this packet from being placed
 			// without selecting the right item.
 			if (type != args.Player.TPlayer.inventory[args.Player.TPlayer.selectedItem].createTile)

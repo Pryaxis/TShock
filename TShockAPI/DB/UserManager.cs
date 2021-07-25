@@ -378,7 +378,7 @@ namespace TShockAPI.DB
 		/// <summary>The hashed password for the user account.</summary>
 		public string Password { get; internal set; }
 
-		/// <summary>The user's saved Univerally Unique Identifier token.</summary>
+		/// <summary>The user's saved Universally Unique Identifier token.</summary>
 		public string UUID { get; set; }
 
 		/// <summary>The group object that the user account is a part of.</summary>
