@@ -14,6 +14,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 ## Upcoming changes
 * Fixed SendTileRectHandler not sending tile rect updates like Pylons/Mannequins to other clients. (@Stealownz)
+* Added a `tshock.npc.summonboss` permission check for Lunatic Cultist, players who do not have this permission will not be able to kill Cultist Archers/Devotees to summon the Lunatic Cultist. (@moisterrific)
 
 ## TShock 4.5.5
 * Changed the world autosave message so that it no longer warns of a "potential lag spike." (@hakusaro)
@@ -32,7 +33,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Correct rejection message in LandGolfBallInCupHandler to output the proper expected player id. (@drunderscore)
 * Clarified the error mesage that the console is presented if a rate-limit is reached over REST to indicate that "tokens" actually refers to rate-limit tokens, and not auth tokens, and added a hint as to what config setting determines this. (@hakusaro, @patsore)
 * Fixed an issue where, when the console was redirected, input was disabled and commands didn't work, in TSAPI. You can now pass `-disable-commands` to disable the input thread, but by default, it will be enabled. Fixes [#1450](https://github.com/Pryaxis/TShock/issues/1450). (@DeathCradle, @QuiCM)
-* Added `summonboss` permission check for Empress of Light and Lunatic Cultist. Players who do not have this permission will be unable to kill Prismatic Lacewings, Cultist Devotees, and Cultist Archers. Also added support for the `AnonymousBossInvasions` config option for summoning Empress of Light, if this is set to `false` it will now broadcast the name of the player who summoned her. (@moisterrific)
+* Added `summonboss` permission check for Empress of Light. Players who do not have this permission will be unable to kill Prismatic Lacewings. Also added support for the `AnonymousBossInvasions` config option, if this is set to `false` it will now broadcast the name of the player who summoned her. (@moisterrific)
 * Added `ForceTime` config setting check for Enchanted Sundial usage. If `ForceTime` is set to anything other than `normal`, Sundial use will be rejected as this would lead to very janky game behavior. Additionally, players with `cfgreload` permission will be advised  to change it back to `normal` in order to use sundial. (@moisterrific, @bartico6)
 * Added `%onlineplayers%` and `%serverslots%` placeholders for MOTD. The default MOTD message was also updated to use this. (@moisterrific, @bartico6)
 * Fixed Bouncer inconsistently using `TilePlacementValid` when validating tile coordinates, which could cause a DoS attack due to unexpectedly large world framing. The list below shows the corrected methods within Bouncer. This was assigned [GHSA-jq4j-v8pr-jv7j](https://github.com/Pryaxis/TShock/security/advisories/GHSA-jq4j-v8pr-jv7j). (@drunderscore)
