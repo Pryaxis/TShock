@@ -424,11 +424,8 @@ namespace TShockAPI
 				}
 				else if (action == EditAction.PlaceTile || action == EditAction.ReplaceTile || action == EditAction.PlaceWall || action == EditAction.ReplaceWall)
 				{
-					var isInvalidPlaceStyle = ExtraneousPlaceStyles.ContainsKey(editData)
-						? style > ExtraneousPlaceStyles[editData]
-						: MaxPlaceStyles.ContainsKey(editData) && style > MaxPlaceStyles[editData];
 					if ((action == EditAction.PlaceTile && TShock.Config.Settings.PreventInvalidPlaceStyle) &&
-						isInvalidPlaceStyle)
+						style > GetMaxPlaceStyle(editData))
 					{
 						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (ms1) {0} {1} {2}", args.Player.Name, action, editData);
 						args.Player.SendTileSquare(tileX, tileY, 4);
@@ -2226,6 +2223,25 @@ namespace TShockAPI
 					}
 				}
 			});
+		}
+
+		/// <summary>
+		/// Returns the max <see cref="Item.placeStyle"/> associated with the given <paramref name="tileID"/>. Or -1 if there's no association
+		/// </summary>
+		/// <param name="tileID">Tile ID to query for</param>
+		/// <returns>The max <see cref="Item.placeStyle"/>, otherwise -1 if there's no association</returns>
+		internal static int GetMaxPlaceStyle(int tileID)
+		{
+			int result;
+			if (ExtraneousPlaceStyles.TryGetValue(tileID, out result)
+				|| MaxPlaceStyles.TryGetValue(tileID, out result))
+			{
+				return result;
+			}
+			else
+			{
+				return -1;
+			}
 		}
 
 		// These time values are references from Projectile.cs, at npc.AddBuff() calls.
