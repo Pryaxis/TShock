@@ -168,7 +168,7 @@ namespace TShockAPI.DB
 		}
 
 		/// <summary>
-		/// Delets the region from this world with a given ID.
+		/// Deletes the region from this world with a given ID.
 		/// </summary>
 		/// <param name="id">The ID of the region to delete.</param>
 		/// <returns>Whether the region was successfully deleted.</returns>
@@ -584,7 +584,7 @@ namespace TShockAPI.DB
 		/// </summary>
 		/// <param name="regionName">Region name</param>
 		/// <param name="newOwner">New owner's username</param>
-		/// <returns>Whether the change was successfull</returns>
+		/// <returns>Whether the change was successful</returns>
 		public bool ChangeOwner(string regionName, string newOwner)
 		{
 			var region = GetRegionByName(regionName);
@@ -604,7 +604,7 @@ namespace TShockAPI.DB
 		/// </summary>
 		/// <param name="regionName">Region name</param>
 		/// <param name="groupName">Group's name</param>
-		/// <returns>Whether the change was successfull</returns>
+		/// <returns>Whether the change was successful</returns>
 		public bool AllowGroup(string regionName, string groupName)
 		{
 			string mergedGroups = "";
@@ -646,7 +646,7 @@ namespace TShockAPI.DB
 		/// </summary>
 		/// <param name="regionName">Region name</param>
 		/// <param name="group">Group name</param>
-		/// <returns>Whether the change was successfull</returns>
+		/// <returns>Whether the change was successful</returns>
 		public bool RemoveGroup(string regionName, string group)
 		{
 			Region r = GetRegionByName(regionName);
@@ -688,7 +688,7 @@ namespace TShockAPI.DB
 		/// </summary>
 		/// <param name="name">Region name</param>
 		/// <param name="z">New Z index</param>
-		/// <returns>Whether the change was successfull</returns>
+		/// <returns>Whether the change was successful</returns>
 		public bool SetZ(string name, int z)
 		{
 			try

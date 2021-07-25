@@ -1614,7 +1614,7 @@ namespace TShockAPI
 		}
 
 		/// <summary>OnProjectileSetDefaults - Called when a projectile sets the default attributes for itself.</summary>
-		/// <param name="e">e - The SetDefaultsEventArgs object praameterized with Projectile and int.</param>
+		/// <param name="e">e - The SetDefaultsEventArgs object parameterized with Projectile and int.</param>
 		private void OnProjectileSetDefaults(SetDefaultsEventArgs<Projectile, int> e)
 		{
 			//tombstone fix.

@@ -14,6 +14,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 ## Upcoming changes
 * Fixed SendTileRectHandler not sending tile rect updates like Pylons/Mannequins to other clients. (@Stealownz)
+* Fix some typos that have been in the repository for over a lustrum. (@Killia0)
 * Added a new `DisablePrimeBombs` config option (`false` by default). Highly recommended to set this to `true` in order to prevent griefing on servers doing a `for the worthy` play-through, since the prime bombs on this seed can destroy most tiles and bypass region protection. (@moisterrific)
 
 ## TShock 4.5.5
