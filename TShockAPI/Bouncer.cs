@@ -332,6 +332,8 @@ namespace TShockAPI
 							{
 								tplayer.UsingBiomeTorches = true;
 							}
+							// BiomeTorchPlaceStyle returns the place style of the player's
+							// current biome's biome torch
 							var biomeTorchStyle = tplayer.BiomeTorchPlaceStyle(placeStyle);
 							if (!usingBiomeTorches)
 							{
