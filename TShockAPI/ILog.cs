@@ -119,7 +119,7 @@ namespace TShockAPI
 		/// Writes a message to the log
 		/// </summary>
 		/// <param name="message">Message to write</param>
-		/// <param name="level">LogLevel assosciated with the message</param>
+		/// <param name="level">LogLevel associated with the message</param>
 		void Write(string message, TraceLevel level);
 
 		/// <summary>

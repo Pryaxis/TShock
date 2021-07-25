@@ -50,7 +50,7 @@ namespace TShockAPI
 		public bool Silent { get; private set; }
 
 		/// <summary>
-		/// Parameters passed to the arguement. Does not include the command name.
+		/// Parameters passed to the argument. Does not include the command name.
 		/// IE '/kick "jerk face"' will only have 1 argument
 		/// </summary>
 		public List<string> Parameters { get; private set; }
@@ -948,7 +948,7 @@ namespace TShockAPI
 			}
 			catch (UserAccountManagerException ex)
 			{
-				args.Player.SendErrorMessage("Sorry, an error occured: " + ex.Message + ".");
+				args.Player.SendErrorMessage("Sorry, an error occurred: " + ex.Message + ".");
 				TShock.Log.ConsoleError("PasswordUser returned an error: " + ex);
 			}
 		}
@@ -1023,7 +1023,7 @@ namespace TShockAPI
 			}
 			catch (UserAccountManagerException ex)
 			{
-				args.Player.SendErrorMessage("Sorry, an error occured: " + ex.Message + ".");
+				args.Player.SendErrorMessage("Sorry, an error occurred: " + ex.Message + ".");
 				TShock.Log.ConsoleError("RegisterUser returned an error: " + ex);
 			}
 		}
@@ -1236,7 +1236,7 @@ namespace TShockAPI
 					if (DateTime.TryParse(account.LastAccessed, out LastSeen))
 					{
 						LastSeen = DateTime.Parse(account.LastAccessed).ToLocalTime();
-						args.Player.SendSuccessMessage("{0}'s last login occured {1} {2} UTC{3}.", account.Name, LastSeen.ToShortDateString(),
+						args.Player.SendSuccessMessage("{0}'s last login occurred {1} {2} UTC{3}.", account.Name, LastSeen.ToShortDateString(),
 							LastSeen.ToShortTimeString(), Timezone);
 					}
 
@@ -6492,6 +6492,6 @@ namespace TShockAPI
 			}
 		}
 
-		#endregion Cheat Comamnds
+		#endregion Cheat Commands
 	}
 }
