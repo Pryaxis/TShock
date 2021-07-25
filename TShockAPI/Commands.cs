@@ -5518,7 +5518,7 @@ namespace TShockAPI
 
 		#endregion General Commands
 
-		#region Cheat Commands
+		#region Game Commands
 
 		private static void Clear(CommandArgs args)
 		{
@@ -6472,6 +6472,6 @@ namespace TShockAPI
 			}
 		}
 
-		#endregion Cheat Commands
+		#endregion Game Commands
 	}
 }
