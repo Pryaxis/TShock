@@ -348,7 +348,10 @@ namespace TShockAPI
 								return;
 							}
 						}
-						// Checks if the player is trying to place a booster track facing right
+						// Only other extraneous tile is Right Booster Track with a placeStyle of 3
+						// The player can place it only if they're facing right
+						// or direction 1 for positive X <- -X(Left)  Origin  (Right)X+ ->
+						// If none of the conditions mentioned above check out, fail check
 						else if (createTile != ItemID.BoosterTrack || args.Player.TPlayer.direction != 1 || style != 3)
 						{
 							TShock.Log.ConsoleError("Bouncer / OnTileEdit rejected from (placestyle) {0} {1} {2} placeStyle: {3} expectedStyle: {4}",
