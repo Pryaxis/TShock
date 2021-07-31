@@ -58,7 +58,7 @@ namespace TShockAPI
 		/// <summary>VersionNum - The version number the TerrariaAPI will return back to the API. We just use the Assembly info.</summary>
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
 		/// <summary>VersionCodename - The version codename is displayed when the server starts. Inspired by software codenames conventions.</summary>
-		public static readonly string VersionCodename = "Blood Moon edition";
+		public static readonly string VersionCodename = "Olympics maybe?";
 
 		/// <summary>SavePath - This is the path TShock saves its data in. This path is relative to the TerrariaServer.exe (not in ServerPlugins).</summary>
 		public static string SavePath = "tshock";
@@ -1614,7 +1614,7 @@ namespace TShockAPI
 		}
 
 		/// <summary>OnProjectileSetDefaults - Called when a projectile sets the default attributes for itself.</summary>
-		/// <param name="e">e - The SetDefaultsEventArgs object praameterized with Projectile and int.</param>
+		/// <param name="e">e - The SetDefaultsEventArgs object parameterized with Projectile and int.</param>
 		private void OnProjectileSetDefaults(SetDefaultsEventArgs<Projectile, int> e)
 		{
 			//tombstone fix.

@@ -1018,7 +1018,7 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Player Y cooridnate divided by 16. Supposed Y world coordinate.
+		/// Player Y coordinate divided by 16. Supposed Y world coordinate.
 		/// </summary>
 		public int TileY
 		{
@@ -1526,8 +1526,10 @@ namespace TShockAPI
 					}
 
 					foo = foo.Replace("%map%", (TShock.Config.Settings.UseServerName ? TShock.Config.Settings.ServerName : Main.worldName));
-					foo = foo.Replace("%players%", String.Join(",", players));
+					foo = foo.Replace("%players%", String.Join(", ", players));
 					foo = foo.Replace("%specifier%", TShock.Config.Settings.CommandSpecifier);
+					foo = foo.Replace("%onlineplayers%", TShock.Utils.GetActivePlayerCount().ToString());
+					foo = foo.Replace("%serverslots%", TShock.Config.Settings.MaxSlots.ToString());
 
 					SendMessage(foo, lineColor);
 				}

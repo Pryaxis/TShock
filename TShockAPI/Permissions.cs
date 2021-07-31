@@ -399,7 +399,7 @@ namespace TShockAPI
 		[Description("User can use Creative UI to set world time speed.")]
 		public static readonly string journey_timespeed = "tshock.journey.time.setspeed";
 
-		[Description("User can use Creative UI to to toggle character godmode.")]
+		[Description("User can use Creative UI to toggle character godmode.")]
 		public static readonly string journey_godmode = "tshock.journey.godmode";
 
 		[Description("User can use Creative UI to set world wind strength/seed.")]

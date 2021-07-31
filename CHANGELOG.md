@@ -13,6 +13,10 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change.
 
 ## Upcoming changes
+* Fixed SendTileRectHandler not sending tile rect updates like Pylons/Mannequins to other clients. (@Stealownz)
+* Fix some typos that have been in the repository for over a lustrum. (@Killia0)
+
+## TShock 4.5.5
 * Changed the world autosave message so that it no longer warns of a "potential lag spike." (@hakusaro)
 * Added `/slay` as an alias for `/kill` to be more consistent with other server mods. (@hakusaro)
 * Added `/god` as an alias for `/godmode` to be more consistent with other server mods. (@hakusaro)
@@ -29,6 +33,15 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Correct rejection message in LandGolfBallInCupHandler to output the proper expected player id. (@drunderscore)
 * Clarified the error mesage that the console is presented if a rate-limit is reached over REST to indicate that "tokens" actually refers to rate-limit tokens, and not auth tokens, and added a hint as to what config setting determines this. (@hakusaro, @patsore)
 * Fixed an issue where, when the console was redirected, input was disabled and commands didn't work, in TSAPI. You can now pass `-disable-commands` to disable the input thread, but by default, it will be enabled. Fixes [#1450](https://github.com/Pryaxis/TShock/issues/1450). (@DeathCradle, @QuiCM)
+* Added `summonboss` permission check for Prismatic Lacewing. Players who do not have said permission will be unable to kill this critter, as it will summon the Empress of Light. Also added support for the `AnonymousBossInvasions` config option, if this is set to `false` it will now broadcast the name of the player who summoned her. (@moisterrific)
+* Added `ForceTime` config setting check for Enchanted Sundial usage. If `ForceTime` is set to anything other than `normal`, Sundial use will be rejected as this would lead to very janky game behavior. Additionally, players with `cfgreload` permission will be advised  to change it back to `normal` in order to use sundial. (@moisterrific, @bartico6)
+* Added `%onlineplayers%` and `%serverslots%` placeholders for MOTD. The default MOTD message was also updated to use this. (@moisterrific, @bartico6)
+* Fixed Bouncer inconsistently using `TilePlacementValid` when validating tile coordinates, which could cause a DoS attack due to unexpectedly large world framing. The list below shows the corrected methods within Bouncer. This was assigned [GHSA-jq4j-v8pr-jv7j](https://github.com/Pryaxis/TShock/security/advisories/GHSA-jq4j-v8pr-jv7j). (@drunderscore)
+  * `OnTileEdit`: The check was moved to be the first, and will no longer `SendTileSquare` upon failure.
+  * `OnPlaceObject`: The check was moved to be the first, and will no longer `SendTileSquare` upon failure.
+  * `OnPlaceTileEntity`: The check was newly added.
+  * `OnPlaceItemFrame`: The check was newly added.
+  * `OnFoodPlatterTryPlacing`: The check was newly added.
 * Fixed errors on startup not being reported to console. (@bartico6)
 * The server now correctly disconnects players with missing groups instead of throwing an exception, stalling the connection (@bartico6)
 * The server now rejects login attempts from players who would end up with a missing group. (@bartico6)

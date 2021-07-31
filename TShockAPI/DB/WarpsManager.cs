@@ -139,7 +139,7 @@ namespace TShockAPI.DB
 		/// <param name="warpName">The warp name.</param>
 		/// <param name="x">The X position.</param>
 		/// <param name="y">The Y position.</param>
-		/// <returns>Whether the operation suceeded.</returns>
+		/// <returns>Whether the operation succeeded.</returns>
 		public bool Position(string warpName, int x, int y)
 		{
 			try
@@ -163,7 +163,7 @@ namespace TShockAPI.DB
 		/// </summary>
 		/// <param name="warpName">The warp name.</param>
 		/// <param name="state">The state.</param>
-		/// <returns>Whether the operation suceeded.</returns>
+		/// <returns>Whether the operation succeeded.</returns>
 		public bool Hide(string warpName, bool state)
 		{
 			try
