@@ -599,6 +599,10 @@ namespace TShockAPI
 			{
 				HelpText = "Sends all tiles from the server to the player to resync the client with the actual world state."
 			});
+			add(new Command(Permissions.respawn, Respawn, "respawn")
+			{
+				HelpText = "Respawn yourself or another player."
+			});
 			#endregion
 
 			add(new Command(Aliases, "aliases")
@@ -5631,6 +5635,57 @@ namespace TShockAPI
 				args.Player.SendSuccessMessage(string.Format("You just killed {0}!", plr.Name));
 				plr.SendErrorMessage("{0} just killed you!", args.Player.Name);
 			}
+		}
+									
+		private static void Respawn(CommandArgs args)
+		{
+			TSPlayer playerToRespawn;
+			if (args.Parameters.Count > 0)
+			{
+				if (!args.Player.HasPermission(Permissions.respawnother))
+				{
+					args.Player.SendErrorMessage("You do not have permission to respawn another player.");
+					return;
+				}
+				string plStr = String.Join(" ", args.Parameters);
+				var players = TSPlayer.FindByNameOrID(plStr);
+				if (players.Count == 0)
+				{
+					args.Player.SendErrorMessage($"Could not find any player named \"{plStr}\"");
+					return;
+				}
+				else if (players.Count > 1)
+				{
+					args.Player.SendMultipleMatchError(players.Select(p => p.Name));
+					return;
+				}
+				else
+					playerToRespawn = players[0];
+			}
+			else if (!args.Player.RealPlayer)
+			{
+				args.Player.SendErrorMessage("You can't respawn the server console!");
+				return;
+			}
+			else
+				playerToRespawn = args.Player;
+
+			if (!playerToRespawn.Dead)
+			{
+				args.Player.SendErrorMessage($"{(playerToRespawn == args.Player ? "You" : playerToRespawn.Name)} {(playerToRespawn == args.Player ? "are" : "is")} not dead.");
+				return;
+			}
+			else
+				playerToRespawn.Spawn(PlayerSpawnContext.ReviveFromDeath);
+
+			if (playerToRespawn != args.Player)
+			{
+				args.Player.SendSuccessMessage($"You have respawned {playerToRespawn.Name}");
+				if (!args.Silent)
+					playerToRespawn.SendSuccessMessage($"{args.Player.Name} has respawned you.");
+			}
+			else
+				playerToRespawn.SendSuccessMessage("You have respawned yourself.");
 		}
 
 		private static void Butcher(CommandArgs args)
