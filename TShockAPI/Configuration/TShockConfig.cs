@@ -241,12 +241,12 @@ namespace TShockAPI.Configuration
 		[Description("Allows groups on the banned item allowed list to spawn banned items even if PreventBannedItemSpawn is set to true.")]
 		public bool AllowAllowedGroupsToSpawnBannedItems = false;
 
-		/// <summary>The number of seconds a player must wait before being respawned. Cannot be longer than normal value now. Use at your own risk.</summary>
-		[Description("The number of seconds a player must wait before being respawned. Cannot be longer than normal value now. Use at your own risk.")]
+		/// <summary>The number of seconds a player must wait before being respawned. Must be less than 15 seconds. Use at your own risk. Setting it to 0 will use the game's default timers.</summary>
+		[Description("The number of seconds a player must wait before being respawned. Must be less than 15 seconds. Use at your own risk. Setting it to 0 will use the game's default timers.")]
 		public int RespawnSeconds = 0;
 
-		/// <summary>The number of seconds a player must wait before being respawned if there is a boss nearby. Cannot be longer than normal value now. Use at your own risk.</summary>
-		[Description("The number of seconds a player must wait before being respawned if there is a boss nearby. Cannot be longer than normal value now. Use at your own risk.")]
+		/// <summary>The number of seconds a player must wait before being respawned if there is a boss nearby. Must be less than 30 seconds. Use at your own risk. Setting it to 0 will use the game's default timers.</summary>
+		[Description("The number of seconds a player must wait before being respawned if there is a boss nearby. Must be less than 30 seconds. Use at your own risk. Setting it to 0 will use the game's default timers.")]
 		public int RespawnBossSeconds = 0;
 
 		/// <summary>Whether or not to announce boss spawning or invasion starts.</summary>
