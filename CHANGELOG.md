@@ -31,6 +31,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Fixed an issue where, when the console was redirected, input was disabled and commands didn't work, in TSAPI. You can now pass `-disable-commands` to disable the input thread, but by default, it will be enabled. Fixes [#1450](https://github.com/Pryaxis/TShock/issues/1450). (@DeathCradle, @QuiCM)
 * Fixed errors on startup not being reported to console. (@bartico6)
 * The server now correctly disconnects players with missing groups instead of throwing an exception, stalling the connection (@bartico6)
+* The server now rejects login attempts from players who would end up with a missing group. (@bartico6)
 
 ## TShock 4.5.4
 * Fixed ridiculous typo in `GetDataHandlers` which caused TShock to read the wrong field in the packet for `usingBiomeTorches`. (@hakusaro, @Arthri)
