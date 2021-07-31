@@ -200,9 +200,11 @@ namespace TShockAPI.DB
 			LoadPermisions();
 
 			Group.DefaultGroup = GetGroupByName(TShock.Config.Settings.DefaultGuestGroupName);
+
+			AssertCoreGroupsPresent();
 		}
 
-		internal void EnsureCoreGroupsPresent()
+		internal void AssertCoreGroupsPresent()
 		{
 			if (!GroupExists(TShock.Config.Settings.DefaultGuestGroupName))
 			{
@@ -210,11 +212,33 @@ namespace TShockAPI.DB
 				throw new Exception("The guest group could not be found.");
 			}
 
-			if(!GroupExists(TShock.Config.Settings.DefaultRegistrationGroupName))
-            {
+			if (!GroupExists(TShock.Config.Settings.DefaultRegistrationGroupName))
+			{
 				TShock.Log.ConsoleError("The default usergroup could not be found. This may indicate a typo in the configuration file, or that the group was renamed or deleted.");
 				throw new Exception("The default usergroup could not be found.");
-            }
+			}
+		}
+
+		/// <summary>
+		/// Asserts that the group reference can be safely assigned to the player object.
+		/// <para>If this assertion fails, and <paramref name="kick"/> is true, the player is disconnected. If <paramref name="kick"/> is false, the player will receive an error message.</para>
+		/// </summary>
+		/// <param name="player">The player in question</param>
+		/// <param name="group">The group we want to assign them</param>
+		/// <param name="kick">Whether or not failing this check disconnects the player.</param>
+		/// <returns></returns>
+		public bool AssertGroupValid(TSPlayer player, Group group, bool kick)
+		{
+			if (group == null)
+			{
+				if (kick)
+					player.Disconnect("Your account's group could not be loaded. Please contact server administrators about this.");
+				else
+					player.SendErrorMessage("Your account's group could not be loaded. Please contact server administrators about this.");
+				return false;
+			}
+
+			return true;
 		}
 
 		private void AddDefaultGroup(string name, string parent, string permissions)
