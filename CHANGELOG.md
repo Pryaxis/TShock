@@ -15,6 +15,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 ## Upcoming changes
 * Fixed SendTileRectHandler not sending tile rect updates like Pylons/Mannequins to other clients. (@Stealownz)
 * Fix some typos that have been in the repository for over a lustrum. (@Killia0)
+* Added a new `/respawn` command that lets you respawn yourself or another player. Respawning yourself requires the `tshock.respawn` permission and respawning others requires the `tshock.respawn.other` permission. The full command syntax is `/respawn [player]`. (@moisterrific)
 
 ## TShock 4.5.5
 * Changed the world autosave message so that it no longer warns of a "potential lag spike." (@hakusaro)
