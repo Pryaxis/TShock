@@ -5666,6 +5666,11 @@ namespace TShockAPI
 									
 		private static void Respawn(CommandArgs args)
 		{
+			if (!args.Player.RealPlayer)
+			{
+				args.Player.SendErrorMessage("You can't respawn the server console!");
+				return;
+			}
 			TSPlayer playerToRespawn;
 			if (args.Parameters.Count > 0)
 			{
@@ -5681,20 +5686,14 @@ namespace TShockAPI
 					args.Player.SendErrorMessage($"Could not find any player named \"{plStr}\"");
 					return;
 				}
-				else if (players.Count > 1)
+				if (players.Count > 1)
 				{
 					args.Player.SendMultipleMatchError(players.Select(p => p.Name));
 					return;
 				}
-				else
-					playerToRespawn = players[0];
+				playerToRespawn = players[0];
 			}
-			else if (!args.Player.RealPlayer)
-			{
-				args.Player.SendErrorMessage("You can't respawn the server console!");
-				return;
-			}
-			else
+			else 
 				playerToRespawn = args.Player;
 
 			if (!playerToRespawn.Dead)
@@ -5702,8 +5701,7 @@ namespace TShockAPI
 				args.Player.SendErrorMessage($"{(playerToRespawn == args.Player ? "You" : playerToRespawn.Name)} {(playerToRespawn == args.Player ? "are" : "is")} not dead.");
 				return;
 			}
-			else
-				playerToRespawn.Spawn(PlayerSpawnContext.ReviveFromDeath);
+			playerToRespawn.Spawn(PlayerSpawnContext.ReviveFromDeath);
 
 			if (playerToRespawn != args.Player)
 			{
