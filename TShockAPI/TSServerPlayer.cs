@@ -182,12 +182,12 @@ namespace TShockAPI
 
 		public void RevertTiles(Dictionary<Vector2, ITile> tiles)
 		{
-			// Update Main.Tile first so that when tile sqaure is sent it is correct
+			// Update Main.Tile first so that when tile square is sent it is correct
 			foreach (KeyValuePair<Vector2, ITile> entry in tiles)
 			{
 				Main.tile[(int)entry.Key.X, (int)entry.Key.Y] = entry.Value;
 			}
-			// Send all players updated tile sqaures
+			// Send all players updated tile squares
 			foreach (Vector2 coords in tiles.Keys)
 			{
 				All.SendTileSquare((int)coords.X, (int)coords.Y, 3);

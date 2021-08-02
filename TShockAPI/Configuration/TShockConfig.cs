@@ -160,6 +160,12 @@ namespace TShockAPI.Configuration
 		/// <summary>Disables tombstone dropping during death for all players.</summary>
 		[Description("Disables tombstone dropping during death for all players.")]
 		public bool DisableTombstones = true;
+		
+		/// <summary>
+		/// Disables Skeletron Prime Bombs from spawning, useful for preventing unwanted world destruction on for the worthy seed world.
+		/// </summary>
+		[Description("Disables Skeletron Prime Bombs from spawning, useful for preventing unwanted world destruction on for the worthy seed world.")]
+		public bool DisablePrimeBombs;
 
 		/// <summary>Forces the world time to be normal, day, or night.</summary>
 		[Description("Forces the world time to be normal, day, or night.")]

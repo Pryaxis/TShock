@@ -141,7 +141,7 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Broadcasts a message from a Terraria playerplayer, not TShock
+		/// Broadcasts a message from a Terraria player, not TShock
 		/// </summary>
 		/// <param name="ply">ply - the Terraria player index that will send the packet</param>
 		/// <param name="msg">msg - The message to send</param>
