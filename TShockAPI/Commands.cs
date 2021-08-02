@@ -599,6 +599,10 @@ namespace TShockAPI
 			{
 				HelpText = "Sends all tiles from the server to the player to resync the client with the actual world state."
 			});
+			add(new Command(Permissions.respawn, Respawn, "respawn")
+			{
+				HelpText = "Respawn yourself or another player."
+			});
 			#endregion
 
 			add(new Command(Aliases, "aliases")
@@ -1130,6 +1134,11 @@ namespace TShockAPI
 					TShock.UserAccounts.SetUserGroup(account, args.Parameters[2]);
 					TShock.Log.ConsoleInfo(args.Player.Name + " changed account " + account.Name + " to group " + args.Parameters[2] + ".");
 					args.Player.SendSuccessMessage("Account " + account.Name + " has been changed to group " + args.Parameters[2] + "!");
+					
+					//send message to player with matching account name
+					var player = TShock.Players.FirstOrDefault(p => p != null && p.Account?.Name == account.Name);
+					if (player != null && !args.Silent)
+						player.SendSuccessMessage($"{args.Player.Name} has changed your group to {args.Parameters[2]}");
 				}
 				catch (GroupNotExistsException)
 				{
@@ -5658,6 +5667,55 @@ namespace TShockAPI
 				args.Player.SendSuccessMessage(string.Format("You just killed {0}!", plr.Name));
 				plr.SendErrorMessage("{0} just killed you!", args.Player.Name);
 			}
+		}
+									
+		private static void Respawn(CommandArgs args)
+		{
+			if (!args.Player.RealPlayer)
+			{
+				args.Player.SendErrorMessage("You can't respawn the server console!");
+				return;
+			}
+			TSPlayer playerToRespawn;
+			if (args.Parameters.Count > 0)
+			{
+				if (!args.Player.HasPermission(Permissions.respawnother))
+				{
+					args.Player.SendErrorMessage("You do not have permission to respawn another player.");
+					return;
+				}
+				string plStr = String.Join(" ", args.Parameters);
+				var players = TSPlayer.FindByNameOrID(plStr);
+				if (players.Count == 0)
+				{
+					args.Player.SendErrorMessage($"Could not find any player named \"{plStr}\"");
+					return;
+				}
+				if (players.Count > 1)
+				{
+					args.Player.SendMultipleMatchError(players.Select(p => p.Name));
+					return;
+				}
+				playerToRespawn = players[0];
+			}
+			else 
+				playerToRespawn = args.Player;
+
+			if (!playerToRespawn.Dead)
+			{
+				args.Player.SendErrorMessage($"{(playerToRespawn == args.Player ? "You" : playerToRespawn.Name)} {(playerToRespawn == args.Player ? "are" : "is")} not dead.");
+				return;
+			}
+			playerToRespawn.Spawn(PlayerSpawnContext.ReviveFromDeath);
+
+			if (playerToRespawn != args.Player)
+			{
+				args.Player.SendSuccessMessage($"You have respawned {playerToRespawn.Name}");
+				if (!args.Silent)
+					playerToRespawn.SendSuccessMessage($"{args.Player.Name} has respawned you.");
+			}
+			else
+				playerToRespawn.SendSuccessMessage("You have respawned yourself.");
 		}
 
 		private static void Butcher(CommandArgs args)
