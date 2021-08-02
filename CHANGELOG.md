@@ -20,6 +20,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Added more usage examples for the `ban` command under `ban help examples` to explain how users can ban: offline players by account, offline players by IP, and online players by player index - useful for banning hard to type character names. (@moisterrific)
 * Changed `/login` and `/register` to provide login help depending on if UUID login is enabled or disabled, and whether or not a player can login via any username or not. In addition, the message parameters will now be differentiated by colour instead of `<>` (@moisterrific, @hakusaro)
 * Added a new `DisablePrimeBombs` config option (`false` by default). Highly recommended to set this to `true` in order to prevent griefing on servers doing a `for the worthy` play-through, since the prime bombs on this seed can destroy most tiles and bypass region protection. (@moisterrific)
+* Added a new `/respawn` command that lets you respawn yourself or another player. Respawning yourself requires the `tshock.respawn` permission and respawning others requires the `tshock.respawn.other` permission. The full command syntax is `/respawn [player]`. (@moisterrific)
 * Added a notification message and silent command support for permanently changing a target player's user group. Now players who received a group change will be notified of their new group if they are currently online. (@moisterrific, @QuiCM)
 
 ## TShock 4.5.5

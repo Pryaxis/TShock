@@ -436,6 +436,12 @@ namespace TShockAPI
 
 		[Description("User can kill others.")]
 		public static readonly string kill = "tshock.kill";
+		
+		[Description("Player can respawn themselves.")]
+		public static readonly string respawn = "tshock.respawn";
+
+		[Description("Player can respawn others.")]
+		public static readonly string respawnother = "tshock.respawn.other";
 
 		[Description("Allows you to bypass the max slots for up to 5 slots above your max.")]
 		public static readonly string reservedslot = "tshock.reservedslot";
