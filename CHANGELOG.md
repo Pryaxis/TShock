@@ -16,6 +16,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Fixed SendTileRectHandler not sending tile rect updates like Pylons/Mannequins to other clients. (@Stealownz)
 * Fix some typos that have been in the repository for over a lustrum. (@Killia0)
 * Changed `/login` and `/register` to provide login help depending on if UUID login is enabled or disabled, and whether or not a player can login via any username or not. In addition, the message parameters will now be differentiated by colour instead of `<>` (@moisterrific, @hakusaro)
+* Added a new `DisablePrimeBombs` config option (`false` by default). Highly recommended to set this to `true` in order to prevent griefing on servers doing a `for the worthy` play-through, since the prime bombs on this seed can destroy most tiles and bypass region protection. (@moisterrific)
 
 ## TShock 4.5.5
 * Changed the world autosave message so that it no longer warns of a "potential lag spike." (@hakusaro)
