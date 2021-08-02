@@ -807,10 +807,15 @@ namespace TShockAPI
 			}
 			else
 			{
-				args.Player.SendErrorMessage("Syntax: {0}login - Logs in using your UUID and character name", Specifier);
-				args.Player.SendErrorMessage("        {0}login <password> - Logs in using your password and character name", Specifier);
-				args.Player.SendErrorMessage("        {0}login <username> <password> - Logs in using your username and password", Specifier);
-				args.Player.SendErrorMessage("If you forgot your password, there is no way to recover it.");
+				if (!TShock.Config.Settings.DisableUUIDLogin)
+					args.Player.SendMessage($"{Specifier}login - Logs in using your UUID and character name.", Color.White);
+
+				if (TShock.Config.Settings.AllowLoginAnyUsername)
+					args.Player.SendMessage($"{Specifier}login {"username".Color(Utils.GreenHighlight)} {"password".Color(Utils.BoldHighlight)} - Logs in using your username and password.", Color.White);
+				else
+					args.Player.SendMessage($"{Specifier}login {"password".Color(Utils.BoldHighlight)} - Logs in using your password and character name.", Color.White);
+
+				args.Player.SendWarningMessage("If you forgot your password, there is no way to recover it.");
 				return;
 			}
 			try
@@ -991,6 +996,15 @@ namespace TShockAPI
 				{
 					args.Player.SendSuccessMessage("Account \"{0}\" has been registered.", account.Name);
 					args.Player.SendSuccessMessage("Your password is {0}.", echoPassword);
+					
+					if (!TShock.Config.Settings.DisableUUIDLogin)
+						args.Player.SendMessage($"Type {Specifier}login to sign in to your account using your UUID.", Color.White);
+
+					if (TShock.Config.Settings.AllowLoginAnyUsername)
+						args.Player.SendMessage($"Type {Specifier}login \"{account.Name.Color(Utils.GreenHighlight)}\" {echoPassword.Color(Utils.BoldHighlight)} to sign in to your account.", Color.White);
+					else
+						args.Player.SendMessage($"Type {Specifier}login {echoPassword.Color(Utils.BoldHighlight)} to sign in to your account.", Color.White);
+					
 					TShock.UserAccounts.AddUserAccount(account);
 					TShock.Log.ConsoleInfo("{0} registered an account: \"{1}\".", args.Player.Name, account.Name);
 				}
@@ -1303,7 +1317,7 @@ namespace TShockAPI
 				args.Player.SendMessage($"ban {"list".Color(Utils.RedHighlight)}", Color.White);
 				args.Player.SendMessage($"ban {"details".Color(Utils.RedHighlight)} <Ban ID>", Color.White);
 				args.Player.SendMessage($"Quick usage: {"ban add".Color(Utils.BoldHighlight)} {args.Player.Name.Color(Utils.RedHighlight)} \"Griefing\"", Color.White);
-				args.Player.SendMessage($"For more info, use {"ban help".Color(Utils.BoldHighlight)} {"command".Color(Utils.RedHighlight)}", Color.White);
+				args.Player.SendMessage($"For more info, use {"ban help".Color(Utils.BoldHighlight)} {"command".Color(Utils.RedHighlight)} or {"ban help".Color(Utils.BoldHighlight)} {"examples".Color(Utils.RedHighlight)}", Color.White);
 			}
 
 			void MoreHelp(string cmd)
@@ -1327,7 +1341,7 @@ namespace TShockAPI
 						args.Player.SendMessage("", Color.White);
 						args.Player.SendMessage("Ban Del Syntax", Color.White);
 						args.Player.SendMessage($"{"ban del".Color(Utils.BoldHighlight)} <{"Ticket Number".Color(Utils.RedHighlight)}>", Color.White);
-						args.Player.SendMessage($"- {"Ticket Number".Color(Utils.RedHighlight)}s are provided when you add a ban, and can also be viewed with the {"ban list".Color(Utils.BoldHighlight)} command.", Color.White);
+						args.Player.SendMessage($"- {"Ticket Numbers".Color(Utils.RedHighlight)} are provided when you add a ban, and can also be viewed with the {"ban list".Color(Utils.BoldHighlight)} command.", Color.White);
 						args.Player.SendMessage($"Example usage: {"ban del".Color(Utils.BoldHighlight)} {"12345".Color(Utils.RedHighlight)}", Color.White);
 						break;
 
@@ -1343,14 +1357,14 @@ namespace TShockAPI
 						args.Player.SendMessage("", Color.White);
 						args.Player.SendMessage("Ban Details Syntax", Color.White);
 						args.Player.SendMessage($"{"ban details".Color(Utils.BoldHighlight)} <{"Ticket Number".Color(Utils.RedHighlight)}>", Color.White);
-						args.Player.SendMessage($"- {"Ticket Number".Color(Utils.RedHighlight)}s are provided when you add a ban, and can be found with the {"ban list".Color(Utils.BoldHighlight)} command.", Color.White);
+						args.Player.SendMessage($"- {"Ticket Numbers".Color(Utils.RedHighlight)} are provided when you add a ban, and can be found with the {"ban list".Color(Utils.BoldHighlight)} command.", Color.White);
 						args.Player.SendMessage($"Example usage: {"ban details".Color(Utils.BoldHighlight)} {"12345".Color(Utils.RedHighlight)}", Color.White);
 						break;
 
 					case "identifiers":
 						if (!PaginationTools.TryParsePageNumber(args.Parameters, 2, args.Player, out int pageNumber))
 						{
-							args.Player.SendMessage($"Invalid page number. Page number should be numeric.", Color.White);
+							args.Player.SendMessage($"Invalid page number. Page number must be numeric.", Color.White);
 							return;
 						}
 
@@ -1368,10 +1382,23 @@ namespace TShockAPI
 								LineTextColor = Color.White
 							});
 						break;
+					
+					case "examples":
+						args.Player.SendMessage("", Color.White);
+						args.Player.SendMessage("Ban Usage Examples", Color.White);
+						args.Player.SendMessage("- Ban an offline player by account name", Color.White);
+						args.Player.SendMessage($"   {Specifier}{"ban add".Color(Utils.BoldHighlight)} \"{"acc:".Color(Utils.RedHighlight)}{args.Player.Account.Color(Utils.RedHighlight)}\" {"\"Multiple accounts are not allowed\"".Color(Utils.BoldHighlight)} (Permanently bans this account name)", Color.White);
+						args.Player.SendMessage("- Ban an offline player by IP address", Color.White);
+						args.Player.SendMessage($"   {Specifier}{"ai".Color(Utils.BoldHighlight)} \"{args.Player.Account.Color(Utils.RedHighlight)}\" (Find the IP associated with the offline target's account)", Color.White);
+						args.Player.SendMessage($"   {Specifier}{"ban add".Color(Utils.BoldHighlight)} {"ip:".Color(Utils.RedHighlight)}{args.Player.IP.Color(Utils.RedHighlight)} {"\"Griefing\"".Color(Utils.BoldHighlight)} {"-e".Color(Utils.GreenHighlight)} (Permanently bans this IP address)", Color.White);
+						args.Player.SendMessage($"- Ban an online player by index (Useful for hard to type names)", Color.White);
+						args.Player.SendMessage($"   {Specifier}{"who".Color(Utils.BoldHighlight)} {"-i".Color(Utils.GreenHighlight)} (Find the player index for the target)", Color.White);
+						args.Player.SendMessage($"   {Specifier}{"ban add".Color(Utils.BoldHighlight)} {"tsi:".Color(Utils.RedHighlight)}{args.Player.Index.Color(Utils.RedHighlight)} {"\"Trolling\"".Color(Utils.BoldHighlight)} {"-a -u -ip".Color(Utils.GreenHighlight)} (Permanently bans the online player by Account, UUID, and IP)", Color.White);
+						// Ban by account ID when?
+						break;
 
 					default:
-						args.Player.SendMessage($"Unknown ban command. Try {"add".Color(Utils.RedHighlight)}, {"del".Color(Utils.RedHighlight)}, {"list".Color(Utils.RedHighlight)}, or {"details".Color(Utils.RedHighlight)}.", Color.White);
-						break;
+						args.Player.SendMessage($"Unknown ban command. Try {"ban help".Color(Utils.BoldHighlight)} {"add".Color(Utils.RedHighlight)}, {"del".Color(Utils.RedHighlight)}, {"list".Color(Utils.RedHighlight)}, {"details".Color(Utils.RedHighlight)}, {"identifiers".Color(Utils.RedHighlight)}, or {"examples".Color(Utils.RedHighlight)}.", Color.White);						break;
 				}
 			}
 

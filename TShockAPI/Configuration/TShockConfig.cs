@@ -133,6 +133,10 @@ namespace TShockAPI.Configuration
 		[Description("Prevents softcore players from connecting.")]
 		public bool MediumcoreOnly;
 
+		/// <summary>Prevents non-softcore players from connecting.</summary>
+		[Description("Prevents non-softcore players from connecting.")]
+		public bool SoftcoreOnly;
+
 		/// <summary>Disables any placing, or removal of blocks.</summary>
 		[Description("Disables any placing, or removal of blocks.")]
 		public bool DisableBuild;
@@ -156,6 +160,12 @@ namespace TShockAPI.Configuration
 		/// <summary>Disables tombstone dropping during death for all players.</summary>
 		[Description("Disables tombstone dropping during death for all players.")]
 		public bool DisableTombstones = true;
+		
+		/// <summary>
+		/// Disables Skeletron Prime Bombs from spawning, useful for preventing unwanted world destruction on for the worthy seed world.
+		/// </summary>
+		[Description("Disables Skeletron Prime Bombs from spawning, useful for preventing unwanted world destruction on for the worthy seed world.")]
+		public bool DisablePrimeBombs;
 
 		/// <summary>Forces the world time to be normal, day, or night.</summary>
 		[Description("Forces the world time to be normal, day, or night.")]
