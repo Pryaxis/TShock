@@ -1396,7 +1396,7 @@ namespace TShockAPI
 						args.Player.SendMessage("", Color.White);
 						args.Player.SendMessage("Ban Usage Examples", Color.White);
 						args.Player.SendMessage("- Ban an offline player by account name", Color.White);
-						args.Player.SendMessage($"   {Specifier}{"ban add".Color(Utils.BoldHighlight)} \"{"acc:".Color(Utils.RedHighlight)}{args.Player.Account.Color(Utils.RedHighlight)}\" {"\"Multiple accounts are not allowed\"".Color(Utils.BoldHighlight)} (Permanently bans this account name)", Color.White);
+						args.Player.SendMessage($"   {Specifier}{"ban add".Color(Utils.BoldHighlight)} \"{"acc:".Color(Utils.RedHighlight)}{args.Player.Account.Color(Utils.RedHighlight)}\" {"\"Multiple accounts are not allowed\"".Color(Utils.BoldHighlight)} {"-e".Color(Utils.GreenHighlight)} (Permanently bans this account name)", Color.White);
 						args.Player.SendMessage("- Ban an offline player by IP address", Color.White);
 						args.Player.SendMessage($"   {Specifier}{"ai".Color(Utils.BoldHighlight)} \"{args.Player.Account.Color(Utils.RedHighlight)}\" (Find the IP associated with the offline target's account)", Color.White);
 						args.Player.SendMessage($"   {Specifier}{"ban add".Color(Utils.BoldHighlight)} {"ip:".Color(Utils.RedHighlight)}{args.Player.IP.Color(Utils.RedHighlight)} {"\"Griefing\"".Color(Utils.BoldHighlight)} {"-e".Color(Utils.GreenHighlight)} (Permanently bans this IP address)", Color.White);
