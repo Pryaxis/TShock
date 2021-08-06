@@ -5442,7 +5442,10 @@ namespace TShockAPI
 		{
 			if (args.Parameters.Count != 2)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}annoy <player> <seconds to annoy>", Specifier);
+				args.Player.SendMessage("Annoy Syntax", Color.White);
+				args.Player.SendMessage($"{"annoy".Color(Utils.BoldHighlight)} <{"player".Color(Utils.RedHighlight)}> <{"seconds".Color(Utils.PinkHighlight)}>", Color.White);
+				args.Player.SendMessage($"Example usage: {"annoy".Color(Utils.BoldHighlight)} <{args.Player.Name.Color(Utils.RedHighlight)}> <{"10".Color(Utils.PinkHighlight)}>", Color.White);
+				args.Player.SendMessage($"You can use {SilentSpecifier.Color(Utils.GreenHighlight)} instead of {Specifier.Color(Utils.RedHighlight)} to annoy a player silently.", Color.White);
 				return;
 			}
 			int annoy = 5;
@@ -5450,14 +5453,16 @@ namespace TShockAPI
 
 			var players = TSPlayer.FindByNameOrID(args.Parameters[0]);
 			if (players.Count == 0)
-				args.Player.SendErrorMessage("Invalid player!");
+				args.Player.SendErrorMessage($"Could not find any player named \"{args.Parameters[0]}\"");
 			else if (players.Count > 1)
 				args.Player.SendMultipleMatchError(players.Select(p => p.Name));
 			else
 			{
 				var ply = players[0];
-				args.Player.SendSuccessMessage("Annoying " + ply.Name + " for " + annoy + " seconds.");
-				(new Thread(ply.Whoopie)).Start(annoy);
+				args.Player.SendSuccessMessage($"Annoying {ply.Name} for {annoy} seconds.");
+				if (!args.Silent)
+					ply.SendMessage("You are now being annoyed.", Color.LightGoldenrodYellow);
+				new Thread(ply.Whoopie).Start(annoy);
 			}
 		}
 

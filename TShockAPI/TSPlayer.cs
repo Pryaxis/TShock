@@ -1715,7 +1715,6 @@ namespace TShockAPI
 			var time2 = (int)time;
 			var launch = DateTime.UtcNow;
 			var startname = Name;
-			SendInfoMessage("You are now being annoyed.");
 			while ((DateTime.UtcNow - launch).TotalSeconds < time2 && startname == Name)
 			{
 				SendData(PacketTypes.NpcSpecial, number: Index, number2: 2f);
