@@ -582,11 +582,11 @@ namespace TShockAPI
 			{
 				HelpText = "Teleports you to a warp point or manages warps."
 			});
-			add(new Command(Permissions.whisper, Whisper, "whisper", "w", "tell")
+			add(new Command(Permissions.whisper, Whisper, "whisper", "w", "tell", "pm", "dm")
 			{
 				HelpText = "Sends a PM to a player."
 			});
-			add(new Command(Permissions.whisper, Wallow, "wallow")
+			add(new Command(Permissions.whisper, Wallow, "wallow", "wa")
 			{
 				AllowServer = false,
 				HelpText = "Toggles to either ignore or recieve whispers from other players."
@@ -5364,13 +5364,15 @@ namespace TShockAPI
 		{
 			if (args.Parameters.Count < 2)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper usage: /whisper <player> <text>");
+				args.Player.SendMessage("Whisper Syntax", Color.White);
+				args.Player.SendMessage($"{"whisper".Color(Utils.BoldHighlight)} <{"player".Color(Utils.RedHighlight)}> <{"message".Color(Utils.PinkHighlight)}>", Color.White);
+				args.Player.SendMessage($"Example usage: {"w".Color(Utils.BoldHighlight)} {args.Player.Name.Color(Utils.RedHighlight)} {"We're no strangers to love, you know the rules, and so do I.".Color(Utils.PinkHighlight)}", Color.White);
 				return;
 			}
 			var players = TSPlayer.FindByNameOrID(args.Parameters[0]);
 			if (players.Count == 0)
 			{
-				args.Player.SendErrorMessage("Invalid player!");
+				args.Player.SendErrorMessage($"Could not find any player named \"{args.Parameters[0]}\"");
 			}
 			else if (players.Count > 1)
 			{
@@ -5383,14 +5385,19 @@ namespace TShockAPI
 			else
 			{
 				var plr = players[0];
+				if (plr == args.Player)
+				{
+					args.Player.SendErrorMessage("You cannot whisper to yourself.");
+					return;
+				}
 				if (!plr.AcceptingWhispers)
 				{
-					args.Player.SendErrorMessage("This player is not accepting whispers.");
+					args.Player.SendErrorMessage($"{plr.Name} is not accepting whispers.");
 					return;
 				}
 				var msg = string.Join(" ", args.Parameters.ToArray(), 1, args.Parameters.Count - 1);
-				plr.SendMessage(String.Format("<From {0}> {1}", args.Player.Name, msg), Color.MediumPurple);
-				args.Player.SendMessage(String.Format("<To {0}> {1}", plr.Name, msg), Color.MediumPurple);
+				plr.SendMessage($"<From {args.Player.Name}> {msg}", Color.MediumPurple);
+				args.Player.SendMessage($"<To {plr.Name}> {msg}", Color.MediumPurple);
 				plr.LastWhisper = args.Player;
 				args.Player.LastWhisper = plr;
 			}
@@ -5400,7 +5407,7 @@ namespace TShockAPI
 		{
 			args.Player.AcceptingWhispers = !args.Player.AcceptingWhispers;
 			args.Player.SendSuccessMessage($"You {(args.Player.AcceptingWhispers ? "may now" : "will no longer")} receive whispers from other players.");
-			args.Player.SendSuccessMessage($"You can toggle this with the '{Specifier}wallow' command.");
+			args.Player.SendMessage($"You can use {Specifier.Color(Utils.GreenHighlight)}{"wa".Color(Utils.GreenHighlight)} to toggle this setting.", Color.White);
 		}
 
 		private static void Reply(CommandArgs args)
@@ -5413,20 +5420,21 @@ namespace TShockAPI
 			{
 				if (!args.Player.LastWhisper.AcceptingWhispers)
 				{
-					args.Player.SendErrorMessage("This player is not accepting whispers.");
+					args.Player.SendErrorMessage($"{args.Player.LastWhisper.Name} is not accepting whispers.");
 					return;
 				}
 				var msg = string.Join(" ", args.Parameters);
-				args.Player.LastWhisper.SendMessage(String.Format("<From {0}> {1}", args.Player.Name, msg), Color.MediumPurple);
-				args.Player.SendMessage(String.Format("<To {0}> {1}", args.Player.LastWhisper.Name, msg), Color.MediumPurple);
+				args.Player.LastWhisper.SendMessage($"<From {args.Player.Name}> {msg}", Color.MediumPurple);
+				args.Player.SendMessage($"<To {args.Player.LastWhisper.Name}> {msg}", Color.MediumPurple);
 			}
 			else if (args.Player.LastWhisper != null)
 			{
-				args.Player.SendErrorMessage("The player you're attempting to reply to is no longer online.");
+				args.Player.SendErrorMessage($"{args.Player.LastWhisper.Name} is offline and cannot receive your reply.");
 			}
 			else
 			{
-				args.Player.SendErrorMessage("You haven't previously received any whispers. Please use {0}whisper to whisper to other people.", Specifier);
+				args.Player.SendErrorMessage("You haven't previously received any whispers.");
+				args.Player.SendMessage($"You can use {Specifier.Color(Utils.GreenHighlight)}{"w".Color(Utils.GreenHighlight)} to whisper to other players.", Color.White);
 			}
 		}
 
