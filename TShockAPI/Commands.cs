@@ -5176,16 +5176,24 @@ namespace TShockAPI
 			}
 			if (invalidUsage)
 			{
-				args.Player.SendErrorMessage("Invalid usage, proper usage: {0}who [-i] [pagenumber]", Specifier);
+				args.Player.SendMessage($"List Online Players Syntax", Color.White);
+				args.Player.SendMessage($"{"playing".Color(Utils.BoldHighlight)} {"[-i]".Color(Utils.RedHighlight)} {"[page]".Color(Utils.GreenHighlight)}", Color.White);
+				args.Player.SendMessage($"Command aliases: {"playing".Color(Utils.GreenHighlight)}, {"online".Color(Utils.GreenHighlight)}, {"who".Color(Utils.GreenHighlight)}", Color.White);
+				args.Player.SendMessage($"Example usage: {"who".Color(Utils.BoldHighlight)} {"-i".Color(Utils.RedHighlight)}", Color.White);
 				return;
 			}
 			if (displayIdsRequested && !args.Player.HasPermission(Permissions.seeids))
 			{
-				args.Player.SendErrorMessage("You do not have permission to list player ids.");
+				args.Player.SendErrorMessage("You do not have permission to see player IDs.");
 				return;
 			}
 
-			args.Player.SendSuccessMessage("Online Players ({0}/{1})", TShock.Utils.GetActivePlayerCount(), TShock.Config.Settings.MaxSlots);
+			if (TShock.Utils.GetActivePlayerCount() == 0)
+			{
+				args.Player.SendMessage("There are currently no players online.", Color.White);
+				return;
+			}
+			args.Player.SendMessage($"Online Players ({TShock.Utils.GetActivePlayerCount().Color(Utils.GreenHighlight)}/{TShock.Config.Settings.MaxSlots})", Color.White);
 
 			var players = new List<string>();
 
@@ -5194,13 +5202,9 @@ namespace TShockAPI
 				if (ply != null && ply.Active)
 				{
 					if (displayIdsRequested)
-					{
-						players.Add(String.Format("{0} (Index: {1}{2})", ply.Name, ply.Index, ply.Account != null ? ", Account ID: " + ply.Account.ID : ""));
-					}
+						players.Add($"{ply.Name} (Index: {ply.Index}{(ply.Account != null ? ", Account ID: " + ply.Account.ID : "")})");
 					else
-					{
 						players.Add(ply.Name);
-					}
 				}
 			}
 
@@ -5209,7 +5213,7 @@ namespace TShockAPI
 				new PaginationTools.Settings
 				{
 					IncludeHeader = false,
-					FooterFormat = string.Format("Type {0}who {1}{{0}} for more.", Specifier, displayIdsRequested ? "-i " : string.Empty)
+					FooterFormat = $"Type {Specifier}who {(displayIdsRequested ? "-i" : string.Empty)}{Specifier} for more."
 				}
 			);
 		}
