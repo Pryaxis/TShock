@@ -5148,7 +5148,7 @@ namespace TShockAPI
 
 		private static void GetVersion(CommandArgs args)
 		{
-			args.Player.SendInfoMessage("TShock: {0} ({1}).", TShock.VersionNum, TShock.VersionCodename);
+			args.Player.SendMessage($"TShock: {TShock.VersionNum.Color(Utils.BoldHighlight)} {TShock.VersionCodename.Color(Utils.RedHighlight)}.", Color.White);
 		}
 
 		private static void ListConnectedPlayers(CommandArgs args)
