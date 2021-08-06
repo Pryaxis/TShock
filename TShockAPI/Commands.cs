@@ -5470,12 +5470,15 @@ namespace TShockAPI
 		{
 			if (args.Parameters.Count != 1)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}rocket <player>", Specifier);
+				args.Player.SendMessage("Rocket Syntax", Color.White);
+				args.Player.SendMessage($"{"rocket".Color(Utils.BoldHighlight)} <{"player".Color(Utils.RedHighlight)}>", Color.White);
+				args.Player.SendMessage($"Example usage: {"rocket".Color(Utils.BoldHighlight)} {args.Player.Name.Color(Utils.RedHighlight)}", Color.White);
+				args.Player.SendMessage($"You can use {SilentSpecifier.Color(Utils.GreenHighlight)} instead of {Specifier.Color(Utils.RedHighlight)} to rocket a player silently.", Color.White);
 				return;
 			}
 			var players = TSPlayer.FindByNameOrID(args.Parameters[0]);
 			if (players.Count == 0)
-				args.Player.SendErrorMessage("Invalid player!");
+				args.Player.SendErrorMessage($"Could not find any player named \"{args.Parameters[0]}\"");
 			else if (players.Count > 1)
 				args.Player.SendMultipleMatchError(players.Select(p => p.Name));
 			else
@@ -5486,11 +5489,24 @@ namespace TShockAPI
 				{
 					ply.TPlayer.velocity.Y = -50;
 					TSPlayer.All.SendData(PacketTypes.PlayerUpdate, "", ply.Index);
-					args.Player.SendSuccessMessage("Rocketed {0}.", ply.Name);
+
+					if (!args.Silent)
+					{
+						TSPlayer.All.SendInfoMessage($"{args.Player.Name} has launched {(ply == args.Player ? (args.Player.TPlayer.Male ? "himself" : "herself") : ply.Name)} into space.");
+						return;
+					}
+
+					if (ply == args.Player)
+						args.Player.SendSuccessMessage("You have launched yourself into space.");
+					else
+						args.Player.SendSuccessMessage($"You have launched {ply.Name} into space.");
 				}
 				else
 				{
-					args.Player.SendErrorMessage("Failed to rocket player: Not logged in or not SSC mode.");
+					if (!Main.ServerSideCharacter)
+						args.Player.SendErrorMessage("SSC must be enabled to use this command.");
+					else
+						args.Player.SendErrorMessage($"Unable to rocket {ply.Name} because {(ply.TPlayer.Male ? "he" : "she")} is not logged in.");
 				}
 			}
 		}
