@@ -5307,14 +5307,17 @@ namespace TShockAPI
 		{
 			if (args.Parameters.Count < 1)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}mute <player> [reason]", Specifier);
+				args.Player.SendMessage("Mute Syntax", Color.White);
+				args.Player.SendMessage($"{"mute".Color(Utils.BoldHighlight)} <{"player".Color(Utils.RedHighlight)}> [{"reason".Color(Utils.GreenHighlight)}]", Color.White);
+				args.Player.SendMessage($"Example usage: {"mute".Color(Utils.BoldHighlight)} \"{args.Player.Name.Color(Utils.RedHighlight)}\" \"{"No swearing on my Christian server".Color(Utils.GreenHighlight)}\"", Color.White);
+				args.Player.SendMessage($"To mute a player without broadcasting to chat, use the command with {SilentSpecifier.Color(Utils.GreenHighlight)} instead of {Specifier.Color(Utils.RedHighlight)}", Color.White);
 				return;
 			}
 
 			var players = TSPlayer.FindByNameOrID(args.Parameters[0]);
 			if (players.Count == 0)
 			{
-				args.Player.SendErrorMessage("Invalid player!");
+				args.Player.SendErrorMessage($"Could not find any players named \"{args.Parameters[0]}\"");
 			}
 			else if (players.Count > 1)
 			{
@@ -5322,13 +5325,16 @@ namespace TShockAPI
 			}
 			else if (players[0].HasPermission(Permissions.mute))
 			{
-				args.Player.SendErrorMessage("You cannot mute this player.");
+				args.Player.SendErrorMessage($"You do not have permission to mute {players[0].Name}");
 			}
 			else if (players[0].mute)
 			{
 				var plr = players[0];
 				plr.mute = false;
-				TSPlayer.All.SendInfoMessage("{0} has been unmuted by {1}.", plr.Name, args.Player.Name);
+				if (args.Silent)
+					args.Player.SendSuccessMessage($"You have unmuted {plr.Name}.");
+				else
+					TSPlayer.All.SendInfoMessage($"{args.Player.Name} has unmuted {plr.Name}.");
 			}
 			else
 			{
@@ -5337,7 +5343,10 @@ namespace TShockAPI
 					reason = String.Join(" ", args.Parameters.ToArray(), 1, args.Parameters.Count - 1);
 				var plr = players[0];
 				plr.mute = true;
-				TSPlayer.All.SendInfoMessage("{0} has been muted by {1} for {2}.", plr.Name, args.Player.Name, reason);
+				if (args.Silent)
+					args.Player.SendSuccessMessage($"You have muted {plr.Name} for {reason}");
+				else
+					TSPlayer.All.SendInfoMessage($"{args.Player.Name} has muted {plr.Name} for {reason}.");
 			}
 		}
 
