@@ -5741,28 +5741,36 @@ namespace TShockAPI
 
 		private static void Kill(CommandArgs args)
 		{
+			// To-Do: separate kill self and kill other player into two permissions
+			var user = args.Player;
 			if (args.Parameters.Count < 1)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}kill <player>", Specifier);
+				user.SendMessage("Kill syntax and example", Color.White);
+				user.SendMessage($"{"kill".Color(Utils.BoldHighlight)} <{"player".Color(Utils.RedHighlight)}>", Color.White);
+				user.SendMessage($"Example usage: {"kill".Color(Utils.BoldHighlight)} {user.Name.Color(Utils.RedHighlight)}", Color.White);
+				user.SendMessage($"You can use {SilentSpecifier.Color(Utils.GreenHighlight)} instead of {Specifier.Color(Utils.RedHighlight)} to execute this command silently.", Color.White);
 				return;
 			}
 
-			string plStr = String.Join(" ", args.Parameters);
-			var players = TSPlayer.FindByNameOrID(plStr);
+			var players = TSPlayer.FindByNameOrID(String.Join(" ", args.Parameters));
+
 			if (players.Count == 0)
-			{
-				args.Player.SendErrorMessage("Invalid player!");
-			}
+				user.SendErrorMessage($"Could not find any player named \"{args.Parameters}\".");
 			else if (players.Count > 1)
-			{
-				args.Player.SendMultipleMatchError(players.Select(p => p.Name));
-			}
+				user.SendMultipleMatchError(players.Select(p => p.Name));
 			else
 			{
-				var plr = players[0];
-				plr.KillPlayer();
-				args.Player.SendSuccessMessage(string.Format("You just killed {0}!", plr.Name));
-				plr.SendErrorMessage("{0} just killed you!", args.Player.Name);
+				var target = players[0];
+
+				if (target.Dead)
+				{
+					user.SendErrorMessage($"{(target == user ? "You" : target.Name)} {(target == user ? "are" : "is")} already dead!");
+					return;
+				}
+				target.KillPlayer();
+				user.SendSuccessMessage($"You just killed {(target == user ? "yourself" : target.Name)}!");
+				if (!args.Silent && target != user)
+					target.SendErrorMessage($"{user.Name} just killed you!");
 			}
 		}
 									
