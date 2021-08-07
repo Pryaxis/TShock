@@ -5636,18 +5636,25 @@ namespace TShockAPI
 
 		private static void Clear(CommandArgs args)
 		{
+			var user = args.Player;
+			var everyone = TSPlayer.All;
+			int radius = 50;
+
 			if (args.Parameters.Count != 1 && args.Parameters.Count != 2)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}clear <item/npc/projectile> [radius]", Specifier);
+				user.SendMessage("Clear Syntax", Color.White);
+				user.SendMessage($"{"clear".Color(Utils.BoldHighlight)} <{"item".Color(Utils.GreenHighlight)}|{"npc".Color(Utils.RedHighlight)}|{"projectile".Color(Utils.YellowHighlight)}> [{"radius".Color(Utils.PinkHighlight)}]", Color.White);
+				user.SendMessage($"Example usage: {"clear".Color(Utils.BoldHighlight)} {"i".Color(Utils.RedHighlight)} {"10000".Color(Utils.GreenHighlight)}", Color.White); user.SendMessage($"Example usage: {"clear".Color(Utils.BoldHighlight)} {"item".Color(Utils.RedHighlight)} {"10000".Color(Utils.GreenHighlight)}", Color.White);
+				user.SendMessage($"If you do not specify a radius, it will use a default radius of {radius} around your character.", Color.White);
+				user.SendMessage($"You can use {SilentSpecifier.Color(Utils.GreenHighlight)} instead of {Specifier.Color(Utils.RedHighlight)} to execute this command silently.", Color.White);
 				return;
 			}
 
-			int radius = 50;
 			if (args.Parameters.Count == 2)
 			{
 				if (!int.TryParse(args.Parameters[1], out radius) || radius <= 0)
 				{
-					args.Player.SendErrorMessage("Invalid radius.");
+					user.SendErrorMessage($"\"{args.Parameters[1]}\" is not a valid radius.");
 					return;
 				}
 			}
@@ -5656,66 +5663,78 @@ namespace TShockAPI
 			{
 				case "item":
 				case "items":
+				case "i":
 					{
 						int cleared = 0;
 						for (int i = 0; i < Main.maxItems; i++)
 						{
-							float dX = Main.item[i].position.X - args.Player.X;
-							float dY = Main.item[i].position.Y - args.Player.Y;
+							float dX = Main.item[i].position.X - user.X;
+							float dY = Main.item[i].position.Y - user.Y;
 
 							if (Main.item[i].active && dX * dX + dY * dY <= radius * radius * 256f)
 							{
 								Main.item[i].active = false;
-								TSPlayer.All.SendData(PacketTypes.ItemDrop, "", i);
+								everyone.SendData(PacketTypes.ItemDrop, "", i);
 								cleared++;
 							}
 						}
-						args.Player.SendSuccessMessage("Deleted {0} items within a radius of {1}.", cleared, radius);
+						if (args.Silent)
+							user.SendSuccessMessage($"You deleted {cleared} item{(cleared > 1 ? "s": "")} within a radius of {radius}.");
+						else
+							everyone.SendInfoMessage($"{user.Name} deleted {cleared} item{(cleared > 1 ? "s" : "")} within a radius of {radius}.");
 					}
 					break;
 				case "npc":
 				case "npcs":
+				case "n":
 					{
 						int cleared = 0;
 						for (int i = 0; i < Main.maxNPCs; i++)
 						{
-							float dX = Main.npc[i].position.X - args.Player.X;
-							float dY = Main.npc[i].position.Y - args.Player.Y;
+							float dX = Main.npc[i].position.X - user.X;
+							float dY = Main.npc[i].position.Y - user.Y;
 
 							if (Main.npc[i].active && dX * dX + dY * dY <= radius * radius * 256f)
 							{
 								Main.npc[i].active = false;
 								Main.npc[i].type = 0;
-								TSPlayer.All.SendData(PacketTypes.NpcUpdate, "", i);
+								everyone.SendData(PacketTypes.NpcUpdate, "", i);
 								cleared++;
 							}
 						}
-						args.Player.SendSuccessMessage("Deleted {0} NPCs within a radius of {1}.", cleared, radius);
+						if (args.Silent)
+							user.SendSuccessMessage($"You deleted {cleared} NPC{(cleared > 1 ? "s" : "")} within a radius of {radius}.");
+						else
+							everyone.SendInfoMessage($"{user.Name} deleted {cleared} NPC{(cleared > 1 ? "s" : "")} within a radius of {radius}.");
 					}
 					break;
 				case "proj":
 				case "projectile":
 				case "projectiles":
+				case "p":
 					{
 						int cleared = 0;
 						for (int i = 0; i < Main.maxProjectiles; i++)
 						{
-							float dX = Main.projectile[i].position.X - args.Player.X;
-							float dY = Main.projectile[i].position.Y - args.Player.Y;
+							float dX = Main.projectile[i].position.X - user.X;
+							float dY = Main.projectile[i].position.Y - user.Y;
 
 							if (Main.projectile[i].active && dX * dX + dY * dY <= radius * radius * 256f)
 							{
 								Main.projectile[i].active = false;
 								Main.projectile[i].type = 0;
-								TSPlayer.All.SendData(PacketTypes.ProjectileNew, "", i);
+								everyone.SendData(PacketTypes.ProjectileNew, "", i);
 								cleared++;
 							}
 						}
-						args.Player.SendSuccessMessage("Deleted {0} projectiles within a radius of {1}.", cleared, radius);
+						if (args.Silent)
+							user.SendSuccessMessage($"You deleted {cleared} projectile{(cleared > 1 ? "s" : "")} within a radius of {radius}.");
+						else
+							everyone.SendInfoMessage($"{user.Name} deleted {cleared} projectile{(cleared > 1 ? "s" : "")} within a radius of {radius}");
 					}
 					break;
 				default:
-					args.Player.SendErrorMessage("Invalid clear option!");
+					user.SendErrorMessage($"\"{args.Parameters[0]}\" is not a valid clear option.");
 					break;
 			}
 		}
