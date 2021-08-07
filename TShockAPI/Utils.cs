@@ -62,6 +62,10 @@ namespace TShockAPI
 		/// Hex code for a white highlight
 		/// </summary>
 		public const string WhiteHighlight = "FFFFFF";
+		/// <summary>
+		/// Hex code for a cyan pastel color
+		/// </summary>
+		public const string CyanHighlight = "AAFFFF";
 
 		/// <summary>
 		/// The lowest id for a prefix.

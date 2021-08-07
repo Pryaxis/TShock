@@ -5483,62 +5483,98 @@ namespace TShockAPI
 				args.Player.SendMultipleMatchError(players.Select(p => p.Name));
 			else
 			{
-				var ply = players[0];
+				var target = players[0];
 
-				if (ply.IsLoggedIn && Main.ServerSideCharacter)
+				if (target.IsLoggedIn && Main.ServerSideCharacter)
 				{
-					ply.TPlayer.velocity.Y = -50;
-					TSPlayer.All.SendData(PacketTypes.PlayerUpdate, "", ply.Index);
+					target.TPlayer.velocity.Y = -50;
+					TSPlayer.All.SendData(PacketTypes.PlayerUpdate, "", target.Index);
 
 					if (!args.Silent)
 					{
-						TSPlayer.All.SendInfoMessage($"{args.Player.Name} has launched {(ply == args.Player ? (args.Player.TPlayer.Male ? "himself" : "herself") : ply.Name)} into space.");
+						TSPlayer.All.SendInfoMessage($"{args.Player.Name} has launched {(target == args.Player ? (args.Player.TPlayer.Male ? "himself" : "herself") : target.Name)} into space.");
 						return;
 					}
 
-					if (ply == args.Player)
+					if (target == args.Player)
 						args.Player.SendSuccessMessage("You have launched yourself into space.");
 					else
-						args.Player.SendSuccessMessage($"You have launched {ply.Name} into space.");
+						args.Player.SendSuccessMessage($"You have launched {target.Name} into space.");
 				}
 				else
 				{
 					if (!Main.ServerSideCharacter)
 						args.Player.SendErrorMessage("SSC must be enabled to use this command.");
 					else
-						args.Player.SendErrorMessage($"Unable to rocket {ply.Name} because {(ply.TPlayer.Male ? "he" : "she")} is not logged in.");
+						args.Player.SendErrorMessage($"Unable to rocket {target.Name} because {(target.TPlayer.Male ? "he" : "she")} is not logged in.");
 				}
 			}
 		}
 
 		private static void FireWork(CommandArgs args)
 		{
+			var user = args.Player;
 			if (args.Parameters.Count < 1)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}firework <player> [red|green|blue|yellow]", Specifier);
+				// firework <player> [R|G|B|Y]
+				user.SendMessage("Firework Syntax", Color.White);
+				user.SendMessage($"{"firework".Color(Utils.CyanHighlight)} <{"player".Color(Utils.PinkHighlight)}> [{"R".Color(Utils.RedHighlight)}|{"G".Color(Utils.GreenHighlight)}|{"B".Color(Utils.BoldHighlight)}|{"Y".Color(Utils.YellowHighlight)}]", Color.White);
+				user.SendMessage($"Example usage: {"firework".Color(Utils.CyanHighlight)} {user.Name.Color(Utils.PinkHighlight)} {"R".Color(Utils.RedHighlight)}", Color.White);
+				user.SendMessage($"You can use {SilentSpecifier.Color(Utils.GreenHighlight)} instead of {Specifier.Color(Utils.RedHighlight)} to launch a firework silently.", Color.White);
 				return;
 			}
 			var players = TSPlayer.FindByNameOrID(args.Parameters[0]);
 			if (players.Count == 0)
-				args.Player.SendErrorMessage("Invalid player!");
+				user.SendErrorMessage($"Could not find any player named \"{args.Parameters[0]}\"");
 			else if (players.Count > 1)
-				args.Player.SendMultipleMatchError(players.Select(p => p.Name));
+				user.SendMultipleMatchError(players.Select(p => p.Name));
 			else
 			{
-				int type = 167;
-				if (args.Parameters.Count > 1)
+				int type = 0;
+				switch (args.Parameters[1].ToLower())
 				{
-					if (args.Parameters[1].ToLower() == "green")
-						type = 168;
-					else if (args.Parameters[1].ToLower() == "blue")
-						type = 169;
-					else if (args.Parameters[1].ToLower() == "yellow")
-						type = 170;
+					case "red":
+					case "r":
+						type = ProjectileID.RocketFireworkRed;
+						break;
+					case "green":
+					case "g":
+						type = ProjectileID.RocketFireworkGreen;
+						break;
+					case "blue":
+					case "b":
+						type = ProjectileID.RocketFireworkBlue;
+						break;
+					case "yellow":
+					case "y":
+						type = ProjectileID.RocketFireworkYellow;
+						break;
+					case "r2":
+					case "star":
+						type = ProjectileID.RocketFireworksBoxRed;
+						break;
+					case "g2":
+					case "spiral":
+						type = ProjectileID.RocketFireworksBoxGreen;
+						break;
+					case "b2":
+					case "rings":
+						type = ProjectileID.RocketFireworksBoxBlue;
+						break;
+					case "y2":
+					case "flower":
+						type = ProjectileID.RocketFireworksBoxYellow;
+						break;
+					default:
+						type = ProjectileID.RocketFireworkRed;
+						break;
 				}
-				var ply = players[0];
-				int p = Projectile.NewProjectile(Projectile.GetNoneSource(), ply.TPlayer.position.X, ply.TPlayer.position.Y - 64f, 0f, -8f, type, 0, (float)0);
+				var target = players[0];
+				int p = Projectile.NewProjectile(Projectile.GetNoneSource(), target.TPlayer.position.X, target.TPlayer.position.Y - 64f, 0f, -8f, type, 0, 0);
 				Main.projectile[p].Kill();
-				args.Player.SendSuccessMessage("Launched Firework on {0}.", ply.Name);
+				args.Player.SendSuccessMessage($"You launched fireworks on {(target == user ? "yourself" : target.Name)}.");
+				if (!args.Silent && target != user)
+					target.SendSuccessMessage($"{user.Name} launched fireworks on you.");
 			}
 		}
 
