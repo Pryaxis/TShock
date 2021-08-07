@@ -825,7 +825,7 @@ namespace TShockAPI
 				{
 					var group = TShock.Groups.GetGroupByName(account.Group);
 
-					if (!TShock.Utils.AssertGroupValid(args.Player, group, false))
+					if (!TShock.Groups.AssertGroupValid(args.Player, group, false))
 					{
 						args.Player.SendErrorMessage("Login attempt failed - see the message above.");
 						return;

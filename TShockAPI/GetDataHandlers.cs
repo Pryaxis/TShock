@@ -2452,7 +2452,7 @@ namespace TShockAPI
 
 					var group = TShock.Groups.GetGroupByName(account.Group);
 
-					if (!TShock.Utils.AssertGroupValid(args.Player, group, true))
+					if (!TShock.Groups.AssertGroupValid(args.Player, group, true))
 						return true;
 
 					args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, account.ID);
@@ -3023,7 +3023,7 @@ namespace TShockAPI
 
 					var group = TShock.Groups.GetGroupByName(account.Group);
 
-					if (!TShock.Utils.AssertGroupValid(args.Player, group, true))
+					if (!TShock.Groups.AssertGroupValid(args.Player, group, true))
 						return true;
 
 					args.Player.Group = group;
