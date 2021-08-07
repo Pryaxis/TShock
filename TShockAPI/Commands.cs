@@ -6121,45 +6121,51 @@ namespace TShockAPI
 
 		private static void Heal(CommandArgs args)
 		{
-			TSPlayer playerToHeal;
-			if (args.Parameters.Count > 0)
+			// heal <player> [amount]
+			// To-Do: break up heal self and heal other into two separate permissions
+			var user = args.Player;
+			if (args.Parameters.Count < 1 || args.Parameters.Count > 2)
 			{
-				string plStr = String.Join(" ", args.Parameters);
-				var players = TSPlayer.FindByNameOrID(plStr);
-				if (players.Count == 0)
-				{
-					args.Player.SendErrorMessage("Invalid player!");
-					return;
-				}
-				else if (players.Count > 1)
-				{
-					args.Player.SendMultipleMatchError(players.Select(p => p.Name));
-					return;
-				}
-				else
-				{
-					playerToHeal = players[0];
-				}
-			}
-			else if (!args.Player.RealPlayer)
-			{
-				args.Player.SendErrorMessage("You can't heal yourself!");
+				user.SendMessage("Heal Syntax and Example", Color.White);
+				user.SendMessage($"{"heal".Color(Utils.BoldHighlight)} <{"player".Color(Utils.RedHighlight)}> [{"amount".Color(Utils.GreenHighlight)}]", Color.White);
+				user.SendMessage($"Example usage: {"heal".Color(Utils.BoldHighlight)} {user.Name.Color(Utils.RedHighlight)} {"100".Color(Utils.GreenHighlight)}", Color.White);
+				user.SendMessage($"If no amount is specified, it will default to healing the target player by their max HP.", Color.White);
+				user.SendMessage($"To execute this command silently, use {SilentSpecifier.Color(Utils.GreenHighlight)} instead of {Specifier.Color(Utils.RedHighlight)}", Color.White);
 				return;
 			}
-			else
+			if (args.Parameters[0].Length == 0)
 			{
-				playerToHeal = args.Player;
+				user.SendErrorMessage($"You didn't put a player name.");
+				return;
 			}
 
-			playerToHeal.Heal();
-			if (playerToHeal == args.Player)
-			{
-				args.Player.SendSuccessMessage("You just got healed!");
-			}
+			string targetName = args.Parameters[0];
+			var players = TSPlayer.FindByNameOrID(targetName);
+			if (players.Count == 0)
+				user.SendErrorMessage($"Unable to find any players named \"{targetName}\"");
+			else if (players.Count > 1)
+				user.SendMultipleMatchError(players.Select(p => p.Name));
 			else
 			{
-				args.Player.SendSuccessMessage(string.Format("You just healed {0}", playerToHeal.Name));
-				playerToHeal.SendSuccessMessage(string.Format("{0} just healed you!", args.Player.Name));
+				var target = players[0];
+				int amount = target.TPlayer.statLifeMax2;
+
+				if (target.Dead)
+				{
+					user.SendErrorMessage("You can't heal a dead player!");
+					return;
+				}
+
+				if (args.Parameters.Count == 2)
+				{
+					int.TryParse(args.Parameters[1], out amount);
+				}
+				target.Heal(amount);
+
+				if (args.Silent)
+					user.SendSuccessMessage($"You healed {(target == user ? "yourself" : target.Name)} for {amount} HP.");
+				else
+					TSPlayer.All.SendInfoMessage($"{user.Name} healed {(target == user ? (target.TPlayer.Male ? "himself" : "herself") : target.Name)} for {amount} HP.");
 			}
 		}
 
