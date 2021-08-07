@@ -6171,15 +6171,15 @@ namespace TShockAPI
 
 		private static void Buff(CommandArgs args)
 		{
-			// buff <buff name|ID> [duration]
+			// buff <"buff name|ID"> [duration]
 			var user = args.Player;
 			if (args.Parameters.Count < 1 || args.Parameters.Count > 2)
 			{
 				user.SendMessage("Buff Syntax and Example", Color.White);
-				user.SendMessage($"buff <buff name|ID> [duration]", Color.White);
-				user.SendMessage($"Example usage: buff <buff name|ID> [seconds]", Color.White);
-				user.SendMessage("If you don't specify the duration, it will default to 60 seconds.", Color.White);
-				user.SendMessage("If you put -1 as the duration, it will use the max possible time of 415 days.", Color.White);
+				user.SendMessage($"{"buff".Color(Utils.BoldHighlight)} <\"{"buff name".Color(Utils.RedHighlight)}|{"ID".Color(Utils.RedHighlight)}\"> [{"duration".Color(Utils.GreenHighlight)}]", Color.White);
+				user.SendMessage($"Example usage: {"buff".Color(Utils.BoldHighlight)} \"{"obsidian skin".Color(Utils.RedHighlight)}\" {"-1".Color(Utils.GreenHighlight)}", Color.White);
+				user.SendMessage($"If you don't specify the duration, it will default to {"60".Color(Utils.GreenHighlight)} seconds.", Color.White);
+				user.SendMessage($"If you put {"-1".Color(Utils.GreenHighlight)} as the duration, it will use the max possible time of 415 days.", Color.White);
 				return;
 			}
 
