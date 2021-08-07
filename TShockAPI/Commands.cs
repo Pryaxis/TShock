@@ -5752,10 +5752,11 @@ namespace TShockAPI
 				return;
 			}
 
-			var players = TSPlayer.FindByNameOrID(String.Join(" ", args.Parameters));
+			string targetName = String.Join(" ", args.Parameters);
+			var players = TSPlayer.FindByNameOrID(targetName);
 
 			if (players.Count == 0)
-				user.SendErrorMessage($"Could not find any player named \"{args.Parameters}\".");
+				user.SendErrorMessage($"Could not find any player named \"{targetName}\".");
 			else if (players.Count > 1)
 				user.SendMultipleMatchError(players.Select(p => p.Name));
 			else
