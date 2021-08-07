@@ -6171,42 +6171,53 @@ namespace TShockAPI
 
 		private static void Buff(CommandArgs args)
 		{
+			// buff <buff name|ID> [duration]
+			var user = args.Player;
 			if (args.Parameters.Count < 1 || args.Parameters.Count > 2)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}buff <buff name or ID> [time in seconds]", Specifier);
+				user.SendMessage("Buff Syntax and Example", Color.White);
+				user.SendMessage($"buff <buff name|ID> [duration]", Color.White);
+				user.SendMessage($"Example usage: buff <buff name|ID> [seconds]", Color.White);
+				user.SendMessage("If you don't specify the duration, it will default to 60 seconds.", Color.White);
+				user.SendMessage("If you put -1 as the duration, it will use the max possible time of 415 days.", Color.White);
 				return;
 			}
+
 			int id = 0;
 			int time = 60;
 			var timeLimit = (int.MaxValue / 60) - 1;
+
 			if (!int.TryParse(args.Parameters[0], out id))
 			{
 				var found = TShock.Utils.GetBuffByName(args.Parameters[0]);
+
 				if (found.Count == 0)
 				{
-					args.Player.SendErrorMessage("Invalid buff name!");
+					user.SendErrorMessage($"Unable to find any buffs named \"{args.Parameters[0]}\"");
 					return;
 				}
-				else if (found.Count > 1)
+
+				if (found.Count > 1)
 				{
-					args.Player.SendMultipleMatchError(found.Select(f => Lang.GetBuffName(f)));
+					user.SendMultipleMatchError(found.Select(f => Lang.GetBuffName(f)));
 					return;
 				}
 				id = found[0];
 			}
+
 			if (args.Parameters.Count == 2)
 				int.TryParse(args.Parameters[1], out time);
+
 			if (id > 0 && id < Main.maxBuffTypes)
 			{
-				// Max possible buff duration as of 1.4.2.2 is 35791393 seconds (415 days).
+				// Max possible buff duration as of Terraria 1.4.2.3 is 35791393 seconds (415 days).
 				if (time < 0 || time > timeLimit)
 					time = timeLimit;
-				args.Player.SetBuff(id, time * 60);
-				args.Player.SendSuccessMessage(string.Format("You have buffed yourself with {0} ({1}) for {2} seconds!",
-													  TShock.Utils.GetBuffName(id), TShock.Utils.GetBuffDescription(id), (time)));
+				user.SetBuff(id, time * 60);
+				user.SendSuccessMessage($"You buffed yourself with {TShock.Utils.GetBuffName(id)} ({TShock.Utils.GetBuffDescription(id)}) for {time} seconds.");
 			}
 			else
-				args.Player.SendErrorMessage("Invalid buff ID!");
+				user.SendErrorMessage($"\"{id}\" is not a valid buff ID!");
 		}
 
 		private static void GBuff(CommandArgs args)
