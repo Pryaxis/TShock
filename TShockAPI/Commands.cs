@@ -5826,9 +5826,15 @@ namespace TShockAPI
 
 		private static void Butcher(CommandArgs args)
 		{
+			var user = args.Player;
 			if (args.Parameters.Count > 1)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}butcher [mob type]", Specifier);
+				user.SendMessage("Butcher Syntax and Example", Color.White);
+				user.SendMessage($"{"butcher".Color(Utils.BoldHighlight)} [{"NPC name".Color(Utils.RedHighlight)}|{"ID".Color(Utils.RedHighlight)}]", Color.White);
+				user.SendMessage($"Example usage: {"butcher".Color(Utils.BoldHighlight)} {"pigron".Color(Utils.RedHighlight)}", Color.White);
+				user.SendMessage("All alive NPCs (excluding town NPCs) on the server will be killed if you do not input a name or ID.", Color.White);
+				user.SendMessage($"To get rid of NPCs without making them drop items, use the {"clear".Color(Utils.BoldHighlight)} command instead.", Color.White);
+				user.SendMessage($"To execute this command silently, use {SilentSpecifier.Color(Utils.GreenHighlight)} instead of {Specifier.Color(Utils.RedHighlight)}", Color.White);
 				return;
 			}
 
@@ -5839,18 +5845,16 @@ namespace TShockAPI
 				var npcs = TShock.Utils.GetNPCByIdOrName(args.Parameters[0]);
 				if (npcs.Count == 0)
 				{
-					args.Player.SendErrorMessage("Invalid mob type!");
+					user.SendErrorMessage($"\"{args.Parameters[0]}\" is not a valid NPC.");
 					return;
 				}
-				else if (npcs.Count > 1)
+
+				if (npcs.Count > 1)
 				{
-					args.Player.SendMultipleMatchError(npcs.Select(n => $"{n.FullName}({n.type})"));
+					user.SendMultipleMatchError(npcs.Select(n => $"{n.FullName}({n.type})"));
 					return;
 				}
-				else
-				{
-					npcId = npcs[0].netID;
-				}
+				npcId = npcs[0].netID;
 			}
 
 			int kills = 0;
@@ -5862,7 +5866,11 @@ namespace TShockAPI
 					kills++;
 				}
 			}
-			TSPlayer.All.SendInfoMessage("{0} butchered {1} NPCs.", args.Player.Name, kills);
+
+			if (args.Silent)
+				user.SendSuccessMessage($"You butchered {kills} NPC{(kills > 1 ? "s": "")}.");
+			else
+				TSPlayer.All.SendInfoMessage($"{user.Name} butchered {kills} NPC{(kills > 1 ? "s" : "")}.");
 		}
 
 		private static void Item(CommandArgs args)
