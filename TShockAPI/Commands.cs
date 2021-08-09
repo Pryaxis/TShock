@@ -6222,9 +6222,13 @@ namespace TShockAPI
 
 		private static void GBuff(CommandArgs args)
 		{
+			var user = args.Player;
 			if (args.Parameters.Count < 2 || args.Parameters.Count > 3)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}gbuff <player> <buff name or ID> [time in seconds]", Specifier);
+				user.SendMessage("Give Buff Syntax and Example", Color.White);
+				user.SendMessage($"{"gbuff".Color(Utils.BoldHighlight)} <{"player".Color(Utils.RedHighlight)}> <{"buff name".Color(Utils.PinkHighlight)}|{"ID".Color(Utils.PinkHighlight)}> [{"seconds".Color(Utils.GreenHighlight)}]", Color.White);
+				user.SendMessage($"Example usage: {"gbuff".Color(Utils.BoldHighlight)} {user.Name.Color(Utils.RedHighlight)} {"regen".Color(Utils.PinkHighlight)} {"-1".Color(Utils.GreenHighlight)}", Color.White);
+				user.SendMessage($"To buff a player without them knowing, use {SilentSpecifier.Color(Utils.RedHighlight)} instead of {Specifier.Color(Utils.GreenHighlight)}", Color.White);
 				return;
 			}
 			int id = 0;
@@ -6233,12 +6237,12 @@ namespace TShockAPI
 			var foundplr = TSPlayer.FindByNameOrID(args.Parameters[0]);
 			if (foundplr.Count == 0)
 			{
-				args.Player.SendErrorMessage("Invalid player!");
+				user.SendErrorMessage($"Unable to find any player named \"{args.Parameters[0]}\"");
 				return;
 			}
 			else if (foundplr.Count > 1)
 			{
-				args.Player.SendMultipleMatchError(foundplr.Select(p => p.Name));
+				user.SendMultipleMatchError(foundplr.Select(p => p.Name));
 				return;
 			}
 			else
@@ -6248,12 +6252,12 @@ namespace TShockAPI
 					var found = TShock.Utils.GetBuffByName(args.Parameters[1]);
 					if (found.Count == 0)
 					{
-						args.Player.SendErrorMessage("Invalid buff name!");
+						user.SendErrorMessage($"Unable to find any buff named \"{args.Parameters[1]}\"");
 						return;
 					}
 					else if (found.Count > 1)
 					{
-						args.Player.SendMultipleMatchError(found.Select(b => Lang.GetBuffName(b)));
+						user.SendMultipleMatchError(found.Select(b => Lang.GetBuffName(b)));
 						return;
 					}
 					id = found[0];
@@ -6262,18 +6266,16 @@ namespace TShockAPI
 					int.TryParse(args.Parameters[2], out time);
 				if (id > 0 && id < Main.maxBuffTypes)
 				{
+					var target = foundplr[0];
 					if (time < 0 || time > timeLimit)
 						time = timeLimit;
-					foundplr[0].SetBuff(id, time * 60);
-					args.Player.SendSuccessMessage(string.Format("You have buffed {0} with {1} ({2}) for {3} seconds!",
-														  foundplr[0].Name, TShock.Utils.GetBuffName(id),
-														  TShock.Utils.GetBuffDescription(id), (time)));
-					foundplr[0].SendSuccessMessage(string.Format("{0} has buffed you with {1} ({2}) for {3} seconds!",
-														  args.Player.Name, TShock.Utils.GetBuffName(id),
-														  TShock.Utils.GetBuffDescription(id), (time)));
+					target.SetBuff(id, time * 60);
+					user.SendSuccessMessage($"You have buffed {(target == user ? "yourself" : target.Name)} with {TShock.Utils.GetBuffName(id)} ({TShock.Utils.GetBuffDescription(id)}) for {time} seconds!");
+					if (!args.Silent && target != user)
+						target.SendSuccessMessage($"{user.Name} has buffed you with {TShock.Utils.GetBuffName(id)} ({TShock.Utils.GetBuffDescription(id)}) for {time} seconds!");
 				}
 				else
-					args.Player.SendErrorMessage("Invalid buff ID!");
+					user.SendErrorMessage("Invalid buff ID!");
 			}
 		}
 
