@@ -50,7 +50,7 @@ namespace TShockAPI
 		public bool Silent { get; private set; }
 
 		/// <summary>
-		/// Parameters passed to the arguement. Does not include the command name.
+		/// Parameters passed to the argument. Does not include the command name.
 		/// IE '/kick "jerk face"' will only have 1 argument
 		/// </summary>
 		public List<string> Parameters { get; private set; }
@@ -599,6 +599,10 @@ namespace TShockAPI
 			{
 				HelpText = "Sends all tiles from the server to the player to resync the client with the actual world state."
 			});
+			add(new Command(Permissions.respawn, Respawn, "respawn")
+			{
+				HelpText = "Respawn yourself or another player."
+			});
 			#endregion
 
 			add(new Command(Aliases, "aliases")
@@ -807,10 +811,15 @@ namespace TShockAPI
 			}
 			else
 			{
-				args.Player.SendErrorMessage("Syntax: {0}login - Logs in using your UUID and character name", Specifier);
-				args.Player.SendErrorMessage("        {0}login <password> - Logs in using your password and character name", Specifier);
-				args.Player.SendErrorMessage("        {0}login <username> <password> - Logs in using your username and password", Specifier);
-				args.Player.SendErrorMessage("If you forgot your password, there is no way to recover it.");
+				if (!TShock.Config.Settings.DisableUUIDLogin)
+					args.Player.SendMessage($"{Specifier}login - Logs in using your UUID and character name.", Color.White);
+
+				if (TShock.Config.Settings.AllowLoginAnyUsername)
+					args.Player.SendMessage($"{Specifier}login {"username".Color(Utils.GreenHighlight)} {"password".Color(Utils.BoldHighlight)} - Logs in using your username and password.", Color.White);
+				else
+					args.Player.SendMessage($"{Specifier}login {"password".Color(Utils.BoldHighlight)} - Logs in using your password and character name.", Color.White);
+
+				args.Player.SendWarningMessage("If you forgot your password, there is no way to recover it.");
 				return;
 			}
 			try
@@ -939,7 +948,7 @@ namespace TShockAPI
 			}
 			catch (UserAccountManagerException ex)
 			{
-				args.Player.SendErrorMessage("Sorry, an error occured: " + ex.Message + ".");
+				args.Player.SendErrorMessage("Sorry, an error occurred: " + ex.Message + ".");
 				TShock.Log.ConsoleError("PasswordUser returned an error: " + ex);
 			}
 		}
@@ -991,6 +1000,15 @@ namespace TShockAPI
 				{
 					args.Player.SendSuccessMessage("Account \"{0}\" has been registered.", account.Name);
 					args.Player.SendSuccessMessage("Your password is {0}.", echoPassword);
+					
+					if (!TShock.Config.Settings.DisableUUIDLogin)
+						args.Player.SendMessage($"Type {Specifier}login to sign in to your account using your UUID.", Color.White);
+
+					if (TShock.Config.Settings.AllowLoginAnyUsername)
+						args.Player.SendMessage($"Type {Specifier}login \"{account.Name.Color(Utils.GreenHighlight)}\" {echoPassword.Color(Utils.BoldHighlight)} to sign in to your account.", Color.White);
+					else
+						args.Player.SendMessage($"Type {Specifier}login {echoPassword.Color(Utils.BoldHighlight)} to sign in to your account.", Color.White);
+					
 					TShock.UserAccounts.AddUserAccount(account);
 					TShock.Log.ConsoleInfo("{0} registered an account: \"{1}\".", args.Player.Name, account.Name);
 				}
@@ -1003,7 +1021,7 @@ namespace TShockAPI
 			}
 			catch (UserAccountManagerException ex)
 			{
-				args.Player.SendErrorMessage("Sorry, an error occured: " + ex.Message + ".");
+				args.Player.SendErrorMessage("Sorry, an error occurred: " + ex.Message + ".");
 				TShock.Log.ConsoleError("RegisterUser returned an error: " + ex);
 			}
 		}
@@ -1116,6 +1134,11 @@ namespace TShockAPI
 					TShock.UserAccounts.SetUserGroup(account, args.Parameters[2]);
 					TShock.Log.ConsoleInfo(args.Player.Name + " changed account " + account.Name + " to group " + args.Parameters[2] + ".");
 					args.Player.SendSuccessMessage("Account " + account.Name + " has been changed to group " + args.Parameters[2] + "!");
+					
+					//send message to player with matching account name
+					var player = TShock.Players.FirstOrDefault(p => p != null && p.Account?.Name == account.Name);
+					if (player != null && !args.Silent)
+						player.SendSuccessMessage($"{args.Player.Name} has changed your group to {args.Parameters[2]}");
 				}
 				catch (GroupNotExistsException)
 				{
@@ -1216,7 +1239,7 @@ namespace TShockAPI
 					if (DateTime.TryParse(account.LastAccessed, out LastSeen))
 					{
 						LastSeen = DateTime.Parse(account.LastAccessed).ToLocalTime();
-						args.Player.SendSuccessMessage("{0}'s last login occured {1} {2} UTC{3}.", account.Name, LastSeen.ToShortDateString(),
+						args.Player.SendSuccessMessage("{0}'s last login occurred {1} {2} UTC{3}.", account.Name, LastSeen.ToShortDateString(),
 							LastSeen.ToShortTimeString(), Timezone);
 					}
 
@@ -1303,7 +1326,7 @@ namespace TShockAPI
 				args.Player.SendMessage($"ban {"list".Color(Utils.RedHighlight)}", Color.White);
 				args.Player.SendMessage($"ban {"details".Color(Utils.RedHighlight)} <Ban ID>", Color.White);
 				args.Player.SendMessage($"Quick usage: {"ban add".Color(Utils.BoldHighlight)} {args.Player.Name.Color(Utils.RedHighlight)} \"Griefing\"", Color.White);
-				args.Player.SendMessage($"For more info, use {"ban help".Color(Utils.BoldHighlight)} {"command".Color(Utils.RedHighlight)}", Color.White);
+				args.Player.SendMessage($"For more info, use {"ban help".Color(Utils.BoldHighlight)} {"command".Color(Utils.RedHighlight)} or {"ban help".Color(Utils.BoldHighlight)} {"examples".Color(Utils.RedHighlight)}", Color.White);
 			}
 
 			void MoreHelp(string cmd)
@@ -1327,7 +1350,7 @@ namespace TShockAPI
 						args.Player.SendMessage("", Color.White);
 						args.Player.SendMessage("Ban Del Syntax", Color.White);
 						args.Player.SendMessage($"{"ban del".Color(Utils.BoldHighlight)} <{"Ticket Number".Color(Utils.RedHighlight)}>", Color.White);
-						args.Player.SendMessage($"- {"Ticket Number".Color(Utils.RedHighlight)}s are provided when you add a ban, and can also be viewed with the {"ban list".Color(Utils.BoldHighlight)} command.", Color.White);
+						args.Player.SendMessage($"- {"Ticket Numbers".Color(Utils.RedHighlight)} are provided when you add a ban, and can also be viewed with the {"ban list".Color(Utils.BoldHighlight)} command.", Color.White);
 						args.Player.SendMessage($"Example usage: {"ban del".Color(Utils.BoldHighlight)} {"12345".Color(Utils.RedHighlight)}", Color.White);
 						break;
 
@@ -1343,14 +1366,14 @@ namespace TShockAPI
 						args.Player.SendMessage("", Color.White);
 						args.Player.SendMessage("Ban Details Syntax", Color.White);
 						args.Player.SendMessage($"{"ban details".Color(Utils.BoldHighlight)} <{"Ticket Number".Color(Utils.RedHighlight)}>", Color.White);
-						args.Player.SendMessage($"- {"Ticket Number".Color(Utils.RedHighlight)}s are provided when you add a ban, and can be found with the {"ban list".Color(Utils.BoldHighlight)} command.", Color.White);
+						args.Player.SendMessage($"- {"Ticket Numbers".Color(Utils.RedHighlight)} are provided when you add a ban, and can be found with the {"ban list".Color(Utils.BoldHighlight)} command.", Color.White);
 						args.Player.SendMessage($"Example usage: {"ban details".Color(Utils.BoldHighlight)} {"12345".Color(Utils.RedHighlight)}", Color.White);
 						break;
 
 					case "identifiers":
 						if (!PaginationTools.TryParsePageNumber(args.Parameters, 2, args.Player, out int pageNumber))
 						{
-							args.Player.SendMessage($"Invalid page number. Page number should be numeric.", Color.White);
+							args.Player.SendMessage($"Invalid page number. Page number must be numeric.", Color.White);
 							return;
 						}
 
@@ -1368,10 +1391,23 @@ namespace TShockAPI
 								LineTextColor = Color.White
 							});
 						break;
+					
+					case "examples":
+						args.Player.SendMessage("", Color.White);
+						args.Player.SendMessage("Ban Usage Examples", Color.White);
+						args.Player.SendMessage("- Ban an offline player by account name", Color.White);
+						args.Player.SendMessage($"   {Specifier}{"ban add".Color(Utils.BoldHighlight)} \"{"acc:".Color(Utils.RedHighlight)}{args.Player.Account.Color(Utils.RedHighlight)}\" {"\"Multiple accounts are not allowed\"".Color(Utils.BoldHighlight)} {"-e".Color(Utils.GreenHighlight)} (Permanently bans this account name)", Color.White);
+						args.Player.SendMessage("- Ban an offline player by IP address", Color.White);
+						args.Player.SendMessage($"   {Specifier}{"ai".Color(Utils.BoldHighlight)} \"{args.Player.Account.Color(Utils.RedHighlight)}\" (Find the IP associated with the offline target's account)", Color.White);
+						args.Player.SendMessage($"   {Specifier}{"ban add".Color(Utils.BoldHighlight)} {"ip:".Color(Utils.RedHighlight)}{args.Player.IP.Color(Utils.RedHighlight)} {"\"Griefing\"".Color(Utils.BoldHighlight)} {"-e".Color(Utils.GreenHighlight)} (Permanently bans this IP address)", Color.White);
+						args.Player.SendMessage($"- Ban an online player by index (Useful for hard to type names)", Color.White);
+						args.Player.SendMessage($"   {Specifier}{"who".Color(Utils.BoldHighlight)} {"-i".Color(Utils.GreenHighlight)} (Find the player index for the target)", Color.White);
+						args.Player.SendMessage($"   {Specifier}{"ban add".Color(Utils.BoldHighlight)} {"tsi:".Color(Utils.RedHighlight)}{args.Player.Index.Color(Utils.RedHighlight)} {"\"Trolling\"".Color(Utils.BoldHighlight)} {"-a -u -ip".Color(Utils.GreenHighlight)} (Permanently bans the online player by Account, UUID, and IP)", Color.White);
+						// Ban by account ID when?
+						break;
 
 					default:
-						args.Player.SendMessage($"Unknown ban command. Try {"add".Color(Utils.RedHighlight)}, {"del".Color(Utils.RedHighlight)}, {"list".Color(Utils.RedHighlight)}, or {"details".Color(Utils.RedHighlight)}.", Color.White);
-						break;
+						args.Player.SendMessage($"Unknown ban command. Try {"ban help".Color(Utils.BoldHighlight)} {"add".Color(Utils.RedHighlight)}, {"del".Color(Utils.RedHighlight)}, {"list".Color(Utils.RedHighlight)}, {"details".Color(Utils.RedHighlight)}, {"identifiers".Color(Utils.RedHighlight)}, or {"examples".Color(Utils.RedHighlight)}.", Color.White);						break;
 				}
 			}
 
@@ -5518,7 +5554,7 @@ namespace TShockAPI
 
 		#endregion General Commands
 
-		#region Cheat Commands
+		#region Game Commands
 
 		private static void Clear(CommandArgs args)
 		{
@@ -5631,6 +5667,55 @@ namespace TShockAPI
 				args.Player.SendSuccessMessage(string.Format("You just killed {0}!", plr.Name));
 				plr.SendErrorMessage("{0} just killed you!", args.Player.Name);
 			}
+		}
+									
+		private static void Respawn(CommandArgs args)
+		{
+			if (!args.Player.RealPlayer)
+			{
+				args.Player.SendErrorMessage("You can't respawn the server console!");
+				return;
+			}
+			TSPlayer playerToRespawn;
+			if (args.Parameters.Count > 0)
+			{
+				if (!args.Player.HasPermission(Permissions.respawnother))
+				{
+					args.Player.SendErrorMessage("You do not have permission to respawn another player.");
+					return;
+				}
+				string plStr = String.Join(" ", args.Parameters);
+				var players = TSPlayer.FindByNameOrID(plStr);
+				if (players.Count == 0)
+				{
+					args.Player.SendErrorMessage($"Could not find any player named \"{plStr}\"");
+					return;
+				}
+				if (players.Count > 1)
+				{
+					args.Player.SendMultipleMatchError(players.Select(p => p.Name));
+					return;
+				}
+				playerToRespawn = players[0];
+			}
+			else 
+				playerToRespawn = args.Player;
+
+			if (!playerToRespawn.Dead)
+			{
+				args.Player.SendErrorMessage($"{(playerToRespawn == args.Player ? "You" : playerToRespawn.Name)} {(playerToRespawn == args.Player ? "are" : "is")} not dead.");
+				return;
+			}
+			playerToRespawn.Spawn(PlayerSpawnContext.ReviveFromDeath);
+
+			if (playerToRespawn != args.Player)
+			{
+				args.Player.SendSuccessMessage($"You have respawned {playerToRespawn.Name}");
+				if (!args.Silent)
+					playerToRespawn.SendSuccessMessage($"{args.Player.Name} has respawned you.");
+			}
+			else
+				playerToRespawn.SendSuccessMessage("You have respawned yourself.");
 		}
 
 		private static void Butcher(CommandArgs args)
@@ -6472,6 +6557,6 @@ namespace TShockAPI
 			}
 		}
 
-		#endregion Cheat Comamnds
+		#endregion Game Commands
 	}
 }

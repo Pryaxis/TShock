@@ -892,7 +892,7 @@ namespace TShockAPI
 						CacheIP = RealPlayer ? (Netplay.Clients[Index].Socket.IsConnected()
 								? TShock.Utils.GetRealIP(Netplay.Clients[Index].Socket.GetRemoteAddress().ToString())
 								: "")
-							: "";
+							: "127.0.0.1";
 				else
 					return CacheIP;
 			}
@@ -1018,7 +1018,7 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Player Y cooridnate divided by 16. Supposed Y world coordinate.
+		/// Player Y coordinate divided by 16. Supposed Y world coordinate.
 		/// </summary>
 		public int TileY
 		{

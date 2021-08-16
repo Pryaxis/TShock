@@ -263,20 +263,19 @@ namespace TShockAPI
 
 			try
 			{
+				if (!TShock.Utils.TilePlacementValid(tileX, tileY))
+				{
+					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (tile placement valid) {0} {1} {2}", args.Player.Name, action, editData);
+					args.Handled = true;
+					return;
+				}
+
 				if (editData < 0 ||
 					((action == EditAction.PlaceTile || action == EditAction.ReplaceTile) && editData >= Main.maxTileSets) ||
 					((action == EditAction.PlaceWall || action == EditAction.ReplaceWall) && editData >= Main.maxWallTypes))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from editData out of bounds {0} {1} {2}", args.Player.Name, action, editData);
 					args.Player.SendTileSquare(tileX, tileY, 4);
-					args.Handled = true;
-					return;
-				}
-
-				if (!TShock.Utils.TilePlacementValid(tileX, tileY))
-				{
-					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (tile placement valid) {0} {1} {2}", args.Player.Name, action, editData);
-					args.Player.SendTileSquare(tileX, tileY, 1);
 					args.Handled = true;
 					return;
 				}
@@ -1705,6 +1704,13 @@ namespace TShockAPI
 			short type = args.Type;
 			short style = args.Style;
 
+			if (!TShock.Utils.TilePlacementValid(x, y))
+			{
+				TShock.Log.ConsoleDebug("Bouncer / OnPlaceObject rejected valid placements from {0}", args.Player.Name);
+				args.Handled = true;
+				return;
+			}
+
 			if (type < 0 || type >= Main.maxTileSets)
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnPlaceObject rejected out of bounds tile from {0}", args.Player.Name);
@@ -1753,14 +1759,6 @@ namespace TShockAPI
 				return;
 			}
 
-			if (!TShock.Utils.TilePlacementValid(x, y))
-			{
-				TShock.Log.ConsoleDebug("Bouncer / OnPlaceObject rejected valid placements from {0}", args.Player.Name);
-				args.Player.SendTileSquare(x, y, 1);
-				args.Handled = true;
-				return;
-			}
-
 			if (args.Player.Dead && TShock.Config.Settings.PreventDeadModification)
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnPlaceObject rejected dead people don't do things from {0}", args.Player.Name);
@@ -1777,7 +1775,7 @@ namespace TShockAPI
 				return;
 			}
 
-			// This is neccessary to check in order to prevent special tiles such as
+			// This is necessary to check in order to prevent special tiles such as
 			// queen bee larva, paintings etc that use this packet from being placed
 			// without selecting the right item.
 			if (type != args.Player.TPlayer.inventory[args.Player.TPlayer.selectedItem].createTile)
@@ -1852,6 +1850,13 @@ namespace TShockAPI
 		/// <param name="args">The packet arguments that the event has.</param>
 		internal void OnPlaceTileEntity(object sender, GetDataHandlers.PlaceTileEntityEventArgs args)
 		{
+			if (!TShock.Utils.TilePlacementValid(args.X, args.Y))
+			{
+				TShock.Log.ConsoleDebug("Bouncer / OnPlaceTileEntity rejected tile placement valid from {0}", args.Player.Name);
+				args.Handled = true;
+				return;
+			}
+
 			if (args.Player.IsBeingDisabled())
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnPlaceTileEntity rejected disabled from {0}", args.Player.Name);
@@ -1879,6 +1884,13 @@ namespace TShockAPI
 		/// <param name="args">The packet arguments that the event has.</param>
 		internal void OnPlaceItemFrame(object sender, GetDataHandlers.PlaceItemFrameEventArgs args)
 		{
+			if (!TShock.Utils.TilePlacementValid(args.X, args.Y))
+			{
+				TShock.Log.ConsoleDebug("Bouncer / OnPlaceItemFrame rejected tile placement valid from {0}", args.Player.Name);
+				args.Handled = true;
+				return;
+			}
+
 			if (args.Player.IsBeingDisabled())
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnPlaceItemFrame rejected disabled from {0}", args.Player.Name);
@@ -2180,6 +2192,13 @@ namespace TShockAPI
 		/// <param name="args"></param>
 		internal void OnFoodPlatterTryPlacing(object sender, GetDataHandlers.FoodPlatterTryPlacingEventArgs args)
 		{
+			if (!TShock.Utils.TilePlacementValid(args.TileX, args.TileY))
+			{
+				TShock.Log.ConsoleDebug("Bouncer / OnFoodPlatterTryPlacing rejected tile placement valid from {0}", args.Player.Name);
+				args.Handled = true;
+				return;
+			}
+
 			if ((args.Player.SelectedItem.type != args.ItemID && args.Player.ItemInHand.type != args.ItemID))
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnFoodPlatterTryPlacing rejected item not placed by hand from {0}", args.Player.Name);

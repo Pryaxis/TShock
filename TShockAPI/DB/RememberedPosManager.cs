@@ -56,7 +56,7 @@ namespace TShockAPI.DB
 					{
 						int checkX=reader.Get<int>("X");
 						int checkY=reader.Get<int>("Y");
-						//fix leftover inconsistancies
+						//fix leftover inconsistencies
 						if (checkX==0)
 						   checkX++;
 						if (checkY==0)

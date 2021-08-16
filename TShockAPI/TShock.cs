@@ -58,7 +58,7 @@ namespace TShockAPI
 		/// <summary>VersionNum - The version number the TerrariaAPI will return back to the API. We just use the Assembly info.</summary>
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
 		/// <summary>VersionCodename - The version codename is displayed when the server starts. Inspired by software codenames conventions.</summary>
-		public static readonly string VersionCodename = "Blood Moon edition";
+		public static readonly string VersionCodename = "Olympics maybe?";
 
 		/// <summary>SavePath - This is the path TShock saves its data in. This path is relative to the TerrariaServer.exe (not in ServerPlugins).</summary>
 		public static string SavePath = "tshock";
@@ -1614,18 +1614,21 @@ namespace TShockAPI
 		}
 
 		/// <summary>OnProjectileSetDefaults - Called when a projectile sets the default attributes for itself.</summary>
-		/// <param name="e">e - The SetDefaultsEventArgs object praameterized with Projectile and int.</param>
+		/// <param name="e">e - The SetDefaultsEventArgs object parameterized with Projectile and int.</param>
 		private void OnProjectileSetDefaults(SetDefaultsEventArgs<Projectile, int> e)
 		{
 			//tombstone fix.
-			if (e.Info == 43 || (e.Info >= 201 && e.Info <= 205) || (e.Info >= 527 && e.Info <= 531))
+			if (e.Info == ProjectileID.Tombstone || (e.Info >= ProjectileID.GraveMarker && e.Info <= ProjectileID.Obelisk) || (e.Info >= ProjectileID.RichGravestone1 && e.Info <= ProjectileID.RichGravestone5))
 				if (Config.Settings.DisableTombstones)
 					e.Object.SetDefaults(0);
-			if (e.Info == 75)
+			if (e.Info == ProjectileID.HappyBomb)
 				if (Config.Settings.DisableClownBombs)
 					e.Object.SetDefaults(0);
-			if (e.Info == 109)
+			if (e.Info == ProjectileID.SnowBallHostile)
 				if (Config.Settings.DisableSnowBalls)
+					e.Object.SetDefaults(0);
+			if (e.Info == ProjectileID.BombSkeletronPrime)
+				if (Config.Settings.DisablePrimeBombs)
 					e.Object.SetDefaults(0);
 		}
 
