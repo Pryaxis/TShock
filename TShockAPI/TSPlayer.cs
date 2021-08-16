@@ -892,7 +892,7 @@ namespace TShockAPI
 						CacheIP = RealPlayer ? (Netplay.Clients[Index].Socket.IsConnected()
 								? TShock.Utils.GetRealIP(Netplay.Clients[Index].Socket.GetRemoteAddress().ToString())
 								: "")
-							: "";
+							: "127.0.0.1";
 				else
 					return CacheIP;
 			}
