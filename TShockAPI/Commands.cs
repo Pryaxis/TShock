@@ -1328,9 +1328,9 @@ namespace TShockAPI
 						args.Player.SendMessage($"- {Highlight("Duration", PinkHighlight)}: uses the format {Highlight("0d0m0s", PinkHighlight)} to determine the length of the ban.", Color.White);
 						args.Player.SendMessage($"   Eg a value of {Highlight("10d30m0s", PinkHighlight)} would represent 10 days, 30 minutes, 0 seconds.", Color.White);
 						args.Player.SendMessage($"   If no duration is provided, the ban will be permanent.", Color.White);
-						args.Player.SendMessage($"- {Highlight("Flags", GreenHighlight)}: -a (account name), -u (UUID), -n (character name), -ip (IP address), -e (exact, {Highlight("Target", RedHighlight)} will be treated as a raw identifier)", Color.White);
+						args.Player.SendMessage($"- {Highlight("Flags", GreenHighlight)}: -a (account name), -u (UUID), -n (character name), -ip (IP address)", Color.White);
+						args.Player.SendMessage($"   -e (exact, {Highlight("Target", RedHighlight)} will be treated as a raw identifier)", Color.White);
 						args.Player.SendMessage($"   -o (offline, {Highlight("Target", RedHighlight)} will be treated as a username)", Color.White);
-						args.Player.SendMessage($"   If {Highlight("-e", GreenHighlight)} is used, {Highlight("Target", RedHighlight)} will be treated as a raw identifier. Otherwise it will be used to search for an online player or an offline account.", Color.White);
 						args.Player.SendMessage($"   If no {Highlight("Flags", GreenHighlight)} are specified, the command uses {Highlight("-a -u -ip", GreenHighlight)} by default.", Color.White);
 						args.Player.SendMessage($"Example usage: {Highlight("ban add", BlueHighlight)} {Highlight(args.Player.Name, RedHighlight)} {Highlight("\"Cheating\"", BlueHighlight)} {Highlight("10d30m0s", PinkHighlight)} {Highlight("-a -u -ip", GreenHighlight)}", Color.White);
 						break;
@@ -1508,6 +1508,18 @@ namespace TShockAPI
 					return;
 				}
 
+				if (banOffline)
+				{
+					UserAccount account = TShock.UserAccounts.GetUserAccountByName(target);
+					if (account == null)
+					{
+						args.Player.SendErrorMessage("Could not find the account target specified. Check that you have the correct spelling.");
+						return;
+					}
+
+
+				}
+
 				var players = TSPlayer.FindByNameOrID(target);
 
 				if (players.Count > 1)
@@ -1524,35 +1536,22 @@ namespace TShockAPI
 				}
 
 				var player = players[0];
-				AddBanResult banResult = null;
-
-				if (banAccount)
+				IEnumerable<AddBanResult> banResults = TShock.Bans.DoPlayerBan(player, new BanAction
 				{
-					if (player.Account != null)
-					{
-						banResult = DoBan($"{Identifier.Account}{player.Account.Name}", reason, expiration);
-					}
-				}
+					BanAccount = banAccount,
+					BanIp = banIp,
+					BanName = banName,
+					BanUuid = banUuid,
+					ExecutingUser = args.Player,
+					Expiration = expiration,
+					Reason = reason
+				});
 
-				if (banUuid)
-				{
-					banResult = DoBan($"{Identifier.UUID}{player.UUID}", reason, expiration);					
-				}
-
-				if (banName)
-				{
-					banResult = DoBan($"{Identifier.Name}{player.Name}", reason, expiration);
-				}
-
-				if (banIp)
-				{
-					banResult = DoBan($"{Identifier.IP}{player.IP}", reason, expiration);
-				}
-
-				if (banResult?.Ban != null)
+				//TODO: group bans better. Display parent ban ID to user
+				/*if (banResult?.Ban != null)
 				{
 					player.Disconnect($"#{banResult.Ban.TicketNumber} - You have been banned: {banResult.Ban.Reason}.");
-				}
+				}*/
 			}
 
 			void DelBan()

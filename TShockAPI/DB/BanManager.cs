@@ -259,6 +259,38 @@ namespace TShockAPI.DB
 			}
 		}
 
+		public IEnumerable<AddBanResult> DoPlayerBan(TSPlayer bannedUser, BanAction banAction)
+		{
+			if (banAction.BanAccount)
+			{
+				if (bannedUser.Account != null)
+				{
+					yield return TShock.Bans.InsertBan($"{Identifier.Account}{bannedUser.Account.Name}", banAction.Reason, banAction.ExecutingUser.Account.Name, DateTime.UtcNow, banAction.Expiration);
+				}
+			}
+
+			if (banAction.BanUuid)
+			{
+				yield return TShock.Bans.InsertBan($"{Identifier.UUID}{bannedUser.UUID}", banAction.Reason, banAction.ExecutingUser.Account.Name, DateTime.UtcNow, banAction.Expiration);
+			}
+
+			if (banAction.BanName)
+			{
+				yield return TShock.Bans.InsertBan($"{Identifier.Name}{bannedUser.Name}", banAction.Reason, banAction.ExecutingUser.Account.Name, DateTime.UtcNow, banAction.Expiration);
+			}
+
+			if (banAction.BanIp)
+			{
+				yield return TShock.Bans.InsertBan($"{Identifier.Name}{bannedUser.IP}", banAction.Reason, banAction.ExecutingUser.Account.Name, DateTime.UtcNow, banAction.Expiration);
+			}
+		}
+
+		public IEnumerable<AddBanResult> DoAccountBan(UserAccount bannedAccount, BanAction banAction)
+		{
+			yield return TShock.Bans.InsertBan($"{Identifier.UUID}{bannedAccount.UUID}", banAction.Reason, banAction.ExecutingUser.Account.Name, DateTime.UtcNow, banAction.Expiration);
+			yield return TShock.Bans.InsertBan($"{Identifier.Account}{bannedAccount.Name}", banAction.Reason, banAction.ExecutingUser.Account.Name, DateTime.UtcNow, banAction.Expiration);
+		}
+
 		/// <summary>
 		/// Adds a new ban for the given identifier. Returns a Ban object if the ban was added, else null
 		/// </summary>
@@ -674,6 +706,17 @@ namespace TShockAPI.DB
 
 			return ident;
 		}
+	}
+
+	public class BanAction
+	{
+		public TSPlayer ExecutingUser { get; set; }
+		public string Reason { get; set; }
+		public DateTime Expiration { get; set; }
+		public bool BanAccount { get; set; }
+		public bool BanUuid { get; set; }
+		public bool BanName { get; set; }
+		public bool BanIp { get; set; }
 	}
 
 	/// <summary>
