@@ -41,7 +41,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Hex code for a blue pastel color
 		/// </summary>
-		public const string BoldHighlight = "AAAAFF";
+		public const string BlueHighlight = "AAAAFF";
 		/// <summary>
 		/// Hex code for a red pastel color
 		/// </summary>
@@ -62,6 +62,18 @@ namespace TShockAPI
 		/// Hex code for a white highlight
 		/// </summary>
 		public const string WhiteHighlight = "FFFFFF";
+
+		/// <summary>
+		/// Converts an object to its string representation and wraps it in a Terraria color block
+		/// using the provided hex color code
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <param name="color"></param>
+		/// <returns></returns>
+		public static string Highlight(object obj, string color)
+		{
+			return $"[c/{color}:{obj}]";
+		}
 
 		/// <summary>
 		/// The lowest id for a prefix.
