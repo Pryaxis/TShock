@@ -45,6 +45,20 @@ namespace TShockAPI
 		internal Handlers.LandGolfBallInCupHandler LandGolfBallInCupHandler { get; private set; }
 		internal Handlers.SyncTilePickingHandler SyncTilePickingHandler { get; private set; }
 
+		/// <summary>
+		/// Represents a place style corrector.
+		/// </summary>
+		/// <param name="player">The player placing the tile.</param>
+		/// <param name="requestedPlaceStyle">The requested place style to be placed.</param>
+		/// <param name="actualItemPlaceStyle">The actual place style that should be placed, based of the player's held item.</param>
+		/// <returns>The correct place style in the current context.</returns>
+		internal delegate int PlaceStyleCorrector(Player player, int requestedPlaceStyle, int actualItemPlaceStyle);
+
+		/// <summary>
+		/// Represents a dictionary of <see cref="PlaceStyleCorrector"/>s, the key is the tile ID and the value is the corrector.
+		/// </summary>
+		internal Dictionary<int, PlaceStyleCorrector> PlaceStyleCorrectors = new Dictionary<int, PlaceStyleCorrector>();
+
 		/// <summary>Constructor call initializes Bouncer and related functionality.</summary>
 		/// <returns>A new Bouncer.</returns>
 		internal Bouncer()
@@ -101,6 +115,70 @@ namespace TShockAPI
 			GetDataHandlers.KillMe += OnKillMe;
 			GetDataHandlers.FishOutNPC += OnFishOutNPC;
 			GetDataHandlers.FoodPlatterTryPlacing += OnFoodPlatterTryPlacing;
+
+			PlaceStyleCorrectors.Add(TileID.Torches,
+				(player, requestedPlaceStyle, actualItemPlaceStyle) =>
+				{
+					// If the client is attempting to place a default torch, we need to check that the torch they are attempting to place is valid.
+					// The place styles may mismatch if the player is placing a biome torch.
+					// Biome torches can only be placed if the player has unlocked them (Torch God's Favor)
+					// Therefore, the following conditions need to be true:
+					// - The client's selected item will create a default torch
+					// - The client's selected item's place style will be that of a default torch
+					// - The client has unlocked biome torches
+					if (actualItemPlaceStyle == TorchID.Torch && player.unlockedBiomeTorches)
+					{
+						// The server isn't notified when the player turns on biome torches.
+						// So on the client it can be on, while on the server it's off.
+						// BiomeTorchPlaceStyle returns placeStyle as-is if biome torches is off.
+						// Because of the uncertainty, we:
+						// 1. Ensure that UsingBiomeTorches is on, so we can get the correct
+						// value from BiomeTorchPlaceStyle.
+						// 2. Check if the torch is either 0 or the biome torch since we aren't
+						// sure if the player has biome torches on
+						var usingBiomeTorches = player.UsingBiomeTorches;
+						player.UsingBiomeTorches = true;
+						// BiomeTorchPlaceStyle returns the place style of the player's current biome's biome torch
+						var biomeTorchPlaceStyle = player.BiomeTorchPlaceStyle(actualItemPlaceStyle);
+						// Reset UsingBiomeTorches value
+						player.UsingBiomeTorches = usingBiomeTorches;
+
+						return biomeTorchPlaceStyle;
+					}
+					else
+					{
+						return requestedPlaceStyle;
+					}
+				});
+			PlaceStyleCorrectors.Add(TileID.MinecartTrack,
+				(player, requestedPlaceStyle, actualItemPlaceStyle) =>
+				{
+					// The player can place right booster tracks only if they're facing right (direction == 1).
+					// If this isn't the case, reject the packet
+					if (actualItemPlaceStyle == 2)
+					{
+						// 3 is for right-facing booster tracks
+						// 1 is right, because adding it to 0 points to the positive X axis -->
+						if (player.direction == 1)
+						{
+							return 3;
+						}
+						// 2 is for left-facing booster tracks
+						// -1 is left, because adding it to 0 points to the negative X axis <--
+						else if (player.direction == -1)
+						{
+							return 2;
+						}
+						else
+						{
+							throw new InvalidOperationException("Unrecognized player direction");
+						}
+					}
+					else
+					{
+						return actualItemPlaceStyle;
+					}
+				});
 		}
 
 		internal void OnGetSection(object sender, GetDataHandlers.GetSectionEventArgs args)
@@ -321,48 +399,12 @@ namespace TShockAPI
 					if (requestedPlaceStyle != actualItemPlaceStyle)
 					{
 						var tplayer = args.Player.TPlayer;
-
-						// If the client is attempting to place a default torch, we need to check that the torch they are attempting to place is valid.
-						// The place styles may mismatch if the player is placing a biome torch.
-						// Biome torches can only be placed if the player has unlocked them (Torch God's Favor)
-						// Therefore, the following conditions need to be true:
-						// - The client's selected item will create a default torch
-						// - The client's selected item's place style will be that of a default torch
-						// - The client has unlocked biome torches
-						if (actualTileToBeCreated == TileID.Torches && actualItemPlaceStyle == TorchID.Torch && tplayer.unlockedBiomeTorches)
-						{
-							// The server isn't notified when the player turns on biome torches.
-							// So on the client it can be on, while on the server it's off.
-							// BiomeTorchPlaceStyle returns placeStyle as-is if biome torches is off.
-							// Because of the uncertainty, we:
-							// 1. Ensure that UsingBiomeTorches is on, so we can get the correct
-							// value from BiomeTorchPlaceStyle.
-							// 2. Check if the torch is either 0 or the biome torch since we aren't
-							// sure if the player has biome torches on
-							var usingBiomeTorches = tplayer.UsingBiomeTorches;
-							tplayer.UsingBiomeTorches = true;
-							// BiomeTorchPlaceStyle returns the place style of the player's current biome's biome torch
-							var biomeTorchPlaceStyle = tplayer.BiomeTorchPlaceStyle(actualItemPlaceStyle);
-							// Reset UsingBiomeTorches value
-							tplayer.UsingBiomeTorches = usingBiomeTorches;
-
-							// If the biome torch place style still doesn't match the expected place style then the client has sent an invalid place tile request
-							if (biomeTorchPlaceStyle != requestedPlaceStyle)
-							{
-								TShock.Log.ConsoleError("Bouncer / OnTileEdit rejected from (placestyle) {0} {1} {2} placeStyle: {3} expectedStyle: 0 or {4}",
-									args.Player.Name, action, editData, requestedPlaceStyle, biomeTorchPlaceStyle);
-								args.Player.SendTileSquare(tileX, tileY, 1);
-								args.Handled = true;
-								return;
-							}
-						}
-						// Currently the only other extraneous tile is Right Booster Track with a placeStyle of 3
-						// The player can place it only if they're facing right (direction == 1).
-						// If this isn't the case, reject the packet
-						else if (actualTileToBeCreated != ItemID.BoosterTrack && requestedPlaceStyle != 3 && args.Player.TPlayer.direction != 1)
+						var correctedPlaceStyle = actualItemPlaceStyle;
+						if (!PlaceStyleCorrectors.TryGetValue(actualTileToBeCreated, out PlaceStyleCorrector corrector)
+							|| requestedPlaceStyle != (correctedPlaceStyle = corrector(tplayer, requestedPlaceStyle, actualItemPlaceStyle)))
 						{
 							TShock.Log.ConsoleError("Bouncer / OnTileEdit rejected from (placestyle) {0} {1} {2} placeStyle: {3} expectedStyle: {4}",
-								args.Player.Name, action, editData, requestedPlaceStyle, actualItemPlaceStyle);
+								args.Player.Name, action, editData, requestedPlaceStyle, correctedPlaceStyle);
 							args.Player.SendTileSquare(tileX, tileY, 1);
 							args.Handled = true;
 							return;
