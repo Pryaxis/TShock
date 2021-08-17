@@ -117,7 +117,7 @@ namespace TShockAPI
 			GetDataHandlers.FoodPlatterTryPlacing += OnFoodPlatterTryPlacing;
 
 
-			// The following section is based off <see cref="Player.PlaceThing_Tiles_PlaceIt(bool, TileObject)"/> and <see cref="Player.PlaceThing_Tiles_PlaceIt_GetLegacyTileStyle"/>.
+			// The following section is based off Player.PlaceThing_Tiles_PlaceIt and Player.PlaceThing_Tiles_PlaceIt_GetLegacyTileStyle.
 			PlaceStyleCorrectors.Add(TileID.Torches,
 				(player, requestedPlaceStyle, actualItemPlaceStyle) =>
 				{
