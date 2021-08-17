@@ -116,6 +116,8 @@ namespace TShockAPI
 			GetDataHandlers.FishOutNPC += OnFishOutNPC;
 			GetDataHandlers.FoodPlatterTryPlacing += OnFoodPlatterTryPlacing;
 
+
+			// The following section is based off <see cref="Player.PlaceThing_Tiles_PlaceIt(bool, TileObject)"/> and <see cref="Player.PlaceThing_Tiles_PlaceIt_GetLegacyTileStyle"/>.
 			PlaceStyleCorrectors.Add(TileID.Torches,
 				(player, requestedPlaceStyle, actualItemPlaceStyle) =>
 				{
@@ -150,6 +152,50 @@ namespace TShockAPI
 						return requestedPlaceStyle;
 					}
 				});
+			PlaceStyleCorrectors.Add(TileID.Jackolanterns,
+				(player, requestedPlaceStyle, actualItemPlaceStyle) =>
+				{
+					if (actualItemPlaceStyle == 0)
+					{
+						return requestedPlaceStyle;
+					}
+					else
+					{
+						return 0;
+					}
+				});
+			PlaceStyleCorrectors.Add(TileID.SnowballLauncher,
+				(player, requestedPlaceStyle, actualItemPlaceStyle) =>
+				{
+					// 1 is right, because adding it to 0 points to the positive X axis -->
+					if (player.direction == 1)
+					{
+						// Right-facing snowball launcher
+						return 1;
+					}
+					// -1 is left, because adding it to 0 points to the negative X axis <--
+					else if (player.direction == -1)
+					{
+						// Left-facing snowball launcher
+						return 0;
+					}
+					else
+					{
+						throw new InvalidOperationException("Unrecognized player direction");
+					}
+				});
+			PlaceStyleCorrectors.Add(TileID.Painting4X3,
+				(player, requestedPlaceStyle, actualItemPlaceStyle) =>
+				{
+					if (actualItemPlaceStyle == 0)
+					{
+						return requestedPlaceStyle;
+					}
+					else
+					{
+						return 0;
+					}
+				});
 			PlaceStyleCorrectors.Add(TileID.MinecartTrack,
 				(player, requestedPlaceStyle, actualItemPlaceStyle) =>
 				{
@@ -179,6 +225,18 @@ namespace TShockAPI
 						return actualItemPlaceStyle;
 					}
 				});
+
+			// Return the input as-is. These tiles have a random placeStyle every time they're placed.
+			// Though they originate from the same tile.
+			// e.g. everytime Presents(36) are placed, a variation from the 8 is randomly chosen on the client.
+			// We just agree to it because there's nothing wrong.
+			// Although they can use hacks to place 10 variation 8s consecutively, we don't care about that.
+			PlaceStyleCorrector agreeAnyway =
+				(player, requestedPlaceStyle, actualItemPlaceStyle) => requestedPlaceStyle;
+
+			PlaceStyleCorrectors.Add(TileID.Presents, agreeAnyway);
+			PlaceStyleCorrectors.Add(TileID.Explosives, agreeAnyway);
+			PlaceStyleCorrectors.Add(TileID.Crystals, agreeAnyway);
 		}
 
 		internal void OnGetSection(object sender, GetDataHandlers.GetSectionEventArgs args)
