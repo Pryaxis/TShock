@@ -78,6 +78,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * TShock defaults to saving backups every 10 minutes, and defaults to keeping backups for 4 hours. (@hakusaro)
 * Updated SSC bypass messaging. Now, when you connect, you're told if you're bypassing SSC. Console logging has been improved to warn when players are not being saved due to the bypass SSC permission. To turn this warning off, change `WarnPlayersAboutBypassPermission` to `false` in the `sscconfig.json` file. (@hakusaro)
 * Fix oversight & exploit allowing specially crafted SendTileRectangle packets to perform large-scale world griefing. In addition, `NetTile.Slope` is now the native value (byte), and accessor methods `Slope1`, `Slope2`, and `Slope3` can be used to get the old style of values out. `HalfBrick` and `Actuator` were removed from `NetTile` because these were initialized to zero and never changed or used. (@bartico6)
+* Warning: a bug introduced in a prior TShock release may cause your SSC config file to be reset after applying this update. Please backup your config file prior to installing TShock 4.5.3+ if you use SSC. (@cardinal-system)
 
 ## TShock 4.5.2
 * Added preliminary support for Terraria 1.4.2.2. (@hakusaro)
