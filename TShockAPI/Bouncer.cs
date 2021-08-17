@@ -125,7 +125,7 @@ namespace TShockAPI
 					// The place styles may mismatch if the player is placing a biome torch.
 					// Biome torches can only be placed if the player has unlocked them (Torch God's Favor)
 					// Therefore, the following conditions need to be true:
-					// - The client's selected item will create a default torch
+					// - The client's selected item will create a default torch(this should be true if this handler is running)
 					// - The client's selected item's place style will be that of a default torch
 					// - The client has unlocked biome torches
 					if (actualItemPlaceStyle == TorchID.Torch && player.unlockedBiomeTorches)
@@ -149,34 +149,86 @@ namespace TShockAPI
 					}
 					else
 					{
-						return requestedPlaceStyle;
+						// If the player is not placing a default torch, then biome torches don't apply and return item place style.
+						// Or they haven't unlocked biome torches yet, then return default torch because they can't place biome torches.
+						return actualItemPlaceStyle;
 					}
 				});
 			PlaceStyleCorrectors.Add(TileID.Jackolanterns,
 				(player, requestedPlaceStyle, actualItemPlaceStyle) =>
 				{
-					if (actualItemPlaceStyle == 0)
+					// Jack O' Lanterns is a tile with 9 variations, but only 1 item.
+					// The item uses the first style a.k.a. 0.
+					// RNG only generates placeStyles less than 9.
+					if (actualItemPlaceStyle == 0 && requestedPlaceStyle < 9)
 					{
 						return requestedPlaceStyle;
 					}
 					else
 					{
+						// Return 0 for now, but ideally 0-8 should be returned.
+						return 0;
+					}
+				});
+			PlaceStyleCorrectors.Add(TileID.Presents,
+				(player, requestedPlaceStyle, actualItemPlaceStyle) =>
+				{
+					// RNG only generates placeStyles less than 7.
+					// Do note there's a 8th present(blue, golden stripes) that's unplaceable.
+					// https://terraria.fandom.com/wiki/Presents, last present of the 8 displayed
+					if (requestedPlaceStyle < 7)
+					{
+						return requestedPlaceStyle;
+					}
+					else
+					{
+						// Return 0 for now, but ideally 0-7 should be returned.
+						return 0;
+					}
+				});
+			PlaceStyleCorrectors.Add(TileID.Explosives,
+				(player, requestedPlaceStyle, actualItemPlaceStyle) =>
+				{
+					// RNG only generates placeStyles less than 2.
+					if (requestedPlaceStyle < 2)
+					{
+						return requestedPlaceStyle;
+					}
+					else
+					{
+						// Return 0 for now, but ideally 0-1 should be returned.
+						return 0;
+					}
+				});
+			PlaceStyleCorrectors.Add(TileID.Crystals,
+				(player, requestedPlaceStyle, actualItemPlaceStyle) =>
+				{
+					// RNG only generates placeStyles less than 18.
+					// Do note that Gelatin Crystals(Queen Slime summon) share the same ID as Crystal Shards.
+					// <18 includes all shards except Gelatin Crystals.
+					if (requestedPlaceStyle < 18)
+					{
+						return requestedPlaceStyle;
+					}
+					else
+					{
+						// Return 0 for now, but ideally 0-17 should be returned.
 						return 0;
 					}
 				});
 			PlaceStyleCorrectors.Add(TileID.SnowballLauncher,
 				(player, requestedPlaceStyle, actualItemPlaceStyle) =>
 				{
-					// 1 is right, because adding it to 0 points to the positive X axis -->
+					// Check the direction the player is facing.
+					// 1 is right and -1 is left, these are the only possible values.
 					if (player.direction == 1)
 					{
-						// Right-facing snowball launcher
+						// Right-facing snowball launcher.
 						return 1;
 					}
-					// -1 is left, because adding it to 0 points to the negative X axis <--
 					else if (player.direction == -1)
 					{
-						// Left-facing snowball launcher
+						// Left-facing snowball launcher.
 						return 0;
 					}
 					else
@@ -187,32 +239,36 @@ namespace TShockAPI
 			PlaceStyleCorrectors.Add(TileID.Painting4X3,
 				(player, requestedPlaceStyle, actualItemPlaceStyle) =>
 				{
-					if (actualItemPlaceStyle == 0)
+					// Painting4X3 or "Catacombs" is a painting with 9 variations, but only 1 item.
+					// The first item uses the first style a.k.a. 0.
+					// RNG only generates placeStyles less than 9.
+					if (actualItemPlaceStyle == 0 && requestedPlaceStyle < 9)
 					{
 						return requestedPlaceStyle;
 					}
 					else
 					{
+						// Return 0 for now, ideally 0-8 should be returned.
 						return 0;
 					}
 				});
 			PlaceStyleCorrectors.Add(TileID.MinecartTrack,
 				(player, requestedPlaceStyle, actualItemPlaceStyle) =>
 				{
-					// The player can place right booster tracks only if they're facing right (direction == 1).
-					// If this isn't the case, reject the packet
+					// Booster tracks have 2 variations, but only 1 item.
+					// The variation depends on the direction the player is facing.
 					if (actualItemPlaceStyle == 2)
 					{
-						// 3 is for right-facing booster tracks
-						// 1 is right, because adding it to 0 points to the positive X axis -->
+						// Check the direction the player is facing.
+						// 1 is right and -1 is left, these are the only possible values.
 						if (player.direction == 1)
 						{
+							// Right-facing booster tracks
 							return 3;
 						}
-						// 2 is for left-facing booster tracks
-						// -1 is left, because adding it to 0 points to the negative X axis <--
 						else if (player.direction == -1)
 						{
+							// Left-facing booster tracks
 							return 2;
 						}
 						else
@@ -222,21 +278,10 @@ namespace TShockAPI
 					}
 					else
 					{
+						// Not a booster track, return as-is.
 						return actualItemPlaceStyle;
 					}
 				});
-
-			// Return the input as-is. These tiles have a random placeStyle every time they're placed.
-			// Though they originate from the same tile.
-			// e.g. everytime Presents(36) are placed, a variation from the 8 is randomly chosen on the client.
-			// We just agree to it because there's nothing wrong.
-			// Although they can use hacks to place 10 variation 8s consecutively, we don't care about that.
-			PlaceStyleCorrector agreeAnyway =
-				(player, requestedPlaceStyle, actualItemPlaceStyle) => requestedPlaceStyle;
-
-			PlaceStyleCorrectors.Add(TileID.Presents, agreeAnyway);
-			PlaceStyleCorrectors.Add(TileID.Explosives, agreeAnyway);
-			PlaceStyleCorrectors.Add(TileID.Crystals, agreeAnyway);
 		}
 
 		internal void OnGetSection(object sender, GetDataHandlers.GetSectionEventArgs args)
