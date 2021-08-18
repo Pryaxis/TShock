@@ -4258,6 +4258,7 @@ namespace TShockAPI
 		{
 			{TileID.Presents, 6},
 			{TileID.Explosives, 1},
+			{TileID.MagicalIceBlock, 0},
 			{TileID.Crystals, 17},
 			{TileID.MinecartTrack, 3}
 		};
