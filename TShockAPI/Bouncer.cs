@@ -149,8 +149,8 @@ namespace TShockAPI
 					}
 					else
 					{
-						// If the player is not placing a default torch, then biome torches don't apply and return item place style.
-						// Or they haven't unlocked biome torches yet, then return default torch because they can't place biome torches.
+						// If the player isn't holding the default torch, then biome torches don't apply and return item place style.
+						// Or, they are holding the default torch but haven't unlocked biome torches yet, so return item place style.
 						return actualItemPlaceStyle;
 					}
 				});
@@ -159,7 +159,7 @@ namespace TShockAPI
 				{
 					// Jack O' Lanterns is a tile with 9 variations, but only 1 item.
 					// The item uses the first style a.k.a. 0.
-					// RNG only generates placeStyles less than 9.
+					// RNG only generates placeStyles less than 9, so permit only <9
 					if (actualItemPlaceStyle == 0 && requestedPlaceStyle < 9)
 					{
 						return requestedPlaceStyle;
@@ -173,8 +173,8 @@ namespace TShockAPI
 			PlaceStyleCorrectors.Add(TileID.Presents,
 				(player, requestedPlaceStyle, actualItemPlaceStyle) =>
 				{
-					// RNG only generates placeStyles less than 7.
-					// Do note there's a 8th present(blue, golden stripes) that's unplaceable.
+					// RNG only generates placeStyles less than 7, so permit only <7
+					// Note: there's an 8th present(blue, golden stripes) that's unplaceable.
 					// https://terraria.fandom.com/wiki/Presents, last present of the 8 displayed
 					if (requestedPlaceStyle < 7)
 					{
@@ -189,7 +189,7 @@ namespace TShockAPI
 			PlaceStyleCorrectors.Add(TileID.Explosives,
 				(player, requestedPlaceStyle, actualItemPlaceStyle) =>
 				{
-					// RNG only generates placeStyles less than 2.
+					// RNG only generates placeStyles less than 2, so permit only <2
 					if (requestedPlaceStyle < 2)
 					{
 						return requestedPlaceStyle;
@@ -203,8 +203,8 @@ namespace TShockAPI
 			PlaceStyleCorrectors.Add(TileID.Crystals,
 				(player, requestedPlaceStyle, actualItemPlaceStyle) =>
 				{
-					// RNG only generates placeStyles less than 18.
-					// Do note that Gelatin Crystals(Queen Slime summon) share the same ID as Crystal Shards.
+					// RNG only generates placeStyles less than 18, so permit only <18.
+					// Note: Gelatin Crystals(Queen Slime summon) share the same ID as Crystal Shards.
 					// <18 includes all shards except Gelatin Crystals.
 					if (requestedPlaceStyle < 18)
 					{
@@ -241,14 +241,14 @@ namespace TShockAPI
 				{
 					// Painting4X3 or "Catacombs" is a painting with 9 variations, but only 1 item.
 					// The first item uses the first style a.k.a. 0.
-					// RNG only generates placeStyles less than 9.
+					// RNG only generates placeStyles less than 9, so permit only <9.
 					if (actualItemPlaceStyle == 0 && requestedPlaceStyle < 9)
 					{
 						return requestedPlaceStyle;
 					}
 					else
 					{
-						// Return 0 for now, ideally 0-8 should be returned.
+						// Return 0 for now, but ideally 0-8 should be returned.
 						return 0;
 					}
 				});
