@@ -118,6 +118,7 @@ namespace TShockAPI
 
 
 			// The following section is based off Player.PlaceThing_Tiles_PlaceIt and Player.PlaceThing_Tiles_PlaceIt_GetLegacyTileStyle.
+			// Multi-block tiles are intentionally ignored because they don't pass through OnTileEdit.
 			PlaceStyleCorrectors.Add(TileID.Torches,
 				(player, requestedPlaceStyle, actualItemPlaceStyle) =>
 				{
