@@ -1226,7 +1226,7 @@ namespace TShockAPI
 			for (int i = 0; i < Main.maxItemTypes; i++)
 			{
 				item.netDefaults(i);
-				if (item.placeStyle > 0)
+				if (item.placeStyle >= 0)
 				{
 					if (GetDataHandlers.MaxPlaceStyles.ContainsKey(item.createTile))
 					{
