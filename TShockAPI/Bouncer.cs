@@ -154,22 +154,6 @@ namespace TShockAPI
 						return actualItemPlaceStyle;
 					}
 				});
-			PlaceStyleCorrectors.Add(TileID.Jackolanterns,
-				(player, requestedPlaceStyle, actualItemPlaceStyle) =>
-				{
-					// Jack O' Lanterns is a tile with 9 variations, but only 1 item.
-					// The item uses the first style a.k.a. 0.
-					// RNG only generates placeStyles less than 9, so permit only <9
-					if (actualItemPlaceStyle == 0 && requestedPlaceStyle < 9)
-					{
-						return requestedPlaceStyle;
-					}
-					else
-					{
-						// Return 0 for now, but ideally 0-8 should be returned.
-						return 0;
-					}
-				});
 			PlaceStyleCorrectors.Add(TileID.Presents,
 				(player, requestedPlaceStyle, actualItemPlaceStyle) =>
 				{
@@ -213,42 +197,6 @@ namespace TShockAPI
 					else
 					{
 						// Return 0 for now, but ideally 0-17 should be returned.
-						return 0;
-					}
-				});
-			PlaceStyleCorrectors.Add(TileID.SnowballLauncher,
-				(player, requestedPlaceStyle, actualItemPlaceStyle) =>
-				{
-					// Check the direction the player is facing.
-					// 1 is right and -1 is left, these are the only possible values.
-					if (player.direction == 1)
-					{
-						// Right-facing snowball launcher.
-						return 1;
-					}
-					else if (player.direction == -1)
-					{
-						// Left-facing snowball launcher.
-						return 0;
-					}
-					else
-					{
-						throw new InvalidOperationException("Unrecognized player direction");
-					}
-				});
-			PlaceStyleCorrectors.Add(TileID.Painting4X3,
-				(player, requestedPlaceStyle, actualItemPlaceStyle) =>
-				{
-					// Painting4X3 or "Catacombs" is a painting with 9 variations, but only 1 item.
-					// The first item uses the first style a.k.a. 0.
-					// RNG only generates placeStyles less than 9, so permit only <9.
-					if (actualItemPlaceStyle == 0 && requestedPlaceStyle < 9)
-					{
-						return requestedPlaceStyle;
-					}
-					else
-					{
-						// Return 0 for now, but ideally 0-8 should be returned.
 						return 0;
 					}
 				});

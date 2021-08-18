@@ -4256,12 +4256,9 @@ namespace TShockAPI
 		/// </summary>
 		internal static Dictionary<int, int> ExtraneousPlaceStyles = new Dictionary<int, int>
 		{
-			{TileID.Jackolanterns, 8},
 			{TileID.Presents, 6},
 			{TileID.Explosives, 1},
 			{TileID.Crystals, 17},
-			{TileID.SnowballLauncher, 1},
-			{TileID.Painting4X3, 8},
 			{TileID.MinecartTrack, 3}
 		};
 		
