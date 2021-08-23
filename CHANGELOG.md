@@ -23,6 +23,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Added a new `/respawn` command that lets you respawn yourself or another player. Respawning yourself requires the `tshock.respawn` permission and respawning others requires the `tshock.respawn.other` permission. The full command syntax is `/respawn [player]`. (@moisterrific)
 * Added a notification message and silent command support for permanently changing a target player's user group. Now players who received a group change will be notified of their new group if they are currently online. (@moisterrific, @QuiCM)
 * Changed the TSPlayer IP method to return the loopback IP if RealPlayer is false. (@Rozen4334)
+* Changed return in ` HandleSpecial ` (GetDataHandlers) to fix Sundail problem. (@Rozen4334)
 
 ## TShock 4.5.5
 * Changed the world autosave message so that it no longer warns of a "potential lag spike." (@hakusaro)
