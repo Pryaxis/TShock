@@ -50,6 +50,9 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * `OnPlaceTileEntity`: The check was newly added.
   * `OnPlaceItemFrame`: The check was newly added.
   * `OnFoodPlatterTryPlacing`: The check was newly added.
+* Fixed errors on startup not being reported to console. (@bartico6)
+* The server now correctly disconnects players with missing groups instead of throwing an exception, stalling the connection (@bartico6)
+* The server now rejects login attempts from players who would end up with a missing group. (@bartico6)
 
 ## TShock 4.5.4
 * Fixed ridiculous typo in `GetDataHandlers` which caused TShock to read the wrong field in the packet for `usingBiomeTorches`. (@hakusaro, @Arthri)
