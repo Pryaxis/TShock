@@ -3246,6 +3246,7 @@ namespace TShockAPI
 				{
 					TShock.Log.ConsoleDebug($"GetDataHandlers / HandleSpecial rejected enchanted sundial permission {args.Player.Name}");
 					args.Player.SendErrorMessage("You do not have permission to use the Enchanted Sundial.");
+					return true;
 				}
 				else if (TShock.Config.Settings.ForceTime != "normal")
 				{
@@ -3256,8 +3257,8 @@ namespace TShockAPI
 					}
 					else
 						args.Player.SendErrorMessage("You must set ForceTime to normal via config to use the Enchanted Sundial.");
+					return true;
 				}
-				return true;
 			}
 
 			return false;
