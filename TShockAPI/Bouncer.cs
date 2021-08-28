@@ -451,9 +451,20 @@ namespace TShockAPI
 					if (requestedPlaceStyle != actualItemPlaceStyle)
 					{
 						var tplayer = args.Player.TPlayer;
-						var correctedPlaceStyle = actualItemPlaceStyle;
-						if (!PlaceStyleCorrectors.TryGetValue(actualTileToBeCreated, out PlaceStyleCorrector corrector)
-							|| requestedPlaceStyle != (correctedPlaceStyle = corrector(tplayer, requestedPlaceStyle, actualItemPlaceStyle)))
+						// Search for an extraneous tile corrector
+						// If none found then it can't be a false positive so deny the action
+						if (!PlaceStyleCorrectors.TryGetValue(actualTileToBeCreated, out PlaceStyleCorrector corrector))
+						{
+							TShock.Log.ConsoleError("Bouncer / OnTileEdit rejected from (placestyle) {0} {1} {2} placeStyle: {3} expectedStyle: {4}",
+								args.Player.Name, action, editData, requestedPlaceStyle, actualItemPlaceStyle);
+							args.Player.SendTileSquare(tileX, tileY, 1);
+							args.Handled = true;
+							return;
+						}
+
+						// See if the corrector's expected style matches
+						var correctedPlaceStyle = corrector(tplayer, requestedPlaceStyle, actualItemPlaceStyle);
+						if (requestedPlaceStyle != correctedPlaceStyle)
 						{
 							TShock.Log.ConsoleError("Bouncer / OnTileEdit rejected from (placestyle) {0} {1} {2} placeStyle: {3} expectedStyle: {4}",
 								args.Player.Name, action, editData, requestedPlaceStyle, correctedPlaceStyle);
