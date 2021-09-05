@@ -810,6 +810,11 @@ namespace TShockAPI
 		public bool GodMode = false;
 
 		/// <summary>
+		/// SSC mode for this player. 
+		/// </summary>
+		public bool SSC = false;
+
+		/// <summary>
 		/// Players controls are inverted if using SSC
 		/// </summary>
 		public bool Confused = false;
@@ -1561,6 +1566,18 @@ namespace TShockAPI
 		{
 			Main.player[Index].team = team;
 			NetMessage.SendData((int)PacketTypes.PlayerTeam, -1, -1, NetworkText.Empty, Index);
+		}
+
+		/// <summary>
+		/// Sets the SSC mode for the player.
+		/// </summary>
+		/// <param name="mode"></param>
+		/// <param name="send">Does the player require this information.</param>
+		public virtual void SetSSC(bool mode, bool send = true)
+		{
+			SSC = mode;
+			if (send)
+				SendData(PacketTypes.WorldInfo);
 		}
 
 		private DateTime LastDisableNotification = DateTime.UtcNow;

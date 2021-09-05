@@ -351,6 +351,7 @@ namespace TShockAPI
 				ServerApi.Hooks.ServerCommand.Register(this, ServerHooks_OnCommand);
 				ServerApi.Hooks.NetGetData.Register(this, OnGetData);
 				ServerApi.Hooks.NetSendData.Register(this, NetHooks_SendData);
+				ServerApi.Hooks.NetSendBytes.Register(this, NetHooks_SendBytes);
 				ServerApi.Hooks.NetGreetPlayer.Register(this, OnGreetPlayer);
 				ServerApi.Hooks.NpcStrike.Register(this, NpcHooks_OnStrikeNpc);
 				ServerApi.Hooks.ProjectileSetDefaults.Register(this, OnProjectileSetDefaults);
@@ -424,6 +425,7 @@ namespace TShockAPI
 				ServerApi.Hooks.ServerCommand.Deregister(this, ServerHooks_OnCommand);
 				ServerApi.Hooks.NetGetData.Deregister(this, OnGetData);
 				ServerApi.Hooks.NetSendData.Deregister(this, NetHooks_SendData);
+				ServerApi.Hooks.NetSendBytes.Deregister(this, NetHooks_SendBytes);
 				ServerApi.Hooks.NetGreetPlayer.Deregister(this, OnGreetPlayer);
 				ServerApi.Hooks.NpcStrike.Deregister(this, NpcHooks_OnStrikeNpc);
 				ServerApi.Hooks.ProjectileSetDefaults.Deregister(this, OnProjectileSetDefaults);
@@ -1671,6 +1673,30 @@ namespace TShockAPI
 							}
 						}
 					}
+				}
+			}
+		}
+
+		private void NetHooks_SendBytes(SendBytesEventArgs args)
+		{
+			if (args.Buffer[2] == 7 && !ServerSideCharacterConfig.Settings.Enabled && Players[args.Socket.Id].SSC)
+			{
+				using (var writer = new BinaryWriter(new MemoryStream(args.Buffer, args.Offset, args.Count)))
+				{
+					writer.BaseStream.Position += 25;
+					writer.Write(Main.worldName);
+					writer.BaseStream.Position += 1;
+					writer.Write(Main.ActiveWorldFileData.UniqueId.ToByteArray());
+					writer.BaseStream.Position += 30;
+
+					writer.BaseStream.Position += 32;
+					WorldGen.TreeTops.SyncSend(writer);
+					writer.BaseStream.Position += 4;
+
+					BitsByte bb = args.Buffer[writer.BaseStream.Position];
+					bb[6] = true;
+					args.Buffer[writer.BaseStream.Position] = bb;
+
 				}
 			}
 		}
