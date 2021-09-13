@@ -22,6 +22,8 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Added a new `DisablePrimeBombs` config option (`false` by default). Highly recommended to set this to `true` in order to prevent griefing on servers doing a `for the worthy` play-through, since the prime bombs on this seed can destroy most tiles and bypass region protection. (@moisterrific)
 * Added a new `/respawn` command that lets you respawn yourself or another player. Respawning yourself requires the `tshock.respawn` permission and respawning others requires the `tshock.respawn.other` permission. The full command syntax is `/respawn [player]`. (@moisterrific)
 * Added a notification message and silent command support for permanently changing a target player's user group. Now players who received a group change will be notified of their new group if they are currently online. (@moisterrific, @QuiCM)
+* Changed the TSPlayer IP method to return the loopback IP if RealPlayer is false. (@Rozen4334)
+* Fixed a bug that caused sundials to be ignored all the time, instead of only when the player has no permission or time is frozen. (@Rozen4334)
 * Added colours and usage examples (similiar to how the new ban system looks) for many more commands. (@moisterrific)
 
 ## TShock 4.5.5
@@ -50,6 +52,9 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * `OnPlaceTileEntity`: The check was newly added.
   * `OnPlaceItemFrame`: The check was newly added.
   * `OnFoodPlatterTryPlacing`: The check was newly added.
+* Fixed errors on startup not being reported to console. (@bartico6)
+* The server now correctly disconnects players with missing groups instead of throwing an exception, stalling the connection (@bartico6)
+* The server now rejects login attempts from players who would end up with a missing group. (@bartico6)
 
 ## TShock 4.5.4
 * Fixed ridiculous typo in `GetDataHandlers` which caused TShock to read the wrong field in the packet for `usingBiomeTorches`. (@hakusaro, @Arthri)
@@ -78,6 +83,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * TShock defaults to saving backups every 10 minutes, and defaults to keeping backups for 4 hours. (@hakusaro)
 * Updated SSC bypass messaging. Now, when you connect, you're told if you're bypassing SSC. Console logging has been improved to warn when players are not being saved due to the bypass SSC permission. To turn this warning off, change `WarnPlayersAboutBypassPermission` to `false` in the `sscconfig.json` file. (@hakusaro)
 * Fix oversight & exploit allowing specially crafted SendTileRectangle packets to perform large-scale world griefing. In addition, `NetTile.Slope` is now the native value (byte), and accessor methods `Slope1`, `Slope2`, and `Slope3` can be used to get the old style of values out. `HalfBrick` and `Actuator` were removed from `NetTile` because these were initialized to zero and never changed or used. (@bartico6)
+* Warning: a bug introduced in a prior TShock release may cause your SSC config file to be reset after applying this update. Please backup your config file prior to installing TShock 4.5.3+ if you use SSC. (@cardinal-system)
 
 ## TShock 4.5.2
 * Added preliminary support for Terraria 1.4.2.2. (@hakusaro)

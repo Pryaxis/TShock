@@ -832,9 +832,15 @@ namespace TShockAPI
 						(usingUUID && account.UUID == args.Player.UUID && !TShock.Config.Settings.DisableUUIDLogin &&
 						!String.IsNullOrWhiteSpace(args.Player.UUID)))
 				{
-					args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, account.ID);
-
 					var group = TShock.Groups.GetGroupByName(account.Group);
+
+					if (!TShock.Groups.AssertGroupValid(args.Player, group, false))
+					{
+						args.Player.SendErrorMessage("Login attempt failed - see the message above.");
+						return;
+					}
+
+					args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, account.ID);
 
 					args.Player.Group = group;
 					args.Player.tempGroup = null;
@@ -5103,7 +5109,7 @@ namespace TShockAPI
 				}
 
 				IEnumerable<string> cmdNames = from cmd in ChatCommands
-											   where cmd.CanRun(args.Player) && (cmd.Name != "auth" || TShock.SetupToken != 0)
+											   where cmd.CanRun(args.Player) && (cmd.Name != "setup" || TShock.SetupToken != 0)
 											   select Specifier + cmd.Name;
 
 				PaginationTools.SendPage(args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(cmdNames),
