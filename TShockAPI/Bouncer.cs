@@ -790,7 +790,7 @@ namespace TShockAPI
 			short type = args.Type;
 			int index = args.Index;
 
-			if (index > Main.maxProjectiles)
+			if (index >= Main.maxProjectiles)
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnNewProjectile rejected from above projectile limit from {0}", args.Player.Name);
 				args.Player.RemoveProjectile(ident, owner);
