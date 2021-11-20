@@ -29,6 +29,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Changed `RespawnSeconds` and `RespawnBossSeconds` from `10` to `0` to respect the game's default respawn timers. (@moisterrific)
 * Updated Open Terraria API (OTAPI) and TSAPI for preliminary support of Terraria 1.4.3.0. This functionally changes OTAPI and points to 2.0.0.45 from 2.0.0.43 in previous versions. Developer note: SendData takes an extra arg in this version of Terraria but that's slated to be removed in a Terraria hotfix. This is vestigial and OTAPI "hacks that out." That's why it'll differ from the source code. (@Patrikkk, @DeathCradle, honorable mention: @Moneylover3246)
 * Added Deerclops to spawnboss command. (@hakusaro, @HiddenStriker)
+* Fixed [GHSA-6w5v-hxr3-m2wx](https://github.com/Pryaxis/TShock/security/advisories/GHSA-6w5v-hxr3-m2wx). (@Yoraiz0r, @Arthri)
 
 ## TShock 4.5.5
 * Changed the world autosave message so that it no longer warns of a "potential lag spike." (@hakusaro)
