@@ -27,6 +27,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Fixed a bug that caused sundials to be ignored all the time, instead of only when the player has no permission or time is frozen. (@Rozen4334)
 * Added colours and usage examples (similiar to how the new ban system looks) for many more commands. (@moisterrific)
 * Changed `RespawnSeconds` and `RespawnBossSeconds` from `10` to `0` to respect the game's default respawn timers. (@moisterrific)
+* Updated Open Terraria API (OTAPI) and TSAPI for preliminary support of Terraria 1.4.3.0 (@Patrikkk, @DeathCradle, honorable mention: @Moneylover3246)
 
 ## TShock 4.5.5
 * Changed the world autosave message so that it no longer warns of a "potential lag spike." (@hakusaro)
