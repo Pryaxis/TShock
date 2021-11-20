@@ -212,7 +212,7 @@ You need to re-run the patcher any time `OTAPI` updates. You need to rebuild `Te
 
 1. Verify that non-zero modifications ran successfully. Then, build the Terraria Server API executable.
 
-          $ cd ./../../../
+          $ cd ../../../../
           $ xbuild ./TerrariaServerAPI/TerrariaServerAPI/TerrariaServerAPI.csproj \
                 /p:Configuration=$BUILD_MODE
 
@@ -220,13 +220,13 @@ You need to re-run the patcher any time `OTAPI` updates. You need to rebuild `Te
 
 ##### TShock
 
-1. Perform a NuGet restore in `TShockAPI` folder that contains `TShockAPI.sln`.
+1. Perform a NuGet restore in the folder that contains `TShock.sln`.
 
           $ mono ~/bin/nuget.exe restore
 
 1. Build TShock in the `BUILD_MODE` you set earlier.
 
-          $ xbuild ./TShockAPI.sln /p:Configuration=$BUILD_MODE
+          $ xbuild ./TShock.sln /p:Configuration=$BUILD_MODE
 
 You're done!
 

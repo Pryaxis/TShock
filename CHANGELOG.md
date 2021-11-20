@@ -13,6 +13,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change.
 
 ## Upcoming changes
+* Updated Linux guide. (@NezbednikSK)
 * Fixed SendTileRectHandler not sending tile rect updates like Pylons/Mannequins to other clients. (@Stealownz)
 * Introduced `SoftcoreOnly` config option to allow only softcore characters to connect. (@drunderscore)
 * Fixed some typos that have been in the repository for over a lustrum. (@Killia0)
@@ -25,6 +26,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Changed the TSPlayer IP method to return the loopback IP if RealPlayer is false. (@Rozen4334)
 * Fixed a bug that caused sundials to be ignored all the time, instead of only when the player has no permission or time is frozen. (@Rozen4334)
 * Added colours and usage examples (similiar to how the new ban system looks) for many more commands. (@moisterrific)
+* Changed `RespawnSeconds` and `RespawnBossSeconds` from `10` to `0` to respect the game's default respawn timers. (@moisterrific)
 
 ## TShock 4.5.5
 * Changed the world autosave message so that it no longer warns of a "potential lag spike." (@hakusaro)
