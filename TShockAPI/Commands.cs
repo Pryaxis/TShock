@@ -2674,6 +2674,11 @@ namespace TShockAPI
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
 					spawnName = "a Stardust Pillar";
 					break;
+				case "deerclops":
+					npc.SetDefaults(668);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
+					spawnName = "a Deerclops";
+					break;
 				default:
 					args.Player.SendErrorMessage("Invalid boss type!");
 					return;
