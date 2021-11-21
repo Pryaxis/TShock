@@ -444,15 +444,11 @@ namespace TShockAPI.DB
 					UpgradePasswordWorkFactor(password);
 					return true;
 				}
-			} 
+			}
 			catch (SaltParseException)
 			{
 				if (String.Equals(HashPassword(password), Password, StringComparison.InvariantCultureIgnoreCase))
 				{
-					// Return true to keep blank passwords working but don't convert them to bcrypt.
-					if (Password == "non-existant password") {
-						return true;
-					}
 					// The password is not stored using BCrypt; upgrade it to BCrypt immediately
 					UpgradePasswordToBCrypt(password);
 					return true;

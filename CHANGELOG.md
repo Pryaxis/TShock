@@ -34,6 +34,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Fixed an issue where `/god [player]` would tell `[player]` that they were in godmode regardless of whether or not they were or not. (@hakusaro, @Kojirremer)
 * In `TSAPI`: Updated `PacketTypes` to support `SetMiscEventValues` (140), `RequestLucyPopup` (141), and `SyncProjectileTrackers` (142). (@hakusaro)
 * Added `DisableDefaultIPBan` to the config file. If set to `true`, the server will not automatically IP ban players when banning them. This is useful if you run an intercepting proxy in front of TShock, and all players share the same IP. (@hakusaro, and Telegram user xmzzhh233)
+* Blank passwords will be upgraded to `bcrypt` hashes automatically. Previously, blank passwords were not upgraded to bcrypt hashes. This is in preparation to remove the old password hashing system and related fallback components in the next release. Most users have been using bcrypt hashes for the past...few years. (@hakusaro)
 
 ## TShock 4.5.5
 * Changed the world autosave message so that it no longer warns of a "potential lag spike." (@hakusaro)
