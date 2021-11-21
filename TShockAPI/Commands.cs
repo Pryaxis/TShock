@@ -1514,6 +1514,11 @@ namespace TShockAPI
 				if (!exactTarget && !banAccount && !banUuid && !banName && !banIp)
 				{
 					banAccount = banUuid = banIp = true;
+
+					if (TShock.Config.Settings.DisableDefaultIPBan)
+					{
+						banIp = false;
+					}
 				}
 
 				reason = reason ?? "Banned";

@@ -33,6 +33,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Fixed an issue where player build permissions would reject gem lock changes, even if `RegionProtectGemLocks` was disabled in the config file. Now, players will be permitted to use gem locks if they don't have build permission in a region, but `RegionProtectGemLocks` is disabled. If `RegionProtectGemLocks` is enabled, players will be unable to use gem locks in a build region. (@hakusaro, @Kojirremer, @Arthri)
 * Fixed an issue where `/god [player]` would tell `[player]` that they were in godmode regardless of whether or not they were or not. (@hakusaro, @Kojirremer)
 * In `TSAPI`: Updated `PacketTypes` to support `SetMiscEventValues` (140), `RequestLucyPopup` (141), and `SyncProjectileTrackers` (142). (@hakusaro)
+* Added `DisableDefaultIPBan` to the config file. If set to `true`, the server will not automatically IP ban players when banning them. This is useful if you run an intercepting proxy in front of TShock, and all players share the same IP. (@hakusaro, and Telegram user xmzzhh233)
 
 ## TShock 4.5.5
 * Changed the world autosave message so that it no longer warns of a "potential lag spike." (@hakusaro)

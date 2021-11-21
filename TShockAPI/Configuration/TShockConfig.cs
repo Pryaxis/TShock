@@ -312,6 +312,10 @@ namespace TShockAPI.Configuration
 		[Description("The reason given if banning a mediumcore player on death.")]
 		public string MediumcoreBanReason = "Death results in a ban";
 
+		/// <summary>Disbales IP bans by default, if no arguments are passed to the ban command.</summary>
+		[Description("Disbales IP bans by default, if no arguments are passed to the ban command.")]
+		public bool DisableDefaultIPBan;
+
 		/// <summary>Enable or disable the whitelist based on IP addresses in the whitelist.txt file.</summary>
 		[Description("Enable or disable the whitelist based on IP addresses in the whitelist.txt file.")]
 		public bool EnableWhitelist;
