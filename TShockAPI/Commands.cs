@@ -6697,7 +6697,7 @@ namespace TShockAPI
 
 			if (!args.Silent || (playerToGod == args.Player))
 			{
-				playerToGod.SendSuccessMessage(string.Format("You are {0} in god mode.", args.Player.GodMode ? "now" : "no longer"));
+				playerToGod.SendSuccessMessage(string.Format("You are {0} in god mode.", playerToGod.GodMode ? "now" : "no longer"));
 			}
 		}
 

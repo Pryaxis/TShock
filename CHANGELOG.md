@@ -31,6 +31,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Added Deerclops to `/spawnboss` command. (@hakusaro, @HiddenStriker)
 * Fixed [GHSA-6w5v-hxr3-m2wx](https://github.com/Pryaxis/TShock/security/advisories/GHSA-6w5v-hxr3-m2wx). (@Yoraiz0r, @Arthri)
 * Fixed an issue where player build permissions would reject gem lock changes, even if `RegionProtectGemLocks` was disabled in the config file. Now, players will be permitted to use gem locks if they don't have build permission in a region, but `RegionProtectGemLocks` is disabled. If `RegionProtectGemLocks` is enabled, players will be unable to use gem locks in a build region. (@hakusaro, @Kojirremer, @Arthri)
+* Fixed an issue where `/god [player]` would tell `[player]` that they were in godmode regardless of whether or not they were or not. (@hakusaro, @Kojirremer)
 
 ## TShock 4.5.5
 * Changed the world autosave message so that it no longer warns of a "potential lag spike." (@hakusaro)
