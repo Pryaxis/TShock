@@ -1922,11 +1922,14 @@ namespace TShockAPI
 				return;
 			}
 
-			if (!args.Player.HasBuildPermission(args.X, args.Y))
+			if (TShock.Config.Settings.RegionProtectGemLocks)
 			{
-				TShock.Log.ConsoleDebug("Bouncer / OnGemLockToggle rejected permissions check from {0}", args.Player.Name);
-				args.Handled = true;
-				return;
+				if (!args.Player.HasBuildPermission(args.X, args.Y))
+				{
+					TShock.Log.ConsoleDebug("Bouncer / OnGemLockToggle rejected permissions check from {0}", args.Player.Name);
+					args.Handled = true;
+					return;
+				}
 			}
 		}
 
