@@ -14,6 +14,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 ## Upcoming changes
 * Fixed the `/respawn` command to permit respawning players from the console. (@hakusaro, @Kojirremer)
+* Removed the old password hashing system, which predated `bcrypt` hashes and allowed specifying the hash algorithm in the config file. This also removes the config option for setting the hash algorithm (`HashAlgorithm`). This is because it helps clear the way for .NET5/6 and OTAPI 3, and because `bcrypt` has been the default since TShock 4.3 in 2015. (@hakusaro)
 
 ## TShock 4.5.6
 * Updated Linux guide. (@NezbednikSK)
