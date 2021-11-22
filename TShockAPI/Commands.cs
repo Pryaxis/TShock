@@ -5793,7 +5793,7 @@ namespace TShockAPI
 									
 		private static void Respawn(CommandArgs args)
 		{
-			if (!args.Player.RealPlayer)
+			if (!args.Player.RealPlayer && args.Parameters.Count == 0)
 			{
 				args.Player.SendErrorMessage("You can't respawn the server console!");
 				return;

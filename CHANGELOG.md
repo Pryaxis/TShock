@@ -13,6 +13,9 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change.
 
 ## Upcoming changes
+* Fixed the `/respawn` command to permit respawning players from the console. (@hakusaro, @Kojirremer)
+
+## TShock 4.5.6
 * Updated Linux guide. (@NezbednikSK)
 * Fixed SendTileRectHandler not sending tile rect updates like Pylons/Mannequins to other clients. (@Stealownz)
 * Introduced `SoftcoreOnly` config option to allow only softcore characters to connect. (@drunderscore)
