@@ -5546,44 +5546,47 @@ namespace TShockAPI
 				user.SendMultipleMatchError(players.Select(p => p.Name));
 			else
 			{
-				int type = 0;
-				switch (args.Parameters[1].ToLower())
+				int type = ProjectileID.RocketFireworkRed;
+				if (args.Parameters.Count > 1)
 				{
-					case "red":
-					case "r":
-						type = ProjectileID.RocketFireworkRed;
-						break;
-					case "green":
-					case "g":
-						type = ProjectileID.RocketFireworkGreen;
-						break;
-					case "blue":
-					case "b":
-						type = ProjectileID.RocketFireworkBlue;
-						break;
-					case "yellow":
-					case "y":
-						type = ProjectileID.RocketFireworkYellow;
-						break;
-					case "r2":
-					case "star":
-						type = ProjectileID.RocketFireworksBoxRed;
-						break;
-					case "g2":
-					case "spiral":
-						type = ProjectileID.RocketFireworksBoxGreen;
-						break;
-					case "b2":
-					case "rings":
-						type = ProjectileID.RocketFireworksBoxBlue;
-						break;
-					case "y2":
-					case "flower":
-						type = ProjectileID.RocketFireworksBoxYellow;
-						break;
-					default:
-						type = ProjectileID.RocketFireworkRed;
-						break;
+					switch (args.Parameters[1].ToLower())
+					{
+						case "red":
+						case "r":
+							type = ProjectileID.RocketFireworkRed;
+							break;
+						case "green":
+						case "g":
+							type = ProjectileID.RocketFireworkGreen;
+							break;
+						case "blue":
+						case "b":
+							type = ProjectileID.RocketFireworkBlue;
+							break;
+						case "yellow":
+						case "y":
+							type = ProjectileID.RocketFireworkYellow;
+							break;
+						case "r2":
+						case "star":
+							type = ProjectileID.RocketFireworksBoxRed;
+							break;
+						case "g2":
+						case "spiral":
+							type = ProjectileID.RocketFireworksBoxGreen;
+							break;
+						case "b2":
+						case "rings":
+							type = ProjectileID.RocketFireworksBoxBlue;
+							break;
+						case "y2":
+						case "flower":
+							type = ProjectileID.RocketFireworksBoxYellow;
+							break;
+						default:
+							type = ProjectileID.RocketFireworkRed;
+							break;
+					}
 				}
 				var target = players[0];
 				int p = Projectile.NewProjectile(Projectile.GetNoneSource(), target.TPlayer.position.X, target.TPlayer.position.Y - 64f, 0f, -8f, type, 0, 0);
