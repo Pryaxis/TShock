@@ -35,6 +35,7 @@
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.2" />
     <PackageReference Include="MySql.Data" Version="8.0.27" />
     <PackageReference Include="SQLite" Version="3.13.0" />
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.115.5" />
   </ItemGroup>
 
   <ItemGroup>
@@ -44,9 +45,6 @@
   <ItemGroup>
     <Reference Include="HttpServer">
       <HintPath>..\prebuilts\HttpServer.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Data.Sqlite">
-      <HintPath>..\prebuilts\Mono.Data.Sqlite.dll</HintPath>
     </Reference>
   </ItemGroup>
 
@@ -64,7 +62,7 @@
     <Copy SourceFiles="$(OutputPath)\TShockAPI.deps.json" DestinationFolder="$(SolutionDir)\TerrariaServerAPI\TerrariaServerAPI\bin\$(ConfigurationName)\net5.0\ServerPlugins" SkipUnchangedFiles="false" />
     <Copy SourceFiles="$(OutputPath)\TShockAPI.pdb" DestinationFolder="$(SolutionDir)\TerrariaServerAPI\TerrariaServerAPI\bin\$(ConfigurationName)\net5.0\ServerPlugins" SkipUnchangedFiles="false" />
     <Copy SourceFiles="$(OutputPath)\TShockAPI.xml" DestinationFolder="$(SolutionDir)\TerrariaServerAPI\TerrariaServerAPI\bin\$(ConfigurationName)\net5.0\ServerPlugins" SkipUnchangedFiles="false" />
-    <Copy SourceFiles="$(OutputPath)\Mono.Data.Sqlite.dll" DestinationFolder="$(SolutionDir)\TerrariaServerAPI\TerrariaServerAPI\bin\$(ConfigurationName)\net5.0\ServerPlugins" SkipUnchangedFiles="false" />
+    <Copy SourceFiles="$(OutputPath)\System.Data.SQLite.dll" DestinationFolder="$(SolutionDir)\TerrariaServerAPI\TerrariaServerAPI\bin\$(ConfigurationName)\net5.0\ServerPlugins" SkipUnchangedFiles="false" />
     <Copy SourceFiles="$(OutputPath)\HttpServer.dll" DestinationFolder="$(SolutionDir)\TerrariaServerAPI\TerrariaServerAPI\bin\$(ConfigurationName)\net5.0\ServerPlugins" SkipUnchangedFiles="false" />
     <Copy SourceFiles="$(OutputPath)\MySql.Data.dll" DestinationFolder="$(SolutionDir)\TerrariaServerAPI\TerrariaServerAPI\bin\$(ConfigurationName)\net5.0\ServerPlugins" SkipUnchangedFiles="false" />
     <Copy SourceFiles="@(DebugRuntimes)" DestinationFolder="$(SolutionDir)\TerrariaServerAPI\TerrariaServerAPI\bin\$(ConfigurationName)\net5.0\runtimes\%(RecursiveDir)" SkipUnchangedFiles="false" />

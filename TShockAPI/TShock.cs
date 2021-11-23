@@ -28,7 +28,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using MaxMind;
-using Mono.Data.Sqlite;
+using System.Data.SQLite;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using Rests;
@@ -45,6 +45,7 @@ using TShockAPI.CLI;
 using TShockAPI.Localization;
 using TShockAPI.Configuration;
 using Terraria.GameContent.Creative;
+using System.Runtime.InteropServices;
 
 namespace TShockAPI
 {
@@ -190,6 +191,50 @@ namespace TShockAPI
 			instance = this;
 		}
 
+
+		static Dictionary<string, IntPtr> _nativeCache = new Dictionary<string, IntPtr>();
+		static IntPtr ResolveNativeDep(string libraryName, Assembly assembly, DllImportSearchPath? searchPath)
+		{
+			if (_nativeCache.TryGetValue(libraryName, out IntPtr cached))
+				return cached;
+
+			IEnumerable<string> matches = Enumerable.Empty<string>();
+
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+			{
+				var osx = Path.Combine(Environment.CurrentDirectory, "runtimes", "osx-x64");
+				matches = Directory.GetFiles(osx, "*" + libraryName + "*", SearchOption.AllDirectories);
+			}
+			else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+			{
+				var lib64 = Path.Combine(Environment.CurrentDirectory, "runtimes", "linux-x64");
+				matches = Directory.GetFiles(lib64, "*" + libraryName + "*", SearchOption.AllDirectories);
+			}
+			else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+			{
+				var x64 = Path.Combine(Environment.CurrentDirectory, "runtimes", "win-x64");
+				matches = Directory.GetFiles(x64, "*" + libraryName + "*", SearchOption.AllDirectories);
+			}
+
+			if (matches.Count() == 0)
+			{
+				matches = Directory.GetFiles(Environment.CurrentDirectory, "*" + libraryName + "*");
+			}
+
+			var handle = IntPtr.Zero;
+
+			if (matches.Count() == 1)
+			{
+				var match = matches.Single();
+				handle = NativeLibrary.Load(match);
+			}
+
+			// cache either way. if zero, no point calling IO if we've checked this assembly before.
+			_nativeCache.Add(libraryName, handle);
+
+			return handle;
+		}
+
 		/// <summary>Initialize - Called by the TerrariaServerAPI during initialization.</summary>
 		[SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands")]
 		public override void Initialize()
@@ -206,6 +251,9 @@ namespace TShockAPI
 				//TShock handles this
 				args.Result = OTAPI.HookResult.Cancel;
 			};
+			// if sqlite.interop cannot be found, try and search the runtimes folder. this usually happens when debugging tsapi
+			// since it does not have the dependency installed directly
+			NativeLibrary.SetDllImportResolver(typeof(SQLiteConnection).Assembly, ResolveNativeDep);
 
 			Main.SettingsUnlock_WorldEvil = true;
 
@@ -266,7 +314,7 @@ namespace TShockAPI
 				{
 					string sql = Path.Combine(SavePath, Config.Settings.SqliteDBPath);
 					Directory.CreateDirectory(Path.GetDirectoryName(sql));
-					DB = new SqliteConnection(string.Format("uri=file://{0},Version=3", sql));
+					DB = new SQLiteConnection(string.Format("Data Source={0},Version=3", sql));
 				}
 				else if (Config.Settings.StorageType.ToLower() == "mysql")
 				{
