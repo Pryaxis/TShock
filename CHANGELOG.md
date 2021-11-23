@@ -15,6 +15,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 ## Upcoming changes
 * Removed `TShockAPI/DB/DBTools.cs`. This appears to have been dead code and not used by anything. (@hakusaro, @DeathCradle)
 * Fixed the `/firework` command not sending fireworks when specified without a firework color. The firework command now correctly sends red fireworks to a target if a color is not specified. (@hakusaro, @Kojirremer)
+* Fixed bad XML of TShock code documentation. (@Arthri)
 
 ## TShock 4.5.7
 * Fixed the `/respawn` command to permit respawning players from the console. (@hakusaro, @Kojirremer)
