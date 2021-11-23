@@ -17,7 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using Microsoft.Xna.Framework;
-using OTAPI.Tile;
 using System;
 using System.Collections.Generic;
 using Terraria;

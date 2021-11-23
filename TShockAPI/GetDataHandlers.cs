@@ -34,7 +34,6 @@ using Terraria.DataStructures;
 using Terraria.GameContent.Tile_Entities;
 using Terraria.Localization;
 using Microsoft.Xna.Framework;
-using OTAPI.Tile;
 using TShockAPI.Localization;
 using TShockAPI.Models;
 using TShockAPI.Models.PlayerUpdate;

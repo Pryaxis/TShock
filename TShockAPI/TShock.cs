@@ -197,17 +197,14 @@ namespace TShockAPI
 			string logFilename;
 			string logPathSetupWarning;
 
-			OTAPI.Hooks.Net.Socket.Create = () =>
+			OTAPI.Hooks.Netplay.CreateTcpListener += (sender, args) =>
 			{
-				//Console.WriteLine($"Creating socket {nameof(LinuxTcpSocket)}");
-				return new LinuxTcpSocket();
-				//return new OTAPI.Sockets.PoolSocket();
-				//return new Terraria.Net.Sockets.TcpSocket();
+				args.Result = new LinuxTcpSocket();
 			};
-			OTAPI.Hooks.Player.Announce = (int playerId) =>
+			OTAPI.Hooks.NetMessage.PlayerAnnounce += (sender, args) =>
 			{
 				//TShock handles this
-				return OTAPI.HookResult.Cancel;
+				args.Result = OTAPI.HookResult.Cancel;
 			};
 
 			Main.SettingsUnlock_WorldEvil = true;
