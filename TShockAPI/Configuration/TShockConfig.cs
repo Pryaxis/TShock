@@ -368,11 +368,6 @@ namespace TShockAPI.Configuration
 		[Description("The minimum password length for new user accounts. Can never be lower than 4.")]
 		public int MinimumPasswordLength = 4;
 
-		/// <summary>The hash algorithm used to encrypt user passwords.
-		/// Valid types: "sha512", "sha256" and "md5". Append with "-xp" for the xp supported algorithms.</summary>
-		[Description("The hash algorithm used to encrypt user passwords. Valid types: \"sha512\", \"sha256\" and \"md5\". Append with \"-xp\" for the xp supported algorithms.")]
-		public string HashAlgorithm = "sha512";
-
 		/// <summary>Determines the BCrypt work factor to use. If increased, all passwords will be upgraded to new work-factor on verify.
 		/// The number of computational rounds is 2^n. Increase with caution. Range: 5-31.</summary>
 		[Description("Determines the BCrypt work factor to use. If increased, all passwords will be upgraded to new work-factor on verify. The number of computational rounds is 2^n. Increase with caution. Range: 5-31.")]

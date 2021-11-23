@@ -438,7 +438,7 @@ namespace TShockAPI.DB
 		{
 			try
 			{
-				if (BCrypt.Net.BCrypt.Verify(password, Password)) 
+				if (BCrypt.Net.BCrypt.Verify(password, Password))
 				{
 					// If necessary, perform an upgrade to the highest work factor.
 					UpgradePasswordWorkFactor(password);
@@ -447,33 +447,10 @@ namespace TShockAPI.DB
 			}
 			catch (SaltParseException)
 			{
-				if (String.Equals(HashPassword(password), Password, StringComparison.InvariantCultureIgnoreCase))
-				{
-					// The password is not stored using BCrypt; upgrade it to BCrypt immediately
-					UpgradePasswordToBCrypt(password);
-					return true;
-				}
+				TShock.Log.ConsoleError("Error: Unable to verify the password hash for user {0} ({1})", Name, ID);
 				return false;
 			}
 			return false;
-		}
-
-		/// <summary>Upgrades a password to BCrypt, from an insecure hashing algorithm.</summary>
-		/// <param name="password">The raw user account password (unhashed) to upgrade</param>
-		protected void UpgradePasswordToBCrypt(string password)
-		{
-			// Save the old password, in the event that we have to revert changes.
-			string oldpassword = Password;
-
-			try
-			{
-				TShock.UserAccounts.SetUserAccountPassword(this, password);
-			}
-			catch (UserAccountManagerException e)
-			{
-				TShock.Log.ConsoleError(e.ToString());
-				Password = oldpassword; // Revert changes
-			}
 		}
 
 		/// <summary>Upgrades a password to the highest work factor available in the config.</summary>
@@ -534,51 +511,6 @@ namespace TShockAPI.DB
 				throw new ArgumentOutOfRangeException("password", "Password must be > " + TShock.Config.Settings.MinimumPasswordLength + " characters.");
 			}
 			Password = BCrypt.Net.BCrypt.HashPassword(password.Trim(), workFactor);
-		}
-
-		/// <summary>
-		/// A dictionary of hashing algorithms and an implementation object.
-		/// </summary>
-		protected readonly Dictionary<string, Func<HashAlgorithm>> HashTypes = new Dictionary<string, Func<HashAlgorithm>>
-			{
-					{"sha512", () => new SHA512Managed()},
-					{"sha256", () => new SHA256Managed()},
-					{"md5", () => new MD5Cng()},
-					{"sha512-xp", () => SHA512.Create()},
-					{"sha256-xp", () => SHA256.Create()},
-					{"md5-xp", () => MD5.Create()},
-			};
-
-		/// <summary>
-		/// Returns a hashed string for a given string based on the config file's hash algo
-		/// </summary>
-		/// <param name="bytes">bytes to hash</param>
-		/// <returns>string hash</returns>
-		protected string HashPassword(byte[] bytes)
-		{
-			if (bytes == null)
-				throw new NullReferenceException("bytes");
-			Func<HashAlgorithm> func;
-			if (!HashTypes.TryGetValue(TShock.Config.Settings.HashAlgorithm.ToLower(), out func))
-				throw new NotSupportedException("Hashing algorithm {0} is not supported".SFormat(TShock.Config.Settings.HashAlgorithm.ToLower()));
-
-			using (var hash = func())
-			{
-				var ret = hash.ComputeHash(bytes);
-				return ret.Aggregate("", (s, b) => s + b.ToString("X2"));
-			}
-		}
-
-		/// <summary>
-		/// Returns a hashed string for a given string based on the config file's hash algo
-		/// </summary>
-		/// <param name="password">string to hash</param>
-		/// <returns>string hash</returns>
-		protected string HashPassword(string password)
-		{
-			if (string.IsNullOrEmpty(password) && Password == "non-existant password")
-				return "non-existant password";
-			return HashPassword(Encoding.UTF8.GetBytes(password));
 		}
 
 		#region IEquatable
