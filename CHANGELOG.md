@@ -13,7 +13,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change.
 
 ## Upcoming changes
-* With any luck, .NET 5?
+* Removed `TShockAPI/DB/DBTools.cs`. This appears to have been dead code and not used by anything. (@hakusaro, @DeathCradle)
 
 ## TShock 4.5.7
 * Fixed the `/respawn` command to permit respawning players from the console. (@hakusaro, @Kojirremer)
