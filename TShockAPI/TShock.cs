@@ -203,23 +203,28 @@ namespace TShockAPI
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
 			{
 				var osx = Path.Combine(Environment.CurrentDirectory, "runtimes", "osx-x64");
-				matches = Directory.GetFiles(osx, "*" + libraryName + "*", SearchOption.AllDirectories);
+				if(Directory.Exists(osx))
+					matches = Directory.GetFiles(osx, "*" + libraryName + "*", SearchOption.AllDirectories);
 			}
 			else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
 			{
 				var lib64 = Path.Combine(Environment.CurrentDirectory, "runtimes", "linux-x64");
-				matches = Directory.GetFiles(lib64, "*" + libraryName + "*", SearchOption.AllDirectories);
+				if (Directory.Exists(lib64))
+					matches = Directory.GetFiles(lib64, "*" + libraryName + "*", SearchOption.AllDirectories);
 			}
 			else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 			{
 				var x64 = Path.Combine(Environment.CurrentDirectory, "runtimes", "win-x64");
-				matches = Directory.GetFiles(x64, "*" + libraryName + "*", SearchOption.AllDirectories);
+				if (Directory.Exists(x64))
+					matches = Directory.GetFiles(x64, "*" + libraryName + "*", SearchOption.AllDirectories);
 			}
 
 			if (matches.Count() == 0)
 			{
 				matches = Directory.GetFiles(Environment.CurrentDirectory, "*" + libraryName + "*");
 			}
+
+			Debug.WriteLine($"Looking for `{libraryName}` with {matches.Count()} match(es)");
 
 			var handle = IntPtr.Zero;
 
