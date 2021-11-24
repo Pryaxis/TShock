@@ -13,6 +13,18 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change.
 
 ## Upcoming changes
+* Removed `TShockAPI/DB/DBTools.cs`. This appears to have been dead code and not used by anything. (@hakusaro, @DeathCradle)
+* Fixed the `/firework` command not sending fireworks when specified without a firework color. The firework command now correctly sends red fireworks to a target if a color is not specified. (@hakusaro, @Kojirremer)
+* Fixed bad XML of TShock code documentation. (@Arthri)
+
+## TShock 4.5.7
+* Fixed the `/respawn` command to permit respawning players from the console. (@hakusaro, @Kojirremer)
+* Removed the old password hashing system, which predated `bcrypt` hashes and allowed specifying the hash algorithm in the config file. This also removes the config option for setting the hash algorithm (`HashAlgorithm`). This is because it helps clear the way for .NET5/6 and OTAPI 3, and because `bcrypt` has been the default since TShock 4.3 in 2015. (@hakusaro)
+* Updated to OTAPI 2.0.0.46, which adds support for Terraria Protocol 1.4.3.1. (@Patrikkk, @DeathCradle)
+* **Change warning: a release of TShock for .NET 5 and OTAPI 3 may be imminent.**
+
+## TShock 4.5.6
+* Updated Linux guide. (@NezbednikSK)
 * Fixed SendTileRectHandler not sending tile rect updates like Pylons/Mannequins to other clients. (@Stealownz)
 * Introduced `SoftcoreOnly` config option to allow only softcore characters to connect. (@drunderscore)
 * Fixed some typos that have been in the repository for over a lustrum. (@Killia0)
@@ -26,6 +38,17 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Fixed Bouncer exploits allowing for invalid tiles' placement. These tiles(specifically torches) caused clients to crash. The fixed exploits are listed below. (@Arthri, @QuiCM)
   - [Biome Torch Correction](https://github.com/Pryaxis/TShock/blob/3ba1e7419d63535eeb8b5634ec668448499f71df/TShockAPI/Bouncer.cs#L310). Previously, it used unrelated values to validate biome torches, and unintentionally passed on invalid tiles. It's now fixed to use the correct values and block invalid torches. As well as a new right booster track correction/check, to allow right booster tracks to be placed. Right booster track is an extraneous place style because it depends on the direction the player is facing. The new check takes that into consideration so that the place style isn't considered mismatched and rejected.
   - [Max Place Styles](https://github.com/Pryaxis/TShock/blob/3ba1e7419d63535eeb8b5634ec668448499f71df/TShockAPI/Bouncer.cs#L385). Previously, it rejects only if both `MaxPlaceStyles` and `ExtraneousPlaceStyles` contains an entry for a tile, and unintentionally passed on invalid tiles. `ExtraneousPlaceStyles` only contains special max placeStyles, not all placeables unlike `MaxPlaceStyles`. It's now corrected to take from `ExtraneousPlaceStyles` first, then fallback to `MaxPlaceStyles` if there's no entry for that tile, and then finally -1 if there's no entry in either.
+* Fixed a bug that caused sundials to be ignored all the time, instead of only when the player has no permission or time is frozen. (@Rozen4334)
+* Added colours and usage examples (similiar to how the new ban system looks) for many more commands. (@moisterrific)
+* Changed `RespawnSeconds` and `RespawnBossSeconds` from `10` to `0` to respect the game's default respawn timers. (@moisterrific)
+* Updated Open Terraria API (OTAPI) and TSAPI for preliminary support of Terraria 1.4.3.0. This functionally changes OTAPI and points to 2.0.0.45 from 2.0.0.43 in previous versions. Developer note: `SendData` takes an extra arg in this version of Terraria but that's slated to be removed in a Terraria hotfix. This is vestigial and OTAPI "hacks that out" to preserve plugin compatibility. That's why it'll differ from the source code. (@Patrikkk, @DeathCradle, honorable mention: @Moneylover3246)
+* Added Deerclops to `/spawnboss` command. (@hakusaro, @HiddenStriker)
+* Fixed [GHSA-6w5v-hxr3-m2wx](https://github.com/Pryaxis/TShock/security/advisories/GHSA-6w5v-hxr3-m2wx). (@Yoraiz0r, @Arthri)
+* Fixed an issue where player build permissions would reject gem lock changes, even if `RegionProtectGemLocks` was disabled in the config file. Now, players will be permitted to use gem locks if they don't have build permission in a region, but `RegionProtectGemLocks` is disabled. If `RegionProtectGemLocks` is enabled, players will be unable to use gem locks in a build region. (@hakusaro, @Kojirremer, @Arthri)
+* Fixed an issue where `/god [player]` would tell `[player]` that they were in godmode regardless of whether or not they were or not. (@hakusaro, @Kojirremer)
+* In `TSAPI`: Updated `PacketTypes` to support `SetMiscEventValues` (140), `RequestLucyPopup` (141), and `SyncProjectileTrackers` (142). (@hakusaro)
+* Added `DisableDefaultIPBan` to the config file. If set to `true`, the server will not automatically IP ban players when banning them. This is useful if you run an intercepting proxy in front of TShock, and all players share the same IP. (@hakusaro, and Telegram user xmzzhh233)
+* Blank passwords will be upgraded to `bcrypt` hashes automatically. Previously, blank passwords were not upgraded to bcrypt hashes. This is in preparation to remove the old password hashing system and related fallback components in the next release. Most users have been using bcrypt hashes for the past...few years. (@hakusaro)
 
 ## TShock 4.5.5
 * Changed the world autosave message so that it no longer warns of a "potential lag spike." (@hakusaro)
@@ -53,6 +76,9 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * `OnPlaceTileEntity`: The check was newly added.
   * `OnPlaceItemFrame`: The check was newly added.
   * `OnFoodPlatterTryPlacing`: The check was newly added.
+* Fixed errors on startup not being reported to console. (@bartico6)
+* The server now correctly disconnects players with missing groups instead of throwing an exception, stalling the connection (@bartico6)
+* The server now rejects login attempts from players who would end up with a missing group. (@bartico6)
 
 ## TShock 4.5.4
 * Fixed ridiculous typo in `GetDataHandlers` which caused TShock to read the wrong field in the packet for `usingBiomeTorches`. (@hakusaro, @Arthri)
@@ -81,6 +107,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * TShock defaults to saving backups every 10 minutes, and defaults to keeping backups for 4 hours. (@hakusaro)
 * Updated SSC bypass messaging. Now, when you connect, you're told if you're bypassing SSC. Console logging has been improved to warn when players are not being saved due to the bypass SSC permission. To turn this warning off, change `WarnPlayersAboutBypassPermission` to `false` in the `sscconfig.json` file. (@hakusaro)
 * Fix oversight & exploit allowing specially crafted SendTileRectangle packets to perform large-scale world griefing. In addition, `NetTile.Slope` is now the native value (byte), and accessor methods `Slope1`, `Slope2`, and `Slope3` can be used to get the old style of values out. `HalfBrick` and `Actuator` were removed from `NetTile` because these were initialized to zero and never changed or used. (@bartico6)
+* Warning: a bug introduced in a prior TShock release may cause your SSC config file to be reset after applying this update. Please backup your config file prior to installing TShock 4.5.3+ if you use SSC. (@cardinal-system)
 
 ## TShock 4.5.2
 * Added preliminary support for Terraria 1.4.2.2. (@hakusaro)

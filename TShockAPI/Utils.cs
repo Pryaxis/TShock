@@ -62,6 +62,10 @@ namespace TShockAPI
 		/// Hex code for a white highlight
 		/// </summary>
 		public const string WhiteHighlight = "FFFFFF";
+		/// <summary>
+		/// Hex code for a cyan pastel color
+		/// </summary>
+		public const string CyanHighlight = "AAFFFF";
 
 		/// <summary>
 		/// The lowest id for a prefix.
@@ -890,7 +894,7 @@ namespace TShockAPI
 				Main.recipe[i] = new Recipe();
 		}
 
-		/// <summary>Dumps a matrix of all permissions & all groups in Markdown table format.</summary>
+		/// <summary>Dumps a matrix of all permissions &amp; all groups in Markdown table format.</summary>
 		/// <param name="path">The save destination.</param>
 		internal void DumpPermissionMatrix(string path)
 		{

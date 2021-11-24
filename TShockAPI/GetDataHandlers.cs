@@ -1935,6 +1935,7 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		/// <summary>
 		/// For use in an Emoji event.
 		/// </summary>
 		public class EmojiEventArgs : GetDataHandledEventArgs
@@ -1968,6 +1969,7 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		/// <summary>
 		/// For use in a TileEntityDisplayDollItemSync event.
 		/// </summary>
 		public class DisplayDollItemSyncEventArgs : GetDataHandledEventArgs
@@ -2026,6 +2028,7 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		/// <summary>
 		/// For use in an OnRequestTileEntityInteraction event.
 		/// </summary>
 		public class RequestTileEntityInteractionEventArgs : GetDataHandledEventArgs
@@ -2456,9 +2459,12 @@ namespace TShockAPI
 						args.Player.State = 2;
 					NetMessage.SendData((int)PacketTypes.WorldInfo, args.Player.Index);
 
-					args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, account.ID);
-
 					var group = TShock.Groups.GetGroupByName(account.Group);
+
+					if (!TShock.Groups.AssertGroupValid(args.Player, group, true))
+						return true;
+
+					args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, account.ID);
 
 					args.Player.Group = group;
 					args.Player.tempGroup = null;
@@ -3037,6 +3043,9 @@ namespace TShockAPI
 
 					var group = TShock.Groups.GetGroupByName(account.Group);
 
+					if (!TShock.Groups.AssertGroupValid(args.Player, group, true))
+						return true;
+
 					args.Player.Group = group;
 					args.Player.tempGroup = null;
 					args.Player.Account = account;
@@ -3240,6 +3249,7 @@ namespace TShockAPI
 				{
 					TShock.Log.ConsoleDebug($"GetDataHandlers / HandleSpecial rejected enchanted sundial permission {args.Player.Name}");
 					args.Player.SendErrorMessage("You do not have permission to use the Enchanted Sundial.");
+					return true;
 				}
 				else if (TShock.Config.Settings.ForceTime != "normal")
 				{
@@ -3250,8 +3260,8 @@ namespace TShockAPI
 					}
 					else
 						args.Player.SendErrorMessage("You must set ForceTime to normal via config to use the Enchanted Sundial.");
+					return true;
 				}
-				return true;
 			}
 
 			return false;

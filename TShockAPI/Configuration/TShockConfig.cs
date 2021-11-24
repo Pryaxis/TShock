@@ -251,13 +251,13 @@ namespace TShockAPI.Configuration
 		[Description("Allows groups on the banned item allowed list to spawn banned items even if PreventBannedItemSpawn is set to true.")]
 		public bool AllowAllowedGroupsToSpawnBannedItems = false;
 
-		/// <summary>The number of seconds a player must wait before being respawned. Cannot be longer than normal value now. Use at your own risk.</summary>
-		[Description("The number of seconds a player must wait before being respawned. Cannot be longer than normal value now. Use at your own risk.")]
-		public int RespawnSeconds = 10;
+		/// <summary>The number of seconds a player must wait before being respawned. Valid range: 0 (default) to 15 seconds. Use at your own risk.</summary>
+		[Description("The number of seconds a player must wait before being respawned. Valid range: 0 (default) to 15 seconds. Use at your own risk.")]
+		public int RespawnSeconds = 0;
 
-		/// <summary>The number of seconds a player must wait before being respawned if there is a boss nearby. Cannot be longer than normal value now. Use at your own risk.</summary>
-		[Description("The number of seconds a player must wait before being respawned if there is a boss nearby. Cannot be longer than normal value now. Use at your own risk.")]
-		public int RespawnBossSeconds = 10;
+		/// <summary>The number of seconds a player must wait before being respawned if there is a boss nearby. Valid range: 0 (default) to 30 seconds. Use at your own risk.</summary>
+		[Description("The number of seconds a player must wait before being respawned if there is a boss nearby. Valid range: 0 (default) to 30 seconds. Use at your own risk.")]
+		public int RespawnBossSeconds = 0;
 
 		/// <summary>Whether or not to announce boss spawning or invasion starts.</summary>
 		[Description("Whether or not to announce boss spawning or invasion starts.")]
@@ -312,6 +312,10 @@ namespace TShockAPI.Configuration
 		[Description("The reason given if banning a mediumcore player on death.")]
 		public string MediumcoreBanReason = "Death results in a ban";
 
+		/// <summary>Disbales IP bans by default, if no arguments are passed to the ban command.</summary>
+		[Description("Disbales IP bans by default, if no arguments are passed to the ban command.")]
+		public bool DisableDefaultIPBan;
+
 		/// <summary>Enable or disable the whitelist based on IP addresses in the whitelist.txt file.</summary>
 		[Description("Enable or disable the whitelist based on IP addresses in the whitelist.txt file.")]
 		public bool EnableWhitelist;
@@ -363,11 +367,6 @@ namespace TShockAPI.Configuration
 		/// <summary>The minimum password length for new user accounts. Can never be lower than 4.</summary>
 		[Description("The minimum password length for new user accounts. Can never be lower than 4.")]
 		public int MinimumPasswordLength = 4;
-
-		/// <summary>The hash algorithm used to encrypt user passwords.
-		/// Valid types: "sha512", "sha256" and "md5". Append with "-xp" for the xp supported algorithms.</summary>
-		[Description("The hash algorithm used to encrypt user passwords. Valid types: \"sha512\", \"sha256\" and \"md5\". Append with \"-xp\" for the xp supported algorithms.")]
-		public string HashAlgorithm = "sha512";
 
 		/// <summary>Determines the BCrypt work factor to use. If increased, all passwords will be upgraded to new work-factor on verify.
 		/// The number of computational rounds is 2^n. Increase with caution. Range: 5-31.</summary>
