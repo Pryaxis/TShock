@@ -79,7 +79,7 @@ namespace TShockAPI
 
 		/// <summary>Players - Contains all TSPlayer objects for accessing TSPlayers currently on the server</summary>
 		public static TSPlayer[] Players = new TSPlayer[Main.maxPlayers];
-		/// <summary>Bans - Static reference to the ban manager for accessing bans & related functions.</summary>
+		/// <summary>Bans - Static reference to the ban manager for accessing bans &amp; related functions.</summary>
 		public static BanManager Bans;
 		/// <summary>Warps - Static reference to the warp manager for accessing the warp system.</summary>
 		public static WarpManager Warps;
@@ -148,7 +148,7 @@ namespace TShockAPI
 		/// </summary>
 		public static event Action Initialized;
 
-		/// <summary>Version - The version required by the TerrariaAPI to be passed back for checking & loading the plugin.</summary>
+		/// <summary>Version - The version required by the TerrariaAPI to be passed back for checking &amp; loading the plugin.</summary>
 		/// <value>value - The version number specified in the Assembly, based on the VersionNum variable set in this class.</value>
 		public override Version Version
 		{

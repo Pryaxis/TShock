@@ -1935,6 +1935,7 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		/// <summary>
 		/// For use in an Emoji event.
 		/// </summary>
 		public class EmojiEventArgs : GetDataHandledEventArgs
@@ -1968,6 +1969,7 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		/// <summary>
 		/// For use in a TileEntityDisplayDollItemSync event.
 		/// </summary>
 		public class DisplayDollItemSyncEventArgs : GetDataHandledEventArgs
@@ -2026,6 +2028,7 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		/// <summary>
 		/// For use in an OnRequestTileEntityInteraction event.
 		/// </summary>
 		public class RequestTileEntityInteractionEventArgs : GetDataHandledEventArgs
