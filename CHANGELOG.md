@@ -13,9 +13,15 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change.
 
 ## Upcoming changes
+* Hopefully TShock on .NET 5?
+
+## TShock 4.5.8
 * Removed `TShockAPI/DB/DBTools.cs`. This appears to have been dead code and not used by anything. (@hakusaro, @DeathCradle)
 * Fixed the `/firework` command not sending fireworks when specified without a firework color. The firework command now correctly sends red fireworks to a target if a color is not specified. (@hakusaro, @Kojirremer)
 * Fixed bad XML of TShock code documentation. (@Arthri)
+* Fixed Bouncer exploits allowing for invalid tiles' placement. These tiles(specifically torches) caused clients to crash. The fixed exploits are listed below. (@Arthri, @QuiCM)
+  - [Biome Torch Correction](https://github.com/Pryaxis/TShock/blob/3ba1e7419d63535eeb8b5634ec668448499f71df/TShockAPI/Bouncer.cs#L310). Previously, it used unrelated values to validate biome torches, and unintentionally passed on invalid tiles. It's now fixed to use the correct values and block invalid torches. As well as a new right booster track correction/check, to allow right booster tracks to be placed. Right booster track is an extraneous place style because it depends on the direction the player is facing. The new check takes that into consideration so that the place style isn't considered mismatched and rejected.
+  - [Max Place Styles](https://github.com/Pryaxis/TShock/blob/3ba1e7419d63535eeb8b5634ec668448499f71df/TShockAPI/Bouncer.cs#L385). Previously, it rejects only if both `MaxPlaceStyles` and `ExtraneousPlaceStyles` contains an entry for a tile, and unintentionally passed on invalid tiles. `ExtraneousPlaceStyles` only contains special max placeStyles, not all placeables unlike `MaxPlaceStyles`. It's now corrected to take from `ExtraneousPlaceStyles` first, then fallback to `MaxPlaceStyles` if there's no entry for that tile, and then finally -1 if there's no entry in either.
 
 ## TShock 4.5.7
 * Fixed the `/respawn` command to permit respawning players from the console. (@hakusaro, @Kojirremer)
