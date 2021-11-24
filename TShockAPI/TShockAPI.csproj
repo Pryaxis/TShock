@@ -31,6 +31,12 @@
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'Default' ">
+    <StartAction>Program</StartAction>
+    <StartProgram>$(SolutionDir)\TShockAPI\bin\Debug\net5.0\TerrariaServerAPI.dll</StartProgram>
+    <StartWorkingDirectory>$(SolutionDir)\TShockAPI\bin\Debug\net5.0\</StartWorkingDirectory>
+    <ExternalConsole>true</ExternalConsole>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.2" />
     <PackageReference Include="MySql.Data" Version="8.0.27" />
@@ -48,24 +54,14 @@
     </Reference>
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Include="$(OutputPath)\TerrariaServerAPI.dll" IncludeInPackage="true" Pack="true" PackagePath="lib\$(TargetFramework)" />
-    <Content Include="$(OutputPath)\TerrariaServerAPI.xml" IncludeInPackage="true" Pack="true" PackagePath="lib\$(TargetFramework)" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(ConfigurationName)'=='Debug'">
-    <DebugRuntimes Include="$(OutputPath)\runtimes\**\*.*" />
-  </ItemGroup>
-  
   <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(ConfigurationName)'=='Debug'">
-    <Copy SourceFiles="$(OutputPath)\TShockAPI.dll" DestinationFolder="$(SolutionDir)\TerrariaServerAPI\TerrariaServerAPI\bin\$(ConfigurationName)\net5.0\ServerPlugins" SkipUnchangedFiles="false" />
-    <Copy SourceFiles="$(OutputPath)\TShockAPI.deps.json" DestinationFolder="$(SolutionDir)\TerrariaServerAPI\TerrariaServerAPI\bin\$(ConfigurationName)\net5.0\ServerPlugins" SkipUnchangedFiles="false" />
-    <Copy SourceFiles="$(OutputPath)\TShockAPI.pdb" DestinationFolder="$(SolutionDir)\TerrariaServerAPI\TerrariaServerAPI\bin\$(ConfigurationName)\net5.0\ServerPlugins" SkipUnchangedFiles="false" />
-    <Copy SourceFiles="$(OutputPath)\TShockAPI.xml" DestinationFolder="$(SolutionDir)\TerrariaServerAPI\TerrariaServerAPI\bin\$(ConfigurationName)\net5.0\ServerPlugins" SkipUnchangedFiles="false" />
-    <Copy SourceFiles="$(OutputPath)\System.Data.SQLite.dll" DestinationFolder="$(SolutionDir)\TerrariaServerAPI\TerrariaServerAPI\bin\$(ConfigurationName)\net5.0\ServerPlugins" SkipUnchangedFiles="false" />
-    <Copy SourceFiles="$(OutputPath)\HttpServer.dll" DestinationFolder="$(SolutionDir)\TerrariaServerAPI\TerrariaServerAPI\bin\$(ConfigurationName)\net5.0\ServerPlugins" SkipUnchangedFiles="false" />
-    <Copy SourceFiles="$(OutputPath)\MySql.Data.dll" DestinationFolder="$(SolutionDir)\TerrariaServerAPI\TerrariaServerAPI\bin\$(ConfigurationName)\net5.0\ServerPlugins" SkipUnchangedFiles="false" />
-    <Copy SourceFiles="@(DebugRuntimes)" DestinationFolder="$(SolutionDir)\TerrariaServerAPI\TerrariaServerAPI\bin\$(ConfigurationName)\net5.0\runtimes\%(RecursiveDir)" SkipUnchangedFiles="false" />
+    <Copy SourceFiles="$(OutputPath)\TShockAPI.dll" DestinationFolder="$(OutputPath)\ServerPlugins" SkipUnchangedFiles="false" />
+    <Copy SourceFiles="$(OutputPath)\TShockAPI.deps.json" DestinationFolder="$(OutputPath)\ServerPlugins" SkipUnchangedFiles="false" />
+    <Copy SourceFiles="$(OutputPath)\TShockAPI.pdb" DestinationFolder="$(OutputPath)\ServerPlugins" SkipUnchangedFiles="false" />
+    <Copy SourceFiles="$(OutputPath)\TShockAPI.xml" DestinationFolder="$(OutputPath)\ServerPlugins" SkipUnchangedFiles="false" />
+    <Copy SourceFiles="$(OutputPath)\System.Data.SQLite.dll" DestinationFolder="$(OutputPath)\ServerPlugins" SkipUnchangedFiles="false" />
+    <Copy SourceFiles="$(OutputPath)\HttpServer.dll" DestinationFolder="$(OutputPath)\ServerPlugins" SkipUnchangedFiles="false" />
+    <Copy SourceFiles="$(OutputPath)\MySql.Data.dll" DestinationFolder="$(OutputPath)\ServerPlugins" SkipUnchangedFiles="false" />
   </Target>
 
 </Project>
