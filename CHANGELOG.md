@@ -13,7 +13,11 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change.
 
 ## Upcoming changes
+* Hopefully not another Terraria version for a few days.
+
+## TShock 4.5.9
 * Added the ability to change a `TSPlayer`'s PVP mode. (@AgaSpace)
+* Added protocol level support for Terraria 1.4.3.2. (@DeathCradle, @Patrikkk)
 
 ## TShock 4.5.8
 * Removed `TShockAPI/DB/DBTools.cs`. This appears to have been dead code and not used by anything. (@hakusaro, @DeathCradle)
