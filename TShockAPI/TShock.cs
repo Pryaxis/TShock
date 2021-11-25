@@ -640,15 +640,24 @@ namespace TShockAPI
 			}
 		}
 
+		private bool tryingToShutdown = false;
+
 		/// <summary> ConsoleCancelHandler - Handles when Ctrl + C is sent to the server for a safe shutdown. </summary>
 		/// <param name="sender">The sender</param>
 		/// <param name="args">The ConsoleCancelEventArgs associated with the event.</param>
 		private void ConsoleCancelHandler(object sender, ConsoleCancelEventArgs args)
 		{
+			if (tryingToShutdown)
+			{
+				System.Environment.Exit(1);
+				return;
+			}
 			// Cancel the default behavior
 			args.Cancel = true;
 
-			Log.ConsoleInfo("Interrupt received. Saving the world and shutting down.");
+			tryingToShutdown = true;
+
+			Log.ConsoleInfo("Shutting down safely. To force shutdown, send SIGINT (CTRL + C) again.");
 
 			// Perform a safe shutdown
 			TShock.Utils.StopServer(true, "Server console interrupted!");

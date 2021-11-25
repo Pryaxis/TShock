@@ -13,7 +13,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change.
 
 ## Upcoming changes
-* Hopefully not another Terraria version for a few days.
+* Changed the server behavior when `SIGINT` is received. When `SIGINT` is trapped, the server will attempt to shut down safely. When it is trapped a second time in a session, it will immediately exit. (`SIGINT` is typically triggered via CTRL + C.) This means that it is possible to corrupt your world if you force shutdown at the wrong time (e.g., while the world is saving), but hopefully you expect this to happen if you hit CTRL + C twice in a session and you read the warning. (@hakusaro, @Onusai)
 
 ## TShock 4.5.9
 * Added the ability to change a `TSPlayer`'s PVP mode. (@AgaSpace)
