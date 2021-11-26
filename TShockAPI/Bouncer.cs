@@ -945,6 +945,7 @@ namespace TShockAPI
 			byte owner = args.Owner;
 			short type = args.Type;
 			int index = args.Index;
+			float[] ai = args.Ai;
 
 			if (index > Main.maxProjectiles)
 			{
@@ -1077,6 +1078,20 @@ namespace TShockAPI
 			if (args.Player.IsBouncerThrottled())
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnNewProjectile rejected from bouncer throttle from {0}", args.Player.Name);
+				args.Player.RemoveProjectile(ident, owner);
+				args.Handled = true;
+				return;
+			}
+
+			if (
+				(Projectile_MaxValuesAI.ContainsKey(type) &&
+					(ai[0] > Projectile_MaxValuesAI[type] || ai[0] < Projectile_MinValuesAI[type])) ||
+
+				(Projectile_MaxValuesAI2.ContainsKey(type) &&
+					(ai[1] > Projectile_MaxValuesAI2[type] || ai[1] < Projectile_MaxValuesAI2[type]))
+			)
+			{
+				TShock.Log.ConsoleDebug("Bouncer / OnNewProjectile rejected from bouncer modified AI from {0}.", args.Player.Name);
 				args.Player.RemoveProjectile(ident, owner);
 				args.Handled = true;
 				return;
@@ -2495,6 +2510,46 @@ namespace TShockAPI
 			{ ProjectileID.TungstenShortswordStab, ItemID.TungstenShortsword },
 			{ ProjectileID.GoldShortswordStab, ItemID.GoldShortsword },
 			{ ProjectileID.PlatinumShortswordStab, ItemID.PlatinumShortsword }
+		};
+
+		private Dictionary<short, short> Projectile_MinValuesAI = new Dictionary<short, short> {
+			{ 611, -1 },
+
+			{ 950, 0 }
+		};
+		private Dictionary<short, short> Projectile_MaxValuesAI = new Dictionary<short, short> {
+			{ 611, 1 },
+
+			{ 950, 0 }
+		};
+
+		private Dictionary<short, short> Projectile_MinValuesAI2 = new Dictionary<short, short> {
+			{ 405, 0 },
+			{ 410, 0 },
+
+			{ 424, 0 },
+			{ 425, 0 },
+			{ 426, 0 },
+
+			{ 612, 0 },
+			{ 953, 0 },
+
+			{ 756, 0 },
+			{ 522, 0 }
+		};
+		private Dictionary<short, short> Projectile_MaxValuesAI2 = new Dictionary<short, short> {
+			{ 405, 2 },
+			{ 410, 2 },
+
+			{ 424, 1 },
+			{ 425, 1 },
+			{ 426, 1 },
+
+			{ 612, 2 },
+			{ 953, 2 },
+
+			{ 756, 1 },
+			{ 522, 0 }
 		};
 	}
 }
