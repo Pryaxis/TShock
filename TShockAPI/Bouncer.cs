@@ -1083,12 +1083,17 @@ namespace TShockAPI
 				return;
 			}
 
+			/*if (
+				(Projectile_MaxValuesAI.ContainsKey(type) &&
+					(Projectile_MinValuesAI[type] > ai[0] || ai[0] < Projectile_MaxValuesAI[type])) ||
+				(Projectile_MaxValuesAI2.ContainsKey(type) &&
+					(Projectile_MinValuesAI2[type] > ai[1] || Projectile_MaxValuesAI2[type] < ai[1]))
+			)*/
 			if (
 				(Projectile_MaxValuesAI.ContainsKey(type) &&
-					(ai[0] > Projectile_MaxValuesAI[type] || ai[0] < Projectile_MinValuesAI[type])) ||
-
+					(Projectile_MaxValuesAI[type] < ai[0] || Projectile_MinValuesAI[type] > ai[0])) ||
 				(Projectile_MaxValuesAI2.ContainsKey(type) &&
-					(ai[1] > Projectile_MaxValuesAI2[type] || ai[1] < Projectile_MinValuesAI2[type]))
+					(Projectile_MaxValuesAI2[type] < ai[1] || Projectile_MinValuesAI2[type] > ai[1]))
 			)
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnNewProjectile rejected from bouncer modified AI from {0}.", args.Player.Name);
@@ -1096,6 +1101,8 @@ namespace TShockAPI
 				args.Handled = true;
 				return;
 			}
+
+			
 
 			if (!args.Player.HasPermission(Permissions.ignoreprojectiledetection))
 			{
@@ -2524,8 +2531,8 @@ namespace TShockAPI
 		};
 
 		private Dictionary<short, float> Projectile_MinValuesAI2 = new Dictionary<short, float> {
-			{ 405, 0.8f },
-			{ 410, 0.6f },
+			{ 405, 0f },
+			{ 410, 0f },
 
 			{ 424, 0.5f },
 			{ 425, 0.5f },
