@@ -2524,32 +2524,32 @@ namespace TShockAPI
 		};
 
 		private Dictionary<short, short> Projectile_MinValuesAI2 = new Dictionary<short, short> {
-			{ 405, 0 },
-			{ 410, 0 },
+			{ 405, 0.8f },
+			{ 410, 0.6f },
 
-			{ 424, 0 },
-			{ 425, 0 },
-			{ 426, 0 },
+			{ 424, 0.5f },
+			{ 425, 0.5f },
+			{ 426, 0.5f },
 
-			{ 612, 0 },
-			{ 953, 0 },
+			{ 612, 0.4f },
+			{ 953, 0.85f },
 
-			{ 756, 0 },
+			{ 756, 0.5f },
 			{ 522, 0 }
 		};
 		private Dictionary<short, short> Projectile_MaxValuesAI2 = new Dictionary<short, short> {
-			{ 405, 2 },
-			{ 410, 2 },
+			{ 405, 1.2f },
+			{ 410, 1.2f },
 
-			{ 424, 1 },
-			{ 425, 1 },
-			{ 426, 1 },
+			{ 424, 0.8f },
+			{ 425, 0.8f },
+			{ 426, 0.8f },
 
-			{ 612, 2 },
+			{ 612, 0.7f },
 			{ 953, 2 },
 
 			{ 756, 1 },
-			{ 522, 0 }
+			{ 522, 40f }
 		};
 	}
 }
