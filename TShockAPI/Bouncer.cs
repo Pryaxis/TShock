@@ -1088,7 +1088,7 @@ namespace TShockAPI
 					(ai[0] > Projectile_MaxValuesAI[type] || ai[0] < Projectile_MinValuesAI[type])) ||
 
 				(Projectile_MaxValuesAI2.ContainsKey(type) &&
-					(ai[1] > Projectile_MaxValuesAI2[type] || ai[1] < Projectile_MaxValuesAI2[type]))
+					(ai[1] > Projectile_MaxValuesAI2[type] || ai[1] < Projectile_MinValuesAI2[type]))
 			)
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnNewProjectile rejected from bouncer modified AI from {0}.", args.Player.Name);
@@ -2512,18 +2512,18 @@ namespace TShockAPI
 			{ ProjectileID.PlatinumShortswordStab, ItemID.PlatinumShortsword }
 		};
 
-		private Dictionary<short, short> Projectile_MinValuesAI = new Dictionary<short, short> {
+		private Dictionary<short, float> Projectile_MinValuesAI = new Dictionary<short, float> {
 			{ 611, -1 },
 
 			{ 950, 0 }
 		};
-		private Dictionary<short, short> Projectile_MaxValuesAI = new Dictionary<short, short> {
+		private Dictionary<short, float> Projectile_MaxValuesAI = new Dictionary<short, float> {
 			{ 611, 1 },
 
 			{ 950, 0 }
 		};
 
-		private Dictionary<short, short> Projectile_MinValuesAI2 = new Dictionary<short, short> {
+		private Dictionary<short, float> Projectile_MinValuesAI2 = new Dictionary<short, float> {
 			{ 405, 0.8f },
 			{ 410, 0.6f },
 
@@ -2537,7 +2537,7 @@ namespace TShockAPI
 			{ 756, 0.5f },
 			{ 522, 0 }
 		};
-		private Dictionary<short, short> Projectile_MaxValuesAI2 = new Dictionary<short, short> {
+		private Dictionary<short, float> Projectile_MaxValuesAI2 = new Dictionary<short, float> {
 			{ 405, 1.2f },
 			{ 410, 1.2f },
 
