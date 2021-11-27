@@ -3,7 +3,7 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
@@ -31,10 +31,10 @@
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(RunConfiguration)' == 'Default' ">
+  <PropertyGroup Condition=" '$(ConfigurationName)' == 'Default' ">
     <StartAction>Program</StartAction>
-    <StartProgram>$(SolutionDir)\TShockAPI\bin\Debug\net5.0\TerrariaServerAPI.dll</StartProgram>
-    <StartWorkingDirectory>$(SolutionDir)\TShockAPI\bin\Debug\net5.0\</StartWorkingDirectory>
+    <StartProgram>$(SolutionDir)\TShockAPI\bin\Debug\net6.0\TerrariaServerAPI.dll</StartProgram>
+    <StartWorkingDirectory>$(SolutionDir)\TShockAPI\bin\Debug\net6.0\</StartWorkingDirectory>
     <ExternalConsole>true</ExternalConsole>
   </PropertyGroup>
   <ItemGroup>
