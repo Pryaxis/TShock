@@ -1934,6 +1934,7 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		/// <summary>
 		/// For use in an Emoji event.
 		/// </summary>
 		public class EmojiEventArgs : GetDataHandledEventArgs
@@ -1967,6 +1968,7 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		/// <summary>
 		/// For use in a TileEntityDisplayDollItemSync event.
 		/// </summary>
 		public class DisplayDollItemSyncEventArgs : GetDataHandledEventArgs
@@ -2025,6 +2027,7 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		/// <summary>
 		/// For use in an OnRequestTileEntityInteraction event.
 		/// </summary>
 		public class RequestTileEntityInteractionEventArgs : GetDataHandledEventArgs
@@ -4262,6 +4265,10 @@ namespace TShockAPI
 		/// </summary>
 		internal static Dictionary<int, int> ExtraneousPlaceStyles = new Dictionary<int, int>
 		{
+			{TileID.Presents, 6},
+			{TileID.Explosives, 1},
+			{TileID.MagicalIceBlock, 0},
+			{TileID.Crystals, 17},
 			{TileID.MinecartTrack, 3}
 		};
 		

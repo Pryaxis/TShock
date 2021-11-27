@@ -1561,6 +1561,18 @@ namespace TShockAPI
 			Main.player[Index].team = team;
 			NetMessage.SendData((int)PacketTypes.PlayerTeam, -1, -1, NetworkText.Empty, Index);
 		}
+		
+		/// <summary>
+		/// Sets the player's pvp.
+		/// </summary>
+		/// <param name="mode">The state of the pvp mode.</param>
+		public virtual void SetPvP(bool mode, bool withMsg = false)
+		{
+			Main.player[Index].hostile = mode;
+			NetMessage.SendData((int)PacketTypes.TogglePvp, -1, -1, NetworkText.Empty, Index);
+			if (withMsg)
+				TSPlayer.All.SendMessage(Language.GetTextValue(mode ? "LegacyMultiplayer.11" : "LegacyMultiplayer.12", Name), Main.teamColor[Team]);
+		}
 
 		private DateTime LastDisableNotification = DateTime.UtcNow;
 

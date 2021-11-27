@@ -80,7 +80,7 @@ namespace TShockAPI
 
 		/// <summary>Players - Contains all TSPlayer objects for accessing TSPlayers currently on the server</summary>
 		public static TSPlayer[] Players = new TSPlayer[Main.maxPlayers];
-		/// <summary>Bans - Static reference to the ban manager for accessing bans & related functions.</summary>
+		/// <summary>Bans - Static reference to the ban manager for accessing bans &amp; related functions.</summary>
 		public static BanManager Bans;
 		/// <summary>Warps - Static reference to the warp manager for accessing the warp system.</summary>
 		public static WarpManager Warps;
@@ -149,7 +149,7 @@ namespace TShockAPI
 		/// </summary>
 		public static event Action Initialized;
 
-		/// <summary>Version - The version required by the TerrariaAPI to be passed back for checking & loading the plugin.</summary>
+		/// <summary>Version - The version required by the TerrariaAPI to be passed back for checking &amp; loading the plugin.</summary>
 		/// <value>value - The version number specified in the Assembly, based on the VersionNum variable set in this class.</value>
 		public override Version Version
 		{
@@ -690,15 +690,24 @@ namespace TShockAPI
 			}
 		}
 
+		private bool tryingToShutdown = false;
+
 		/// <summary> ConsoleCancelHandler - Handles when Ctrl + C is sent to the server for a safe shutdown. </summary>
 		/// <param name="sender">The sender</param>
 		/// <param name="args">The ConsoleCancelEventArgs associated with the event.</param>
 		private void ConsoleCancelHandler(object sender, ConsoleCancelEventArgs args)
 		{
+			if (tryingToShutdown)
+			{
+				System.Environment.Exit(1);
+				return;
+			}
 			// Cancel the default behavior
 			args.Cancel = true;
 
-			Log.ConsoleInfo("Interrupt received. Saving the world and shutting down.");
+			tryingToShutdown = true;
+
+			Log.ConsoleInfo("Shutting down safely. To force shutdown, send SIGINT (CTRL + C) again.");
 
 			// Perform a safe shutdown
 			TShock.Utils.StopServer(true, "Server console interrupted!");

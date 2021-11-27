@@ -894,7 +894,7 @@ namespace TShockAPI
 				Main.recipe[i] = new Recipe();
 		}
 
-		/// <summary>Dumps a matrix of all permissions & all groups in Markdown table format.</summary>
+		/// <summary>Dumps a matrix of all permissions &amp; all groups in Markdown table format.</summary>
 		/// <param name="path">The save destination.</param>
 		internal void DumpPermissionMatrix(string path)
 		{
@@ -1230,7 +1230,7 @@ namespace TShockAPI
 			for (int i = 0; i < Main.maxItemTypes; i++)
 			{
 				item.netDefaults(i);
-				if (item.placeStyle > 0)
+				if (item.placeStyle >= 0)
 				{
 					if (GetDataHandlers.MaxPlaceStyles.ContainsKey(item.createTile))
 					{
