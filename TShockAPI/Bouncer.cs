@@ -1083,12 +1083,6 @@ namespace TShockAPI
 				return;
 			}
 
-			/*if (
-				(Projectile_MaxValuesAI.ContainsKey(type) &&
-					(Projectile_MinValuesAI[type] > ai[0] || ai[0] < Projectile_MaxValuesAI[type])) ||
-				(Projectile_MaxValuesAI2.ContainsKey(type) &&
-					(Projectile_MinValuesAI2[type] > ai[1] || Projectile_MaxValuesAI2[type] < ai[1]))
-			)*/
 			if (
 				(Projectile_MaxValuesAI.ContainsKey(type) &&
 					(Projectile_MaxValuesAI[type] < ai[0] || Projectile_MinValuesAI[type] > ai[0])) ||
