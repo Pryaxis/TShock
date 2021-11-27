@@ -24,9 +24,9 @@
     <AssemblyVersion>4.5.7</AssemblyVersion>
     <FileVersion>4.5.7</FileVersion>
     <AssemblyTitle>TShock for Terraria</AssemblyTitle>
-    <Company>Re-Logic, Pryaxis &amp; TShock Contributors</Company>
+    <Company>Pryaxis &amp; TShock Contributors</Company>
     <Product>TShockAPI</Product>
-    <Copyright>Copyright © Re-Logic, Pryaxis &amp; TShock Contributors 2011-2021</Copyright>
+    <Copyright>Copyright © Pryaxis &amp; TShock Contributors 2011-2021</Copyright>
 
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
