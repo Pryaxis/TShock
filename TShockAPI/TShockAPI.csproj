@@ -54,14 +54,18 @@
     </Reference>
   </ItemGroup>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(ConfigurationName)'=='Debug'">
-    <Copy SourceFiles="$(OutputPath)\TShockAPI.dll" DestinationFolder="$(OutputPath)\ServerPlugins" SkipUnchangedFiles="false" />
-    <Copy SourceFiles="$(OutputPath)\TShockAPI.deps.json" DestinationFolder="$(OutputPath)\ServerPlugins" SkipUnchangedFiles="false" />
-    <Copy SourceFiles="$(OutputPath)\TShockAPI.pdb" DestinationFolder="$(OutputPath)\ServerPlugins" SkipUnchangedFiles="false" />
-    <Copy SourceFiles="$(OutputPath)\TShockAPI.xml" DestinationFolder="$(OutputPath)\ServerPlugins" SkipUnchangedFiles="false" />
-    <Copy SourceFiles="$(OutputPath)\System.Data.SQLite.dll" DestinationFolder="$(OutputPath)\ServerPlugins" SkipUnchangedFiles="false" />
-    <Copy SourceFiles="$(OutputPath)\HttpServer.dll" DestinationFolder="$(OutputPath)\ServerPlugins" SkipUnchangedFiles="false" />
-    <Copy SourceFiles="$(OutputPath)\MySql.Data.dll" DestinationFolder="$(OutputPath)\ServerPlugins" SkipUnchangedFiles="false" />
+  <Target Name="MoveToBinFolder" AfterTargets="FinalCleanup;PostBuildEvent;Publish">
+    <ItemGroup>
+      <MoveBinariesForDebug Include="$(TargetDir)*" Exclude="$(TargetDir)\TerrariaServer*;$(TargetDir)\TShock*" />
+      <MoveBinariesForPublish Include="$(PublishDir)*" Exclude="$(PublishDir)\TerrariaServer*;$(PublishDir)\TShock*" />
+      <TShockDebug Include="$(TargetDir)\TShock*" />
+      <TShockPublish Include="$(PublishDir)\TShock*" />
+    </ItemGroup>
+
+    <Move SourceFiles="@(MoveBinariesForDebug)" DestinationFolder="$(TargetDir)bin" ContinueOnError="true" />
+    <Move SourceFiles="@(MoveBinariesForPublish)" DestinationFolder="$(PublishDir)bin" ContinueOnError="true" />
+    <Copy SourceFiles="@(TShockDebug)" DestinationFolder="$(TargetDir)ServerPlugins" />
+    <Copy SourceFiles="@(TShockPublish)" DestinationFolder="$(PublishDir)ServerPlugins" />
   </Target>
 
 </Project>
