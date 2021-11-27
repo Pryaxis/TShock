@@ -2383,6 +2383,7 @@ namespace TShockAPI
 		}
 
 		// These time values are references from Projectile.cs, at npc.AddBuff() calls.
+		// Moved to Projectile.StatusNPC(int i).
 		private static Dictionary<int, short> NPCAddBuffTimeMax = new Dictionary<int, short>()
 		{
 			{ BuffID.Poisoned, 3600 },              // BuffID: 20
@@ -2414,9 +2415,10 @@ namespace TShockAPI
 			{ BuffID.RainbowWhipNPCDebuff, 240  },  // BuffID: 316
 			{ BuffID.MaceWhipNPCDebuff, 240  },     // BuffID: 319
 			{ BuffID.GelBalloonBuff, 1800  },       // BuffID: 320
-			{ BuffID.OnFire3, 360 },		// BuffID: 323
-			{ BuffID.Frostburn2, 900 },		// BuffID: 324
-			{ BuffID.BoneWhipNPCDebuff, 240 }	// BuffID: 326
+			{ BuffID.OnFire3, 360 },                // BuffID: 323
+			{ BuffID.Frostburn2, 900 },             // BuffID: 324
+			{ BuffID.BoneWhipNPCDebuff, 240 },      // BuffID: 326
+			{ BuffID.TentacleSpike, 540 }           // BuffID: 337
 		};
 
 		/// <summary>
