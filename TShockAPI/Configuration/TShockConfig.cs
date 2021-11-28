@@ -45,7 +45,7 @@ namespace TShockAPI.Configuration
 
 		/// <summary>Whether or not the server should output debug level messages related to system operation.</summary>
 		[Description("Whether or not the server should output debug level messages related to system operation.")]
-		public bool DebugLogs = true;
+		public bool DebugLogs = false;
 
 		/// <summary>Prevents users from being able to login before they finish connecting.</summary>
 		[Description("Prevents users from being able to login before they finish connecting.")]
@@ -74,11 +74,11 @@ namespace TShockAPI.Configuration
 
 		/// <summary>The interval between backups, in minutes. Backups are stored in the tshock/backups folder.</summary>
 		[Description("The interval between backups, in minutes. Backups are stored in the tshock/backups folder.")]
-		public int BackupInterval;
+		public int BackupInterval = 10;
 
 		/// <summary>For how long backups are kept in minutes.</summary>
 		[Description("For how long backups are kept in minutes.\neg. 2880 = 2 days.")]
-		public int BackupKeepFor = 60;
+		public int BackupKeepFor = 240;
 
 		/// <summary>Whether or not to save the world if the server crashes from an unhandled exception.</summary>
 		[Description("Whether or not to save the world if the server crashes from an unhandled exception.")]
@@ -133,6 +133,10 @@ namespace TShockAPI.Configuration
 		[Description("Prevents softcore players from connecting.")]
 		public bool MediumcoreOnly;
 
+		/// <summary>Prevents non-softcore players from connecting.</summary>
+		[Description("Prevents non-softcore players from connecting.")]
+		public bool SoftcoreOnly;
+
 		/// <summary>Disables any placing, or removal of blocks.</summary>
 		[Description("Disables any placing, or removal of blocks.")]
 		public bool DisableBuild;
@@ -156,6 +160,12 @@ namespace TShockAPI.Configuration
 		/// <summary>Disables tombstone dropping during death for all players.</summary>
 		[Description("Disables tombstone dropping during death for all players.")]
 		public bool DisableTombstones = true;
+		
+		/// <summary>
+		/// Disables Skeletron Prime Bombs from spawning, useful for preventing unwanted world destruction on for the worthy seed world.
+		/// </summary>
+		[Description("Disables Skeletron Prime Bombs from spawning, useful for preventing unwanted world destruction on for the worthy seed world.")]
+		public bool DisablePrimeBombs;
 
 		/// <summary>Forces the world time to be normal, day, or night.</summary>
 		[Description("Forces the world time to be normal, day, or night.")]
@@ -241,13 +251,13 @@ namespace TShockAPI.Configuration
 		[Description("Allows groups on the banned item allowed list to spawn banned items even if PreventBannedItemSpawn is set to true.")]
 		public bool AllowAllowedGroupsToSpawnBannedItems = false;
 
-		/// <summary>The number of seconds a player must wait before being respawned. Cannot be longer than normal value now. Use at your own risk.</summary>
-		[Description("The number of seconds a player must wait before being respawned. Cannot be longer than normal value now. Use at your own risk.")]
-		public int RespawnSeconds = 5;
+		/// <summary>The number of seconds a player must wait before being respawned. Valid range: 0 (default) to 15 seconds. Use at your own risk.</summary>
+		[Description("The number of seconds a player must wait before being respawned. Valid range: 0 (default) to 15 seconds. Use at your own risk.")]
+		public int RespawnSeconds = 0;
 
-		/// <summary>The number of seconds a player must wait before being respawned if there is a boss nearby. Cannot be longer than normal value now. Use at your own risk.</summary>
-		[Description("The number of seconds a player must wait before being respawned if there is a boss nearby. Cannot be longer than normal value now. Use at your own risk.")]
-		public int RespawnBossSeconds = 10;
+		/// <summary>The number of seconds a player must wait before being respawned if there is a boss nearby. Valid range: 0 (default) to 30 seconds. Use at your own risk.</summary>
+		[Description("The number of seconds a player must wait before being respawned if there is a boss nearby. Valid range: 0 (default) to 30 seconds. Use at your own risk.")]
+		public int RespawnBossSeconds = 0;
 
 		/// <summary>Whether or not to announce boss spawning or invasion starts.</summary>
 		[Description("Whether or not to announce boss spawning or invasion starts.")]
@@ -302,6 +312,10 @@ namespace TShockAPI.Configuration
 		[Description("The reason given if banning a mediumcore player on death.")]
 		public string MediumcoreBanReason = "Death results in a ban";
 
+		/// <summary>Disbales IP bans by default, if no arguments are passed to the ban command.</summary>
+		[Description("Disbales IP bans by default, if no arguments are passed to the ban command.")]
+		public bool DisableDefaultIPBan;
+
 		/// <summary>Enable or disable the whitelist based on IP addresses in the whitelist.txt file.</summary>
 		[Description("Enable or disable the whitelist based on IP addresses in the whitelist.txt file.")]
 		public bool EnableWhitelist;
@@ -353,11 +367,6 @@ namespace TShockAPI.Configuration
 		/// <summary>The minimum password length for new user accounts. Can never be lower than 4.</summary>
 		[Description("The minimum password length for new user accounts. Can never be lower than 4.")]
 		public int MinimumPasswordLength = 4;
-
-		/// <summary>The hash algorithm used to encrypt user passwords.
-		/// Valid types: "sha512", "sha256" and "md5". Append with "-xp" for the xp supported algorithms.</summary>
-		[Description("The hash algorithm used to encrypt user passwords. Valid types: \"sha512\", \"sha256\" and \"md5\". Append with \"-xp\" for the xp supported algorithms.")]
-		public string HashAlgorithm = "sha512";
 
 		/// <summary>Determines the BCrypt work factor to use. If increased, all passwords will be upgraded to new work-factor on verify.
 		/// The number of computational rounds is 2^n. Increase with caution. Range: 5-31.</summary>
@@ -443,6 +452,10 @@ namespace TShockAPI.Configuration
 		/// <summary>Whether or not to kick users when they surpass the TileRectangleSize threshold.</summary>
 		[Description("Whether or not to kick users when they surpass the TileRectangleSize threshold.")]
 		public bool KickOnTileRectangleSizeThresholdBroken = false;
+
+		/// <summary>Whether or not the server should suppress build permission failure warnings from regions, spawn point, or server edit failure.</summary>
+		[Description("Whether or not the server should suppress build permission failure warnings from regions, spawn point, or server edit failure.")]
+		public bool SuppressPermissionFailureNotices = false;
 		#endregion
 
 

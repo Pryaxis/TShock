@@ -346,7 +346,7 @@ namespace TShockAPI
 			/// </summary>
 			public Vector2 Velocity { get; set; }
 			/// <summary>
-			/// Original poisition of the player when using Potion of Return.
+			/// Original position of the player when using Potion of Return.
 			/// </summary>
 			public Vector2? OriginalPos { get; set; }
 			/// <summary>
@@ -689,12 +689,17 @@ namespace TShockAPI
 			/// ???
 			/// </summary>
 			public int Index { get; set; }
+
+			/// <summary>
+			/// The special meaning of the projectile.
+			/// </summary>
+			public float[] Ai { get; set; }
 		}
 		/// <summary>
 		/// NewProjectile - Called when a client creates a new projectile
 		/// </summary>
 		public static HandlerList<NewProjectileEventArgs> NewProjectile = new HandlerList<NewProjectileEventArgs>();
-		private static bool OnNewProjectile(MemoryStream data, short ident, Vector2 pos, Vector2 vel, float knockback, short dmg, byte owner, short type, int index, TSPlayer player)
+		private static bool OnNewProjectile(MemoryStream data, short ident, Vector2 pos, Vector2 vel, float knockback, short dmg, byte owner, short type, int index, TSPlayer player, float[] ai)
 		{
 			if (NewProjectile == null)
 				return false;
@@ -711,6 +716,7 @@ namespace TShockAPI
 				Type = type,
 				Index = index,
 				Player = player,
+				Ai = ai
 			};
 			NewProjectile.Invoke(null, args);
 			return args.Handled;
@@ -770,7 +776,7 @@ namespace TShockAPI
 		{
 			/// <summary>The projectile's identity...?</summary>
 			public int ProjectileIdentity;
-			/// <summary>The the player index of the projectile's owner (Main.players).</summary>
+			/// <summary>The player index of the projectile's owner (Main.players).</summary>
 			public byte ProjectileOwner;
 			/// <summary>The index of the projectile in Main.projectile.</summary>
 			public int ProjectileIndex;
@@ -1846,7 +1852,7 @@ namespace TShockAPI
 			/// </summary>
 			public byte ID { get; set; }
 			/// <summary>
-			/// The direction the damage is occuring from
+			/// The direction the damage is occurring from
 			/// </summary>
 			public byte Direction { get; set; }
 			/// <summary>
@@ -1902,7 +1908,7 @@ namespace TShockAPI
 			/// </summary>
 			public byte Direction { get; set; }
 			/// <summary>
-			/// Amount of damage delt
+			/// Amount of damage dealt
 			/// </summary>
 			public short Damage { get; set; }
 			/// <summary>
@@ -1935,6 +1941,7 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		/// <summary>
 		/// For use in an Emoji event.
 		/// </summary>
 		public class EmojiEventArgs : GetDataHandledEventArgs
@@ -1968,6 +1975,7 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		/// <summary>
 		/// For use in a TileEntityDisplayDollItemSync event.
 		/// </summary>
 		public class DisplayDollItemSyncEventArgs : GetDataHandledEventArgs
@@ -1989,7 +1997,7 @@ namespace TShockAPI
 			/// </summary>
 			public int Slot { get; set; }
 			/// <summary>
-			/// Wether or not the slot that is being modified is a Dye slot.
+			/// Whether or not the slot that is being modified is a Dye slot.
 			/// </summary>
 			public bool IsDye { get; set; }
 			/// <summary>
@@ -2026,6 +2034,7 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		/// <summary>
 		/// For use in an OnRequestTileEntityInteraction event.
 		/// </summary>
 		public class RequestTileEntityInteractionEventArgs : GetDataHandledEventArgs
@@ -2364,6 +2373,12 @@ namespace TShockAPI
 				NetMessage.SendData((int)PacketTypes.PlayerInfo, -1, args.Player.Index, NetworkText.FromLiteral(args.Player.Name), args.Player.Index);
 				return true;
 			}
+			if (TShock.Config.Settings.SoftcoreOnly && difficulty != 0)
+			{
+				TShock.Log.ConsoleDebug("GetDataHandlers / HandlePlayerInfo rejected softcore required");
+				args.Player.Kick("You need to join with a softcore player.", true, true);
+				return true;
+			}
 			if (TShock.Config.Settings.MediumcoreOnly && difficulty < 1)
 			{
 				TShock.Log.ConsoleDebug("GetDataHandlers / HandlePlayerInfo rejected mediumcore required");
@@ -2450,9 +2465,12 @@ namespace TShockAPI
 						args.Player.State = 2;
 					NetMessage.SendData((int)PacketTypes.WorldInfo, args.Player.Index);
 
-					args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, account.ID);
-
 					var group = TShock.Groups.GetGroupByName(account.Group);
+
+					if (!TShock.Groups.AssertGroupValid(args.Player, group, true))
+						return true;
+
+					args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, account.ID);
 
 					args.Player.Group = group;
 					args.Player.tempGroup = null;
@@ -2776,7 +2794,7 @@ namespace TShockAPI
 
 			var index = TShock.Utils.SearchProjectile(ident, owner);
 
-			if (OnNewProjectile(args.Data, ident, pos, vel, knockback, dmg, owner, type, index, args.Player))
+			if (OnNewProjectile(args.Data, ident, pos, vel, knockback, dmg, owner, type, index, args.Player, ai))
 				return true;
 
 			lock (args.Player.RecentlyCreatedProjectiles)
@@ -2809,10 +2827,37 @@ namespace TShockAPI
 			{
 				args.Player.SendErrorMessage("You do not have permission to hurt Town NPCs.");
 				args.Player.SendData(PacketTypes.NpcUpdate, "", id);
-				TShock.Log.ConsoleDebug("GetDataHandlers / HandleNpcStrike rejected npc strike {0}", args.Player.Name);
+				TShock.Log.ConsoleDebug($"GetDataHandlers / HandleNpcStrike rejected npc strike {args.Player.Name}");
 				return true;
 			}
-
+			
+			if (Main.npc[id].netID == NPCID.EmpressButterfly)
+			{
+				if (!args.Player.HasPermission(Permissions.summonboss))
+				{
+					args.Player.SendErrorMessage("You do not have permission to summon the Empress of Light.");
+					args.Player.SendData(PacketTypes.NpcUpdate, "", id);
+					TShock.Log.ConsoleDebug($"GetDataHandlers / HandleNpcStrike rejected EoL summon from {args.Player.Name}");
+					return true;
+				}
+				else if (!TShock.Config.Settings.AnonymousBossInvasions)
+				{
+					TShock.Utils.Broadcast(string.Format($"{args.Player.Name} summoned the Empress of Light!"), 175, 75, 255);
+				}
+				else
+					TShock.Utils.SendLogs(string.Format($"{args.Player.Name} summoned the Empress of Light!"), Color.PaleVioletRed, args.Player);
+			}
+			
+			if (Main.npc[id].netID == NPCID.CultistDevote || Main.npc[id].netID == NPCID.CultistArcherBlue)
+			{
+				if (!args.Player.HasPermission(Permissions.summonboss))
+				{
+					args.Player.SendErrorMessage("You do not have permission to summon the Lunatic Cultist!");
+					args.Player.SendData(PacketTypes.NpcUpdate, "", id);
+					TShock.Log.ConsoleDebug($"GetDataHandlers / HandleNpcStrike rejected Cultist summon from {args.Player.Name}");
+					return true;
+				}
+			}
 			return false;
 		}
 
@@ -3003,6 +3048,9 @@ namespace TShockAPI
 					NetMessage.SendData((int)PacketTypes.WorldInfo, args.Player.Index);
 
 					var group = TShock.Groups.GetGroupByName(account.Group);
+
+					if (!TShock.Groups.AssertGroupValid(args.Player, group, true))
+						return true;
 
 					args.Player.Group = group;
 					args.Player.tempGroup = null;
@@ -3201,11 +3249,25 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (type == 3 && !args.Player.HasPermission(Permissions.usesundial))
+			if (type == 3)
 			{
-				TShock.Log.ConsoleDebug("GetDataHandlers / HandleSpecial rejected enchanted sundial permission {0}", args.Player.Name);
-				args.Player.SendErrorMessage("You do not have permission to use the Enchanted Sundial.");
-				return true;
+				if (!args.Player.HasPermission(Permissions.usesundial))
+				{
+					TShock.Log.ConsoleDebug($"GetDataHandlers / HandleSpecial rejected enchanted sundial permission {args.Player.Name}");
+					args.Player.SendErrorMessage("You do not have permission to use the Enchanted Sundial.");
+					return true;
+				}
+				else if (TShock.Config.Settings.ForceTime != "normal")
+				{
+					TShock.Log.ConsoleDebug($"GetDataHandlers / HandleSpecial rejected enchanted sundial permission (ForceTime) {args.Player.Name}");
+					if (!args.Player.HasPermission(Permissions.cfgreload))
+					{
+						args.Player.SendErrorMessage("You cannot use the Enchanted Sundial because time is stopped.");
+					}
+					else
+						args.Player.SendErrorMessage("You must set ForceTime to normal via config to use the Enchanted Sundial.");
+					return true;
+				}
 			}
 
 			return false;
@@ -4210,6 +4272,10 @@ namespace TShockAPI
 		/// </summary>
 		internal static Dictionary<int, int> ExtraneousPlaceStyles = new Dictionary<int, int>
 		{
+			{TileID.Presents, 6},
+			{TileID.Explosives, 1},
+			{TileID.MagicalIceBlock, 0},
+			{TileID.Crystals, 17},
 			{TileID.MinecartTrack, 3}
 		};
 		

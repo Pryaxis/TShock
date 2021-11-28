@@ -273,7 +273,7 @@ namespace TShockAPI
 
 		/// <summary>
 		/// Clears the permission list and sets it to the list provided, 
-		/// will parse "!permssion" and add it to the negated permissions.
+		/// will parse "!permission" and add it to the negated permissions.
 		/// </summary>
 		/// <param name="permission">The new list of permissions to associate with the group.</param>
 		public void SetPermission(List<string> permission)

@@ -58,7 +58,7 @@ namespace TShockAPI
 		/// <summary>VersionNum - The version number the TerrariaAPI will return back to the API. We just use the Assembly info.</summary>
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
 		/// <summary>VersionCodename - The version codename is displayed when the server starts. Inspired by software codenames conventions.</summary>
-		public static readonly string VersionCodename = "Blood Moon edition";
+		public static readonly string VersionCodename = "Herrscher of Logic";
 
 		/// <summary>SavePath - This is the path TShock saves its data in. This path is relative to the TerrariaServer.exe (not in ServerPlugins).</summary>
 		public static string SavePath = "tshock";
@@ -79,7 +79,7 @@ namespace TShockAPI
 
 		/// <summary>Players - Contains all TSPlayer objects for accessing TSPlayers currently on the server</summary>
 		public static TSPlayer[] Players = new TSPlayer[Main.maxPlayers];
-		/// <summary>Bans - Static reference to the ban manager for accessing bans & related functions.</summary>
+		/// <summary>Bans - Static reference to the ban manager for accessing bans &amp; related functions.</summary>
 		public static BanManager Bans;
 		/// <summary>Warps - Static reference to the warp manager for accessing the warp system.</summary>
 		public static WarpManager Warps;
@@ -148,7 +148,7 @@ namespace TShockAPI
 		/// </summary>
 		public static event Action Initialized;
 
-		/// <summary>Version - The version required by the TerrariaAPI to be passed back for checking & loading the plugin.</summary>
+		/// <summary>Version - The version required by the TerrariaAPI to be passed back for checking &amp; loading the plugin.</summary>
 		/// <value>value - The version number specified in the Assembly, based on the VersionNum variable set in this class.</value>
 		public override Version Version
 		{
@@ -213,6 +213,8 @@ namespace TShockAPI
 			Main.SettingsUnlock_WorldEvil = true;
 
 			TerrariaApi.Reporting.CrashReporter.HeapshotRequesting += CrashReporter_HeapshotRequesting;
+
+			Console.CancelKeyPress += new ConsoleCancelEventHandler(ConsoleCancelHandler);
 
 			try
 			{
@@ -384,8 +386,8 @@ namespace TShockAPI
 			}
 			catch (Exception ex)
 			{
-				Log.Error("Fatal Startup Exception");
-				Log.Error(ex.ToString());
+				Log.ConsoleError("Fatal Startup Exception");
+				Log.ConsoleError(ex.ToString());
 				Environment.Exit(1);
 			}
 		}
@@ -636,6 +638,29 @@ namespace TShockAPI
 					SaveManager.Instance.SaveWorld();
 				}
 			}
+		}
+
+		private bool tryingToShutdown = false;
+
+		/// <summary> ConsoleCancelHandler - Handles when Ctrl + C is sent to the server for a safe shutdown. </summary>
+		/// <param name="sender">The sender</param>
+		/// <param name="args">The ConsoleCancelEventArgs associated with the event.</param>
+		private void ConsoleCancelHandler(object sender, ConsoleCancelEventArgs args)
+		{
+			if (tryingToShutdown)
+			{
+				System.Environment.Exit(1);
+				return;
+			}
+			// Cancel the default behavior
+			args.Cancel = true;
+
+			tryingToShutdown = true;
+
+			Log.ConsoleInfo("Shutting down safely. To force shutdown, send SIGINT (CTRL + C) again.");
+
+			// Perform a safe shutdown
+			TShock.Utils.StopServer(true, "Server console interrupted!");
 		}
 
 		/// <summary>HandleCommandLine - Handles the command line parameters passed to the server.</summary>
@@ -1598,18 +1623,21 @@ namespace TShockAPI
 		}
 
 		/// <summary>OnProjectileSetDefaults - Called when a projectile sets the default attributes for itself.</summary>
-		/// <param name="e">e - The SetDefaultsEventArgs object praameterized with Projectile and int.</param>
+		/// <param name="e">e - The SetDefaultsEventArgs object parameterized with Projectile and int.</param>
 		private void OnProjectileSetDefaults(SetDefaultsEventArgs<Projectile, int> e)
 		{
 			//tombstone fix.
-			if (e.Info == 43 || (e.Info >= 201 && e.Info <= 205) || (e.Info >= 527 && e.Info <= 531))
+			if (e.Info == ProjectileID.Tombstone || (e.Info >= ProjectileID.GraveMarker && e.Info <= ProjectileID.Obelisk) || (e.Info >= ProjectileID.RichGravestone1 && e.Info <= ProjectileID.RichGravestone5))
 				if (Config.Settings.DisableTombstones)
 					e.Object.SetDefaults(0);
-			if (e.Info == 75)
+			if (e.Info == ProjectileID.HappyBomb)
 				if (Config.Settings.DisableClownBombs)
 					e.Object.SetDefaults(0);
-			if (e.Info == 109)
+			if (e.Info == ProjectileID.SnowBallHostile)
 				if (Config.Settings.DisableSnowBalls)
+					e.Object.SetDefaults(0);
+			if (e.Info == ProjectileID.BombSkeletronPrime)
+				if (Config.Settings.DisablePrimeBombs)
 					e.Object.SetDefaults(0);
 		}
 

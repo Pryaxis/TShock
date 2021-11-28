@@ -687,19 +687,21 @@ namespace TShockAPI
 			}
 
 			// If they should be warned, warn them.
-			switch (failure)
+			if (!TShock.Config.Settings.SuppressPermissionFailureNotices)
 			{
-				case BuildPermissionFailPoint.GeneralBuild:
-					SendErrorMessage("You do not have permission to build on this server.");
-					break;
-				case BuildPermissionFailPoint.SpawnProtect:
-					SendErrorMessage("You do not have permission to build in the spawn point.");
-					break;
-				case BuildPermissionFailPoint.Regions:
-					SendErrorMessage("You do not have permission to build in this region.");
-					break;
+				switch (failure)
+				{
+					case BuildPermissionFailPoint.GeneralBuild:
+						SendErrorMessage("You do not have permission to build on this server.");
+						break;
+					case BuildPermissionFailPoint.SpawnProtect:
+						SendErrorMessage("You do not have permission to build in the spawn point.");
+						break;
+					case BuildPermissionFailPoint.Regions:
+						SendErrorMessage("You do not have permission to build in this region.");
+						break;
+				}
 			}
-
 			// Set the last warning time to now.
 			lastPermissionWarning = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 
@@ -890,7 +892,7 @@ namespace TShockAPI
 						CacheIP = RealPlayer ? (Netplay.Clients[Index].Socket.IsConnected()
 								? TShock.Utils.GetRealIP(Netplay.Clients[Index].Socket.GetRemoteAddress().ToString())
 								: "")
-							: "";
+							: "127.0.0.1";
 				else
 					return CacheIP;
 			}
@@ -1016,7 +1018,7 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Player Y cooridnate divided by 16. Supposed Y world coordinate.
+		/// Player Y coordinate divided by 16. Supposed Y world coordinate.
 		/// </summary>
 		public int TileY
 		{
@@ -1379,7 +1381,7 @@ namespace TShockAPI
 		/// <param name="msg">The message.</param>
 		public virtual void SendSuccessMessage(string msg)
 		{
-			SendMessage(msg, Color.Green);
+			SendMessage(msg, Color.LimeGreen);
 		}
 
 		/// <summary>
@@ -1524,8 +1526,10 @@ namespace TShockAPI
 					}
 
 					foo = foo.Replace("%map%", (TShock.Config.Settings.UseServerName ? TShock.Config.Settings.ServerName : Main.worldName));
-					foo = foo.Replace("%players%", String.Join(",", players));
+					foo = foo.Replace("%players%", String.Join(", ", players));
 					foo = foo.Replace("%specifier%", TShock.Config.Settings.CommandSpecifier);
+					foo = foo.Replace("%onlineplayers%", TShock.Utils.GetActivePlayerCount().ToString());
+					foo = foo.Replace("%serverslots%", TShock.Config.Settings.MaxSlots.ToString());
 
 					SendMessage(foo, lineColor);
 				}
@@ -1557,6 +1561,18 @@ namespace TShockAPI
 		{
 			Main.player[Index].team = team;
 			NetMessage.SendData((int)PacketTypes.PlayerTeam, -1, -1, NetworkText.Empty, Index);
+		}
+		
+		/// <summary>
+		/// Sets the player's pvp.
+		/// </summary>
+		/// <param name="mode">The state of the pvp mode.</param>
+		public virtual void SetPvP(bool mode, bool withMsg = false)
+		{
+			Main.player[Index].hostile = mode;
+			NetMessage.SendData((int)PacketTypes.TogglePvp, -1, -1, NetworkText.Empty, Index);
+			if (withMsg)
+				TSPlayer.All.SendMessage(Language.GetTextValue(mode ? "LegacyMultiplayer.11" : "LegacyMultiplayer.12", Name), Main.teamColor[Team]);
 		}
 
 		private DateTime LastDisableNotification = DateTime.UtcNow;
@@ -1711,7 +1727,6 @@ namespace TShockAPI
 			var time2 = (int)time;
 			var launch = DateTime.UtcNow;
 			var startname = Name;
-			SendInfoMessage("You are now being annoyed.");
 			while ((DateTime.UtcNow - launch).TotalSeconds < time2 && startname == Name)
 			{
 				SendData(PacketTypes.NpcSpecial, number: Index, number2: 2f);

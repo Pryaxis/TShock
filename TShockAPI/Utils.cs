@@ -62,6 +62,10 @@ namespace TShockAPI
 		/// Hex code for a white highlight
 		/// </summary>
 		public const string WhiteHighlight = "FFFFFF";
+		/// <summary>
+		/// Hex code for a cyan pastel color
+		/// </summary>
+		public const string CyanHighlight = "AAFFFF";
 
 		/// <summary>
 		/// The lowest id for a prefix.
@@ -141,7 +145,7 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Broadcasts a message from a Terraria playerplayer, not TShock
+		/// Broadcasts a message from a Terraria player, not TShock
 		/// </summary>
 		/// <param name="ply">ply - the Terraria player index that will send the packet</param>
 		/// <param name="msg">msg - The message to send</param>
@@ -890,7 +894,7 @@ namespace TShockAPI
 				Main.recipe[i] = new Recipe();
 		}
 
-		/// <summary>Dumps a matrix of all permissions & all groups in Markdown table format.</summary>
+		/// <summary>Dumps a matrix of all permissions &amp; all groups in Markdown table format.</summary>
 		/// <param name="path">The save destination.</param>
 		internal void DumpPermissionMatrix(string path)
 		{
@@ -1226,7 +1230,7 @@ namespace TShockAPI
 			for (int i = 0; i < Main.maxItemTypes; i++)
 			{
 				item.netDefaults(i);
-				if (item.placeStyle > 0)
+				if (item.placeStyle >= 0)
 				{
 					if (GetDataHandlers.MaxPlaceStyles.ContainsKey(item.createTile))
 					{

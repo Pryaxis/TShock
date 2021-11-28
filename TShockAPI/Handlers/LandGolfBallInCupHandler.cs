@@ -89,7 +89,7 @@ namespace TShockAPI.Handlers
 		{
 			if (args.PlayerIndex != args.Player.Index)
 			{
-				TShock.Log.ConsoleDebug($"LandGolfBallInCupHandler: Packet rejected for ID spoofing. Expected {args.PlayerIndex} , received {args.PlayerIndex} from {args.Player.Name}.");
+				TShock.Log.ConsoleDebug($"LandGolfBallInCupHandler: Packet rejected for ID spoofing. Expected {args.Player.Index}, received {args.PlayerIndex} from {args.Player.Name}.");
 				args.Handled = true;
 				return;
 			}
