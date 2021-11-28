@@ -1,0 +1,1 @@
+A chat suffix is a bit of text that appears after a player's name but before their chat text in the game chat, assigned on a [[group]] level.
