@@ -904,7 +904,9 @@ namespace TShockAPI
 			// Traverse to build group name list
 			foreach (Group g in TShock.Groups.groups)
 			{
+				output.Append("[[");
 				output.Append(g.Name);
+				output.Append("]]");
 				output.Append("|");
 			}
 
@@ -919,9 +921,9 @@ namespace TShockAPI
 
 			foreach (var field in typeof(Permissions).GetFields().OrderBy(f => f.Name))
 			{
-				output.Append("|");
+				output.Append("|[[");
 				output.Append((string) field.GetValue(null));
-				output.Append("|");
+				output.Append("]]|");
 
 				foreach (Group g in TShock.Groups.groups)
 				{
