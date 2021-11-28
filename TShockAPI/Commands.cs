@@ -50,7 +50,7 @@ namespace TShockAPI
 		public bool Silent { get; private set; }
 
 		/// <summary>
-		/// Parameters passed to the arguement. Does not include the command name.
+		/// Parameters passed to the argument. Does not include the command name.
 		/// IE '/kick "jerk face"' will only have 1 argument
 		/// </summary>
 		public List<string> Parameters { get; private set; }
@@ -541,7 +541,7 @@ namespace TShockAPI
 			{
 				HelpText = "Gives another player a buff or debuff for an amount of time. Putting -1 for time will set it to 415 days."
 			});
-			add(new Command(Permissions.godmode, ToggleGodMode, "godmode")
+			add(new Command(Permissions.godmode, ToggleGodMode, "godmode", "god")
 			{
 				HelpText = "Toggles godmode on a player."
 			});
@@ -582,11 +582,11 @@ namespace TShockAPI
 			{
 				HelpText = "Teleports you to a warp point or manages warps."
 			});
-			add(new Command(Permissions.whisper, Whisper, "whisper", "w", "tell")
+			add(new Command(Permissions.whisper, Whisper, "whisper", "w", "tell", "pm", "dm")
 			{
 				HelpText = "Sends a PM to a player."
 			});
-			add(new Command(Permissions.whisper, Wallow, "wallow")
+			add(new Command(Permissions.whisper, Wallow, "wallow", "wa")
 			{
 				AllowServer = false,
 				HelpText = "Toggles to either ignore or recieve whispers from other players."
@@ -598,6 +598,10 @@ namespace TShockAPI
 			add(new Command(Permissions.synclocalarea, SyncLocalArea, "sync")
 			{
 				HelpText = "Sends all tiles from the server to the player to resync the client with the actual world state."
+			});
+			add(new Command(Permissions.respawn, Respawn, "respawn")
+			{
+				HelpText = "Respawn yourself or another player."
 			});
 			#endregion
 
@@ -807,10 +811,15 @@ namespace TShockAPI
 			}
 			else
 			{
-				args.Player.SendErrorMessage("Syntax: {0}login - Logs in using your UUID and character name", Specifier);
-				args.Player.SendErrorMessage("        {0}login <password> - Logs in using your password and character name", Specifier);
-				args.Player.SendErrorMessage("        {0}login <username> <password> - Logs in using your username and password", Specifier);
-				args.Player.SendErrorMessage("If you forgot your password, there is no way to recover it.");
+				if (!TShock.Config.Settings.DisableUUIDLogin)
+					args.Player.SendMessage($"{Specifier}login - Logs in using your UUID and character name.", Color.White);
+
+				if (TShock.Config.Settings.AllowLoginAnyUsername)
+					args.Player.SendMessage($"{Specifier}login {"username".Color(Utils.GreenHighlight)} {"password".Color(Utils.BoldHighlight)} - Logs in using your username and password.", Color.White);
+				else
+					args.Player.SendMessage($"{Specifier}login {"password".Color(Utils.BoldHighlight)} - Logs in using your password and character name.", Color.White);
+
+				args.Player.SendWarningMessage("If you forgot your password, there is no way to recover it.");
 				return;
 			}
 			try
@@ -823,9 +832,15 @@ namespace TShockAPI
 						(usingUUID && account.UUID == args.Player.UUID && !TShock.Config.Settings.DisableUUIDLogin &&
 						!String.IsNullOrWhiteSpace(args.Player.UUID)))
 				{
-					args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, account.ID);
-
 					var group = TShock.Groups.GetGroupByName(account.Group);
+
+					if (!TShock.Groups.AssertGroupValid(args.Player, group, false))
+					{
+						args.Player.SendErrorMessage("Login attempt failed - see the message above.");
+						return;
+					}
+
+					args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, account.ID);
 
 					args.Player.Group = group;
 					args.Player.tempGroup = null;
@@ -939,7 +954,7 @@ namespace TShockAPI
 			}
 			catch (UserAccountManagerException ex)
 			{
-				args.Player.SendErrorMessage("Sorry, an error occured: " + ex.Message + ".");
+				args.Player.SendErrorMessage("Sorry, an error occurred: " + ex.Message + ".");
 				TShock.Log.ConsoleError("PasswordUser returned an error: " + ex);
 			}
 		}
@@ -991,6 +1006,15 @@ namespace TShockAPI
 				{
 					args.Player.SendSuccessMessage("Account \"{0}\" has been registered.", account.Name);
 					args.Player.SendSuccessMessage("Your password is {0}.", echoPassword);
+					
+					if (!TShock.Config.Settings.DisableUUIDLogin)
+						args.Player.SendMessage($"Type {Specifier}login to sign in to your account using your UUID.", Color.White);
+
+					if (TShock.Config.Settings.AllowLoginAnyUsername)
+						args.Player.SendMessage($"Type {Specifier}login \"{account.Name.Color(Utils.GreenHighlight)}\" {echoPassword.Color(Utils.BoldHighlight)} to sign in to your account.", Color.White);
+					else
+						args.Player.SendMessage($"Type {Specifier}login {echoPassword.Color(Utils.BoldHighlight)} to sign in to your account.", Color.White);
+					
 					TShock.UserAccounts.AddUserAccount(account);
 					TShock.Log.ConsoleInfo("{0} registered an account: \"{1}\".", args.Player.Name, account.Name);
 				}
@@ -1003,7 +1027,7 @@ namespace TShockAPI
 			}
 			catch (UserAccountManagerException ex)
 			{
-				args.Player.SendErrorMessage("Sorry, an error occured: " + ex.Message + ".");
+				args.Player.SendErrorMessage("Sorry, an error occurred: " + ex.Message + ".");
 				TShock.Log.ConsoleError("RegisterUser returned an error: " + ex);
 			}
 		}
@@ -1116,6 +1140,11 @@ namespace TShockAPI
 					TShock.UserAccounts.SetUserGroup(account, args.Parameters[2]);
 					TShock.Log.ConsoleInfo(args.Player.Name + " changed account " + account.Name + " to group " + args.Parameters[2] + ".");
 					args.Player.SendSuccessMessage("Account " + account.Name + " has been changed to group " + args.Parameters[2] + "!");
+					
+					//send message to player with matching account name
+					var player = TShock.Players.FirstOrDefault(p => p != null && p.Account?.Name == account.Name);
+					if (player != null && !args.Silent)
+						player.SendSuccessMessage($"{args.Player.Name} has changed your group to {args.Parameters[2]}");
 				}
 				catch (GroupNotExistsException)
 				{
@@ -1161,11 +1190,13 @@ namespace TShockAPI
 
 		private static void WorldInfo(CommandArgs args)
 		{
-			args.Player.SendInfoMessage("Information of the currently running world");
+			args.Player.SendInfoMessage("Information about the currently running world");
 			args.Player.SendInfoMessage("Name: " + (TShock.Config.Settings.UseServerName ? TShock.Config.Settings.ServerName : Main.worldName));
 			args.Player.SendInfoMessage("Size: {0}x{1}", Main.maxTilesX, Main.maxTilesY);
 			args.Player.SendInfoMessage("ID: " + Main.worldID);
 			args.Player.SendInfoMessage("Seed: " + WorldGen.currentWorldSeed);
+			args.Player.SendInfoMessage("Mode: " + Main.GameMode);
+			args.Player.SendInfoMessage("Path: " + Main.worldPathName);
 		}
 
 		#endregion
@@ -1215,7 +1246,7 @@ namespace TShockAPI
 					if (DateTime.TryParse(account.LastAccessed, out LastSeen))
 					{
 						LastSeen = DateTime.Parse(account.LastAccessed).ToLocalTime();
-						args.Player.SendSuccessMessage("{0}'s last login occured {1} {2} UTC{3}.", account.Name, LastSeen.ToShortDateString(),
+						args.Player.SendSuccessMessage("{0}'s last login occurred {1} {2} UTC{3}.", account.Name, LastSeen.ToShortDateString(),
 							LastSeen.ToShortTimeString(), Timezone);
 					}
 
@@ -1302,7 +1333,7 @@ namespace TShockAPI
 				args.Player.SendMessage($"ban {"list".Color(Utils.RedHighlight)}", Color.White);
 				args.Player.SendMessage($"ban {"details".Color(Utils.RedHighlight)} <Ban ID>", Color.White);
 				args.Player.SendMessage($"Quick usage: {"ban add".Color(Utils.BoldHighlight)} {args.Player.Name.Color(Utils.RedHighlight)} \"Griefing\"", Color.White);
-				args.Player.SendMessage($"For more info, use {"ban help".Color(Utils.BoldHighlight)} {"command".Color(Utils.RedHighlight)}", Color.White);
+				args.Player.SendMessage($"For more info, use {"ban help".Color(Utils.BoldHighlight)} {"command".Color(Utils.RedHighlight)} or {"ban help".Color(Utils.BoldHighlight)} {"examples".Color(Utils.RedHighlight)}", Color.White);
 			}
 
 			void MoreHelp(string cmd)
@@ -1326,7 +1357,7 @@ namespace TShockAPI
 						args.Player.SendMessage("", Color.White);
 						args.Player.SendMessage("Ban Del Syntax", Color.White);
 						args.Player.SendMessage($"{"ban del".Color(Utils.BoldHighlight)} <{"Ticket Number".Color(Utils.RedHighlight)}>", Color.White);
-						args.Player.SendMessage($"- {"Ticket Number".Color(Utils.RedHighlight)}s are provided when you add a ban, and can also be viewed with the {"ban list".Color(Utils.BoldHighlight)} command.", Color.White);
+						args.Player.SendMessage($"- {"Ticket Numbers".Color(Utils.RedHighlight)} are provided when you add a ban, and can also be viewed with the {"ban list".Color(Utils.BoldHighlight)} command.", Color.White);
 						args.Player.SendMessage($"Example usage: {"ban del".Color(Utils.BoldHighlight)} {"12345".Color(Utils.RedHighlight)}", Color.White);
 						break;
 
@@ -1342,14 +1373,14 @@ namespace TShockAPI
 						args.Player.SendMessage("", Color.White);
 						args.Player.SendMessage("Ban Details Syntax", Color.White);
 						args.Player.SendMessage($"{"ban details".Color(Utils.BoldHighlight)} <{"Ticket Number".Color(Utils.RedHighlight)}>", Color.White);
-						args.Player.SendMessage($"- {"Ticket Number".Color(Utils.RedHighlight)}s are provided when you add a ban, and can be found with the {"ban list".Color(Utils.BoldHighlight)} command.", Color.White);
+						args.Player.SendMessage($"- {"Ticket Numbers".Color(Utils.RedHighlight)} are provided when you add a ban, and can be found with the {"ban list".Color(Utils.BoldHighlight)} command.", Color.White);
 						args.Player.SendMessage($"Example usage: {"ban details".Color(Utils.BoldHighlight)} {"12345".Color(Utils.RedHighlight)}", Color.White);
 						break;
 
 					case "identifiers":
 						if (!PaginationTools.TryParsePageNumber(args.Parameters, 2, args.Player, out int pageNumber))
 						{
-							args.Player.SendMessage($"Invalid page number. Page number should be numeric.", Color.White);
+							args.Player.SendMessage($"Invalid page number. Page number must be numeric.", Color.White);
 							return;
 						}
 
@@ -1367,10 +1398,23 @@ namespace TShockAPI
 								LineTextColor = Color.White
 							});
 						break;
+					
+					case "examples":
+						args.Player.SendMessage("", Color.White);
+						args.Player.SendMessage("Ban Usage Examples", Color.White);
+						args.Player.SendMessage("- Ban an offline player by account name", Color.White);
+						args.Player.SendMessage($"   {Specifier}{"ban add".Color(Utils.BoldHighlight)} \"{"acc:".Color(Utils.RedHighlight)}{args.Player.Account.Color(Utils.RedHighlight)}\" {"\"Multiple accounts are not allowed\"".Color(Utils.BoldHighlight)} {"-e".Color(Utils.GreenHighlight)} (Permanently bans this account name)", Color.White);
+						args.Player.SendMessage("- Ban an offline player by IP address", Color.White);
+						args.Player.SendMessage($"   {Specifier}{"ai".Color(Utils.BoldHighlight)} \"{args.Player.Account.Color(Utils.RedHighlight)}\" (Find the IP associated with the offline target's account)", Color.White);
+						args.Player.SendMessage($"   {Specifier}{"ban add".Color(Utils.BoldHighlight)} {"ip:".Color(Utils.RedHighlight)}{args.Player.IP.Color(Utils.RedHighlight)} {"\"Griefing\"".Color(Utils.BoldHighlight)} {"-e".Color(Utils.GreenHighlight)} (Permanently bans this IP address)", Color.White);
+						args.Player.SendMessage($"- Ban an online player by index (Useful for hard to type names)", Color.White);
+						args.Player.SendMessage($"   {Specifier}{"who".Color(Utils.BoldHighlight)} {"-i".Color(Utils.GreenHighlight)} (Find the player index for the target)", Color.White);
+						args.Player.SendMessage($"   {Specifier}{"ban add".Color(Utils.BoldHighlight)} {"tsi:".Color(Utils.RedHighlight)}{args.Player.Index.Color(Utils.RedHighlight)} {"\"Trolling\"".Color(Utils.BoldHighlight)} {"-a -u -ip".Color(Utils.GreenHighlight)} (Permanently bans the online player by Account, UUID, and IP)", Color.White);
+						// Ban by account ID when?
+						break;
 
 					default:
-						args.Player.SendMessage($"Unknown ban command. Try {"add".Color(Utils.RedHighlight)}, {"del".Color(Utils.RedHighlight)}, {"list".Color(Utils.RedHighlight)}, or {"details".Color(Utils.RedHighlight)}.", Color.White);
-						break;
+						args.Player.SendMessage($"Unknown ban command. Try {"ban help".Color(Utils.BoldHighlight)} {"add".Color(Utils.RedHighlight)}, {"del".Color(Utils.RedHighlight)}, {"list".Color(Utils.RedHighlight)}, {"details".Color(Utils.RedHighlight)}, {"identifiers".Color(Utils.RedHighlight)}, or {"examples".Color(Utils.RedHighlight)}.", Color.White);						break;
 				}
 			}
 
@@ -1471,6 +1515,11 @@ namespace TShockAPI
 				if (!exactTarget && !banAccount && !banUuid && !banName && !banIp)
 				{
 					banAccount = banUuid = banIp = true;
+
+					if (TShock.Config.Settings.DisableDefaultIPBan)
+					{
+						banIp = false;
+					}
 				}
 
 				reason = reason ?? "Banned";
@@ -2365,7 +2414,7 @@ namespace TShockAPI
 			if (args.Parameters.Count < 1)
 			{
 				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}worldmode <mode>", Specifier);
-				args.Player.SendErrorMessage("Valid mode: {0}", String.Join(", ", _worldModes.Keys));
+				args.Player.SendErrorMessage("Valid modes: {0}", String.Join(", ", _worldModes.Keys));
 				return;
 			}
 
@@ -2631,6 +2680,11 @@ namespace TShockAPI
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
 					spawnName = "a Stardust Pillar";
 					break;
+				case "deerclops":
+					npc.SetDefaults(668);
+					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
+					spawnName = "a Deerclops";
+					break;
 				default:
 					args.Player.SendErrorMessage("Invalid boss type!");
 					return;
@@ -2724,6 +2778,11 @@ namespace TShockAPI
 
 		private static void Home(CommandArgs args)
 		{
+			if (args.Player.Dead)
+			{
+				args.Player.SendErrorMessage("You are dead.");
+				return;
+			}
 			args.Player.Spawn(PlayerSpawnContext.RecallFromItem);
 			args.Player.SendSuccessMessage("Teleported to your spawnpoint.");
 		}
@@ -3132,7 +3191,7 @@ namespace TShockAPI
 				string warpName = args.Parameters[2];
 				var warp = TShock.Warps.Find(warpName);
 				var plr = foundplr[0];
-				if (warp.Position != Point.Zero)
+				if (warp != null)
 				{
 					if (plr.Teleport(warp.Position.X * 16, warp.Position.Y * 16))
 					{
@@ -3493,7 +3552,7 @@ namespace TShockAPI
 
 						try
 						{
-							string response = TShock.Groups.DeleteGroup(args.Parameters[1]);
+							string response = TShock.Groups.DeleteGroup(args.Parameters[1], true);
 							if (response.Length > 0)
 							{
 								args.Player.SendSuccessMessage(response);
@@ -3501,7 +3560,7 @@ namespace TShockAPI
 						}
 						catch (GroupManagerException ex)
 						{
-							args.Player.SendErrorMessage(ex.ToString());
+							args.Player.SendErrorMessage(ex.Message);
 						}
 					}
 					#endregion
@@ -3537,7 +3596,7 @@ namespace TShockAPI
 						}
 						catch (GroupManagerException ex)
 						{
-							args.Player.SendErrorMessage(ex.ToString());
+							args.Player.SendErrorMessage(ex.Message);
 						}
 					}
 					#endregion
@@ -5061,7 +5120,7 @@ namespace TShockAPI
 				}
 
 				IEnumerable<string> cmdNames = from cmd in ChatCommands
-											   where cmd.CanRun(args.Player) && (cmd.Name != "auth" || TShock.SetupToken != 0)
+											   where cmd.CanRun(args.Player) && (cmd.Name != "setup" || TShock.SetupToken != 0)
 											   select Specifier + cmd.Name;
 
 				PaginationTools.SendPage(args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(cmdNames),
@@ -5106,7 +5165,7 @@ namespace TShockAPI
 
 		private static void GetVersion(CommandArgs args)
 		{
-			args.Player.SendInfoMessage("TShock: {0} ({1}).", TShock.VersionNum, TShock.VersionCodename);
+			args.Player.SendMessage($"TShock: {TShock.VersionNum.Color(Utils.BoldHighlight)} {TShock.VersionCodename.Color(Utils.RedHighlight)}.", Color.White);
 		}
 
 		private static void ListConnectedPlayers(CommandArgs args)
@@ -5134,16 +5193,24 @@ namespace TShockAPI
 			}
 			if (invalidUsage)
 			{
-				args.Player.SendErrorMessage("Invalid usage, proper usage: {0}who [-i] [pagenumber]", Specifier);
+				args.Player.SendMessage($"List Online Players Syntax", Color.White);
+				args.Player.SendMessage($"{"playing".Color(Utils.BoldHighlight)} {"[-i]".Color(Utils.RedHighlight)} {"[page]".Color(Utils.GreenHighlight)}", Color.White);
+				args.Player.SendMessage($"Command aliases: {"playing".Color(Utils.GreenHighlight)}, {"online".Color(Utils.GreenHighlight)}, {"who".Color(Utils.GreenHighlight)}", Color.White);
+				args.Player.SendMessage($"Example usage: {"who".Color(Utils.BoldHighlight)} {"-i".Color(Utils.RedHighlight)}", Color.White);
 				return;
 			}
 			if (displayIdsRequested && !args.Player.HasPermission(Permissions.seeids))
 			{
-				args.Player.SendErrorMessage("You do not have permission to list player ids.");
+				args.Player.SendErrorMessage("You do not have permission to see player IDs.");
 				return;
 			}
 
-			args.Player.SendSuccessMessage("Online Players ({0}/{1})", TShock.Utils.GetActivePlayerCount(), TShock.Config.Settings.MaxSlots);
+			if (TShock.Utils.GetActivePlayerCount() == 0)
+			{
+				args.Player.SendMessage("There are currently no players online.", Color.White);
+				return;
+			}
+			args.Player.SendMessage($"Online Players ({TShock.Utils.GetActivePlayerCount().Color(Utils.GreenHighlight)}/{TShock.Config.Settings.MaxSlots})", Color.White);
 
 			var players = new List<string>();
 
@@ -5152,13 +5219,9 @@ namespace TShockAPI
 				if (ply != null && ply.Active)
 				{
 					if (displayIdsRequested)
-					{
-						players.Add(String.Format("{0} (Index: {1}{2})", ply.Name, ply.Index, ply.Account != null ? ", Account ID: " + ply.Account.ID : ""));
-					}
+						players.Add($"{ply.Name} (Index: {ply.Index}{(ply.Account != null ? ", Account ID: " + ply.Account.ID : "")})");
 					else
-					{
 						players.Add(ply.Name);
-					}
 				}
 			}
 
@@ -5167,7 +5230,7 @@ namespace TShockAPI
 				new PaginationTools.Settings
 				{
 					IncludeHeader = false,
-					FooterFormat = string.Format("Type {0}who {1}{{0}} for more.", Specifier, displayIdsRequested ? "-i " : string.Empty)
+					FooterFormat = $"Type {Specifier}who {(displayIdsRequested ? "-i" : string.Empty)}{Specifier} for more."
 				}
 			);
 		}
@@ -5261,14 +5324,17 @@ namespace TShockAPI
 		{
 			if (args.Parameters.Count < 1)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}mute <player> [reason]", Specifier);
+				args.Player.SendMessage("Mute Syntax", Color.White);
+				args.Player.SendMessage($"{"mute".Color(Utils.BoldHighlight)} <{"player".Color(Utils.RedHighlight)}> [{"reason".Color(Utils.GreenHighlight)}]", Color.White);
+				args.Player.SendMessage($"Example usage: {"mute".Color(Utils.BoldHighlight)} \"{args.Player.Name.Color(Utils.RedHighlight)}\" \"{"No swearing on my Christian server".Color(Utils.GreenHighlight)}\"", Color.White);
+				args.Player.SendMessage($"To mute a player without broadcasting to chat, use the command with {SilentSpecifier.Color(Utils.GreenHighlight)} instead of {Specifier.Color(Utils.RedHighlight)}", Color.White);
 				return;
 			}
 
 			var players = TSPlayer.FindByNameOrID(args.Parameters[0]);
 			if (players.Count == 0)
 			{
-				args.Player.SendErrorMessage("Invalid player!");
+				args.Player.SendErrorMessage($"Could not find any players named \"{args.Parameters[0]}\"");
 			}
 			else if (players.Count > 1)
 			{
@@ -5276,13 +5342,16 @@ namespace TShockAPI
 			}
 			else if (players[0].HasPermission(Permissions.mute))
 			{
-				args.Player.SendErrorMessage("You cannot mute this player.");
+				args.Player.SendErrorMessage($"You do not have permission to mute {players[0].Name}");
 			}
 			else if (players[0].mute)
 			{
 				var plr = players[0];
 				plr.mute = false;
-				TSPlayer.All.SendInfoMessage("{0} has been unmuted by {1}.", plr.Name, args.Player.Name);
+				if (args.Silent)
+					args.Player.SendSuccessMessage($"You have unmuted {plr.Name}.");
+				else
+					TSPlayer.All.SendInfoMessage($"{args.Player.Name} has unmuted {plr.Name}.");
 			}
 			else
 			{
@@ -5291,7 +5360,10 @@ namespace TShockAPI
 					reason = String.Join(" ", args.Parameters.ToArray(), 1, args.Parameters.Count - 1);
 				var plr = players[0];
 				plr.mute = true;
-				TSPlayer.All.SendInfoMessage("{0} has been muted by {1} for {2}.", plr.Name, args.Player.Name, reason);
+				if (args.Silent)
+					args.Player.SendSuccessMessage($"You have muted {plr.Name} for {reason}");
+				else
+					TSPlayer.All.SendInfoMessage($"{args.Player.Name} has muted {plr.Name} for {reason}.");
 			}
 		}
 
@@ -5309,13 +5381,15 @@ namespace TShockAPI
 		{
 			if (args.Parameters.Count < 2)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper usage: /whisper <player> <text>");
+				args.Player.SendMessage("Whisper Syntax", Color.White);
+				args.Player.SendMessage($"{"whisper".Color(Utils.BoldHighlight)} <{"player".Color(Utils.RedHighlight)}> <{"message".Color(Utils.PinkHighlight)}>", Color.White);
+				args.Player.SendMessage($"Example usage: {"w".Color(Utils.BoldHighlight)} {args.Player.Name.Color(Utils.RedHighlight)} {"We're no strangers to love, you know the rules, and so do I.".Color(Utils.PinkHighlight)}", Color.White);
 				return;
 			}
 			var players = TSPlayer.FindByNameOrID(args.Parameters[0]);
 			if (players.Count == 0)
 			{
-				args.Player.SendErrorMessage("Invalid player!");
+				args.Player.SendErrorMessage($"Could not find any player named \"{args.Parameters[0]}\"");
 			}
 			else if (players.Count > 1)
 			{
@@ -5328,14 +5402,19 @@ namespace TShockAPI
 			else
 			{
 				var plr = players[0];
+				if (plr == args.Player)
+				{
+					args.Player.SendErrorMessage("You cannot whisper to yourself.");
+					return;
+				}
 				if (!plr.AcceptingWhispers)
 				{
-					args.Player.SendErrorMessage("This player is not accepting whispers.");
+					args.Player.SendErrorMessage($"{plr.Name} is not accepting whispers.");
 					return;
 				}
 				var msg = string.Join(" ", args.Parameters.ToArray(), 1, args.Parameters.Count - 1);
-				plr.SendMessage(String.Format("<From {0}> {1}", args.Player.Name, msg), Color.MediumPurple);
-				args.Player.SendMessage(String.Format("<To {0}> {1}", plr.Name, msg), Color.MediumPurple);
+				plr.SendMessage($"<From {args.Player.Name}> {msg}", Color.MediumPurple);
+				args.Player.SendMessage($"<To {plr.Name}> {msg}", Color.MediumPurple);
 				plr.LastWhisper = args.Player;
 				args.Player.LastWhisper = plr;
 			}
@@ -5345,7 +5424,7 @@ namespace TShockAPI
 		{
 			args.Player.AcceptingWhispers = !args.Player.AcceptingWhispers;
 			args.Player.SendSuccessMessage($"You {(args.Player.AcceptingWhispers ? "may now" : "will no longer")} receive whispers from other players.");
-			args.Player.SendSuccessMessage($"You can toggle this with the '{Specifier}wallow' command.");
+			args.Player.SendMessage($"You can use {Specifier.Color(Utils.GreenHighlight)}{"wa".Color(Utils.GreenHighlight)} to toggle this setting.", Color.White);
 		}
 
 		private static void Reply(CommandArgs args)
@@ -5358,20 +5437,21 @@ namespace TShockAPI
 			{
 				if (!args.Player.LastWhisper.AcceptingWhispers)
 				{
-					args.Player.SendErrorMessage("This player is not accepting whispers.");
+					args.Player.SendErrorMessage($"{args.Player.LastWhisper.Name} is not accepting whispers.");
 					return;
 				}
 				var msg = string.Join(" ", args.Parameters);
-				args.Player.LastWhisper.SendMessage(String.Format("<From {0}> {1}", args.Player.Name, msg), Color.MediumPurple);
-				args.Player.SendMessage(String.Format("<To {0}> {1}", args.Player.LastWhisper.Name, msg), Color.MediumPurple);
+				args.Player.LastWhisper.SendMessage($"<From {args.Player.Name}> {msg}", Color.MediumPurple);
+				args.Player.SendMessage($"<To {args.Player.LastWhisper.Name}> {msg}", Color.MediumPurple);
 			}
 			else if (args.Player.LastWhisper != null)
 			{
-				args.Player.SendErrorMessage("The player you're attempting to reply to is no longer online.");
+				args.Player.SendErrorMessage($"{args.Player.LastWhisper.Name} is offline and cannot receive your reply.");
 			}
 			else
 			{
-				args.Player.SendErrorMessage("You haven't previously received any whispers. Please use {0}whisper to whisper to other people.", Specifier);
+				args.Player.SendErrorMessage("You haven't previously received any whispers.");
+				args.Player.SendMessage($"You can use {Specifier.Color(Utils.GreenHighlight)}{"w".Color(Utils.GreenHighlight)} to whisper to other players.", Color.White);
 			}
 		}
 
@@ -5379,7 +5459,10 @@ namespace TShockAPI
 		{
 			if (args.Parameters.Count != 2)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}annoy <player> <seconds to annoy>", Specifier);
+				args.Player.SendMessage("Annoy Syntax", Color.White);
+				args.Player.SendMessage($"{"annoy".Color(Utils.BoldHighlight)} <{"player".Color(Utils.RedHighlight)}> <{"seconds".Color(Utils.PinkHighlight)}>", Color.White);
+				args.Player.SendMessage($"Example usage: {"annoy".Color(Utils.BoldHighlight)} <{args.Player.Name.Color(Utils.RedHighlight)}> <{"10".Color(Utils.PinkHighlight)}>", Color.White);
+				args.Player.SendMessage($"You can use {SilentSpecifier.Color(Utils.GreenHighlight)} instead of {Specifier.Color(Utils.RedHighlight)} to annoy a player silently.", Color.White);
 				return;
 			}
 			int annoy = 5;
@@ -5387,14 +5470,16 @@ namespace TShockAPI
 
 			var players = TSPlayer.FindByNameOrID(args.Parameters[0]);
 			if (players.Count == 0)
-				args.Player.SendErrorMessage("Invalid player!");
+				args.Player.SendErrorMessage($"Could not find any player named \"{args.Parameters[0]}\"");
 			else if (players.Count > 1)
 				args.Player.SendMultipleMatchError(players.Select(p => p.Name));
 			else
 			{
 				var ply = players[0];
-				args.Player.SendSuccessMessage("Annoying " + ply.Name + " for " + annoy + " seconds.");
-				(new Thread(ply.Whoopie)).Start(annoy);
+				args.Player.SendSuccessMessage($"Annoying {ply.Name} for {annoy} seconds.");
+				if (!args.Silent)
+					ply.SendMessage("You are now being annoyed.", Color.LightGoldenrodYellow);
+				new Thread(ply.Whoopie).Start(annoy);
 			}
 		}
 
@@ -5402,59 +5487,114 @@ namespace TShockAPI
 		{
 			if (args.Parameters.Count != 1)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}rocket <player>", Specifier);
+				args.Player.SendMessage("Rocket Syntax", Color.White);
+				args.Player.SendMessage($"{"rocket".Color(Utils.BoldHighlight)} <{"player".Color(Utils.RedHighlight)}>", Color.White);
+				args.Player.SendMessage($"Example usage: {"rocket".Color(Utils.BoldHighlight)} {args.Player.Name.Color(Utils.RedHighlight)}", Color.White);
+				args.Player.SendMessage($"You can use {SilentSpecifier.Color(Utils.GreenHighlight)} instead of {Specifier.Color(Utils.RedHighlight)} to rocket a player silently.", Color.White);
 				return;
 			}
 			var players = TSPlayer.FindByNameOrID(args.Parameters[0]);
 			if (players.Count == 0)
-				args.Player.SendErrorMessage("Invalid player!");
+				args.Player.SendErrorMessage($"Could not find any player named \"{args.Parameters[0]}\"");
 			else if (players.Count > 1)
 				args.Player.SendMultipleMatchError(players.Select(p => p.Name));
 			else
 			{
-				var ply = players[0];
+				var target = players[0];
 
-				if (ply.IsLoggedIn && Main.ServerSideCharacter)
+				if (target.IsLoggedIn && Main.ServerSideCharacter)
 				{
-					ply.TPlayer.velocity.Y = -50;
-					TSPlayer.All.SendData(PacketTypes.PlayerUpdate, "", ply.Index);
-					args.Player.SendSuccessMessage("Rocketed {0}.", ply.Name);
+					target.TPlayer.velocity.Y = -50;
+					TSPlayer.All.SendData(PacketTypes.PlayerUpdate, "", target.Index);
+
+					if (!args.Silent)
+					{
+						TSPlayer.All.SendInfoMessage($"{args.Player.Name} has launched {(target == args.Player ? (args.Player.TPlayer.Male ? "himself" : "herself") : target.Name)} into space.");
+						return;
+					}
+
+					if (target == args.Player)
+						args.Player.SendSuccessMessage("You have launched yourself into space.");
+					else
+						args.Player.SendSuccessMessage($"You have launched {target.Name} into space.");
 				}
 				else
 				{
-					args.Player.SendErrorMessage("Failed to rocket player: Not logged in or not SSC mode.");
+					if (!Main.ServerSideCharacter)
+						args.Player.SendErrorMessage("SSC must be enabled to use this command.");
+					else
+						args.Player.SendErrorMessage($"Unable to rocket {target.Name} because {(target.TPlayer.Male ? "he" : "she")} is not logged in.");
 				}
 			}
 		}
 
 		private static void FireWork(CommandArgs args)
 		{
+			var user = args.Player;
 			if (args.Parameters.Count < 1)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}firework <player> [red|green|blue|yellow]", Specifier);
+				// firework <player> [R|G|B|Y]
+				user.SendMessage("Firework Syntax", Color.White);
+				user.SendMessage($"{"firework".Color(Utils.CyanHighlight)} <{"player".Color(Utils.PinkHighlight)}> [{"R".Color(Utils.RedHighlight)}|{"G".Color(Utils.GreenHighlight)}|{"B".Color(Utils.BoldHighlight)}|{"Y".Color(Utils.YellowHighlight)}]", Color.White);
+				user.SendMessage($"Example usage: {"firework".Color(Utils.CyanHighlight)} {user.Name.Color(Utils.PinkHighlight)} {"R".Color(Utils.RedHighlight)}", Color.White);
+				user.SendMessage($"You can use {SilentSpecifier.Color(Utils.GreenHighlight)} instead of {Specifier.Color(Utils.RedHighlight)} to launch a firework silently.", Color.White);
 				return;
 			}
 			var players = TSPlayer.FindByNameOrID(args.Parameters[0]);
 			if (players.Count == 0)
-				args.Player.SendErrorMessage("Invalid player!");
+				user.SendErrorMessage($"Could not find any player named \"{args.Parameters[0]}\"");
 			else if (players.Count > 1)
-				args.Player.SendMultipleMatchError(players.Select(p => p.Name));
+				user.SendMultipleMatchError(players.Select(p => p.Name));
 			else
 			{
-				int type = 167;
+				int type = ProjectileID.RocketFireworkRed;
 				if (args.Parameters.Count > 1)
 				{
-					if (args.Parameters[1].ToLower() == "green")
-						type = 168;
-					else if (args.Parameters[1].ToLower() == "blue")
-						type = 169;
-					else if (args.Parameters[1].ToLower() == "yellow")
-						type = 170;
+					switch (args.Parameters[1].ToLower())
+					{
+						case "red":
+						case "r":
+							type = ProjectileID.RocketFireworkRed;
+							break;
+						case "green":
+						case "g":
+							type = ProjectileID.RocketFireworkGreen;
+							break;
+						case "blue":
+						case "b":
+							type = ProjectileID.RocketFireworkBlue;
+							break;
+						case "yellow":
+						case "y":
+							type = ProjectileID.RocketFireworkYellow;
+							break;
+						case "r2":
+						case "star":
+							type = ProjectileID.RocketFireworksBoxRed;
+							break;
+						case "g2":
+						case "spiral":
+							type = ProjectileID.RocketFireworksBoxGreen;
+							break;
+						case "b2":
+						case "rings":
+							type = ProjectileID.RocketFireworksBoxBlue;
+							break;
+						case "y2":
+						case "flower":
+							type = ProjectileID.RocketFireworksBoxYellow;
+							break;
+						default:
+							type = ProjectileID.RocketFireworkRed;
+							break;
+					}
 				}
-				var ply = players[0];
-				int p = Projectile.NewProjectile(Projectile.GetNoneSource(), ply.TPlayer.position.X, ply.TPlayer.position.Y - 64f, 0f, -8f, type, 0, (float)0);
+				var target = players[0];
+				int p = Projectile.NewProjectile(Projectile.GetNoneSource(), target.TPlayer.position.X, target.TPlayer.position.Y - 64f, 0f, -8f, type, 0, 0);
 				Main.projectile[p].Kill();
-				args.Player.SendSuccessMessage("Launched Firework on {0}.", ply.Name);
+				args.Player.SendSuccessMessage($"You launched fireworks on {(target == user ? "yourself" : target.Name)}.");
+				if (!args.Silent && target != user)
+					target.SendSuccessMessage($"{user.Name} launched fireworks on you.");
 			}
 		}
 
@@ -5512,22 +5652,29 @@ namespace TShockAPI
 
 		#endregion General Commands
 
-		#region Cheat Commands
+		#region Game Commands
 
 		private static void Clear(CommandArgs args)
 		{
+			var user = args.Player;
+			var everyone = TSPlayer.All;
+			int radius = 50;
+
 			if (args.Parameters.Count != 1 && args.Parameters.Count != 2)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}clear <item/npc/projectile> [radius]", Specifier);
+				user.SendMessage("Clear Syntax", Color.White);
+				user.SendMessage($"{"clear".Color(Utils.BoldHighlight)} <{"item".Color(Utils.GreenHighlight)}|{"npc".Color(Utils.RedHighlight)}|{"projectile".Color(Utils.YellowHighlight)}> [{"radius".Color(Utils.PinkHighlight)}]", Color.White);
+				user.SendMessage($"Example usage: {"clear".Color(Utils.BoldHighlight)} {"i".Color(Utils.RedHighlight)} {"10000".Color(Utils.GreenHighlight)}", Color.White); user.SendMessage($"Example usage: {"clear".Color(Utils.BoldHighlight)} {"item".Color(Utils.RedHighlight)} {"10000".Color(Utils.GreenHighlight)}", Color.White);
+				user.SendMessage($"If you do not specify a radius, it will use a default radius of {radius} around your character.", Color.White);
+				user.SendMessage($"You can use {SilentSpecifier.Color(Utils.GreenHighlight)} instead of {Specifier.Color(Utils.RedHighlight)} to execute this command silently.", Color.White);
 				return;
 			}
 
-			int radius = 50;
 			if (args.Parameters.Count == 2)
 			{
 				if (!int.TryParse(args.Parameters[1], out radius) || radius <= 0)
 				{
-					args.Player.SendErrorMessage("Invalid radius.");
+					user.SendErrorMessage($"\"{args.Parameters[1]}\" is not a valid radius.");
 					return;
 				}
 			}
@@ -5536,102 +5683,178 @@ namespace TShockAPI
 			{
 				case "item":
 				case "items":
+				case "i":
 					{
 						int cleared = 0;
 						for (int i = 0; i < Main.maxItems; i++)
 						{
-							float dX = Main.item[i].position.X - args.Player.X;
-							float dY = Main.item[i].position.Y - args.Player.Y;
+							float dX = Main.item[i].position.X - user.X;
+							float dY = Main.item[i].position.Y - user.Y;
 
 							if (Main.item[i].active && dX * dX + dY * dY <= radius * radius * 256f)
 							{
 								Main.item[i].active = false;
-								TSPlayer.All.SendData(PacketTypes.ItemDrop, "", i);
+								everyone.SendData(PacketTypes.ItemDrop, "", i);
 								cleared++;
 							}
 						}
-						args.Player.SendSuccessMessage("Deleted {0} items within a radius of {1}.", cleared, radius);
+						if (args.Silent)
+							user.SendSuccessMessage($"You deleted {cleared} item{(cleared > 1 ? "s": "")} within a radius of {radius}.");
+						else
+							everyone.SendInfoMessage($"{user.Name} deleted {cleared} item{(cleared > 1 ? "s" : "")} within a radius of {radius}.");
 					}
 					break;
 				case "npc":
 				case "npcs":
+				case "n":
 					{
 						int cleared = 0;
 						for (int i = 0; i < Main.maxNPCs; i++)
 						{
-							float dX = Main.npc[i].position.X - args.Player.X;
-							float dY = Main.npc[i].position.Y - args.Player.Y;
+							float dX = Main.npc[i].position.X - user.X;
+							float dY = Main.npc[i].position.Y - user.Y;
 
 							if (Main.npc[i].active && dX * dX + dY * dY <= radius * radius * 256f)
 							{
 								Main.npc[i].active = false;
 								Main.npc[i].type = 0;
-								TSPlayer.All.SendData(PacketTypes.NpcUpdate, "", i);
+								everyone.SendData(PacketTypes.NpcUpdate, "", i);
 								cleared++;
 							}
 						}
-						args.Player.SendSuccessMessage("Deleted {0} NPCs within a radius of {1}.", cleared, radius);
+						if (args.Silent)
+							user.SendSuccessMessage($"You deleted {cleared} NPC{(cleared > 1 ? "s" : "")} within a radius of {radius}.");
+						else
+							everyone.SendInfoMessage($"{user.Name} deleted {cleared} NPC{(cleared > 1 ? "s" : "")} within a radius of {radius}.");
 					}
 					break;
 				case "proj":
 				case "projectile":
 				case "projectiles":
+				case "p":
 					{
 						int cleared = 0;
 						for (int i = 0; i < Main.maxProjectiles; i++)
 						{
-							float dX = Main.projectile[i].position.X - args.Player.X;
-							float dY = Main.projectile[i].position.Y - args.Player.Y;
+							float dX = Main.projectile[i].position.X - user.X;
+							float dY = Main.projectile[i].position.Y - user.Y;
 
 							if (Main.projectile[i].active && dX * dX + dY * dY <= radius * radius * 256f)
 							{
 								Main.projectile[i].active = false;
 								Main.projectile[i].type = 0;
-								TSPlayer.All.SendData(PacketTypes.ProjectileNew, "", i);
+								everyone.SendData(PacketTypes.ProjectileNew, "", i);
 								cleared++;
 							}
 						}
-						args.Player.SendSuccessMessage("Deleted {0} projectiles within a radius of {1}.", cleared, radius);
+						if (args.Silent)
+							user.SendSuccessMessage($"You deleted {cleared} projectile{(cleared > 1 ? "s" : "")} within a radius of {radius}.");
+						else
+							everyone.SendInfoMessage($"{user.Name} deleted {cleared} projectile{(cleared > 1 ? "s" : "")} within a radius of {radius}");
 					}
 					break;
 				default:
-					args.Player.SendErrorMessage("Invalid clear option!");
+					user.SendErrorMessage($"\"{args.Parameters[0]}\" is not a valid clear option.");
 					break;
 			}
 		}
 
 		private static void Kill(CommandArgs args)
 		{
+			// To-Do: separate kill self and kill other player into two permissions
+			var user = args.Player;
 			if (args.Parameters.Count < 1)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}kill <player>", Specifier);
+				user.SendMessage("Kill syntax and example", Color.White);
+				user.SendMessage($"{"kill".Color(Utils.BoldHighlight)} <{"player".Color(Utils.RedHighlight)}>", Color.White);
+				user.SendMessage($"Example usage: {"kill".Color(Utils.BoldHighlight)} {user.Name.Color(Utils.RedHighlight)}", Color.White);
+				user.SendMessage($"You can use {SilentSpecifier.Color(Utils.GreenHighlight)} instead of {Specifier.Color(Utils.RedHighlight)} to execute this command silently.", Color.White);
 				return;
 			}
 
-			string plStr = String.Join(" ", args.Parameters);
-			var players = TSPlayer.FindByNameOrID(plStr);
+			string targetName = String.Join(" ", args.Parameters);
+			var players = TSPlayer.FindByNameOrID(targetName);
+
 			if (players.Count == 0)
-			{
-				args.Player.SendErrorMessage("Invalid player!");
-			}
+				user.SendErrorMessage($"Could not find any player named \"{targetName}\".");
 			else if (players.Count > 1)
-			{
-				args.Player.SendMultipleMatchError(players.Select(p => p.Name));
-			}
+				user.SendMultipleMatchError(players.Select(p => p.Name));
 			else
 			{
-				var plr = players[0];
-				plr.KillPlayer();
-				args.Player.SendSuccessMessage(string.Format("You just killed {0}!", plr.Name));
-				plr.SendErrorMessage("{0} just killed you!", args.Player.Name);
+				var target = players[0];
+
+				if (target.Dead)
+				{
+					user.SendErrorMessage($"{(target == user ? "You" : target.Name)} {(target == user ? "are" : "is")} already dead!");
+					return;
+				}
+				target.KillPlayer();
+				user.SendSuccessMessage($"You just killed {(target == user ? "yourself" : target.Name)}!");
+				if (!args.Silent && target != user)
+					target.SendErrorMessage($"{user.Name} just killed you!");
 			}
+		}
+									
+		private static void Respawn(CommandArgs args)
+		{
+			if (!args.Player.RealPlayer && args.Parameters.Count == 0)
+			{
+				args.Player.SendErrorMessage("You can't respawn the server console!");
+				return;
+			}
+			TSPlayer playerToRespawn;
+			if (args.Parameters.Count > 0)
+			{
+				if (!args.Player.HasPermission(Permissions.respawnother))
+				{
+					args.Player.SendErrorMessage("You do not have permission to respawn another player.");
+					return;
+				}
+				string plStr = String.Join(" ", args.Parameters);
+				var players = TSPlayer.FindByNameOrID(plStr);
+				if (players.Count == 0)
+				{
+					args.Player.SendErrorMessage($"Could not find any player named \"{plStr}\"");
+					return;
+				}
+				if (players.Count > 1)
+				{
+					args.Player.SendMultipleMatchError(players.Select(p => p.Name));
+					return;
+				}
+				playerToRespawn = players[0];
+			}
+			else 
+				playerToRespawn = args.Player;
+
+			if (!playerToRespawn.Dead)
+			{
+				args.Player.SendErrorMessage($"{(playerToRespawn == args.Player ? "You" : playerToRespawn.Name)} {(playerToRespawn == args.Player ? "are" : "is")} not dead.");
+				return;
+			}
+			playerToRespawn.Spawn(PlayerSpawnContext.ReviveFromDeath);
+
+			if (playerToRespawn != args.Player)
+			{
+				args.Player.SendSuccessMessage($"You have respawned {playerToRespawn.Name}");
+				if (!args.Silent)
+					playerToRespawn.SendSuccessMessage($"{args.Player.Name} has respawned you.");
+			}
+			else
+				playerToRespawn.SendSuccessMessage("You have respawned yourself.");
 		}
 
 		private static void Butcher(CommandArgs args)
 		{
+			var user = args.Player;
 			if (args.Parameters.Count > 1)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}butcher [mob type]", Specifier);
+				user.SendMessage("Butcher Syntax and Example", Color.White);
+				user.SendMessage($"{"butcher".Color(Utils.BoldHighlight)} [{"NPC name".Color(Utils.RedHighlight)}|{"ID".Color(Utils.RedHighlight)}]", Color.White);
+				user.SendMessage($"Example usage: {"butcher".Color(Utils.BoldHighlight)} {"pigron".Color(Utils.RedHighlight)}", Color.White);
+				user.SendMessage("All alive NPCs (excluding town NPCs) on the server will be killed if you do not input a name or ID.", Color.White);
+				user.SendMessage($"To get rid of NPCs without making them drop items, use the {"clear".Color(Utils.BoldHighlight)} command instead.", Color.White);
+				user.SendMessage($"To execute this command silently, use {SilentSpecifier.Color(Utils.GreenHighlight)} instead of {Specifier.Color(Utils.RedHighlight)}", Color.White);
 				return;
 			}
 
@@ -5642,18 +5865,16 @@ namespace TShockAPI
 				var npcs = TShock.Utils.GetNPCByIdOrName(args.Parameters[0]);
 				if (npcs.Count == 0)
 				{
-					args.Player.SendErrorMessage("Invalid mob type!");
+					user.SendErrorMessage($"\"{args.Parameters[0]}\" is not a valid NPC.");
 					return;
 				}
-				else if (npcs.Count > 1)
+
+				if (npcs.Count > 1)
 				{
-					args.Player.SendMultipleMatchError(npcs.Select(n => $"{n.FullName}({n.type})"));
+					user.SendMultipleMatchError(npcs.Select(n => $"{n.FullName}({n.type})"));
 					return;
 				}
-				else
-				{
-					npcId = npcs[0].netID;
-				}
+				npcId = npcs[0].netID;
 			}
 
 			int kills = 0;
@@ -5665,7 +5886,11 @@ namespace TShockAPI
 					kills++;
 				}
 			}
-			TSPlayer.All.SendInfoMessage("{0} butchered {1} NPCs.", args.Player.Name, kills);
+
+			if (args.Silent)
+				user.SendSuccessMessage($"You butchered {kills} NPC{(kills > 1 ? "s": "")}.");
+			else
+				TSPlayer.All.SendInfoMessage($"{user.Name} butchered {kills} NPC{(kills > 1 ? "s" : "")}.");
 		}
 
 		private static void Item(CommandArgs args)
@@ -5916,93 +6141,114 @@ namespace TShockAPI
 
 		private static void Heal(CommandArgs args)
 		{
-			TSPlayer playerToHeal;
-			if (args.Parameters.Count > 0)
+			// heal <player> [amount]
+			// To-Do: break up heal self and heal other into two separate permissions
+			var user = args.Player;
+			if (args.Parameters.Count < 1 || args.Parameters.Count > 2)
 			{
-				string plStr = String.Join(" ", args.Parameters);
-				var players = TSPlayer.FindByNameOrID(plStr);
-				if (players.Count == 0)
-				{
-					args.Player.SendErrorMessage("Invalid player!");
-					return;
-				}
-				else if (players.Count > 1)
-				{
-					args.Player.SendMultipleMatchError(players.Select(p => p.Name));
-					return;
-				}
-				else
-				{
-					playerToHeal = players[0];
-				}
-			}
-			else if (!args.Player.RealPlayer)
-			{
-				args.Player.SendErrorMessage("You can't heal yourself!");
+				user.SendMessage("Heal Syntax and Example", Color.White);
+				user.SendMessage($"{"heal".Color(Utils.BoldHighlight)} <{"player".Color(Utils.RedHighlight)}> [{"amount".Color(Utils.GreenHighlight)}]", Color.White);
+				user.SendMessage($"Example usage: {"heal".Color(Utils.BoldHighlight)} {user.Name.Color(Utils.RedHighlight)} {"100".Color(Utils.GreenHighlight)}", Color.White);
+				user.SendMessage($"If no amount is specified, it will default to healing the target player by their max HP.", Color.White);
+				user.SendMessage($"To execute this command silently, use {SilentSpecifier.Color(Utils.GreenHighlight)} instead of {Specifier.Color(Utils.RedHighlight)}", Color.White);
 				return;
 			}
-			else
+			if (args.Parameters[0].Length == 0)
 			{
-				playerToHeal = args.Player;
+				user.SendErrorMessage($"You didn't put a player name.");
+				return;
 			}
 
-			playerToHeal.Heal();
-			if (playerToHeal == args.Player)
-			{
-				args.Player.SendSuccessMessage("You just got healed!");
-			}
+			string targetName = args.Parameters[0];
+			var players = TSPlayer.FindByNameOrID(targetName);
+			if (players.Count == 0)
+				user.SendErrorMessage($"Unable to find any players named \"{targetName}\"");
+			else if (players.Count > 1)
+				user.SendMultipleMatchError(players.Select(p => p.Name));
 			else
 			{
-				args.Player.SendSuccessMessage(string.Format("You just healed {0}", playerToHeal.Name));
-				playerToHeal.SendSuccessMessage(string.Format("{0} just healed you!", args.Player.Name));
+				var target = players[0];
+				int amount = target.TPlayer.statLifeMax2;
+
+				if (target.Dead)
+				{
+					user.SendErrorMessage("You can't heal a dead player!");
+					return;
+				}
+
+				if (args.Parameters.Count == 2)
+				{
+					int.TryParse(args.Parameters[1], out amount);
+				}
+				target.Heal(amount);
+
+				if (args.Silent)
+					user.SendSuccessMessage($"You healed {(target == user ? "yourself" : target.Name)} for {amount} HP.");
+				else
+					TSPlayer.All.SendInfoMessage($"{user.Name} healed {(target == user ? (target.TPlayer.Male ? "himself" : "herself") : target.Name)} for {amount} HP.");
 			}
 		}
 
 		private static void Buff(CommandArgs args)
 		{
+			// buff <"buff name|ID"> [duration]
+			var user = args.Player;
 			if (args.Parameters.Count < 1 || args.Parameters.Count > 2)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}buff <buff name or ID> [time in seconds]", Specifier);
+				user.SendMessage("Buff Syntax and Example", Color.White);
+				user.SendMessage($"{"buff".Color(Utils.BoldHighlight)} <\"{"buff name".Color(Utils.RedHighlight)}|{"ID".Color(Utils.RedHighlight)}\"> [{"duration".Color(Utils.GreenHighlight)}]", Color.White);
+				user.SendMessage($"Example usage: {"buff".Color(Utils.BoldHighlight)} \"{"obsidian skin".Color(Utils.RedHighlight)}\" {"-1".Color(Utils.GreenHighlight)}", Color.White);
+				user.SendMessage($"If you don't specify the duration, it will default to {"60".Color(Utils.GreenHighlight)} seconds.", Color.White);
+				user.SendMessage($"If you put {"-1".Color(Utils.GreenHighlight)} as the duration, it will use the max possible time of 415 days.", Color.White);
 				return;
 			}
+
 			int id = 0;
 			int time = 60;
 			var timeLimit = (int.MaxValue / 60) - 1;
+
 			if (!int.TryParse(args.Parameters[0], out id))
 			{
 				var found = TShock.Utils.GetBuffByName(args.Parameters[0]);
+
 				if (found.Count == 0)
 				{
-					args.Player.SendErrorMessage("Invalid buff name!");
+					user.SendErrorMessage($"Unable to find any buffs named \"{args.Parameters[0]}\"");
 					return;
 				}
-				else if (found.Count > 1)
+
+				if (found.Count > 1)
 				{
-					args.Player.SendMultipleMatchError(found.Select(f => Lang.GetBuffName(f)));
+					user.SendMultipleMatchError(found.Select(f => Lang.GetBuffName(f)));
 					return;
 				}
 				id = found[0];
 			}
+
 			if (args.Parameters.Count == 2)
 				int.TryParse(args.Parameters[1], out time);
+
 			if (id > 0 && id < Main.maxBuffTypes)
 			{
-				// Max possible buff duration as of 1.4.2.2 is 35791393 seconds (415 days).
+				// Max possible buff duration as of Terraria 1.4.2.3 is 35791393 seconds (415 days).
 				if (time < 0 || time > timeLimit)
 					time = timeLimit;
-				args.Player.SetBuff(id, time * 60);
-				args.Player.SendSuccessMessage(string.Format("You have buffed yourself with {0} ({1}) for {2} seconds!",
-													  TShock.Utils.GetBuffName(id), TShock.Utils.GetBuffDescription(id), (time)));
+				user.SetBuff(id, time * 60);
+				user.SendSuccessMessage($"You buffed yourself with {TShock.Utils.GetBuffName(id)} ({TShock.Utils.GetBuffDescription(id)}) for {time} seconds.");
 			}
 			else
-				args.Player.SendErrorMessage("Invalid buff ID!");
+				user.SendErrorMessage($"\"{id}\" is not a valid buff ID!");
 		}
 
 		private static void GBuff(CommandArgs args)
 		{
+			var user = args.Player;
 			if (args.Parameters.Count < 2 || args.Parameters.Count > 3)
 			{
-				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}gbuff <player> <buff name or ID> [time in seconds]", Specifier);
+				user.SendMessage("Give Buff Syntax and Example", Color.White);
+				user.SendMessage($"{"gbuff".Color(Utils.BoldHighlight)} <{"player".Color(Utils.RedHighlight)}> <{"buff name".Color(Utils.PinkHighlight)}|{"ID".Color(Utils.PinkHighlight)}> [{"seconds".Color(Utils.GreenHighlight)}]", Color.White);
+				user.SendMessage($"Example usage: {"gbuff".Color(Utils.BoldHighlight)} {user.Name.Color(Utils.RedHighlight)} {"regen".Color(Utils.PinkHighlight)} {"-1".Color(Utils.GreenHighlight)}", Color.White);
+				user.SendMessage($"To buff a player without them knowing, use {SilentSpecifier.Color(Utils.RedHighlight)} instead of {Specifier.Color(Utils.GreenHighlight)}", Color.White);
 				return;
 			}
 			int id = 0;
@@ -6011,12 +6257,12 @@ namespace TShockAPI
 			var foundplr = TSPlayer.FindByNameOrID(args.Parameters[0]);
 			if (foundplr.Count == 0)
 			{
-				args.Player.SendErrorMessage("Invalid player!");
+				user.SendErrorMessage($"Unable to find any player named \"{args.Parameters[0]}\"");
 				return;
 			}
 			else if (foundplr.Count > 1)
 			{
-				args.Player.SendMultipleMatchError(foundplr.Select(p => p.Name));
+				user.SendMultipleMatchError(foundplr.Select(p => p.Name));
 				return;
 			}
 			else
@@ -6026,12 +6272,12 @@ namespace TShockAPI
 					var found = TShock.Utils.GetBuffByName(args.Parameters[1]);
 					if (found.Count == 0)
 					{
-						args.Player.SendErrorMessage("Invalid buff name!");
+						user.SendErrorMessage($"Unable to find any buff named \"{args.Parameters[1]}\"");
 						return;
 					}
 					else if (found.Count > 1)
 					{
-						args.Player.SendMultipleMatchError(found.Select(b => Lang.GetBuffName(b)));
+						user.SendMultipleMatchError(found.Select(b => Lang.GetBuffName(b)));
 						return;
 					}
 					id = found[0];
@@ -6040,18 +6286,16 @@ namespace TShockAPI
 					int.TryParse(args.Parameters[2], out time);
 				if (id > 0 && id < Main.maxBuffTypes)
 				{
+					var target = foundplr[0];
 					if (time < 0 || time > timeLimit)
 						time = timeLimit;
-					foundplr[0].SetBuff(id, time * 60);
-					args.Player.SendSuccessMessage(string.Format("You have buffed {0} with {1} ({2}) for {3} seconds!",
-														  foundplr[0].Name, TShock.Utils.GetBuffName(id),
-														  TShock.Utils.GetBuffDescription(id), (time)));
-					foundplr[0].SendSuccessMessage(string.Format("{0} has buffed you with {1} ({2}) for {3} seconds!",
-														  args.Player.Name, TShock.Utils.GetBuffName(id),
-														  TShock.Utils.GetBuffDescription(id), (time)));
+					target.SetBuff(id, time * 60);
+					user.SendSuccessMessage($"You have buffed {(target == user ? "yourself" : target.Name)} with {TShock.Utils.GetBuffName(id)} ({TShock.Utils.GetBuffDescription(id)}) for {time} seconds!");
+					if (!args.Silent && target != user)
+						target.SendSuccessMessage($"{user.Name} has buffed you with {TShock.Utils.GetBuffName(id)} ({TShock.Utils.GetBuffDescription(id)}) for {time} seconds!");
 				}
 				else
-					args.Player.SendErrorMessage("Invalid buff ID!");
+					user.SendErrorMessage("Invalid buff ID!");
 			}
 		}
 
@@ -6312,7 +6556,7 @@ namespace TShockAPI
 					}
 					Main.tile[x, y - 1].wall = 0;
 					WorldGen.TryGrowingTreeByType(584, x, y);
-					name = "Amethust Gemtree";
+					name = "Amethyst Gemtree";
 					break;
 
 				case "sapphire":
@@ -6462,10 +6706,10 @@ namespace TShockAPI
 
 			if (!args.Silent || (playerToGod == args.Player))
 			{
-				playerToGod.SendSuccessMessage(string.Format("You are {0} in god mode.", args.Player.GodMode ? "now" : "no longer"));
+				playerToGod.SendSuccessMessage(string.Format("You are {0} in god mode.", playerToGod.GodMode ? "now" : "no longer"));
 			}
 		}
 
-		#endregion Cheat Comamnds
+		#endregion Game Commands
 	}
 }

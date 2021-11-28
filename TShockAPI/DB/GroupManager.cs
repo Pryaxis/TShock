@@ -200,6 +200,45 @@ namespace TShockAPI.DB
 			LoadPermisions();
 
 			Group.DefaultGroup = GetGroupByName(TShock.Config.Settings.DefaultGuestGroupName);
+
+			AssertCoreGroupsPresent();
+		}
+
+		internal void AssertCoreGroupsPresent()
+		{
+			if (!GroupExists(TShock.Config.Settings.DefaultGuestGroupName))
+			{
+				TShock.Log.ConsoleError("The guest group could not be found. This may indicate a typo in the configuration file, or that the group was renamed or deleted.");
+				throw new Exception("The guest group could not be found.");
+			}
+
+			if (!GroupExists(TShock.Config.Settings.DefaultRegistrationGroupName))
+			{
+				TShock.Log.ConsoleError("The default usergroup could not be found. This may indicate a typo in the configuration file, or that the group was renamed or deleted.");
+				throw new Exception("The default usergroup could not be found.");
+			}
+		}
+
+		/// <summary>
+		/// Asserts that the group reference can be safely assigned to the player object.
+		/// <para>If this assertion fails, and <paramref name="kick"/> is true, the player is disconnected. If <paramref name="kick"/> is false, the player will receive an error message.</para>
+		/// </summary>
+		/// <param name="player">The player in question</param>
+		/// <param name="group">The group we want to assign them</param>
+		/// <param name="kick">Whether or not failing this check disconnects the player.</param>
+		/// <returns></returns>
+		public bool AssertGroupValid(TSPlayer player, Group group, bool kick)
+		{
+			if (group == null)
+			{
+				if (kick)
+					player.Disconnect("Your account's group could not be loaded. Please contact server administrators about this.");
+				else
+					player.SendErrorMessage("Your account's group could not be loaded. Please contact server administrators about this.");
+				return false;
+			}
+
+			return true;
 		}
 
 		private void AddDefaultGroup(string name, string parent, string permissions)
@@ -425,14 +464,14 @@ namespace TShockAPI.DB
 					}
 					catch (Exception ex)
 					{
-						TShock.Log.Error($"An exception has occured during database transaction: {ex.Message}");
+						TShock.Log.Error($"An exception has occurred during database transaction: {ex.Message}");
 						try
 						{
 							transaction.Rollback();
 						}
 						catch (Exception rollbackEx)
 						{
-							TShock.Log.Error($"An exception has occured during database rollback: {rollbackEx.Message}");
+							TShock.Log.Error($"An exception has occurred during database rollback: {rollbackEx.Message}");
 						}
 					}
 				}
@@ -454,6 +493,13 @@ namespace TShockAPI.DB
 				if (exceptions)
 					throw new GroupNotExistException(name);
 				return "Error: Group doesn't exist.";
+			}
+
+			if (name == Group.DefaultGroup.Name)
+			{
+				if (exceptions)
+					throw new GroupManagerException("Unable to remove default guest group.");
+				return "Error: Unable to remove the default guest group.";
 			}
 
 			if (database.Query("DELETE FROM GroupList WHERE GroupName=@0", name) == 1)

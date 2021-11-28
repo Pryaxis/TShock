@@ -143,7 +143,6 @@
     <Compile Include="HandlerList.cs" />
     <Compile Include="IPackable.cs" />
     <Compile Include="Commands.cs" />
-    <Compile Include="ConfigFile.cs" />
     <Compile Include="FileTools.cs" />
     <Compile Include="GetDataHandlers.cs" />
     <Compile Include="Group.cs" />

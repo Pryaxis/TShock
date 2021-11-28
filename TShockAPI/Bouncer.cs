@@ -45,6 +45,20 @@ namespace TShockAPI
 		internal Handlers.LandGolfBallInCupHandler LandGolfBallInCupHandler { get; private set; }
 		internal Handlers.SyncTilePickingHandler SyncTilePickingHandler { get; private set; }
 
+		/// <summary>
+		/// Represents a place style corrector.
+		/// </summary>
+		/// <param name="player">The player placing the tile.</param>
+		/// <param name="requestedPlaceStyle">The requested place style to be placed.</param>
+		/// <param name="actualItemPlaceStyle">The actual place style that should be placed, based of the player's held item.</param>
+		/// <returns>The correct place style in the current context.</returns>
+		internal delegate int PlaceStyleCorrector(Player player, int requestedPlaceStyle, int actualItemPlaceStyle);
+
+		/// <summary>
+		/// Represents a dictionary of <see cref="PlaceStyleCorrector"/>s, the key is the tile ID and the value is the corrector.
+		/// </summary>
+		internal Dictionary<int, PlaceStyleCorrector> PlaceStyleCorrectors = new Dictionary<int, PlaceStyleCorrector>();
+
 		/// <summary>Constructor call initializes Bouncer and related functionality.</summary>
 		/// <returns>A new Bouncer.</returns>
 		internal Bouncer()
@@ -101,6 +115,122 @@ namespace TShockAPI
 			GetDataHandlers.KillMe += OnKillMe;
 			GetDataHandlers.FishOutNPC += OnFishOutNPC;
 			GetDataHandlers.FoodPlatterTryPlacing += OnFoodPlatterTryPlacing;
+
+
+			// The following section is based off Player.PlaceThing_Tiles_PlaceIt and Player.PlaceThing_Tiles_PlaceIt_GetLegacyTileStyle.
+			// Multi-block tiles are intentionally ignored because they don't pass through OnTileEdit.
+			PlaceStyleCorrectors.Add(TileID.Torches,
+				(player, requestedPlaceStyle, actualItemPlaceStyle) =>
+				{
+					// If the client is attempting to place a default torch, we need to check that the torch they are attempting to place is valid.
+					// The place styles may mismatch if the player is placing a biome torch.
+					// Biome torches can only be placed if the player has unlocked them (Torch God's Favor)
+					// Therefore, the following conditions need to be true:
+					// - The client's selected item will create a default torch(this should be true if this handler is running)
+					// - The client's selected item's place style will be that of a default torch
+					// - The client has unlocked biome torches
+					if (actualItemPlaceStyle == TorchID.Torch && player.unlockedBiomeTorches)
+					{
+						// The server isn't notified when the player turns on biome torches.
+						// So on the client it can be on, while on the server it's off.
+						// BiomeTorchPlaceStyle returns placeStyle as-is if biome torches is off.
+						// Because of the uncertainty, we:
+						// 1. Ensure that UsingBiomeTorches is on, so we can get the correct
+						// value from BiomeTorchPlaceStyle.
+						// 2. Check if the torch is either 0 or the biome torch since we aren't
+						// sure if the player has biome torches on
+						var usingBiomeTorches = player.UsingBiomeTorches;
+						player.UsingBiomeTorches = true;
+						// BiomeTorchPlaceStyle returns the place style of the player's current biome's biome torch
+						var biomeTorchPlaceStyle = player.BiomeTorchPlaceStyle(actualItemPlaceStyle);
+						// Reset UsingBiomeTorches value
+						player.UsingBiomeTorches = usingBiomeTorches;
+
+						return biomeTorchPlaceStyle;
+					}
+					else
+					{
+						// If the player isn't holding the default torch, then biome torches don't apply and return item place style.
+						// Or, they are holding the default torch but haven't unlocked biome torches yet, so return item place style.
+						return actualItemPlaceStyle;
+					}
+				});
+			PlaceStyleCorrectors.Add(TileID.Presents,
+				(player, requestedPlaceStyle, actualItemPlaceStyle) =>
+				{
+					// RNG only generates placeStyles less than 7, so permit only <7
+					// Note: there's an 8th present(blue, golden stripes) that's unplaceable.
+					// https://terraria.fandom.com/wiki/Presents, last present of the 8 displayed
+					if (requestedPlaceStyle < 7)
+					{
+						return requestedPlaceStyle;
+					}
+					else
+					{
+						// Return 0 for now, but ideally 0-7 should be returned.
+						return 0;
+					}
+				});
+			PlaceStyleCorrectors.Add(TileID.Explosives,
+				(player, requestedPlaceStyle, actualItemPlaceStyle) =>
+				{
+					// RNG only generates placeStyles less than 2, so permit only <2
+					if (requestedPlaceStyle < 2)
+					{
+						return requestedPlaceStyle;
+					}
+					else
+					{
+						// Return 0 for now, but ideally 0-1 should be returned.
+						return 0;
+					}
+				});
+			PlaceStyleCorrectors.Add(TileID.Crystals,
+				(player, requestedPlaceStyle, actualItemPlaceStyle) =>
+				{
+					// RNG only generates placeStyles less than 18, so permit only <18.
+					// Note: Gelatin Crystals(Queen Slime summon) share the same ID as Crystal Shards.
+					// <18 includes all shards except Gelatin Crystals.
+					if (requestedPlaceStyle < 18)
+					{
+						return requestedPlaceStyle;
+					}
+					else
+					{
+						// Return 0 for now, but ideally 0-17 should be returned.
+						return 0;
+					}
+				});
+			PlaceStyleCorrectors.Add(TileID.MinecartTrack,
+				(player, requestedPlaceStyle, actualItemPlaceStyle) =>
+				{
+					// Booster tracks have 2 variations, but only 1 item.
+					// The variation depends on the direction the player is facing.
+					if (actualItemPlaceStyle == 2)
+					{
+						// Check the direction the player is facing.
+						// 1 is right and -1 is left, these are the only possible values.
+						if (player.direction == 1)
+						{
+							// Right-facing booster tracks
+							return 3;
+						}
+						else if (player.direction == -1)
+						{
+							// Left-facing booster tracks
+							return 2;
+						}
+						else
+						{
+							throw new InvalidOperationException("Unrecognized player direction");
+						}
+					}
+					else
+					{
+						// Not a booster track, return as-is.
+						return actualItemPlaceStyle;
+					}
+				});
 		}
 
 		internal void OnGetSection(object sender, GetDataHandlers.GetSectionEventArgs args)
@@ -256,24 +386,26 @@ namespace TShockAPI
 			int tileY = args.Y;
 			short editData = args.EditData;
 			EditType type = args.editDetail;
-			byte style = args.Style;
+
+			// 'placeStyle' is a term used in Terraria land to determine which frame of a sprite is displayed when the sprite is placed. The placeStyle
+			// determines the frameX and frameY offsets
+			byte requestedPlaceStyle = args.Style;
 
 			try
 			{
+				if (!TShock.Utils.TilePlacementValid(tileX, tileY))
+				{
+					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (tile placement valid) {0} {1} {2}", args.Player.Name, action, editData);
+					args.Handled = true;
+					return;
+				}
+
 				if (editData < 0 ||
 					((action == EditAction.PlaceTile || action == EditAction.ReplaceTile) && editData >= Main.maxTileSets) ||
 					((action == EditAction.PlaceWall || action == EditAction.ReplaceWall) && editData >= Main.maxWallTypes))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from editData out of bounds {0} {1} {2}", args.Player.Name, action, editData);
 					args.Player.SendTileSquare(tileX, tileY, 4);
-					args.Handled = true;
-					return;
-				}
-
-				if (!TShock.Utils.TilePlacementValid(tileX, tileY))
-				{
-					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (tile placement valid) {0} {1} {2}", args.Player.Name, action, editData);
-					args.Player.SendTileSquare(tileX, tileY, 1);
 					args.Handled = true;
 					return;
 				}
@@ -308,14 +440,38 @@ namespace TShockAPI
 						return;
 					}
 
-					if ((args.Player.TPlayer.BiomeTorchHoldStyle(style) != args.Player.TPlayer.BiomeTorchPlaceStyle(style))
-					&& (selectedItem.placeStyle != style))
+					// This is the actual tile ID we expect the selected item to create. If the tile ID from the packet and the tile ID from the item do not match
+					// we need to inspect further to determine if Terraria is sending funny information (which it does sometimes) or if someone is being malicious
+					var actualTileToBeCreated = selectedItem.createTile;
+					// This is the actual place style we expect the selected item to create. Same as above - if it differs from what the client tells us,
+					// we need to do some inspection to check if its valid
+					var actualItemPlaceStyle = selectedItem.placeStyle;
+
+					// The client has requested to place a style that does not match their held item's actual place style
+					if (requestedPlaceStyle != actualItemPlaceStyle)
 					{
-						TShock.Log.ConsoleError("Bouncer / OnTileEdit rejected from (placestyle) {0} {1} {2} placeStyle: {3} expectedStyle: {4}",
-							args.Player.Name, action, editData, style, selectedItem.placeStyle);
-						args.Player.SendTileSquare(tileX, tileY, 1);
-						args.Handled = true;
-						return;
+						var tplayer = args.Player.TPlayer;
+						// Search for an extraneous tile corrector
+						// If none found then it can't be a false positive so deny the action
+						if (!PlaceStyleCorrectors.TryGetValue(actualTileToBeCreated, out PlaceStyleCorrector corrector))
+						{
+							TShock.Log.ConsoleError("Bouncer / OnTileEdit rejected from (placestyle) {0} {1} {2} placeStyle: {3} expectedStyle: {4}",
+								args.Player.Name, action, editData, requestedPlaceStyle, actualItemPlaceStyle);
+							args.Player.SendTileSquare(tileX, tileY, 1);
+							args.Handled = true;
+							return;
+						}
+
+						// See if the corrector's expected style matches
+						var correctedPlaceStyle = corrector(tplayer, requestedPlaceStyle, actualItemPlaceStyle);
+						if (requestedPlaceStyle != correctedPlaceStyle)
+						{
+							TShock.Log.ConsoleError("Bouncer / OnTileEdit rejected from (placestyle) {0} {1} {2} placeStyle: {3} expectedStyle: {4}",
+								args.Player.Name, action, editData, requestedPlaceStyle, correctedPlaceStyle);
+							args.Player.SendTileSquare(tileX, tileY, 1);
+							args.Handled = true;
+							return;
+						}
 					}
 				}
 
@@ -384,8 +540,7 @@ namespace TShockAPI
 				else if (action == EditAction.PlaceTile || action == EditAction.ReplaceTile || action == EditAction.PlaceWall || action == EditAction.ReplaceWall)
 				{
 					if ((action == EditAction.PlaceTile && TShock.Config.Settings.PreventInvalidPlaceStyle) &&
-						(MaxPlaceStyles.ContainsKey(editData) && style > MaxPlaceStyles[editData]) &&
-						(ExtraneousPlaceStyles.ContainsKey(editData) && style > ExtraneousPlaceStyles[editData]))
+						requestedPlaceStyle > GetMaxPlaceStyle(editData))
 					{
 						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (ms1) {0} {1} {2}", args.Player.Name, action, editData);
 						args.Player.SendTileSquare(tileX, tileY, 4);
@@ -790,6 +945,7 @@ namespace TShockAPI
 			byte owner = args.Owner;
 			short type = args.Type;
 			int index = args.Index;
+			float[] ai = args.Ai;
 
 			if (index > Main.maxProjectiles)
 			{
@@ -926,6 +1082,21 @@ namespace TShockAPI
 				args.Handled = true;
 				return;
 			}
+
+			if (
+				(Projectile_MaxValuesAI.ContainsKey(type) &&
+					(Projectile_MaxValuesAI[type] < ai[0] || Projectile_MinValuesAI[type] > ai[0])) ||
+				(Projectile_MaxValuesAI2.ContainsKey(type) &&
+					(Projectile_MaxValuesAI2[type] < ai[1] || Projectile_MinValuesAI2[type] > ai[1]))
+			)
+			{
+				TShock.Log.ConsoleDebug("Bouncer / OnNewProjectile rejected from bouncer modified AI from {0}.", args.Player.Name);
+				args.Player.RemoveProjectile(ident, owner);
+				args.Handled = true;
+				return;
+			}
+
+			
 
 			if (!args.Player.HasPermission(Permissions.ignoreprojectiledetection))
 			{
@@ -1654,6 +1825,13 @@ namespace TShockAPI
 			short type = args.Type;
 			short style = args.Style;
 
+			if (!TShock.Utils.TilePlacementValid(x, y))
+			{
+				TShock.Log.ConsoleDebug("Bouncer / OnPlaceObject rejected valid placements from {0}", args.Player.Name);
+				args.Handled = true;
+				return;
+			}
+
 			if (type < 0 || type >= Main.maxTileSets)
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnPlaceObject rejected out of bounds tile from {0}", args.Player.Name);
@@ -1702,14 +1880,6 @@ namespace TShockAPI
 				return;
 			}
 
-			if (!TShock.Utils.TilePlacementValid(x, y))
-			{
-				TShock.Log.ConsoleDebug("Bouncer / OnPlaceObject rejected valid placements from {0}", args.Player.Name);
-				args.Player.SendTileSquare(x, y, 1);
-				args.Handled = true;
-				return;
-			}
-
 			if (args.Player.Dead && TShock.Config.Settings.PreventDeadModification)
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnPlaceObject rejected dead people don't do things from {0}", args.Player.Name);
@@ -1726,7 +1896,7 @@ namespace TShockAPI
 				return;
 			}
 
-			// This is neccessary to check in order to prevent special tiles such as
+			// This is necessary to check in order to prevent special tiles such as
 			// queen bee larva, paintings etc that use this packet from being placed
 			// without selecting the right item.
 			if (type != args.Player.TPlayer.inventory[args.Player.TPlayer.selectedItem].createTile)
@@ -1801,6 +1971,13 @@ namespace TShockAPI
 		/// <param name="args">The packet arguments that the event has.</param>
 		internal void OnPlaceTileEntity(object sender, GetDataHandlers.PlaceTileEntityEventArgs args)
 		{
+			if (!TShock.Utils.TilePlacementValid(args.X, args.Y))
+			{
+				TShock.Log.ConsoleDebug("Bouncer / OnPlaceTileEntity rejected tile placement valid from {0}", args.Player.Name);
+				args.Handled = true;
+				return;
+			}
+
 			if (args.Player.IsBeingDisabled())
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnPlaceTileEntity rejected disabled from {0}", args.Player.Name);
@@ -1828,6 +2005,13 @@ namespace TShockAPI
 		/// <param name="args">The packet arguments that the event has.</param>
 		internal void OnPlaceItemFrame(object sender, GetDataHandlers.PlaceItemFrameEventArgs args)
 		{
+			if (!TShock.Utils.TilePlacementValid(args.X, args.Y))
+			{
+				TShock.Log.ConsoleDebug("Bouncer / OnPlaceItemFrame rejected tile placement valid from {0}", args.Player.Name);
+				args.Handled = true;
+				return;
+			}
+
 			if (args.Player.IsBeingDisabled())
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnPlaceItemFrame rejected disabled from {0}", args.Player.Name);
@@ -1910,11 +2094,14 @@ namespace TShockAPI
 				return;
 			}
 
-			if (!args.Player.HasBuildPermission(args.X, args.Y))
+			if (TShock.Config.Settings.RegionProtectGemLocks)
 			{
-				TShock.Log.ConsoleDebug("Bouncer / OnGemLockToggle rejected permissions check from {0}", args.Player.Name);
-				args.Handled = true;
-				return;
+				if (!args.Player.HasBuildPermission(args.X, args.Y))
+				{
+					TShock.Log.ConsoleDebug("Bouncer / OnGemLockToggle rejected permissions check from {0}", args.Player.Name);
+					args.Handled = true;
+					return;
+				}
 			}
 		}
 
@@ -2129,6 +2316,13 @@ namespace TShockAPI
 		/// <param name="args"></param>
 		internal void OnFoodPlatterTryPlacing(object sender, GetDataHandlers.FoodPlatterTryPlacingEventArgs args)
 		{
+			if (!TShock.Utils.TilePlacementValid(args.TileX, args.TileY))
+			{
+				TShock.Log.ConsoleDebug("Bouncer / OnFoodPlatterTryPlacing rejected tile placement valid from {0}", args.Player.Name);
+				args.Handled = true;
+				return;
+			}
+
 			if ((args.Player.SelectedItem.type != args.ItemID && args.Player.ItemInHand.type != args.ItemID))
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnFoodPlatterTryPlacing rejected item not placed by hand from {0}", args.Player.Name);
@@ -2185,7 +2379,27 @@ namespace TShockAPI
 			});
 		}
 
+		/// <summary>
+		/// Returns the max <see cref="Item.placeStyle"/> associated with the given <paramref name="tileID"/>. Or -1 if there's no association
+		/// </summary>
+		/// <param name="tileID">Tile ID to query for</param>
+		/// <returns>The max <see cref="Item.placeStyle"/>, otherwise -1 if there's no association</returns>
+		internal static int GetMaxPlaceStyle(int tileID)
+		{
+			int result;
+			if (ExtraneousPlaceStyles.TryGetValue(tileID, out result)
+				|| MaxPlaceStyles.TryGetValue(tileID, out result))
+			{
+				return result;
+			}
+			else
+			{
+				return -1;
+			}
+		}
+
 		// These time values are references from Projectile.cs, at npc.AddBuff() calls.
+		// Moved to Projectile.StatusNPC(int i).
 		private static Dictionary<int, short> NPCAddBuffTimeMax = new Dictionary<int, short>()
 		{
 			{ BuffID.Poisoned, 3600 },              // BuffID: 20
@@ -2217,9 +2431,10 @@ namespace TShockAPI
 			{ BuffID.RainbowWhipNPCDebuff, 240  },  // BuffID: 316
 			{ BuffID.MaceWhipNPCDebuff, 240  },     // BuffID: 319
 			{ BuffID.GelBalloonBuff, 1800  },       // BuffID: 320
-			{ BuffID.OnFire3, 360 },		// BuffID: 323
-			{ BuffID.Frostburn2, 900 },		// BuffID: 324
-			{ BuffID.BoneWhipNPCDebuff, 240 }	// BuffID: 326
+			{ BuffID.OnFire3, 360 },                // BuffID: 323
+			{ BuffID.Frostburn2, 900 },             // BuffID: 324
+			{ BuffID.BoneWhipNPCDebuff, 240 },      // BuffID: 326
+			{ BuffID.TentacleSpike, 540 }           // BuffID: 337
 		};
 
 		/// <summary>
@@ -2298,6 +2513,46 @@ namespace TShockAPI
 			{ ProjectileID.TungstenShortswordStab, ItemID.TungstenShortsword },
 			{ ProjectileID.GoldShortswordStab, ItemID.GoldShortsword },
 			{ ProjectileID.PlatinumShortswordStab, ItemID.PlatinumShortsword }
+		};
+
+		private Dictionary<short, float> Projectile_MinValuesAI = new Dictionary<short, float> {
+			{ 611, -1 },
+
+			{ 950, 0 }
+		};
+		private Dictionary<short, float> Projectile_MaxValuesAI = new Dictionary<short, float> {
+			{ 611, 1 },
+
+			{ 950, 0 }
+		};
+
+		private Dictionary<short, float> Projectile_MinValuesAI2 = new Dictionary<short, float> {
+			{ 405, 0f },
+			{ 410, 0f },
+
+			{ 424, 0.5f },
+			{ 425, 0.5f },
+			{ 426, 0.5f },
+
+			{ 612, 0.4f },
+			{ 953, 0.85f },
+
+			{ 756, 0.5f },
+			{ 522, 0 }
+		};
+		private Dictionary<short, float> Projectile_MaxValuesAI2 = new Dictionary<short, float> {
+			{ 405, 1.2f },
+			{ 410, 1.2f },
+
+			{ 424, 0.8f },
+			{ 425, 0.8f },
+			{ 426, 0.8f },
+
+			{ 612, 0.7f },
+			{ 953, 2 },
+
+			{ 756, 1 },
+			{ 522, 40f }
 		};
 	}
 }

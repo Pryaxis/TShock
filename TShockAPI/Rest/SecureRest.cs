@@ -117,7 +117,7 @@ namespace Rests
 			{
 				if (tokens >= TShock.Config.Settings.RESTMaximumRequestsPerInterval)
 				{
-					TShock.Log.ConsoleError("A REST login from {0} was blocked as it currently has {1} tokens", context.RemoteEndPoint.Address.ToString(), tokens);
+					TShock.Log.ConsoleError("A REST login from {0} was blocked as it currently has {1} rate-limit tokens and is at the RESTMaximumRequestsPerInterval threshold.", context.RemoteEndPoint.Address.ToString(), tokens);
 					tokenBucket[context.RemoteEndPoint.Address.ToString()] += 1; // Tokens over limit, increment by one and reject request
 					return new RestObject("403")
 					{
