@@ -1,0 +1,1 @@
+See [TDSM on GitHub](https://github.com/DeathCradle/Terraria-s-Dedicated-Server-Mod).
