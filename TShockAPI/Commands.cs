@@ -1195,6 +1195,7 @@ namespace TShockAPI
 			args.Player.SendInfoMessage("Size: {0}x{1}", Main.maxTilesX, Main.maxTilesY);
 			args.Player.SendInfoMessage("ID: " + Main.worldID);
 			args.Player.SendInfoMessage("Seed: " + WorldGen.currentWorldSeed);
+			args.Player.SendInfoMessage("Mode: " + Main.GameMode);
 			args.Player.SendInfoMessage("Path: " + Main.worldPathName);
 		}
 
@@ -2413,7 +2414,7 @@ namespace TShockAPI
 			if (args.Parameters.Count < 1)
 			{
 				args.Player.SendErrorMessage("Invalid syntax! Proper syntax: {0}worldmode <mode>", Specifier);
-				args.Player.SendErrorMessage("Valid mode: {0}", String.Join(", ", _worldModes.Keys));
+				args.Player.SendErrorMessage("Valid modes: {0}", String.Join(", ", _worldModes.Keys));
 				return;
 			}
 
