@@ -1096,7 +1096,13 @@ namespace TShockAPI
 				return;
 			}
 
-			
+			if (TShock.Config.Settings.DisableAnyZenith && type == ProjectileID.FinalFractal && !Terraria.Graphics.FinalFractalHelper._fractalProfiles.ContainsKey((int)ai[1]))
+			{
+				TShock.Log.ConsoleDebug("Bouncer / OnNewProjectile rejected from bouncer modified Zenith projectile from {0}.", args.Player.Name);
+				args.Player.RemoveProjectile(ident, owner);
+				args.Handled = true;
+				return;
+			}
 
 			if (!args.Player.HasPermission(Permissions.ignoreprojectiledetection))
 			{

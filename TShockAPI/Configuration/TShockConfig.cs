@@ -456,6 +456,10 @@ namespace TShockAPI.Configuration
 		/// <summary>Whether or not the server should suppress build permission failure warnings from regions, spawn point, or server edit failure.</summary>
 		[Description("Whether or not the server should suppress build permission failure warnings from regions, spawn point, or server edit failure.")]
 		public bool SuppressPermissionFailureNotices = false;
+
+		/// <summary>Prohibit the use of Zenith projectile with different objects instead of weapons.</summary>
+		[Description("Prohibit the use of Zenith projectile with different objects instead of weapons.")]
+		public bool DisableAnyZenith = true;
 		#endregion
 
 
