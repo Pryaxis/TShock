@@ -1,0 +1,1 @@
+The superadmin group is the highest authority group in [[TShock]]. It's used for administration purposes primarily, because it grants all [[Permissions]] that exist in the system, irrespective of whether or not those permissions make sense to apply at all times. For example, the [[SSC]] system doesn't save the inventory of players who are logged in as superadmin.
