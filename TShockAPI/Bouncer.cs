@@ -945,6 +945,7 @@ namespace TShockAPI
 			byte owner = args.Owner;
 			short type = args.Type;
 			int index = args.Index;
+			float[] ai = args.Ai;
 
 			if (index > Main.maxProjectiles)
 			{
@@ -1081,6 +1082,21 @@ namespace TShockAPI
 				args.Handled = true;
 				return;
 			}
+
+			if (
+				(Projectile_MaxValuesAI.ContainsKey(type) &&
+					(Projectile_MaxValuesAI[type] < ai[0] || Projectile_MinValuesAI[type] > ai[0])) ||
+				(Projectile_MaxValuesAI2.ContainsKey(type) &&
+					(Projectile_MaxValuesAI2[type] < ai[1] || Projectile_MinValuesAI2[type] > ai[1]))
+			)
+			{
+				TShock.Log.ConsoleDebug("Bouncer / OnNewProjectile rejected from bouncer modified AI from {0}.", args.Player.Name);
+				args.Player.RemoveProjectile(ident, owner);
+				args.Handled = true;
+				return;
+			}
+
+			
 
 			if (!args.Player.HasPermission(Permissions.ignoreprojectiledetection))
 			{
@@ -2497,6 +2513,46 @@ namespace TShockAPI
 			{ ProjectileID.TungstenShortswordStab, ItemID.TungstenShortsword },
 			{ ProjectileID.GoldShortswordStab, ItemID.GoldShortsword },
 			{ ProjectileID.PlatinumShortswordStab, ItemID.PlatinumShortsword }
+		};
+
+		private Dictionary<short, float> Projectile_MinValuesAI = new Dictionary<short, float> {
+			{ 611, -1 },
+
+			{ 950, 0 }
+		};
+		private Dictionary<short, float> Projectile_MaxValuesAI = new Dictionary<short, float> {
+			{ 611, 1 },
+
+			{ 950, 0 }
+		};
+
+		private Dictionary<short, float> Projectile_MinValuesAI2 = new Dictionary<short, float> {
+			{ 405, 0f },
+			{ 410, 0f },
+
+			{ 424, 0.5f },
+			{ 425, 0.5f },
+			{ 426, 0.5f },
+
+			{ 612, 0.4f },
+			{ 953, 0.85f },
+
+			{ 756, 0.5f },
+			{ 522, 0 }
+		};
+		private Dictionary<short, float> Projectile_MaxValuesAI2 = new Dictionary<short, float> {
+			{ 405, 1.2f },
+			{ 410, 1.2f },
+
+			{ 424, 0.8f },
+			{ 425, 0.8f },
+			{ 426, 0.8f },
+
+			{ 612, 0.7f },
+			{ 953, 2 },
+
+			{ 756, 1 },
+			{ 522, 40f }
 		};
 	}
 }

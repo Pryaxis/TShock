@@ -689,12 +689,17 @@ namespace TShockAPI
 			/// ???
 			/// </summary>
 			public int Index { get; set; }
+
+			/// <summary>
+			/// The special meaning of the projectile.
+			/// </summary>
+			public float[] Ai { get; set; }
 		}
 		/// <summary>
 		/// NewProjectile - Called when a client creates a new projectile
 		/// </summary>
 		public static HandlerList<NewProjectileEventArgs> NewProjectile = new HandlerList<NewProjectileEventArgs>();
-		private static bool OnNewProjectile(MemoryStream data, short ident, Vector2 pos, Vector2 vel, float knockback, short dmg, byte owner, short type, int index, TSPlayer player)
+		private static bool OnNewProjectile(MemoryStream data, short ident, Vector2 pos, Vector2 vel, float knockback, short dmg, byte owner, short type, int index, TSPlayer player, float[] ai)
 		{
 			if (NewProjectile == null)
 				return false;
@@ -711,6 +716,7 @@ namespace TShockAPI
 				Type = type,
 				Index = index,
 				Player = player,
+				Ai = ai
 			};
 			NewProjectile.Invoke(null, args);
 			return args.Handled;
@@ -2788,7 +2794,7 @@ namespace TShockAPI
 
 			var index = TShock.Utils.SearchProjectile(ident, owner);
 
-			if (OnNewProjectile(args.Data, ident, pos, vel, knockback, dmg, owner, type, index, args.Player))
+			if (OnNewProjectile(args.Data, ident, pos, vel, knockback, dmg, owner, type, index, args.Player, ai))
 				return true;
 
 			lock (args.Player.RecentlyCreatedProjectiles)
