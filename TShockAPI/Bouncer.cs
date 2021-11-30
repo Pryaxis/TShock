@@ -2279,6 +2279,12 @@ namespace TShockAPI
 					args.Handled = true;
 					return;
 				}
+				if (TShock.Config.Settings.DisableCustomDeathMessages && playerDeathReason._sourceCustomReason != null)
+				{
+					TShock.Log.ConsoleDebug("Bouncer / OnKillMe rejected custom death message from {0}", args.Player.Name);
+					args.Handled = true;
+					return;
+				}
 			}
 		}
 
