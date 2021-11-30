@@ -29,14 +29,9 @@
 		<PackageReference Include="System.Data.SQLite.Core" Version="1.0.115.5" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <None Update="TShock.sh">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	</ItemGroup>
 	<Target Name="MoveToBinFolderDebug" AfterTargets="FinalCleanup;PostBuildEvent">
 		<ItemGroup>
-			<MoveBinariesForDebug Include="$(TargetDir)*" Exclude="$(TargetDir)TShock.Run*" />
+			<MoveBinariesForDebug Include="$(TargetDir)*" Exclude="$(TargetDir)TShock.Run*;$(TargetDir)TShock*" />
 			<TShockPluginFiles Include="$(ProjectDir)../TShockAPI/bin/$(Configuration)/$(TargetFramework)/TShockAPI*" />
 		</ItemGroup>
 		<Move SourceFiles="@(MoveBinariesForDebug)" DestinationFolder="$(TargetDir)bin" ContinueOnError="true" />
@@ -90,7 +85,7 @@
 	</Target>
 
     <Target Name="CreateOsxLauncherAfterPublish" AfterTargets="Publish" Condition="'$(RuntimeIdentifier)' == 'osx-x64'">
-		<Move SourceFiles="$(PublishDir)bin/TShock.sh" DestinationFolder="$(PublishDir)" ContinueOnError="true" />
+		<Copy SourceFiles="$(ProjectDir)TShock.sh" DestinationFolder="$(PublishDir)" />
         <!-- <Message Text="Run the launcher with chmod u+x TShock.exe &amp;&amp; ./TShock.exe" Importance="High" /> -->
     </Target>
 </Project>
