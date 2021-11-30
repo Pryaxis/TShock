@@ -460,6 +460,10 @@ namespace TShockAPI.Configuration
 		/// <summary>Prohibit the use of Zenith projectile with different objects instead of weapons.</summary>
 		[Description("Prohibit the use of Zenith projectile with different objects instead of weapons.")]
 		public bool DisableModifiedZenith = false;
+
+		/// <summary>Allows you to disable or enable protection against creating custom messages with death. Created for developers who came up with a more original solution to this problem.</summary>
+		[Description("Allows you to disable or enable protection against creating custom messages with death. Created for developers who came up with a more original solution to this problem.")]
+		public bool DisableCustomDeathMessages = true;
 		#endregion
 
 
