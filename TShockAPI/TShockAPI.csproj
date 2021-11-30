@@ -27,16 +27,8 @@
     <Company>Pryaxis &amp; TShock Contributors</Company>
     <Product>TShockAPI</Product>
     <Copyright>Copyright © Pryaxis &amp; TShock Contributors 2011-2021</Copyright>
-
-    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(ConfigurationName)' == 'Default' ">
-    <StartAction>Program</StartAction>
-    <StartProgram>$(SolutionDir)\TShockAPI\bin\Debug\net6.0\TerrariaServerAPI.dll</StartProgram>
-    <StartWorkingDirectory>$(SolutionDir)\TShockAPI\bin\Debug\net6.0\</StartWorkingDirectory>
-    <ExternalConsole>true</ExternalConsole>
-  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.2" />
     <PackageReference Include="MySql.Data" Version="8.0.27" />
@@ -53,19 +45,5 @@
       <HintPath>..\prebuilts\HttpServer.dll</HintPath>
     </Reference>
   </ItemGroup>
-
-  <Target Name="MoveToBinFolder" AfterTargets="FinalCleanup;PostBuildEvent;Publish">
-    <ItemGroup>
-      <MoveBinariesForDebug Include="$(TargetDir)*" Exclude="$(TargetDir)\TerrariaServer*;$(TargetDir)\TShock*" />
-      <MoveBinariesForPublish Include="$(PublishDir)*" Exclude="$(PublishDir)\TerrariaServer*;$(PublishDir)\TShock*" />
-      <TShockDebug Include="$(TargetDir)\TShock*" />
-      <TShockPublish Include="$(PublishDir)\TShock*" />
-    </ItemGroup>
-
-    <Move SourceFiles="@(MoveBinariesForDebug)" DestinationFolder="$(TargetDir)bin" ContinueOnError="true" />
-    <Move SourceFiles="@(MoveBinariesForPublish)" DestinationFolder="$(PublishDir)bin" ContinueOnError="true" />
-    <Copy SourceFiles="@(TShockDebug)" DestinationFolder="$(TargetDir)ServerPlugins" />
-    <Copy SourceFiles="@(TShockPublish)" DestinationFolder="$(PublishDir)ServerPlugins" />
-  </Target>
 
 </Project>
