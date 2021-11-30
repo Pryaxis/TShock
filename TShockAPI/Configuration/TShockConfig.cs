@@ -459,7 +459,7 @@ namespace TShockAPI.Configuration
 
 		/// <summary>Prohibit the use of Zenith projectile with different objects instead of weapons.</summary>
 		[Description("Prohibit the use of Zenith projectile with different objects instead of weapons.")]
-		public bool DisableAnyZenith = true;
+		public bool DisableModifiedZenith = false;
 		#endregion
 
 
