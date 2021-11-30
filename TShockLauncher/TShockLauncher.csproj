@@ -5,8 +5,11 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<AssemblyName>TShock</AssemblyName>
+		<AssemblyName Condition="$([MSBuild]::IsOSPlatform('Windows'))">TShock</AssemblyName>
+		<AssemblyName Condition="$([MSBuild]::IsOSPlatform('Windows')) == false">TShock.Run</AssemblyName>
+		<RunPostBuildEvent>Always</RunPostBuildEvent>
 	</PropertyGroup>
+
 	<ItemGroup>
 		<ProjectReference Include="..\TerrariaServerAPI\TerrariaServerAPI\TerrariaServerAPI.csproj" />
 		<ProjectReference Include="..\TShockAPI\TShockAPI.csproj">
@@ -26,9 +29,14 @@
 		<PackageReference Include="System.Data.SQLite.Core" Version="1.0.115.5" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <None Update="TShock.sh">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
 	<Target Name="MoveToBinFolderDebug" AfterTargets="FinalCleanup;PostBuildEvent">
 		<ItemGroup>
-			<MoveBinariesForDebug Include="$(TargetDir)*" Exclude="$(TargetDir)\TShock*" />
+			<MoveBinariesForDebug Include="$(TargetDir)*" Exclude="$(TargetDir)TShock.Run*" />
 			<TShockPluginFiles Include="$(ProjectDir)../TShockAPI/bin/$(Configuration)/$(TargetFramework)/TShockAPI*" />
 		</ItemGroup>
 		<Move SourceFiles="@(MoveBinariesForDebug)" DestinationFolder="$(TargetDir)bin" ContinueOnError="true" />
@@ -44,10 +52,7 @@
 		<Copy SourceFiles="@(TShockPluginFilesForPublish)" DestinationFolder="$(PublishDir)ServerPlugins" ContinueOnError="true" />
 	</Target>
 
-	<UsingTask
-		TaskName="PatchAppHost"
-		TaskFactory="RoslynCodeTaskFactory"
-		AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll" >
+	<UsingTask TaskName="PatchAppHost" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
 		<ParameterGroup>
     		<HostExe ParameterType="System.String" Required="true" />
 		</ParameterGroup>
@@ -65,14 +70,14 @@
 			var contents = File.ReadAllBytes(HostExe);
 
 			var matches = 0;
-			var offset = Array.FindIndex(contents, (b) => {
+			var offset = Array.FindIndex(contents, (b) =&gt; {
 				matches = (b == find[matches]) ? matches + 1 : 0;
 				return matches == find.Length;
 			});
-			if (offset > -1) offset -= find.Length - 1;
+			if (offset &gt; -1) offset -= find.Length - 1;
 
 			var x = 0;
-			Array.ForEach(replace, _ => { contents[offset + x] = replace[x++]; });
+			Array.ForEach(replace, _ =&gt; { contents[offset + x] = replace[x++]; });
 			
 			File.WriteAllBytes(HostExe, contents);
 			</Code>
@@ -84,22 +89,8 @@
 		<Message Text="Patched TShock.exe host for ./bin redirect" Importance="High" />
 	</Target>
 
-	<UsingTask
-        TaskName="CreateOsxLauncher"
-        TaskFactory="RoslynCodeTaskFactory"
-        AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll" >
-        <ParameterGroup>
-            <OutPath ParameterType="System.String" Required="true" />
-        </ParameterGroup>
-        <Task>
-            <Code Type="Fragment" Language="cs">
-            File.WriteAllText(Path.Combine(OutPath, "TShock.exe"), "#!/bin/bash\n./bin/TShock");
-            </Code>
-        </Task>
-    </UsingTask>
-
     <Target Name="CreateOsxLauncherAfterPublish" AfterTargets="Publish" Condition="'$(RuntimeIdentifier)' == 'osx-x64'">
-        <CreateOsxLauncher OutPath="$(PublishDir)" />
-        <Message Text="Run the launcher with chmod u+x TShock.exe &amp;&amp; ./TShock.exe" Importance="High" />
+		<Move SourceFiles="$(PublishDir)bin/TShock.sh" DestinationFolder="$(PublishDir)" ContinueOnError="true" />
+        <!-- <Message Text="Run the launcher with chmod u+x TShock.exe &amp;&amp; ./TShock.exe" Importance="High" /> -->
     </Target>
 </Project>
