@@ -911,6 +911,12 @@ namespace TShockAPI
 				return;
 			}
 
+			if (args.Player.TPlayer.talkNPC != -1)
+			{
+				args.Player.SendErrorMessage("Please close NPC window for logging out.");
+				return;
+			}
+
 			args.Player.Logout();
 			args.Player.SendSuccessMessage("You have been successfully logged out of your account.");
 			if (Main.ServerSideCharacter)
