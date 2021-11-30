@@ -1096,7 +1096,15 @@ namespace TShockAPI
 				return;
 			}
 
-			if (TShock.Config.Settings.DisableModifiedZenith && type == ProjectileID.FinalFractal && (ai[0] < -100 || ai[0] > 101 ) && !Terraria.Graphics.FinalFractalHelper._fractalProfiles.ContainsKey((int)ai[1]))
+			/*
+			 * ai - Arguments that Projectile.AI uses for easier projectile control.
+			 *	ai[0] - Distance from player (Doesn't affect the result very much)
+			 *	ai[1] - The identifier of the object that will fly.
+			 *
+			 * FinalFractalHelper._fractalProfiles - A list of items that must be used in Zenith. (And also their colors)
+			 *	If you add an item to this collection, it will also fly in the Zenith. (not active from server)
+			*/
+			if (TShock.Config.Settings.DisableModifiedZenith && type == ProjectileID.FinalFractal && (ai[0] < -100 || ai[0] > 101) && !Terraria.Graphics.FinalFractalHelper._fractalProfiles.ContainsKey((int)ai[1]))
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnNewProjectile rejected from bouncer modified Zenith projectile from {0}.", args.Player.Name);
 				args.Player.RemoveProjectile(ident, owner);
