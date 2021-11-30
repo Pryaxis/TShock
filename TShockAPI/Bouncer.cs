@@ -2178,6 +2178,7 @@ namespace TShockAPI
 			bool pvp = args.PVP;
 			bool crit = args.Critical;
 			byte direction = args.Direction;
+			PlayerDeathReason reason = args.PlayerDeathReason;
 
 			if (id >= Main.maxPlayers || TShock.Players[id] == null)
 			{
@@ -2242,6 +2243,17 @@ namespace TShockAPI
 				return;
 			}
 
+			/*
+			 * A player must take damage from another player in any case
+			 * I didn't add sourceProjectile because the player can't always die from a projectile.
+			*/
+			if (TShock.Config.Settings.DisableCustomDeathMessages &&
+				(reason._sourcePlayerIndex == -1 || reason._sourceNPCIndex != -1 || reason._sourceOtherIndex != -1 || reason._sourceCustomReason != null))
+			{
+				TShock.Log.ConsoleDebug("Bouncer / OnPlayerDamage rejected custom death message from {0}", args.Player.Name);
+				args.Handled = true;
+				return;
+			}
 		}
 
 		/// <summary>Bouncer's KillMe hook stops crash exploits from out of bounds values.</summary>
