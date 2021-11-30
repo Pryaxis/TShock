@@ -17,6 +17,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Changed hook `GetDataHandlers.OnNewProjectile` so that it passes the projectile's AI (by updating `NewProjectileEventArgs` and parsing this during the TShock hook) to support processing projectile AI in bouncer. (@AgaSpace)
 * Fixed an issue where certain projectiles could be sent to the server with uncapped size parameters, which resulted in large disruptive client artifacts that could be used to grief players. (@AgaSpace, @Arthri)
 * Added the currently running value of `Main.GameMode` to `/worldmode` as "Mode". (@hakusaro)
+* Fixed the ability to spawn Zenith projectile with non-original items. (@AgaSpace)
 
 ## TShock 4.5.10
 * Changed the server behavior when `SIGINT` is received. When `SIGINT` is trapped, the server will attempt to shut down safely. When it is trapped a second time in a session, it will immediately exit. (`SIGINT` is typically triggered via CTRL + C.) This means that it is possible to corrupt your world if you force shutdown at the wrong time (e.g., while the world is saving), but hopefully you expect this to happen if you hit CTRL + C twice in a session and you read the warning. (@hakusaro, @Onusai)
