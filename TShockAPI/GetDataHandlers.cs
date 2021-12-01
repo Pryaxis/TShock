@@ -118,6 +118,7 @@ namespace TShockAPI
 					{ PacketTypes.PlaceChest, HandlePlaceChest },
 					{ PacketTypes.Zones, HandlePlayerZone },
 					{ PacketTypes.PasswordSend, HandlePassword },
+					{ PacketTypes.NpcTalk, HandleNpcTalk },
 					{ PacketTypes.PlayerAnimation, HandlePlayerAnimation },
 					{ PacketTypes.PlayerMana, HandlePlayerMana },
 					{ PacketTypes.PlayerTeam, HandlePlayerTeam },
@@ -1066,6 +1067,39 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		/// <summary>
+		/// Using when player trying to talk to a NPC
+		/// </summary>
+		public class NpcTalkEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// Player Id
+			/// </summary>
+			public byte PlayerId { get; set; }
+			/// <summary>
+			/// NPC Id player's talk to
+			/// </summary>
+			public short NPCTalkTarget { get; set; }
+		}
+		public static HandlerList<NpcTalkEventArgs> NpcTalk = new HandlerList<NpcTalkEventArgs>();
+		private static bool OnNpcTalk(TSPlayer player, MemoryStream data, byte _plr, short _npctarget)
+		{
+			if (NpcTalk == null)
+			{
+				return false;
+			}
+
+			var args = new NpcTalkEventArgs
+			{
+				Player = player,
+				Data = data,
+				PlayerId = _plr,
+				NPCTalkTarget = _npctarget,
+			};
+			NpcTalk.Invoke(null, args);
+			return args.Handled;
+		}		
+		
 		/// <summary>
 		/// For use with a PlayerAnimation event
 		/// </summary>
@@ -3104,6 +3138,29 @@ namespace TShockAPI
 			return true;
 		}
 
+		private static bool HandleNpcTalk(GetDataHandlerArgs args)
+		{
+			var plr = args.Data.ReadInt8();
+			var npc = args.Data.ReadInt16();
+
+			if (OnNpcTalk(args.Player, args.Data, plr, npc))
+				return true;
+			//Rejecting player who trying to talk to a npc if player were disabled, mainly for unregistered and logged out players. Preventing smuggling or duplicating their items if player put it in a npc's item slot
+			if (args.Player.IsBeingDisabled())
+			{
+				TShock.Log.ConsoleDebug("GetDataHandlers / HandleNpcTalk rejected npc talk {0}", args.Player.Name);
+				args.Player.SendData(PacketTypes.NpcTalk, "", plr, -1);
+				return true;
+			}
+
+			if (args.Player.IsBouncerThrottled())
+			{
+				TShock.Log.ConsoleDebug("Bouncer / HandleNpcTalk rejected from bouncer throttle from {0}", args.Player.Name);
+				return true;
+			}
+			return false;
+		}		
+		
 		private static bool HandlePlayerAnimation(GetDataHandlerArgs args)
 		{
 			if (OnPlayerAnimation(args.Player, args.Data))
