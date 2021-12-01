@@ -1073,11 +1073,12 @@ namespace TShockAPI
 		public class NpcTalkEventArgs : GetDataHandledEventArgs
 		{
 			/// <summary>
-			/// Player Id
+			/// The Terraria ID of the player talking to the NPC
 			/// </summary>
 			public byte PlayerId { get; set; }
+			
 			/// <summary>
-			/// NPC Id player's talk to
+			/// The NPC ID of the NPC the player is talking to
 			/// </summary>
 			public short NPCTalkTarget { get; set; }
 		}
@@ -3145,6 +3146,7 @@ namespace TShockAPI
 
 			if (OnNpcTalk(args.Player, args.Data, plr, npc))
 				return true;
+			
 			//Rejecting player who trying to talk to a npc if player were disabled, mainly for unregistered and logged out players. Preventing smuggling or duplicating their items if player put it in a npc's item slot
 			if (args.Player.IsBeingDisabled())
 			{
