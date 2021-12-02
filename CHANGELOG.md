@@ -12,6 +12,9 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * Do not forget to sign every line you change with your name. (@hakusaro)
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change.
 
+## Upcoming changes
+* Added documentation for essentially everything in Obsidian format to replace the Readme. (@hakusaro, @drunderscore)
+
 ## TShock 4.5.11
 * Add the new allowed buff TentacleSpike to NPC buff cheat detection bouncer. (@sgkoishi)
 * Changed hook `GetDataHandlers.OnNewProjectile` so that it passes the projectile's AI (by updating `NewProjectileEventArgs` and parsing this during the TShock hook) to support processing projectile AI in bouncer. (@AgaSpace)
