@@ -2244,8 +2244,11 @@ namespace TShockAPI
 			}
 
 			/*
-			 * A player must take damage from another player in any case
-			 * I didn't add sourceProjectile because the player can't always die from a projectile.
+			 * PlayerDeathReason does not initially contain any information, so all fields have values -1 or null. 
+			 * We can use this to determine the real cause of death.
+			 * 
+			 * If the player was not specified, that is, the player index is -1, then it is definitely a custom cause, as you can only deal damage with a projectile or another player.
+			 * This is how everything else works. If an NPC is specified, its value is not -1, which is a custom cause.
 			*/
 			if (TShock.Config.Settings.DisableCustomDeathMessages &&
 				(reason._sourcePlayerIndex == -1 || reason._sourceNPCIndex != -1 || reason._sourceOtherIndex != -1 || reason._sourceCustomReason != null))
