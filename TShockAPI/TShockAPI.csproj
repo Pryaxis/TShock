@@ -20,9 +20,7 @@
       Also, be sure to release on github with the exact assembly version tag as below
       so that the update manager works correctly (via the Github releases api and mimic)
     -->
-    <Version>4.5.7</Version>
-    <AssemblyVersion>4.5.7</AssemblyVersion>
-    <FileVersion>4.5.7</FileVersion>
+		<Version>4.5.7-beta</Version>
     <AssemblyTitle>TShock for Terraria</AssemblyTitle>
     <Company>Pryaxis &amp; TShock Contributors</Company>
     <Product>TShockAPI</Product>
