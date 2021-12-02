@@ -1,0 +1,3 @@
+A tile section represents an area of `200 x 150` tiles. Although the game normally uses these within a [[Developer/Protocol/Packets/Tile Section|Tile Section]] packet, this is not explicitly required -- the client has no problem accepting tile sections of arbitrary size and position.
+
+The _only_ time this is explicitly required to be used is within the [[Developer/Protocol/Packets/Tile Frame Section|Tile Frame Section]] packet. The parameters of this packet are _not_ in tile coordinates, rather section coordinates, which are multiples of `200 x 150`.
