@@ -2,7 +2,7 @@
 4
 
 ###### Direction
-Server <-> Client
+Server <-> Client[^1]
 
 ### Structure
 | Description | Type |
@@ -38,3 +38,5 @@ Server <-> Client
 | Using Biome Torches    | `1 << 0` |
 | Happy Fun Torch Time   | `1 << 1` |
 | Unlocked Biome Torches | `1 << 2` |
+
+[^1]: If the receiving Player ID is themself, [[Server Side Characters]] must be enabled.

@@ -2,7 +2,7 @@
 42
 
 ###### Direction
-Server <-> Client
+Server <-> Client[^1]
 
 ### Structure
 | Description | Type |
@@ -10,3 +10,5 @@ Server <-> Client
 | Player ID | byte |
 | Mana      | short |
 | Max Mana  | short |
+
+[^1]: If the receiving Player ID is themself, [[Server Side Characters]] must be enabled.
