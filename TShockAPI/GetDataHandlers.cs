@@ -3160,9 +3160,16 @@ namespace TShockAPI
 				TShock.Log.ConsoleDebug("Bouncer / HandleNpcTalk rejected from bouncer throttle from {0}", args.Player.Name);
 				return true;
 			}
+
+			// -1 is a magic value, represents not talking to an NPC
+			if (npc < -1 || npc >= Main.maxNPCs)
+			{
+				TShock.Log.ConsoleDebug("Bouncer / HandleNpcTalk rejected from bouncer out of bounds from {0}", args.Player.Name);
+				return true;
+			}
 			return false;
-		}		
-		
+		}
+
 		private static bool HandlePlayerAnimation(GetDataHandlerArgs args)
 		{
 			if (OnPlayerAnimation(args.Player, args.Data))
