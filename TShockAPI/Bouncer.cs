@@ -2178,6 +2178,7 @@ namespace TShockAPI
 			bool pvp = args.PVP;
 			bool crit = args.Critical;
 			byte direction = args.Direction;
+			PlayerDeathReason reason = args.PlayerDeathReason;
 
 			if (id >= Main.maxPlayers || TShock.Players[id] == null)
 			{
@@ -2242,6 +2243,20 @@ namespace TShockAPI
 				return;
 			}
 
+			/*
+			 * PlayerDeathReason does not initially contain any information, so all fields have values -1 or null. 
+			 * We can use this to determine the real cause of death.
+			 * 
+			 * If the player was not specified, that is, the player index is -1, then it is definitely a custom cause, as you can only deal damage with a projectile or another player.
+			 * This is how everything else works. If an NPC is specified, its value is not -1, which is a custom cause.
+			*/
+			if (TShock.Config.Settings.DisableCustomDeathMessages &&
+				(reason._sourcePlayerIndex == -1 || reason._sourceNPCIndex != -1 || reason._sourceOtherIndex != -1 || reason._sourceCustomReason != null))
+			{
+				TShock.Log.ConsoleDebug("Bouncer / OnPlayerDamage rejected custom death message from {0}", args.Player.Name);
+				args.Handled = true;
+				return;
+			}
 		}
 
 		/// <summary>Bouncer's KillMe hook stops crash exploits from out of bounds values.</summary>
@@ -2276,6 +2291,12 @@ namespace TShockAPI
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnKillMe rejected bad length death text from {0}", args.Player.Name);
 					TShock.Players[id].Kick("Death reason outside of normal bounds.", true);
+					args.Handled = true;
+					return;
+				}
+				if (TShock.Config.Settings.DisableCustomDeathMessages && playerDeathReason._sourceCustomReason != null)
+				{
+					TShock.Log.ConsoleDebug("Bouncer / OnKillMe rejected custom death message from {0}", args.Player.Name);
 					args.Handled = true;
 					return;
 				}
