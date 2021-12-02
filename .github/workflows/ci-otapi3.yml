@@ -40,4 +40,6 @@ jobs:
         run: dotnet nuget add source https://pkgs.dev.azure.com/MonoMod/MonoMod/_packaging/DevBuilds%40Local/nuget/v3/index.json -n DevBuilds@Local
 
       - name: Produce build
-        run: dotnet publish -r ${{ matrix.arch }} -f net6.0 -c Release -p:PublishSingleFile=true --self-contained true
+        run: |
+            cd TShockLauncher
+            dotnet publish -r ${{ matrix.arch }} -f net6.0 -c Release -p:PublishSingleFile=true --self-contained true
