@@ -1,0 +1,1 @@
+This permission gives a player the ability to force a blood moon to occur using the [[worldevent]] command. ^3d301a

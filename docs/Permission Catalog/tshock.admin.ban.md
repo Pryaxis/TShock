@@ -1,0 +1,1 @@
+This permission gives [[account]]s the ability to [[ban]] other players using the ban command.

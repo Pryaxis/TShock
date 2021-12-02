@@ -1,0 +1,1 @@
+Gives the [[account]] the ability to buff themselves, using the [[buff]] command.
