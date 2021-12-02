@@ -15,6 +15,10 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 ## Upcoming changes
 * Added documentation for essentially everything in Obsidian format to replace the Readme. (@hakusaro, @drunderscore)
 
+## TShock 4.5.12
+* Fixed the ability to spawn Zenith projectile with non-original items. (@AgaSpace)
+* Added hook `GetDataHandlers.OnNpcTalk` for NpcTalk and a handler for it that stops unregistered and logged out players from interacting with NPCs, preventing them from smuggling or duplicating items via NPC item slots. (@tru321)
+
 ## TShock 4.5.11
 * Add the new allowed buff TentacleSpike to NPC buff cheat detection bouncer. (@sgkoishi)
 * Changed hook `GetDataHandlers.OnNewProjectile` so that it passes the projectile's AI (by updating `NewProjectileEventArgs` and parsing this during the TShock hook) to support processing projectile AI in bouncer. (@AgaSpace)
