@@ -1,5 +1,10 @@
-###### ID 5
-###### Server <-> Client
+###### ID
+5
+
+###### Direction
+Server <-> Client
+
+### Structure
 | Description | Type |
 |-------------|------|
 | Player ID       | byte |

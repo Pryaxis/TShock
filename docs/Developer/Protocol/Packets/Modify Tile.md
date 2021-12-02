@@ -1,5 +1,10 @@
-###### ID 17
-###### Server <-> Client
+###### ID
+17
+
+###### Direction
+Server <-> Client
+
+### Structure
 | Description | Type |
 |-------------|------|
 | [[#Action]] | byte |

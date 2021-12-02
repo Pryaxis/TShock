@@ -1,5 +1,10 @@
-###### ID 117
-###### Server <-> Client
+###### ID
+117
+
+###### Direction
+Server <-> Client
+
+### Structure
 | Description | Type |
 |-------------|------|
 | Player ID[^1]     | byte |

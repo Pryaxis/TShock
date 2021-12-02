@@ -1,5 +1,10 @@
-###### ID 42
-###### Server <-> Client
+###### ID
+42
+
+###### Direction
+Server <-> Client
+
+### Structure
 | Description | Type |
 |-------------|------|
 | Player ID | byte |
