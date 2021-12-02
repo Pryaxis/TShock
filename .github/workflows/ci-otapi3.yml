@@ -22,7 +22,7 @@ jobs:
         run: dotnet test
 
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         arch: ["win-x64", "osx-x64", "linux-x64", "linux-arm64", "linux-arm"]
@@ -43,6 +43,12 @@ jobs:
         run: |
             cd TShockLauncher
             dotnet publish -r ${{ matrix.arch }} -f net6.0 -c Release -p:PublishSingleFile=true --self-contained true
+
+      - name: Chmod scripts
+        if: ${{ matrix.arch != 'win-x64' }}
+        run: |
+            chmod +x TShockLauncher/bin/Release/net6.0/${{ matrix.arch }}/publish/TShock.sh
+            chmod +x TShockLauncher/bin/Release/net6.0/${{ matrix.arch }}/publish/bin/TShock.Run
 
       - uses: actions/upload-artifact@v2
         with:
