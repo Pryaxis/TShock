@@ -33,12 +33,12 @@ For `Width * Height` tiles, **y by x**:
 | [[#Header 1]]    | byte |
 | [[#Header 2]][^1] | byte |
 | [[#Header 3]][^2] | byte |
-| Block ID[^3]                | byte or ushort[^4] |
-| Frame X[^5]                 | short |
-| Frame Y[^5]                 | short |
-| Wall ID[^6]                 | byte |
-| Liquid Amount[^7]           | byte |
-| Upper Wall ID[^8]           | byte |
+| Block ID[^3]      | byte or ushort[^4] |
+| Frame X[^5]       | short |
+| Frame Y[^5]       | short |
+| Wall ID[^6]       | byte |
+| Liquid Amount[^7] | byte |
+| Upper Wall ID[^8] | byte |
 
 [^1]: Only present if `Has Header 2` bit is set on [[#Header1]]
 [^2]: Only present if `Has Header 3` bit is set on [[#Header2]]
