@@ -14,9 +14,9 @@ Server <-> Client
 | [[#Flags]]       | byte |
 | Cooldown Counter | sbyte |
 
-[^1]: This represents who is getting attacked
+[^1]: This represents who is getting attacked.
 
-##### Flags
+###### Flags
 | Description | Value |
 |-------------|------|
 | Crit | `1 << 0` |

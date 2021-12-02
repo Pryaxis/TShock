@@ -13,9 +13,9 @@ Server <-> Client
 | Direction    | byte |
 | [[#Flags]]   | byte |
 
-[^1]: This represents who is getting attacked
+[^1]: This represents who is getting attacked.
 
-##### Flags
+###### Flags
 | Description | Value |
 |-------------|------|
 | PvP  | `1 << 0` |
