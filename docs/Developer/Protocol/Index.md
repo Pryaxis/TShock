@@ -30,6 +30,7 @@ TODO: Document the packets used and process that goes into connecting to a serve
 - [[Modify Tile]]
 - [[Set Time]]
 - [[Toggle Door]]
+- [[Sync Tile Rect]]
 - [[Toggle PvP]]
 - [[Player Item Animation]]
 - [[Player Mana]]
