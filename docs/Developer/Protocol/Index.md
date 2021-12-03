@@ -28,6 +28,8 @@ TODO: Document the packets used and process that goes into connecting to a serve
 - [[Player Active]]
 - [[Player HP]]
 - [[Modify Tile]]
+- [[Set Time]]
+- [[Toggle Door]]
 - [[Toggle PvP]]
 - [[Player Item Animation]]
 - [[Player Mana]]
