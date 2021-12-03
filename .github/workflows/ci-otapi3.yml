@@ -48,9 +48,12 @@ jobs:
         if: ${{ matrix.arch != 'win-x64' }}
         run: |
             chmod +x TShockLauncher/bin/Release/net6.0/${{ matrix.arch }}/publish/TShock.sh
-            chmod +x TShockLauncher/bin/Release/net6.0/${{ matrix.arch }}/publish/bin/TShock.Run
+
+      # preserve file perms: https://github.com/actions/upload-artifact#maintaining-file-permissions-and-case-sensitive-files
+      - name: Archive artifact
+        run: tar -cvf TShock-Beta-${{ matrix.arch }}-Release.tar TShockLauncher/bin/Release/net6.0/${{ matrix.arch }}/publish/
 
       - uses: actions/upload-artifact@v2
         with:
           name: TShock-Beta-${{ matrix.arch }}-Release
-          path: TShockLauncher/bin/Release/net6.0/${{ matrix.arch }}/publish
+          path: TShock-Beta-${{ matrix.arch }}-Release.tar
