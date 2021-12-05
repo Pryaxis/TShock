@@ -17,6 +17,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Added hook `GetDataHandlers.OnNpcTalk` for NpcTalk and a handler for it that stops unregistered and logged out players from interacting with NPCs, preventing them from smuggling or duplicating items via NPC item slots. (@tru321)
 * Fixed the ability to create custom messages with your death (or the death of another player) (@AgaSpace)
 * Added the `OnSignRead` handler in `GetDataHandler`, and added the `SignRead` event. Added check to ensure the sign being read is within world bounds `(x >= 0 && y >= 0 && x < Main.maxTilesX && y < Main.maxTilesY)`. (@drunderscore)
+* Added check to `HandleNpcTalk` to ensure the passed NPC index is within bounds (>= -1 && < `Main.maxNPCs`). (@drunderscore)
 
 ## TShock 4.5.11
 * Add the new allowed buff TentacleSpike to NPC buff cheat detection bouncer. (@sgkoishi)
