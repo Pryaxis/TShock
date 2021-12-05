@@ -122,6 +122,7 @@ namespace TShockAPI
 					{ PacketTypes.PlayerAnimation, HandlePlayerAnimation },
 					{ PacketTypes.PlayerMana, HandlePlayerMana },
 					{ PacketTypes.PlayerTeam, HandlePlayerTeam },
+					{ PacketTypes.SignRead, HandleSignRead },
 					{ PacketTypes.SignNew, HandleSign },
 					{ PacketTypes.LiquidSet, HandleLiquidSet },
 					{ PacketTypes.PlayerBuff, HandlePlayerBuffList },
@@ -1184,6 +1185,43 @@ namespace TShockAPI
 				Team = _team,
 			};
 			PlayerTeam.Invoke(null, args);
+			return args.Handled;
+		}
+
+		/// <summary>
+		/// For use in a SignRead event
+		/// </summary>
+		public class SignReadEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// X location of the sign
+			/// </summary>
+			public int X { get; set; }
+
+			/// <summary>
+			/// Y location of the sign
+			/// </summary>
+			public int Y { get; set; }
+		}
+
+		/// <summary>
+		/// Sign - Called when a sign is read
+		/// </summary>
+		public static HandlerList<SignReadEventArgs> SignRead = new HandlerList<SignReadEventArgs>();
+
+		private static bool OnSignRead(TSPlayer player, MemoryStream data, int x, int y)
+		{
+			if (SignRead == null)
+				return false;
+
+			var args = new SignReadEventArgs
+			{
+				Player = player,
+				Data = data,
+				X = x,
+				Y = y,
+			};
+			SignRead.Invoke(null, args);
 			return args.Handled;
 		}
 
@@ -3214,6 +3252,23 @@ namespace TShockAPI
 			}
 
 			args.Player.LastPvPTeamChange = DateTime.UtcNow;
+			return false;
+		}
+
+		private static bool HandleSignRead(GetDataHandlerArgs args)
+		{
+			var x = args.Data.ReadInt16();
+			var y = args.Data.ReadInt16();
+
+			if (OnSignRead(args.Player, args.Data, x, y))
+				return true;
+
+			if (x < 0 || y < 0 || x >= Main.maxTilesX || y >= Main.maxTilesY)
+			{
+				TShock.Log.ConsoleDebug("GetDataHandlers / HandleSignRead rejected out of bounds {0}", args.Player.Name);
+				return true;
+			}
+
 			return false;
 		}
 
