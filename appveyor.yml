@@ -1,56 +1,15 @@
 version: '{build}'
 max_jobs: 16
-image: Visual Studio 2019
+image: Visual Studio 2022
 build_script:
 - ps: >-
     git submodule update --init --recursive
 
-    cd ./TerrariaServerAPI/
+    dotnet nuget add source https://pkgs.dev.azure.com/MonoMod/MonoMod/_packaging/DevBuilds%40Local/nuget/v3/index.json -n DevBuilds@Local
 
+    dotnet build TShock.sln
 
-    nuget restore TShock.4.OTAPI.sln
-
-    msbuild TShock.4.OTAPI.sln /p:Configuration=Debug
-
-
-    cd ./TShock.Modifications.Bootstrapper/bin/Debug/
-
-
-    ./TShock.Modifications.Bootstrapper.exe
-
-
-    cd ../../../
-
-
-    msbuild ./TerrariaServerAPI/TerrariaServerAPI.csproj /p:Configuration=Debug
-
-
-    msbuild TShock.4.OTAPI.sln /p:Configuration=Release
-
-
-    cd ./TShock.Modifications.Bootstrapper/bin/Release/
-
-
-    ./TShock.Modifications.Bootstrapper.exe
-
-
-    cd ../../../
-
-
-    msbuild ./TerrariaServerAPI/TerrariaServerAPI.csproj /p:Configuration=Release
-
-
-    cd ../
-
-
-    nuget restore TShock.sln
-
-
-    msbuild ./TShockAPI/TShockAPI.csproj /p:Configuration=Release
-
-    msbuild ./TShockAPI/TShockAPI.csproj /p:Configuration=Debug
+    dotnet test
 artifacts:
-- path: ./TShockAPI/bin/Debug/
+- path: ./TShockLauncher/bin/Debug/net6.0
   name: TShockAVDebug
-- path: ./TShockAPI/bin/Release/
-  name: TShockAVRelease
