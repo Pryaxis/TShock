@@ -1666,7 +1666,7 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Called when player release a NPC,  for checking critter released from item.
+		/// Called when player release a NPC, for checking critter released from item.
 		/// </summary>
 		public static HandlerList<ReleaseNpcEventArgs> ReleaseNPC = new HandlerList<ReleaseNpcEventArgs>();
 		private static bool OnReleaseNpc(TSPlayer player, MemoryStream data, int _x, int _y, short _type, byte _style)

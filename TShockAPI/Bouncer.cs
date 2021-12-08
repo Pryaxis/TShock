@@ -1843,7 +1843,7 @@ namespace TShockAPI
 			byte style = args.Style;
 			
 			// if npc released outside allowed tile
-			if ( x >= Main.maxTilesX * 16 - 16 || x < 0 || y >= Main.maxTilesY * 16 - 16 || y < 0)
+			if (x >= Main.maxTilesX * 16 - 16 || x < 0 || y >= Main.maxTilesY * 16 - 16 || y < 0)
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnReleaseNPC rejected out of bounds from {0}", args.Player.Name);
 				args.Handled = true;
@@ -1860,7 +1860,7 @@ namespace TShockAPI
 
 			// if released npc not from its item (from crafted packet)
 			// e.g. using bunny item to release golden bunny 
-			if(args.Player.TPlayer.lastVisualizedSelectedItem.makeNPC != type && args.Player.TPlayer.lastVisualizedSelectedItem.placeStyle != style)
+			if (args.Player.TPlayer.lastVisualizedSelectedItem.makeNPC != type && args.Player.TPlayer.lastVisualizedSelectedItem.placeStyle != style)
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnReleaseNPC rejected npc release from {0}", args.Player.Name);
 				args.Player.Kick("Trying to release different critter exploit!", true);
