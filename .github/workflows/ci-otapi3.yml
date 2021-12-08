@@ -1,0 +1,59 @@
+name: CI(OTAPI3)
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.100'
+
+      - name: MonoMod dev build
+        run: dotnet nuget add source https://pkgs.dev.azure.com/MonoMod/MonoMod/_packaging/DevBuilds%40Local/nuget/v3/index.json -n DevBuilds@Local
+
+      - name: Run tests
+        run: dotnet test
+
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: ["win-x64", "osx-x64", "linux-x64", "linux-arm64", "linux-arm"]
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.100'
+
+      - name: MonoMod dev build
+        run: dotnet nuget add source https://pkgs.dev.azure.com/MonoMod/MonoMod/_packaging/DevBuilds%40Local/nuget/v3/index.json -n DevBuilds@Local
+
+      - name: Produce build
+        run: |
+            cd TShockLauncher
+            dotnet publish -r ${{ matrix.arch }} -f net6.0 -c Release -p:PublishSingleFile=true --self-contained true
+
+      - name: Chmod scripts
+        if: ${{ matrix.arch != 'win-x64' }}
+        run: |
+            chmod +x TShockLauncher/bin/Release/net6.0/${{ matrix.arch }}/publish/TShock.sh
+
+      # preserve file perms: https://github.com/actions/upload-artifact#maintaining-file-permissions-and-case-sensitive-files
+      - name: Archive artifact
+        run: tar -cvf TShock-Beta-${{ matrix.arch }}-Release.tar TShockLauncher/bin/Release/net6.0/${{ matrix.arch }}/publish/
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: TShock-Beta-${{ matrix.arch }}-Release
+          path: TShock-Beta-${{ matrix.arch }}-Release.tar

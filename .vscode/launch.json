@@ -1,0 +1,86 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": ".NET Core Launch (console)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/TShockLauncher/bin/Debug/net6.0/TShock.Run.dll",
+            "windows": {
+                "program": "${workspaceFolder}/TShockLauncher/bin/Debug/net6.0/TShock.dll",
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}/TShockLauncher/bin/Debug/net6.0/",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
+        },
+        {
+            "name": ".NET Core Attach",
+            "type": "coreclr",
+            "request": "attach"
+        },
+        {
+            // this command assumes you have:
+            // raspberry pi 4 b with default user/pass, SSH enabled & connected to a reliable connection
+            // dotnet sdk 6.0.100 (needed for breakpoints to hit)
+            // windows with putty installed
+            // vsdbg
+            // follow this for other OS's: https://docs.microsoft.com/en-us/dotnet/iot/debugging?tabs=self-contained&pivots=vscode
+            // TODO: ability to chmod +x TShock.sh && chmod +x bin/TShock.Run
+            "name": ".NET Remote Launch - Self-contained",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "/home/pi/dotnet/dotnet",
+            "args": [
+                "bin/TShock.Run.dll"
+            ],
+            "cwd": "/home/pi/tshockdev/publish",
+            "stopAtEntry": false,
+            "console": "integratedTerminal",
+            "pipeTransport": {
+                "pipeCwd": "${workspaceRoot}",
+                "pipeProgram": "C:\\Program Files\\PuTTY\\PLINK.EXE",
+                "pipeArgs": [
+                    "-pw",
+                    "raspberry",
+                    "pi@raspberrypi"
+                ],
+                "debuggerPath": "/home/pi/vsdbg/vsdbg"
+            }
+        },
+        {
+            // this command assumes you have:
+            // raspberry pi 4 b with default user/pass, SSH enabled & connected to a reliable connection
+            // dotnet sdk 6.0.100 (needed for breakpoints to hit)
+            // windows with putty installed
+            // vsdbg
+            // follow this for other OS's: https://docs.microsoft.com/en-us/dotnet/iot/debugging?tabs=self-contained&pivots=vscode
+            // TODO: ability to chmod +x TShock.sh && chmod +x bin/TShock.Run
+            "name": ".NET Remote Publish & Launch - Self-contained",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "/home/pi/dotnet/dotnet",
+            "args": [
+                "bin/TShock.Run.dll"
+            ],
+            "cwd": "/home/pi/tshockdev/publish",
+            "stopAtEntry": false,
+            "console": "integratedTerminal",
+            "preLaunchTask": "Remote Publish",
+            "pipeTransport": {
+                "pipeCwd": "${workspaceRoot}",
+                "pipeProgram": "C:\\Program Files\\PuTTY\\PLINK.EXE",
+                "pipeArgs": [
+                    "-pw",
+                    "raspberry",
+                    "pi@raspberrypi"
+                ],
+                "debuggerPath": "/home/pi/vsdbg/vsdbg"
+            }
+        }
+    ]
+}

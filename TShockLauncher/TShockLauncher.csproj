@@ -1,0 +1,94 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<AssemblyName Condition="'$(RuntimeIdentifier)' == 'win-x64' Or '$(RuntimeIdentifier)' == ''">TShock</AssemblyName>
+		<AssemblyName Condition="'$(RuntimeIdentifier)' != 'win-x64' And '$(RuntimeIdentifier)' != ''">TShock.Run</AssemblyName>
+		<RunPostBuildEvent>Always</RunPostBuildEvent>
+		<DebugType>embedded</DebugType>
+		<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\TerrariaServerAPI\TerrariaServerAPI\TerrariaServerAPI.csproj" ExcludeFromSingleFile="true" />
+		<ProjectReference Include="..\TShockAPI\TShockAPI.csproj" ExcludeFromSingleFile="true" Condition="'$(PublishSingleFile)' == 'true'" />
+		<ProjectReference Include="..\TShockAPI\TShockAPI.csproj" ReferenceOutputAssembly="false" Condition="'$(PublishSingleFile)' != 'true'" />
+		<Reference Include="HttpServer" ExcludeFromSingleFile="true" >
+			<HintPath>..\prebuilts\HttpServer.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- match tshocks dependencies so that publishing outputs all files to ./bin -->
+		<PackageReference Include="BCrypt.Net-Next" Version="4.0.2" />
+		<PackageReference Include="MySql.Data" Version="8.0.27" />
+		<PackageReference Include="SQLite" Version="3.13.0" />
+		<PackageReference Include="System.Data.SQLite.Core" Version="1.0.115.5" />
+	</ItemGroup>
+	
+	<Target Name="MoveTShockDebug" AfterTargets="FinalCleanup;PostBuildEvent">
+		<ItemGroup>
+			<TShockPluginFilesDebug Include="$(TargetDir)/TShockAPI*" />
+		</ItemGroup>
+		<Move SourceFiles="@(TShockPluginFilesDebug)" DestinationFolder="$(TargetDir)ServerPlugins" ContinueOnError="true" />
+	</Target>
+	<Target Name="MoveTShockPublish" AfterTargets="Publish">
+		<ItemGroup>
+			<TShockPluginFilesPublish Include="$(PublishDir)/TShockAPI*" />
+			<TShockPluginFilesForPublish Include="$(ProjectDir)../TShockAPI/bin/$(Configuration)/$(TargetFramework)/TShockAPI*" Condition="'$(PublishSingleFile)' != 'true'" />
+		</ItemGroup>
+		<Move SourceFiles="@(TShockPluginFilesPublish)" DestinationFolder="$(PublishDir)ServerPlugins" ContinueOnError="true" />
+		<Copy SourceFiles="@(TShockPluginFilesForPublish)" DestinationFolder="$(PublishDir)ServerPlugins" ContinueOnError="true" Condition="'$(PublishSingleFile)' != 'true'" />
+	</Target>
+
+	<Target Name="MoveBin" AfterTargets="Publish">
+		<ItemGroup>
+			<MoveBinaries Include="$(PublishDir)*" Exclude="$(PublishDir)\TShock.exe;$(PublishDir)\TShockAPI*" />
+		</ItemGroup>
+		<Move SourceFiles="@(MoveBinaries)" DestinationFolder="$(PublishDir)bin" ContinueOnError="true" />
+	</Target>
+
+	<UsingTask TaskName="PatchAppHost" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+		<ParameterGroup>
+    		<HostExe ParameterType="System.String" Required="true" />
+		</ParameterGroup>
+		<Task>
+			<Code Type="Fragment" Language="cs">
+			/*
+				This is a patch to allow self contained apps to run from the root while having the modules in a ./bin folder.
+				https://github.com/dotnet/sdk/issues/10366
+
+				The script replaces the ./TShock.dll with ./bin/TShock.dll
+				alternates: dnSpy(does this method), NetCoreBeauty
+			*/
+			var find = Encoding.UTF8.GetBytes("TShock.dll\0");
+			var replace = Encoding.UTF8.GetBytes("bin" + Path.DirectorySeparatorChar + "TShock.dll\0");
+			var contents = File.ReadAllBytes(HostExe);
+
+			var matches = 0;
+			var offset = Array.FindIndex(contents, (b) =&gt; {
+				matches = (b == find[matches]) ? matches + 1 : 0;
+				return matches == find.Length;
+			});
+			if (offset &gt; -1) offset -= find.Length - 1;
+
+			var x = 0;
+			Array.ForEach(replace, _ =&gt; { contents[offset + x] = replace[x++]; });
+			
+			File.WriteAllBytes(HostExe, contents);
+			</Code>
+		</Task>
+	</UsingTask>
+
+	<Target Name="PatchAppHostAfterPublish" AfterTargets="Publish" Condition="'$(RuntimeIdentifier)' == 'win-x64'">
+		<PatchAppHost HostExe="$(PublishDir)TShock.exe" />
+		<Message Text="Patched TShock.exe host for ./bin redirect" Importance="High" />
+	</Target>
+	<Target Name="CreateScriptAfterPublish" AfterTargets="Publish" Condition="'$(RuntimeIdentifier)' != 'win-x64'">
+		<Copy SourceFiles="$(ProjectDir)TShock.sh" DestinationFolder="$(PublishDir)" />
+        <Message Text="Run the launcher with chmod +x TShock.sh &amp;&amp; ./TShock.sh" Importance="High" />
+    </Target>
+</Project>

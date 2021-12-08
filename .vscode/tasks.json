@@ -1,0 +1,56 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/TShock.sln",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "Publish",
+            "options": {
+                "cwd": "TShockLauncher"
+            },
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "publish",
+                "-c",
+                "Debug",
+                "--self-contained",
+                "true",
+                "-r",
+                "linux-arm64",
+                "/nowarn:CS1591",
+                "/nowarn:CS1587"
+            ],
+        },
+        {
+            "label": "Remote Publish",
+            "options": {
+                "cwd": "TShockLauncher/bin/Debug/net6.0/linux-arm64"
+            },
+            "command": "C:\\Program Files\\PuTTY\\pscp.exe",
+            "type": "process",
+            "args": [
+                "-pw",
+                "raspberry",
+                "-sftp",
+                "-p",
+                "-r",
+                "publish",
+                "pi@raspberrypi:/home/pi/tshockdev"
+            ],
+            "dependsOn": [
+                "Publish"
+            ]
+        }
+    ]
+}
