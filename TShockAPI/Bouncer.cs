@@ -105,6 +105,7 @@ namespace TShockAPI
 			GetDataHandlers.NPCAddBuff += OnNPCAddBuff;
 			GetDataHandlers.NPCHome += OnUpdateNPCHome;
 			GetDataHandlers.HealOtherPlayer += OnHealOtherPlayer;
+			GetDataHandlers.ReleaseNPC += OnReleaseNPC;
 			GetDataHandlers.PlaceObject += OnPlaceObject;
 			GetDataHandlers.PlaceTileEntity += OnPlaceTileEntity;
 			GetDataHandlers.PlaceItemFrame += OnPlaceItemFrame;
@@ -1829,6 +1830,52 @@ namespace TShockAPI
 			return;
 		}
 
+		/// <summary>
+		/// A bouncer for checking NPC released by player
+		/// </summary>
+		/// <param name="sender">The object that triggered the event.</param>
+		/// <param name="args">The packet arguments that the event has.</param>
+		internal void OnReleaseNPC(object sender, GetDataHandlers.ReleaseNpcEventArgs args)
+		{
+			int x = args.X;
+			int y = args.Y;
+			short type = args.Type;
+			byte style = args.Style;
+			
+			// if npc released outside allowed tile
+			if ( x >= Main.maxTilesX * 16 - 16 || x < 0 || y >= Main.maxTilesY * 16 - 16 || y < 0)
+			{
+				TShock.Log.ConsoleDebug("Bouncer / OnReleaseNPC rejected out of bounds from {0}", args.Player.Name);
+				args.Handled = true;
+				return;
+			}
+
+			// if player disabled
+			if (args.Player.IsBeingDisabled())
+			{
+				TShock.Log.ConsoleDebug("Bouncer / OnReleaseNPC rejected npc release from {0}", args.Player.Name);
+				args.Handled = true;
+				return;
+			}
+
+			// if released npc not from its item (from crafted packet)
+			// e.g. using bunny item to release golden bunny 
+			if(args.Player.TPlayer.lastVisualizedSelectedItem.makeNPC != type)
+			{
+				TShock.Log.ConsoleDebug("Bouncer / OnReleaseNPC rejected npc release from {0}", args.Player.Name);
+				args.Player.Kick("Trying to release different critter exploit!", true);
+				args.Handled = true;
+				return;
+			}
+
+			if (args.Player.IsBouncerThrottled())
+			{
+				TShock.Log.ConsoleDebug("Bouncer / OnReleaseNPC rejected throttle from {0}", args.Player.Name);
+				args.Handled = true;
+				return;
+			}
+		}		
+		
 		/// <summary>Bouncer's PlaceObject hook reverts malicious tile placement.</summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">The packet arguments that the event has.</param>
