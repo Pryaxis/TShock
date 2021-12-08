@@ -1,0 +1,56 @@
+version: '{build}'
+max_jobs: 16
+image: Visual Studio 2019
+build_script:
+- ps: >-
+    git submodule update --init --recursive
+
+    cd ./TerrariaServerAPI/
+
+
+    nuget restore TShock.4.OTAPI.sln
+
+    msbuild TShock.4.OTAPI.sln /p:Configuration=Debug
+
+
+    cd ./TShock.Modifications.Bootstrapper/bin/Debug/
+
+
+    ./TShock.Modifications.Bootstrapper.exe
+
+
+    cd ../../../
+
+
+    msbuild ./TerrariaServerAPI/TerrariaServerAPI.csproj /p:Configuration=Debug
+
+
+    msbuild TShock.4.OTAPI.sln /p:Configuration=Release
+
+
+    cd ./TShock.Modifications.Bootstrapper/bin/Release/
+
+
+    ./TShock.Modifications.Bootstrapper.exe
+
+
+    cd ../../../
+
+
+    msbuild ./TerrariaServerAPI/TerrariaServerAPI.csproj /p:Configuration=Release
+
+
+    cd ../
+
+
+    nuget restore TShock.sln
+
+
+    msbuild ./TShockAPI/TShockAPI.csproj /p:Configuration=Release
+
+    msbuild ./TShockAPI/TShockAPI.csproj /p:Configuration=Debug
+artifacts:
+- path: ./TShockAPI/bin/Debug/
+  name: TShockAVDebug
+- path: ./TShockAPI/bin/Release/
+  name: TShockAVRelease
