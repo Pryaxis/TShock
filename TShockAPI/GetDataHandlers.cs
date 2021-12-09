@@ -3549,6 +3549,11 @@ namespace TShockAPI
 				return true;
 			}
 
+			bool hasPaintSprayerAbilities(Item item) =>
+				item != null
+				&& item.stack > 0
+				&& (item.type == ItemID.PaintSprayer || item.type == ItemID.ArchitectGizmoPack);
+
 			// Not selecting paintbrush or paint scraper or the spectre versions? Hacking.
 			if (args.Player.SelectedItem.type != ItemID.PaintRoller &&
 				args.Player.SelectedItem.type != ItemID.PaintScraper &&
@@ -3556,8 +3561,8 @@ namespace TShockAPI
 				args.Player.SelectedItem.type != ItemID.SpectrePaintRoller &&
 				args.Player.SelectedItem.type != ItemID.SpectrePaintScraper &&
 				args.Player.SelectedItem.type != ItemID.SpectrePaintbrush &&
-				!args.Player.Accessories.Any(i => i != null && i.stack > 0 &&
-					(i.type == ItemID.PaintSprayer || i.type == ItemID.ArchitectGizmoPack)))
+				!args.Player.Accessories.Any(hasPaintSprayerAbilities) &&
+				!args.Player.Inventory.Any(hasPaintSprayerAbilities))
 			{
 				TShock.Log.ConsoleDebug("GetDataHandlers / HandlePaintTile rejected select consistency {0}", args.Player.Name);
 				args.Player.SendData(PacketTypes.PaintTile, "", x, y, Main.tile[x, y].color());

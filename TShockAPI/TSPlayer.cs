@@ -899,6 +899,18 @@ namespace TShockAPI
 		}
 
 		/// <summary>
+		/// Gets the player's inventory (first 5 rows)
+		/// </summary>
+		public IEnumerable<Item> Inventory
+		{
+			get
+			{
+				for (int i = 0; i < 50; i++)
+					yield return TPlayer.inventory[i];
+			}
+		}
+
+		/// <summary>
 		/// Gets the player's accessories.
 		/// </summary>
 		public IEnumerable<Item> Accessories
