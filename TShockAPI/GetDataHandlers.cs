@@ -3713,8 +3713,6 @@ namespace TShockAPI
 			if(args.Player.IsBeingDisabled())
 			{
 				TShock.Log.ConsoleDebug("GetDataHandlers / HandleCatchNpc rejected catch npc {0}", args.Player.Name);
-				Main.npc[npcID].active = true;
-				NetMessage.SendData((int)PacketTypes.NpcUpdate, -1, -1, NetworkText.Empty, npcID);
 				return true;
 			}
 
