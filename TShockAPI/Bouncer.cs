@@ -1862,8 +1862,8 @@ namespace TShockAPI
 			// e.g. using bunny item to release golden bunny 
 			if (args.Player.TPlayer.lastVisualizedSelectedItem.makeNPC != type && args.Player.TPlayer.lastVisualizedSelectedItem.placeStyle != style)
 			{
-				TShock.Log.ConsoleDebug("Bouncer / OnReleaseNPC rejected npc release from {0}", args.Player.Name);
-				args.Player.Kick("Trying to release different critter exploit!", true);
+				TShock.Log.ConsoleDebug("Bouncer / OnReleaseNPC released different critter from {0}", args.Player.Name);
+				args.Player.Kick("Released critter was not from its item.", true);
 				args.Handled = true;
 				return;
 			}
