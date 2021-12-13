@@ -71,11 +71,11 @@ TODO: Document the packets used and process that goes into connecting to a serve
 | 53  | [[Npc Add Buff]]                       |
 | 54  | [[Npc Update Buff]]                    |
 | 55  | [[Player Add Buff]]                    |
-| 56  | [[Update N P C Name]]                  |
+| 56  | [[Update NPC Name]]                    |
 | 57  | [[Update Good Evil]]                   |
 | 58  | [[Play Harp]]                          |
 | 59  | [[Hit Switch]]                         |
-| 60  | [[Update N P C Home]]                  |
+| 60  | [[Update NPC Home]]                    |
 | 61  | [[Spawn Bossor Invasion]]              |
 | 62  | [[Player Dodge]]                       |
 | 63  | [[Paint Tile]]                         |
@@ -85,8 +85,8 @@ TODO: Document the packets used and process that goes into connecting to a serve
 | 67  | [[Placeholder]]                        |
 | 68  | [[Client UUID]]                        |
 | 69  | [[Chest Name]]                         |
-| 70  | [[Catch N P C]]                        |
-| 71  | [[Release N P C]]                      |
+| 70  | [[Catch NPC]]                          |
+| 71  | [[Release NPC]]                        |
 | 72  | [[Travelling Merchant Inventory]]      |
 | 73  | [[Teleportation Potion]]               |
 | 74  | [[Angler Quest]]                       |
@@ -127,7 +127,7 @@ TODO: Document the packets used and process that goes into connecting to a serve
 | 109 | [[Mass Wire Operation]]                |
 | 110 | [[Mass Wire Operation Pay]]            |
 | 111 | [[Toggle Party]]                       |
-| 112 | [[Tree Grow F X]]                      |
+| 112 | [[Tree Grow FX]]                       |
 | 113 | [[Crystal Invasion Start]]             |
 | 114 | [[Crystal Invasion Wipe All]]          |
 | 115 | [[Minion Attack Target Update]]        |
@@ -145,14 +145,14 @@ TODO: Document the packets used and process that goes into connecting to a serve
 | 127 | [[Remove Revenge Marker]]              |
 | 128 | [[Land Golf Ball In Cup]]              |
 | 129 | [[Finished Connecting To Server]]      |
-| 130 | [[Fish Out N P C]]                     |
-| 131 | [[Tamper With N P C]]                  |
+| 130 | [[Fish Out NPC]]                       |
+| 131 | [[Tamper With NPC]]                    |
 | 132 | [[Play Legacy Sound]]                  |
 | 133 | [[Food Platter Try Placing]]           |
 | 134 | [[Update Player Luck Factors]]         |
 | 135 | [[Dead Player]]                        |
 | 136 | [[Sync Cavern Monster Type]]           |
-| 137 | [[Request N P C Buff Removal]]         |
+| 137 | [[Request NPC Buff Removal]]           |
 | 138 | [[Client Synced Inventory]]            |
 | 139 | [[Set Counts As Host For Gameplay]]    |
 | 140 | [[Set Misc Event Values]]              |
