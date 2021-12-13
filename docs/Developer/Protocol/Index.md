@@ -59,7 +59,7 @@ TODO: Document the packets used and process that goes into connecting to a serve
 | 41  | [[Player Item Animation]]              |
 | 42  | [[Player Mana]]                        |
 | 43  | [[Effect Mana]]                        |
-| 44  | [[Undefined]]                          |
+| 44  | Undefined                              |
 | 45  | [[Player Team]]                        |
 | 46  | [[Sign Read]]                          |
 | 47  | [[Sign New]]                           |
