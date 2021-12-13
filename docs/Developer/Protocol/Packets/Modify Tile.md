@@ -1,5 +1,10 @@
-###### ID 17
-###### Server <-> Client
+###### ID
+17
+
+###### Direction
+Server <-> Client
+
+### Structure
 | Description | Type |
 |-------------|------|
 | [[#Action]] | byte |
@@ -8,7 +13,7 @@
 | Flags 1     | short |
 | Flags 2     | byte |
 
-##### Action
+###### Action
 | Description | Value |
 |-------------|------|
 | Kill Block Without Drop | 0 |

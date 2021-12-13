@@ -1,5 +1,10 @@
-###### ID 5
-###### Server <-> Client
+###### ID
+5
+
+###### Direction
+Server <-> Client[^1]
+
+### Structure
 | Description | Type |
 |-------------|------|
 | Player ID       | byte |
@@ -7,3 +12,5 @@
 | Item Stack      | short |
 | Item Prefix     | sbyte |
 | Item ID         | short |
+
+[^1]: If the receiving Player ID is themself, [[Server Side Characters]] must be enabled.

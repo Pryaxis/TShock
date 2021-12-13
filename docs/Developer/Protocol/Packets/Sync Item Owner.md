@@ -1,5 +1,5 @@
 ###### ID
-30
+22
 
 ###### Direction
 Server <-> Client
@@ -7,5 +7,5 @@ Server <-> Client
 ### Structure
 | Description | Type |
 |-------------|------|
+| Item ID   | short |
 | Player ID | byte |
-| Enabled   | bool |

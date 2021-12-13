@@ -1,5 +1,5 @@
 ###### ID
-30
+29
 
 ###### Direction
 Server <-> Client
@@ -7,5 +7,5 @@ Server <-> Client
 ### Structure
 | Description | Type |
 |-------------|------|
-| Player ID | byte |
-| Enabled   | bool |
+| Projectile ID | short |
+| Owner         | byte |

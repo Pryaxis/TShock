@@ -1,5 +1,10 @@
-###### ID 4
-###### Server <-> Client
+###### ID
+4
+
+###### Direction
+Server <-> Client[^1]
+
+### Structure
 | Description | Type |
 |-------------|------|
 | Player ID             | byte |
@@ -19,7 +24,7 @@
 | [[#Difficulty Flags]] | byte |
 | [[#Torch Flags]]      | byte |
 
-##### Difficulty Flags
+###### Difficulty Flags
 | Description | Value |
 |-------------|------|
 | Softcore                  | `1 << 0` |
@@ -27,9 +32,11 @@
 | Has Expert Accessory Slot | `1 << 2` |
 | Hardcore                  | `1 << 3` |
 
-##### Torch Flags
+###### Torch Flags
 | Description | Value |
 |-------------|-------|
 | Using Biome Torches    | `1 << 0` |
 | Happy Fun Torch Time   | `1 << 1` |
 | Unlocked Biome Torches | `1 << 2` |
+
+[^1]: If the receiving Player ID is themself, [[Server Side Characters]] must be enabled.

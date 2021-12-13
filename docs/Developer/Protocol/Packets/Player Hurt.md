@@ -1,5 +1,10 @@
-###### ID 117
-###### Server <-> Client
+###### ID
+117
+
+###### Direction
+Server <-> Client
+
+### Structure
 | Description | Type |
 |-------------|------|
 | Player ID[^1]     | byte |
@@ -9,9 +14,9 @@
 | [[#Flags]]       | byte |
 | Cooldown Counter | sbyte |
 
-[^1]: This represents who is getting attacked
+[^1]: This represents who is getting attacked.
 
-##### Flags
+###### Flags
 | Description | Value |
 |-------------|------|
 | Crit | `1 << 0` |

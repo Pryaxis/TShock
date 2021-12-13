@@ -1,5 +1,5 @@
 ###### ID
-2
+18
 
 ###### Direction
 Server -> Client
@@ -7,4 +7,7 @@ Server -> Client
 ### Structure
 | Description | Type |
 |-------------|------|
-| Reason | [[Network Text]] |
+| Day Time   | bool |
+| Time       | int |
+| Sun Mod Y  | short |
+| Moon Mod Y | short |

@@ -1,5 +1,10 @@
-###### ID 8
-###### Client -> Server
+###### ID
+8
+
+###### Direction
+Client -> Server
+
+### Structure
 | Description | Type |
 |-------------|------|
 | X[^1] | int |

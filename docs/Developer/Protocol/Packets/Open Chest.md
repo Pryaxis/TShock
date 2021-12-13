@@ -1,11 +1,11 @@
 ###### ID
-30
+31
 
 ###### Direction
-Server <-> Client
+Client -> Server
 
 ### Structure
 | Description | Type |
 |-------------|------|
-| Player ID | byte |
-| Enabled   | bool |
+| Tile X | short |
+| Tile Y | short |

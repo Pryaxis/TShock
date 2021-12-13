@@ -1,5 +1,10 @@
-###### ID 10
-###### Server -> Client
+###### ID
+10
+
+###### Direction
+Server -> Client
+
+### Structure
 | Description | Type |
 |-------------|------|
 | Compressed  | bool |
@@ -20,20 +25,20 @@ If the `Compressed` boolean is `true`, then all subsequent data is written with 
 | Tile Entity Count | ushort |
 | Tile Entities     | [[#Tile Entities]]
 
-##### Tiles
-For every tile, **y by x**:
+###### Tiles
+For `Width * Height` tiles, **y by x**:
 
 | Description | Type |
 |-------------|------|
-| [[#Header1]\|Header 1]]    | byte |
-| [[#Header2]\|Header 2]][^1] | byte |
-| [[#Header3]\|Header 3]][^2] | byte |
-| Block ID[^3]                | byte or ushort[^4] |
-| Frame X[^5]                 | short |
-| Frame Y[^5]                 | short |
-| Wall ID[^6]                 | byte |
-| Liquid Amount[^7]           | byte |
-| Upper Wall ID[^8]           | byte |
+| [[#Header 1]]    | byte |
+| [[#Header 2]][^1] | byte |
+| [[#Header 3]][^2] | byte |
+| Block ID[^3]      | byte or ushort[^4] |
+| Frame X[^5]       | short |
+| Frame Y[^5]       | short |
+| Wall ID[^6]       | byte |
+| Liquid Amount[^7] | byte |
+| Upper Wall ID[^8] | byte |
 
 [^1]: Only present if `Has Header 2` bit is set on [[#Header1]]
 [^2]: Only present if `Has Header 3` bit is set on [[#Header2]]
@@ -44,7 +49,7 @@ For every tile, **y by x**:
 [^7]: Only present if `((Header 1 & Liquid Type) >> 3) != 0`.
 [^8]: Only present if `Has Extended Wall ID` bit is set on [[#Header3]]. If present, this becomes the upper bits of the wall ID, and the previous bits become the lower bits.
 
-##### Header1
+###### Header 1
 | Description | Value |
 |-------------|-------|
 | Has Header 2                   | `1 << 0` |
@@ -53,7 +58,7 @@ For every tile, **y by x**:
 | Has Extended Block ID          | `1 << 5` |
 | [[#Liquid Types\|Liquid Type]] | `0b0001'1000` |
 
-##### Header2
+###### Header 2
 | Description | Value |
 |-------------|-------|
 | Has Header 3       | `1 << 0` |
@@ -62,7 +67,7 @@ For every tile, **y by x**:
 | Has Green Wire     | `1 << 3` |
 | [[#Shapes\|Shape]] | `0b0111'0000` |
 
-##### Header3
+###### Header 3
 | Description | Value |
 |-------------|-------|
 | Has Actuator         | `1 << 1` |
@@ -70,14 +75,14 @@ For every tile, **y by x**:
 | Has Yellow Wire      | `1 << 5` |
 | Has Extended Wall ID | `1 << 6` |
 
-##### Liquid Types
+###### Liquid Types
 | Description | Value |
 |-------------|-------|
 | Water | 1 |
 | Lava  | 2 |
 | Honey | 3 |
 
-##### Shapes
+###### Shapes
 | Description | Value |
 |-------------|-------|
 | Half Brick   | 1 |
