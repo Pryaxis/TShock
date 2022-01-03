@@ -105,6 +105,7 @@ namespace TShockAPI
 			GetDataHandlers.NPCAddBuff += OnNPCAddBuff;
 			GetDataHandlers.NPCHome += OnUpdateNPCHome;
 			GetDataHandlers.HealOtherPlayer += OnHealOtherPlayer;
+			GetDataHandlers.ReleaseNPC += OnReleaseNPC;
 			GetDataHandlers.PlaceObject += OnPlaceObject;
 			GetDataHandlers.PlaceTileEntity += OnPlaceTileEntity;
 			GetDataHandlers.PlaceItemFrame += OnPlaceItemFrame;
@@ -1829,6 +1830,52 @@ namespace TShockAPI
 			return;
 		}
 
+		/// <summary>
+		/// A bouncer for checking NPC released by player
+		/// </summary>
+		/// <param name="sender">The object that triggered the event.</param>
+		/// <param name="args">The packet arguments that the event has.</param>
+		internal void OnReleaseNPC(object sender, GetDataHandlers.ReleaseNpcEventArgs args)
+		{
+			int x = args.X;
+			int y = args.Y;
+			short type = args.Type;
+			byte style = args.Style;
+			
+			// if npc released outside allowed tile
+			if (x >= Main.maxTilesX * 16 - 16 || x < 0 || y >= Main.maxTilesY * 16 - 16 || y < 0)
+			{
+				TShock.Log.ConsoleDebug("Bouncer / OnReleaseNPC rejected out of bounds from {0}", args.Player.Name);
+				args.Handled = true;
+				return;
+			}
+
+			// if player disabled
+			if (args.Player.IsBeingDisabled())
+			{
+				TShock.Log.ConsoleDebug("Bouncer / OnReleaseNPC rejected npc release from {0}", args.Player.Name);
+				args.Handled = true;
+				return;
+			}
+
+			// if released npc not from its item (from crafted packet)
+			// e.g. using bunny item to release golden bunny 
+			if (args.Player.TPlayer.lastVisualizedSelectedItem.makeNPC != type && args.Player.TPlayer.lastVisualizedSelectedItem.placeStyle != style)
+			{
+				TShock.Log.ConsoleDebug("Bouncer / OnReleaseNPC released different critter from {0}", args.Player.Name);
+				args.Player.Kick("Released critter was not from its item.", true);
+				args.Handled = true;
+				return;
+			}
+
+			if (args.Player.IsBouncerThrottled())
+			{
+				TShock.Log.ConsoleDebug("Bouncer / OnReleaseNPC rejected throttle from {0}", args.Player.Name);
+				args.Handled = true;
+				return;
+			}
+		}		
+		
 		/// <summary>Bouncer's PlaceObject hook reverts malicious tile placement.</summary>
 		/// <param name="sender">The object that triggered the event.</param>
 		/// <param name="args">The packet arguments that the event has.</param>
@@ -2249,8 +2296,10 @@ namespace TShockAPI
 			 * 
 			 * If the player was not specified, that is, the player index is -1, then it is definitely a custom cause, as you can only deal damage with a projectile or another player.
 			 * This is how everything else works. If an NPC is specified, its value is not -1, which is a custom cause.
+			 * 
+			 * Checking whether this damage came from the player is necessary, because the damage from the player can come even when it is hit by a NPC
 			*/
-			if (TShock.Config.Settings.DisableCustomDeathMessages &&
+			if (TShock.Config.Settings.DisableCustomDeathMessages && id != args.Player.Index && 
 				(reason._sourcePlayerIndex == -1 || reason._sourceNPCIndex != -1 || reason._sourceOtherIndex != -1 || reason._sourceCustomReason != null))
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnPlayerDamage rejected custom death message from {0}", args.Player.Name);

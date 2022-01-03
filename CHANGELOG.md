@@ -11,12 +11,20 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * Do not insert tabs into this file, under any circumstances, ever.
   * Do not forget to sign every line you change with your name. (@hakusaro)
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change.
+## Upcoming changes
+* Added hook `GetDataHandlers.OnReleaseNpc` to handling ReleaseNPC packet and a bouncer to stops unregistered and logged out players on SSC servers from releasing critters NPC. The bouncer has additional filter to stops players who tried to release different critter using crafted packet, e.g. using bunny item to release golden bunny. (@tru321)
+* Added filter in `GetDataHandlers.HandleCatchNpc` that stops unregistered and logged out players on SSC servers to catch critters. (@tru321)
+
+## Upcoming changes
+* Fixed rejection check inside of `HandlePaintTile` to account for the Paint Sprayer (or Architect Gizmo Pack) being inside your inventory, rather than on an accessory slot. (@drunderscore)
 
 ## TShock 4.5.12
 * Fixed the ability to spawn Zenith projectile with non-original items. (@AgaSpace)
 * Fixed item dupe via /logout & NPC. (@Terrarxxn)
 * Added hook `GetDataHandlers.OnNpcTalk` for NpcTalk and a handler for it that stops unregistered and logged out players from interacting with NPCs, preventing them from smuggling or duplicating items via NPC item slots. (@tru321)
 * Fixed the ability to create custom messages with your death (or the death of another player) (@AgaSpace)
+* Added the `OnSignRead` handler in `GetDataHandler`, and added the `SignRead` event. Added check to ensure the sign being read is within world bounds `(x >= 0 && y >= 0 && x < Main.maxTilesX && y < Main.maxTilesY)`. (@drunderscore)
+* Added check to `HandleNpcTalk` to ensure the passed NPC index is within bounds (>= -1 && < `Main.maxNPCs`). (@drunderscore)
 
 ## TShock 4.5.11
 * Add the new allowed buff TentacleSpike to NPC buff cheat detection bouncer. (@sgkoishi)
