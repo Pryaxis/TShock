@@ -2060,7 +2060,8 @@ namespace TShockAPI
 			"eclipse",
 			"invasion",
 			"sandstorm",
-			"rain"
+			"rain",
+			"lanternsnight"
 		};
 		static readonly List<string> _validInvasions = new List<string>()
 		{
@@ -2157,6 +2158,15 @@ namespace TShockAPI
 						return;
 					}
 					Rain(args);
+					return;
+
+				case "lanternsnight":
+				case "lanterns":
+					if (!args.Player.HasPermission(Permissions.managelanternsnightevent))
+					{
+						FailedPermissionCheck();
+					}
+					LanternsNight(args);
 					return;
 
 				default:
@@ -2372,6 +2382,12 @@ namespace TShockAPI
 				TSPlayer.All.SendInfoMessage("{0} caused it to rain.", args.Player.Name);
 				return;
 			}
+		}
+
+		private static void LanternsNight(CommandArgs args)
+		{
+			LanternNight.ToggleManualLanterns();
+			args.Player.SendInfoMessage("{0}ed a lantern night.", LanternNight.LanternsUp ? "Start" : "Stop");
 		}
 
 		private static void ClearAnglerQuests(CommandArgs args)
