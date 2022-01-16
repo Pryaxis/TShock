@@ -2165,6 +2165,7 @@ namespace TShockAPI
 					if (!args.Player.HasPermission(Permissions.managelanternsnightevent))
 					{
 						FailedPermissionCheck();
+						return;
 					}
 					LanternsNight(args);
 					return;
