@@ -2388,7 +2388,15 @@ namespace TShockAPI
 		private static void LanternsNight(CommandArgs args)
 		{
 			LanternNight.ToggleManualLanterns();
-			args.Player.SendInfoMessage("{0}ed a lantern night.", LanternNight.LanternsUp ? "Start" : "Stop");
+			string msg = $" st{(LanternNight.LanternsUp ? "art" : "opp")}ed a lantern night.";
+			if (args.Silent)
+			{
+				args.Player.SendInfoMessage("You" + msg);
+			}
+			else
+			{
+				TSPlayer.All.SendInfoMessage(args.Player.Name + msg);
+			}
 		}
 
 		private static void ClearAnglerQuests(CommandArgs args)
