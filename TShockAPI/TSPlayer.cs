@@ -1311,7 +1311,7 @@ namespace TShockAPI
 		/// <returns>true if the tile square was sent successfully, else false</returns>
 		public virtual bool SendTileSquare(int x, int y, int size = 10)
 		{
-			return SendTileRect((short)x, (short)y, (byte)size, (byte)size);
+			return SendTileRect((short)(x-(size/2)), (short)(y-(size/2)), (byte)size, (byte)size);
 		}
 
 		/// <summary>
