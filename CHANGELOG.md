@@ -14,9 +14,8 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 ## Upcoming changes
 * Added hook `GetDataHandlers.OnReleaseNpc` to handling ReleaseNPC packet and a bouncer to stops unregistered and logged out players on SSC servers from releasing critters NPC. The bouncer has additional filter to stops players who tried to release different critter using crafted packet, e.g. using bunny item to release golden bunny. (@tru321)
 * Added filter in `GetDataHandlers.HandleCatchNpc` that stops unregistered and logged out players on SSC servers to catch critters. (@tru321)
-
-## Upcoming changes
 * Fixed rejection check inside of `HandlePaintTile` to account for the Paint Sprayer (or Architect Gizmo Pack) being inside your inventory, rather than on an accessory slot. (@drunderscore)
+* Added the lanterns night event to the `/worldevent` command. (@0x3fcf1bbd)
 
 ## TShock 4.5.12
 * Fixed the ability to spawn Zenith projectile with non-original items. (@AgaSpace)
