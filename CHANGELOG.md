@@ -16,6 +16,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Added filter in `GetDataHandlers.HandleCatchNpc` that stops unregistered and logged out players on SSC servers to catch critters. (@tru321)
 * Fixed rejection check inside of `HandlePaintTile` to account for the Paint Sprayer (or Architect Gizmo Pack) being inside your inventory, rather than on an accessory slot. (@drunderscore)
 * Added the lanterns night event to the `/worldevent` command. (@0x3fcf1bbd)
+* Removed extraneous space causing build commands in README to fail. (@EtherTyper)
 
 ## TShock 4.5.12
 * Fixed the ability to spawn Zenith projectile with non-original items. (@AgaSpace)
@@ -23,7 +24,6 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Fixed the ability to create custom messages with your death (or the death of another player) (@AgaSpace)
 * Added the `OnSignRead` handler in `GetDataHandler`, and added the `SignRead` event. Added check to ensure the sign being read is within world bounds `(x >= 0 && y >= 0 && x < Main.maxTilesX && y < Main.maxTilesY)`. (@drunderscore)
 * Added check to `HandleNpcTalk` to ensure the passed NPC index is within bounds (>= -1 && < `Main.maxNPCs`). (@drunderscore)
-* Removed extraneous space causing build commands in README to fail. (@EtherTyper)
 
 ## TShock 4.5.11
 * Add the new allowed buff TentacleSpike to NPC buff cheat detection bouncer. (@sgkoishi)
