@@ -1343,10 +1343,6 @@ namespace TShockAPI
 		{
 			try
 			{
-				x = TShock.Utils.Clamp(x, Main.maxTilesX, 0);
-				y = TShock.Utils.Clamp(y, Main.maxTilesY, 0);
-				width = TShock.Utils.Clamp(x + width, Main.maxTilesX, 0) - x;
-				length = TShock.Utils.Clamp(y + length, Main.maxTilesY, 0) - x;
 				NetMessage.SendTileSquare(Index, x, y, width, length, changeType);
 				return true;
 			}
