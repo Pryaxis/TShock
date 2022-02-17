@@ -190,7 +190,7 @@ namespace TShockAPI
 			// Send all players updated tile squares
 			foreach (Vector2 coords in tiles.Keys)
 			{
-				All.SendTileSquare((int)coords.X, (int)coords.Y, 3);
+				All.SendTileSquareCentered((int)coords.X, (int)coords.Y, 3);
 			}
 		}
 

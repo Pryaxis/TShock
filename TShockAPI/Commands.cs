@@ -4899,7 +4899,7 @@ namespace TShockAPI
 
 									try
 									{
-										args.Player.SendTileSquare(boundaryPoint.X, boundaryPoint.Y, 1);
+										args.Player.SendTileSquareCentered(boundaryPoint.X, boundaryPoint.Y, 1);
 									}
 									finally
 									{
@@ -4913,7 +4913,7 @@ namespace TShockAPI
 							{
 								foreach (Point boundaryPoint in Utils.Instance.EnumerateRegionBoundaries(regionArea))
 									if ((boundaryPoint.X + boundaryPoint.Y & 1) == 0)
-										args.Player.SendTileSquare(boundaryPoint.X, boundaryPoint.Y, 1);
+										args.Player.SendTileSquareCentered(boundaryPoint.X, boundaryPoint.Y, 1);
 
 								Debug.Assert(boundaryHideTimer != null);
 								boundaryHideTimer.Dispose();
@@ -5670,7 +5670,7 @@ namespace TShockAPI
 
 		private static void SyncLocalArea(CommandArgs args)
 		{
-			args.Player.SendTileSquare((int) args.Player.TileX, (int) args.Player.TileY, 32);
+			args.Player.SendTileSquareCentered(args.Player.TileX, args.Player.TileY, 32);
 			args.Player.SendWarningMessage("Sync'd!");
 			return;
 		}
@@ -6676,7 +6676,7 @@ namespace TShockAPI
 			}
 			if (args.Parameters.Count == 1)
 			{
-				args.Player.SendTileSquare(x - 2, y - 20, 25);
+				args.Player.SendTileSquareCentered(x - 2, y - 20, 25);
 				args.Player.SendSuccessMessage("Tried to grow a " + name + ".");
 			}
 		}

@@ -16,6 +16,8 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Added filter in `GetDataHandlers.HandleCatchNpc` that stops unregistered and logged out players on SSC servers to catch critters. (@tru321)
 * Fixed rejection check inside of `HandlePaintTile` to account for the Paint Sprayer (or Architect Gizmo Pack) being inside your inventory, rather than on an accessory slot. (@drunderscore)
 * Added the lanterns night event to the `/worldevent` command. (@0x3fcf1bbd)
+* Marked `TSPlayer.SendTileSquare` as deprecated, and created `TSPlayer.SendTileSquareCentered` that sends a tile square centered around the passed coordinates. (@0x3fcf1bbd)
+* Added coordinates clamping to `TSPlayer.SendTileRect` so as to avoid OOBs. (@0x3fcf1bbd)
 * Removed extraneous space causing build commands in README to fail. (@EtherTyper)
 
 ## TShock 4.5.12
