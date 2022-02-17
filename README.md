@@ -207,7 +207,7 @@ You need to re-run the patcher any time `OTAPI` updates. You need to rebuild `Te
 
           $ cd ./TerrariaServerAPI/TShock.Modifications.Bootstrapper/bin/$BUILD_MODE/
           $ mono TShock.Modifications.Bootstrapper.exe -in=OTAPI.dll \
-                -mod=../../../TShock.Modifications.**/bin/$BUILD_MODE/TShock.Modifications.*.dll \ 
+                -mod=../../../TShock.Modifications.**/bin/$BUILD_MODE/TShock.Modifications.*.dll \
                 -o=Output/OTAPI.dll
 
 1. Verify that non-zero modifications ran successfully. Then, build the Terraria Server API executable.

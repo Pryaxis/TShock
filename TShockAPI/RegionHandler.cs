@@ -171,7 +171,7 @@ namespace TShockAPI
 				}
 
 				// Revert all tile changes and handle the event
-				player.SendTileSquare(e.X, e.Y, 4);
+				player.SendTileSquareCentered(e.X, e.Y, 4);
 				e.Handled = true;
 			}
 
@@ -190,7 +190,7 @@ namespace TShockAPI
 				player.AwaitingTempPoint = 0;
 
 				// Revert all tile changes and handle the event
-				player.SendTileSquare(e.X, e.Y, 4);
+				player.SendTileSquareCentered(e.X, e.Y, 4);
 				e.Handled = true;
 			}
 
