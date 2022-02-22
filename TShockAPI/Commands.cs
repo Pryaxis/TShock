@@ -2060,7 +2060,8 @@ namespace TShockAPI
 			"eclipse",
 			"invasion",
 			"sandstorm",
-			"rain"
+			"rain",
+			"lanternsnight"
 		};
 		static readonly List<string> _validInvasions = new List<string>()
 		{
@@ -2157,6 +2158,16 @@ namespace TShockAPI
 						return;
 					}
 					Rain(args);
+					return;
+
+				case "lanternsnight":
+				case "lanterns":
+					if (!args.Player.HasPermission(Permissions.managelanternsnightevent))
+					{
+						FailedPermissionCheck();
+						return;
+					}
+					LanternsNight(args);
 					return;
 
 				default:
@@ -2371,6 +2382,20 @@ namespace TShockAPI
 				TSPlayer.All.SendData(PacketTypes.WorldInfo);
 				TSPlayer.All.SendInfoMessage("{0} caused it to rain.", args.Player.Name);
 				return;
+			}
+		}
+
+		private static void LanternsNight(CommandArgs args)
+		{
+			LanternNight.ToggleManualLanterns();
+			string msg = $" st{(LanternNight.LanternsUp ? "art" : "opp")}ed a lantern night.";
+			if (args.Silent)
+			{
+				args.Player.SendInfoMessage("You" + msg);
+			}
+			else
+			{
+				TSPlayer.All.SendInfoMessage(args.Player.Name + msg);
 			}
 		}
 
@@ -4874,7 +4899,7 @@ namespace TShockAPI
 
 									try
 									{
-										args.Player.SendTileSquare(boundaryPoint.X, boundaryPoint.Y, 1);
+										args.Player.SendTileSquareCentered(boundaryPoint.X, boundaryPoint.Y, 1);
 									}
 									finally
 									{
@@ -4888,7 +4913,7 @@ namespace TShockAPI
 							{
 								foreach (Point boundaryPoint in Utils.Instance.EnumerateRegionBoundaries(regionArea))
 									if ((boundaryPoint.X + boundaryPoint.Y & 1) == 0)
-										args.Player.SendTileSquare(boundaryPoint.X, boundaryPoint.Y, 1);
+										args.Player.SendTileSquareCentered(boundaryPoint.X, boundaryPoint.Y, 1);
 
 								Debug.Assert(boundaryHideTimer != null);
 								boundaryHideTimer.Dispose();
@@ -5645,7 +5670,7 @@ namespace TShockAPI
 
 		private static void SyncLocalArea(CommandArgs args)
 		{
-			args.Player.SendTileSquare((int) args.Player.TileX, (int) args.Player.TileY, 32);
+			args.Player.SendTileSquareCentered(args.Player.TileX, args.Player.TileY, 32);
 			args.Player.SendWarningMessage("Sync'd!");
 			return;
 		}
@@ -6524,7 +6549,7 @@ namespace TShockAPI
 			}
 			if (args.Parameters.Count == 1)
 			{
-				args.Player.SendTileSquare(x - 2, y - 20, 25);
+				args.Player.SendTileSquareCentered(x - 2, y - 20, 25);
 				args.Player.SendSuccessMessage("Tried to grow a " + name + ".");
 			}
 		}

@@ -136,6 +136,7 @@ namespace TShockAPI
 					{ PacketTypes.Teleport, HandleTeleport },
 					{ PacketTypes.PlayerHealOther, HandleHealOther },
 					{ PacketTypes.CatchNPC, HandleCatchNpc },
+					{ PacketTypes.ReleaseNPC, HandleReleaseNpc },
 					{ PacketTypes.TeleportationPotion, HandleTeleportationPotion },
 					{ PacketTypes.CompleteAnglerQuest, HandleCompleteAnglerQuest },
 					{ PacketTypes.NumberOfAnglerQuestsCompleted, HandleNumberOfAnglerQuestsCompleted },
@@ -1676,6 +1677,56 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		/// <summary>
+		/// The ReleaseNPC event arguments
+		/// </summary>
+		public class ReleaseNpcEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// The X value of where NPC released
+			/// </summary>
+			public int X { get; set; }
+
+			/// <summary>
+			/// The Y value of where NPC released
+			/// </summary>
+			public int Y { get; set; }
+
+			/// <summary>
+			/// The NPC Type that player release
+			/// </summary>
+			public short Type { get; set; }
+
+			/// <summary>
+			/// The NPC release style
+			/// </summary>
+			public byte Style { get; set; }
+		}
+
+		/// <summary>
+		/// Called when player release a NPC, for checking critter released from item.
+		/// </summary>
+		public static HandlerList<ReleaseNpcEventArgs> ReleaseNPC = new HandlerList<ReleaseNpcEventArgs>();
+		private static bool OnReleaseNpc(TSPlayer player, MemoryStream data, int _x, int _y, short _type, byte _style)
+		{
+			if (ReleaseNPC == null)
+			{
+				return false;
+			}
+
+			var args = new ReleaseNpcEventArgs
+			{
+				Player = player,
+				Data = data,				
+				X = _x,
+				Y = _y,
+				Type = _type,
+				Style = _style
+			};
+			ReleaseNPC.Invoke(null, args);
+			return args.Handled;
+		}		
+		
 		/// <summary>The arguments to the PlaceObject hook.</summary>
 		public class PlaceObjectEventArgs : GetDataHandledEventArgs
 		{
@@ -3549,6 +3600,11 @@ namespace TShockAPI
 				return true;
 			}
 
+			bool hasPaintSprayerAbilities(Item item) =>
+				item != null
+				&& item.stack > 0
+				&& (item.type == ItemID.PaintSprayer || item.type == ItemID.ArchitectGizmoPack);
+
 			// Not selecting paintbrush or paint scraper or the spectre versions? Hacking.
 			if (args.Player.SelectedItem.type != ItemID.PaintRoller &&
 				args.Player.SelectedItem.type != ItemID.PaintScraper &&
@@ -3556,8 +3612,8 @@ namespace TShockAPI
 				args.Player.SelectedItem.type != ItemID.SpectrePaintRoller &&
 				args.Player.SelectedItem.type != ItemID.SpectrePaintScraper &&
 				args.Player.SelectedItem.type != ItemID.SpectrePaintbrush &&
-				!args.Player.Accessories.Any(i => i != null && i.stack > 0 &&
-					(i.type == ItemID.PaintSprayer || i.type == ItemID.ArchitectGizmoPack)))
+				!args.Player.Accessories.Any(hasPaintSprayerAbilities) &&
+				!args.Player.Inventory.Any(hasPaintSprayerAbilities))
 			{
 				TShock.Log.ConsoleDebug("GetDataHandlers / HandlePaintTile rejected select consistency {0}", args.Player.Name);
 				args.Player.SendData(PacketTypes.PaintTile, "", x, y, Main.tile[x, y].color());
@@ -3720,10 +3776,31 @@ namespace TShockAPI
 				NetMessage.SendData((int)PacketTypes.NpcUpdate, -1, -1, NetworkText.Empty, npcID);
 				return true;
 			}
+			
+			if(args.Player.IsBeingDisabled())
+			{
+				TShock.Log.ConsoleDebug("GetDataHandlers / HandleCatchNpc rejected catch npc {0}", args.Player.Name);
+				return true;
+			}
 
 			return false;
 		}
 
+		private static bool HandleReleaseNpc(GetDataHandlerArgs args)
+		{
+			var x = args.Data.ReadInt32();
+			var y = args.Data.ReadInt32();
+			var type = args.Data.ReadInt16();
+			var style = args.Data.ReadInt8();
+			
+			if (OnReleaseNpc(args.Player, args.Data, x, y, type, style))
+			{
+				return true;
+			}
+
+			return false;
+		}		
+		
 		private static bool HandleTeleportationPotion(GetDataHandlerArgs args)
 		{
 			var type = args.Data.ReadByte();
@@ -3818,7 +3895,7 @@ namespace TShockAPI
 
 			if (TShock.TileBans.TileIsBanned((short)TileID.LogicSensor, args.Player))
 			{
-				args.Player.SendTileSquare(x, y, 1);
+				args.Player.SendTileSquareCentered(x, y, 1);
 				args.Player.SendErrorMessage("You do not have permission to place Logic Sensors.");
 				return true;
 			}
