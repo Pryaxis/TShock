@@ -199,7 +199,7 @@ namespace TShockAPI
 			{
 				if (args.Player.TPlayer.autoActuator && DataModel.ItemIsBanned("Actuator", args.Player))
 				{
-					args.Player.SendTileSquare(args.X, args.Y, 1);
+					args.Player.SendTileSquareCentered(args.X, args.Y, 1);
 					args.Player.SendErrorMessage("You do not have permission to place actuators.");
 					args.Handled = true;
 					return;
@@ -207,7 +207,7 @@ namespace TShockAPI
 
 				if (DataModel.ItemIsBanned(EnglishLanguage.GetItemNameById(args.Player.SelectedItem.netID), args.Player))
 				{
-					args.Player.SendTileSquare(args.X, args.Y, 4);
+					args.Player.SendTileSquareCentered(args.X, args.Y, 4);
 					args.Handled = true;
 					return;
 				}

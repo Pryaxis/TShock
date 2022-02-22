@@ -3895,7 +3895,7 @@ namespace TShockAPI
 
 			if (TShock.TileBans.TileIsBanned((short)TileID.LogicSensor, args.Player))
 			{
-				args.Player.SendTileSquare(x, y, 1);
+				args.Player.SendTileSquareCentered(x, y, 1);
 				args.Player.SendErrorMessage("You do not have permission to place Logic Sensors.");
 				return true;
 			}

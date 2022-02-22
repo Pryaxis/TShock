@@ -1227,7 +1227,7 @@ namespace TShockAPI
 				y = 992;
 			}
 
-			SendTileSquare((int)(x / 16), (int)(y / 16), 15);
+			SendTileSquareCentered((int)(x / 16), (int)(y / 16), 15);
 			TPlayer.Teleport(new Vector2(x, y), style);
 			NetMessage.SendData((int)PacketTypes.Teleport, -1, -1, NetworkText.Empty, 0, TPlayer.whoAmI, x, y, style);
 			return true;
@@ -1309,9 +1309,25 @@ namespace TShockAPI
 		/// <param name="y">The y coordinate to send.</param>
 		/// <param name="size">The size square set of tiles to send.</param>
 		/// <returns>true if the tile square was sent successfully, else false</returns>
+		[Obsolete("This method may not send tiles the way you would expect it to. The (x,y) coordinates are the top left corner of the tile square, switch to " + nameof(SendTileSquareCentered) + " if you wish for the coordindates to be the center of the square.")]
 		public virtual bool SendTileSquare(int x, int y, int size = 10)
 		{
 			return SendTileRect((short)x, (short)y, (byte)size, (byte)size);
+		}
+
+		/// <summary>
+		/// Sends a tile square at a center location with a given size.
+		/// Typically used to revert changes by Bouncer through sending the
+		/// "old" version of modified data back to a client.
+		/// Prevents desync issues.
+		/// </summary>
+		/// <param name="x">The x coordinates of the center of the square.</param>
+		/// <param name="y">The y coordinates of the center of the square.</param>
+		/// <param name="size">The size square set of tiles to send.</param>
+		/// <returns>true if the tile square was sent successfully, else false</returns>
+		public virtual bool SendTileSquareCentered(int x, int y, byte size = 10)
+		{
+			return SendTileRect((short)(x - (size / 2)), (short)(y - (size / 2)), size, size);
 		}
 
 		/// <summary>
@@ -1348,7 +1364,7 @@ namespace TShockAPI
 		public bool GiveItemCheck(int type, string name, int stack, int prefix = 0)
 		{
 			if ((TShock.ItemBans.DataModel.ItemIsBanned(name) && TShock.Config.Settings.PreventBannedItemSpawn) &&
-			    (TShock.ItemBans.DataModel.ItemIsBanned(name, this) || !TShock.Config.Settings.AllowAllowedGroupsToSpawnBannedItems))
+				(TShock.ItemBans.DataModel.ItemIsBanned(name, this) || !TShock.Config.Settings.AllowAllowedGroupsToSpawnBannedItems))
 				return false;
 
 			GiveItem(type, stack, prefix);
