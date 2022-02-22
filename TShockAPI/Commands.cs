@@ -913,7 +913,7 @@ namespace TShockAPI
 
 			if (args.Player.TPlayer.talkNPC != -1)
 			{
-				args.Player.SendErrorMessage("Please close NPC window for logging out.");
+				args.Player.SendErrorMessage("Please close NPC windows before logging out.");
 				return;
 			}
 
