@@ -477,33 +477,33 @@ Please note that the permissions previously tied to the removed commands are als
 
 ## TShock 4.3.24
 * Updated OpenTerraria API to 1.3.5.3 (@DeathCradle)
-* Updated Terraria Server API to 1.3.5.3 (@WhiteXZ, @hakusaro)
+* Updated Terraria Server API to 1.3.5.3 (@QuiCM, @hakusaro)
 * Updated TShock core components to 1.3.5.3 (@hakusaro)
 * Terraria Server API version tick: 2.1
 * Added OnNpcKilled hook to Server API: 2.2 (@tylerjwatson)
-* Added CreateCombatTextExtended to PacketTypes. This packet allows for the same functionality that packet 82 (CreateCombatText) used to have. (@WhiteXZ)
+* Added CreateCombatTextExtended to PacketTypes. This packet allows for the same functionality that packet 82 (CreateCombatText) used to have. (@QuiCM)
 * Updated ServerBroadcast hook to provide a NetworkText object. (@tylerjwatson)
 * Fixed levers and things not updating properly. (@deathcradle)
-* Deprecated PacketTypes.ChatText. Chat is now handled using the NetTextModule and packet 82. (@WhiteXZ, @Hakusaro)
+* Deprecated PacketTypes.ChatText. Chat is now handled using the NetTextModule and packet 82. (@QuiCM, @Hakusaro)
 * Removed the -lang command-line flag from TShock. It is now a vanilla feature. (@Hakusaro)
 
 ## TShock 4.3.23
 * Added evil type option during world creation (@mistzzt)
-* Bans can be sorted. TShock's default sorting will retrieve bans sorted from newest to oldest based on the date the ban was added (@WhiteXZ)
-* Resolved issues with mob and item spawning. Thanks to @OnsenManju for your investigative work :) (@WhiteXZ)
+* Bans can be sorted. TShock's default sorting will retrieve bans sorted from newest to oldest based on the date the ban was added (@QuiCM)
+* Resolved issues with mob and item spawning. Thanks to @OnsenManju for your investigative work :) (@QuiCM)
 * Patched a crashing exploit (@Simon311)
 
 ## TShock 4.3.22
 * Compatibility with Terraria 1.3.4.4
 * API: Version tick 2.0
 * API: Reduced RAM usage by ~80MB (Large server) (@deathcradle)
-* API: Added TSPlayer.KillPlayer() (@WhiteXZ)
+* API: Added TSPlayer.KillPlayer() (@QuiCM)
 * API: Added TSPlayer.Logout() (@ProfessorXZ)
 * Fixed connections after max slot is reached (@DeathCradle)
 * Fixed server crashes caused by client disconnections when attempting to read closed sockets (@Enerdy)
 * Added some code to make trapdoors work better (@DogooFalchion)
-* AllowCutTilesAndBreakables config option now correctly allows flowers/vines/herbs to be cut in regions without breaking walls (@WhiteXZ)
-* REST: `/v3/players/read` now includes a `muted` field (@WhiteXZ)
+* AllowCutTilesAndBreakables config option now correctly allows flowers/vines/herbs to be cut in regions without breaking walls (@QuiCM)
+* REST: `/v3/players/read` now includes a `muted` field (@QuiCM)
 * REST: Token creation is now more secure (Thanks to @Plazmaz for reporting the issue!)
 * REST: Deprecated the RestRequestEvent. If you use this event, please let us know.
 * REST: ALL endpoints now have a base route (eg you can use `/server/motd` instead of `/v3/server/motd`). These base routes will never change, but will provide an `upgrade` field describing any newer routes
@@ -518,34 +518,34 @@ Please note that the permissions previously tied to the removed commands are als
 * Fixed HealOtherPlayer packet exploit (@Simon311).
 * Added associated config option for HealOtherPlayer exploit prevention (@Simon311).
 * Added `/accountinfo` command to get account information for a given TShock account (@Simon311).
-* Removed TShock color parsing from MOTDs (@WhiteXZ).
+* Removed TShock color parsing from MOTDs (@QuiCM).
 * Fixed butterfly statues spawning catchable butterflies (@DogooFalchion).
 * Implemented some missing balance changes lost in prior version patches (@DogooFalchion).
 * Added alias for server shutdown command: stop (@nicatronTg).
 * Removed the old REST model. This includes the following endpoints:
  * `/status`
  * `/v2/players/read`
- * `/v2/server/rawcmd` (@WhiteXZ).
+ * `/v2/server/rawcmd` (@QuiCM).
 * Fixed `/user group` always giving an unhelpful error messaging telling you to check the console, even if we knew exactly why it failed (@nicatronTg).
 * Removed _all obsolete methods in TShock marked obsolete prior to this version (all of them)_ (@nicatronTg).
 * Fixed issue where registration + login would fail because KnownIps had 0 items and .Last() doesn't work on collections with 0 items (@DogooFalchion, @nicatronTg, @Simon311).
 * Added `/uploadssc [player]` which allows someone to upload SSC data for [player] and store it on the server. Adds `tshock.ssc.upload` and `tshock.ssc.upload.others` permission nodes to match (@DogooFalchion).
 * Added hardened stone to the whitelist of tiles editable by players (@DogooFalchion).
-* Added conversion system to send convert old MOTD format into smart text, while preserving initial line starting values to keep byte optimization for background colors Thanks to (@WhiteXZ, @Simon311, and especially @DogooFalchion) for the hard work on this issue.
+* Added conversion system to send convert old MOTD format into smart text, while preserving initial line starting values to keep byte optimization for background colors Thanks to (@QuiCM, @Simon311, and especially @DogooFalchion) for the hard work on this issue.
 
 ## TShock 4.3.20
 * Security improvement: The auth system is now automatically disabled if a superadmin exists in the database (@Enerdy).
 * Removed the `auth-verify` command since `auth` now serves its purpose when necessary (@Enerdy).
 * Security: `/"` exploit can no longer break chat mute filters (@Simon311).
 * Fixed an issue where sometimes players could connect briefly during server shutdown, leading to errors (@Simon311).
-* Fixed wyverns despawning & not behaving like normal (@WhiteXZ).
-* Fixed major security issue where InvokeClientConnect could be exploited to do terrible, terrible things (@Simon311, @nicatronTg, @popstarfreas, @ProfessorXZ, @WhiteXZ).
+* Fixed wyverns despawning & not behaving like normal (@QuiCM).
+* Fixed major security issue where InvokeClientConnect could be exploited to do terrible, terrible things (@Simon311, @nicatronTg, @popstarfreas, @ProfessorXZ, @QuiCM).
 
 ## TShock 4.3.19
 * Compatibility with Terraria 1.3.3.3 (@Simon311)
 * API: Version tick 1.25
-* API: Resolved some issues with the ItemForceIntoChest hook (@WhiteXZ, @Patrikkk)
-* API: Resolved some shonky code that caused Vitamins and other Ankh Shield related items to drop at strange rates or not at all (@ProfessorXZ, @WhiteXZ, @nicatronTg)
+* API: Resolved some issues with the ItemForceIntoChest hook (@QuiCM, @Patrikkk)
+* API: Resolved some shonky code that caused Vitamins and other Ankh Shield related items to drop at strange rates or not at all (@ProfessorXZ, @QuiCM, @nicatronTg)
 * Fixed magical ice blocks not working correctly (@ProfessorXZ)
 
 ## TShock 4.3.18
@@ -553,7 +553,7 @@ Please note that the permissions previously tied to the removed commands are als
 * Compatibility with Terraria 1.3.3.2
 * API: Version tick 1.24
 * API: Fixed chat line breaks when using chat tags and long strings of text (@ProfessorXZ)
-* API: Added ItemForceIntoChest hook (@WhiteXZ)
+* API: Added ItemForceIntoChest hook (@QuiCM)
 * API: Included the player's registration date in REST's players/read endpoints (@ProfessorXZ)
 * The setdungeon command correctly uses tshock.world.setdungeon as its permission (@OnsenManju)
 * Fixed clients being able to "Catch" and remove NPCs (@ProfessorXZ)
@@ -574,19 +574,19 @@ Please note that the permissions previously tied to the removed commands are als
 * Players can no longer bypass tile checks by using the Tile packet (@ProfessorXZ)
 * Fixed a bug where players couldn't hammer a Junction Box without "allowclientsideworldedit" permission (@Patrikkk)
 * Fixed the client's UI not being draw when setting wind speed to abnormal values (@ProfessorXZ)
-* Added a command to start and stop sandstorms (@WhiteXZ)
+* Added a command to start and stop sandstorms (@QuiCM)
 
 ## TShock 4.3.17
 
 * Compatibility with Terraria 1.3.2.1
-* Updated superadmin behaviour to conform to expected behaviour (@WhiteXZ, @Patrikk)
-* Fixed a crash involving teleporters and dressers (@WhiteXZ)
+* Updated superadmin behaviour to conform to expected behaviour (@QuiCM, @Patrikk)
+* Fixed a crash involving teleporters and dressers (@QuiCM)
 * Fixed pressure plates (@Enerdy, @Patrikk)
 * Fixed a deadlock in wiring (@Wolfje)
 * Fixed a crash in wiring (@Patrikk)
 * Improved network syncing on client joins (@Patrikk)
 * The Presserator can now place actuators (@ProfessorXZ)
-* Resolved a region error when removing unlisted users from regions (@WhiteXZ)
+* Resolved a region error when removing unlisted users from regions (@QuiCM)
 * Added a `SetDungeon` command to set the dungeon position (@webmilio)
 * The currently running world name is now part of the server application's title (@webmilio)
 * Gem locks can now be region protected (@mistzzt)
@@ -610,23 +610,23 @@ Please note that the permissions previously tied to the removed commands are als
 
 * Fixed an issue preventing TShock from starting on certain mono versions (@Wolfje)
 * Fixed a deadlock in Wiring (@Wolfje)
-* Fixed character styles/gender not being saved properly on first login while SSC is on (@WhiteXZ)
+* Fixed character styles/gender not being saved properly on first login while SSC is on (@QuiCM)
 * Added a PlayerPermission hook fired whenever a permission check involving said player occurs (when the new TSPlayer.HasPermission method is called) (@Enerdy)
-* Resolved an issue where martian invasions and eclipses would have empty messages if AnonymousBossInvasions was set to true (@WhiteXZ)
-* Added an optional `slime` parameter to the `rain` command, allowing slime rain to be started and stopped. New syntax is `rain [slime] <start/stop>` (@WhiteXZ)
+* Resolved an issue where martian invasions and eclipses would have empty messages if AnonymousBossInvasions was set to true (@QuiCM)
+* Added an optional `slime` parameter to the `rain` command, allowing slime rain to be started and stopped. New syntax is `rain [slime] <start/stop>` (@QuiCM)
 * Fixed performance issues due to concurrent dictionary access in TSPlayer (@CoderCow)
-* Added an ID property to Regions (@WhiteXZ)
-* Fixed an issue where region sizes were calculated incorrectly (@WhiteXZ)
+* Added an ID property to Regions (@QuiCM)
+* Fixed an issue where region sizes were calculated incorrectly (@QuiCM)
 * Fixed a bug in RegionManager preventing regions adding correctly (@pink_panther)
-* Fixed another bug in RegionManager preventing regions adding correctly (@WhiteXZ)
+* Fixed another bug in RegionManager preventing regions adding correctly (@QuiCM)
 * Fixed a routing issue with the `/v2/token/create` REST endpoint
 * Removed the `/token/create` REST endpoint. `/v2/token/create` should be used instead.
 
 ## TShock 4.3.12
 
-* Fixed issues with TSPlayer.SetTeam not working (@WhiteXZ)
-* Fixed /butcher not killing bosses in expert difficulty (@WhiteXZ)
-* API: Deprecated PacketBufferer (now obviated by SendQ) (@WhiteXZ)
+* Fixed issues with TSPlayer.SetTeam not working (@QuiCM)
+* Fixed /butcher not killing bosses in expert difficulty (@QuiCM)
+* API: Deprecated PacketBufferer (now obviated by SendQ) (@QuiCM)
 * API: Building on Windows no longer breaks traps (@Wolfje)
 * Fixed bombs, dynamite, and sticky bombs (@Wolfje)
 * Removed spammy messages from OnSecondUpdate that confused some server owners (@Wolfje)
@@ -658,17 +658,17 @@ Other notable changes include:
 * Fixed an issue preventing some players from joining when the world is saving (@Wolfje)
 * Fixed an issue adding a ban on a player who has previously been banned (@Wolfje)
 * Fixed /invade martian (@Wolfje)
-* Fixed target dummies not working properly (@WhiteXZ)
-* Added a config option (DisableSecondUpdateLogs) to prevent log spam from OnSecondUpdate() (@WhiteXZ)
+* Fixed target dummies not working properly (@QuiCM)
+* Added a config option (DisableSecondUpdateLogs) to prevent log spam from OnSecondUpdate() (@QuiCM)
 * Added RESTful API login rate limiting (@George)
 * Added config options (MaximumRequestsPerInterval, RequestBucketDecreaseIntervalMinutes, LimitOnlyFailedLoginRequests) for rate limiting (@George)
-* **DEPRECATION**: Deprecated Disable(string, bool) and added Disable(string, DisableFlags). Please update your plugins accordingly (@WhiteXZ)
+* **DEPRECATION**: Deprecated Disable(string, bool) and added Disable(string, DisableFlags). Please update your plugins accordingly (@QuiCM)
 * Fixed Halloween and Christmas events not working properly (@TomyLobo)
-* Fixed the demon heart's extra accessory slot not working correctly in SSC (@WhiteXZ)
+* Fixed the demon heart's extra accessory slot not working correctly in SSC (@QuiCM)
 * Fixed gender-changing potions not working correctly in SSC (@hastinbe)
 * Fixed IP bans not working correctly (@hastinbe)
-* Fixed /reload not using the correct permission (@WhiteXZ)
-* Fixed TSPlayer.ActiveChest not being tracked correctly resulting in item dupes while disabled (@WhiteXZ)
+* Fixed /reload not using the correct permission (@QuiCM)
+* Fixed TSPlayer.ActiveChest not being tracked correctly resulting in item dupes while disabled (@QuiCM)
 * /reload now reloads tile and projectile bans
 
 ## TShock 4.3.8
@@ -696,8 +696,8 @@ Alternatively, if you do not want to report the crash, just delete the file.
 
 * Auth system kicks players if system is disabled. (@nicatronTg)
 * Fixed /login permitting multiple logins without a logout in between. (@nicatronTg)
-* Allow[Hallow/Corruption/Crimson]Creep in config now work. (@WhiteXZ)
-* API: Treasure bags are now named properly. (@WhiteXZ)
+* Allow[Hallow/Corruption/Crimson]Creep in config now work. (@QuiCM)
+* API: Treasure bags are now named properly. (@QuiCM)
 * API: Clients no longer close on disconnect. (@Wolfje)
 * API: Add server broadcast hook. (@Patrikk)
 * API: Fixed pressure plate hook triggering multiple times. (@Patrikk)
@@ -706,17 +706,17 @@ Alternatively, if you do not want to report the crash, just delete the file.
 
 ## TShock 4.3.6
 
-* API: NPCs shoot the right way (@WhiteXZ)
+* API: NPCs shoot the right way (@QuiCM)
 * API: The server config file works correctly with priority and port (@Patrikkk)
 * API: Removed support for favorites and removed JSON dependencies. (@Enerdy)
 * API: Removed support for clouds. (@Enerdy)
-* API: Fixed a whole lot of bugs with wiring, and in general re-wrote some core bits that were bugged. (@WhiteXZ)
+* API: Fixed a whole lot of bugs with wiring, and in general re-wrote some core bits that were bugged. (@QuiCM)
 * API: Fixed projectile AI bugs. (@AndrioCelos)
 * API: Fixed world saving problems. (WhiteXZ)
-* API: Fixed server not accepting more connections once max slots was filled. (@WhiteXZ)
+* API: Fixed server not accepting more connections once max slots was filled. (@QuiCM)
 * API: Removed startup parameters and moved them to TShock. (@Cleant)
 * API: Item.SetDefaults() no longer kills some tools. (@Enerdy)
-* API: Restored chat bubbles. (@WhiteXZ)
+* API: Restored chat bubbles. (@QuiCM)
 * API: Updated to 1.3.0.6. (@Enerdy & @Patrikkk)
 * API: Lots and I mean lots of network improvements in the SendQ department. (@tylerjwatson)
 * API: Added NpcLootDrop and DropBossBag hooks. (@Patrikkk)
@@ -740,20 +740,20 @@ Alternatively, if you do not want to report the crash, just delete the file.
 * API: API Version Tick to 1.20.
 * The config option disabling the DCU has been deprecated and will be removed in a future release. (@nicatronTg)
 * Fixed bubble tile triggering noclip checks. (@Enerdy)
-* Updated projectile handling in GetDataHandlers. (@WhiteXZ)
-* Fixed issue #992. (@WhiteXZ)
-* Teleport handler now handles wormholes. (@WhiteXZ)
-* Fixed tall gates and trap doors (issue #998). (@WhiteXZ)
-* Added monoliths to orientable tiles (issue #999). (@WhiteXZ)
-* Fixed vortex stealth armor (issue #964). (@WhiteXZ)
-* Added moon lord to spawn boss. (@WhiteXZ)
+* Updated projectile handling in GetDataHandlers. (@QuiCM)
+* Fixed issue #992. (@QuiCM)
+* Teleport handler now handles wormholes. (@QuiCM)
+* Fixed tall gates and trap doors (issue #998). (@QuiCM)
+* Added monoliths to orientable tiles (issue #999). (@QuiCM)
+* Fixed vortex stealth armor (issue #964). (@QuiCM)
+* Added moon lord to spawn boss. (@QuiCM)
 * Fixed serverpassword syntax error error message. (@JordyMoos)
-* Fixed issue #1019. (@WhiteXZ)
+* Fixed issue #1019. (@QuiCM)
 * Fix: Region protection prevents placement of objects. (@Patrikkk)
 * Moved all startup parameters to TShock. (@Cleant)
 * Fix: Target dummies are no longer butchered. (@Denway)
 * Added projectile 465 to the ignore list, which fixes some other issues. (@Enerdy)
-* Fix: Logging out is now safe with SSC (/logout) (issue #1037). (@WhiteXZ)
+* Fix: Logging out is now safe with SSC (/logout) (issue #1037). (@QuiCM)
 * API/TShock: Removed -world parameter from TShock, put it back in the API. (@tylerjwatson)
 
 ## TShock 4.3.5
@@ -764,34 +764,34 @@ Alternatively, if you do not want to report the crash, just delete the file.
 
 ## TShock 4.3.4
 
-* Fix invasion progress messages (@WhiteXZ)
+* Fix invasion progress messages (@QuiCM)
 * Completely rewrite SendQ to have less deadlocks (@tylerjwatson)
 
 ## TShock 4.3.3
 
 * Fix dihydrogen monoxide (@tylerjwatson)
-* Whitelist another boss projectile (@Patrikkk, @WhiteXZ)
+* Whitelist another boss projectile (@Patrikkk, @QuiCM)
 
 ## TShock 4.3.2
 
-* Fixed the issue where using the Super Absorbent Sponge would disable users (@WhiteXZ)
-* Fixed an issue in NetGetData where e.Length - 1 would be -1 (@WhiteXZ)
+* Fixed the issue where using the Super Absorbent Sponge would disable users (@QuiCM)
+* Fixed an issue in NetGetData where e.Length - 1 would be -1 (@QuiCM)
 * Fixed /who -i and /userinfo (@Enerdy)
 * API: OnRegionEntered hook now returns the region entered (@Patrikkk)
 * Support for Terraria 1.3.0.4 (@nicatronTg)
 * Fixed dressers being unbreakable. (@nicatronTg)
-* Fixed wall placement mechanics (@nicatronTg, @Ijwu, @WhiteXZ)
+* Fixed wall placement mechanics (@nicatronTg, @Ijwu, @QuiCM)
 * Fixed Moon Lord projectiles disabling players (@k0rd, @nicatronTg)
 * Fixed several potential crashes in server (@Patrikkk)
-* Fixed -autocreate command line argument (@WhiteXZ, @nicatronTg)
-* Added more world data to world load menu (@WhiteXZ)
+* Fixed -autocreate command line argument (@QuiCM, @nicatronTg)
+* Added more world data to world load menu (@QuiCM)
 * Moved server password to TShock config (@Enerdy)
 * Fixed world delete in server (@benjiro)
-* Fixed disappearing NPCs (@WhiteXZ)
+* Fixed disappearing NPCs (@QuiCM)
 * Added much more performant code, SendQ, to server module. Reduces downstream network overhead by at least 40% (@tylerjwatson)
 * API: Updated TSPlayer.Disable to use new buffs (@Enerdy)
 * Updated default max damage & projectile damage to 1,175 (based on 625 people)
-* Fixed support for SSC (@WhiteXZ)
+* Fixed support for SSC (@QuiCM)
 
 ## TShock 4.3.1
 
@@ -802,9 +802,9 @@ Alternatively, if you do not want to report the crash, just delete the file.
 * Fixed projectiles 435-438 (martian invasion) freezing everyone under certain conditions. (@Enerdy)
 * DisableTombstones now works properly with the new golden gravestones. (@Enerdy)
 * REST module now properly catches exceptions during Start(). (@Patrikkk)
-* Added /expert command to toggle expert mode. (@WhiteXZ)
+* Added /expert command to toggle expert mode. (@QuiCM)
 * Fixed pirate invasions. (@patrik)
-* Fixed worldinfo packet. (@WhiteXZ)
+* Fixed worldinfo packet. (@QuiCM)
 * Fixed server passwords. (@Enerdy)
 
 ## TShock 4.3.0.0
@@ -813,10 +813,10 @@ Alternatively, if you do not want to report the crash, just delete the file.
 * Updated prebuilts (SQLite, JSON, MySQL) to latest versions. (@nicatronTg)
 * Added a minimum password length to prevent blank passwords. (@nicatronTg)
 * Modified item ban checks to provide which item is disabling a player in the logs. (@Enerdy)
-* API: Modified TSPlayer to store a user, and deprecated calls to TSPlayer.User.ID. (@WhiteXZ)
+* API: Modified TSPlayer to store a user, and deprecated calls to TSPlayer.User.ID. (@QuiCM)
 * Modified chat color specs in config file to be int arrays rather than floats. (@nicatronTg)
 * Modified verbiage for ```/auth``` and ```/auth-verify``` to make it clearer how they operate. (@nicatronTg)
-* API: Added fuzzy name searching for users. (@WhiteXZ)
+* API: Added fuzzy name searching for users. (@QuiCM)
 * API: Fixed ```OnPlayerLogout``` not being fired when a player disconnects. (@nicatronTg)
 * API: Deprecated ```ValidString``` and ```SanitizeString``` methods in Utils. (@nicatronTg)
 * Added BCrypt password hashing and related systems for it. BCrypt replaces the old system using non-password hashing algorithms for storing passwords. It breaks implementations of the login code that were manually recreated, but is otherwise seamless in transition. (@nicatronTg)
