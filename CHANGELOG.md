@@ -15,6 +15,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 ## Upcoming changes
 * Improved the `/grow` command to reduce code duplication, use `TileID` constants for less ambiguous types. (@drunderscore)
+* Fixed item dupe via /logout & NPC. (@Terrarxxn)
 
 ## TShock 4.5.13
 * Added hook `GetDataHandlers.OnReleaseNpc` to handling ReleaseNPC packet and a bouncer to stops unregistered and logged out players on SSC servers from releasing critters NPC. The bouncer has additional filter to stops players who tried to release different critter using crafted packet, e.g. using bunny item to release golden bunny. (@tru321)
@@ -27,7 +28,6 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 ## TShock 4.5.12
 * Fixed the ability to spawn Zenith projectile with non-original items. (@AgaSpace)
-* Fixed item dupe via /logout & NPC. (@Terrarxxn)
 * Added hook `GetDataHandlers.OnNpcTalk` for NpcTalk and a handler for it that stops unregistered and logged out players from interacting with NPCs, preventing them from smuggling or duplicating items via NPC item slots. (@tru321)
 * Fixed the ability to create custom messages with your death (or the death of another player) (@AgaSpace)
 * Added the `OnSignRead` handler in `GetDataHandler`, and added the `SignRead` event. Added check to ensure the sign being read is within world bounds `(x >= 0 && y >= 0 && x < Main.maxTilesX && y < Main.maxTilesY)`. (@drunderscore)
