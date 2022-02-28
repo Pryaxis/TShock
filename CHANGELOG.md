@@ -13,7 +13,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change.
 
 ## Upcoming changes
-* World peace
+* Added preliminary support for Terraria 1.4.3.5. (@SignatureBeef, @hakusaro)
 
 ## TShock 4.5.14
 * Improved the `/grow` command to reduce code duplication, use `TileID` constants for less ambiguous types. (@drunderscore)
