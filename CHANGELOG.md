@@ -11,7 +11,16 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * Do not insert tabs into this file, under any circumstances, ever.
   * Do not forget to sign every line you change with your name. (@hakusaro)
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change.
+
 ## Upcoming changes
+* World peace
+
+## TShock 4.5.14
+* Improved the `/grow` command to reduce code duplication, use `TileID` constants for less ambiguous types. (@drunderscore)
+* Fixed item dupe via /logout & NPC. (@Terrarxxn)
+* Added preliminary support for Terraria 1.4.3.4. Note that this has the side-effect of adding `IEntitySource` as the first parameter to `Item.NewItem` and `NPC.NewNPC`, and in `TSAPI`, `NpcLootDropEventArgs` passes `IEntitySource` as `Source`. If you're updating a plugin, you can either make something that implements with `IEntitySource` or just use `new EntitySource_DebugCommand()` [like TShock does](https://github.com/Pryaxis/TShock/commit/1b96ed8992110c5bbcc2ef952cc98459ea194dee). (@SignatureBeef, @Patrikkk, @hakusaro)
+
+## TShock 4.5.13
 * Added hook `GetDataHandlers.OnReleaseNpc` to handling ReleaseNPC packet and a bouncer to stops unregistered and logged out players on SSC servers from releasing critters NPC. The bouncer has additional filter to stops players who tried to release different critter using crafted packet, e.g. using bunny item to release golden bunny. (@tru321)
 * Added filter in `GetDataHandlers.HandleCatchNpc` that stops unregistered and logged out players on SSC servers to catch critters. (@tru321)
 * Fixed rejection check inside of `HandlePaintTile` to account for the Paint Sprayer (or Architect Gizmo Pack) being inside your inventory, rather than on an accessory slot. (@drunderscore)

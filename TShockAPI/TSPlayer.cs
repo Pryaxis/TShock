@@ -1378,7 +1378,7 @@ namespace TShockAPI
 		/// <param name="prefix">The item prefix.</param>
 		public virtual void GiveItem(int type, int stack, int prefix = 0)
 		{
-			int itemIndex = Item.NewItem((int)X, (int)Y, TPlayer.width, TPlayer.height, type, stack, true, prefix, true);
+			int itemIndex = Item.NewItem(new EntitySource_DebugCommand(), (int)X, (int)Y, TPlayer.width, TPlayer.height, type, stack, true, prefix, true);
 			SendData(PacketTypes.ItemDrop, "", itemIndex);
 		}
 
