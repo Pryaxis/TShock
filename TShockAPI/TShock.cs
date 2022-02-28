@@ -254,7 +254,7 @@ namespace TShockAPI
 			OTAPI.Hooks.NetMessage.PlayerAnnounce += (sender, args) =>
 			{
 				//TShock handles this
-				args.Result = OTAPI.HookResult.Cancel;
+				args.Result = 0;
 			};
 			// if sqlite.interop cannot be found, try and search the runtimes folder. this usually happens when debugging tsapi
 			// since it does not have the dependency installed directly
