@@ -13,7 +13,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change.
 
 ## Upcoming changes (TShock 5.0.0)
-* Reduced load/save console spam
+* Reduced load/save console spam. (@SignatureBeef, @YehnBeep)
 
 ## Upcoming changes
 
