@@ -46,6 +46,7 @@ using TShockAPI.Localization;
 using TShockAPI.Configuration;
 using Terraria.GameContent.Creative;
 using System.Runtime.InteropServices;
+using TShockAPI.Modules;
 
 namespace TShockAPI
 {
@@ -148,6 +149,8 @@ namespace TShockAPI
 		/// Called after TShock is initialized. Useful for plugins that needs hooks before tshock but also depend on tshock being loaded.
 		/// </summary>
 		public static event Action Initialized;
+
+		public static ModuleManager ModuleManager { get; } = new ModuleManager();
 
 		/// <summary>Version - The version required by the TerrariaAPI to be passed back for checking &amp; loading the plugin.</summary>
 		/// <value>value - The version number specified in the Assembly, based on the VersionNum variable set in this class.</value>
@@ -421,6 +424,8 @@ namespace TShockAPI
 
 				EnglishLanguage.Initialize();
 
+				ModuleManager.Initialise(new object[] { this });
+
 				if (Config.Settings.RestApiEnabled)
 					RestApi.Start();
 
@@ -462,6 +467,8 @@ namespace TShockAPI
 					Geo.Dispose();
 				}
 				SaveManager.Instance.Dispose();
+
+				ModuleManager.Dispose();
 
 				ServerApi.Hooks.GamePostInitialize.Deregister(this, OnPostInit);
 				ServerApi.Hooks.GameUpdate.Deregister(this, OnUpdate);
