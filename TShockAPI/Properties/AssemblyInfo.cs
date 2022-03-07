@@ -28,7 +28,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Re-Logic, Pryaxis & TShock Contributors")]
 [assembly: AssemblyProduct("TShockAPI")]
-[assembly: AssemblyCopyright("Copyright © Re-Logic, Pryaxis & TShock Contributors 2011-2021")]
+[assembly: AssemblyCopyright("Copyright © Re-Logic, Pryaxis & TShock Contributors 2011-2022")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -53,5 +53,5 @@ using System.Runtime.InteropServices;
 // Also, be sure to release on github with the exact assembly version tag as below
 // so that the update manager works correctly (via the Github releases api and mimic)
 
-[assembly: AssemblyVersion("4.5.15")]
-[assembly: AssemblyFileVersion("4.5.15")]
+[assembly: AssemblyVersion("4.5.16")]
+[assembly: AssemblyFileVersion("4.5.16")]
