@@ -521,7 +521,7 @@ namespace TShockAPI
 			{
 				if (player.IP == ip)
 				{
-					player.Kick("You logged in from the same IP.", true, true, "Server", true);
+					player.Kick("You logged in from the same IP.", true, true, null, true);
 					args.Handled = true;
 					return;
 				}
@@ -530,7 +530,7 @@ namespace TShockAPI
 					var ips = JsonConvert.DeserializeObject<List<string>>(player.Account.KnownIps);
 					if (ips.Contains(ip))
 					{
-						player.Kick("You logged in from another location.", true, true, "Server", true);
+						player.Kick("You logged in from another location.", true, true, null, true);
 						args.Handled = true;
 					}
 				}
