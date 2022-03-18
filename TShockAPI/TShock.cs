@@ -521,7 +521,7 @@ namespace TShockAPI
 			{
 				if (player.IP == ip)
 				{
-					Netplay.Clients[player.Index].PendingTermination = true;
+					player.Kick("You logged in from the same IP.", true, true, null, true);
 					args.Handled = true;
 					return;
 				}
@@ -530,7 +530,7 @@ namespace TShockAPI
 					var ips = JsonConvert.DeserializeObject<List<string>>(player.Account.KnownIps);
 					if (ips.Contains(ip))
 					{
-						Netplay.Clients[player.Index].PendingTermination = true;
+						player.Kick("You logged in from another location.", true, true, null, true);
 						args.Handled = true;
 					}
 				}
@@ -1279,7 +1279,7 @@ namespace TShockAPI
 
 			//Reset toggle creative powers to default, preventing potential power transfer & desync on another user occupying this slot later.
 
-			foreach(var kv in CreativePowerManager.Instance._powersById)
+			foreach (var kv in CreativePowerManager.Instance._powersById)
 			{
 				var power = kv.Value;
 
