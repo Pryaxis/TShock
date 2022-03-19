@@ -3814,6 +3814,13 @@ namespace TShockAPI
 			switch (type)
 			{
 				case 0: // Teleportation Potion
+					if (args.Player.ItemInHand.type != ItemID.TeleportationPotion &&
+					    args.Player.SelectedItem.type != ItemID.TeleportationPotion)
+					{
+						TShock.Log.ConsoleDebug("GetDataHandlers / HandleTeleportationPotion rejected not holding the correct item {0} {1}", args.Player.Name, type);
+						return true;
+					}
+
 					if (!args.Player.HasPermission(Permissions.tppotion))
 					{
 						Fail("Teleportation Potions");
@@ -3821,6 +3828,13 @@ namespace TShockAPI
 					}
 					break;
 				case 1: // Magic Conch
+					if (args.Player.ItemInHand.type != ItemID.MagicConch &&
+					    args.Player.SelectedItem.type != ItemID.MagicConch)
+					{
+						TShock.Log.ConsoleDebug("GetDataHandlers / HandleTeleportationPotion rejected not holding the correct item {0} {1}", args.Player.Name, type);
+						return true;
+					}
+
 					if (!args.Player.HasPermission(Permissions.magicconch))
 					{
 						Fail("the Magic Conch");
@@ -3828,6 +3842,13 @@ namespace TShockAPI
 					}
 					break;
 				case 2: // Demon Conch
+					if (args.Player.ItemInHand.type != ItemID.DemonConch &&
+					    args.Player.SelectedItem.type != ItemID.DemonConch)
+					{
+						TShock.Log.ConsoleDebug("GetDataHandlers / HandleTeleportationPotion rejected not holding the correct item {0} {1}", args.Player.Name, type);
+						return true;
+					}
+
 					if (!args.Player.HasPermission(Permissions.demonconch))
 					{
 						Fail("the Demon Conch");
