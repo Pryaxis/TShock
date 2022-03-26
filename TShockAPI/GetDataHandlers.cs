@@ -3466,8 +3466,7 @@ namespace TShockAPI
 			if (OnPlayerBuff(args.Player, args.Data, id, type, time))
 				return true;
 
-			args.Player.SendData(PacketTypes.PlayerAddBuff, "", id);
-			return true;
+			return false;
 		}
 
 		private static bool HandleUpdateNPCHome(GetDataHandlerArgs args)
