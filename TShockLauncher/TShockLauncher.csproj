@@ -16,15 +16,15 @@
 		<ProjectReference Include="..\TerrariaServerAPI\TerrariaServerAPI\TerrariaServerAPI.csproj" ExcludeFromSingleFile="true" />
 		<ProjectReference Include="..\TShockAPI\TShockAPI.csproj" ExcludeFromSingleFile="true" Condition="'$(PublishSingleFile)' == 'true'" />
 		<ProjectReference Include="..\TShockAPI\TShockAPI.csproj" ReferenceOutputAssembly="false" Condition="'$(PublishSingleFile)' != 'true'" />
-		<Reference Include="HttpServer" ExcludeFromSingleFile="true" >
+		<Reference Include="HttpServer" ExcludeFromSingleFile="true">
 			<HintPath>..\prebuilts\HttpServer.dll</HintPath>
 		</Reference>
 	</ItemGroup>
 
 	<ItemGroup>
 		<!-- match tshocks dependencies so that publishing outputs all files to ./bin -->
-		<PackageReference Include="BCrypt.Net-Next" Version="4.0.2" />
-		<PackageReference Include="MySql.Data" Version="8.0.27" />
+		<PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+		<PackageReference Include="MySql.Data" Version="8.0.28" />
 		<PackageReference Include="SQLite" Version="3.13.0" />
 		<PackageReference Include="System.Data.SQLite.Core" Version="1.0.115.5" />
 	</ItemGroup>
