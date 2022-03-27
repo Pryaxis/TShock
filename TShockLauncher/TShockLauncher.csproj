@@ -25,8 +25,7 @@
 		<!-- match tshocks dependencies so that publishing outputs all files to ./bin -->
 		<PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
 		<PackageReference Include="MySql.Data" Version="8.0.28" />
-		<PackageReference Include="SQLite" Version="3.13.0" />
-		<PackageReference Include="System.Data.SQLite.Core" Version="1.0.115.5" />
+		<PackageReference Include="Microsoft.Data.Sqlite" Version="6.0.3" />
 	</ItemGroup>
 	
 	<Target Name="MoveTShockDebug" AfterTargets="FinalCleanup;PostBuildEvent">
