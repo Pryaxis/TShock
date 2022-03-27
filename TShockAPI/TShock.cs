@@ -258,9 +258,6 @@ namespace TShockAPI
 				//TShock handles this
 				args.Result = OTAPI.Hooks.NetMessage.PlayerAnnounceResult.None;
 			};
-			// if sqlite.interop cannot be found, try and search the runtimes folder. this usually happens when debugging tsapi
-			// since it does not have the dependency installed directly
-			NativeLibrary.SetDllImportResolver(typeof(Microsoft.Data.Sqlite.SqliteConnection).Assembly, ResolveNativeDep);
 
 			Main.SettingsUnlock_WorldEvil = true;
 
