@@ -28,7 +28,6 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using MaxMind;
-using System.Data.SQLite;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using Rests;
@@ -259,9 +258,6 @@ namespace TShockAPI
 				//TShock handles this
 				args.Result = OTAPI.Hooks.NetMessage.PlayerAnnounceResult.None;
 			};
-			// if sqlite.interop cannot be found, try and search the runtimes folder. this usually happens when debugging tsapi
-			// since it does not have the dependency installed directly
-			NativeLibrary.SetDllImportResolver(typeof(SQLiteConnection).Assembly, ResolveNativeDep);
 
 			Main.SettingsUnlock_WorldEvil = true;
 
@@ -322,7 +318,7 @@ namespace TShockAPI
 				{
 					string sql = Path.Combine(SavePath, Config.Settings.SqliteDBPath);
 					Directory.CreateDirectory(Path.GetDirectoryName(sql));
-					DB = new SQLiteConnection(string.Format("Data Source={0},Version=3", sql));
+					DB = new Microsoft.Data.Sqlite.SqliteConnection(string.Format("Data Source={0}", sql));
 				}
 				else if (Config.Settings.StorageType.ToLower() == "mysql")
 				{
@@ -441,8 +437,16 @@ namespace TShockAPI
 			}
 			catch (Exception ex)
 			{
-				Log.ConsoleError("Fatal Startup Exception");
-				Log.ConsoleError(ex.ToString());
+				if (Log is not null)
+				{
+					Log.ConsoleError("Fatal Startup Exception");
+					Log.ConsoleError(ex.ToString());
+				}
+				else
+				{
+					Console.WriteLine("Fatal Startup Exception");
+					Console.WriteLine(ex.ToString());
+				}
 				Environment.Exit(1);
 			}
 		}

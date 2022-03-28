@@ -65,13 +65,13 @@ namespace TShockAPI.DB
 			try
 			{
 				db.Open();
-				using (var com = db.CreateCommand())
+				var com = db.CreateCommand(); // this will be disposed via the QueryResult instance
 				{
 					com.CommandText = query;
 					for (int i = 0; i < args.Length; i++)
 						com.AddParameter("@" + i, args[i]);
 
-					return new QueryResult(db, com.ExecuteReader());
+					return new QueryResult(db, com.ExecuteReader(), com);
 				}
 			}
 			catch (Exception ex)
@@ -117,13 +117,13 @@ namespace TShockAPI.DB
 		{
 			var db = olddb.CloneEx();
 			db.Open();
-			using (var com = db.CreateCommand())
+			var com = db.CreateCommand(); // this will be disposed via the QueryResult instance
 			{
 				com.CommandText = query;
 				foreach (var kv in values)
 					com.AddParameter("@" + kv.Key, kv.Value);
 
-				return new QueryResult(db, com.ExecuteReader());
+				return new QueryResult(db, com.ExecuteReader(), com);
 			}
 		}
 
@@ -274,11 +274,13 @@ namespace TShockAPI.DB
 	{
 		public IDbConnection Connection { get; protected set; }
 		public IDataReader Reader { get; protected set; }
+		public IDbCommand Command { get; protected set; }
 
-		public QueryResult(IDbConnection conn, IDataReader reader)
+		public QueryResult(IDbConnection conn, IDataReader reader, IDbCommand command)
 		{
 			Connection = conn;
 			Reader = reader;
+			Command = command;
 		}
 
 		~QueryResult()
@@ -300,6 +302,11 @@ namespace TShockAPI.DB
 				{
 					Reader.Dispose();
 					Reader = null;
+				}
+				if (Command != null)
+				{
+					Command.Dispose();
+					Command = null;
 				}
 				if (Connection != null)
 				{
