@@ -19,6 +19,13 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 
 ## Upcoming changes
 
+## TShock 4.5.17
+* Fixed duplicate characters (twins) after repeatedly logging in as the same character due to connection not being immediately closed during `NetHooks_NameCollision`. (@gohjoseph)
+* Fixed mobs not dropping picked up coins. (@gohjoseph)
+
+## TShock 4.5.16
+* Added preliminary support for Terraria 1.4.3.6. (@SignatureBeef, @hakusaro)
+
 ## TShock 4.5.15
 * Added preliminary support for Terraria 1.4.3.5. (@SignatureBeef, @hakusaro)
 

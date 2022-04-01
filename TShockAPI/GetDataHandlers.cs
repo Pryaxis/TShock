@@ -3957,7 +3957,7 @@ namespace TShockAPI
 				return true;
 			}
 
-			return true;
+			return false;
 		}
 
 		private static bool HandleKillPortal(GetDataHandlerArgs args)

@@ -59,7 +59,7 @@ namespace TShockAPI
 		/// <summary>VersionNum - The version number the TerrariaAPI will return back to the API. We just use the Assembly info.</summary>
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
 		/// <summary>VersionCodename - The version codename is displayed when the server starts. Inspired by software codenames conventions.</summary>
-		public static readonly string VersionCodename = "Zelenskyy";
+		public static readonly string VersionCodename = "Volodymyr Oleksandrovych Zelenskyy";
 
 		/// <summary>SavePath - This is the path TShock saves its data in. This path is relative to the TerrariaServer.exe (not in ServerPlugins).</summary>
 		public static string SavePath = "tshock";
@@ -582,7 +582,7 @@ namespace TShockAPI
 			{
 				if (player.IP == ip)
 				{
-					Netplay.Clients[player.Index].PendingTermination = true;
+					player.Kick("You logged in from the same IP.", true, true, null, true);
 					args.Handled = true;
 					return;
 				}
@@ -591,7 +591,7 @@ namespace TShockAPI
 					var ips = JsonConvert.DeserializeObject<List<string>>(player.Account.KnownIps);
 					if (ips.Contains(ip))
 					{
-						Netplay.Clients[player.Index].PendingTermination = true;
+						player.Kick("You logged in from another location.", true, true, null, true);
 						args.Handled = true;
 					}
 				}
@@ -1340,7 +1340,7 @@ namespace TShockAPI
 
 			//Reset toggle creative powers to default, preventing potential power transfer & desync on another user occupying this slot later.
 
-			foreach(var kv in CreativePowerManager.Instance._powersById)
+			foreach (var kv in CreativePowerManager.Instance._powersById)
 			{
 				var power = kv.Value;
 
