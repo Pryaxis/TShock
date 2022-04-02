@@ -386,7 +386,8 @@ namespace TShockAPI
 			}
 			catch (Exception ex)
 			{
-				Log.ConsoleError("Fatal Startup Exception");
+				Log.ConsoleError("TShock encountered a problem from which it cannot recover. The following message may help diagnose the problem.");
+				Log.ConsoleError("Until the problem is resolved, TShock will not be able to start (and will crash on startup).");
 				Log.ConsoleError(ex.ToString());
 				Environment.Exit(1);
 			}
