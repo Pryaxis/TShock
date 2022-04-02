@@ -380,8 +380,8 @@ namespace TShockAPI
 				Initialized?.Invoke();
 
 				Log.ConsoleInfo("Welcome to TShock for Terraria!");
-				Log.ConsoleInfo("TShock comes with no warranty & is free software.");
-				Log.ConsoleInfo("You can modify & distribute it under the terms of the GNU GPLv3.");
+				Log.ConsoleInfo("TShock is free, and comes with ABSOLUTELY NO WARRANTY.");
+				Log.ConsoleInfo("You can modify & distribute it under GPLv3 or later, see: https://www.gnu.org/licenses/.");
 
 			}
 			catch (Exception ex)
