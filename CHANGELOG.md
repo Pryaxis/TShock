@@ -16,6 +16,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Fixed `TSPlayer.GiveItem` not working if the player is in lava. (@gohjoseph)
 * Only allow using Teleportation Potions, Magic Conch, and Demon Conch whilst holding them. (@drunderscore)
 * Updated server startup language to be more clear when encountering a fatal startup error. Now, the server gives more context as to what happened so that there's a better chance of people being able to help themselves. (@hakusaro)
+* Added a new account hook that checks for changes in a player's group.
 
 ## TShock 4.5.17
 * Fixed duplicate characters (twins) after repeatedly logging in as the same character due to connection not being immediately closed during `NetHooks_NameCollision`. (@gohjoseph)
