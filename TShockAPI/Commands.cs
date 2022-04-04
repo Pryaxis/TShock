@@ -1143,7 +1143,7 @@ namespace TShockAPI
 
 				try
 				{
-					TShock.UserAccounts.SetUserGroup(account, args.Parameters[2]);
+					TShock.UserAccounts.SetUserGroup(args.Player.Account, account, args.Parameters[2]);
 					TShock.Log.ConsoleInfo(args.Player.Name + " changed account " + account.Name + " to group " + args.Parameters[2] + ".");
 					args.Player.SendSuccessMessage("Account " + account.Name + " has been changed to group " + args.Parameters[2] + "!");
 					

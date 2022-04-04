@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using TShockAPI.DB;
+using System.Linq;
 namespace TShockAPI.Hooks
 {
 	public class AccountDeleteEventArgs
@@ -36,6 +37,36 @@ namespace TShockAPI.Hooks
 		public AccountCreateEventArgs(UserAccount account)
 		{
 			this.Account = account;
+		}
+	}
+
+	public class AccountGroupChangeEventArgs
+	{
+		public bool Handled = false;
+
+		public UserAccount Author { get; private set; }
+		public UserAccount Account { get; private set; }
+
+		public Group OldGroup { get; private set; }
+		public Group NewGroup { get; set; }
+
+		public AccountGroupChangeEventArgs(UserAccount account, UserAccount author, Group oldGroup, Group newGroup)
+		{
+			this.Account = account;
+			this.Author = author;
+			this.OldGroup = oldGroup;
+			this.NewGroup = newGroup;
+		}
+
+		public TSPlayer FindAuthor()
+		{
+			for (int i = 0; i < TShock.Players.Length; i++)
+			{
+				var plr = TShock.Players[i];
+				if (plr.IsLoggedIn && plr.Account.ID == Author.ID)
+					return plr;
+			}
+			return null;
 		}
 	}
 
@@ -61,6 +92,18 @@ namespace TShockAPI.Hooks
 				return;
 
 			AccountDelete(new AccountDeleteEventArgs(u));
+		}
+
+		public delegate void AccountGroupChangeD(AccountGroupChangeEventArgs e);
+		public static event AccountGroupChangeD AccountGroupChange;
+
+		public static bool OnAccountGroupChange(UserAccount account, UserAccount author, Group oldGroup, ref Group newGroup)
+		{
+			AccountGroupChangeEventArgs args = new AccountGroupChangeEventArgs(account, author, oldGroup, newGroup);
+			AccountGroupChange(args);
+			newGroup = args.NewGroup;
+
+			return args.Handled;
 		}
 	}
 }

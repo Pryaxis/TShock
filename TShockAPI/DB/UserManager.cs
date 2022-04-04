@@ -168,7 +168,39 @@ namespace TShockAPI.DB
 
 			if (_database.Query("UPDATE Users SET UserGroup = @0 WHERE Username = @1;", group, account.Name) == 0)
 				throw new UserAccountNotExistException(account.Name);
-			
+
+			try
+			{
+				// Update player group reference for any logged in player
+				foreach (var player in TShock.Players.Where(p => p != null && p.Account != null && p.Account.Name == account.Name))
+				{
+					player.Group = grp;
+				}
+			}
+			catch (Exception ex)
+			{
+				throw new UserAccountManagerException("SetUserGroup SQL returned an error", ex);
+			}
+		}
+
+		/// <summary>
+		/// Sets the group for a given username
+		/// </summary>
+		/// <param name="account">The user account</param>
+		/// <param name="author">A player who replaced another player's group.</param>
+		/// <param name="group">The user account group to be set</param>
+		public void SetUserGroup(UserAccount author, UserAccount account, string group)
+		{
+			Group grp = TShock.Groups.GetGroupByName(group);
+			if (null == grp)
+				throw new GroupNotExistsException(group);
+
+			if (Hooks.AccountHooks.OnAccountGroupChange(author, account, TShock.Groups.GetGroupByName(account.Group), ref grp))
+				throw new Exception();
+
+			if (_database.Query("UPDATE Users SET UserGroup = @0 WHERE Username = @1;", group, account.Name) == 0)
+				throw new UserAccountNotExistException(account.Name);
+
 			try
 			{
 				// Update player group reference for any logged in player
