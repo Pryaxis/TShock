@@ -1858,14 +1858,48 @@ namespace TShockAPI
 				return;
 			}
 
-			// if released npc not from its item (from crafted packet)
-			// e.g. using bunny item to release golden bunny 
-			if (args.Player.TPlayer.lastVisualizedSelectedItem.makeNPC != type && args.Player.TPlayer.lastVisualizedSelectedItem.placeStyle != style)
+			void rejectForCritterNotReleasedFromItem()
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnReleaseNPC released different critter from {0}", args.Player.Name);
 				args.Player.Kick("Released critter was not from its item.", true);
 				args.Handled = true;
-				return;
+			}
+
+			// if released npc not from its item (from crafted packet)
+			// e.g. using bunny item to release golden bunny
+			if (args.Player.TPlayer.lastVisualizedSelectedItem.makeNPC != type || args.Player.TPlayer.lastVisualizedSelectedItem.placeStyle != style)
+			{
+				// If the critter is an Explosive Bunny, check if we've recently created an Explosive Bunny projectile.
+				// If we have, check if the critter we are trying to create is within range of the projectile
+				// If we have at least one of those, then this wasn't a crafted packet, but simply a delayed critter release from an
+				// Explosive Bunny projectile.
+				if (type == NPCID.ExplosiveBunny)
+				{
+					bool areAnyBunnyProjectilesInRange;
+
+					lock (args.Player.RecentlyCreatedProjectiles)
+					{
+						areAnyBunnyProjectilesInRange = args.Player.RecentlyCreatedProjectiles.Any(projectile =>
+						{
+							if (projectile.Type != ProjectileID.ExplosiveBunny)
+								return false;
+
+							var projectileInstance = Main.projectile[projectile.Index];
+							return projectileInstance.active && projectileInstance.WithinRange(new Vector2(args.X, args.Y), 32.0f);
+						});
+					}
+
+					if (!areAnyBunnyProjectilesInRange)
+					{
+						rejectForCritterNotReleasedFromItem();
+						return;
+					}
+				}
+				else
+				{
+					rejectForCritterNotReleasedFromItem();
+					return;
+				}
 			}
 
 			if (args.Player.IsBouncerThrottled())
