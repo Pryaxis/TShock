@@ -1512,7 +1512,7 @@ namespace TShockAPI
 					}
 				}
 
-				if (TShock.Utils.TryParseTime(duration, out int seconds))
+				if (TShock.Utils.TryParseTime(duration, out ulong seconds))
 				{
 					expiration = DateTime.UtcNow.AddSeconds(seconds);
 				}
@@ -1880,7 +1880,7 @@ namespace TShockAPI
 
 			if (args.Parameters.Count > 2)
 			{
-				int time;
+				ulong time;
 				if (!TShock.Utils.TryParseTime(args.Parameters[2], out time))
 				{
 					args.Player.SendErrorMessage("Invalid time string! Proper format: _d_h_m_s, with at least one time specifier.");
@@ -1888,7 +1888,7 @@ namespace TShockAPI
 					return;
 				}
 
-				ply[0].tempGroupTimer = new System.Timers.Timer(time * 1000);
+				ply[0].tempGroupTimer = new System.Timers.Timer(time * 1000d);
 				ply[0].tempGroupTimer.Elapsed += ply[0].TempGroupTimerElapsed;
 				ply[0].tempGroupTimer.Start();
 			}
