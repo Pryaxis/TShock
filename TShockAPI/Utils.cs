@@ -574,7 +574,7 @@ namespace TShockAPI
 			var sb = new StringBuilder(3);
 			for (int i = 0; i < str.Length; i++)
 			{
-				if (Char.IsDigit(str[i]) || (str[i] == '-' || str[i] == '+' || str[i] == ' '))
+				if (char.IsDigit(str[i]) || str[i] == '-' || str[i] == '+' || str[i] == ' ')
 					sb.Append(str[i]);
 				else
 				{
@@ -625,7 +625,7 @@ namespace TShockAPI
 			var sb = new StringBuilder(3);
 			for (int i = 0; i < str.Length; i++)
 			{
-				if (char.IsDigit(str[i]) || (str[i] == '-' || str[i] == '+' || str[i] == ' '))
+				if (char.IsDigit(str[i]) || str[i] == '-' || str[i] == '+' || str[i] == ' ')
 					sb.Append(str[i]);
 				else
 				{
