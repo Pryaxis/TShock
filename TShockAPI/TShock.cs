@@ -768,6 +768,28 @@ namespace TShockAPI
 						}
 					})
 
+				.AddFlag("-worldevil", (value) =>
+				{
+
+					int worldEvil;
+					switch (value.ToLower())
+					{
+						case "random":
+							worldEvil = -1;
+							break;
+						case "corrupt":
+							worldEvil = 0;
+							break;
+						case "crimson":
+							worldEvil = 1;
+							break;
+						default:
+							throw new InvalidOperationException("Invalid value given for command line argument \"-worldevil\".");
+					}
+
+					ServerApi.LogWriter.PluginWriteLine(this, String.Format("New worlds will be generated with the {0} world evil type!", value), TraceLevel.Verbose);
+					WorldGen.WorldGenParam_Evil = worldEvil;
+				})
 
 				//Flags without arguments
 				.AddFlag("-logclear", () => LogClear = true)
