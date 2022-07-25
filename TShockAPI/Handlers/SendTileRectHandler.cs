@@ -145,14 +145,68 @@ namespace TShockAPI.Handlers
 						int objHeight = data.Height;
 						int offsetY = 0;
 
-						if (newTile.Type == TileID.TrapdoorClosed)
+						// Verify that the changes are actually valid conceptually
+						if (Main.tile[realX, realY].type == newTile.Type)
 						{
-							// Trapdoors can modify a 2x3 space. When it closes it will have leftover tiles either on top or bottom.
-							// If we don't update these tiles, the trapdoor gets confused and disappears.
-							// So we capture all 6 possible tiles and offset ourselves 1 tile above the closed trapdoor to capture the entire 2x3 area
-							objWidth = 2;
-							objHeight = 3;
-							offsetY = -1;
+							switch (newTile.Type)
+							{
+								// Some individual cases might still allow crashing exploits, as the actual framing is not being checked here
+								// Doing so requires hard-coding the individual valid framing values and is a lot of effort
+								case TileID.ProjectilePressurePad:
+								case TileID.WirePipe:
+								case TileID.Traps:
+								case TileID.Candles:
+								case TileID.PeaceCandle:
+								case TileID.WaterCandle:
+								case TileID.PlatinumCandle:
+								case TileID.Chairs:
+								case TileID.Bathtubs:
+								case TileID.Beds:
+								case TileID.Firework:
+								case TileID.WaterFountain:
+								case TileID.BloodMoonMonolith:
+								case TileID.VoidMonolith:
+								case TileID.LunarMonolith:
+								case TileID.MusicBoxes:
+								case TileID.ArrowSign:
+								case TileID.PaintedArrowSign:
+								case TileID.Cannon:
+								case TileID.Campfire:
+								case TileID.Plants:
+								case TileID.MinecartTrack:
+								case TileID.ChristmasTree:
+									{
+										// allowed changes
+									}
+									break;
+								default:
+									{
+										continue;
+									}
+							}
+						}
+						else
+						{
+							// Together with Flower Boots and Land Mine destruction, these are the only cases where a tile type is allowed to be modified
+							switch (newTile.Type)
+							{
+								case TileID.LogicSensor:
+								case TileID.FoodPlatter:
+								case TileID.WeaponsRack2:
+								case TileID.ItemFrame:
+								case TileID.HatRack:
+								case TileID.DisplayDoll:
+								case TileID.TeleportationPylon:
+								case TileID.TargetDummy:
+									{
+										// allowed placements
+									}
+									break;
+								default:
+									{
+										continue;
+									}
+							}
 						}
 
 						// Ensure the tile object fits inside the rect before processing it
@@ -249,7 +303,10 @@ namespace TShockAPI.Handlers
 				UpdateServerTileState(tile, newTile, TileDataType.Tile);
 			}
 
-			ProcessConversionSpreads(Main.tile[realX, realY], newTile);
+			if (rectWidth == 1 && rectLength == 1) // Conversion only sends a 1x1 rect
+			{
+				ProcessConversionSpreads(Main.tile[realX, realY], newTile);
+			}
 
 			// All other single tile updates should not be processed.
 		}
