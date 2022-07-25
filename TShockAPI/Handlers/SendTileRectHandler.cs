@@ -159,9 +159,6 @@ namespace TShockAPI.Handlers
 								case TileID.PeaceCandle:
 								case TileID.WaterCandle:
 								case TileID.PlatinumCandle:
-								case TileID.Chairs:
-								case TileID.Bathtubs:
-								case TileID.Beds:
 								case TileID.Firework:
 								case TileID.WaterFountain:
 								case TileID.BloodMoonMonolith:
