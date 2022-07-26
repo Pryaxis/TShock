@@ -232,7 +232,7 @@ namespace TShockAPI.Handlers
 				}
 			}
 		}
-
+		
 		/// <summary>
 		/// Processes a tile object consisting of multiple tiles from the tile rect packet
 		/// </summary>
@@ -290,12 +290,12 @@ namespace TShockAPI.Handlers
 
 			ITile tile = Main.tile[realX, realY];
 
-			if (tile.type == TileID.LandMine && !newTile.Active)
+			if (rectWidth == 1 && rectLength == 1 && tile.type == TileID.LandMine && !newTile.Active)
 			{
 				UpdateServerTileState(tile, newTile, TileDataType.Tile);
 			}
 
-			if (tile.type == TileID.WirePipe)
+			if (rectWidth == 1 && rectLength == 1 && tile.type == TileID.WirePipe)
 			{
 				UpdateServerTileState(tile, newTile, TileDataType.Tile);
 			}
@@ -500,15 +500,9 @@ namespace TShockAPI.Handlers
 				return true;
 			}
 
-			var rectSize = args.Width * args.Length;
-			if (rectSize > TShock.Config.Settings.TileRectangleSizeThreshold)
+			if (args.Width > 4 || args.Length > 4) // as of 1.4.3.6 this is the biggest size the client will send in any case
 			{
 				TShock.Log.ConsoleDebug("Bouncer / SendTileRect rejected from non-vanilla tilemod from {0}", args.Player.Name);
-				if (TShock.Config.Settings.KickOnTileRectangleSizeThresholdBroken)
-				{
-					args.Player.Kick("Unexpected tile threshold reached");
-				}
-
 				return true;
 			}
 
