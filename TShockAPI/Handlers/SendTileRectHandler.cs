@@ -331,6 +331,13 @@ namespace TShockAPI.Handlers
 				UpdateServerTileState(tile, newTile, TileDataType.Tile);
 			}
 
+			if (rectWidth == 1 && rectLength == 1 &&
+				(tile.type == TileID.Grass && newTile.Type == TileID.GolfGrass ||
+				tile.type == TileID.HallowedGrass && newTile.Type == TileID.GolfGrassHallowed))
+			{
+				UpdateServerTileState(tile, newTile, TileDataType.Tile);
+			}
+
 			if (rectWidth == 1 && rectLength == 1) // Conversion only sends a 1x1 rect
 			{
 				ProcessConversionSpreads(tile, newTile);
