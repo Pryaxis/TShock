@@ -36,12 +36,12 @@ jobs:
       - name: Produce build
         run: |
             cd TShockLauncher
-            dotnet publish -r ${{ matrix.arch }} -f net6.0 -c Release -p:PublishSingleFile=true --self-contained true
+            dotnet publish -r ${{ matrix.arch }} -f net6.0 -c Release -p:PublishSingleFile=true --self-contained false
 
       - name: Chmod scripts
         if: ${{ matrix.arch != 'win-x64' }}
         run: |
-            chmod +x TShockLauncher/bin/Release/net6.0/${{ matrix.arch }}/publish/TShock.sh
+            chmod +x TShockLauncher/bin/Release/net6.0/${{ matrix.arch }}/publish/TShock.Server
 
       # preserve file perms: https://github.com/actions/upload-artifact#maintaining-file-permissions-and-case-sensitive-files
       - name: Archive artifact
