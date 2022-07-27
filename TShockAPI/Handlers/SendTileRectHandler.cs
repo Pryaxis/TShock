@@ -19,14 +19,45 @@ namespace TShockAPI.Handlers
 	/// </summary>
 	public class SendTileRectHandler : IPacketHandler<GetDataHandlers.SendTileRectEventArgs>
 	{
-		/// <summary>
-		/// Maps grass-type blocks to flowers that can be grown on them with flower boots
-		/// </summary>
-		public static Dictionary<ushort, List<ushort>> GrassToPlantMap = new Dictionary<ushort, List<ushort>>
+		private static readonly Dictionary<ushort, HashSet<ushort>> PlantToGrassMap = new Dictionary<ushort, HashSet<ushort>>
 		{
-			{ TileID.Grass, new List<ushort>            { TileID.Plants,         TileID.Plants2 } },
-			{ TileID.HallowedGrass, new List<ushort>    { TileID.HallowedPlants, TileID.HallowedPlants2 } },
-			{ TileID.JungleGrass, new List<ushort>      { TileID.JunglePlants,   TileID.JunglePlants2 } }
+			{ TileID.Plants, new HashSet<ushort>()
+			{
+				TileID.Grass, TileID.GolfGrass
+			} },
+			{ TileID.HallowedPlants, new HashSet<ushort>()
+			{
+				TileID.HallowedGrass, TileID.GolfGrassHallowed
+			} },
+			{ TileID.HallowedPlants2, new HashSet<ushort>()
+			{
+				TileID.HallowedGrass, TileID.GolfGrassHallowed
+			} },
+			{ TileID.JunglePlants2, new HashSet<ushort>()
+			{
+				TileID.JungleGrass
+			} },
+		};
+
+		private static readonly Dictionary<ushort, HashSet<ushort>> PlantToStyleMap = new Dictionary<ushort, HashSet<ushort>>()
+		{
+			{ TileID.Plants, new HashSet<ushort>()
+			{
+				6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 24, 27, 30, 33, 36, 39, 42,
+				22, 23, 25, 26, 28, 29, 31, 32, 34, 35, 37, 38, 40, 41, 43, 44,
+			} },
+			{ TileID.HallowedPlants, new HashSet<ushort>()
+			{
+				4, 6,
+			} },
+			{ TileID.HallowedPlants2, new HashSet<ushort>()
+			{
+				2, 3, 4, 6, 7,
+			} },
+			{ TileID.JunglePlants2, new HashSet<ushort>()
+			{
+				9, 10, 11, 12, 13, 14, 15, 16,
+			} },
 		};
 
 		/// <summary>
@@ -40,7 +71,7 @@ namespace TShockAPI.Handlers
 
 		/// <summary>
 		/// Maps TileIDs to Tile Entity IDs.
-		/// Note: <see cref="Terraria.ID.TileEntityID"/> is empty at the time of writing, but entities are dynamically assigned their ID at initialize time
+		/// Note: <see cref="TileEntityID"/> is empty at the time of writing, but entities are dynamically assigned their ID at initialize time
 		/// which is why we can use the _myEntityId field on each entity type
 		/// </summary>
 		public static Dictionary<int, int> TileEntityIdToTileIdMap = new Dictionary<int, int>
@@ -139,13 +170,8 @@ namespace TShockAPI.Handlers
 					// and process them as a tile object
 					if (newTile.Type < TileObjectData._data.Count && TileObjectData._data[newTile.Type] != null)
 					{
-						data = TileObjectData._data[newTile.Type];
-						NetTile[,] newTiles;
-						int objWidth = data.Width;
-						int objHeight = data.Height;
-						int offsetY = 0;
-
 						// Verify that the changes are actually valid conceptually
+						// Many tiles that are never placed or modified using this packet are valid TileObjectData entries, which is the main attack vector for most exploits using this packet
 						if (Main.tile[realX, realY].type == newTile.Type)
 						{
 							switch (newTile.Type)
@@ -206,8 +232,13 @@ namespace TShockAPI.Handlers
 							}
 						}
 
+						data = TileObjectData._data[newTile.Type];
+						NetTile[,] newTiles;
+						int objWidth = data.Width;
+						int objHeight = data.Height;
+
 						// Ensure the tile object fits inside the rect before processing it
-						if (!DoesTileObjectFitInTileRect(x, y, objWidth, objHeight, width, length, offsetY, processed))
+						if (!DoesTileObjectFitInTileRect(x, y, objWidth, objHeight, width, length, processed))
 						{
 							continue;
 						}
@@ -218,11 +249,11 @@ namespace TShockAPI.Handlers
 						{
 							for (int j = 0; j < objHeight; j++)
 							{
-								newTiles[i, j] = tiles[x + i, y + j + offsetY];
-								processed[x + i, y + j + offsetY] = true;
+								newTiles[i, j] = tiles[x + i, y + j];
+								processed[x + i, y + j] = true;
 							}
 						}
-						ProcessTileObject(newTile.Type, realX, realY + offsetY, objWidth, objHeight, newTiles, args);
+						ProcessTileObject(newTile.Type, realX, realY, objWidth, objHeight, newTiles, args);
 						continue;
 					}
 
@@ -282,9 +313,9 @@ namespace TShockAPI.Handlers
 		{
 			// Some boots allow growing flowers on grass. This process sends a 1x1 tile rect to grow the flowers
 			// The rect size must be 1 and the player must have an accessory that allows growing flowers in order for this rect to be valid
-			if (rectWidth == 1 && rectLength == 1 && args.Player.Accessories.Any(a => a != null && FlowerBootItems.Contains(a.type)))
+			if (rectWidth == 1 && rectLength == 1 && WorldGen.InWorld(realX, realY + 1) && args.Player.Accessories.Any(a => a != null && FlowerBootItems.Contains(a.type)))
 			{
-				ProcessFlowerBoots(realX, realY, newTile, args);
+				ProcessFlowerBoots(realX, realY, newTile);
 				return;
 			}
 
@@ -302,7 +333,7 @@ namespace TShockAPI.Handlers
 
 			if (rectWidth == 1 && rectLength == 1) // Conversion only sends a 1x1 rect
 			{
-				ProcessConversionSpreads(Main.tile[realX, realY], newTile);
+				ProcessConversionSpreads(tile, newTile);
 			}
 
 			// All other single tile updates should not be processed.
@@ -314,24 +345,18 @@ namespace TShockAPI.Handlers
 		/// <param name="realX">The tile x position of the tile rect packet - this is where the flowers are intending to grow</param>
 		/// <param name="realY">The tile y position of the tile rect packet - this is where the flowers are intending to grow</param>
 		/// <param name="newTile">The NetTile containing information about the flowers that are being grown</param>
-		/// <param name="args">SendTileRectEventArgs containing event information</param>
-		internal void ProcessFlowerBoots(int realX, int realY, NetTile newTile, GetDataHandlers.SendTileRectEventArgs args)
+		internal void ProcessFlowerBoots(int realX, int realY, NetTile newTile)
 		{
-			// We need to get the tile below the tile rect to determine what grass types are allowed
-			if (!WorldGen.InWorld(realX, realY + 1))
+			ITile tile = Main.tile[realX, realY];
+			// Ensure that the placed plant is valid for the grass below, that the target tile is empty, and that the placed plant has valid framing
+			if (
+				PlantToGrassMap.TryGetValue(newTile.Type, out HashSet<ushort> grassTiles) &&
+				!tile.active() && grassTiles.Contains(Main.tile[realX, realY + 1].type) &&
+				PlantToStyleMap[newTile.Type].Contains((ushort)(newTile.FrameX / 18))
+			)
 			{
-				// If the tile below the tile rect isn't valid, we return here and don't update the server tile state
-				return;
+				UpdateServerTileState(tile, newTile, TileDataType.Tile);
 			}
-
-			ITile tile = Main.tile[realX, realY + 1];
-			if (!GrassToPlantMap.TryGetValue(tile.type, out List<ushort> plantTiles) && !plantTiles.Contains(newTile.Type))
-			{
-				// If the tile below the tile rect isn't a valid plant tile (eg grass) then we don't update the server tile state
-				return;
-			}
-
-			UpdateServerTileState(Main.tile[realX, realY], newTile, TileDataType.Tile);
 		}
 
 		/// <summary>
@@ -532,24 +557,16 @@ namespace TShockAPI.Handlers
 		/// <param name="height"></param>
 		/// <param name="rectWidth"></param>
 		/// <param name="rectLength"></param>
-		/// <param name="offsetY"></param>
 		/// <param name="processed"></param>
 		/// <returns></returns>
-		static bool DoesTileObjectFitInTileRect(int x, int y, int width, int height, short rectWidth, short rectLength, int offsetY, bool[,] processed)
+		static bool DoesTileObjectFitInTileRect(int x, int y, int width, int height, short rectWidth, short rectLength, bool[,] processed)
 		{
-			// If the starting y position of this tile object is at (x, 0) and the y offset is negative, we'll be accessing tiles outside the rect
-			if (y + offsetY < 0)
-			{
-				TShock.Log.ConsoleDebug("Bouncer / SendTileRectHandler - rejected tile object because object dimensions fall outside the tile rect (negative y value)");
-				return false;
-			}
-
-			if (x + width > rectWidth || y + height + offsetY > rectLength)
+			if (x + width > rectWidth || y + height > rectLength)
 			{
 				// This is ugly, but we want to mark all these tiles as processed so that we're not hitting this check multiple times for one dodgy tile object
 				for (int i = x; i < rectWidth; i++)
 				{
-					for (int j = Math.Max(0, y + offsetY); j < rectLength; j++) // This is also ugly. Using Math.Max to make sure y + offsetY >= 0
+					for (int j = y; j < rectLength; j++)
 					{
 						processed[i, j] = true;
 					}
