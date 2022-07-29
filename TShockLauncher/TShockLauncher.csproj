@@ -22,8 +22,19 @@
 	<ItemGroup>
 		<PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
 		<PackageReference Include="MySql.Data" Version="8.0.30" />
-    <PackageReference Include="Microsoft.Data.Sqlite" Version="6.0.7" />
-    <PackageReference Include="ModFramework" Version="1.0.40-alpha" /> <!-- temporary until otapi's nuget package describes the right version. oops. -->
+		<PackageReference Include="Microsoft.Data.Sqlite" Version="6.0.7" />
+		<PackageReference Include="ModFramework" Version="1.0.40-alpha" /> <!-- temporary until otapi's nuget package describes the right version. oops. -->
+
+		<!-- the launcher doesnt need the direct OTAPI reference, but since PackageReference[ExcludeFromSingleFile] doesnt work, exclude the assets and copy manually -->
+		<PackageReference Include="OTAPI.Upcoming" Version="3.0.37-alpha" ExcludeAssets="all" GeneratePathProperty="true" />
+		<None Include="$(PkgOTAPI_Upcoming)\lib\net6.0\OTAPI.dll">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+		</None>
+		<None Include="$(PkgOTAPI_Upcoming)\lib\net6.0\OTAPI.Runtime.dll">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+		</None>
 	</ItemGroup>
 
 	<Target Name="CreateServerPlugins" AfterTargets="PostBuildEvent;Publish">
