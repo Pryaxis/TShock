@@ -45,7 +45,9 @@ jobs:
 
       # preserve file perms: https://github.com/actions/upload-artifact#maintaining-file-permissions-and-case-sensitive-files
       - name: Archive artifact
-        run: tar -cvf TShock-Beta-${{ matrix.arch }}-Release.tar TShockLauncher/bin/Release/net6.0/${{ matrix.arch }}/publish/
+        run: |
+            cd TShockLauncher/bin/Release/net6.0/${{ matrix.arch }}/publish/
+            tar -cvf ../../../../../../TShock-Beta-${{ matrix.arch }}-Release.tar *
 
       - uses: actions/upload-artifact@v2
         with:
