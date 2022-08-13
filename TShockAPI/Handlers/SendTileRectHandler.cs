@@ -19,7 +19,10 @@ namespace TShockAPI.Handlers
 	/// </summary>
 	public class SendTileRectHandler : IPacketHandler<GetDataHandlers.SendTileRectEventArgs>
 	{
-		private static readonly Dictionary<ushort, HashSet<ushort>> PlantToGrassMap = new Dictionary<ushort, HashSet<ushort>>
+		/// <summary>
+		/// Maps plant tile types to their valid grass ground tiles when using flower boots
+		/// </summary>
+		private static readonly Dictionary<ushort, HashSet<ushort>> FlowerBootPlantToGrassMap = new Dictionary<ushort, HashSet<ushort>>
 		{
 			{ TileID.Plants, new HashSet<ushort>()
 			{
@@ -39,19 +42,27 @@ namespace TShockAPI.Handlers
 			} },
 		};
 
-		private static readonly Dictionary<ushort, HashSet<ushort>> PlantToStyleMap = new Dictionary<ushort, HashSet<ushort>>()
+		/// <summary>
+		/// Maps plant tile types to a list of valid styles, which are used to determine the FrameX value of the plant tile
+		/// See `Player.DoBootsEffect_PlaceFlowersOnTile`
+		/// </summary>
+		private static readonly Dictionary<ushort, HashSet<ushort>> FlowerBootPlantToStyleMap = new Dictionary<ushort, HashSet<ushort>>()
 		{
 			{ TileID.Plants, new HashSet<ushort>()
 			{
+				// The upper line is from a `NextFromList` call
+				// The lower line is from an additional switch which will add the listed options by adding a random value to a select set of styles
 				6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 24, 27, 30, 33, 36, 39, 42,
 				22, 23, 25, 26, 28, 29, 31, 32, 34, 35, 37, 38, 40, 41, 43, 44,
 			} },
 			{ TileID.HallowedPlants, new HashSet<ushort>()
 			{
+				// 5 is intentionally missing here because it is being skipped by vanilla
 				4, 6,
 			} },
 			{ TileID.HallowedPlants2, new HashSet<ushort>()
 			{
+				// 5 is intentionally missing here because it is being skipped by vanilla
 				2, 3, 4, 6, 7,
 			} },
 			{ TileID.JunglePlants2, new HashSet<ushort>()
@@ -199,7 +210,7 @@ namespace TShockAPI.Handlers
 								case TileID.MinecartTrack:
 								case TileID.ChristmasTree:
 									{
-										// allowed changes
+										// Allowed changes
 									}
 									break;
 								default:
@@ -222,7 +233,7 @@ namespace TShockAPI.Handlers
 								case TileID.TeleportationPylon:
 								case TileID.TargetDummy:
 									{
-										// allowed placements
+										// Allowed placements
 									}
 									break;
 								default:
@@ -263,7 +274,7 @@ namespace TShockAPI.Handlers
 				}
 			}
 		}
-		
+
 		/// <summary>
 		/// Processes a tile object consisting of multiple tiles from the tile rect packet
 		/// </summary>
@@ -321,24 +332,30 @@ namespace TShockAPI.Handlers
 
 			ITile tile = Main.tile[realX, realY];
 
+			// Triggering a single land mine tile
 			if (rectWidth == 1 && rectLength == 1 && tile.type == TileID.LandMine && !newTile.Active)
 			{
 				UpdateServerTileState(tile, newTile, TileDataType.Tile);
 			}
 
+			// Hammering a single junction box
 			if (rectWidth == 1 && rectLength == 1 && tile.type == TileID.WirePipe)
 			{
 				UpdateServerTileState(tile, newTile, TileDataType.Tile);
 			}
 
+			// Mowing a single grass tile: Grass -> GolfGrass OR HallowedGrass -> GolfGrassHallowed
 			if (rectWidth == 1 && rectLength == 1 &&
-				(tile.type == TileID.Grass && newTile.Type == TileID.GolfGrass ||
-				tile.type == TileID.HallowedGrass && newTile.Type == TileID.GolfGrassHallowed))
+				(
+					tile.type == TileID.Grass && newTile.Type == TileID.GolfGrass ||
+					tile.type == TileID.HallowedGrass && newTile.Type == TileID.GolfGrassHallowed
+				))
 			{
 				UpdateServerTileState(tile, newTile, TileDataType.Tile);
 			}
 
-			if (rectWidth == 1 && rectLength == 1) // Conversion only sends a 1x1 rect
+			// Conversion: only sends a 1x1 rect
+			if (rectWidth == 1 && rectLength == 1)
 			{
 				ProcessConversionSpreads(tile, newTile);
 			}
@@ -355,11 +372,15 @@ namespace TShockAPI.Handlers
 		internal void ProcessFlowerBoots(int realX, int realY, NetTile newTile)
 		{
 			ITile tile = Main.tile[realX, realY];
-			// Ensure that the placed plant is valid for the grass below, that the target tile is empty, and that the placed plant has valid framing
+			// Ensure that:
+			//  - the placed plant is valid for the grass below
+			//  - the target tile is empty
+			//  - and the placed plant has valid framing (style * 18 = FrameX)
 			if (
-				PlantToGrassMap.TryGetValue(newTile.Type, out HashSet<ushort> grassTiles) &&
-				!tile.active() && grassTiles.Contains(Main.tile[realX, realY + 1].type) &&
-				PlantToStyleMap[newTile.Type].Contains((ushort)(newTile.FrameX / 18))
+				FlowerBootPlantToGrassMap.TryGetValue(newTile.Type, out HashSet<ushort> grassTiles) &&
+				!tile.active() &&
+				grassTiles.Contains(Main.tile[realX, realY + 1].type) &&
+				FlowerBootPlantToStyleMap[newTile.Type].Contains((ushort)(newTile.FrameX / 18))
 			)
 			{
 				UpdateServerTileState(tile, newTile, TileDataType.Tile);
