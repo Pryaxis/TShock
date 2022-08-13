@@ -17,6 +17,9 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Only allow using Teleportation Potions, Magic Conch, and Demon Conch whilst holding them. (@drunderscore)
 * Updated server startup language to be more clear when encountering a fatal startup error. Now, the server gives more context as to what happened so that there's a better chance of people being able to help themselves. (@hakusaro)
 * Added `-worldevil <type>` command line argument (@NotGeri)
+* Fixed an exploit in which the Ice Block deletion allowance from the Ice Rod bypassed region protection, allowing for deleting all tiles in a protected region and/or replacing them with Ice Blocks. (@punchready)
+* Changed SendTileRect handling from a denylist to an allowlist with stricter checks. This prevents essentially all exploits involving this packet. Most notably this stops people from placing arbitrary tiles with arbitrary framing values, which are the root of most exploits. (@punchready)
+* Removed the config options `TileRectangleSizeThreshold` and `KickOnTileRectangleSizeThresholdBroken` because they are made obsolete by the new system, which will only allow valid rectangle sizes (at a maximum of only 4 by 4 tiles in 1.4.3.6). (@punchready)
 
 ## TShock 4.5.17
 * Fixed duplicate characters (twins) after repeatedly logging in as the same character due to connection not being immediately closed during `NetHooks_NameCollision`. (@gohjoseph)
