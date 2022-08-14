@@ -18,7 +18,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Updated server startup language to be more clear when encountering a fatal startup error. Now, the server gives more context as to what happened so that there's a better chance of people being able to help themselves. (@hakusaro)
 * Added `-worldevil <type>` command line argument (@NotGeri)
 * Added PlayerHasBuildPermission hook to PlayerHooks. (@AnzhelikaO, @Killia0)
-* Prevent Server Broadcast to display prefix without a message. (@PackmanDude)
+* Prevent Server Broadcast to display prefix without a message. (@PackmanDude, @punchready)
 
 ## TShock 4.5.17
 * Fixed duplicate characters (twins) after repeatedly logging in as the same character due to connection not being immediately closed during `NetHooks_NameCollision`. (@gohjoseph)
