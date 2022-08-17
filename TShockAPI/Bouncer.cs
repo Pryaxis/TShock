@@ -401,6 +401,18 @@ namespace TShockAPI
 					return;
 				}
 
+				// I do not understand the ice tile check enough to be able to modify it, however I do know that it can be used to completely bypass region protection
+				// This check ensures that build permission is always checked no matter what
+				if (!args.Player.HasBuildPermission(tileX, tileY))
+				{
+					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from build from {0} {1} {2}", args.Player.Name, action, editData);
+
+					GetRollbackRectSize(tileX, tileY, out byte width, out byte length, out int offsetY);
+					args.Player.SendTileRect((short)(tileX - width), (short)(tileY + offsetY), (byte)(width * 2), (byte)(length + 1));
+					args.Handled = true;
+					return;
+				}
+
 				if (editData < 0 ||
 					((action == EditAction.PlaceTile || action == EditAction.ReplaceTile) && editData >= Main.maxTileSets) ||
 					((action == EditAction.PlaceWall || action == EditAction.ReplaceWall) && editData >= Main.maxWallTypes))
