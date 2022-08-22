@@ -1194,7 +1194,7 @@ namespace TShockAPI
 		/// <param name="empty">If the server is empty; determines if we should use Utils.GetActivePlayerCount() for player count or 0.</param>
 		internal void SetConsoleTitle(bool empty)
 		{
-			Console.Title = string.Format("{0}{1}/{2} on {3} @ {4}:{5} (TShock for Terraria v{6})",
+			Console.Title = string.Format("{0}{1}/{2} on {3} @ {4}:{5} (TShock汉化版 Terraria v{6} Beta 1 - th汉化组)",
 					!string.IsNullOrWhiteSpace(TShock.Config.Settings.ServerName) ? TShock.Config.Settings.ServerName + " - " : "",
 					empty ? 0 : GetActivePlayerCount(),
 					TShock.Config.Settings.MaxSlots, Main.worldName, Netplay.ServerIP.ToString(), Netplay.ListenPort, TShock.VersionNum);
