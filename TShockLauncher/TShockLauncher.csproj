@@ -5,7 +5,7 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<AssemblyName>TShock.Server</AssemblyName>
+		<AssemblyName>TShock.Server</AssemblyName> <!-- TShock was initially decided on by a community poll, however tshock already exists as a folder and will clash -->
 		<RunPostBuildEvent>Always</RunPostBuildEvent>
 		<DebugType>embedded</DebugType>
 		<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract> <!-- needed for sqlite native libs -->
@@ -22,11 +22,11 @@
 	<ItemGroup>
 		<PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
 		<PackageReference Include="MySql.Data" Version="8.0.30" />
-		<PackageReference Include="Microsoft.Data.Sqlite" Version="6.0.7" />
-		<PackageReference Include="ModFramework" Version="1.0.40-alpha" /> <!-- temporary until otapi's nuget package describes the right version. oops. -->
+		<PackageReference Include="Microsoft.Data.Sqlite" Version="6.0.8" />
+		<PackageReference Include="ModFramework" Version="1.1.0-alpha" />
 
 		<!-- the launcher doesnt need the direct OTAPI reference, but since PackageReference[ExcludeFromSingleFile] doesnt work, exclude the assets and copy manually -->
-		<PackageReference Include="OTAPI.Upcoming" Version="3.0.37-alpha" ExcludeAssets="all" GeneratePathProperty="true" />
+		<PackageReference Include="OTAPI.Upcoming" Version="3.1.1-alpha" ExcludeAssets="all" GeneratePathProperty="true" />
 		<None Include="$(PkgOTAPI_Upcoming)\lib\net6.0\OTAPI.dll">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
