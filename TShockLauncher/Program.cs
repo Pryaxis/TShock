@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * The purpose of this project is to be the launcher of the TSAPI server.
  * We use this project:
  *	- to copy/move around TShockAPI.dll (the TShock plugin to TSAPI)
- *	- to publishing TShock releases.
+ *	- to publish TShock releases.
  *	- move dependencies to a ./bin folder
  * 
  * The assembly name of this launcher (TShock.exe) was decided on by a community poll.
