@@ -59,7 +59,7 @@ namespace TShockAPI
 		/// <summary>VersionNum - The version number the TerrariaAPI will return back to the API. We just use the Assembly info.</summary>
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
 		/// <summary>VersionCodename - The version codename is displayed when the server starts. Inspired by software codenames conventions.</summary>
-		public static readonly string VersionCodename = "Volodymyr Oleksandrovych Zelenskyy";
+		public static readonly string VersionCodename = "Audaciously Artistic";
 
 		/// <summary>SavePath - This is the path TShock saves its data in. This path is relative to the TerrariaServer.exe (not in ServerPlugins).</summary>
 		public static string SavePath = "tshock";
@@ -437,16 +437,15 @@ namespace TShockAPI
 			}
 			catch (Exception ex)
 			{
-				if (Log is not null)
+				// handle if Log was not initialised
+				void SafeError(string message)
 				{
-					Log.ConsoleError("Fatal Startup Exception");
-					Log.ConsoleError(ex.ToString());
-				}
-				else
-				{
-					Console.WriteLine("Fatal Startup Exception");
-					Console.WriteLine(ex.ToString());
-				}
+					if(Log is not null) Log.ConsoleError(message);
+					else Console.WriteLine(message);
+				};
+				SafeError("TShock encountered a problem from which it cannot recover. The following message may help diagnose the problem.");
+				SafeError("Until the problem is resolved, TShock will not be able to start (and will crash on startup).");
+				SafeError(ex.ToString());
 				Environment.Exit(1);
 			}
 		}
@@ -828,6 +827,28 @@ namespace TShockAPI
 						}
 					})
 
+				.AddFlag("-worldevil", (value) =>
+				{
+
+					int worldEvil;
+					switch (value.ToLower())
+					{
+						case "random":
+							worldEvil = -1;
+							break;
+						case "corrupt":
+							worldEvil = 0;
+							break;
+						case "crimson":
+							worldEvil = 1;
+							break;
+						default:
+							throw new InvalidOperationException("Invalid value given for command line argument \"-worldevil\".");
+					}
+
+					ServerApi.LogWriter.PluginWriteLine(this, String.Format("New worlds will be generated with the {0} world evil type!", value), TraceLevel.Verbose);
+					WorldGen.WorldGenParam_Evil = worldEvil;
+				})
 
 				//Flags without arguments
 				.AddFlag("-logclear", () => LogClear = true)

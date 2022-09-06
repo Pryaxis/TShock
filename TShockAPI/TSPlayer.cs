@@ -650,6 +650,12 @@ namespace TShockAPI
 		/// <returns>True if the player can build at the given point from build, spawn, and region protection.</returns>
 		public bool HasBuildPermission(int x, int y, bool shouldWarnPlayer = true)
 		{
+			PermissionHookResult hookResult = PlayerHooks.OnPlayerHasBuildPermission(this, x, y);
+			if (hookResult != PermissionHookResult.Unhandled)
+			{
+				return hookResult == PermissionHookResult.Granted;
+			}
+
 			BuildPermissionFailPoint failure = BuildPermissionFailPoint.GeneralBuild;
 			// The goal is to short circuit on easy stuff as much as possible.
 			// Don't compute permissions unless needed, and don't compute taxing stuff unless needed.
