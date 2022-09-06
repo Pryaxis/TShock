@@ -17,50 +17,85 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
 
-namespace TShockAPI.Modules
+namespace TShockAPI.Modules;
+
+public class ReduceConsoleSpam : Module
 {
-	public class ReduceConsoleSpam : Module
+	public override void Initialise() =>
+		OTAPI.Hooks.Main.StatusTextChange += OnMainStatusTextChange;
+
+	public override void Dispose() =>
+		OTAPI.Hooks.Main.StatusTextChange -= OnMainStatusTextChange;
+
+	/// <summary>
+	/// Holds the last status text value, to determine if there is a suitable change to report.
+	/// </summary>
+	private string _lastStatusText = null;
+
+	/// <summary>
+	/// Aims to reduce the amount of console spam by filtering out load/save progress
+	/// </summary>
+	/// <param name="sender"></param>
+	/// <param name="e">OTAPI event</param>
+	private void OnMainStatusTextChange(object sender, OTAPI.Hooks.Main.StatusTextChangeArgs e)
 	{
-		public override void Initialise() =>
-			OTAPI.Hooks.Main.StatusTextChange += OnMainStatusTextChange;
-
-		public override void Dispose() =>
-			OTAPI.Hooks.Main.StatusTextChange -= OnMainStatusTextChange;
-
-		/// <summary>
-		/// Holds the last status text value, to determine if there is a suitable change to report.
-		/// </summary>
-		private string _lastStatusText = null;
-
-		/// <summary>
-		/// Aims to reduce the amount of console spam by filtering out load/save progress
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e">OTAPI event</param>
-		private void OnMainStatusTextChange(object sender, OTAPI.Hooks.Main.StatusTextChangeArgs e)
+		void WriteIfChange(string text)
 		{
-			bool replace(string text)
+			if (_lastStatusText != text)
 			{
-				if (e.Value.StartsWith(text))
-				{
-					var segment = e.Value.Substring(0, text.Length);
-					if (_lastStatusText != segment)
-					{
-						Console.WriteLine(segment); // write it manually instead of terraria which causes double writes
-						_lastStatusText = segment;
-					}
-					e.Value = "";
-					return true;
-				}
-				return false;
+				Console.WriteLine(text); // write it manually instead of terraria which causes double writes
+				_lastStatusText = text;
 			}
+		}
+		bool replace(string text)
+		{
+			if (e.Value.StartsWith(text))
+			{
+				var segment = e.Value.Substring(0, text.Length);
+				WriteIfChange(segment);
+				e.Value = "";
+				return true;
+			}
+			return false;
+		}
 
-			_ = replace("Resetting game objects")
-				|| replace("Settling liquids")
-				|| replace("Loading world data")
-				|| replace("Saving world data")
-				|| replace("Validating world save");
+		if (replace("Resetting game objects")
+			|| replace("Settling liquids")
+			|| replace("Loading world data")
+			|| replace("Saving world data")
+			|| replace("Validating world save"))
+			return;
+
+		// try parsing % - [text] - %
+		const string FindMaster = "% - ";
+		const string FindSub = " - ";
+		var master = e.Value.IndexOf(FindMaster);
+		if (master > -1)
+		{
+			var sub = e.Value.LastIndexOf(FindSub);
+			if (master > -1 && sub > master)
+			{
+				var mprogress = e.Value.Substring(0, master + 1/*%*/);
+				var sprogress = e.Value.Substring(sub + FindSub.Length);
+				if (mprogress.EndsWith("%") && sprogress.EndsWith("%"))
+				{
+					var text = e.Value.Substring(master + FindMaster.Length, sub - master - FindMaster.Length).Trim();
+
+					if (text.Length > 0 && !(
+						// relogic has made a mess of this
+						(
+							_lastStatusText != "Validating world save"
+							|| _lastStatusText != "Saving world data"
+						)
+						&& text == "Finalizing world"
+					))
+						WriteIfChange(text);
+
+					e.Value = "";
+				}
+			}
 		}
 	}
+
 }
 
