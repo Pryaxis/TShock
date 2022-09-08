@@ -45,7 +45,7 @@ namespace TShockAPI.DB
 				{
 					com.CommandText = query;
 					for (int i = 0; i < args.Length; i++)
-						com.AddParameter("@" + i, args[i]);
+						com.AddParameter("@" + i, args[i] ?? DBNull.Value);
 					return com.ExecuteNonQuery();
 				}
 			}
