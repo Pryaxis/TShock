@@ -6,8 +6,6 @@
     <TargetFramework>net6.0</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <!-- 
       Version information for an assembly consists of the following four values:
 
@@ -20,11 +18,16 @@
       Also, be sure to release on github with the exact assembly version tag as below
       so that the update manager works correctly (via the Github releases api and mimic)
     -->
-		<Version>5.0.0-beta</Version>
+    <Version>5.0.0-beta</Version>
     <AssemblyTitle>TShock for Terraria</AssemblyTitle>
     <Company>Pryaxis &amp; TShock Contributors</Company>
     <Product>TShockAPI</Product>
-    <Copyright>Copyright © Pryaxis &amp; TShock Contributors 2011-2021</Copyright>
+    <Copyright>Copyright © Pryaxis &amp; TShock Contributors 2011-2022</Copyright>
+    <!-- extras for nuget -->
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+    <Authors>Pryaxis &amp; TShock Contributors</Authors>
+    <Description>TShock is a toolbox for Terraria servers and communities.</Description>
   </PropertyGroup>
 
   <ItemGroup>
@@ -41,6 +44,15 @@
     <Reference Include="HttpServer">
       <HintPath>..\prebuilts\HttpServer.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\prebuilts\HttpServer.dll">
+      <Link>HttpServer.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <PackageCopyToOutput>true</PackageCopyToOutput>
+      <Pack>true</Pack>
+    </None>
   </ItemGroup>
 
 </Project>

@@ -4,6 +4,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.0.31825.309
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{755F5B05-0924-47E9-9563-26EB20FE3F67}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		appveyor.yml = appveyor.yml
+		CHANGELOG.md = CHANGELOG.md
+		.github\workflows\ci-otapi3-nuget.yml = .github\workflows\ci-otapi3-nuget.yml
+		.github\workflows\ci-otapi3.yml = .github\workflows\ci-otapi3.yml
+		COPYING = COPYING
+		.github\workflows\danger.yml = .github\workflows\danger.yml
+		README.md = README.md
+		README_cn.md = README_cn.md
+		SECURITY.md = SECURITY.md
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TShockAPI", "TShockAPI\TShockAPI.csproj", "{49606449-072B-4CF5-8088-AA49DA586694}"
 EndProject
