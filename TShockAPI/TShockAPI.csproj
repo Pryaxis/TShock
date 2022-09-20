@@ -36,6 +36,7 @@
     <PackageReference Include="GetText.NET" Version="1.7.14" />
     <PackageReference Include="MySql.Data" Version="8.0.31" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="6.0.10" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="5.0.4" />
   </ItemGroup>
 
   <ItemGroup>
