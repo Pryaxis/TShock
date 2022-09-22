@@ -17,12 +17,12 @@ public class GroupTests
 		LanguageManager.Instance.SetLanguage(GameCulture.DefaultCulture);
 		Lang.InitializeLegacyLocalization();
 
-		IHostBuilder hostBuilder = DIBuilder.ConfigureHost(new string[] { });
-		hostBuilder.ConfigureServices(svcs => svcs
-			.AddSingleton<ServiceLoader>()
-			.AddSingleton<HookService>()
-			.AddSingleton<TShock>()
-		);
+		IHostBuilder hostBuilder = Host.CreateDefaultBuilder()
+			.ConfigureServices(svcs => svcs
+				.AddSingleton<ServiceLoader>()
+				.AddSingleton<HookService>()
+				.AddSingleton<TShock>()
+			);
 
 		IHost host = hostBuilder.Build();
 
