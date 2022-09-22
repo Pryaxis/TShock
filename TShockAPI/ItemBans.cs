@@ -30,6 +30,7 @@ using Terraria.ObjectData;
 using Terraria.DataStructures;
 using Terraria.Localization;
 using System.Data;
+using Microsoft.Extensions.Logging;
 
 namespace TShockAPI
 {
@@ -50,12 +51,12 @@ namespace TShockAPI
 		/// <param name="plugin">The executing plugin.</param>
 		/// <param name="database">The database the item ban information is stored in.</param>
 		/// <returns>A new item ban system.</returns>
-		internal ItemBans(TShock plugin, IDbConnection database)
+		internal ItemBans(TShock plugin, IDbConnection database, HookService hookService, ILogger<TShock> logger)
 		{
 			DataModel = new ItemManager(database);
 			Plugin = plugin;
 
-			ServerApi.Hooks.GameUpdate.Register(plugin, OnGameUpdate);
+			hookService.GameUpdate.Register(OnGameUpdate, logger);
 			GetDataHandlers.PlayerUpdate += OnPlayerUpdate;
 			GetDataHandlers.ChestItemChange += OnChestItemChange;
 			GetDataHandlers.TileEdit += OnTileEdit;
