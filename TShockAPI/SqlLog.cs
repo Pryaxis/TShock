@@ -22,6 +22,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
 using TShockAPI.DB;
 
@@ -59,11 +60,11 @@ namespace TShockAPI
 		/// <param name="db">Database connection</param>
 		/// <param name="textlogFilepath">File path to a backup text log in case the SQL log fails</param>
 		/// <param name="clearTextLog"></param>
-		public SqlLog(IDbConnection db, string textlogFilepath, bool clearTextLog)
+		public SqlLog(IDbConnection db, string textlogFilepath, bool clearTextLog, ILogger<TShock> logger)
 		{
 			FileName = string.Format("{0}://database", db.GetSqlType());
 			_database = db;
-			_backupLog = new TextLog(textlogFilepath, clearTextLog);
+			_backupLog = new TextLog(textlogFilepath, clearTextLog, logger);
 
 			var table = new SqlTable("Logs",
 				new SqlColumn("ID", MySqlDbType.Int32) {AutoIncrement = true, Primary = true},
