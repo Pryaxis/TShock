@@ -17,7 +17,7 @@ public class ServerConfigConfigurator : ConfigConfigurator
 	/// </summary>
 	public ServerConfigConfigurator() : base()
 	{
-		Priority = 100;
+		Priority = 1; // Arbitrarily higher than 0. We need this to run before the log configurator so that the logging configuration is preset on the host context
 	}
 
 	/// <inheritdoc/>
