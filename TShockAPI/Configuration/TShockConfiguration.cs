@@ -12,9 +12,11 @@ public sealed class TShockConfiguration
 	public GameSettings Game { get; set; }
 	public ProtectionSettings Protection { get; set; }
 	public AuthenticationSettings UserAccount { get; set; }
+	public PunishmentSettings Punishments { get; set; }
+	public AntiCheatSettings AntiCheat { get; set; }
 
 	/// <summary>
-	/// Settings specific to the setup of the server, such as password and port
+	/// Settings specific to the setup of the server, such as password and port.
 	/// </summary>
 	public sealed class ServerSettings
 	{
@@ -51,20 +53,10 @@ public sealed class TShockConfiguration
 		/// Overridden by <see cref="LoginBeforeJoin"/> if enabled.
 		/// </summary>
 		public string Password { get; set; }
-
-		/// <summary>
-		/// Allows users to login before they finish connecting to the server.
-		/// <para/>
-		/// If enabled, the user will need to use their own password when presented with the password screen.
-		/// This setting overrides the server password *for users who already have an account*.
-		/// <para/>
-		/// Default: true.
-		/// </summary>
-		public bool LoginBeforeJoin { get; set; } = true;
 	}
 
 	/// <summary>
-	/// Settings specific to saving and backups
+	/// Settings specific to saving and backups.
 	/// </summary>
 	public sealed class SaveSettings
 	{
@@ -112,7 +104,7 @@ public sealed class TShockConfiguration
 	}
 
 	/// <summary>
-	/// Settings specific to how the game operates
+	/// Settings specific to how the game operates.
 	/// </summary>
 	public sealed class GameSettings
 	{
@@ -268,7 +260,7 @@ public sealed class TShockConfiguration
 	}
 
 	/// <summary>
-	/// Settings specific to the tile and world protection systems in TShock
+	/// Settings specific to the tile and world protection systems in TShock.
 	/// </summary>
 	public sealed class ProtectionSettings
 	{
@@ -295,7 +287,7 @@ public sealed class TShockConfiguration
 	}
 
 	/// <summary>
-	/// Settings specific to TShock user groups
+	/// Settings specific to TShock user groups.
 	/// </summary>
 	public sealed class GroupSettings
 	{
@@ -312,17 +304,10 @@ public sealed class TShockConfiguration
 		/// Default: "guest".
 		/// </summary>
 		public string GuestGroup { get; set; } = "guest";
-
-		/// <summary>
-		/// The maximum number of failed logins a player may attempt before they are kicked, if set.
-		/// <para/>
-		/// Default: 3.
-		/// </summary>
-		public int? MaximumLoginAttempts { get; set; } = 3;
 	}
 
 	/// <summary>
-	/// Settings specific to TShock user account authentication
+	/// Settings specific to TShock user account authentication.
 	/// </summary>
 	public sealed class AuthenticationSettings
 	{
@@ -348,13 +333,6 @@ public sealed class TShockConfiguration
 		public bool EnableRegisterWithAnyUsername { get; set; } = false;
 
 		/// <summary>
-		/// The minimum length a user account's password may be. Cannot be lower than 4.
-		/// <para/>
-		/// Default: 4.
-		/// </summary>
-		public int MinimumPasswordLength { get; set; } = 4;
-
-		/// <summary>
 		/// Enable or disable players authenticating with their UUID.
 		/// <para/>
 		/// Note: UUIDs can be changed by players at any time. This should not be considered a secure authentication mechanism.
@@ -362,6 +340,23 @@ public sealed class TShockConfiguration
 		/// Default: <see langword="true"/>.
 		/// </summary>
 		public bool EnableUuidLogin { get; set; } = true;
+
+		/// <summary>
+		/// Allows users to login before they finish connecting to the server.
+		/// <para/>
+		/// If enabled, the user will need to use their own password when presented with the password screen.
+		/// This setting overrides the server password *for users who already have an account*.
+		/// <para/>
+		/// Default: true.
+		/// </summary>
+		public bool LoginBeforeJoin { get; set; } = true;
+
+		/// <summary>
+		/// The minimum length a user account's password may be. Cannot be lower than 4.
+		/// <para/>
+		/// Default: 4.
+		/// </summary>
+		public int MinimumPasswordLength { get; set; } = 4;
 
 		/// <summary>
 		/// BCrypt work factor to use. Higher values take longer to compute. 
@@ -372,9 +367,26 @@ public sealed class TShockConfiguration
 		/// Default: 7.
 		/// </summary>
 		public int BCryptWorkFactor { get; set; } = 7;
+
+		/// <summary>
+		/// The maximum number of failed logins a player may attempt before they are kicked, if set.
+		/// <para/>
+		/// Default: 3.
+		/// </summary>
+		public int? MaximumLoginAttempts { get; set; } = 3;
+
+		/// <summary>
+		/// Enables or disables the IP address allow list.
+		/// <para/>
+		/// Default: <see langword="false"/>.
+		/// </summary>
+		public bool EnableAllowlist { get; set; } = false;
 	}
 
-	public sealed class KickSettings
+	/// <summary>
+	/// Settings specific to TShock's auto-kick and ban rules.
+	/// </summary>
+	public sealed class PunishmentSettings
 	{
 		/// <summary>
 		/// Kick players who connect via a proxy, when detected by the GeoIP library.
@@ -382,15 +394,64 @@ public sealed class TShockConfiguration
 		/// Default: <see langword="false"/>.
 		/// </summary>
 		public bool KickProxyUsers { get; set; } = false;
+
+		/// <summary>
+		/// Kick players who do not present a UUID when connecting to the server.
+		/// <para/>
+		/// Default: <see langword="false"/>
+		/// </summary>
+		public bool KickEmptyUuid { get; set; } = false;
+
+		public bool KickOnTilePlaceThresholdExceeded { get; set; } = false;
+
+		public bool KickOnTileKillThresholdExceeded { get; set; } = false;
+
+		public bool KickOnPaintThresholdExceeded { get; set; } = false;
+
+		public bool KickOnLiquidThresholdExceeded { get; set; } = false;
+
+		public bool KickOnProjectileThresholdExceeded { get; set; } = false;
+
+		public bool KickOnHealOtherThresholdExceeded { get; set; } = false;
+
+		public bool KickOnDamageThresholdExceeded { get; set; } = false;
+
+		public bool KickOnMediumcoreDeath { get; set; } = false;
+
+		public bool KickOnHardcoreDeath { get; set; } = false;
+
+		public bool BanOnMediumcoreDeath { get; set; } = false;
+
+		public bool BanOnHardcoreDeath { get; set; } = false;
+	}
+
+	/// <summary>
+	/// Settings specific to TShock's anti-cheat functions.
+	/// </summary>
+	public sealed class AntiCheatSettings
+	{
+		/// <summary>
+		/// Enables or disables the use of the Zenith projectile with different objects instead of weapons.
+		/// </summary>
+		public bool EnableModifiedZenith { get; set; } = true;
+
+		/// <summary>
+		/// Enables or disables the ability for clients to send their own death messages.
+		/// Clients may send death messages with any content at any time, if enabled.
+		/// <para/>
+		/// Default: <see langword="false"/>.
+		/// </summary>
+		public bool EnableCustomDeathMessages { get; set; } = false;
 	}
 
 	/*
     Notes:
     * LogPath, DebugLogs, any other log config needs to be dealt with in NLog config
-
     * Convert MaxHp & MaxMP config options to permissions -> player.hp.<value>, player.mp.<value>?
+    * Convert damage config options to permissions -> player.damage.<value>, player.projdamage.<value>?
     * Convert BombExplosionRadius config option to permission -> player.bombradius.<value>?
     * Convert MaxRangeForDisabled config option to permission -> player.disableradius.<value>?
+	* Convert thresholds to permission -> player.threshold.tilekill.<value>, etc.
     * Migrate RangeChecks config option to a permission.
     * Migrate DisableBuild config option to a permission.
     * Migrate DisableInvisPvP config option to a permission?
