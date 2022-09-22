@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
@@ -9,6 +9,8 @@
 		<RunPostBuildEvent>Always</RunPostBuildEvent>
 		<DebugType>embedded</DebugType>
 		<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract> <!-- needed for sqlite native libs -->
+    <ContainerImageName>tshock</ContainerImageName>
+    <Version>5.0.0-beta</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -21,6 +23,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+		<PackageReference Include="Microsoft.NET.Build.Containers" Version="0.1.8" />
 		<PackageReference Include="MySql.Data" Version="8.0.30" />
 		<PackageReference Include="Microsoft.Data.Sqlite" Version="6.0.8" />
 		<PackageReference Include="ModFramework" Version="1.1.1-alpha" GeneratePathProperty="true" /> <!-- only used to extract out to ./bin. -->
