@@ -22,12 +22,12 @@ public class GroupTests
 		LanguageManager.Instance.SetLanguage(GameCulture.DefaultCulture); // TShockAPI.Localization will fail without ActiveCulture set
 		Lang.InitializeLegacyLocalization(); // TShockAPI.Localization will fail without preparing NPC names etc
 
-		IHostBuilder hostBuilder = DIBuilder.ConfigureHost(new string[] { });
-		hostBuilder.ConfigureServices(svcs => svcs
-			.AddSingleton<ServiceLoader>()
-			.AddSingleton<HookService>()
-			.AddSingleton<TShock>()
-		);
+		IHostBuilder hostBuilder = Host.CreateDefaultBuilder()
+			.ConfigureServices(svcs => svcs
+				.AddSingleton<ServiceLoader>()
+				.AddSingleton<HookService>()
+				.AddSingleton<TShock>()
+			);
 
 		IHost host = hostBuilder.Build();
 
