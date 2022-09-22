@@ -16,11 +16,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using TerrariaApi.Server;
 
 namespace TShockAPI
 {
@@ -36,15 +36,18 @@ namespace TShockAPI
 		/// </summary>
 		public string FileName { get; set; }
 
+		private readonly ILogger<TShock> _logger;
+
 		/// <summary>
 		/// Creates the log file stream and sets the initial log level.
 		/// </summary>
 		/// <param name="filename">The output filename. This file will be overwritten if 'clear' is set.</param>
 		/// <param name="clear">Whether or not to clear the log file on initialization.</param>
-		public TextLog(string filename, bool clear)
+		public TextLog(string filename, bool clear, ILogger<TShock> logger)
 		{
 			FileName = filename;
 			_logWriter = new StreamWriter(filename, !clear);
+			_logger = logger;
 		}
 
 		public bool MayWriteType(TraceLevel type)
@@ -246,7 +249,7 @@ namespace TShockAPI
 			}
 			catch (ObjectDisposedException)
 			{
-				ServerApi.LogWriter.PluginWriteLine(TShock.instance, logEntry, TraceLevel.Error);
+				_logger.LogError(logEntry);
 				Console.WriteLine("Unable to write to log as log has been disposed.");
 				Console.WriteLine("{0} - {1}: {2}: {3}",
 					DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture),

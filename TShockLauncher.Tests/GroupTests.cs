@@ -1,6 +1,9 @@
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using NUnit.Framework;
 using Terraria;
 using Terraria.Localization;
+using TerrariaApi.Server;
 using TShockAPI;
 using TShockAPI.DB;
 
@@ -14,9 +17,17 @@ public class GroupTests
 		LanguageManager.Instance.SetLanguage(GameCulture.DefaultCulture);
 		Lang.InitializeLegacyLocalization();
 
-		//Setup();
-		var ts = new TShock(null); // prepares configs etc
-		ts.Initialize();
+		IHostBuilder hostBuilder = Host.CreateDefaultBuilder()
+			.ConfigureServices(svcs => svcs
+				.AddSingleton<ServiceLoader>()
+				.AddSingleton<HookService>()
+				.AddSingleton<TShock>()
+			);
+
+		IHost host = hostBuilder.Build();
+
+		var ts = host.Services.GetRequiredService<TShock>();
+		ts.Start();
 	}
 
 	/// <summary>

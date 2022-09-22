@@ -46,6 +46,7 @@ using TShockAPI.Configuration;
 using Terraria.GameContent.Creative;
 using System.Runtime.InteropServices;
 using TShockAPI.Modules;
+using Microsoft.Extensions.Logging;
 
 namespace TShockAPI
 {
@@ -53,8 +54,7 @@ namespace TShockAPI
 	/// This is the TShock main class. TShock is a plugin on the TerrariaServerAPI, so it extends the base TerrariaPlugin.
 	/// TShock also complies with the API versioning system, and defines its required API version here.
 	/// </summary>
-	[ApiVersion(2, 1)]
-	public class TShock : TerrariaPlugin
+	public class TShock : PluginService, IDisposable
 	{
 		/// <summary>VersionNum - The version number the TerrariaAPI will return back to the API. We just use the Assembly info.</summary>
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
@@ -122,8 +122,6 @@ namespace TShockAPI
 		public static UpdateManager UpdateManager;
 		/// <summary>Log - Static reference to the log system, which outputs to either SQL or a text file, depending on user config.</summary>
 		public static ILog Log;
-		/// <summary>instance - Static reference to the TerrariaPlugin instance.</summary>
-		public static TerrariaPlugin instance;
 		/// <summary>
 		/// Static reference to a <see cref="CommandLineParser"/> used for simple command-line parsing
 		/// </summary>
@@ -149,48 +147,48 @@ namespace TShockAPI
 		/// </summary>
 		public static event Action Initialized;
 
-		public static ModuleManager ModuleManager { get; } = new ModuleManager();
-
 		/// <summary>Version - The version required by the TerrariaAPI to be passed back for checking &amp; loading the plugin.</summary>
 		/// <value>value - The version number specified in the Assembly, based on the VersionNum variable set in this class.</value>
-		public override Version Version
+		public Version Version
 		{
 			get { return VersionNum; }
 		}
 
 		/// <summary>Name - The plugin name.</summary>
 		/// <value>value - "TShock"</value>
-		public override string Name
+		public string Name
 		{
 			get { return "TShock"; }
 		}
 
 		/// <summary>Author - The author of the plugin.</summary>
 		/// <value>value - "The TShock Team"</value>
-		public override string Author
+		public string Author
 		{
 			get { return "The TShock Team"; }
 		}
 
 		/// <summary>Description - The plugin description.</summary>
 		/// <value>value - "The administration modification of the future."</value>
-		public override string Description
+		public string Description
 		{
 			get { return "The administration modification of the future."; }
 		}
 
+		private readonly HookService _hookService;
+		private readonly ILogger<TShock> _logger;
+
 		/// <summary>TShock - The constructor for the TShock plugin.</summary>
-		/// <param name="game">game - The Terraria main game.</param>
-		public TShock(Main game)
-			: base(game)
+		public TShock(HookService hookService, ILogger<TShock> logger)
 		{
+			_hookService = hookService;
+			_logger = logger;
 			Config = new TShockConfig();
 			ServerSideCharacterConfig = new ServerSideConfig();
 			ServerSideCharacterConfig.Settings.StartingInventory.Add(new NetItem(-15, 1, 0));
 			ServerSideCharacterConfig.Settings.StartingInventory.Add(new NetItem(-13, 1, 0));
 			ServerSideCharacterConfig.Settings.StartingInventory.Add(new NetItem(-16, 1, 0));
-			Order = 0;
-			instance = this;
+			Priority = 0;
 		}
 
 
@@ -244,7 +242,7 @@ namespace TShockAPI
 
 		/// <summary>Initialize - Called by the TerrariaServerAPI during initialization.</summary>
 		[SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands")]
-		public override void Initialize()
+		public override void Start()
 		{
 			string logFilename;
 			string logPathSetupWarning;
@@ -261,7 +259,7 @@ namespace TShockAPI
 
 			Main.SettingsUnlock_WorldEvil = true;
 
-			TerrariaApi.Reporting.CrashReporter.HeapshotRequesting += CrashReporter_HeapshotRequesting;
+			//TerrariaApi.Reporting.CrashReporter.HeapshotRequesting += CrashReporter_HeapshotRequesting;
 
 			Console.CancelKeyPress += new ConsoleCancelEventHandler(ConsoleCancelHandler);
 
@@ -297,7 +295,7 @@ namespace TShockAPI
 					logPathSetupWarning =
 						"Could not apply the given log path / log format, defaults will be used. Exception details:\n" + ex;
 
-					ServerApi.LogWriter.PluginWriteLine(this, logPathSetupWarning, TraceLevel.Error);
+					_logger.LogError(logPathSetupWarning);
 
 					// Problem with the log path or format use the default
 					logFilename = Path.Combine(LogPathDefault, now.ToString(LogFormatDefault) + ".log");
@@ -337,7 +335,7 @@ namespace TShockAPI
 					}
 					catch (MySqlException ex)
 					{
-						ServerApi.LogWriter.PluginWriteLine(this, ex.ToString(), TraceLevel.Error);
+						_logger.LogError(ex.ToString());
 						throw new Exception("MySql not setup correctly");
 					}
 				}
@@ -347,9 +345,9 @@ namespace TShockAPI
 				}
 
 				if (Config.Settings.UseSqlLogs)
-					Log = new SqlLog(DB, logFilename, LogClear);
+					Log = new SqlLog(DB, logFilename, LogClear, _logger);
 				else
-					Log = new TextLog(logFilename, LogClear);
+					Log = new TextLog(logFilename, LogClear, _logger);
 
 				if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
 				{
@@ -381,7 +379,7 @@ namespace TShockAPI
 				RestManager.RegisterRestfulCommands();
 				Bouncer = new Bouncer();
 				RegionSystem = new RegionHandler(Regions);
-				ItemBans = new ItemBans(this, DB);
+				ItemBans = new ItemBans(this, DB, _hookService, _logger);
 
 				var geoippath = "GeoIP.dat";
 				if (Config.Settings.EnableGeoIP && File.Exists(geoippath))
@@ -389,27 +387,27 @@ namespace TShockAPI
 
 				Log.ConsoleInfo("TShock {0} ({1}) now running.", Version, VersionCodename);
 
-				ServerApi.Hooks.GamePostInitialize.Register(this, OnPostInit);
-				ServerApi.Hooks.GameUpdate.Register(this, OnUpdate);
-				ServerApi.Hooks.GameHardmodeTileUpdate.Register(this, OnHardUpdate);
-				ServerApi.Hooks.GameStatueSpawn.Register(this, OnStatueSpawn);
-				ServerApi.Hooks.ServerConnect.Register(this, OnConnect);
-				ServerApi.Hooks.ServerJoin.Register(this, OnJoin);
-				ServerApi.Hooks.ServerLeave.Register(this, OnLeave);
-				ServerApi.Hooks.ServerChat.Register(this, OnChat);
-				ServerApi.Hooks.ServerCommand.Register(this, ServerHooks_OnCommand);
-				ServerApi.Hooks.NetGetData.Register(this, OnGetData);
-				ServerApi.Hooks.NetSendData.Register(this, NetHooks_SendData);
-				ServerApi.Hooks.NetGreetPlayer.Register(this, OnGreetPlayer);
-				ServerApi.Hooks.NpcStrike.Register(this, NpcHooks_OnStrikeNpc);
-				ServerApi.Hooks.ProjectileSetDefaults.Register(this, OnProjectileSetDefaults);
-				ServerApi.Hooks.WorldStartHardMode.Register(this, OnStartHardMode);
-				ServerApi.Hooks.WorldSave.Register(this, SaveManager.Instance.OnSaveWorld);
-				ServerApi.Hooks.WorldChristmasCheck.Register(this, OnXmasCheck);
-				ServerApi.Hooks.WorldHalloweenCheck.Register(this, OnHalloweenCheck);
-				ServerApi.Hooks.NetNameCollision.Register(this, NetHooks_NameCollision);
-				ServerApi.Hooks.ItemForceIntoChest.Register(this, OnItemForceIntoChest);
-				ServerApi.Hooks.WorldGrassSpread.Register(this, OnWorldGrassSpread);
+				_hookService.GamePostInitialize.Register(OnPostInit, _logger);
+				_hookService.GameUpdate.Register(OnUpdate, _logger);
+				_hookService.GameHardmodeTileUpdate.Register(OnHardUpdate, _logger);
+				_hookService.GameStatueSpawn.Register(OnStatueSpawn, _logger);
+				_hookService.ServerConnect.Register(OnConnect, _logger);
+				_hookService.ServerJoin.Register(OnJoin, _logger);
+				_hookService.ServerLeave.Register(OnLeave, _logger);
+				_hookService.ServerChat.Register(OnChat, _logger);
+				_hookService.ServerCommand.Register(ServerHooks_OnCommand, _logger);
+				_hookService.NetGetData.Register(OnGetData, _logger);
+				_hookService.NetSendData.Register(NetHooks_SendData, _logger);
+				_hookService.NetGreetPlayer.Register(OnGreetPlayer, _logger);
+				_hookService.NpcStrike.Register(NpcHooks_OnStrikeNpc, _logger);
+				_hookService.ProjectileSetDefaults.Register(OnProjectileSetDefaults, _logger);
+				_hookService.WorldStartHardMode.Register(OnStartHardMode, _logger);
+				_hookService.WorldSave.Register(SaveManager.Instance.OnSaveWorld, _logger);
+				_hookService.WorldChristmasCheck.Register(OnXmasCheck, _logger);
+				_hookService.WorldHalloweenCheck.Register(OnHalloweenCheck, _logger);
+				_hookService.NetNameCollision.Register(NetHooks_NameCollision, _logger);
+				_hookService.ItemForceIntoChest.Register(OnItemForceIntoChest, _logger);
+				_hookService.WorldGrassSpread.Register(OnWorldGrassSpread, _logger);
 				Hooks.PlayerHooks.PlayerPreLogin += OnPlayerPreLogin;
 				Hooks.PlayerHooks.PlayerPostLogin += OnPlayerLogin;
 				Hooks.AccountHooks.AccountDelete += OnAccountDelete;
@@ -419,8 +417,6 @@ namespace TShockAPI
 				Commands.InitCommands();
 
 				EnglishLanguage.Initialize();
-
-				ModuleManager.Initialise(new object[] { this });
 
 				if (Config.Settings.RestApiEnabled)
 					RestApi.Start();
@@ -450,63 +446,83 @@ namespace TShockAPI
 			}
 		}
 
-		protected void CrashReporter_HeapshotRequesting(object sender, EventArgs e)
-		{
-			foreach (TSPlayer player in TShock.Players)
-			{
-				player.Account = null;
-			}
-		}
+		//protected void CrashReporter_HeapshotRequesting(object sender, EventArgs e)
+		//{
+		//	foreach (TSPlayer player in TShock.Players)
+		//	{
+		//		player.Account = null;
+		//	}
+		//}
 
 		/// <summary>Dispose - Called when disposing.</summary>
 		/// <param name="disposing">disposing - If set, disposes of all hooks and other systems.</param>
-		protected override void Dispose(bool disposing)
+		protected virtual void Dispose(bool disposing)
 		{
-			if (disposing)
+			if (!disposedValue)
 			{
-				// NOTE: order is important here
-				if (Geo != null)
+				if (disposing)
 				{
-					Geo.Dispose();
+					// NOTE: order is important here
+					if (Geo != null)
+					{
+						Geo.Dispose();
+					}
+					SaveManager.Instance.Dispose();
+
+					_hookService.GamePostInitialize.Deregister(OnPostInit);
+					_hookService.GameUpdate.Deregister(OnUpdate);
+					_hookService.GameHardmodeTileUpdate.Deregister(OnHardUpdate);
+					_hookService.GameStatueSpawn.Deregister(OnStatueSpawn);
+					_hookService.ServerConnect.Deregister(OnConnect);
+					_hookService.ServerJoin.Deregister(OnJoin);
+					_hookService.ServerLeave.Deregister(OnLeave);
+					_hookService.ServerChat.Deregister(OnChat);
+					_hookService.ServerCommand.Deregister(ServerHooks_OnCommand);
+					_hookService.NetGetData.Deregister(OnGetData);
+					_hookService.NetSendData.Deregister(NetHooks_SendData);
+					_hookService.NetGreetPlayer.Deregister(OnGreetPlayer);
+					_hookService.NpcStrike.Deregister(NpcHooks_OnStrikeNpc);
+					_hookService.ProjectileSetDefaults.Deregister(OnProjectileSetDefaults);
+					_hookService.WorldStartHardMode.Deregister(OnStartHardMode);
+					_hookService.WorldSave.Deregister(SaveManager.Instance.OnSaveWorld);
+					_hookService.WorldChristmasCheck.Deregister(OnXmasCheck);
+					_hookService.WorldHalloweenCheck.Deregister(OnHalloweenCheck);
+					_hookService.NetNameCollision.Deregister(NetHooks_NameCollision);
+					_hookService.ItemForceIntoChest.Deregister(OnItemForceIntoChest);
+					_hookService.WorldGrassSpread.Deregister(OnWorldGrassSpread);
+					TShockAPI.Hooks.PlayerHooks.PlayerPostLogin -= OnPlayerLogin;
+
+					if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
+					{
+						File.Delete(Path.Combine(SavePath, "tshock.pid"));
+					}
+
+					RestApi.Dispose();
+					Log.Dispose();
+
+					RegionSystem.Dispose();
 				}
-				SaveManager.Instance.Dispose();
 
-				ModuleManager.Dispose();
-
-				ServerApi.Hooks.GamePostInitialize.Deregister(this, OnPostInit);
-				ServerApi.Hooks.GameUpdate.Deregister(this, OnUpdate);
-				ServerApi.Hooks.GameHardmodeTileUpdate.Deregister(this, OnHardUpdate);
-				ServerApi.Hooks.GameStatueSpawn.Deregister(this, OnStatueSpawn);
-				ServerApi.Hooks.ServerConnect.Deregister(this, OnConnect);
-				ServerApi.Hooks.ServerJoin.Deregister(this, OnJoin);
-				ServerApi.Hooks.ServerLeave.Deregister(this, OnLeave);
-				ServerApi.Hooks.ServerChat.Deregister(this, OnChat);
-				ServerApi.Hooks.ServerCommand.Deregister(this, ServerHooks_OnCommand);
-				ServerApi.Hooks.NetGetData.Deregister(this, OnGetData);
-				ServerApi.Hooks.NetSendData.Deregister(this, NetHooks_SendData);
-				ServerApi.Hooks.NetGreetPlayer.Deregister(this, OnGreetPlayer);
-				ServerApi.Hooks.NpcStrike.Deregister(this, NpcHooks_OnStrikeNpc);
-				ServerApi.Hooks.ProjectileSetDefaults.Deregister(this, OnProjectileSetDefaults);
-				ServerApi.Hooks.WorldStartHardMode.Deregister(this, OnStartHardMode);
-				ServerApi.Hooks.WorldSave.Deregister(this, SaveManager.Instance.OnSaveWorld);
-				ServerApi.Hooks.WorldChristmasCheck.Deregister(this, OnXmasCheck);
-				ServerApi.Hooks.WorldHalloweenCheck.Deregister(this, OnHalloweenCheck);
-				ServerApi.Hooks.NetNameCollision.Deregister(this, NetHooks_NameCollision);
-				ServerApi.Hooks.ItemForceIntoChest.Deregister(this, OnItemForceIntoChest);
-				ServerApi.Hooks.WorldGrassSpread.Deregister(this, OnWorldGrassSpread);
-				TShockAPI.Hooks.PlayerHooks.PlayerPostLogin -= OnPlayerLogin;
-
-				if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
-				{
-					File.Delete(Path.Combine(SavePath, "tshock.pid"));
-				}
-
-				RestApi.Dispose();
-				Log.Dispose();
-
-				RegionSystem.Dispose();
+				// TODO: free unmanaged resources (unmanaged objects) and override finalizer
+				// TODO: set large fields to null
+				disposedValue = true;
 			}
-			base.Dispose(disposing);
+		}
+
+		// // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+		// ~TShock()
+		// {
+		//     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+		//     Dispose(disposing: false);
+		// }
+
+		/// <summary>Dispose - Called when disposing.</summary>
+		/// <param name="disposing">disposing - If set, disposes of all hooks and other systems.</param>
+		public void Dispose()
+		{
+			// Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+			Dispose(disposing: true);
+			GC.SuppressFinalize(this);
 		}
 
 		/// <summary>OnPlayerLogin - Fires the PlayerLogin hook to listening plugins.</summary>
@@ -747,7 +763,7 @@ namespace TShockAPI
 						SavePath = path ?? "tshock";
 						if (path != null)
 						{
-							ServerApi.LogWriter.PluginWriteLine(this, "Config path has been set to " + path, TraceLevel.Info);
+							_logger.LogInformation("Config path has been set to " + path);
 						}
 					})
 
@@ -757,7 +773,7 @@ namespace TShockAPI
 						if (path != null)
 						{
 							Main.WorldPath = path;
-							ServerApi.LogWriter.PluginWriteLine(this, "World path has been set to " + path, TraceLevel.Info);
+							_logger.LogInformation("World path has been set to " + path);
 						}
 					})
 
@@ -767,7 +783,7 @@ namespace TShockAPI
 						if (path != null)
 						{
 							LogPath = path;
-							ServerApi.LogWriter.PluginWriteLine(this, "Log path has been set to " + path, TraceLevel.Info);
+							_logger.LogInformation("Log path has been set to " + path);
 						}
 					})
 
@@ -780,7 +796,7 @@ namespace TShockAPI
 					{
 						if (!string.IsNullOrWhiteSpace(cfg))
 						{
-							ServerApi.LogWriter.PluginWriteLine(this, string.Format("Loading dedicated config file: {0}", cfg), TraceLevel.Verbose);
+							_logger.LogDebug(string.Format("Loading dedicated config file: {0}", cfg));
 							Main.instance.LoadDedConfig(cfg);
 						}
 					})
@@ -791,7 +807,7 @@ namespace TShockAPI
 						if (int.TryParse(p, out port))
 						{
 							Netplay.ListenPort = port;
-							ServerApi.LogWriter.PluginWriteLine(this, string.Format("Listening on port {0}.", port), TraceLevel.Verbose);
+							_logger.LogDebug(string.Format("Listening on port {0}.", port));
 						}
 					})
 
@@ -800,7 +816,7 @@ namespace TShockAPI
 						if (!string.IsNullOrWhiteSpace(world))
 						{
 							Main.instance.SetWorldName(world);
-							ServerApi.LogWriter.PluginWriteLine(this, string.Format("World name will be overridden by: {0}", world), TraceLevel.Verbose);
+							_logger.LogDebug(string.Format("World name will be overridden by: {0}", world));
 						}
 					})
 
@@ -810,7 +826,7 @@ namespace TShockAPI
 						if (IPAddress.TryParse(ip, out addr))
 						{
 							Netplay.ServerIP = addr;
-							ServerApi.LogWriter.PluginWriteLine(this, string.Format("Listening on IP {0}.", addr), TraceLevel.Verbose);
+							_logger.LogDebug(string.Format("Listening on IP {0}.", addr));
 						}
 						else
 						{
@@ -846,7 +862,7 @@ namespace TShockAPI
 							throw new InvalidOperationException("Invalid value given for command line argument \"-worldevil\".");
 					}
 
-					ServerApi.LogWriter.PluginWriteLine(this, String.Format("New worlds will be generated with the {0} world evil type!", value), TraceLevel.Verbose);
+					_logger.LogDebug(String.Format("New worlds will be generated with the {0} world evil type!", value));
 					WorldGen.WorldGenParam_Evil = worldEvil;
 				})
 
@@ -1028,6 +1044,12 @@ namespace TShockAPI
 
 		/// <summary>LastSave - Used to keep track of SSC save intervals.</summary>
 		private DateTime LastSave = DateTime.UtcNow;
+		private bool disposedValue;
+
+		/// <summary>
+		/// This forces Terraria to actually continue to update even if there are no clients connected
+		/// </summary>
+		public static bool ForceUpdate { get; private set; }
 
 		/// <summary>OnUpdate - Called when ever the server ticks.</summary>
 		/// <param name="args">args - EventArgs args</param>
@@ -1035,7 +1057,7 @@ namespace TShockAPI
 		{
 			// This forces Terraria to actually continue to update
 			// even if there are no clients connected
-			if (ServerApi.ForceUpdate)
+			if (ForceUpdate)
 			{
 				Netplay.HasClients = true;
 			}
