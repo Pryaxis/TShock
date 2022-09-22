@@ -16,15 +16,16 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
+using TerrariaApi.Server;
 
 namespace TShockAPI.Modules;
 
-public class ReduceConsoleSpam : Module
+public class ReduceConsoleSpam : PluginService, IDisposable
 {
-	public override void Initialise() =>
+	public override void Start() =>
 		OTAPI.Hooks.Main.StatusTextChange += OnMainStatusTextChange;
 
-	public override void Dispose() =>
+	public void Dispose() =>
 		OTAPI.Hooks.Main.StatusTextChange -= OnMainStatusTextChange;
 
 	/// <summary>
