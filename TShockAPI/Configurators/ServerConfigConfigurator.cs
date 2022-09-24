@@ -36,7 +36,12 @@ public class ServerConfigConfigurator : ConfigConfigurator
 		// We now build a second IConfiguration that first takes values from the json file, 
 		// then overwrites any duplicates with values from the environment variables, then the commandline
 		IConfiguration tshockConfig = new ConfigurationBuilder()
-			.AddJsonFile(configPath)
+			.AddJsonFile(configPath,
+				// potentially temporary to allow testing
+				// feel free to remove this when tshock is creating the file by default
+				// or cleanup comments 
+				optional: true
+			)
 			.AddConfiguration(tshockEnvVars)
 			.Build();
 
