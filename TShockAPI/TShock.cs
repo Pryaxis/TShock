@@ -47,6 +47,7 @@ using Terraria.GameContent.Creative;
 using System.Runtime.InteropServices;
 using TShockAPI.Modules;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace TShockAPI
 {
@@ -177,12 +178,15 @@ namespace TShockAPI
 
 		private readonly HookService _hookService;
 		private readonly ILogger<TShock> _logger;
+		private readonly IServiceProvider _serviceProvider;
 
 		/// <summary>TShock - The constructor for the TShock plugin.</summary>
-		public TShock(HookService hookService, ILogger<TShock> logger)
+		public TShock(HookService hookService, ILogger<TShock> logger, IServiceProvider serviceProvider)
 		{
 			_hookService = hookService;
 			_logger = logger;
+			_serviceProvider = serviceProvider;
+
 			Config = new TShockConfig();
 			ServerSideCharacterConfig = new ServerSideConfig();
 			ServerSideCharacterConfig.Settings.StartingInventory.Add(new NetItem(-15, 1, 0));
@@ -417,6 +421,10 @@ namespace TShockAPI
 				Commands.InitCommands();
 
 				EnglishLanguage.Initialize();
+
+				// invoke the constructor of each module and allow them to register to hooks.
+				var modules = _serviceProvider.GetService<IEnumerable<TShockAPI.Modules.Module>>();
+				_logger.LogInformation($"{modules.Count()} module(s) started.");
 
 				if (Config.Settings.RestApiEnabled)
 					RestApi.Start();
