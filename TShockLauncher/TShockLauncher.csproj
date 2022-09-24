@@ -28,6 +28,7 @@
 		<PackageReference Include="MySql.Data" Version="8.0.30" />
 		<PackageReference Include="Microsoft.Data.Sqlite" Version="6.0.8" />
 		<PackageReference Include="ModFramework" Version="1.1.1-alpha" GeneratePathProperty="true" /> <!-- only used to extract out to ./bin. -->
+		<PackageReference Include="NLog.Extensions.Logging" Version="5.0.4" /> <!-- allow the dll to be included -->
 
 		<!-- the launcher doesnt need the direct OTAPI reference, but since PackageReference[ExcludeFromSingleFile] doesnt work, exclude the assets and copy manually -->
 		<PackageReference Include="OTAPI.Upcoming" Version="3.1.3-alpha" ExcludeAssets="all" GeneratePathProperty="true" />
