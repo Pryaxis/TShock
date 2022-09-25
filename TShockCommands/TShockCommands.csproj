@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <Nullable>enable</Nullable>
+    <Version>5.0.0-beta</Version>
+    <AssemblyTitle>TShock Commands</AssemblyTitle>
+    <Company>Pryaxis &amp; TShock Contributors</Company>
+    <Product>TShockCommands</Product>
+    <Copyright>Copyright © Pryaxis &amp; TShock Contributors 2011-2022</Copyright>
+    <!-- extras for nuget -->
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+    <Authors>Pryaxis &amp; TShock Contributors</Authors>
+    <Description>TShock command adapter</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EasyCommands" Version="1.2.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TShockAPI\TShockAPI.csproj" />
+  </ItemGroup>
+</Project>
