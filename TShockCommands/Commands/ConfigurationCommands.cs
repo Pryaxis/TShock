@@ -17,6 +17,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 using EasyCommands;
 using EasyCommands.Commands;
+using Microsoft.Xna.Framework;
+using System;
+using System.IO;
 using TShockAPI;
 using TShockCommands.Annotations;
 
@@ -24,34 +27,98 @@ namespace TShockCommands.Commands;
 
 class ConfigurationCommands : CommandCallbacks<TSPlayer>
 {
-	//			#region Configuration Commands
-	//			add(new Command(Permissions.maintenance, CheckUpdates, "checkupdates")
-	//			{
-	//				HelpText = "Checks for TShock updates."
-	//			});
-	//			add(new Command(Permissions.maintenance, Off, "off", "exit", "stop")
-	//			{
-	//				HelpText = "Shuts down the server while saving."
-	//			});
-	//			add(new Command(Permissions.maintenance, OffNoSave, "off-nosave", "exit-nosave", "stop-nosave")
-	//			{
-	//				HelpText = "Shuts down the server without saving."
-	//			});
-	//			add(new Command(Permissions.cfgreload, Reload, "reload")
-	//			{
-	//				HelpText = "Reloads the server configuration file."
-	//			});
-	//			add(new Command(Permissions.cfgpassword, ServerPassword, "serverpassword")
-	//			{
-	//				HelpText = "Changes the server password."
-	//			});
-	//			add(new Command(Permissions.maintenance, GetVersion, "version")
-	//			{
-	//				HelpText = "Shows the TShock version."
-	//			});
-	//			add(new Command(Permissions.whitelist, Whitelist, "whitelist")
-	//			{
-	//				HelpText = "Manages the server whitelist."
-	//			});
-	//			#endregion
+	[Command("checkupdates")]
+	[HelpText("Checks for TShock updates.")]
+	[CommandPermissions(Permissions.maintenance)]
+	public void CheckUpdates()
+	{
+		Sender.SendInfoMessage("An update check has been queued.");
+		try
+		{
+			_ = TShock.UpdateManager.UpdateCheckAsync(null!);
+		}
+		catch (Exception)
+		{
+			//swallow the exception
+			return;
+		}
+	}
+
+	[Command("off", "exit", "stop")]
+	[HelpText("Checks for TShock updates.")]
+	[CommandPermissions(Permissions.maintenance)]
+	public void Off(string? reason = null)
+	{
+		if (Terraria.Main.ServerSideCharacter)
+		{
+			foreach (TSPlayer player in TShock.Players)
+			{
+				if (player != null && player.IsLoggedIn && !player.IsDisabledPendingTrashRemoval)
+				{
+					player.SaveServerCharacter();
+				}
+			}
+		}
+
+		reason = (!String.IsNullOrWhiteSpace(reason) ? "Server shutting down: " + reason : "Server shutting down!");
+		TShock.Utils.StopServer(true, reason);
+	}
+
+	[Command("off-nosave", "exit-nosave", "stop-nosave")]
+	[HelpText("Shuts down the server without saving.")]
+	[CommandPermissions(Permissions.maintenance)]
+	public void OffNoSave(string? reason = null)
+	{
+		reason = (!String.IsNullOrWhiteSpace(reason) ? "Server shutting down: " + reason : "Server shutting down!");
+		TShock.Utils.StopServer(false, reason);
+	}
+
+	[Command("reload")]
+	[HelpText("Reloads the server configuration file.")]
+	[CommandPermissions(Permissions.cfgreload)]
+	public void Reload()
+	{
+		TShock.Utils.Reload();
+		TShockAPI.Hooks.GeneralHooks.OnReloadEvent(Sender);
+
+		Sender.SendSuccessMessage(
+			"Configuration, permissions, and regions reload complete. Some changes may require a server restart.");
+	}
+
+	[Command("serverpassword")]
+	[HelpText("Changes the server password.")]
+	[CommandPermissions(Permissions.cfgpassword)]
+	public void ServerPassword(string newpassword)
+	{
+		if (String.IsNullOrWhiteSpace(newpassword))
+		{
+			Sender.SendErrorMessage("Invalid syntax! Proper syntax: {0}serverpassword \"<new password>\"", TextOptions.CommandPrefix);
+			return;
+		}
+		TShock.Config.Settings.ServerPassword = newpassword;
+		Sender.SendSuccessMessage($"Server password has been changed to: {newpassword}.");
+	}
+
+	[Command("version")]
+	[HelpText("Shows the TShock version.")]
+	[CommandPermissions(Permissions.maintenance)]
+	public void GetVersion()
+	{
+		Sender.SendMessage($"TShock: {TShock.VersionNum.Color(Utils.BoldHighlight)} {TShock.VersionCodename.Color(Utils.RedHighlight)}.", Color.White);
+	}
+
+	[Command("whitelist")]
+	[HelpText("Manages the server whitelist.")]
+	[CommandPermissions(Permissions.whitelist)]
+	public void Whitelist(string target)
+	{
+		if (!String.IsNullOrWhiteSpace(target))
+		{
+			using (var tw = new StreamWriter(FileTools.WhitelistPath, true))
+			{
+				tw.WriteLine(target);
+			}
+			Sender.SendSuccessMessage("Added " + target + " to the whitelist.");
+		}
+	}
 }

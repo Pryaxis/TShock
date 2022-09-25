@@ -49,7 +49,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Path to the file containing the whitelist.
 		/// </summary>
-		internal static string WhitelistPath
+		public static string WhitelistPath
 		{
 			get { return Path.Combine(TShock.SavePath, "whitelist.txt"); }
 		}

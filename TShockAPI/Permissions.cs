@@ -119,16 +119,16 @@ namespace TShockAPI
 
 		#region tshock.cfg nodes
 		[Description("User is notified when an update is available, user can turn off / restart the server.")]
-		public static readonly string maintenance = "tshock.cfg.maintenance";
+		public const string maintenance = "tshock.cfg.maintenance";
 
 		[Description("User can modify the whitelist.")]
-		public static readonly string whitelist = "tshock.cfg.whitelist";
+		public const string whitelist = "tshock.cfg.whitelist";
 
 		[Description("User can edit the server password.")]
-		public static readonly string cfgpassword = "tshock.cfg.password";
+		public const string cfgpassword = "tshock.cfg.password";
 
 		[Description("User can reload the configurations file.")]
-		public static readonly string cfgreload = "tshock.cfg.reload";
+		public const string cfgreload = "tshock.cfg.reload";
 
 		[Description("User can create reference files of Terraria IDs and the permission matrix in the server folder.")]
 		public static readonly string createdumps = "tshock.cfg.createdumps";
