@@ -223,7 +223,7 @@ namespace TShockAPI.DB
 		/// <summary>Gets a user account object by name.</summary>
 		/// <param name="name">The user's name.</param>
 		/// <returns>The user account object returned from the search.</returns>
-		public UserAccount GetUserAccountByName(string name)
+		public UserAccount? GetUserAccountByName(string name)
 		{
 			try
 			{

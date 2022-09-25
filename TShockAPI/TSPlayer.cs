@@ -206,7 +206,7 @@ namespace TShockAPI
 		/// <summary>
 		/// The player's temporary group.  This overrides the user's actual group.
 		/// </summary>
-		public Group tempGroup = null;
+		public Group? tempGroup = null;
 
 		public Timer tempGroupTimer;
 

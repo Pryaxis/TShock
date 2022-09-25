@@ -34,16 +34,16 @@ namespace TShockAPI
 	{
 		#region tshock.account nodes
 		[Description("User can register account in game.")]
-		public static readonly string canregister = "tshock.account.register";
+		public const string canregister = "tshock.account.register";
 
 		[Description("User can login in game.")]
-		public static readonly string canlogin = "tshock.account.login";
+		public const string canlogin = "tshock.account.login";
 
 		[Description("User can logout in game.")]
-		public static readonly string canlogout = "tshock.account.logout";
+		public const string canlogout = "tshock.account.logout";
 
 		[Description("User can change password in game.")]
-		public static readonly string canchangepassword = "tshock.account.changepassword";
+		public const string canchangepassword = "tshock.account.changepassword";
 		#endregion
 
 		#region tshock.admin nodes
@@ -490,7 +490,7 @@ namespace TShockAPI
 		public static readonly string canusebannedtiles = "tshock.tiles.usebanned";
 
 		[Description("Player can check if a username is registered and see its last login time.")]
-		public static readonly string checkaccountinfo = "tshock.accountinfo.check";
+		public const string checkaccountinfo = "tshock.accountinfo.check";
 
 		[Description("Player can see advanced information about any user account.")]
 		public static readonly string advaccountinfo = "tshock.accountinfo.details";
