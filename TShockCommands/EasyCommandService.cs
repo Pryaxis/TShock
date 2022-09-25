@@ -55,7 +55,7 @@ public class EasyCommandService : CommandHandler<TSPlayer>, ICommandService
 	/// <param name="logger">Logger for this instance</param>
 	/// <param name="repoLogger">Logger for the repository</param>
 	/// <param name="serviceProvider">The service provider for the repository to allow DI in easy command callbacks</param>
-	/// <exception cref="Exception"></exception>
+	/// <exception cref="Exception">Configuration exceptions</exception>
 	public EasyCommandService(
 		IOptions<CommandOptions> options,
 		ILogger<EasyCommandService> logger,

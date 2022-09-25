@@ -30,6 +30,9 @@ using TShockCommands.Annotations;
 
 namespace TShockCommands;
 
+/// <summary>
+/// TShock command respository for EasyCommands
+/// </summary>
 public class EasyCommandsRepository : CommandRepository<TSPlayer>
 {
 	Dictionary<string, CommandDelegate<TSPlayer>> _commands = new();
@@ -37,12 +40,19 @@ public class EasyCommandsRepository : CommandRepository<TSPlayer>
 	private readonly ILogger<EasyCommandsRepository> _logger;
 	private readonly IServiceProvider _serviceProvider;
 
+	/// <summary>
+	/// Constructor for the repositoru
+	/// </summary>
+	/// <param name="context">Context to use</param>
+	/// <param name="options">Command options/settings</param>
+	/// <param name="logger">Logger instance</param>
+	/// <param name="serviceProvider">Service provider instance so commands can resolve from DI</param>
 	public EasyCommandsRepository(
-		Context<TSPlayer> context,
-		IOptions<CommandOptions> options,
-		ILogger<EasyCommandsRepository> logger,
-		IServiceProvider serviceProvider
-	) : base(context)
+	Context<TSPlayer> context,
+	IOptions<CommandOptions> options,
+	ILogger<EasyCommandsRepository> logger,
+	IServiceProvider serviceProvider
+) : base(context)
 	{
 		_options = options;
 		_logger = logger;
