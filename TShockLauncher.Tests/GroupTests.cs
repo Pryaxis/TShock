@@ -6,6 +6,8 @@ using Terraria.Localization;
 using TerrariaApi.Server;
 using TShockAPI;
 using TShockAPI.DB;
+using TShockAPI.Modules;
+using TShockCommands;
 
 namespace TShockLauncher.Tests;
 
@@ -22,6 +24,7 @@ public class GroupTests
 				.AddSingleton<ServiceLoader>()
 				.AddSingleton<HookService>()
 				.AddSingleton<TShock>()
+				.AddSingleton<ICommandService, EasyCommandService>()
 			);
 
 		IHost host = hostBuilder.Build();

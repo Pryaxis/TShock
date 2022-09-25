@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TShockAPI\TShockAPI.csproj" />
+    <ProjectReference Include="..\TShockCommands\TShockCommands.csproj" />
     <ProjectReference Include="..\TShockLauncher\TShockLauncher.csproj" />
   </ItemGroup>
 
