@@ -460,7 +460,7 @@ namespace TShockAPI
 		public static readonly string whisper = "tshock.whisper";
 
 		[Description("User can annoy others.")]
-		public static readonly string annoy = "tshock.annoy";
+		public const string annoy = "tshock.annoy";
 
 		[Description("User can heal players.")]
 		public static readonly string heal = "tshock.heal";
