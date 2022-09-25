@@ -29,6 +29,7 @@ using Rests;
 using Terraria;
 using TShockAPI.DB;
 using Newtonsoft.Json;
+using TShockAPI.Modules;
 
 namespace TShockAPI
 {
@@ -168,13 +169,16 @@ namespace TShockAPI
 		/// </summary>
 		private Rest Rest;
 
+		private readonly ICommandService _commandService;
+
 		/// <summary>
 		/// Creates a new instance of <see cref="RestManager"/> using the provided <see cref="Rest"/> object
 		/// </summary>
 		/// <param name="rest"></param>
-		public RestManager(Rest rest)
+		public RestManager(Rest rest, ICommandService commandService)
 		{
 			Rest = rest;
+			_commandService = commandService;
 		}
 
 		/// <summary>
@@ -310,7 +314,7 @@ namespace TShockAPI
 			Group restPlayerGroup = TShock.Groups.GetGroupByName(args.TokenData.UserGroupName);
 
 			TSRestPlayer tr = new TSRestPlayer(args.TokenData.Username, restPlayerGroup);
-			Commands.HandleCommand(tr, args.Parameters["cmd"]);
+			_commandService.Handle(tr, args.Parameters["cmd"]);
 			return new RestObject()
 			{
 				{"response", tr.GetCommandOutput()}
@@ -1170,10 +1174,10 @@ namespace TShockAPI
 
 		#region Utility Methods
 
-		public static void DumpDescriptions()
+		public static void DumpDescriptions(ICommandService commandService)
 		{
 			var sb = new StringBuilder();
-			var rest = new RestManager(null);
+			var rest = new RestManager(null, commandService);
 
 			foreach (var method in rest.GetType().GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static).OrderBy(f => f.Name))
 			{

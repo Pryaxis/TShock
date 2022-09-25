@@ -30,6 +30,7 @@ using Terraria.Utilities;
 using Microsoft.Xna.Framework;
 using Terraria.Localization;
 using TShockAPI.Localization;
+using TShockAPI.Modules;
 
 namespace TShockAPI
 {
@@ -865,14 +866,14 @@ namespace TShockAPI
 		/// Dumps information and optionally exits afterwards
 		/// </summary>
 		/// <param name="exit"></param>
-		public void Dump(bool exit = true)
+		public void Dump(ICommandService commandService, bool exit = true)
 		{
 			PrepareLangForDump();
 			// Lang.setLang(true);
 			Configuration.TShockConfig.DumpDescriptions();
-			Permissions.DumpDescriptions();
+			Permissions.DumpDescriptions(commandService);
 			Configuration.ServerSideConfig.DumpDescriptions();
-			RestManager.DumpDescriptions();
+			RestManager.DumpDescriptions(commandService);
 			DumpBuffs("BuffList.txt");
 			DumpItems("Items-1_0.txt", 1, 235);
 			DumpItems("Items-1_1.txt", 235, 604);

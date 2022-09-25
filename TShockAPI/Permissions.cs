@@ -22,6 +22,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using TShockAPI.Modules;
 
 // Since the permission nodes have annotations that say what they are, we don't need XML comments.
 #pragma warning disable 1591
@@ -500,22 +501,11 @@ namespace TShockAPI
 		[Description("Player can send emotes.")]
 		public static readonly string sendemoji = "tshock.sendemoji";
 		#endregion
-		/// <summary>
-		/// Lists all commands associated with a given permission
-		/// </summary>
-		/// <param name="perm">string permission - the permission to get information on</param>
-		/// <returns>List of commands</returns>
-		private static List<Command> GetCommands(string perm)
-		{
-			if (Commands.ChatCommands.Count < 1)
-				Commands.InitCommands();
-			return Commands.ChatCommands.Where(c => c.Permissions.Contains(perm)).ToList();
-		}
 
 		/// <summary>
 		/// Dumps the descriptions of each permission to a file in Markdown format.
 		/// </summary>
-		public static void DumpDescriptions()
+		public static void DumpDescriptions(ICommandService commandService)
 		{
 			var sb = new StringBuilder();
 			foreach (var field in typeof(Permissions).GetFields().OrderBy(f => f.Name))
@@ -526,18 +516,18 @@ namespace TShockAPI
 					field.GetCustomAttributes(false).FirstOrDefault(o => o is DescriptionAttribute) as DescriptionAttribute;
 				var desc = descattr != null && !string.IsNullOrWhiteSpace(descattr.Description) ? descattr.Description : "None";
 
-				var commands = GetCommands(name);
-				foreach (var c in commands)
-				{
-					for (var i = 0; i < c.Names.Count; i++)
-					{
-						c.Names[i] = "/" + c.Names[i];
-					}
-				}
+				var commands = commandService.GetCommands(permission: name);
+				//foreach (var c in commands)
+				//{
+				//	for (var i = 0; i < c.Names.Count; i++)
+				//	{
+				//		c.Names[i] = "/" + c.Names[i];
+				//	}
+				//}
 				var strs =
 					commands.Select(
 						c =>
-						c.Name + (c.Names.Count > 1 ? "({0})".SFormat(string.Join(" ", c.Names.ToArray(), 1, c.Names.Count - 1)) : ""));
+						c.Names.First() + (c.Names.Count() > 1 ? "({0})".SFormat(string.Join(" ", c.Names.ToArray(), 1, c.Names.Count() - 1)) : ""));
 
 				sb.AppendLine("{0}".SFormat(name));
 				sb.AppendLine("Description: {0}  ".SFormat(desc));

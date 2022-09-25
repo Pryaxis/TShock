@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System.Collections.Generic;
 using System.ComponentModel;
 using TShockAPI.DB;
+using TShockAPI.Modules;
 
 namespace TShockAPI.Hooks
 {
@@ -111,7 +112,7 @@ namespace TShockAPI.Hooks
 		/// <summary>
 		/// The full list of server commands.
 		/// </summary>
-		public IEnumerable<Command> CommandList { get; set; }
+		public IEnumerable<ICommand> CommandList { get; set; }
 
 		/// <summary>
 		/// The prefix used to send the command (either <see cref="Commands.Specifier"/> or <see cref="Commands.SilentSpecifier"/>).
@@ -430,7 +431,7 @@ namespace TShockAPI.Hooks
 		/// <param name="commands">The list of commands.</param>
 		/// <param name="cmdPrefix">The command specifier used.</param>
 		/// <returns>True if the event has been handled.</returns>
-		public static bool OnPlayerCommand(TSPlayer player, string cmdName, string cmdText, List<string> args, ref IEnumerable<Command> commands, string cmdPrefix)
+		public static bool OnPlayerCommand(TSPlayer player, string cmdName, string cmdText, List<string> args, ref IEnumerable<ICommand> commands, string cmdPrefix)
 		{
 			if (PlayerCommand == null)
 			{

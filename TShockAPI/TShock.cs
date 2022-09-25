@@ -179,13 +179,15 @@ namespace TShockAPI
 		private readonly HookService _hookService;
 		private readonly ILogger<TShock> _logger;
 		private readonly IServiceProvider _serviceProvider;
+		private readonly ICommandService _commandService;
 
 		/// <summary>TShock - The constructor for the TShock plugin.</summary>
-		public TShock(HookService hookService, ILogger<TShock> logger, IServiceProvider serviceProvider)
+		public TShock(HookService hookService, ILogger<TShock> logger, IServiceProvider serviceProvider, ICommandService commandService)
 		{
 			_hookService = hookService;
 			_logger = logger;
 			_serviceProvider = serviceProvider;
+			_commandService = commandService;
 
 			Config = new TShockConfig();
 			ServerSideCharacterConfig = new ServerSideConfig();
@@ -379,7 +381,7 @@ namespace TShockAPI
 				CharacterDB = new CharacterManager(DB);
 				ResearchDatastore = new ResearchDatastore(DB);
 				RestApi = new SecureRest(Netplay.ServerIP, Config.Settings.RestApiPort);
-				RestManager = new RestManager(RestApi);
+				RestManager = new RestManager(RestApi, _commandService);
 				RestManager.RegisterRestfulCommands();
 				Bouncer = new Bouncer();
 				RegionSystem = new RegionHandler(Regions);
@@ -418,7 +420,7 @@ namespace TShockAPI
 				Hooks.AccountHooks.AccountCreate += OnAccountCreate;
 
 				GetDataHandlers.InitGetDataHandler();
-				Commands.InitCommands();
+				_commandService.Start();
 
 				EnglishLanguage.Initialize();
 
@@ -877,7 +879,7 @@ namespace TShockAPI
 				//Flags without arguments
 				.AddFlag("-logclear", () => LogClear = true)
 				.AddFlag("-autoshutdown", () => Main.instance.EnableAutoShutdown())
-				.AddFlag("-dump", () => Utils.Dump());
+				.AddFlag("-dump", () => Utils.Dump(_commandService));
 
 			CliParser.ParseFromSource(parms);
 		}
@@ -1018,8 +1020,8 @@ namespace TShockAPI
 				var r = new Random((int)DateTime.Now.ToBinary());
 				SetupToken = r.Next(100000, 10000000);
 				Console.ForegroundColor = ConsoleColor.Yellow;
-				Console.WriteLine("To setup the server, join the game and type {0}setup {1}", Commands.Specifier, SetupToken);
-				Console.WriteLine("This token will display until disabled by verification. ({0}setup)", Commands.Specifier);
+				Console.WriteLine("To setup the server, join the game and type {0}setup {1}", _commandService.Specifier, SetupToken);
+				Console.WriteLine("This token will display until disabled by verification. ({0}setup)", _commandService.Specifier);
 				Console.ResetColor();
 				File.WriteAllText(Path.Combine(SavePath, "setup-code.txt"), SetupToken.ToString());
 			}
@@ -1028,8 +1030,8 @@ namespace TShockAPI
 				SetupToken = Convert.ToInt32(File.ReadAllText(Path.Combine(SavePath, "setup-code.txt")));
 				Console.ForegroundColor = ConsoleColor.Yellow;
 				Console.WriteLine("TShock Notice: setup-code.txt is still present, and the code located in that file will be used.");
-				Console.WriteLine("To setup the server, join the game and type {0}setup {1}", Commands.Specifier, SetupToken);
-				Console.WriteLine("This token will display until disabled by verification. ({0}setup)", Commands.Specifier);
+				Console.WriteLine("To setup the server, join the game and type {0}setup {1}", _commandService.Specifier, SetupToken);
+				Console.WriteLine("This token will display until disabled by verification. ({0}setup)", _commandService.Specifier);
 				Console.ResetColor();
 			}
 
@@ -1492,7 +1494,7 @@ namespace TShockAPI
 				try
 				{
 					args.Handled = true;
-					if (!Commands.HandleCommand(tsplr, text))
+					if (!_commandService.Handle(tsplr, text))
 					{
 						// This is required in case anyone makes HandleCommand return false again
 						tsplr.SendErrorMessage("Unable to parse command. Please contact an administrator for assistance.");
@@ -1601,13 +1603,13 @@ namespace TShockAPI
 				Main.autoSave = Config.Settings.AutoSave = !Config.Settings.AutoSave;
 				Log.ConsoleInfo("AutoSave " + (Config.Settings.AutoSave ? "Enabled" : "Disabled"));
 			}
-			else if (args.Command.StartsWith(Commands.Specifier) || args.Command.StartsWith(Commands.SilentSpecifier))
+			else if (args.Command.StartsWith(_commandService.Specifier) || args.Command.StartsWith(_commandService.SilentSpecifier))
 			{
-				Commands.HandleCommand(TSPlayer.Server, args.Command);
+				_commandService.Handle(TSPlayer.Server, args.Command);
 			}
 			else
 			{
-				Commands.HandleCommand(TSPlayer.Server, "/" + args.Command);
+				_commandService.Handle(TSPlayer.Server, "/" + args.Command);
 			}
 			args.Handled = true;
 		}
@@ -1700,12 +1702,12 @@ namespace TShockAPI
 				if (Main.ServerSideCharacter)
 				{
 					player.IsDisabledForSSC = true;
-					player.SendErrorMessage(String.Format("Server side characters is enabled! Please {0}register or {0}login to play!", Commands.Specifier));
+					player.SendErrorMessage(String.Format("Server side characters is enabled! Please {0}register or {0}login to play!", _commandService.Specifier));
 					player.LoginHarassed = true;
 				}
 				else if (Config.Settings.RequireLogin)
 				{
-					player.SendErrorMessage("Please {0}register or {0}login to play!", Commands.Specifier);
+					player.SendErrorMessage("Please {0}register or {0}login to play!", _commandService.Specifier);
 					player.LoginHarassed = true;
 				}
 			}
