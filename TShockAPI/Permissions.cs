@@ -174,10 +174,10 @@ namespace TShockAPI
 
 		#region tshock.item nodes
 		[Description("User can give items.")]
-		public static readonly string give = "tshock.item.give";
+		public const string give = "tshock.item.give";
 
 		[Description("User can spawn items.")]
-		public static readonly string item = "tshock.item.spawn";
+		public const string item = "tshock.item.spawn";
 
 		[Description("Allows you to use banned items.")]
 		public static readonly string usebanneditem = "tshock.item.usebanned";
@@ -185,10 +185,10 @@ namespace TShockAPI
 
 		#region tshock.npc nodes
 		[Description("User can edit the max spawns.")]
-		public static readonly string maxspawns = "tshock.npc.maxspawns";
+		public const string maxspawns = "tshock.npc.maxspawns";
 
 		[Description("User can edit the spawnrate.")]
-		public static readonly string spawnrate = "tshock.npc.spawnrate";
+		public const string spawnrate = "tshock.npc.spawnrate";
 
 		[Description("User can start an invasion. Warning: high network use. Easy to abuse.")]
 		public static readonly string invade = "tshock.npc.invade";
@@ -203,13 +203,13 @@ namespace TShockAPI
 		public static readonly string spawnpets = "tshock.npc.spawnpets";
 
 		[Description("User can rename NPCs.")]
-		public static readonly string renamenpc = "tshock.npc.rename";
+		public const string renamenpc = "tshock.npc.rename";
 
 		[Description("User can spawn npcs.")]
-		public static readonly string spawnmob = "tshock.npc.spawnmob";
+		public const string spawnmob = "tshock.npc.spawnmob";
 
 		[Description("User can kill all enemy npcs.")]
-		public static readonly string butcher = "tshock.npc.butcher";
+		public const string butcher = "tshock.npc.butcher";
 
 		[Description("User can summon bosses using items.")]
 		public static readonly string summonboss = "tshock.npc.summonboss";
@@ -221,7 +221,7 @@ namespace TShockAPI
 		public static readonly string startdd2 = "tshock.npc.startdd2";
 
 		[Description("User can clear the list of users who have completed an angler quest that day.")]
-		public static readonly string clearangler = "tshock.npc.clearanglerquests";
+		public const string clearangler = "tshock.npc.clearanglerquests";
 
 		[Description("Meant for super admins only.")]
 		public const string user = "tshock.superadmin.user";
