@@ -28,3 +28,7 @@ jobs:
     # Publish
     - name: Push TShockAPI
       run: dotnet nuget push TShockAPI/bin/Release/*.nupkg -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
+
+    # Publish
+    - name: Push TShockCommands
+      run: dotnet nuget push TShockCommands/bin/Release/*.nupkg -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
