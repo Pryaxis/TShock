@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using EasyCommands;
 using EasyCommands.Arguments;
 using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -208,5 +209,35 @@ class ParsingRules : ParsingRules<TSPlayer>
 		if (buffs[0] <= 0 || buffs[0] >= Main.maxBuffTypes)
 			throw new CommandParsingException(FailMessage("Invalid buff ID!"));
 		return buffs[0];
+	}
+
+	[ParseRule]
+	public int ParsePageNumber(string arg, PageNumber attributeOverride)
+	{
+		int pageNumber = 1;
+		if (!String.IsNullOrWhiteSpace(arg) // is the arg specified?
+			&& (
+				!int.TryParse(arg, out pageNumber) || pageNumber < 1
+			)
+		)
+		{
+			//throw new CommandParsingException(FailMessage(attributeOverride.ErrorMessage ?? $"\"{arg}\" is not a valid page number."));
+			return -1;
+		}
+
+		return pageNumber;
+	}
+
+	[ParseRule]
+	public int ParseDuration(string arg, Duration attributeOverride)
+	{
+		if (arg != ".") // allow . to be used to specify the default
+		{
+			if (TShock.Utils.TryParseTime(arg, out int seconds))
+			{
+				return seconds;
+			}
+		}
+		return DateTime.MaxValue.Second;
 	}
 }

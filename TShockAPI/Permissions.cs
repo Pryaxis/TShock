@@ -64,7 +64,7 @@ namespace TShockAPI
 		public static readonly string kick = "tshock.admin.kick";
 
 		[Description("User can ban others.")]
-		public static readonly string ban = "tshock.admin.ban";
+		public const string ban = "tshock.admin.ban";
 
 		[Description("User can manage warps.")]
 		public static readonly string managewarp = "tshock.admin.warp";
@@ -224,7 +224,7 @@ namespace TShockAPI
 		public static readonly string clearangler = "tshock.npc.clearanglerquests";
 
 		[Description("Meant for super admins only.")]
-		public static readonly string user = "tshock.superadmin.user";
+		public const string user = "tshock.superadmin.user";
 
 		[Description("Allows a user to elevate to superadmin for 10 minutes.")]
 		public static readonly string su = "tshock.su";

@@ -30,6 +30,7 @@ using TerrariaApi.Server;
 using TShockAPI;
 using TShockAPI.Modules;
 using TShockCommands.Annotations;
+using TShockCommands.Commands;
 
 namespace TShockCommands;
 
@@ -76,6 +77,7 @@ public class EasyCommandService : CommandHandler<TSPlayer>, ICommandService
 		Context.TextOptions.CommandPrefix = options.Value.CommandSpecifier;
 		AddParsingRules(typeof(DefaultParsingRules<TSPlayer>));
 		AddParsingRules(typeof(ParsingRules));
+		AddFlagRule(typeof(AddBanFlags));
 
 		Context.CommandRepository = new EasyCommandsRepository(Context, options, repoLogger, serviceProvider);
 	}
@@ -99,7 +101,7 @@ public class EasyCommandService : CommandHandler<TSPlayer>, ICommandService
 	/// Logs command exceptions
 	/// </summary>
 	/// <param name="e">The exception</param>
-	protected override void HandleCommandException(Exception e) => _logger.LogError("Failed to handle command", e);
+	protected override void HandleCommandException(Exception e) => _logger.LogError($"Failed to handle command: {e}");
 
 	/// <summary>
 	/// Determines if a player has access to a command
