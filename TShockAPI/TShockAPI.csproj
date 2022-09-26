@@ -157,11 +157,6 @@
     <Compile Include="DB\RememberedPosManager.cs" />
     <Compile Include="Bouncer.cs" />
     <Compile Include="ItemBans.cs" />
-    <Compile Include="Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="Rest\Rest.cs" />
     <Compile Include="Rest\RestCommand.cs" />
     <Compile Include="Rest\RestManager.cs" />
@@ -181,13 +176,6 @@
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="TShockAPI.licenseheader" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <SubType>Designer</SubType>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">
