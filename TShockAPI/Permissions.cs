@@ -357,7 +357,7 @@ namespace TShockAPI
 		public static readonly string worldsettle = "tshock.world.settleliquids";
 
 		[Description("User can get the world info.")]
-		public static readonly string worldinfo = "tshock.world.info";
+		public const string worldinfo = "tshock.world.info";
 
 		[Description("User can set the world spawn.")]
 		public static readonly string worldspawn = "tshock.world.setspawn";
@@ -472,7 +472,7 @@ namespace TShockAPI
 		public const string cantalkinthird = "tshock.thirdperson";
 
 		[Description("User can get the server info.")]
-		public static readonly string serverinfo = "tshock.info";
+		public const string serverinfo = "tshock.info";
 
 		[Description("Player recovers health as damage is taken.  Can be one shotted.")]
 		public const string godmode = "tshock.godmode";
