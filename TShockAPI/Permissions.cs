@@ -235,22 +235,22 @@ namespace TShockAPI
 		public static readonly string tpallothers = "tshock.tp.allothers";
 
 		[Description("User can teleport to others.")]
-		public static readonly string tp = "tshock.tp.self";
+		public const string tp = "tshock.tp.self";
 
 		[Description("User can teleport other people.")]
 		public const string tpothers = "tshock.tp.others";
 
 		[Description("User can teleport to tile positions.")]
-		public static readonly string tppos = "tshock.tp.pos";
+		public const string tppos = "tshock.tp.pos";
 
 		[Description("User can get the position of players.")]
-		public static readonly string getpos = "tshock.tp.getpos";
+		public const string getpos = "tshock.tp.getpos";
 
 		[Description("User can teleport to an NPC.")]
-		public static readonly string tpnpc = "tshock.tp.npc";
+		public const string tpnpc = "tshock.tp.npc";
 
 		[Description("Users can stop people from teleporting.")]
-		public static readonly string tpallow = "tshock.tp.block";
+		public const string tpallow = "tshock.tp.block";
 
 		[Description("Users can override teleport blocks.")]
 		public static readonly string tpoverride = "tshock.tp.override";
@@ -259,10 +259,10 @@ namespace TShockAPI
 		public static readonly string tpsilent = "tshock.tp.silent";
 
 		[Description("User can use /home.")]
-		public static readonly string home = "tshock.tp.home";
+		public const string home = "tshock.tp.home";
 
 		[Description("User can use /spawn.")]
-		public static readonly string spawn = "tshock.tp.spawn";
+		public const string spawn = "tshock.tp.spawn";
 
 		[Description("User can use the Rod of Discord.")]
 		public static readonly string rod = "tshock.tp.rod";
