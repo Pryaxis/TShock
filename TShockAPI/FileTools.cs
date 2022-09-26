@@ -33,7 +33,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Path to the file containing the rules.
 		/// </summary>
-		internal static string RulesPath
+		public static string RulesPath
 		{
 			get { return Path.Combine(TShock.SavePath, "rules.txt"); }
 		}
@@ -41,7 +41,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Path to the file containing the message of the day.
 		/// </summary>
-		internal static string MotdPath
+		public static string MotdPath
 		{
 			get { return Path.Combine(TShock.SavePath, "motd.txt"); }
 		}

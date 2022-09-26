@@ -111,10 +111,7 @@ public class EasyCommandService : CommandHandler<TSPlayer>, ICommandService
 	/// <param name="command"></param>
 	/// <returns></returns>
 	public override bool CanSeeCommand(TSPlayer sender, CommandDelegate<TSPlayer> command)
-	{
-		var permissions = command.GetCustomAttribute<CommandPermissions>();
-		return permissions is null || permissions.Permissions.Any(node => sender.Group.HasPermission(node));
-	}
+		=> command.CanRun(sender);
 
 	#endregion
 

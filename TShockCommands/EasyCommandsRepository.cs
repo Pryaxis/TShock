@@ -35,7 +35,7 @@ namespace TShockCommands;
 /// </summary>
 public class EasyCommandsRepository : CommandRepository<TSPlayer>
 {
-	Dictionary<string, CommandDelegate<TSPlayer>> _commands = new();
+	//Dictionary<string, CommandDelegate<TSPlayer>> _commands = new();
 	private readonly IOptions<CommandOptions> _options;
 	private readonly ILogger<EasyCommandsRepository> _logger;
 	private readonly IServiceProvider _serviceProvider;
@@ -66,9 +66,28 @@ public class EasyCommandsRepository : CommandRepository<TSPlayer>
 			if (!Regex.IsMatch(name, Context.TextOptions.CommandNameValidationRegex))
 				throw new CommandRegistrationException(string.Format(Context.TextOptions.InvalidCommandNameErrorMessage, name));
 
-			if (!_commands.TryAdd(name, command))
+			if (!TryAdd(name, command))
 				throw new CommandRegistrationException($"Cannot register `{name}` as one is already defined.");
 		}
+	}
+
+	private bool TryAdd(string name, CommandDelegate<TSPlayer> command)
+	{
+		lock (commandList)
+		{
+			if (!commandList.Any(c => c.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)))
+			{
+				commandList.Add(command);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private bool TryGetValue(string name, out CommandDelegate<TSPlayer>? command)
+	{
+		command = commandList.FirstOrDefault(c => c.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase));
+		return command is not null;
 	}
 
 	//public override bool CanResolveType(Type type) => _serviceProvider.GetService(type) is not null;
@@ -100,7 +119,7 @@ public class EasyCommandsRepository : CommandRepository<TSPlayer>
 		else name = text;
 
 		if (!String.IsNullOrWhiteSpace(name))
-			_commands.TryGetValue(name, out ezcmd);
+			TryGetValue(name, out ezcmd);
 
 		if (ezcmd is null)
 			throw new CommandParsingException(string.Format(Context.TextOptions.CommandNotFound, name ?? "<not found>"));
