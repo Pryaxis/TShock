@@ -67,7 +67,7 @@ namespace TShockAPI
 		public const string ban = "tshock.admin.ban";
 
 		[Description("User can manage warps.")]
-		public static readonly string managewarp = "tshock.admin.warp";
+		public const string managewarp = "tshock.admin.warp";
 
 		[Description("User can manage item bans.")]
 		public static readonly string manageitem = "tshock.admin.itemban";
@@ -111,10 +111,10 @@ namespace TShockAPI
 
 		#region tshock.buff nodes
 		[Description("User can buff self.")]
-		public static readonly string buff = "tshock.buff.self";
+		public const string buff = "tshock.buff.self";
 
 		[Description("User can buff other players.")]
-		public static readonly string buffplayer = "tshock.buff.others";
+		public const string buffplayer = "tshock.buff.others";
 		#endregion
 
 		#region tshock.cfg nodes
@@ -131,7 +131,7 @@ namespace TShockAPI
 		public const string cfgreload = "tshock.cfg.reload";
 
 		[Description("User can create reference files of Terraria IDs and the permission matrix in the server folder.")]
-		public static readonly string createdumps = "tshock.cfg.createdumps";
+		public const string createdumps = "tshock.cfg.createdumps";
 		#endregion
 
 		#region tshock.ignore nodes
@@ -238,7 +238,7 @@ namespace TShockAPI
 		public static readonly string tp = "tshock.tp.self";
 
 		[Description("User can teleport other people.")]
-		public static readonly string tpothers = "tshock.tp.others";
+		public const string tpothers = "tshock.tp.others";
 
 		[Description("User can teleport to tile positions.")]
 		public static readonly string tppos = "tshock.tp.pos";
@@ -436,13 +436,13 @@ namespace TShockAPI
 
 		#region Non-grouped
 		[Description("User can clear items or projectiles.")]
-		public static readonly string clear = "tshock.clear";
+		public const string clear = "tshock.clear";
 
 		[Description("User can kill others.")]
-		public static readonly string kill = "tshock.kill";
+		public const string kill = "tshock.kill";
 		
 		[Description("Player can respawn themselves.")]
-		public static readonly string respawn = "tshock.respawn";
+		public const string respawn = "tshock.respawn";
 
 		[Description("Player can respawn others.")]
 		public static readonly string respawnother = "tshock.respawn.other";
@@ -451,31 +451,31 @@ namespace TShockAPI
 		public static readonly string reservedslot = "tshock.reservedslot";
 
 		[Description("User can use warps.")]
-		public static readonly string warp = "tshock.warp";
+		public const string warp = "tshock.warp";
 
 		[Description("User can slap others.")]
-		public static readonly string slap = "tshock.slap";
+		public const string slap = "tshock.slap";
 
 		[Description("User can whisper to others.")]
-		public static readonly string whisper = "tshock.whisper";
+		public const string whisper = "tshock.whisper";
 
 		[Description("User can annoy others.")]
 		public const string annoy = "tshock.annoy";
 
 		[Description("User can heal players.")]
-		public static readonly string heal = "tshock.heal";
+		public const string heal = "tshock.heal";
 
 		[Description("User can use party chat in game.")]
-		public static readonly string canpartychat = "tshock.partychat";
+		public const string canpartychat = "tshock.partychat";
 
 		[Description("User can talk in third person.")]
-		public static readonly string cantalkinthird = "tshock.thirdperson";
+		public const string cantalkinthird = "tshock.thirdperson";
 
 		[Description("User can get the server info.")]
 		public static readonly string serverinfo = "tshock.info";
 
 		[Description("Player recovers health as damage is taken.  Can be one shotted.")]
-		public static readonly string godmode = "tshock.godmode";
+		public const string godmode = "tshock.godmode";
 
 		[Description("User can godmode other players.")]
 		public static readonly string godmodeother = "tshock.godmode.other";
@@ -496,7 +496,7 @@ namespace TShockAPI
 		public static readonly string advaccountinfo = "tshock.accountinfo.details";
 
 		[Description("Player can resync themselves with server state.")]
-		public static readonly string synclocalarea = "tshock.synclocalarea";
+		public const string synclocalarea = "tshock.synclocalarea";
 
 		[Description("Player can send emotes.")]
 		public static readonly string sendemoji = "tshock.sendemoji";

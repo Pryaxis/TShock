@@ -48,6 +48,7 @@ public class EasyCommandService : CommandHandler<TSPlayer>, ICommandService
 	private readonly ILogger<EasyCommandService> _logger;
 	private readonly IServiceProvider _serviceProvider;
 	private readonly IOptions<CommandOptions> _options;
+	private bool disposedValue;
 
 	/// <summary>
 	/// Constructor for DI to create a new EazyCommandService, with the given services.
@@ -213,6 +214,35 @@ public class EasyCommandService : CommandHandler<TSPlayer>, ICommandService
 
 		foreach (var plugin in plugins)
 			RegisterFromAssembly(plugin.GetType().Assembly);
+	}
+
+	protected virtual void Dispose(bool disposing)
+	{
+		if (!disposedValue)
+		{
+			if (disposing)
+			{
+				// TODO: dispose managed state (managed objects)
+			}
+
+			// TODO: free unmanaged resources (unmanaged objects) and override finalizer
+			// TODO: set large fields to null
+			disposedValue = true;
+		}
+	}
+
+	// // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+	// ~EasyCommandService()
+	// {
+	//     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+	//     Dispose(disposing: false);
+	// }
+
+	public void Dispose()
+	{
+		// Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+		Dispose(disposing: true);
+		GC.SuppressFinalize(this);
 	}
 	#endregion
 }

@@ -897,7 +897,7 @@ namespace TShockAPI
 
 		/// <summary>Dumps a matrix of all permissions &amp; all groups in Markdown table format.</summary>
 		/// <param name="path">The save destination.</param>
-		internal void DumpPermissionMatrix(string path)
+		public void DumpPermissionMatrix(string path)
 		{
 			StringBuilder output = new StringBuilder();
 			output.Append("|Permission|");

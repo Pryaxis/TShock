@@ -15,6 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+using System;
 using System.Collections.Generic;
 
 namespace TShockAPI.Modules;
@@ -33,7 +34,7 @@ public interface ICommand
 /// <summary>
 /// Defines a command service used by tshock
 /// </summary>
-public interface ICommandService
+public interface ICommandService : IDisposable
 {
 	/// <summary>
 	/// Called when the service is ready to start
