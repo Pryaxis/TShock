@@ -9,7 +9,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/TShockLauncher/bin/Debug/net6.0/TShock.Run.dll",
+            "program": "${workspaceFolder}/TShockLauncher/bin/Debug/net6.0/TShock.Server.dll",
             "windows": {
                 "program": "${workspaceFolder}/TShockLauncher/bin/Debug/net6.0/TShock.dll",
             },
@@ -30,13 +30,13 @@
             // windows with putty installed
             // vsdbg
             // follow this for other OS's: https://docs.microsoft.com/en-us/dotnet/iot/debugging?tabs=self-contained&pivots=vscode
-            // TODO: ability to chmod +x TShock.sh && chmod +x bin/TShock.Run
+            // TODO: ability to chmod +x TShock.sh && chmod +x bin/TShock.Server
             "name": ".NET Remote Launch - Self-contained",
             "type": "coreclr",
             "request": "launch",
             "program": "/home/pi/dotnet/dotnet",
             "args": [
-                "bin/TShock.Run.dll"
+                "bin/TShock.Server.dll"
             ],
             "cwd": "/home/pi/tshockdev/publish",
             "stopAtEntry": false,
@@ -59,13 +59,13 @@
             // windows with putty installed
             // vsdbg
             // follow this for other OS's: https://docs.microsoft.com/en-us/dotnet/iot/debugging?tabs=self-contained&pivots=vscode
-            // TODO: ability to chmod +x TShock.sh && chmod +x bin/TShock.Run
+            // TODO: ability to chmod +x TShock.sh && chmod +x bin/TShock.Server
             "name": ".NET Remote Publish & Launch - Self-contained",
             "type": "coreclr",
             "request": "launch",
             "program": "/home/pi/dotnet/dotnet",
             "args": [
-                "bin/TShock.Run.dll"
+                "bin/TShock.Server.dll"
             ],
             "cwd": "/home/pi/tshockdev/publish",
             "stopAtEntry": false,
