@@ -1147,7 +1147,7 @@ namespace TShockAPI
 
 		/// <summary>Starts an invasion on the server.</summary>
 		/// <param name="type">The invasion type id.</param>
-		internal void StartInvasion(int type)
+		public void StartInvasion(int type)
 		{
 			int invasionSize = 0;
 

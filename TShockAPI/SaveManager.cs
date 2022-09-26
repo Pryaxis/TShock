@@ -25,7 +25,7 @@ using TerrariaApi.Server;
 
 namespace TShockAPI
 {
-	class SaveManager : IDisposable
+	public class SaveManager : IDisposable
 	{
 		// Singleton
 		private static readonly SaveManager instance = new SaveManager();

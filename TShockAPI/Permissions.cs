@@ -48,7 +48,7 @@ namespace TShockAPI
 
 		#region tshock.admin nodes
 		[Description("User can set build protection status.")]
-		public static readonly string antibuild = "tshock.admin.antibuild";
+		public const string antibuild = "tshock.admin.antibuild";
 
 		[Description("Prevents you from being kicked.")]
 		public static readonly string immunetokick = "tshock.admin.nokick";
@@ -191,7 +191,7 @@ namespace TShockAPI
 		public const string spawnrate = "tshock.npc.spawnrate";
 
 		[Description("User can start an invasion. Warning: high network use. Easy to abuse.")]
-		public static readonly string invade = "tshock.npc.invade";
+		public const string invade = "tshock.npc.invade";
 
 		[Description("User can hurt town NPCs.")]
 		public static readonly string hurttownnpc = "tshock.npc.hurttown";
@@ -285,58 +285,58 @@ namespace TShockAPI
 
 		#region tshock.world nodes
 		[Description("User can use the 'worldevent' command")]
-		public static readonly string manageevents = "tshock.world.events";
+		public const string manageevents = "tshock.world.events";
 
 		[Description("User can use the 'bloodmoon' subcommand of the 'worldevent' command")]
-		public static readonly string managebloodmoonevent = "tshock.world.events.bloodmoon";
+		public const string managebloodmoonevent = "tshock.world.events.bloodmoon";
 
 		[Description("User can use the 'fullmoon' subcommand of the 'worldevent' command")]
-		public static readonly string managefullmoonevent = "tshock.world.events.fullmoon";
+		public const string managefullmoonevent = "tshock.world.events.fullmoon";
 
 		[Description("User can use the 'invasion' subcommand of the 'worldevent' command")]
-		public static readonly string manageinvasionevent = "tshock.world.events.invasion";
+		public const string manageinvasionevent = "tshock.world.events.invasion";
 
 		[Description("User can use the 'meteor' subcommand of the 'worldevent' command")]
-		public static readonly string managemeteorevent = "tshock.world.events.meteor";
+		public const string managemeteorevent = "tshock.world.events.meteor";
 
 		[Description("User can use the 'eclipse' subcommand of the 'worldevent' command")]
-		public static readonly string manageeclipseevent = "tshock.world.events.eclipse";
+		public const string manageeclipseevent = "tshock.world.events.eclipse";
 
 		[Description("User can use the 'sandstorm' subcommand of the 'worldevent' command")]
-		public static readonly string managesandstormevent = "tshock.world.events.sandstorm";
+		public const string managesandstormevent = "tshock.world.events.sandstorm";
 
 		[Description("User can use the 'rain' subcommand of the 'worldevent' command")]
-		public static readonly string managerainevent = "tshock.world.events.rain";
+		public const string managerainevent = "tshock.world.events.rain";
 
 		[Description("User can use the 'lanternsnight' subcommand of the 'worldevent' command")]
-		public static readonly string managelanternsnightevent = "tshock.world.events.lanternsnight";
+		public const string managelanternsnightevent = "tshock.world.events.lanternsnight";
 
 		[Description("User can change expert state.")]
-		public static readonly string toggleexpert = "tshock.world.toggleexpert";
+		public const string toggleexpert = "tshock.world.toggleexpert";
 
 		[Description("Allows you to edit the spawn.")]
-		public static readonly string editspawn = "tshock.world.editspawn";
+		public const string editspawn = "tshock.world.editspawn";
 
 		[Description("Allows you to edit regions.")]
 		public static readonly string editregion = "tshock.world.editregion";
 
 		[Description("User can force a blood moon.")]
-		public static readonly string bloodmoon = "tshock.world.time.bloodmoon";
+		public const string bloodmoon = "tshock.world.time.bloodmoon";
 
 		[Description("User can set the time.")]
-		public static readonly string time = "tshock.world.time.set";
+		public const string time = "tshock.world.time.set";
 
 		[Description("Player can use the Enchanted Sundial item.")]
 		public static readonly string usesundial = "tshock.world.time.usesundial";
 
 		[Description("User can grow plants.")]
-		public static readonly string grow = "tshock.world.grow";
+		public const string grow = "tshock.world.grow";
 
 		[Description("User can grow evil biome plants.")]
 		public static readonly string growevil = "tshock.world.growevil";
 
 		[Description("User can change hardmode state.")]
-		public static readonly string hardmode = "tshock.world.hardmode";
+		public const string hardmode = "tshock.world.hardmode";
 
 		[Description("User can change the homes of NPCs.")]
 		public static readonly string movenpc = "tshock.world.movenpc";
@@ -345,34 +345,34 @@ namespace TShockAPI
 		public static readonly string converthardmode = "tshock.world.converthardmode";
 
 		[Description("User can force the server to Halloween mode.")]
-		public static readonly string halloween = "tshock.world.sethalloween";
+		public const string halloween = "tshock.world.sethalloween";
 
 		[Description("User can force the server to Christmas mode.")]
-		public static readonly string xmas = "tshock.world.setxmas";
+		public const string xmas = "tshock.world.setxmas";
 
 		[Description("User can save the world.")]
-		public static readonly string worldsave = "tshock.world.save";
+		public const string worldsave = "tshock.world.save";
 
 		[Description("User can settle liquids.")]
-		public static readonly string worldsettle = "tshock.world.settleliquids";
+		public const string worldsettle = "tshock.world.settleliquids";
 
 		[Description("User can get the world info.")]
 		public const string worldinfo = "tshock.world.info";
 
 		[Description("User can set the world spawn.")]
-		public static readonly string worldspawn = "tshock.world.setspawn";
+		public const string worldspawn = "tshock.world.setspawn";
 
 		[Description("User can set the dungeon's location.")]
-		public static readonly string dungeonposition = "tshock.world.setdungeon";
+		public const string dungeonposition = "tshock.world.setdungeon";
 
 		[Description("User can drop a meteor.")]
-		public static readonly string dropmeteor = "tshock.world.time.dropmeteor";
+		public const string dropmeteor = "tshock.world.time.dropmeteor";
 
 		[Description("User can force an eclipse.")]
-		public static readonly string eclipse = "tshock.world.time.eclipse";
+		public const string eclipse = "tshock.world.time.eclipse";
 
 		[Description("User can force a full moon.")]
-		public static readonly string fullmoon = "tshock.world.time.fullmoon";
+		public const string fullmoon = "tshock.world.time.fullmoon";
 
 		[Description("User can modify the world.")]
 		public static readonly string canbuild = "tshock.world.modify";
@@ -381,13 +381,13 @@ namespace TShockAPI
 		public static readonly string canpaint = "tshock.world.paint";
 
 		[Description("User can turn on or off sandstorms.")]
-		public static readonly string sandstorm = "tshock.world.sandstorm";
+		public const string sandstorm = "tshock.world.sandstorm";
 
 		[Description("User can turn on or off the rain.")]
-		public static readonly string rain = "tshock.world.rain";
+		public const string rain = "tshock.world.rain";
 
 		[Description("User can modify the wind.")]
-		public static readonly string wind = "tshock.world.wind";
+		public const string wind = "tshock.world.wind";
 
 		[Description("Player can toggle party event.")]
 		public static readonly string toggleparty = "tshock.world.toggleparty";

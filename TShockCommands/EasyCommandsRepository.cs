@@ -86,7 +86,9 @@ public class EasyCommandsRepository : CommandRepository<TSPlayer>
 
 	private bool TryGetValue(string name, out CommandDelegate<TSPlayer>? command)
 	{
-		command = commandList.FirstOrDefault(c => c.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase));
+		command = commandList.FirstOrDefault(c => c.Name.Replace("-", "").Equals(name, StringComparison.CurrentCultureIgnoreCase)
+			|| c.Aliases.Any(a => a.Equals(name.Replace("-", ""), StringComparison.CurrentCultureIgnoreCase))
+		);
 		return command is not null;
 	}
 
