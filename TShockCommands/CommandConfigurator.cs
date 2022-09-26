@@ -29,7 +29,6 @@ public class CommandConfigurator : ServiceConfigurator
 	{
 		services
 			.AddSingleton<ICommandService, EasyCommandService>()
-			.AddSingleton<EasyCommandService>()
 			.AddScoped<CommandArgs>();
 
 		services.Configure<CommandOptions>(hostContext.Configuration.GetSection(nameof(CommandOptions)));
