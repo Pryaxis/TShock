@@ -167,21 +167,6 @@ public class EasyCommandService : CommandHandler<TSPlayer>, ICommandService
 		return commands.Select(cd => new CommandAdapter(cd)).Cast<ICommand>();
 	}
 
-	/// <summary>
-	/// Translates the easy command delegate to TShock's command interface
-	/// </summary>
-	struct CommandAdapter : ICommand
-	{
-		private CommandDelegate<TSPlayer> _commandDelegate;
-
-		public CommandAdapter(CommandDelegate<TSPlayer> commandDelegate)
-		{
-			_commandDelegate = commandDelegate;
-		}
-
-		public IEnumerable<string> Names => new[] { _commandDelegate.Name }.Concat(_commandDelegate.Aliases);
-	}
-
 	static IEnumerable<Type> GetExportedTypes(Assembly assembly)
 	{
 		try
