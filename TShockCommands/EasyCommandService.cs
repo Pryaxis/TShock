@@ -79,6 +79,7 @@ public class EasyCommandService : CommandHandler<TSPlayer>, ICommandService
 		AddParsingRules(typeof(DefaultParsingRules<TSPlayer>));
 		AddParsingRules(typeof(ParsingRules));
 		AddFlagRule(typeof(AddBanFlags));
+		AddFlagRule(typeof(RegionInfoFlags));
 
 		Context.CommandRepository = new EasyCommandsRepository(Context, options, repoLogger, serviceProvider);
 	}

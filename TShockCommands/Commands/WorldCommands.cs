@@ -17,13 +17,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 using EasyCommands;
 using EasyCommands.Commands;
-using TShockAPI;
-using Terraria;
-using TShockCommands.Annotations;
 using System;
-using Terraria.ID;
 using System.Collections.Generic;
 using System.Linq;
+using Terraria;
+using Terraria.ID;
+using TShockAPI;
+using TShockCommands.Annotations;
 
 namespace TShockCommands.Commands;
 

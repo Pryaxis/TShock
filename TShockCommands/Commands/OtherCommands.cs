@@ -15,18 +15,17 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-using System.Linq;
 using EasyCommands;
 using EasyCommands.Commands;
 using Microsoft.Xna.Framework;
-using TShockAPI;
-using TShockCommands.Annotations;
-using Terraria;
-using Utils = TShockAPI.Utils;
-using Terraria.GameContent.Creative;
 using System;
 using System.Collections.Generic;
-using TShockAPI.Modules;
+using System.Linq;
+using Terraria;
+using Terraria.GameContent.Creative;
+using TShockAPI;
+using TShockCommands.Annotations;
+using Utils = TShockAPI.Utils;
 
 namespace TShockCommands.Commands;
 

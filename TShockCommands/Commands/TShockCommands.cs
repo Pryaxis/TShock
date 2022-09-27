@@ -15,13 +15,14 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+using EasyCommands;
+using EasyCommands.Commands;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using EasyCommands;
-using EasyCommands.Commands;
-using Microsoft.Xna.Framework;
+using System.Text;
 using TShockAPI;
 using TShockCommands.Annotations;
 
@@ -144,8 +145,8 @@ class TShockCommands : CommandCallbacks<TSPlayer>
 			}
 
 			IEnumerable<string> cmdNames = (from cmd in CommandRepository.CommandList
-										   where cmd.CanRun(Sender) && (cmd.Name != "setup" || TShock.SetupToken != 0)
-										   select TextOptions.CommandPrefix + cmd.Name).Distinct();
+											where cmd.CanRun(Sender) && (cmd.Name != "setup" || TShock.SetupToken != 0)
+											select TextOptions.CommandPrefix + cmd.Name).Distinct();
 
 			PaginationTools.SendPage(Sender, pageNumber, PaginationTools.BuildLinesFromTerms(cmdNames),
 				new PaginationTools.Settings
@@ -270,5 +271,31 @@ class TShockCommands : CommandCallbacks<TSPlayer>
 	public void Rules()
 	{
 		Sender.SendFileTextAsMessage(FileTools.RulesPath);
+	}
+
+	[Command("userinfo", "ui")]
+	[CommandPermissions(Permissions.userinfo)]
+	[HelpText("Shows information about a player.")]
+	public void GrabUserUserInfo(string? playername = null)
+	{
+		if (String.IsNullOrWhiteSpace(playername))
+		{
+			Sender.SendErrorMessage("Invalid syntax! Proper syntax: {0}userinfo <player>", TextOptions.CommandPrefix);
+			return;
+		}
+
+		var players = TSPlayer.FindByNameOrID(playername);
+		if (players.Count < 1)
+			Sender.SendErrorMessage("Invalid player.");
+		else if (players.Count > 1)
+			Sender.SendMultipleMatchError(players.Select(p => p.Name));
+		else
+		{
+			var message = new StringBuilder();
+			message.Append("IP Address: ").Append(players[0].IP);
+			if (players[0].Account != null && players[0].IsLoggedIn)
+				message.Append(" | Logged in as: ").Append(players[0].Account.Name).Append(" | Group: ").Append(players[0].Group.Name);
+			Sender.SendSuccessMessage(message.ToString());
+		}
 	}
 }

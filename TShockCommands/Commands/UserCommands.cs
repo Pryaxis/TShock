@@ -30,6 +30,19 @@ namespace TShockCommands.Commands;
 [CommandPermissions(Permissions.user)]
 class UserCommands : CommandCallbacks<TSPlayer>
 {
+	[SubCommand(SubCommandType.Default)]
+	public void Default() => Help();
+
+	[SubCommand("help")]
+	public void Help()
+	{
+		Sender.SendInfoMessage("Use command help:");
+		Sender.SendInfoMessage("{0}user add username password group   -- Adds a specified user", TextOptions.CommandPrefix);
+		Sender.SendInfoMessage("{0}user del username                  -- Removes a specified user", TextOptions.CommandPrefix);
+		Sender.SendInfoMessage("{0}user password username newpassword -- Changes a user's password", TextOptions.CommandPrefix);
+		Sender.SendInfoMessage("{0}user group username newgroup       -- Changes a user's group", TextOptions.CommandPrefix);
+	}
+
 	[SubCommand]
 	public void Add(string username, string password, string group)
 	{
@@ -68,7 +81,7 @@ class UserCommands : CommandCallbacks<TSPlayer>
 		}
 	}
 
-	[SubCommand("del")]
+	[SubCommand("del", "delete")]
 	public void Delete(string username)
 	{
 		var account = new UserAccount();
@@ -150,13 +163,4 @@ class UserCommands : CommandCallbacks<TSPlayer>
 		}
 	}
 
-	[SubCommand]
-	public void Help()
-	{
-		Sender.SendInfoMessage("Use command help:");
-		Sender.SendInfoMessage("{0}user add username password group   -- Adds a specified user", TextOptions.CommandPrefix);
-		Sender.SendInfoMessage("{0}user del username                  -- Removes a specified user", TextOptions.CommandPrefix);
-		Sender.SendInfoMessage("{0}user password username newpassword -- Changes a user's password", TextOptions.CommandPrefix);
-		Sender.SendInfoMessage("{0}user group username newgroup       -- Changes a user's group", TextOptions.CommandPrefix);
-	}
 }

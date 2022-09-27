@@ -15,17 +15,13 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-using System.Linq;
 using EasyCommands;
 using EasyCommands.Commands;
-using Microsoft.Xna.Framework;
-using TShockAPI;
-using TShockCommands.Annotations;
-using Terraria;
-using Utils = TShockAPI.Utils;
-using Terraria.GameContent.Creative;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using TShockAPI;
+using TShockCommands.Annotations;
 
 namespace TShockCommands.Commands;
 
@@ -34,6 +30,22 @@ namespace TShockCommands.Commands;
 [CommandPermissions(Permissions.warp)]
 class WarpCommands : CommandCallbacks<TSPlayer>
 {
+	[SubCommand(SubCommandType.Default)]
+	[CommandPermissions(Permissions.warp)]
+	public void Warp([AllowSpaces] string warpName)
+	{
+		var warp = TShock.Warps.Find(warpName);
+		if (warp != null)
+		{
+			if (Sender.Teleport(warp.Position.X * 16, warp.Position.Y * 16))
+				Sender.SendSuccessMessage("Warped to " + warpName + ".");
+		}
+		else
+		{
+			Sender.SendErrorMessage("The specified warp was not found.");
+		}
+	}
+
 	[SubCommand]
 	public void Help()
 	{
@@ -178,22 +190,6 @@ class WarpCommands : CommandCallbacks<TSPlayer>
 		else
 		{
 			Sender.SendErrorMessage("Specified warp not found.");
-		}
-	}
-
-	[SubCommand(SubCommandType.Default)]
-	[CommandPermissions(Permissions.warp)]
-	public void Warp([AllowSpaces] string warpName)
-	{
-		var warp = TShock.Warps.Find(warpName);
-		if (warp != null)
-		{
-			if (Sender.Teleport(warp.Position.X * 16, warp.Position.Y * 16))
-				Sender.SendSuccessMessage("Warped to " + warpName + ".");
-		}
-		else
-		{
-			Sender.SendErrorMessage("The specified warp was not found.");
 		}
 	}
 }
