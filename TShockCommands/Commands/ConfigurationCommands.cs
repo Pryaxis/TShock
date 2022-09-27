@@ -45,7 +45,7 @@ class ConfigurationCommands : CommandCallbacks<TSPlayer>
 	}
 
 	[Command("off", "exit", "stop")]
-	[HelpText("Checks for TShock updates.")]
+	[HelpText("Shuts down the server while saving.")]
 	[CommandPermissions(Permissions.maintenance)]
 	public void Off(string? reason = null)
 	{
