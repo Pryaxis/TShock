@@ -27,6 +27,32 @@ using Microsoft.Xna.Framework;
 namespace TShockAPI.DB
 {
 	/// <summary>
+	/// Defines a resize direction for a region
+	/// </summary>
+	public enum ERegionResizeDirection
+	{
+		/// <summary>
+		/// Resize upwards
+		/// </summary>
+		Up = 0,
+
+		/// <summary>
+		/// Resize to the right
+		/// </summary>
+		Right = 1,
+
+		/// <summary>
+		/// Resize downwards
+		/// </summary>
+		Down = 2,
+
+		/// <summary>
+		/// Resize to the left
+		/// </summary>
+		Left = 3,
+	}
+
+	/// <summary>
 	/// Represents the Region database manager.
 	/// </summary>
 	public class RegionManager
@@ -347,7 +373,22 @@ namespace TShockAPI.DB
 		/// 2 = resize height.
 		/// 3 = resize width and X.</param>
 		/// <returns></returns>
+		[Obsolete($"Use the new overload using {nameof(ERegionResizeDirection)}")]
 		public bool ResizeRegion(string regionName, int addAmount, int direction)
+			=> ResizeRegion(regionName, addAmount, (ERegionResizeDirection)direction);
+
+		/// <summary>
+		/// Changes the size of a given region
+		/// </summary>
+		/// <param name="regionName">Name of the region to resize</param>
+		/// <param name="addAmount">Amount to resize</param>
+		/// <param name="direction">Direction to resize in:
+		/// 0 = resize height and Y.
+		/// 1 = resize width.
+		/// 2 = resize height.
+		/// 3 = resize width and X.</param>
+		/// <returns></returns>
+		public bool ResizeRegion(string regionName, int addAmount, ERegionResizeDirection direction)
 		{
 			//0 = up
 			//1 = right
@@ -373,17 +414,17 @@ namespace TShockAPI.DB
 				}
 				switch (direction)
 				{
-					case 0:
+					case ERegionResizeDirection.Up:
 						Y -= addAmount;
 						height += addAmount;
 						break;
-					case 1:
+					case ERegionResizeDirection.Right:
 						width += addAmount;
 						break;
-					case 2:
+					case ERegionResizeDirection.Down:
 						height += addAmount;
 						break;
-					case 3:
+					case ERegionResizeDirection.Left:
 						X -= addAmount;
 						width += addAmount;
 						break;
