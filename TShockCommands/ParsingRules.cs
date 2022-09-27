@@ -214,19 +214,17 @@ class ParsingRules : ParsingRules<TSPlayer>
 	[ParseRule]
 	public int ParsePageNumber(string arg, PageNumber attributeOverride)
 	{
-		int pageNumber = 1;
-		if (!String.IsNullOrWhiteSpace(arg) // is the arg specified?
-			&& (
-				!int.TryParse(arg, out pageNumber) || pageNumber < 1
-			)
-		)
-		{
-			//throw new CommandParsingException(FailMessage(attributeOverride.ErrorMessage ?? $"\"{arg}\" is not a valid page number."));
-			return -1;
-		}
+		Int32.TryParse(arg, out int pageNumber);
+
+		if (pageNumber <= 0)
+			pageNumber = 1;
 
 		return pageNumber;
 	}
+
+	[ParseRule]
+	public int? TryParsePageNumber(string arg, PageNumber attributeOverride)
+		=> Int32.TryParse(arg, out int pageNumber) ? pageNumber : null;
 
 	[ParseRule]
 	public int ParseDuration(string arg, Duration attributeOverride)
@@ -240,4 +238,27 @@ class ParsingRules : ParsingRules<TSPlayer>
 		}
 		return DateTime.MaxValue.Second;
 	}
+
+	[ParseRule]
+	public ERegionResizeDirection ParseRegionResizeDirection(string arg)
+	{
+		ERegionResizeDirection? dir = arg.ToLower() switch
+		{
+			"u" => ERegionResizeDirection.Up,
+			"d" => ERegionResizeDirection.Down,
+			"l" => ERegionResizeDirection.Left,
+			"r" => ERegionResizeDirection.Right,
+			_ => null
+		};
+		dir ??= TryParseRegionResizeDirection(arg);
+		if (dir is null)
+			throw new CommandParsingException(FailMessage(
+				$"Invalid resize direction, possible: {String.Join(", ", Enum.GetNames<ERegionResizeDirection>().Select(x => $"[{x[0]}]{x.Substring(1)}"))}"
+			));
+		return dir.Value;
+	}
+
+	[ParseRule]
+	public ERegionResizeDirection? TryParseRegionResizeDirection(string arg)
+		=> Enum.TryParse(arg, out ERegionResizeDirection direction) ? direction : null;
 }
