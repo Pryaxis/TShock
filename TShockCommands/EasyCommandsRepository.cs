@@ -26,6 +26,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using TShockAPI;
+using TShockAPI.Modules;
 using TShockCommands.Annotations;
 
 namespace TShockCommands;
@@ -84,9 +85,9 @@ public class EasyCommandsRepository : CommandRepository<TSPlayer>
 		return false;
 	}
 
-	private bool TryGetValue(string name, out CommandDelegate<TSPlayer>? command)
+	private bool TryGetValue(IEnumerable<CommandDelegate<TSPlayer>> commands, string name, out CommandDelegate<TSPlayer>? command)
 	{
-		command = commandList.FirstOrDefault(c => c.Name.Replace("-", "").Equals(name, StringComparison.CurrentCultureIgnoreCase)
+		command = commands.FirstOrDefault(c => c.Name.Replace("-", "").Equals(name, StringComparison.CurrentCultureIgnoreCase)
 			|| c.Aliases.Any(a => a.Equals(name.Replace("-", ""), StringComparison.CurrentCultureIgnoreCase))
 		);
 		return command is not null;
@@ -120,8 +121,12 @@ public class EasyCommandsRepository : CommandRepository<TSPlayer>
 		}
 		else name = text;
 
-		if (!String.IsNullOrWhiteSpace(name))
-			TryGetValue(name, out ezcmd);
+		var cl = commandList.Select(c => new CommandAdapter(c)).Cast<ICommand>();
+		if (TShockAPI.Hooks.PlayerHooks.OnPlayerCommand(sender, name, parameters, new() { command }, ref cl, silent ? _options.Value.CommandSilentSpecifier : _options.Value.CommandSpecifier))
+			return;
+
+		if (cl is not null && !String.IsNullOrWhiteSpace(name))
+			TryGetValue(cl.OfType<CommandAdapter>().Select(ca => ca.CommandDelegate), name, out ezcmd);
 
 		if (ezcmd is null)
 			throw new CommandParsingException(string.Format(Context.TextOptions.CommandNotFound, name ?? "<not found>"));
