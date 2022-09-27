@@ -58,10 +58,10 @@ namespace TShockAPI
 		public static readonly string immunetoban = "tshock.admin.noban";
 
 		[Description("Specific log messages are sent to users with this permission.")]
-		public static readonly string logs = "tshock.admin.viewlogs";
+		public const string logs = "tshock.admin.viewlogs";
 
 		[Description("User can kick others.")]
-		public static readonly string kick = "tshock.admin.kick";
+		public const string kick = "tshock.admin.kick";
 
 		[Description("User can ban others.")]
 		public const string ban = "tshock.admin.ban";
@@ -70,43 +70,43 @@ namespace TShockAPI
 		public const string managewarp = "tshock.admin.warp";
 
 		[Description("User can manage item bans.")]
-		public static readonly string manageitem = "tshock.admin.itemban";
+		public const string manageitem = "tshock.admin.itemban";
 
 		[Description("User can manage projectile bans.")]
-		public static readonly string manageprojectile = "tshock.admin.projectileban";
+		public const string manageprojectile = "tshock.admin.projectileban";
 
 		[Description("User can manage tile bans.")]
-		public static readonly string managetile = "tshock.admin.tileban";
+		public const string managetile = "tshock.admin.tileban";
 
 		[Description("User can manage groups.")]
-		public static readonly string managegroup = "tshock.admin.group";
+		public const string managegroup = "tshock.admin.group";
 
 		[Description("User can manage regions.")]
-		public static readonly string manageregion = "tshock.admin.region";
+		public const string manageregion = "tshock.admin.region";
 
 		[Description("User can mute and unmute users.")]
-		public static readonly string mute = "tshock.admin.mute";
+		public const string mute = "tshock.admin.mute";
 
 		[Description("User can see the id of players with /who.")]
 		public static readonly string seeids = "tshock.admin.seeplayerids";
 
 		[Description("User can save all the players SSI (server side character) state.")]
-		public static readonly string savessc = "tshock.admin.savessi";
+		public const string savessc = "tshock.admin.savessi";
 
 		[Description("User can upload their joined character data as SSC data.")]
-		public static readonly string uploaddata = "tshock.ssc.upload";
+		public const string uploaddata = "tshock.ssc.upload";
 
 		[Description("User can upload other players join data to the SSC database.")]
 		public static readonly string uploadothersdata = "tshock.ssc.upload.others";
 
 		[Description("User can elevate other users' groups temporarily.")]
-		public static readonly string settempgroup = "tshock.admin.tempgroup";
+		public const string settempgroup = "tshock.admin.tempgroup";
 
 		[Description("User can broadcast messages.")]
-		public static readonly string broadcast = "tshock.admin.broadcast";
+		public const string broadcast = "tshock.admin.broadcast";
 
 		[Description("User can get other users' info.")]
-		public static readonly string userinfo = "tshock.admin.userinfo";
+		public const string userinfo = "tshock.admin.userinfo";
 		#endregion
 
 		#region tshock.buff nodes
@@ -227,7 +227,7 @@ namespace TShockAPI
 		public const string user = "tshock.superadmin.user";
 
 		[Description("Allows a user to elevate to superadmin for 10 minutes.")]
-		public static readonly string su = "tshock.su";
+		public const string su = "tshock.su";
 		#endregion
 
 		#region tshock.tp nodes
