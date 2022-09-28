@@ -13,7 +13,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change.
 
 ## Upcoming changes
-* Your changes could be here!
+* Removed obsolete resource files `TShockAPI/Resources.resx` and `TShockAPI/Resources.Designer.cs`. (@Arthri)
 
 ## TShock 4.5.18
 * Fixed `TSPlayer.GiveItem` not working if the player is in lava. (@gohjoseph)
