@@ -7,13 +7,44 @@ namespace TShockAPI.Configuration;
 /// </summary>
 public sealed class TShockConfiguration
 {
-	public ServerSettings Server { get; set; }
-	public SaveSettings Save { get; set; }
-	public GameSettings Game { get; set; }
-	public ProtectionSettings Protection { get; set; }
-	public AuthenticationSettings UserAccount { get; set; }
-	public PunishmentSettings Punishments { get; set; }
-	public AntiCheatSettings AntiCheat { get; set; }
+	/// <summary>
+	/// Server configuration settings.
+	/// </summary>
+	public ServerSettings Server { get; set; } = null!;
+	/// <summary>
+	/// Save configuration settings.
+	/// </summary>
+	public SaveSettings Save { get; set; } = null!;
+	/// <summary>
+	/// Game configuration settings.
+	/// </summary>
+	public GameSettings Game { get; set; } = null!;
+	/// <summary>
+	/// Protection configuration settings.
+	/// </summary>
+	public ProtectionSettings Protection { get; set; } = null!;
+	/// <summary>
+	/// Authentication configuration settings.
+	/// </summary>
+	public AuthenticationSettings Authentication { get; set; } = null!;
+	/// <summary>
+	/// Punishment configuration settings.
+	/// </summary>
+	public PunishmentSettings Punishments { get; set; } = null!;
+	/// <summary>
+	/// Anti-cheat configuration settings.
+	/// </summary>
+	public AntiCheatSettings AntiCheat { get; set; } = null!;
+	/// <summary>
+	/// Command configuration settings.
+	/// </summary>
+	public CommandSettings Commands { get; set; } = null!;
+	/// <summary>
+	/// Message configuration settings.
+	/// </summary>
+	public MessageSettings Messages { get; set; } = null!;
+
+	#region Settings definitions
 
 	/// <summary>
 	/// Settings specific to the setup of the server, such as password and port.
@@ -35,7 +66,7 @@ public sealed class TShockConfiguration
 		/// <summary>
 		/// Slots that are reserved for players with the <see cref="Permissions.reservedslot"/> permission.
 		/// <para/>
-		/// Note that this requires <see cref="LoginBeforeJoin"/> to be enabled.
+		/// Note that this requires <see cref="AuthenticationSettings.LoginBeforeJoin"/> to be enabled.
 		/// Note that this uses players slots defined in <see cref="MaxPlayerSlots"/>.
 		/// <para/>
 		/// Default: 0.
@@ -45,14 +76,14 @@ public sealed class TShockConfiguration
 		/// <summary>
 		/// Overrides the world name while the server is running, if set.
 		/// </summary>
-		public string ServerName { get; set; }
+		public string? ServerName { get; set; }
 
 		/// <summary>
 		/// Server password. Users will need to provide the password to enter the server, if set.
 		/// <para/>
-		/// Overridden by <see cref="LoginBeforeJoin"/> if enabled.
+		/// Overridden by <see cref="AuthenticationSettings.LoginBeforeJoin"/> if enabled.
 		/// </summary>
-		public string Password { get; set; }
+		public string? Password { get; set; }
 	}
 
 	/// <summary>
@@ -86,7 +117,7 @@ public sealed class TShockConfiguration
 		/// <para/>
 		/// Default: <see langword="null"/>
 		/// </summary>
-		public string SaveMessage { get; set; }
+		public string? SaveMessage { get; set; }
 
 		/// <summary>
 		/// How frequently to save world file backups, in minutes.
@@ -257,6 +288,14 @@ public sealed class TShockConfiguration
 		/// Default: <see langword="true"/>.
 		/// </summary>
 		public bool EnableHardmode { get; set; } = true;
+
+		/// <summary>
+		/// Enable or disable tracking player's last location when they disconnect, respawning them at that location
+		/// when they reconnect.
+		/// <para/>
+		/// Default: <see langword="false"/>.
+		/// </summary>
+		public bool RememberLastLocation { get; set; } = false;
 	}
 
 	/// <summary>
@@ -402,26 +441,81 @@ public sealed class TShockConfiguration
 		/// </summary>
 		public bool KickEmptyUuid { get; set; } = false;
 
+		/// <summary>
+		/// Kick players who exceed the tile placement threshold.
+		/// <para/>
+		/// Default: <see langword="false"/>.
+		/// </summary>
 		public bool KickOnTilePlaceThresholdExceeded { get; set; } = false;
 
+		/// <summary>
+		/// Kick players who exceed the tile kill threshold.
+		/// <para/>
+		/// Default: <see langword="false"/>.
+		/// </summary>
 		public bool KickOnTileKillThresholdExceeded { get; set; } = false;
 
+		/// <summary>
+		/// Kick players who exceed the paint threshold.
+		/// <para/>
+		/// Default: <see langword="false"/>.
+		/// </summary>
 		public bool KickOnPaintThresholdExceeded { get; set; } = false;
 
+		/// <summary>
+		/// Kick players who exceed the liquid modification threshold.
+		/// <para/>
+		/// Default: <see langword="false"/>.
+		/// </summary>
 		public bool KickOnLiquidThresholdExceeded { get; set; } = false;
 
+		/// <summary>
+		/// Kick players who exceed the projectile creation threshold.
+		/// <para/>
+		/// Default: <see langword="false"/>.
+		/// </summary>
 		public bool KickOnProjectileThresholdExceeded { get; set; } = false;
 
+		/// <summary>
+		/// Kick players who exceed the heal other threshold.
+		/// <para/>
+		/// Default: <see langword="false"/>.
+		/// </summary>
 		public bool KickOnHealOtherThresholdExceeded { get; set; } = false;
 
+		/// <summary>
+		/// Kick players who exceed the damage threshold.
+		/// <para/>
+		/// Default: <see langword="false"/>.
+		/// </summary>
 		public bool KickOnDamageThresholdExceeded { get; set; } = false;
 
+		/// <summary>
+		/// Kick mediumcore players who die.
+		/// <para/>
+		/// Default: <see langword="false"/>.
+		/// </summary>
 		public bool KickOnMediumcoreDeath { get; set; } = false;
 
+		/// <summary>
+		/// Kick hardcore players who die.
+		/// <para/>
+		/// Default: <see langword="false"/>.
+		/// </summary>
 		public bool KickOnHardcoreDeath { get; set; } = false;
 
+		/// <summary>
+		/// Ban mediumcore players who die.
+		/// <para/>
+		/// Default: <see langword="false"/>.
+		/// </summary>
 		public bool BanOnMediumcoreDeath { get; set; } = false;
 
+		/// <summary>
+		/// Ban hardcore players who die.
+		/// <para/>
+		/// Default: <see langword="false"/>.
+		/// </summary>
 		public bool BanOnHardcoreDeath { get; set; } = false;
 	}
 
@@ -443,6 +537,70 @@ public sealed class TShockConfiguration
 		/// </summary>
 		public bool EnableCustomDeathMessages { get; set; } = false;
 	}
+
+	/// <summary>
+	/// Settings specific to TShock's command handling
+	/// </summary>
+	public sealed class CommandSettings
+	{
+		/// <summary>
+		/// Characters which indicate the start of a command. All messages that begin with this will be treated as
+		/// commands.
+		/// <para/>
+		/// Default: "/"
+		/// </summary>
+		public string CommandPrefix { get; set; } = "/";
+
+		/// <summary>
+		/// Characters which indicate the start of a command that will be run silently.
+		/// All messages that begin with this will be treated as commands.
+		/// <para/>
+		/// Default: "."
+		/// </summary>
+		public string SilentCommandPrefix { get; set; } = ".";
+	}
+
+	/// <summary>
+	/// Settings specific to TShock's formatting of in-game messages
+	/// </summary>
+	public sealed class MessageSettings
+	{
+		/// <summary>
+		/// Sets the format for in-game messages that display in the chat box.
+		/// Available placeholders:
+		/// {0}: group name,
+		/// {1}: group prefix,
+		/// {2}: player name,
+		/// {3}: group suffix,
+		/// {4}: chat message
+		/// <para/>
+		/// Default: "{1}{2}{3}: {4}"
+		/// </summary>
+		public string MessageFormat { get; set; } = "{1}{2}{3}: {4}";
+
+		/// <summary>
+		/// Sets the format for in-game messages that appear over a player's head.
+		/// Displays as "({OverHeadMessageFormat}) {message}".
+		/// <para/>
+		/// Available placeholders:
+		/// {0}: group name,
+		/// {1}: group prefix,
+		/// {2}: player name,
+		/// {3}: group suffix
+		/// <para/>
+		/// Default: "{2}"
+		/// </summary>
+		public string OverheadMessageFormat { get; set; } = "{2}";
+
+		/// <summary>
+		/// Enables or disables messages being displayed over player's heads.
+		/// <para/>
+		/// Default: <see langword="false"/>.
+		/// </summary>
+		public bool EnableOverheadMessages { get; set; } = false;
+	}
+
+	#endregion
 
 	/*
     Notes:
