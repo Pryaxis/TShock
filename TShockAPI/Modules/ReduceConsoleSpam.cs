@@ -28,20 +28,21 @@ public class ReduceConsoleSpam : Module
 	public ReduceConsoleSpam() =>
 		OTAPI.Hooks.Main.StatusTextChange += OnMainStatusTextChange;
 
+	/// <inheritdoc/>
 	public override void Dispose() =>
 		OTAPI.Hooks.Main.StatusTextChange -= OnMainStatusTextChange;
 
 	/// <summary>
 	/// Holds the last status text value, to determine if there is a suitable change to report.
 	/// </summary>
-	private string _lastStatusText = null;
+	private string? _lastStatusText = null;
 
 	/// <summary>
 	/// Aims to reduce the amount of console spam by filtering out load/save progress
 	/// </summary>
 	/// <param name="sender"></param>
 	/// <param name="e">OTAPI event</param>
-	private void OnMainStatusTextChange(object sender, OTAPI.Hooks.Main.StatusTextChangeArgs e)
+	private void OnMainStatusTextChange(object? sender, OTAPI.Hooks.Main.StatusTextChangeArgs e)
 	{
 		void WriteIfChange(string text)
 		{
