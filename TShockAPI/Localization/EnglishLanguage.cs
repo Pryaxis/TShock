@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria;
@@ -58,10 +58,10 @@ namespace TShockAPI.Localization
 					NpcNames.Add(i, Lang.GetNPCNameValue(i));
 				}
 
-				foreach (var field in typeof(Main).Assembly.GetType("Terraria.ID.PrefixID")
+				foreach (var field in typeof(Main).Assembly!.GetType("Terraria.ID.PrefixID")!
 							.GetFields().Where(f => !f.Name.Equals("Count", StringComparison.Ordinal)))
 				{
-					Prefixs.Add((int) field.GetValue(null), field.Name);
+					Prefixs.Add((int)field!.GetValue(null)!, field.Name);
 				}
 			}
 			finally
@@ -78,9 +78,9 @@ namespace TShockAPI.Localization
 		/// </summary>
 		/// <param name="id">Id of the item</param>
 		/// <returns>Item name in English</returns>
-		public static string GetItemNameById(int id)
+		public static string? GetItemNameById(int id)
 		{
-			string itemName;
+			string? itemName;
 			if (ItemNames.TryGetValue(id, out itemName))
 				return itemName;
 
@@ -92,9 +92,9 @@ namespace TShockAPI.Localization
 		/// </summary>
 		/// <param name="id">Id of the npc</param>
 		/// <returns>Npc name in English</returns>
-		public static string GetNpcNameById(int id)
+		public static string? GetNpcNameById(int id)
 		{
-			string npcName;
+			string? npcName;
 			if (NpcNames.TryGetValue(id, out npcName))
 				return npcName;
 
@@ -106,9 +106,9 @@ namespace TShockAPI.Localization
 		/// </summary>
 		/// <param name="id">Prefix Id</param>
 		/// <returns>Prefix in English</returns>
-		public static string GetPrefixById(int id)
+		public static string? GetPrefixById(int id)
 		{
-			string prefix;
+			string? prefix;
 			if (Prefixs.TryGetValue(id, out prefix))
 				return prefix;
 
