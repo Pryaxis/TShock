@@ -93,54 +93,6 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Sets up the configuration file for all variables, and creates any missing files.
-		/// </summary>
-		public static void SetupConfig()
-		{
-			if (!Directory.Exists(TShock.SavePath))
-			{
-				Directory.CreateDirectory(TShock.SavePath);
-			}
-
-			CreateIfNot(RulesPath, "Respect the admins!\nDon't use TNT!");
-			CreateIfNot(MotdPath, MotdFormat);
-						
-			CreateIfNot(WhitelistPath);
-			bool writeConfig = true; // Default to true if the file doesn't exist
-			if (File.Exists(ConfigPath))
-			{
-				TShock.Config.Read(ConfigPath, out writeConfig);
-			}
-			if (writeConfig)
-			{
-				// Add all the missing config properties in the json file
-				TShock.Config.Write(ConfigPath);
-			}
-
-			bool writeSSCConfig = true; // Default to true if the file doesn't exist
-			if (File.Exists(ServerSideCharacterConfigPath))
-			{
-				TShock.ServerSideCharacterConfig.Read(ServerSideCharacterConfigPath, out writeSSCConfig);
-			}
-			if (writeSSCConfig)
-			{
-				// Add all the missing config properties in the json file
-				TShock.ServerSideCharacterConfig = new Configuration.ServerSideConfig
-				{
-					Settings = { StartingInventory =
-						new List<NetItem>
-						{
-							new NetItem(-15, 1, 0),
-							new NetItem(-13, 1, 0),
-							new NetItem(-16, 1, 0)
-						}
-					}
-				};
-				TShock.ServerSideCharacterConfig.Write(ServerSideCharacterConfigPath);
-			}
-		}
-
-		/// <summary>
 		/// Tells if a user is on the whitelist
 		/// </summary>
 		/// <param name="ip">string ip of the user</param>

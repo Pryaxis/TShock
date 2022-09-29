@@ -44,6 +44,11 @@ public sealed class TShockConfiguration
 	/// </summary>
 	public MessageSettings Messages { get; set; } = null!;
 
+	/// <summary>
+	/// Server-side character configuration settings.
+	/// </summary>
+	public ServerSideCharacterSettings ServerSideCharacters { get; set; } = null!;
+
 	#region Settings definitions
 
 	/// <summary>
@@ -66,7 +71,7 @@ public sealed class TShockConfiguration
 		/// <summary>
 		/// Slots that are reserved for players with the <see cref="Permissions.reservedslot"/> permission.
 		/// <para/>
-		/// Note that this requires <see cref="AuthenticationSettings.LoginBeforeJoin"/> to be enabled.
+		/// Note that this requires <see cref="AuthenticationSettings.EnableLoginBeforeJoin"/> to be enabled.
 		/// Note that this uses players slots defined in <see cref="MaxPlayerSlots"/>.
 		/// <para/>
 		/// Default: 0.
@@ -81,7 +86,7 @@ public sealed class TShockConfiguration
 		/// <summary>
 		/// Server password. Users will need to provide the password to enter the server, if set.
 		/// <para/>
-		/// Overridden by <see cref="AuthenticationSettings.LoginBeforeJoin"/> if enabled.
+		/// Overridden by <see cref="AuthenticationSettings.EnableLoginBeforeJoin"/> if enabled.
 		/// </summary>
 		public string? Password { get; set; }
 	}
@@ -177,11 +182,17 @@ public sealed class TShockConfiguration
 
 		/// <summary>
 		/// How large to make invasions. Invasion size is calculated as (100 + (multiplier * onlinePlayerCount)).
-		/// For never-ending invasions, set this to a very large number.
 		/// <para/>
 		/// Default: 1.
 		/// </summary>
 		public int InvasionMultiplier { get; set; } = 1;
+
+		/// <summary>
+		/// Enables or disables infinite invasions.
+		/// <para/>
+		/// Default: <see langword="false"/>.
+		/// </summary>
+		public bool EnableInfiniteInvasion { get; set; } = false;
 
 		/// <summary>
 		/// Server PVP mode. Defines the PVP state enforced by the server.
@@ -388,7 +399,7 @@ public sealed class TShockConfiguration
 		/// <para/>
 		/// Default: true.
 		/// </summary>
-		public bool LoginBeforeJoin { get; set; } = true;
+		public bool EnableLoginBeforeJoin { get; set; } = true;
 
 		/// <summary>
 		/// The minimum length a user account's password may be. Cannot be lower than 4.
@@ -598,6 +609,40 @@ public sealed class TShockConfiguration
 		/// Default: <see langword="false"/>.
 		/// </summary>
 		public bool EnableOverheadMessages { get; set; } = false;
+	}
+
+	/// <summary>
+	/// Settings specific to TShock's server-side characters
+	/// </summary>
+	public sealed class ServerSideCharacterSettings
+	{
+		/// <summary>
+		/// Enables or disables server-side characters. When enabled, character data will be saved on the server instead of on player's computers.
+		/// <para/>
+		/// Default: <see langword="false"/>.
+		/// </summary>
+		public bool EnableServerSideCharacters { get; set; } = false;
+
+		/// <summary>
+		/// The interval at which character data should be saved, in minutes.
+		/// <para/>
+		/// Default: 5.
+		/// </summary>
+		public int SaveInterval { get; set; } = 5;
+
+		/// <summary>
+		/// The amount of HP newly created server side characters will be given.
+		/// <para/>
+		/// Default: 100.
+		/// </summary>
+		public int StartingHp { get; set; } = 100;
+
+		/// <summary>
+		/// The amount of MP newly created server side characters will be given.
+		/// <para/>
+		/// Default: 0.
+		/// </summary>
+		public int StartingMp { get; set; } = 0;
 	}
 
 	#endregion

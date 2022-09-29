@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.IO;
 
-namespace TShockAPI
+namespace TShockAPI.Net
 {
 	/// <summary>
 	/// Derived objects can be written to and read from streams.

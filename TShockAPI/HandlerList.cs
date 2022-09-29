@@ -23,9 +23,6 @@ using System.Linq;
 
 namespace TShockAPI
 {
-	public class HandlerList : HandlerList<EventArgs>
-	{
-	}
 	public class HandlerList<T> where T : EventArgs
 	{
 		public class HandlerItem
