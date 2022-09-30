@@ -11,6 +11,7 @@ public class GroupTests
 	[SetUp]
 	public static void SetupTShock()
 	{
+		Program.SavePath = ""; // 1.4.4.2
 		LanguageManager.Instance.SetLanguage(GameCulture.DefaultCulture);
 		Lang.InitializeLegacyLocalization();
 
