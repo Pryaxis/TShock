@@ -16,6 +16,9 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Reduced load/save console spam. (@SignatureBeef, @YehnBeep)
 * Replaced SQLite library with Microsoft.Data.Sqlite for arm64 support. (@SignatureBeef)
 * Initial support for MonoMod hooks on Raspberry Pi (arm64). (@kevzhao2)
+* Ported to OTAPI3 and .NET6. (@SignatureBeef)
+* Introduced a new module framework for TShock developers. (@SignatureBeef)
+* Fixed a secondary crash when server init fails and log services were not initialised. (@SignatureBeef)
 
 ## Upcoming changes
 * Your changes could be here!
