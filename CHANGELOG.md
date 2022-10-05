@@ -12,7 +12,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * Do not forget to sign every line you change with your name. (@hakusaro)
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change.
 
-## Upcoming changes (TShock 5.0.0)
+## Upcoming changes
 * Reduced load/save console spam. (@SignatureBeef, @YehnBeep)
 * Replaced SQLite library with Microsoft.Data.Sqlite for arm64 support. (@SignatureBeef)
 * Initial support for MonoMod hooks on Raspberry Pi (arm64). (@kevzhao2)
@@ -22,9 +22,6 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Added preliminary support for Terraria 1.4.4.4. (@SignatureBeef)
 * GrassSpreadEventArgs Color property has been changed from a Byte to a TileColorCache type. (@SignatureBeef)
 * SetDefaultsEventArgs now includes a nullable ItemVariant instance. (@SignatureBeef)
-
-## Upcoming changes
-* Your changes could be here!
 
 ## TShock 4.5.18
 * Fixed `TSPlayer.GiveItem` not working if the player is in lava. (@gohjoseph)
