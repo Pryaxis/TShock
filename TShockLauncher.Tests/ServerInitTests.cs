@@ -7,6 +7,9 @@ namespace TShockLauncher.Tests;
 
 public class ServerInitTests
 {
+	/// <summary>
+	/// This test will ensure that the TSAPI binary boots up as expected
+	/// </summary>
 	[TestCase]
 	public void EnsureBoots()
 	{
