@@ -19,6 +19,9 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Ported to OTAPI3 and .NET6. (@SignatureBeef)
 * Introduced a new module framework for TShock developers. (@SignatureBeef)
 * Fixed a secondary crash when server init fails and log services were not initialised. (@SignatureBeef)
+* Added preliminary support for Terraria 1.4.4.4. (@SignatureBeef)
+* GrassSpreadEventArgs Color property has been changed from a Byte to a TileColorCache type. (@SignatureBeef)
+* SetDefaultsEventArgs now includes a nullable ItemVariant instance. (@SignatureBeef)
 
 ## Upcoming changes
 * Your changes could be here!
