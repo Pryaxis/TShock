@@ -172,7 +172,7 @@ namespace TShockAPI.DB
 		/// <returns></returns>
 		protected override string EscapeTableName(string table)
 		{
-			return table.SFormat("'{0}'", table);
+			return $"\'{table}\'";
 		}
 	}
 
