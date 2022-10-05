@@ -1,4 +1,4 @@
-name: CI(OTAPI3) Legacy
+name: CI(OTAPI3)
 
 on: [push]
 
