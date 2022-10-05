@@ -1,6 +1,6 @@
 <p align="center">
   <img src="https://tshock.co/newlogo.png" alt="TShock for Terraria"><br />
-  <a href="https://ci.appveyor.com/project/hakusaro/tshock"><img src="https://ci.appveyor.com/api/projects/status/chhe61q227lqdlg1?svg=true" alt="AppVeyor Build Status"></a><a href="https://github.com/Pryaxis/TShock/actions"><img src="https://github.com/Pryaxis/TShock/workflows/Build%20Server/badge.svg" alt="GitHub Actions Build Status"></a><a href="#contributors"><img src="https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square" alt="All contributors"></a><br />
+  <a href="https://ci.appveyor.com/project/hakusaro/tshock"><img src="https://ci.appveyor.com/api/projects/status/chhe61q227lqdlg1?svg=true" alt="AppVeyor Build Status"></a><a href="https://github.com/Pryaxis/TShock/actions"><img src="https://github.com/Pryaxis/TShock/actions/workflows/Build%20Server/badge.svg" alt="GitHub Actions Build Status"></a><a href="#contributors"><img src="https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square" alt="All contributors"></a><br />
 </p>
 
 TShock是为泰拉瑞亚设计的多功能服务端。它拥有反作弊/强制开荒/用户组/权限管理/物品封禁/大量指令和无限的扩展性。

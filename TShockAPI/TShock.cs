@@ -28,7 +28,6 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using MaxMind;
-using Mono.Data.Sqlite;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using Rests;
@@ -45,6 +44,8 @@ using TShockAPI.CLI;
 using TShockAPI.Localization;
 using TShockAPI.Configuration;
 using Terraria.GameContent.Creative;
+using System.Runtime.InteropServices;
+using TShockAPI.Modules;
 
 namespace TShockAPI
 {
@@ -148,6 +149,8 @@ namespace TShockAPI
 		/// </summary>
 		public static event Action Initialized;
 
+		public static ModuleManager ModuleManager { get; } = new ModuleManager();
+
 		/// <summary>Version - The version required by the TerrariaAPI to be passed back for checking &amp; loading the plugin.</summary>
 		/// <value>value - The version number specified in the Assembly, based on the VersionNum variable set in this class.</value>
 		public override Version Version
@@ -190,6 +193,55 @@ namespace TShockAPI
 			instance = this;
 		}
 
+
+		static Dictionary<string, IntPtr> _nativeCache = new Dictionary<string, IntPtr>();
+		static IntPtr ResolveNativeDep(string libraryName, Assembly assembly, DllImportSearchPath? searchPath)
+		{
+			if (_nativeCache.TryGetValue(libraryName, out IntPtr cached))
+				return cached;
+
+			IEnumerable<string> matches = Enumerable.Empty<string>();
+
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+			{
+				var osx = Path.Combine(Environment.CurrentDirectory, "runtimes", "osx-x64");
+				if(Directory.Exists(osx))
+					matches = Directory.GetFiles(osx, "*" + libraryName + "*", SearchOption.AllDirectories);
+			}
+			else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+			{
+				var lib64 = Path.Combine(Environment.CurrentDirectory, "runtimes", "linux-x64");
+				if (Directory.Exists(lib64))
+					matches = Directory.GetFiles(lib64, "*" + libraryName + "*", SearchOption.AllDirectories);
+			}
+			else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+			{
+				var x64 = Path.Combine(Environment.CurrentDirectory, "runtimes", "win-x64");
+				if (Directory.Exists(x64))
+					matches = Directory.GetFiles(x64, "*" + libraryName + "*", SearchOption.AllDirectories);
+			}
+
+			if (matches.Count() == 0)
+			{
+				matches = Directory.GetFiles(Environment.CurrentDirectory, "*" + libraryName + "*");
+			}
+
+			Debug.WriteLine($"Looking for `{libraryName}` with {matches.Count()} match(es)");
+
+			var handle = IntPtr.Zero;
+
+			if (matches.Count() == 1)
+			{
+				var match = matches.Single();
+				handle = NativeLibrary.Load(match);
+			}
+
+			// cache either way. if zero, no point calling IO if we've checked this assembly before.
+			_nativeCache.Add(libraryName, handle);
+
+			return handle;
+		}
+
 		/// <summary>Initialize - Called by the TerrariaServerAPI during initialization.</summary>
 		[SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands")]
 		public override void Initialize()
@@ -197,17 +249,14 @@ namespace TShockAPI
 			string logFilename;
 			string logPathSetupWarning;
 
-			OTAPI.Hooks.Net.Socket.Create = () =>
+			OTAPI.Hooks.Netplay.CreateTcpListener += (sender, args) =>
 			{
-				//Console.WriteLine($"Creating socket {nameof(LinuxTcpSocket)}");
-				return new LinuxTcpSocket();
-				//return new OTAPI.Sockets.PoolSocket();
-				//return new Terraria.Net.Sockets.TcpSocket();
+				args.Result = new LinuxTcpSocket();
 			};
-			OTAPI.Hooks.Player.Announce = (int playerId) =>
+			OTAPI.Hooks.NetMessage.PlayerAnnounce += (sender, args) =>
 			{
 				//TShock handles this
-				return OTAPI.HookResult.Cancel;
+				args.Result = OTAPI.Hooks.NetMessage.PlayerAnnounceResult.None;
 			};
 
 			Main.SettingsUnlock_WorldEvil = true;
@@ -269,7 +318,7 @@ namespace TShockAPI
 				{
 					string sql = Path.Combine(SavePath, Config.Settings.SqliteDBPath);
 					Directory.CreateDirectory(Path.GetDirectoryName(sql));
-					DB = new SqliteConnection(string.Format("uri=file://{0},Version=3", sql));
+					DB = new Microsoft.Data.Sqlite.SqliteConnection(string.Format("Data Source={0}", sql));
 				}
 				else if (Config.Settings.StorageType.ToLower() == "mysql")
 				{
@@ -305,7 +354,7 @@ namespace TShockAPI
 				if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
 				{
 					Log.ConsoleInfo(
-						"TShock被异常关闭。请使用{0}exit 正常退出。", Commands.Specifier);
+						"TShock was improperly shut down. Please use the exit command in the future to prevent this.");
 					File.Delete(Path.Combine(SavePath, "tshock.pid"));
 				}
 				File.WriteAllText(Path.Combine(SavePath, "tshock.pid"),
@@ -338,7 +387,7 @@ namespace TShockAPI
 				if (Config.Settings.EnableGeoIP && File.Exists(geoippath))
 					Geo = new GeoIPCountry(geoippath);
 
-				Log.ConsoleInfo("TShock {0} ({1}) 汉化版 Beta 1 正在运行。", Version, VersionCodename);
+				Log.ConsoleInfo("TShock {0} ({1}) now running.", Version, VersionCodename);
 
 				ServerApi.Hooks.GamePostInitialize.Register(this, OnPostInit);
 				ServerApi.Hooks.GameUpdate.Register(this, OnUpdate);
@@ -371,24 +420,32 @@ namespace TShockAPI
 
 				EnglishLanguage.Initialize();
 
+				ModuleManager.Initialise(new object[] { this });
+
 				if (Config.Settings.RestApiEnabled)
 					RestApi.Start();
 
-				Log.ConsoleInfo("自动保存 " + (Config.Settings.AutoSave ? "已开启" : "已关闭"));
-				Log.ConsoleInfo("自动备份 " + (Backups.Interval > 0 ? "已开启" : "已关闭"));
+				Log.ConsoleInfo("AutoSave " + (Config.Settings.AutoSave ? "Enabled" : "Disabled"));
+				Log.ConsoleInfo("Backups " + (Backups.Interval > 0 ? "Enabled" : "Disabled"));
 
 				Initialized?.Invoke();
 
-				Log.ConsoleInfo("欢迎使用TShock 初始化完毕");
-				Log.ConsoleInfo("TShock 完全免费且开源~");
+				Log.ConsoleInfo("Welcome to TShock for Terraria!");
+				Log.ConsoleInfo("TShock comes with no warranty & is free software.");
 				Log.ConsoleInfo("You can modify & distribute it under the terms of the GNU GPLv3.");
 
 			}
 			catch (Exception ex)
 			{
-				Log.Error("初始化错误");
-				Log.ConsoleError("Until the problem is resolved, TShock will not be able to start (and will crash on startup).");
-				Log.ConsoleError(ex.ToString());
+				// handle if Log was not initialised
+				void SafeError(string message)
+				{
+					if(Log is not null) Log.ConsoleError(message);
+					else Console.WriteLine(message);
+				};
+				SafeError("TShock encountered a problem from which it cannot recover. The following message may help diagnose the problem.");
+				SafeError("Until the problem is resolved, TShock will not be able to start (and will crash on startup).");
+				SafeError(ex.ToString());
 				Environment.Exit(1);
 			}
 		}
@@ -413,6 +470,8 @@ namespace TShockAPI
 					Geo.Dispose();
 				}
 				SaveManager.Instance.Dispose();
+
+				ModuleManager.Dispose();
 
 				ServerApi.Hooks.GamePostInitialize.Deregister(this, OnPostInit);
 				ServerApi.Hooks.GameUpdate.Deregister(this, OnUpdate);
@@ -1031,7 +1090,7 @@ namespace TShockAPI
 					{
 						if (player.TileKillThreshold >= Config.Settings.TileKillThreshold)
 						{
-							player.Disable("到达 砖块破坏 上限。", flags);
+							player.Disable("Reached TileKill threshold.", flags);
 							TSPlayer.Server.RevertTiles(player.TilesDestroyed);
 							player.TilesDestroyed.Clear();
 						}
@@ -1048,7 +1107,7 @@ namespace TShockAPI
 					{
 						if (player.TilePlaceThreshold >= Config.Settings.TilePlaceThreshold)
 						{
-							player.Disable("到达 砖块放置 上限。", flags);
+							player.Disable("Reached TilePlace threshold", flags);
 							lock (player.TilesCreated)
 							{
 								TSPlayer.Server.RevertTiles(player.TilesCreated);
@@ -1092,7 +1151,7 @@ namespace TShockAPI
 
 					if (player.TileLiquidThreshold >= Config.Settings.TileLiquidThreshold)
 					{
-						player.Disable("到达 液体放置 上限。", flags);
+						player.Disable("Reached TileLiquid threshold", flags);
 					}
 					if (player.TileLiquidThreshold > 0)
 					{
@@ -1101,7 +1160,7 @@ namespace TShockAPI
 
 					if (player.ProjectileThreshold >= Config.Settings.ProjectileThreshold)
 					{
-						player.Disable("到达 弹幕发射 上限。", flags);
+						player.Disable("Reached projectile threshold", flags);
 					}
 					if (player.ProjectileThreshold > 0)
 					{
@@ -1110,7 +1169,7 @@ namespace TShockAPI
 
 					if (player.PaintThreshold >= Config.Settings.TilePaintThreshold)
 					{
-						player.Disable("到达 涂漆 上限。", flags);
+						player.Disable("Reached paint threshold", flags);
 					}
 					if (player.PaintThreshold > 0)
 					{
@@ -1252,7 +1311,7 @@ namespace TShockAPI
 				{
 					if (Config.Settings.KickProxyUsers)
 					{
-						player.Kick("禁止使用代理。", true, true, null, false);
+						player.Kick("Connecting via a proxy is not allowed.", true, true, null, false);
 						args.Handled = true;
 						return;
 					}
@@ -1274,7 +1333,7 @@ namespace TShockAPI
 
 			if (Config.Settings.KickEmptyUUID && String.IsNullOrWhiteSpace(player.UUID))
 			{
-				player.Kick("客户端异常，请重新连接。", true, true, null, false);
+				player.Kick("Your client sent a blank UUID. Configure it to send one or use a different client.", true, true, null, false);
 				args.Handled = true;
 				return;
 			}
@@ -1320,8 +1379,8 @@ namespace TShockAPI
 			if (tsplr.ReceivedInfo)
 			{
 				if (!tsplr.SilentKickInProgress && tsplr.State >= 3)
-					Utils.Broadcast(tsplr.Name + " 离开游戏。", Color.Yellow);
-				Log.Info("{0} 断开连接。", tsplr.Name);
+					Utils.Broadcast(tsplr.Name + " has left.", Color.Yellow);
+				Log.Info("{0} disconnected.", tsplr.Name);
 
 				if (tsplr.IsLoggedIn && !tsplr.IsDisabledPendingTrashRemoval && Main.ServerSideCharacter && (!tsplr.Dead || tsplr.TPlayer.difficulty != 2))
 				{
@@ -1371,7 +1430,7 @@ namespace TShockAPI
 
 			if (args.Text.Length > 500)
 			{
-				tsplr.Kick("禁止超长文本。", true);
+				tsplr.Kick("Crash attempt via long chat packet.", true);
 				args.Handled = true;
 				return;
 			}
@@ -1412,7 +1471,7 @@ namespace TShockAPI
 				}
 				catch (Exception ex)
 				{
-					Log.ConsoleError("执行命令时发生错误。");
+					Log.ConsoleError("An exception occurred executing a command.");
 					Log.Error(ex.ToString());
 				}
 			}
@@ -1424,7 +1483,7 @@ namespace TShockAPI
 				}
 				else if (tsplr.mute)
 				{
-					tsplr.SendErrorMessage("你被禁言了。");
+					tsplr.SendErrorMessage("You are muted!");
 					args.Handled = true;
 				}
 				else if (!TShock.Config.Settings.EnableChatAboveHeads)
@@ -1510,7 +1569,7 @@ namespace TShockAPI
 			if (args.Command == "autosave")
 			{
 				Main.autoSave = Config.Settings.AutoSave = !Config.Settings.AutoSave;
-				Log.ConsoleInfo("自动保存 " + (Config.Settings.AutoSave ? "已开启" : "已关闭"));
+				Log.ConsoleInfo("AutoSave " + (Config.Settings.AutoSave ? "Enabled" : "Disabled"));
 			}
 			else if (args.Command.StartsWith(Commands.Specifier) || args.Command.StartsWith(Commands.SilentSpecifier))
 			{
@@ -1583,18 +1642,18 @@ namespace TShockAPI
 									   player.Group.Name, player.Country, TShock.Utils.GetActivePlayerCount(),
 									   TShock.Config.Settings.MaxSlots);
 				if (!player.SilentJoinInProgress)
-					Utils.Broadcast(string.Format("{0} ({1}) 进入游戏。", player.Name, player.Country), Color.Yellow);
+					Utils.Broadcast(string.Format("{0} ({1}) has joined.", player.Name, player.Country), Color.Yellow);
 			}
 			else
 			{
-				Log.Info("{0} ({1})  用户组'{2}' 进入游戏。({3}/{4})", player.Name, player.IP,
+				Log.Info("{0} ({1}) from '{2}' group joined. ({3}/{4})", player.Name, player.IP,
 									   player.Group.Name, TShock.Utils.GetActivePlayerCount(), TShock.Config.Settings.MaxSlots);
 				if (!player.SilentJoinInProgress)
-					Utils.Broadcast(player.Name + " 进入游戏。", Color.Yellow);
+					Utils.Broadcast(player.Name + " has joined.", Color.Yellow);
 			}
 
 			if (Config.Settings.DisplayIPToAdmins)
-				Utils.SendLogs(string.Format("{0} 进入游戏。IP: {1}", player.Name, player.IP), Color.Blue);
+				Utils.SendLogs(string.Format("{0} has joined. IP: {1}", player.Name, player.IP), Color.Blue);
 
 			player.SendFileTextAsMessage(FileTools.MotdPath);
 
@@ -1616,7 +1675,7 @@ namespace TShockAPI
 				}
 				else if (Config.Settings.RequireLogin)
 				{
-					player.SendErrorMessage("请{0}注册 或 {0}登入 进行游戏。", Commands.Specifier);
+					player.SendErrorMessage("Please {0}register or {0}login to play!", Commands.Specifier);
 					player.LoginHarassed = true;
 				}
 			}
@@ -1626,7 +1685,7 @@ namespace TShockAPI
 			if (Config.Settings.RememberLeavePos && (RememberedPos.GetLeavePos(player.Name, player.IP) != Vector2.Zero) && !player.LoginHarassed)
 			{
 				player.RPPending = 3;
-				player.SendInfoMessage("你将被传送到最后所在位置。");
+				player.SendInfoMessage("You will be teleported to your last known location...");
 			}
 
 			args.Handled = true;
