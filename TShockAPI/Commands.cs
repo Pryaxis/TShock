@@ -33,7 +33,6 @@ using TerrariaApi.Server;
 using TShockAPI.Hooks;
 using Terraria.GameContent.Events;
 using Microsoft.Xna.Framework;
-using OTAPI.Tile;
 using TShockAPI.Localization;
 using System.Text.RegularExpressions;
 using Terraria.DataStructures;

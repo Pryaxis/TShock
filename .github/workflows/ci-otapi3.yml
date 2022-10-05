@@ -1,0 +1,55 @@
+name: CI(OTAPI3)
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.100'
+
+      - name: Run tests
+        run: dotnet test
+
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: ["win-x64", "osx-x64", "linux-x64", "linux-arm64", "linux-arm"]
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.100'
+
+      - name: Produce build
+        run: |
+            cd TShockLauncher
+            dotnet publish -r ${{ matrix.arch }} -f net6.0 -c Release -p:PublishSingleFile=true --self-contained false
+
+      - name: Chmod scripts
+        if: ${{ matrix.arch != 'win-x64' }}
+        run: |
+            chmod +x TShockLauncher/bin/Release/net6.0/${{ matrix.arch }}/publish/TShock.Server
+
+      # preserve file perms: https://github.com/actions/upload-artifact#maintaining-file-permissions-and-case-sensitive-files
+      - name: Archive artifact
+        run: |
+            cd TShockLauncher/bin/Release/net6.0/${{ matrix.arch }}/publish/
+            tar -cvf ../../../../../../TShock-Beta-${{ matrix.arch }}-Release.tar *
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: TShock-Beta-${{ matrix.arch }}-Release
+          path: TShock-Beta-${{ matrix.arch }}-Release.tar
