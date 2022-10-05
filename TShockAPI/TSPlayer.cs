@@ -386,6 +386,12 @@ namespace TShockAPI
 			Item[] safe = TPlayer.bank2.item;
 			Item[] forge = TPlayer.bank3.item;
 			Item[] voidVault = TPlayer.bank4.item;
+			Item[] loadout1Armor = TPlayer.Loadouts[0].Armor;
+			Item[] loadout1Dye = TPlayer.Loadouts[0].Dye;
+			Item[] loadout2Armor = TPlayer.Loadouts[1].Armor;
+			Item[] loadout2Dye = TPlayer.Loadouts[1].Dye;
+			Item[] loadout3Armor = TPlayer.Loadouts[2].Armor;
+			Item[] loadout3Dye = TPlayer.Loadouts[2].Dye;
 
 			Item trash = TPlayer.trashItem;
 			for (int i = 0; i < NetItem.MaxInventory; i++)
@@ -594,7 +600,126 @@ namespace TShockAPI
 						}
 					}
 				}
+				else if (i < NetItem.Loadout1Armor.Item2)
+				{
+					var index = i - NetItem.Loadout1Armor.Item1;
+					Item item = new Item();
+					if (loadout1Armor[index] != null && loadout1Armor[index].netID != 0)
+					{
+						item.netDefaults(loadout1Armor[index].netID);
+						item.Prefix(loadout1Armor[index].prefix);
+						item.AffixName();
 
+						if (loadout1Armor[index].stack > item.maxStack || loadout1Armor[index].stack < 0)
+						{
+							check = true;
+							if (shouldWarnPlayer)
+							{
+								SendErrorMessage(GetString("Stack cheat detected. Remove Loadout 1 item {0} ({1}) and then rejoin.", item.Name, loadout1Armor[index].stack));
+							}
+						}
+					}
+				}
+				else if (i < NetItem.Loadout1Dye.Item2)
+				{
+					var index = i - NetItem.Loadout1Dye.Item1;
+					Item item = new Item();
+					if (loadout1Dye[index] != null && loadout1Dye[index].netID != 0)
+					{
+						item.netDefaults(loadout1Dye[index].netID);
+						item.Prefix(loadout1Dye[index].prefix);
+						item.AffixName();
+
+						if (loadout1Dye[index].stack > item.maxStack || loadout1Dye[index].stack < 0)
+						{
+							check = true;
+							if (shouldWarnPlayer)
+							{
+								SendErrorMessage(GetString("Stack cheat detected. Remove Loadout 1 item {0} ({1}) and then rejoin.", item.Name, loadout1Dye[index].stack));
+							}
+						}
+					}
+				}
+				else if (i < NetItem.Loadout2Armor.Item2)
+				{
+					var index = i - NetItem.Loadout2Armor.Item1;
+					Item item = new Item();
+					if (loadout2Armor[index] != null && loadout2Armor[index].netID != 0)
+					{
+						item.netDefaults(loadout2Armor[index].netID);
+						item.Prefix(loadout2Armor[index].prefix);
+						item.AffixName();
+
+						if (loadout2Armor[index].stack > item.maxStack || loadout2Armor[index].stack < 0)
+						{
+							check = true;
+							if (shouldWarnPlayer)
+							{
+								SendErrorMessage(GetString("Stack cheat detected. Remove Loadout 2 item {0} ({1}) and then rejoin.", item.Name, loadout2Armor[index].stack));
+							}
+						}
+					}
+				}
+				else if (i < NetItem.Loadout2Dye.Item2)
+				{
+					var index = i - NetItem.Loadout2Dye.Item1;
+					Item item = new Item();
+					if (loadout2Dye[index] != null && loadout2Dye[index].netID != 0)
+					{
+						item.netDefaults(loadout2Dye[index].netID);
+						item.Prefix(loadout2Dye[index].prefix);
+						item.AffixName();
+
+						if (loadout2Dye[index].stack > item.maxStack || loadout2Dye[index].stack < 0)
+						{
+							check = true;
+							if (shouldWarnPlayer)
+							{
+								SendErrorMessage(GetString("Stack cheat detected. Remove Loadout 2 item {0} ({1}) and then rejoin.", item.Name, loadout2Dye[index].stack));
+							}
+						}
+					}
+				}
+				else if (i < NetItem.Loadout3Armor.Item2)
+				{
+					var index = i - NetItem.Loadout3Armor.Item1;
+					Item item = new Item();
+					if (loadout3Armor[index] != null && loadout3Armor[index].netID != 0)
+					{
+						item.netDefaults(loadout3Armor[index].netID);
+						item.Prefix(loadout3Armor[index].prefix);
+						item.AffixName();
+
+						if (loadout3Armor[index].stack > item.maxStack || loadout3Armor[index].stack < 0)
+						{
+							check = true;
+							if (shouldWarnPlayer)
+							{
+								SendErrorMessage(GetString("Stack cheat detected. Remove Loadout 3 item {0} ({1}) and then rejoin.", item.Name, loadout3Armor[index].stack));
+							}
+						}
+					}
+				}
+				else if (i < NetItem.Loadout3Dye.Item2)
+				{
+					var index = i - NetItem.Loadout3Dye.Item1;
+					Item item = new Item();
+					if (loadout3Dye[index] != null && loadout3Dye[index].netID != 0)
+					{
+						item.netDefaults(loadout3Dye[index].netID);
+						item.Prefix(loadout3Dye[index].prefix);
+						item.AffixName();
+
+						if (loadout3Dye[index].stack > item.maxStack || loadout3Dye[index].stack < 0)
+						{
+							check = true;
+							if (shouldWarnPlayer)
+							{
+								SendErrorMessage(GetString("Stack cheat detected. Remove Loadout 3 item {0} ({1}) and then rejoin.", item.Name, loadout3Dye[index].stack));
+							}
+						}
+					}
+				}
 			}
 
 			return check;
