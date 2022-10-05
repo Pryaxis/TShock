@@ -52,6 +52,7 @@ namespace TShockAPI
 		public int usingBiomeTorches;
 		public int happyFunTorchTime;
 		public int unlockedBiomeTorches;
+		public int currentLoadoutIndex;
 
 		public PlayerData(TSPlayer player)
 		{
@@ -120,6 +121,7 @@ namespace TShockAPI
 			this.usingBiomeTorches = player.TPlayer.UsingBiomeTorches ? 1 : 0;
 			this.happyFunTorchTime = player.TPlayer.happyFunTorchTime ? 1 : 0;
 			this.unlockedBiomeTorches = player.TPlayer.unlockedBiomeTorches ? 1 : 0;
+			this.currentLoadoutIndex = player.TPlayer.CurrentLoadoutIndex;
 
 			Item[] inventory = player.TPlayer.inventory;
 			Item[] armor = player.TPlayer.armor;
@@ -131,6 +133,12 @@ namespace TShockAPI
 			Item[] forge = player.TPlayer.bank3.item;
 			Item[] voidVault = player.TPlayer.bank4.item;
 			Item trash = player.TPlayer.trashItem;
+			Item[] loadout1Armor = player.TPlayer.Loadouts[0].Armor;
+			Item[] loadout1Dye = player.TPlayer.Loadouts[0].Dye;
+			Item[] loadout2Armor = player.TPlayer.Loadouts[1].Armor;
+			Item[] loadout2Dye = player.TPlayer.Loadouts[1].Dye;
+			Item[] loadout3Armor = player.TPlayer.Loadouts[2].Armor;
+			Item[] loadout3Dye = player.TPlayer.Loadouts[2].Dye;
 
 			for (int i = 0; i < NetItem.MaxInventory; i++)
 			{
@@ -186,11 +194,41 @@ namespace TShockAPI
 					var index = i - NetItem.ForgeIndex.Item1;
 					this.inventory[i] = (NetItem)forge[index];
 				}
-				else
+				else if(i < NetItem.VoidIndex.Item2)
 				{
 					//220
 					var index = i - NetItem.VoidIndex.Item1;
 					this.inventory[i] = (NetItem)voidVault[index];
+				}
+				else if(i < NetItem.Loadout1Armor.Item2)
+				{
+					var index = i - NetItem.Loadout1Armor.Item1;
+					this.inventory[i] = (NetItem)loadout1Armor[index];
+				}
+				else if(i < NetItem.Loadout1Dye.Item2)
+				{
+					var index = i - NetItem.Loadout1Dye.Item1;
+					this.inventory[i] = (NetItem)loadout1Dye[index];
+				}
+				else if(i < NetItem.Loadout2Armor.Item2)
+				{
+					var index = i - NetItem.Loadout2Armor.Item1;
+					this.inventory[i] = (NetItem)loadout2Armor[index];
+				}
+				else if(i < NetItem.Loadout2Dye.Item2)
+				{
+					var index = i - NetItem.Loadout2Dye.Item1;
+					this.inventory[i] = (NetItem)loadout2Dye[index];
+				}
+				else if(i < NetItem.Loadout3Armor.Item2)
+				{
+					var index = i - NetItem.Loadout3Armor.Item1;
+					this.inventory[i] = (NetItem)loadout3Armor[index];
+				}
+				else if(i < NetItem.Loadout3Dye.Item2)
+				{
+					var index = i - NetItem.Loadout3Dye.Item1;
+					this.inventory[i] = (NetItem)loadout3Dye[index];
 				}
 			}
 		}
@@ -217,6 +255,7 @@ namespace TShockAPI
 			player.TPlayer.UsingBiomeTorches = this.usingBiomeTorches == 1;
 			player.TPlayer.happyFunTorchTime = this.happyFunTorchTime == 1;
 			player.TPlayer.unlockedBiomeTorches = this.unlockedBiomeTorches == 1;
+			player.TPlayer.CurrentLoadoutIndex = this.currentLoadoutIndex;
 
 			if (extraSlot != null)
 				player.TPlayer.extraAccessory = extraSlot.Value == 1 ? true : false;
@@ -353,7 +392,7 @@ namespace TShockAPI
 						player.TPlayer.bank3.item[index].Prefix((byte)this.inventory[i].PrefixId);
 					}
 				}
-				else
+				else if (i < NetItem.VoidIndex.Item2)
 				{
 					//260
 					var index = i - NetItem.VoidIndex.Item1;
@@ -365,7 +404,80 @@ namespace TShockAPI
 						player.TPlayer.bank4.item[index].Prefix((byte)this.inventory[i].PrefixId);
 					}
 				}
+				else if (i < NetItem.Loadout1Armor.Item2)
+				{
+					var index = i - NetItem.Loadout1Armor.Item1;
+					player.TPlayer.Loadouts[0].Armor[index].netDefaults(this.inventory[i].NetId);
+
+					if (player.TPlayer.Loadouts[0].Armor[index].netID != 0)
+					{
+						player.TPlayer.Loadouts[0].Armor[index].stack = this.inventory[i].Stack;
+						player.TPlayer.Loadouts[0].Armor[index].Prefix((byte)this.inventory[i].PrefixId);
+					}
+				}
+				else if (i < NetItem.Loadout1Dye.Item2)
+				{
+					var index = i - NetItem.Loadout1Dye.Item1;
+					player.TPlayer.Loadouts[0].Dye[index].netDefaults(this.inventory[i].NetId);
+
+					if (player.TPlayer.Loadouts[0].Dye[index].netID != 0)
+					{
+						player.TPlayer.Loadouts[0].Dye[index].stack = this.inventory[i].Stack;
+						player.TPlayer.Loadouts[0].Dye[index].Prefix((byte)this.inventory[i].PrefixId);
+					}
+				}
+				else if (i < NetItem.Loadout2Armor.Item2)
+				{
+					var index = i - NetItem.Loadout2Armor.Item1;
+					player.TPlayer.Loadouts[1].Armor[index].netDefaults(this.inventory[i].NetId);
+
+					if (player.TPlayer.Loadouts[1].Armor[index].netID != 0)
+					{
+						player.TPlayer.Loadouts[1].Armor[index].stack = this.inventory[i].Stack;
+						player.TPlayer.Loadouts[1].Armor[index].Prefix((byte)this.inventory[i].PrefixId);
+					}
+				}
+				else if (i < NetItem.Loadout2Dye.Item2)
+				{
+					var index = i - NetItem.Loadout2Dye.Item1;
+					player.TPlayer.Loadouts[1].Dye[index].netDefaults(this.inventory[i].NetId);
+
+					if (player.TPlayer.Loadouts[1].Dye[index].netID != 0)
+					{
+						player.TPlayer.Loadouts[1].Dye[index].stack = this.inventory[i].Stack;
+						player.TPlayer.Loadouts[1].Dye[index].Prefix((byte)this.inventory[i].PrefixId);
+					}
+				}
+				else if (i < NetItem.Loadout3Armor.Item2)
+				{
+					var index = i - NetItem.Loadout3Armor.Item1;
+					player.TPlayer.Loadouts[2].Armor[index].netDefaults(this.inventory[i].NetId);
+
+					if (player.TPlayer.Loadouts[2].Armor[index].netID != 0)
+					{
+						player.TPlayer.Loadouts[2].Armor[index].stack = this.inventory[i].Stack;
+						player.TPlayer.Loadouts[2].Armor[index].Prefix((byte)this.inventory[i].PrefixId);
+					}
+				}
+				else if (i < NetItem.Loadout3Dye.Item2)
+				{
+					var index = i - NetItem.Loadout3Dye.Item1;
+					player.TPlayer.Loadouts[2].Dye[index].netDefaults(this.inventory[i].NetId);
+
+					if (player.TPlayer.Loadouts[2].Dye[index].netID != 0)
+					{
+						player.TPlayer.Loadouts[2].Dye[index].stack = this.inventory[i].Stack;
+						player.TPlayer.Loadouts[2].Dye[index].Prefix((byte)this.inventory[i].PrefixId);
+					}
+				}
 			}
+
+			// Just like in MessageBuffer when the client receives a ContinueConnecting, let's sync the CurrentLoadoutIndex _before_ any of
+			// the items.
+			// This is sent to everyone BUT this player, and then ONLY this player. When using UUID login, it is too soon for the server to
+			// broadcast packets to this client.
+			NetMessage.SendData((int)PacketTypes.SyncLoadout, remoteClient: player.Index, number: player.Index, number2: player.TPlayer.CurrentLoadoutIndex);
+			NetMessage.SendData((int)PacketTypes.SyncLoadout, ignoreClient: player.Index, number: player.Index, number2: player.TPlayer.CurrentLoadoutIndex);
 
 			float slot = 0f;
 			for (int k = 0; k < NetItem.InventorySlots; k++)
@@ -412,6 +524,36 @@ namespace TShockAPI
 			for (int k = 0; k < NetItem.VoidSlots; k++)
 			{
 				NetMessage.SendData(5, -1, -1, NetworkText.FromLiteral(Main.player[player.Index].bank4.item[k].Name), player.Index, slot, (float)Main.player[player.Index].bank4.item[k].prefix);
+				slot++;
+			}
+			for (int k = 0; k < NetItem.LoadoutArmorSlots; k++)
+			{
+				NetMessage.SendData(5, -1, -1, NetworkText.FromLiteral(Main.player[player.Index].Loadouts[0].Armor[k].Name), player.Index, slot, (float)Main.player[player.Index].Loadouts[0].Armor[k].prefix);
+				slot++;
+			}
+			for (int k = 0; k < NetItem.LoadoutDyeSlots; k++)
+			{
+				NetMessage.SendData(5, -1, -1, NetworkText.FromLiteral(Main.player[player.Index].Loadouts[0].Dye[k].Name), player.Index, slot, (float)Main.player[player.Index].Loadouts[0].Dye[k].prefix);
+				slot++;
+			}
+			for (int k = 0; k < NetItem.LoadoutArmorSlots; k++)
+			{
+				NetMessage.SendData(5, -1, -1, NetworkText.FromLiteral(Main.player[player.Index].Loadouts[1].Armor[k].Name), player.Index, slot, (float)Main.player[player.Index].Loadouts[1].Armor[k].prefix);
+				slot++;
+			}
+			for (int k = 0; k < NetItem.LoadoutDyeSlots; k++)
+			{
+				NetMessage.SendData(5, -1, -1, NetworkText.FromLiteral(Main.player[player.Index].Loadouts[1].Dye[k].Name), player.Index, slot, (float)Main.player[player.Index].Loadouts[1].Dye[k].prefix);
+				slot++;
+			}
+			for (int k = 0; k < NetItem.LoadoutArmorSlots; k++)
+			{
+				NetMessage.SendData(5, -1, -1, NetworkText.FromLiteral(Main.player[player.Index].Loadouts[2].Armor[k].Name), player.Index, slot, (float)Main.player[player.Index].Loadouts[2].Armor[k].prefix);
+				slot++;
+			}
+			for (int k = 0; k < NetItem.LoadoutDyeSlots; k++)
+			{
+				NetMessage.SendData(5, -1, -1, NetworkText.FromLiteral(Main.player[player.Index].Loadouts[1].Dye[k].Name), player.Index, slot, (float)Main.player[player.Index].Loadouts[2].Dye[k].prefix);
 				slot++;
 			}
 
@@ -465,6 +607,36 @@ namespace TShockAPI
 			for (int k = 0; k < NetItem.VoidSlots; k++)
 			{
 				NetMessage.SendData(5, player.Index, -1, NetworkText.FromLiteral(Main.player[player.Index].bank4.item[k].Name), player.Index, slot, (float)Main.player[player.Index].bank4.item[k].prefix);
+				slot++;
+			}
+			for (int k = 0; k < NetItem.LoadoutArmorSlots; k++)
+			{
+				NetMessage.SendData(5, player.Index, -1, NetworkText.FromLiteral(Main.player[player.Index].Loadouts[0].Armor[k].Name), player.Index, slot, (float)Main.player[player.Index].Loadouts[0].Armor[k].prefix);
+				slot++;
+			}
+			for (int k = 0; k < NetItem.LoadoutDyeSlots; k++)
+			{
+				NetMessage.SendData(5, player.Index, -1, NetworkText.FromLiteral(Main.player[player.Index].Loadouts[0].Dye[k].Name), player.Index, slot, (float)Main.player[player.Index].Loadouts[0].Dye[k].prefix);
+				slot++;
+			}
+			for (int k = 0; k < NetItem.LoadoutArmorSlots; k++)
+			{
+				NetMessage.SendData(5, player.Index, -1, NetworkText.FromLiteral(Main.player[player.Index].Loadouts[1].Armor[k].Name), player.Index, slot, (float)Main.player[player.Index].Loadouts[1].Armor[k].prefix);
+				slot++;
+			}
+			for (int k = 0; k < NetItem.LoadoutDyeSlots; k++)
+			{
+				NetMessage.SendData(5, player.Index, -1, NetworkText.FromLiteral(Main.player[player.Index].Loadouts[1].Dye[k].Name), player.Index, slot, (float)Main.player[player.Index].Loadouts[1].Dye[k].prefix);
+				slot++;
+			}
+			for (int k = 0; k < NetItem.LoadoutArmorSlots; k++)
+			{
+				NetMessage.SendData(5, player.Index, -1, NetworkText.FromLiteral(Main.player[player.Index].Loadouts[2].Armor[k].Name), player.Index, slot, (float)Main.player[player.Index].Loadouts[2].Armor[k].prefix);
+				slot++;
+			}
+			for (int k = 0; k < NetItem.LoadoutDyeSlots; k++)
+			{
+				NetMessage.SendData(5, player.Index, -1, NetworkText.FromLiteral(Main.player[player.Index].Loadouts[2].Dye[k].Name), player.Index, slot, (float)Main.player[player.Index].Loadouts[2].Dye[k].prefix);
 				slot++;
 			}
 

@@ -4350,13 +4350,75 @@ namespace TShockAPI
 			if (loadoutIndex == args.TPlayer.CurrentLoadoutIndex)
 				return false;
 
-			if (args.Player.IsBeingDisabled())
+			if (loadoutIndex >= args.TPlayer.Loadouts.Length)
 			{
-				TShock.Log.ConsoleDebug("GetDataHandlers / HandleSyncLoadout rejected loadout index sync {0}", args.Player.Name);
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleSyncLoadout rejected loadout index sync out of bounds {0}",
+					args.Player.Name));
 				NetMessage.SendData((int)PacketTypes.SyncLoadout, number: args.Player.Index, number2: args.TPlayer.CurrentLoadoutIndex);
 
 				return true;
 			}
+
+			if (args.Player.IsBeingDisabled())
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleSyncLoadout rejected loadout index sync {0}", args.Player.Name));
+				NetMessage.SendData((int)PacketTypes.SyncLoadout, number: args.Player.Index, number2: args.TPlayer.CurrentLoadoutIndex);
+
+				return true;
+			}
+
+			// The client does not sync slot changes when changing loadouts, it only tells the server the loadout index changed,
+			// and the server will replicate the changes the client did. This means that PlayerData.StoreSlot is never called, so we need to
+			// swap around the PlayerData items ourself.
+
+			Tuple<int, int> GetArmorSlotsForLoadoutIndex(int index)
+			{
+				return index switch
+				{
+					0 => NetItem.Loadout1Armor,
+					1 => NetItem.Loadout2Armor,
+					2 => NetItem.Loadout3Armor
+				};
+			}
+
+			Tuple<int, int> GetDyeSlotsForLoadoutIndex(int index)
+			{
+				return index switch
+				{
+					0 => NetItem.Loadout1Dye,
+					1 => NetItem.Loadout2Dye,
+					2 => NetItem.Loadout3Dye
+				};
+			}
+
+			var (currentLoadoutArmorSlotStartIndex, _) = GetArmorSlotsForLoadoutIndex(args.TPlayer.CurrentLoadoutIndex);
+			var (currentLoadoutDyeSlotStartIndex, _) = GetDyeSlotsForLoadoutIndex(args.TPlayer.CurrentLoadoutIndex);
+
+			var (switchedLoadoutArmorSlotStartIndex, _) = GetArmorSlotsForLoadoutIndex(loadoutIndex);
+			var (switchedLoadoutDyeSlotStartIndex, _) = GetDyeSlotsForLoadoutIndex(loadoutIndex);
+
+			// Emulate what is seen in Player.TrySwitchingLoadout:
+			// - Swap the current loadout items with the player's equipment
+			// - Swap the switching loadout items with the player's equipment
+
+			// At the end of all of this:
+			// - The current loadout will contain the player's original equipment
+			// - The switched loadout will contain the current loadout's items
+			// - The player's equipment will contain the switched loadout's item
+
+			for (var i = 0; i < NetItem.LoadoutArmorSlots; i++)
+				Terraria.Utils.Swap(ref args.Player.PlayerData.inventory[currentLoadoutArmorSlotStartIndex + i],
+					ref args.Player.PlayerData.inventory[NetItem.ArmorIndex.Item1 + i]);
+			for (var i = 0; i < NetItem.LoadoutDyeSlots; i++)
+				Terraria.Utils.Swap(ref args.Player.PlayerData.inventory[currentLoadoutDyeSlotStartIndex + i],
+					ref args.Player.PlayerData.inventory[NetItem.DyeIndex.Item1 + i]);
+
+			for (var i = 0; i < NetItem.LoadoutArmorSlots; i++)
+				Terraria.Utils.Swap(ref args.Player.PlayerData.inventory[switchedLoadoutArmorSlotStartIndex + i],
+					ref args.Player.PlayerData.inventory[NetItem.ArmorIndex.Item1 + i]);
+			for (var i = 0; i < NetItem.LoadoutDyeSlots; i++)
+				Terraria.Utils.Swap(ref args.Player.PlayerData.inventory[switchedLoadoutDyeSlotStartIndex + i],
+					ref args.Player.PlayerData.inventory[NetItem.DyeIndex.Item1 + i]);
 
 			return false;
 		}
