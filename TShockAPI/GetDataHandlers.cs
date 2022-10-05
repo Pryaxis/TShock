@@ -3600,6 +3600,10 @@ namespace TShockAPI
 				TShock.Log.ConsoleDebug("GetDataHandlers / HandlePaintTile rejected range check {0}", args.Player.Name);
 				return true;
 			}
+			if (OnPaintTile(args.Player, args.Data, x, y, t))
+			{
+				return true;
+			}
 
 			// Not selecting paintbrush or paint scraper or the spectre versions? Hacking.
 			if (args.Player.SelectedItem.type != ItemID.PaintRoller &&
