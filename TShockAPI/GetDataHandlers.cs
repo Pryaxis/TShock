@@ -3583,6 +3583,12 @@ namespace TShockAPI
 			return false;
 		}
 
+		private static bool HasPaintSprayerAbilities(Item item)
+			=> item is not null && item.stack > 0 && (
+			   item.type == ItemID.PaintSprayer ||
+			   item.type == ItemID.ArchitectGizmoPack ||
+			   item.type == ItemID.HandOfCreation);
+
 		private static bool HandlePaintTile(GetDataHandlerArgs args)
 		{
 			var x = args.Data.ReadInt16();
@@ -3594,15 +3600,6 @@ namespace TShockAPI
 				TShock.Log.ConsoleDebug("GetDataHandlers / HandlePaintTile rejected range check {0}", args.Player.Name);
 				return true;
 			}
-			if (OnPaintTile(args.Player, args.Data, x, y, t))
-			{
-				return true;
-			}
-
-			bool hasPaintSprayerAbilities(Item item) =>
-				item != null
-				&& item.stack > 0
-				&& (item.type == ItemID.PaintSprayer || item.type == ItemID.ArchitectGizmoPack);
 
 			// Not selecting paintbrush or paint scraper or the spectre versions? Hacking.
 			if (args.Player.SelectedItem.type != ItemID.PaintRoller &&
@@ -3611,8 +3608,8 @@ namespace TShockAPI
 				args.Player.SelectedItem.type != ItemID.SpectrePaintRoller &&
 				args.Player.SelectedItem.type != ItemID.SpectrePaintScraper &&
 				args.Player.SelectedItem.type != ItemID.SpectrePaintbrush &&
-				!args.Player.Accessories.Any(hasPaintSprayerAbilities) &&
-				!args.Player.Inventory.Any(hasPaintSprayerAbilities))
+				!args.Player.Accessories.Any(HasPaintSprayerAbilities) &&
+				!args.Player.Inventory.Any(HasPaintSprayerAbilities))
 			{
 				TShock.Log.ConsoleDebug("GetDataHandlers / HandlePaintTile rejected select consistency {0}", args.Player.Name);
 				args.Player.SendData(PacketTypes.PaintTile, "", x, y, Main.tile[x, y].color());
@@ -3658,8 +3655,8 @@ namespace TShockAPI
 				args.Player.SelectedItem.type != ItemID.SpectrePaintRoller &&
 				args.Player.SelectedItem.type != ItemID.SpectrePaintScraper &&
 				args.Player.SelectedItem.type != ItemID.SpectrePaintbrush &&
-				!args.Player.Accessories.Any(i => i != null && i.stack > 0 &&
-					(i.type == ItemID.PaintSprayer || i.type == ItemID.ArchitectGizmoPack)))
+				!args.Player.Accessories.Any(HasPaintSprayerAbilities) &&
+				!args.Player.Inventory.Any(HasPaintSprayerAbilities))
 			{
 				TShock.Log.ConsoleDebug("GetDataHandlers / HandlePaintWall rejected selector consistency {0}", args.Player.Name);
 				args.Player.SendData(PacketTypes.PaintWall, "", x, y, Main.tile[x, y].wallColor());
