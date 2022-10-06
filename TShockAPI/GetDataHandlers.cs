@@ -162,7 +162,8 @@ namespace TShockAPI
 					{ PacketTypes.LandGolfBallInCup, HandleLandGolfBallInCup },
 					{ PacketTypes.FishOutNPC, HandleFishOutNPC },
 					{ PacketTypes.FoodPlatterTryPlacing, HandleFoodPlatterTryPlacing },
-					{ PacketTypes.SyncCavernMonsterType, HandleSyncCavernMonsterType }
+					{ PacketTypes.SyncCavernMonsterType, HandleSyncCavernMonsterType },
+					{ PacketTypes.SyncLoadout, HandleSyncLoadout }
 				};
 		}
 
@@ -4323,6 +4324,27 @@ namespace TShockAPI
 			args.Player.Kick("Exploit attempt detected!");
 			TShock.Log.ConsoleDebug($"HandleSyncCavernMonsterType: Player is trying to modify NPC cavernMonsterType; this is a crafted packet! - From {args.Player.Name}");
 			return true;
+		}
+
+		private static bool HandleSyncLoadout(GetDataHandlerArgs args)
+		{
+			var playerIndex = args.Data.ReadInt8();
+			var loadoutIndex = args.Data.ReadInt8();
+
+			// When syncing a player's own loadout index, they then sync it back to us...
+			// So let's only care if the index has actually changed, otherwise we might end up in a loop...
+			if (loadoutIndex == args.TPlayer.CurrentLoadoutIndex)
+				return false;
+
+			if (args.Player.IsBeingDisabled())
+			{
+				TShock.Log.ConsoleDebug("GetDataHandlers / HandleSyncLoadout rejected loadout index sync {0}", args.Player.Name);
+				NetMessage.SendData((int)PacketTypes.SyncLoadout, number: args.Player.Index, number2: args.TPlayer.CurrentLoadoutIndex);
+
+				return true;
+			}
+
+			return false;
 		}
 
 		public enum DoorAction
