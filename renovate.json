@@ -8,7 +8,7 @@
   },
   "packageRules": [
   {
-    "matchPackageNames": ["OTAPI.Upcoming", "ModFramework"],
+    "matchPackageNames": ["OTAPI.Upcoming", "ModFramework", "TerrariaServerAPI"],
     "ignoreUnstable": "false",
     "bumpVersion": "prerelease",
     "groupName": "OTAPI things"
