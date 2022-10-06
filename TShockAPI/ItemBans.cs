@@ -23,7 +23,6 @@ using TShockAPI.DB;
 using TShockAPI.Net;
 using Terraria;
 using Microsoft.Xna.Framework;
-using OTAPI.Tile;
 using TShockAPI.Localization;
 using static TShockAPI.GetDataHandlers;
 using TerrariaApi.Server;
