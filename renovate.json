@@ -5,5 +5,12 @@
   ],
   "git-submodules": {
     "enabled": true
+  },
+  "packageRules": [
+  {
+    "matchPackageNames": ["OTAPI.Upcoming"],
+    "ignoreUnstable": "false",
+    "bumpVersion": "prerelease",
   }
+ ]
 }
