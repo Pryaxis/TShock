@@ -15,7 +15,7 @@ jobs:
         uses: Zomzog/changelog-checker@564f4aa7a062e7498bd253f616569f02fb024c06
         with:
           fileName: CHANGELOG.md
-          noChangelogLabel: Blocked
+          noChangelogLabel: simple
           checkNotification: Simple
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
