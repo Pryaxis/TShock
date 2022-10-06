@@ -49,7 +49,7 @@ jobs:
             cd TShockLauncher/bin/Release/net6.0/${{ matrix.arch }}/publish/
             tar -cvf ../../../../../../TShock-Beta-${{ matrix.arch }}-Release.tar *
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: TShock-Beta-${{ matrix.arch }}-Release
           path: TShock-Beta-${{ matrix.arch }}-Release.tar
