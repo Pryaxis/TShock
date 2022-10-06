@@ -11,7 +11,7 @@
     "matchPackageNames": ["OTAPI.Upcoming", "ModFramework"],
     "ignoreUnstable": "false",
     "bumpVersion": "prerelease",
+    "groupName": "OTAPI things"
   }
- ],
- "labels": ["simple"]
+ ]
 }
