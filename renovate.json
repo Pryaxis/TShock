@@ -12,5 +12,6 @@
     "ignoreUnstable": "false",
     "bumpVersion": "prerelease",
   }
- ]
+ ],
+ "labels": ["simple"]
 }
