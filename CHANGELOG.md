@@ -22,6 +22,8 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Added preliminary support for Terraria 1.4.4.4. (@SignatureBeef)
 * GrassSpreadEventArgs Color property has been changed from a Byte to a TileColorCache type. (@SignatureBeef)
 * SetDefaultsEventArgs now includes a nullable ItemVariant instance. (@SignatureBeef)
+* Use a string interpolation and escape single quotes when escaping tables (@drunderscore)
+* Removed obsolete resource files `TShockAPI/Resources.resx` and `TShockAPI/Resources.Designer.cs`. (@Arthri)
 * Fixed painting wall/tile being rejected from hand of creation. (@Rozen4334)
 
 ## TShock 4.5.18
