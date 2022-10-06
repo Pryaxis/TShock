@@ -12,7 +12,7 @@ jobs:
         with:
           submodules: 'recursive'
       - name: Changelog check
-        uses: Zomzog/changelog-checker@564f4aa7a062e7498bd253f616569f02fb024c06
+        uses: Zomzog/changelog-checker@9f2307a9f44fcbde2147bdb8a7fa724aaaaae16a
         with:
           fileName: CHANGELOG.md
           noChangelogLabel: simple
