@@ -8,7 +8,7 @@
   },
   "packageRules": [
   {
-    "matchPackageNames": ["OTAPI.Upcoming"],
+    "matchPackageNames": ["OTAPI.Upcoming", "ModFramework"],
     "ignoreUnstable": "false",
     "bumpVersion": "prerelease",
   }
