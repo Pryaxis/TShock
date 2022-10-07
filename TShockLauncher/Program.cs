@@ -42,7 +42,7 @@ Assembly? Default_Resolving(System.Runtime.Loader.AssemblyLoadContext arg1, Asse
 	if (arg2?.Name is null) return null;
 	if (_cache.TryGetValue(arg2.Name, out Assembly? asm) && asm is not null) return asm;
 
-	var loc = Path.Combine(Environment.CurrentDirectory, "bin", arg2.Name + ".dll");
+	var loc = Path.Combine(AppContext.BaseDirectory, "bin", arg2.Name + ".dll");
 	if (File.Exists(loc))
 		asm = arg1.LoadFromAssemblyPath(loc);
 
