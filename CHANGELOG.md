@@ -24,6 +24,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * SetDefaultsEventArgs now includes a nullable ItemVariant instance. (@SignatureBeef)
 * Use a string interpolation and escape single quotes when escaping tables (@drunderscore)
 * Removed obsolete resource files `TShockAPI/Resources.resx` and `TShockAPI/Resources.Designer.cs`. (@Arthri)
+* Fixed hardcore and mediumcore not banning on death when settings are enabled. This also alters the TSPlayer.Ban method to remove the force option which is no longer needed. (@SignatureBeef)
 
 ## TShock 4.5.18
 * Fixed `TSPlayer.GiveItem` not working if the player is in lava. (@gohjoseph)
