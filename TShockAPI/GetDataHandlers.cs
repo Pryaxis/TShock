@@ -4157,7 +4157,7 @@ namespace TShockAPI
 
 				if (shouldBan)
 				{
-					if (!args.Player.Ban(banReason, false, "TShock"))
+					if (!args.Player.Ban(banReason, "TShock"))
 					{
 						TShock.Log.ConsoleDebug("GetDataHandlers / HandlePlayerKillMeV2 kicked with difficulty {0} {1}", args.Player.Name, args.TPlayer.difficulty);
 						args.Player.Kick("You died! Normally, you'd be banned.", true, true);
