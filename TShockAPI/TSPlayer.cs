@@ -1701,30 +1701,26 @@ namespace TShockAPI
 		/// Bans and disconnects the player from the server.
 		/// </summary>
 		/// <param name="reason">The reason to be displayed to the server.</param>
-		/// <param name="force">If the ban should bypass immunity to ban checks.</param>
 		/// <param name="adminUserName">The player who initiated the ban.</param>
-		public bool Ban(string reason, bool force = false, string adminUserName = null)
+		public bool Ban(string reason, string adminUserName = null)
 		{
 			if (!ConnectionAlive)
 				return true;
-			if (force)
-			{
-				TShock.Bans.InsertBan($"{Identifier.IP}{IP}", reason, adminUserName, DateTime.UtcNow, DateTime.MaxValue);
-				TShock.Bans.InsertBan($"{Identifier.UUID}{UUID}", reason, adminUserName, DateTime.UtcNow, DateTime.MaxValue);
-				if (Account != null)
-				{
-					TShock.Bans.InsertBan($"{Identifier.Account}{Account.Name}", reason, adminUserName, DateTime.UtcNow, DateTime.MaxValue);
-				}
 
-				Disconnect(string.Format("Banned: {0}", reason));
-				string verb = force ? "force " : "";
-				if (string.IsNullOrWhiteSpace(adminUserName))
-					TSPlayer.All.SendInfoMessage("{0} was {1}banned for '{2}'.", Name, verb, reason);
-				else
-					TSPlayer.All.SendInfoMessage("{0} {1}banned {2} for '{3}'.", adminUserName, verb, Name, reason);
-				return true;
+			TShock.Bans.InsertBan($"{Identifier.IP}{IP}", reason, adminUserName, DateTime.UtcNow, DateTime.MaxValue);
+			TShock.Bans.InsertBan($"{Identifier.UUID}{UUID}", reason, adminUserName, DateTime.UtcNow, DateTime.MaxValue);
+			if (Account != null)
+			{
+				TShock.Bans.InsertBan($"{Identifier.Account}{Account.Name}", reason, adminUserName, DateTime.UtcNow, DateTime.MaxValue);
 			}
-			return false;
+
+			Disconnect(string.Format("Banned: {0}", reason));
+
+			if (string.IsNullOrWhiteSpace(adminUserName))
+				TSPlayer.All.SendInfoMessage("{0} was banned for '{1}'.", Name, reason);
+			else
+				TSPlayer.All.SendInfoMessage("{0} banned {1} for '{2}'.", adminUserName, Name, reason);
+			return true;
 		}
 
 		/// <summary>
