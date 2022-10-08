@@ -28,6 +28,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Plugins and ./bin dependencies are now loaded relative to the launcher, this improves the use of startup files (@SignatureBeef)
 * Added preliminary support for Terraria 1.4.4.5. (@drunderscore)
   * For clarity sake, we're listing the individual changes to Terraria's version, despite the fact that this version only supports the latest one.
+* Don't allow players to sync loadout index whilst disabled (@drunderscore)
 
 ## TShock 4.5.18
 * Fixed `TSPlayer.GiveItem` not working if the player is in lava. (@gohjoseph)
