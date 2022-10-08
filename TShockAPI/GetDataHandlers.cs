@@ -3840,7 +3840,7 @@ namespace TShockAPI
 
 					if (!args.Player.HasPermission(Permissions.magicconch))
 					{
-						if (args.Player.ItemInHand.type == ItemID.ShellphoneOcean || args.Player.SelectedItem.type != ItemID.ShellphoneOcean)
+						if (args.Player.ItemInHand.type == ItemID.ShellphoneOcean || args.Player.SelectedItem.type == ItemID.ShellphoneOcean)
 						{
 							Fail("the Shellphone (Ocean)");
 						}
@@ -3863,7 +3863,7 @@ namespace TShockAPI
 
 					if (!args.Player.HasPermission(Permissions.demonconch))
 					{
-						if (args.Player.ItemInHand.type == ItemID.ShellphoneHell || args.Player.SelectedItem.type != ItemID.ShellphoneHell)
+						if (args.Player.ItemInHand.type == ItemID.ShellphoneHell || args.Player.SelectedItem.type == ItemID.ShellphoneHell)
 						{
 							Fail("the Shellphone (Underworld)");
 						}
