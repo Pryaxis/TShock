@@ -574,7 +574,7 @@ namespace TShockAPI
 			var sb = new StringBuilder(3);
 			for (int i = 0; i < str.Length; i++)
 			{
-				if (Char.IsDigit(str[i]) || (str[i] == '-' || str[i] == '+' || str[i] == ' '))
+				if (char.IsDigit(str[i]) || str[i] == '-' || str[i] == '+' || str[i] == ' ')
 					sb.Append(str[i]);
 				else
 				{
@@ -599,6 +599,82 @@ namespace TShockAPI
 							break;
 						default:
 							return false;
+					}
+				}
+			}
+			if (sb.Length != 0)
+				return false;
+			return true;
+		}
+
+		/// <summary>
+		/// Attempts to parse a string as a positive timespan (_d_m_h_s).
+		/// </summary>
+		/// <param name="str">The time string.</param>
+		/// <param name="seconds">The seconds.</param>
+		/// <returns>Whether the string was parsed successfully.</returns>
+		public bool TryParseTime(string str, out ulong seconds)
+		{
+			seconds = 0;
+
+			if (string.IsNullOrWhiteSpace(str))
+			{
+				return false;
+			}
+
+			var sb = new StringBuilder(3);
+			for (int i = 0; i < str.Length; i++)
+			{
+				if (char.IsDigit(str[i]) || str[i] == '-' || str[i] == '+' || str[i] == ' ')
+					sb.Append(str[i]);
+				else
+				{
+					int num;
+					if (!int.TryParse(sb.ToString().Trim(' '), out num))
+						return false;
+
+					sb.Clear();
+
+					if (num == 0)
+					{
+						continue;
+					}
+
+					int numSeconds;
+					switch (str[i])
+					{
+						case 's':
+							numSeconds = num;
+							break;
+						case 'm':
+							numSeconds = num * 60;
+							break;
+						case 'h':
+							numSeconds = num * 60 * 60;
+							break;
+						case 'd':
+							numSeconds = num * 60 * 60 * 24;
+							break;
+						default:
+							return false;
+					}
+
+					if (numSeconds > 0)
+					{
+						if (ulong.MaxValue - seconds < (uint)numSeconds)
+						{
+							return false;
+						}
+
+						seconds += (uint)numSeconds;
+					}
+					else if (seconds >= (uint)Math.Abs(numSeconds))
+					{
+						seconds -= (uint)Math.Abs(numSeconds);
+					}
+					else
+					{
+						return false;
 					}
 				}
 			}
