@@ -29,6 +29,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Added preliminary support for Terraria 1.4.4.5. (@drunderscore)
   * For clarity sake, we're listing the individual changes to Terraria's version, despite the fact that this version only supports the latest one.
 * Don't allow players to sync loadout index whilst disabled (@drunderscore)
+* Fixed painting wall/tile being rejected from hand of creation. (@Rozen4334)
 
 ## TShock 4.5.18
 * Fixed `TSPlayer.GiveItem` not working if the player is in lava. (@gohjoseph)
