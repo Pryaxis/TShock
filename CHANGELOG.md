@@ -32,6 +32,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Fixed painting wall/tile being rejected from hand of creation. (@Rozen4334)
 * Added a second `Utils.TryParseTime` method for parsing large, positive time spans. (@punchready)
 * Fixed `/tempgroup` breaking on durations greater than roughly 24 days. (@punchready)
+* Fix player does't use the Shellphone (Ocean), Shellphone (Underworld) and Shellphone (Spawn). (@hufang360)
 
 ## TShock 4.5.18
 * Fixed `TSPlayer.GiveItem` not working if the player is in lava. (@gohjoseph)

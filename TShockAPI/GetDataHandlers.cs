@@ -3828,9 +3828,11 @@ namespace TShockAPI
 						return true;
 					}
 					break;
-				case 1: // Magic Conch
+				case 1: // Magic Conch or Shellphone (Ocean)
 					if (args.Player.ItemInHand.type != ItemID.MagicConch &&
-					    args.Player.SelectedItem.type != ItemID.MagicConch)
+						args.Player.SelectedItem.type != ItemID.MagicConch &&
+						args.Player.ItemInHand.type != ItemID.ShellphoneOcean &&
+						args.Player.SelectedItem.type != ItemID.ShellphoneOcean)
 					{
 						TShock.Log.ConsoleDebug("GetDataHandlers / HandleTeleportationPotion rejected not holding the correct item {0} {1}", args.Player.Name, type);
 						return true;
@@ -3838,13 +3840,22 @@ namespace TShockAPI
 
 					if (!args.Player.HasPermission(Permissions.magicconch))
 					{
-						Fail("the Magic Conch");
+						if (args.Player.ItemInHand.type == ItemID.ShellphoneOcean || args.Player.SelectedItem.type == ItemID.ShellphoneOcean)
+						{
+							Fail("the Shellphone (Ocean)");
+						}
+						else
+						{
+							Fail("the Magic Conch");
+						}
 						return true;
 					}
 					break;
-				case 2: // Demon Conch
+				case 2: // Demon Conch or Shellphone (Underworld)
 					if (args.Player.ItemInHand.type != ItemID.DemonConch &&
-					    args.Player.SelectedItem.type != ItemID.DemonConch)
+						args.Player.SelectedItem.type != ItemID.DemonConch &&
+						args.Player.ItemInHand.type != ItemID.ShellphoneHell &&
+						args.Player.SelectedItem.type != ItemID.ShellphoneHell)
 					{
 						TShock.Log.ConsoleDebug("GetDataHandlers / HandleTeleportationPotion rejected not holding the correct item {0} {1}", args.Player.Name, type);
 						return true;
@@ -3852,7 +3863,21 @@ namespace TShockAPI
 
 					if (!args.Player.HasPermission(Permissions.demonconch))
 					{
-						Fail("the Demon Conch");
+						if (args.Player.ItemInHand.type == ItemID.ShellphoneHell || args.Player.SelectedItem.type == ItemID.ShellphoneHell)
+						{
+							Fail("the Shellphone (Underworld)");
+						}
+						else
+						{
+							Fail("the Demon Conch");
+						}
+						return true;
+					}
+					break;
+				case 3: // Shellphone (Spawn)
+					if (args.Player.ItemInHand.type != ItemID.ShellphoneSpawn && args.Player.SelectedItem.type != ItemID.ShellphoneSpawn)
+					{
+						TShock.Log.ConsoleDebug("GetDataHandlers / HandleTeleportationPotion rejected not holding the correct item {0} {1}", args.Player.Name, type);
 						return true;
 					}
 					break;
