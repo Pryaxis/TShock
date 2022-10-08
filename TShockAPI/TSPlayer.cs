@@ -405,7 +405,7 @@ namespace TShockAPI
 							check = true;
 							if (shouldWarnPlayer)
 							{
-								SendErrorMessage("Stack cheat detected. Remove item {0} ({1}) and then rejoin.", item.Name, inventory[i].stack);
+								SendErrorMessage("检测到堆栈作弊.请移除物品 {0}（{1}）,然后重新加入.", item.Name, inventory[i].stack);
 							}
 						}
 					}
@@ -425,7 +425,7 @@ namespace TShockAPI
 							check = true;
 							if (shouldWarnPlayer)
 							{
-								SendErrorMessage("Stack cheat detected. Remove armor {0} ({1}) and then rejoin.", item.Name, armor[index].stack);
+								SendErrorMessage("检测到堆栈作弊.请移除盔甲 {0}（{1}）,然后重新加入", item.Name, armor[index].stack);
 							}
 						}
 					}
@@ -445,7 +445,7 @@ namespace TShockAPI
 							check = true;
 							if (shouldWarnPlayer)
 							{
-								SendErrorMessage("Stack cheat detected. Remove dye {0} ({1}) and then rejoin.", item.Name, dye[index].stack);
+								SendErrorMessage("检测到堆栈作弊.请移除染料 {0}（{1}）,然后重新加入.", item.Name, dye[index].stack);
 							}
 						}
 					}
@@ -465,7 +465,7 @@ namespace TShockAPI
 							check = true;
 							if (shouldWarnPlayer)
 							{
-								SendErrorMessage("Stack cheat detected. Remove item {0} ({1}) and then rejoin.", item.Name, miscEquips[index].stack);
+								SendErrorMessage("检测到堆栈作弊.请移除物品 {0}（{1}）,然后重新加入.", item.Name, miscEquips[index].stack);
 							}
 						}
 					}
@@ -485,7 +485,7 @@ namespace TShockAPI
 							check = true;
 							if (shouldWarnPlayer)
 							{
-								SendErrorMessage("Stack cheat detected. Remove item dye {0} ({1}) and then rejoin.", item.Name, miscDyes[index].stack);
+								SendErrorMessage("检测到堆栈作弊.请移除物品染料 {0}（{1}）,然后重新加入.", item.Name, miscDyes[index].stack);
 							}
 						}
 					}
@@ -506,7 +506,7 @@ namespace TShockAPI
 							check = true;
 							if (shouldWarnPlayer)
 							{
-								SendErrorMessage("Stack cheat detected. Remove piggy-bank item {0} ({1}) and then rejoin.", item.Name, piggy[index].stack);
+								SendErrorMessage("检测到堆栈作弊.请移除存钱罐内物品 {0}（{1}）,然后重新加入.", item.Name, piggy[index].stack);
 							}
 						}
 					}
@@ -527,7 +527,7 @@ namespace TShockAPI
 							check = true;
 							if (shouldWarnPlayer)
 							{
-								SendErrorMessage("Stack cheat detected. Remove safe item {0} ({1}) and then rejoin.", item.Name, safe[index].stack);
+								SendErrorMessage("检测到堆栈作弊.请移除保险箱内物品 {0}（{1}）,然后重新加入.", item.Name, safe[index].stack);
 							}
 						}
 					}
@@ -547,7 +547,7 @@ namespace TShockAPI
 							check = true;
 							if (shouldWarnPlayer)
 							{
-								SendErrorMessage("Stack cheat detected. Remove trash item {0} ({1}) and then rejoin.", item.Name, trash.stack);
+								SendErrorMessage("检测到堆栈作弊.请移除垃圾桶内物品 {0}（{1}）,然后重新加入.", item.Name, trash.stack);
 							}
 						}
 					}
@@ -568,7 +568,7 @@ namespace TShockAPI
 							check = true;
 							if (shouldWarnPlayer)
 							{
-								SendErrorMessage("Stack cheat detected. Remove Defender's Forge item {0} ({1}) and then rejoin.", item.Name, forge[index].stack);
+								SendErrorMessage("检测到堆栈作弊.请移除护卫熔炉内物品 {0}（{1}）,然后重新加入.", item.Name, forge[index].stack);
 							}
 						}
 					}
@@ -589,7 +589,7 @@ namespace TShockAPI
 							check = true;
 							if (shouldWarnPlayer)
 							{
-								SendErrorMessage("Stack cheat detected. Remove Void Vault item {0} ({1}) and then rejoin.", item.Name, voidVault[index].stack);
+								SendErrorMessage("检测到堆栈作弊.请移除虚空储物柜内物品 {0}（{1}）,然后重新加入.", item.Name, voidVault[index].stack);
 							}
 						}
 					}
@@ -697,13 +697,13 @@ namespace TShockAPI
 				switch (failure)
 				{
 					case BuildPermissionFailPoint.GeneralBuild:
-						SendErrorMessage("You do not have permission to build on this server.");
+						SendErrorMessage("你没有权限在服务器上建造哦.");
 						break;
 					case BuildPermissionFailPoint.SpawnProtect:
-						SendErrorMessage("You do not have permission to build in the spawn point.");
+						SendErrorMessage("你没有权限在出生点保护范围内建造哦.");
 						break;
 					case BuildPermissionFailPoint.Regions:
-						SendErrorMessage("You do not have permission to build in this region.");
+						SendErrorMessage("你没有权限在这个区域内建造哦.");
 						break;
 				}
 			}
@@ -941,7 +941,7 @@ namespace TShockAPI
 			{
 				if (HasPermission(Permissions.bypassssc))
 				{
-					TShock.Log.ConsoleInfo("Skipping SSC save (due to tshock.ignore.ssc) for " + Account.Name);
+					TShock.Log.ConsoleInfo("跳过 " + Account.Name + " 的SSC云存档 (玩家具有 tshock.ignore.ssc 权限)");
 					return true;
 				}
 				PlayerData.CopyCharacter(this);
@@ -1197,7 +1197,7 @@ namespace TShockAPI
 		/// <param name="args"></param>
 		public void TempGroupTimerElapsed(object sender, ElapsedEventArgs args)
 		{
-			SendWarningMessage("Your temporary group access has expired.");
+			SendWarningMessage("你的临时组权限已过期.");
 
 			tempGroup = null;
 			if (sender != null)
@@ -1646,11 +1646,11 @@ namespace TShockAPI
 					{
 						if (flags.HasFlag(DisableFlags.WriteToLog))
 						{
-							TShock.Log.ConsoleInfo("Player {0} has been disabled for {1}.", Name, reason);
+							TShock.Log.ConsoleInfo("玩家 {0} 因为'{1}'被石化.", Name, reason);
 						}
 						else
 						{
-							Server.SendInfoMessage("Player {0} has been disabled for {1}.", Name, reason);
+							Server.SendInfoMessage("玩家 {0} 因为'{1}'被石化..", Name, reason);
 						}
 					}
 
@@ -1682,15 +1682,15 @@ namespace TShockAPI
 				SilentKickInProgress = silent;
 				if (IsLoggedIn && saveSSI)
 					SaveServerCharacter();
-				Disconnect(string.Format("Kicked: {0}", reason));
-				TShock.Log.ConsoleInfo(string.Format("Kicked {0} for : '{1}'", Name, reason));
-				string verb = force ? "force " : "";
+				Disconnect(string.Format("踢出: {0}", reason));
+				TShock.Log.ConsoleInfo(string.Format("玩家 {0} 因'{1}'被踢出.", Name, reason));
+				string verb = force ? "强制" : "";
 				if (!silent)
 				{
 					if (string.IsNullOrWhiteSpace(adminUserName))
-						TShock.Utils.Broadcast(string.Format("{0} was {1}kicked for '{2}'", Name, verb, reason.ToLower()), Color.Green);
+						TShock.Utils.Broadcast(string.Format("玩家 {0} 因'{2}'被{1}踢出.", Name, verb, reason.ToLower()), Color.Green);
 					else
-						TShock.Utils.Broadcast(string.Format("{0} {1}kicked {2} for '{3}'", adminUserName, verb, Name, reason.ToLower()), Color.Green);
+						TShock.Utils.Broadcast(string.Format("{0} 以'{3}'为理由{1}踢出了 {2}.", adminUserName, verb, Name, reason.ToLower()), Color.Green);
 				}
 				return true;
 			}
@@ -1701,26 +1701,30 @@ namespace TShockAPI
 		/// Bans and disconnects the player from the server.
 		/// </summary>
 		/// <param name="reason">The reason to be displayed to the server.</param>
+		/// <param name="force">If the ban should bypass immunity to ban checks.</param>
 		/// <param name="adminUserName">The player who initiated the ban.</param>
-		public bool Ban(string reason, string adminUserName = null)
+		public bool Ban(string reason, bool force = false, string adminUserName = null)
 		{
 			if (!ConnectionAlive)
 				return true;
-
-			TShock.Bans.InsertBan($"{Identifier.IP}{IP}", reason, adminUserName, DateTime.UtcNow, DateTime.MaxValue);
-			TShock.Bans.InsertBan($"{Identifier.UUID}{UUID}", reason, adminUserName, DateTime.UtcNow, DateTime.MaxValue);
-			if (Account != null)
+			if (force)
 			{
-				TShock.Bans.InsertBan($"{Identifier.Account}{Account.Name}", reason, adminUserName, DateTime.UtcNow, DateTime.MaxValue);
+				TShock.Bans.InsertBan($"{Identifier.IP}{IP}", reason, adminUserName, DateTime.UtcNow, DateTime.MaxValue);
+				TShock.Bans.InsertBan($"{Identifier.UUID}{UUID}", reason, adminUserName, DateTime.UtcNow, DateTime.MaxValue);
+				if (Account != null)
+				{
+					TShock.Bans.InsertBan($"{Identifier.Account}{Account.Name}", reason, adminUserName, DateTime.UtcNow, DateTime.MaxValue);
+				}
+
+				Disconnect(string.Format("Ban: {0}", reason));
+				string verb = force ? "强制" : "";
+				if (string.IsNullOrWhiteSpace(adminUserName))
+					TSPlayer.All.SendInfoMessage("玩家 {0} 因'{2}'被{1}封禁.", Name, verb, reason);
+				else
+					TSPlayer.All.SendInfoMessage("{0} 以'{3}'为理由{1}封禁了 {2}.", adminUserName, verb, Name, reason);
+				return true;
 			}
-
-			Disconnect(string.Format("Banned: {0}", reason));
-
-			if (string.IsNullOrWhiteSpace(adminUserName))
-				TSPlayer.All.SendInfoMessage("{0} was banned for '{1}'.", Name, reason);
-			else
-				TSPlayer.All.SendInfoMessage("{0} banned {1} for '{2}'.", adminUserName, Name, reason);
-			return true;
+			return false;
 		}
 
 		/// <summary>
@@ -1730,13 +1734,13 @@ namespace TShockAPI
 		/// <param name="matches">An enumerable list with the matches</param>
 		public void SendMultipleMatchError(IEnumerable<object> matches)
 		{
-			SendErrorMessage("More than one match found -- unable to decide which is correct: ");
+			SendErrorMessage("找到多个匹配项-无法判断哪个是正确的: ");
 
 			var lines = PaginationTools.BuildLinesFromTerms(matches.ToArray());
 			lines.ForEach(SendInfoMessage);
 
-			SendErrorMessage("Use \"my query\" for items with spaces.");
-			SendErrorMessage("Use tsi:[number] or tsn:[username] to distinguish between user IDs and usernames.");
+			SendErrorMessage("使用 \"目标ID\" 来选中名字带有空格的物品.");
+			SendErrorMessage("使用 tsi:[玩家索引] 或者 tsn:[用户名] 来区分玩家索引和用户名.");
 		}
 
 		[Conditional("DEBUG")]

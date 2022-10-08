@@ -28,32 +28,42 @@
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <Authors>Pryaxis &amp; TShock Contributors</Authors>
     <Description>TShock is a toolbox for Terraria servers and communities.</Description>
-    <PackageId>TShock</PackageId> <!-- package name for nuget, instead of TShockAPI -->
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="MySql.Data" Version="8.0.30" />
-    <PackageReference Include="Microsoft.Data.Sqlite" Version="6.0.9" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\TerrariaServerAPI\TerrariaServerAPI\TerrariaServerAPI.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="HttpServer">
-      <HintPath>..\prebuilts\HttpServer.dll</HintPath>
-    </Reference>
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="6.0.8" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="..\prebuilts\HttpServer.dll">
       <Link>HttpServer.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <PackageCopyToOutput>true</PackageCopyToOutput>
       <Pack>true</Pack>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="HttpServer">
+      <HintPath>..\..\code\TShock144\bin\HttpServer.dll</HintPath>
+    </Reference>
+    <Reference Include="ModFramework">
+      <HintPath>..\..\code\TShock144\bin\ModFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\code\TShock\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="OTAPI">
+      <HintPath>..\..\code\TShock144\bin\OTAPI.dll</HintPath>
+    </Reference>
+    <Reference Include="OTAPI.Runtime">
+      <HintPath>..\..\code\TShock144\bin\OTAPI.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="TerrariaServer">
+      <HintPath>..\..\code\TShock144\bin\TerrariaServer.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

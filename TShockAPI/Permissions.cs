@@ -32,67 +32,67 @@ namespace TShockAPI
 	public static class Permissions
 	{
 		#region tshock.account nodes
-		[Description("User can register account in game.")]
+		[Description("允许用户在游戏中注册.")]
 		public static readonly string canregister = "tshock.account.register";
 
-		[Description("User can login in game.")]
+		[Description("允许用户在游戏中登录.")]
 		public static readonly string canlogin = "tshock.account.login";
 
-		[Description("User can logout in game.")]
+		[Description("允许用户在游戏中登出.")]
 		public static readonly string canlogout = "tshock.account.logout";
 
-		[Description("User can change password in game.")]
+		[Description("允许用户在游戏中修改自己的用户密码.")]
 		public static readonly string canchangepassword = "tshock.account.changepassword";
 		#endregion
 
 		#region tshock.admin nodes
-		[Description("User can set build protection status.")]
+		[Description("允许用户切换出生点保护.")]
 		public static readonly string antibuild = "tshock.admin.antibuild";
 
-		[Description("Prevents you from being kicked.")]
+		[Description("阻止用户被踢出.")]
 		public static readonly string immunetokick = "tshock.admin.nokick";
 
-		[Obsolete("Ban immunity is no longer available.")]
-		[Description("Prevents you from being banned.")]
+		[Obsolete("免Ban不再有效(已经失效).")]
+		[Description("阻止用户被添加Ban.")]
 		public static readonly string immunetoban = "tshock.admin.noban";
 
-		[Description("Specific log messages are sent to users with this permission.")]
+		[Description("允许向用户接收特定的服务器日志.")]
 		public static readonly string logs = "tshock.admin.viewlogs";
 
-		[Description("User can kick others.")]
+		[Description("允许用户使用/kick.")]
 		public static readonly string kick = "tshock.admin.kick";
 
-		[Description("User can ban others.")]
+		[Description("允许用户使用/ban.")]
 		public static readonly string ban = "tshock.admin.ban";
 
-		[Description("User can manage warps.")]
+		[Description("允许用户管理传送点.")]
 		public static readonly string managewarp = "tshock.admin.warp";
 
-		[Description("User can manage item bans.")]
+		[Description("允许用户管理物品禁用.")]
 		public static readonly string manageitem = "tshock.admin.itemban";
 
-		[Description("User can manage projectile bans.")]
+		[Description("允许用户管理射弹禁用.")]
 		public static readonly string manageprojectile = "tshock.admin.projectileban";
 
-		[Description("User can manage tile bans.")]
+		[Description("允许用户管理图格禁用.")]
 		public static readonly string managetile = "tshock.admin.tileban";
 
-		[Description("User can manage groups.")]
+		[Description("允许用户管理组.")]
 		public static readonly string managegroup = "tshock.admin.group";
 
-		[Description("User can manage regions.")]
+		[Description("允许用户管理区域.")]
 		public static readonly string manageregion = "tshock.admin.region";
 
-		[Description("User can mute and unmute users.")]
+		[Description("允许用户禁言和解禁玩家.")]
 		public static readonly string mute = "tshock.admin.mute";
 
-		[Description("User can see the id of players with /who.")]
+		[Description("允许用户使用 /who -i 查询玩家索引和用户ID.")]
 		public static readonly string seeids = "tshock.admin.seeplayerids";
 
-		[Description("User can save all the players SSI (server side character) state.")]
+		[Description("允许用户保存所有玩家的SSC云存档.")]
 		public static readonly string savessc = "tshock.admin.savessi";
 
-		[Description("User can upload their joined character data as SSC data.")]
+		[Description("允许用户将自己的本地角色数据.")]
 		public static readonly string uploaddata = "tshock.ssc.upload";
 
 		[Description("User can upload other players join data to the SSC database.")]

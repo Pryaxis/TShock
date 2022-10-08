@@ -23,6 +23,7 @@ using Terraria.Localization;
 using Terraria.GameContent.NetModules;
 using Terraria.Net;
 using Terraria.ID;
+using System;
 
 namespace TShockAPI
 {

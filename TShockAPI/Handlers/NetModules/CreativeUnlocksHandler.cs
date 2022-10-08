@@ -74,7 +74,7 @@ namespace TShockAPI.Handlers.NetModules
 
 			if (!player.HasPermission(Permissions.journey_contributeresearch))
 			{
-				player.SendErrorMessage("You do not have permission to contribute research.");
+				player.SendErrorMessage("你没有权限贡献研究.");
 				rejectPacket = true;
 				return;
 			}

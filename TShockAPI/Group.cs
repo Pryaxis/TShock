@@ -142,7 +142,7 @@ namespace TShockAPI
 
 					if (traversed.Contains(cur))
 					{
-						throw new Exception("Infinite group parenting ({0})".SFormat(cur.Name));
+						throw new Exception("父组套娃啦 ({0})".SFormat(cur.Name));
 					}
 					traversed.Add(cur);
 					cur = cur.Parent;
@@ -230,7 +230,7 @@ namespace TShockAPI
 					return true;
 				if (traversed.Contains(cur))
 				{
-					throw new InvalidOperationException("Infinite group parenting ({0})".SFormat(cur.Name));
+					throw new InvalidOperationException("套娃父组啦 ({0})".SFormat(cur.Name));
 				}
 				traversed.Add(cur);
 				cur = cur.Parent;

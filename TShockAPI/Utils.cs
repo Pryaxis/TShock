@@ -133,7 +133,7 @@ namespace TShockAPI
 		{
 			TSPlayer.All.SendMessage(msg, red, green, blue);
 			TSPlayer.Server.SendMessage(msg, red, green, blue);
-			TShock.Log.Info(string.Format("Broadcast: {0}", msg));
+			TShock.Log.Info(string.Format("服务器广播: {0}", msg));
 		}
 
 		/// <summary>>Broadcast - Broadcasts a message to all players on the server, as well as the server console, and the logs.</summary>
@@ -156,7 +156,7 @@ namespace TShockAPI
 		{
 			TSPlayer.All.SendMessageFromPlayer(msg, red, green, blue, ply);
 			TSPlayer.Server.SendMessage(Main.player[ply].name + ": " + msg, red, green, blue);
-			TShock.Log.Info(string.Format("Broadcast: {0}", Main.player[ply].name + ": " + msg));
+			TShock.Log.Info(string.Format("服务器广播: {0}", Main.player[ply].name + ": " + msg));
 		}
 
 		/// <summary>
@@ -486,7 +486,7 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="save">bool perform a world save before stop (default: true)</param>
 		/// <param name="reason">string reason (default: "Server shutting down!")</param>
-		public void StopServer(bool save = true, string reason = "Server shutting down!")
+		public void StopServer(bool save = true, string reason = "服务器已关闭!")
 		{
 			TShock.ShuttingDown = true;
 
@@ -574,7 +574,7 @@ namespace TShockAPI
 			var sb = new StringBuilder(3);
 			for (int i = 0; i < str.Length; i++)
 			{
-				if (char.IsDigit(str[i]) || str[i] == '-' || str[i] == '+' || str[i] == ' ')
+				if (Char.IsDigit(str[i]) || (str[i] == '-' || str[i] == '+' || str[i] == ' '))
 					sb.Append(str[i]);
 				else
 				{
@@ -599,82 +599,6 @@ namespace TShockAPI
 							break;
 						default:
 							return false;
-					}
-				}
-			}
-			if (sb.Length != 0)
-				return false;
-			return true;
-		}
-
-		/// <summary>
-		/// Attempts to parse a string as a positive timespan (_d_m_h_s).
-		/// </summary>
-		/// <param name="str">The time string.</param>
-		/// <param name="seconds">The seconds.</param>
-		/// <returns>Whether the string was parsed successfully.</returns>
-		public bool TryParseTime(string str, out ulong seconds)
-		{
-			seconds = 0;
-
-			if (string.IsNullOrWhiteSpace(str))
-			{
-				return false;
-			}
-
-			var sb = new StringBuilder(3);
-			for (int i = 0; i < str.Length; i++)
-			{
-				if (char.IsDigit(str[i]) || str[i] == '-' || str[i] == '+' || str[i] == ' ')
-					sb.Append(str[i]);
-				else
-				{
-					int num;
-					if (!int.TryParse(sb.ToString().Trim(' '), out num))
-						return false;
-
-					sb.Clear();
-
-					if (num == 0)
-					{
-						continue;
-					}
-
-					int numSeconds;
-					switch (str[i])
-					{
-						case 's':
-							numSeconds = num;
-							break;
-						case 'm':
-							numSeconds = num * 60;
-							break;
-						case 'h':
-							numSeconds = num * 60 * 60;
-							break;
-						case 'd':
-							numSeconds = num * 60 * 60 * 24;
-							break;
-						default:
-							return false;
-					}
-
-					if (numSeconds > 0)
-					{
-						if (ulong.MaxValue - seconds < (uint)numSeconds)
-						{
-							return false;
-						}
-
-						seconds += (uint)numSeconds;
-					}
-					else if (seconds >= (uint)Math.Abs(numSeconds))
-					{
-						seconds -= (uint)Math.Abs(numSeconds);
-					}
-					else
-					{
-						return false;
 					}
 				}
 			}
@@ -1270,7 +1194,7 @@ namespace TShockAPI
 		/// <param name="empty">If the server is empty; determines if we should use Utils.GetActivePlayerCount() for player count or 0.</param>
 		internal void SetConsoleTitle(bool empty)
 		{
-			Console.Title = string.Format("{0}{1}/{2} on {3} @ {4}:{5} (TShock for Terraria v{6})",
+			Console.Title = string.Format("{0}{1}/{2} 在 {3} @ {4}:{5} (TShock for Terraria v{6})",
 					!string.IsNullOrWhiteSpace(TShock.Config.Settings.ServerName) ? TShock.Config.Settings.ServerName + " - " : "",
 					empty ? 0 : GetActivePlayerCount(),
 					TShock.Config.Settings.MaxSlots, Main.worldName, Netplay.ServerIP.ToString(), Netplay.ListenPort, TShock.VersionNum);

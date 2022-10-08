@@ -317,7 +317,7 @@ namespace TShockAPI
 			if (_failures.Count >= TShock.Config.Settings.RevertToTextLogsOnSqlFailures)
 			{
 				_useTextLog = true;
-				_backupLog.ConsoleError("SQL Logging disabled due to errors. Reverting to text logging.");
+				_backupLog.ConsoleError("由于出现错误, 已禁用SQL日志记录.恢复到文本日志记录.");
 
 				foreach (var logInfo in _failures)
 				{

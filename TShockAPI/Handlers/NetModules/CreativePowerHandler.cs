@@ -65,7 +65,7 @@ namespace TShockAPI.Handlers.NetModules
 
 			if (!player.HasPermission(permission))
 			{
-				player.SendErrorMessage("You do not have permission to {0}.", PermissionToDescriptionMap[permission]);
+				player.SendErrorMessage("你没有权限使用{0}.", PermissionToDescriptionMap[permission]);
 				return false;
 			}
 
@@ -100,18 +100,18 @@ namespace TShockAPI.Handlers.NetModules
 		/// </summary>
 		public static Dictionary<string, string> PermissionToDescriptionMap = new Dictionary<string, string>
 		{
-			{ Permissions.journey_timefreeze,			"freeze the time of the server"						},
-			{ Permissions.journey_timeset,				"modify the time of the server"						},
-			{ Permissions.journey_godmode,				"toggle godmode"									},
-			{ Permissions.journey_windstrength,			"modify the wind strength of the server"			},
-			{ Permissions.journey_rainstrength,			"modify the rain strength of the server"			},
-			{ Permissions.journey_timespeed,			"modify the time speed of the server"				},
-			{ Permissions.journey_rainfreeze,			"freeze the rain strength of the server"			},
-			{ Permissions.journey_windfreeze,			"freeze the wind strength of the server"			},
-			{ Permissions.journey_placementrange,		"modify the tile placement range of your character" },
-			{ Permissions.journey_setdifficulty,		"modify the world difficulty of the server"			},
-			{ Permissions.journey_biomespreadfreeze,	"freeze the biome spread of the server"				},
-			{ Permissions.journey_setspawnrate,			"modify the NPC spawn rate of the server"			},
+			{ Permissions.journey_timefreeze,			"冻结服务器时间"						},
+			{ Permissions.journey_timeset,				"修改服务器时间"						},
+			{ Permissions.journey_godmode,				"开启上帝模式"							},
+			{ Permissions.journey_windstrength,         "修改服务器的风速"						},
+			{ Permissions.journey_rainstrength,         "修改服务器的降雨"						},
+			{ Permissions.journey_timespeed,			"修改时间流逝倍速"						},
+			{ Permissions.journey_rainfreeze,			"冻结服务器降雨"						},
+			{ Permissions.journey_windfreeze,			"冻结服务器风速"						},
+			{ Permissions.journey_placementrange,       "修改角色的图格放置范围"				},
+			{ Permissions.journey_setdifficulty,        "修改服务器的世界难度"					},
+			{ Permissions.journey_biomespreadfreeze,    "冻结服务器的生物群系扩散"              },
+			{ Permissions.journey_setspawnrate,         "修改服务器的NPC生成速率"				},
 		};
 	}
 }

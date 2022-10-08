@@ -222,7 +222,7 @@ namespace TShockAPI
 						}
 						else
 						{
-							throw new InvalidOperationException("Unrecognized player direction");
+							throw new InvalidOperationException("未识别的玩家方向");
 						}
 					}
 					else
@@ -237,7 +237,7 @@ namespace TShockAPI
 		{
 			if (args.Player.RequestedSection)
 			{
-				TShock.Log.ConsoleDebug("Bouncer / OnGetSection rejected GetSection packet from {0}", args.Player.Name);
+				TShock.Log.ConsoleDebug("Bouncer / OnGetSection拒绝GetSection数据包来自{0}", args.Player.Name);
 				args.Handled = true;
 				return;
 			}
@@ -245,8 +245,8 @@ namespace TShockAPI
 
 			if (String.IsNullOrEmpty(args.Player.Name))
 			{
-				TShock.Log.ConsoleDebug("Bouncer / OnGetSection rejected empty player name.");
-				args.Player.Kick("Your client sent a blank character name.", true, true);
+				TShock.Log.ConsoleDebug("Bouncer / OnGetSection拒绝空白角色名.");
+				args.Player.Kick("你的客户发送了一个空白角色名", true, true);
 				args.Handled = true;
 				return;
 			}
@@ -271,45 +271,45 @@ namespace TShockAPI
 
 			if (Single.IsInfinity(vel.X) || Single.IsInfinity(vel.Y))
 			{
-				TShock.Log.ConsoleInfo("Bouncer / OnPlayerUpdate force kicked (attempted to set velocity to infinity) from {0}", args.Player.Name);
-				args.Player.Kick("Detected DOOM set to ON position.", true, true);
+				TShock.Log.ConsoleInfo("Bouncer / OnPlayerUpdate 强制将{0}踢出(试图将速度设置为无限)", args.Player.Name);
+				args.Player.Kick("检测到试图将速度设置为无限.", true, true);
 				args.Handled = true;
 				return;
 			}
 
 			if (Single.IsNaN(vel.X) || Single.IsNaN(vel.Y))
 			{
-				TShock.Log.ConsoleInfo("Bouncer / OnPlayerUpdate force kicked (attempted to set velocity to NaN) from {0}", args.Player.Name);
-				args.Player.Kick("Detected DOOM set to ON position.", true, true);
+				TShock.Log.ConsoleInfo("Bouncer / OnPlayerUpdate 强制将{0}踢出(试图将速度设置为 NaN)", args.Player.Name);
+				args.Player.Kick("检测到试图将速度设置为 NaN.", true, true);
 				args.Handled = true;
 				return;
 			}
 
 			if (vel.X > 50000 || vel.Y > 50000 || vel.X < -50000 || vel.Y < -50000)
 			{
-				TShock.Log.ConsoleInfo("Bouncer / OnPlayerUpdate force kicked (attempted to set velocity +/- 50000) from {0}", args.Player.Name);
-				args.Player.Kick("Detected DOOM set to ON position.", true, true);
+				TShock.Log.ConsoleInfo("Bouncer / OnPlayerUpdate 强制将{0}踢出(试图设置速度 +/-50000)", args.Player.Name);
+				args.Player.Kick("试图设置速度 +/-50000.", true, true);
 				args.Handled = true;
 				return;
 			}
 
 			if (pos.X < 0 || pos.Y < 0 || pos.X >= Main.maxTilesX * 16 - 16 || pos.Y >= Main.maxTilesY * 16 - 16)
 			{
-				TShock.Log.ConsoleDebug("Bouncer / OnPlayerUpdate rejected from (position check) {0}", args.Player.Name);
+				TShock.Log.ConsoleDebug("Bouncer / OnPlayerUpdate 拒绝{0}(坐标检查)", args.Player.Name);
 				args.Handled = true;
 				return;
 			}
 
 			if (item < 0 || item >= args.Player.TPlayer.inventory.Length)
 			{
-				TShock.Log.ConsoleDebug("Bouncer / OnPlayerUpdate rejected from (inventory length) {0}", args.Player.Name);
+				TShock.Log.ConsoleDebug("Bouncer / OnPlayerUpdate 拒绝{0}(库存长度)", args.Player.Name);
 				args.Handled = true;
 				return;
 			}
 
 			if (args.Player.LastNetPosition == Vector2.Zero)
 			{
-				TShock.Log.ConsoleInfo("Bouncer / OnPlayerUpdate *would have rejected* from (last network position zero) {0}", args.Player.Name);
+				TShock.Log.ConsoleInfo("Bouncer / OnPlayerUpdate * 将拒绝 * {0} (最后一个网络位置为0)", args.Player.Name);
 				// args.Handled = true;
 				// return;
 			}
@@ -327,23 +327,23 @@ namespace TShockAPI
 						// We need to tell them they were disabled and why, then revert the change.
 						if (args.Player.IsDisabledForStackDetection)
 						{
-							args.Player.SendErrorMessage("Disabled. You went too far with hacked item stacks.");
+							args.Player.SendErrorMessage("你的物品堆叠超过栈上限.");
 						}
 						else if (args.Player.IsDisabledForBannedWearable)
 						{
-							args.Player.SendErrorMessage("Disabled. You went too far with banned armor.");
+							args.Player.SendErrorMessage("你正在穿戴违禁装备.");
 						}
 						else if (args.Player.IsDisabledForSSC)
 						{
-							args.Player.SendErrorMessage("Disabled. You need to {0}login to load your saved data.", TShock.Config.Settings.CommandSpecifier);
+							args.Player.SendErrorMessage("你需要 {0}login 才能加载你的数据.", TShock.Config.Settings.CommandSpecifier);
 						}
 						else if (TShock.Config.Settings.RequireLogin && !args.Player.IsLoggedIn)
 						{
-							args.Player.SendErrorMessage("Account needed! Please {0}register or {0}login to play!", TShock.Config.Settings.CommandSpecifier);
+							args.Player.SendErrorMessage("需要一个账号! 请用 {0}register 或者 {0}login 注册登录你的账号!", TShock.Config.Settings.CommandSpecifier);
 						}
 						else if (args.Player.IsDisabledPendingTrashRemoval)
 						{
-							args.Player.SendErrorMessage("You need to rejoin to ensure your trash can is cleared!");
+							args.Player.SendErrorMessage("你需要重新加入，以确保您的垃圾桶被清除！");
 						}
 
 						// ??
@@ -353,11 +353,11 @@ namespace TShockAPI
 						{
 							args.Player.Spawn(PlayerSpawnContext.RecallFromItem);
 						}
-						TShock.Log.ConsoleDebug("Bouncer / OnPlayerUpdate rejected from (??) {0}", args.Player.Name);
+						TShock.Log.ConsoleDebug("Bouncer / OnPlayerUpdate 拒绝{0} (??) ", args.Player.Name);
 						args.Handled = true;
 						return;
 					}
-					TShock.Log.ConsoleDebug("Bouncer / OnPlayerUpdate rejected from (below ??) {0}", args.Player.Name);
+					TShock.Log.ConsoleDebug("Bouncer / OnPlayerUpdate 拒绝{0} (在 ?? 下) ", args.Player.Name);
 					args.Handled = true;
 					return;
 				}
@@ -365,7 +365,7 @@ namespace TShockAPI
 				// Corpses don't move
 				if (args.Player.Dead)
 				{
-					TShock.Log.ConsoleDebug("Bouncer / OnPlayerUpdate rejected from (corpses don't move) {0}", args.Player.Name);
+					TShock.Log.ConsoleDebug("Bouncer / OnPlayerUpdate拒绝 {0} (死亡后无法移动)", args.Player.Name);
 					args.Handled = true;
 					return;
 				}
@@ -395,7 +395,7 @@ namespace TShockAPI
 			{
 				if (!TShock.Utils.TilePlacementValid(tileX, tileY))
 				{
-					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (tile placement valid) {0} {1} {2}", args.Player.Name, action, editData);
+					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit 拒绝 {0} {1} {2} (物块放置有效) {0} {1} {2}", args.Player.Name, action, editData);
 					args.Handled = true;
 					return;
 				}
@@ -404,7 +404,7 @@ namespace TShockAPI
 				// This check ensures that build permission is always checked no matter what
 				if (!args.Player.HasBuildPermission(tileX, tileY))
 				{
-					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from build from {0} {1} {2}", args.Player.Name, action, editData);
+					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit 拒绝玩家建造来自 {0} {1} {2}", args.Player.Name, action, editData);
 
 					GetRollbackRectSize(tileX, tileY, out byte width, out byte length, out int offsetY);
 					args.Player.SendTileRect((short)(tileX - width), (short)(tileY + offsetY), (byte)(width * 2), (byte)(length + 1));
@@ -416,7 +416,7 @@ namespace TShockAPI
 					((action == EditAction.PlaceTile || action == EditAction.ReplaceTile) && editData >= Main.maxTileSets) ||
 					((action == EditAction.PlaceWall || action == EditAction.ReplaceWall) && editData >= Main.maxWallTypes))
 				{
-					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from editData out of bounds {0} {1} {2}", args.Player.Name, action, editData);
+					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit 拒绝编辑数据越界{0}{1}{2}", args.Player.Name, action, editData);
 					args.Player.SendTileSquareCentered(tileX, tileY, 4);
 					args.Handled = true;
 					return;
@@ -424,14 +424,14 @@ namespace TShockAPI
 
 				if (action == EditAction.KillTile && Main.tile[tileX, tileY].type == TileID.MagicalIceBlock)
 				{
-					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit super accepted from (ice block) {0} {1} {2}", args.Player.Name, action, editData);
+					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit 格外接受 {0}{1}{2}（冰块）", args.Player.Name, action, editData);
 					args.Handled = false;
 					return;
 				}
 
 				if (args.Player.Dead && TShock.Config.Settings.PreventDeadModification)
 				{
-					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (pdm) {0} {1} {2}", args.Player.Name, action, editData);
+					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit 拒绝{0} {1} {2} (数据管理系统) ", args.Player.Name, action, editData);
 					args.Player.SendTileSquareCentered(tileX, tileY, 4);
 					args.Handled = true;
 					return;
@@ -445,9 +445,9 @@ namespace TShockAPI
 				{
 					if (TShock.TileBans.TileIsBanned(editData, args.Player))
 					{
-						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (tb) {0} {1} {2}", args.Player.Name, action, editData);
+						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit 拒绝{0} {1} {2} (tb)", args.Player.Name, action, editData);
 						args.Player.SendTileSquareCentered(tileX, tileY, 1);
-						args.Player.SendErrorMessage("You do not have permission to place this tile.");
+						args.Player.SendErrorMessage("你没有权限发送替换这个图格.");
 						args.Handled = true;
 						return;
 					}
@@ -467,7 +467,7 @@ namespace TShockAPI
 						// If none found then it can't be a false positive so deny the action
 						if (!PlaceStyleCorrectors.TryGetValue(actualTileToBeCreated, out PlaceStyleCorrector corrector))
 						{
-							TShock.Log.ConsoleError("Bouncer / OnTileEdit rejected from (placestyle) {0} {1} {2} placeStyle: {3} expectedStyle: {4}",
+							TShock.Log.ConsoleError("Bouncer / OnTileEdit 拒绝 {0} {1} {2} (放置样式) 放置样式：{3} 预期样式：{4}",
 								args.Player.Name, action, editData, requestedPlaceStyle, actualItemPlaceStyle);
 							args.Player.SendTileSquareCentered(tileX, tileY, 1);
 							args.Handled = true;
@@ -478,7 +478,7 @@ namespace TShockAPI
 						var correctedPlaceStyle = corrector(tplayer, requestedPlaceStyle, actualItemPlaceStyle);
 						if (requestedPlaceStyle != correctedPlaceStyle)
 						{
-							TShock.Log.ConsoleError("Bouncer / OnTileEdit rejected from (placestyle) {0} {1} {2} placeStyle: {3} expectedStyle: {4}",
+							TShock.Log.ConsoleError("Bouncer / OnTileEdit 拒绝 {0} {1} {2} (放置样式) 放置样式：{3} 预期样式：{4}",
 								args.Player.Name, action, editData, requestedPlaceStyle, correctedPlaceStyle);
 							args.Player.SendTileSquareCentered(tileX, tileY, 1);
 							args.Handled = true;
@@ -494,7 +494,7 @@ namespace TShockAPI
 					// If the tile is an axe tile and they aren't selecting an axe, they're hacking.
 					if (Main.tileAxe[tile.type] && ((args.Player.TPlayer.mount.Type != 8 && selectedItem.axe == 0) && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0))
 					{
-						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (axe) {0} {1} {2}", args.Player.Name, action, editData);
+						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit 拒绝{0} {1} {2} (斧)", args.Player.Name, action, editData);
 						args.Player.SendTileSquareCentered(tileX, tileY, 4);
 						args.Handled = true;
 						return;
@@ -502,7 +502,7 @@ namespace TShockAPI
 					// If the tile is a hammer tile and they aren't selecting a hammer, they're hacking.
 					else if (Main.tileHammer[tile.type] && ((args.Player.TPlayer.mount.Type != 8 && selectedItem.hammer == 0) && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0))
 					{
-						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (hammer) {0} {1} {2}", args.Player.Name, action, editData);
+						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit 拒绝 {0} {1} {2} (锤子)", args.Player.Name, action, editData);
 						args.Player.SendTileSquareCentered(tileX, tileY, 4);
 						args.Handled = true;
 						return;
@@ -592,7 +592,7 @@ namespace TShockAPI
 						if (TShock.Utils.HasWorldReachedMaxChests())
 						{
 							TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (chestcap) {0} {1} {2}", args.Player.Name, action, editData);
-							args.Player.SendErrorMessage("The world's chest limit has been reached - unable to place more.");
+							args.Player.SendErrorMessage("已经达到了世界箱子的极限——无法再放更多了.");
 							args.Player.SendTileSquareCentered(tileX, tileY, 3);
 							args.Handled = true;
 							return;
@@ -705,16 +705,16 @@ namespace TShockAPI
 				{
 					if (TShock.Config.Settings.KickOnTileKillThresholdBroken)
 					{
-						args.Player.Kick(string.Format("Tile kill threshold exceeded {0}.", TShock.Config.Settings.TileKillThreshold));
+						args.Player.Kick(string.Format("物块挖掘阈值达到 {0}.", TShock.Config.Settings.TileKillThreshold));
 					}
 					else
 					{
-						args.Player.Disable("Reached TileKill threshold.", DisableFlags.WriteToLogAndConsole);
+						args.Player.Disable("已达到物块挖掘阈值.", DisableFlags.WriteToLogAndConsole);
 						args.Player.SendTileSquareCentered(tileX, tileY, 4);
 					}
 					
 					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from tile kill threshold from {0}, (value: {1})", args.Player.Name, args.Player.TileKillThreshold);
-					TShock.Log.ConsoleDebug("If this player wasn't hacking, please report the tile kill threshold they were disabled for to TShock so we can improve this!");
+					TShock.Log.ConsoleDebug("如果这个玩家不是挂逼，请向TShock报告他们被禁用的物块挖掘阈值，这样我们就可以改进它了！");
 					args.Handled = true;
 					return;
 				}
@@ -723,16 +723,16 @@ namespace TShockAPI
 				{
 					if (TShock.Config.Settings.KickOnTilePlaceThresholdBroken)
 					{
-						args.Player.Kick(string.Format("Tile place threshold exceeded {0}.", TShock.Config.Settings.TilePlaceThreshold));
+						args.Player.Kick(string.Format("物块放置阈值达到 {0}.", TShock.Config.Settings.TilePlaceThreshold));
 					}
 					else
 					{
-						args.Player.Disable("Reached TilePlace threshold.", DisableFlags.WriteToLogAndConsole);
+						args.Player.Disable("已达到物块放置阈值.", DisableFlags.WriteToLogAndConsole);
 						args.Player.SendTileSquareCentered(tileX, tileY, 4);
 					}
 					
 					TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from tile place threshold from {0}, (value: {1})", args.Player.Name, args.Player.TilePlaceThreshold);
-					TShock.Log.ConsoleDebug("If this player wasn't hacking, please report the tile place threshold they were disabled for to TShock so we can improve this!");
+					TShock.Log.ConsoleDebug("如果这个玩家不是挂逼，请向TShock报告他们被禁用这个阈值，这样我们就可以改进它了！");
 					args.Handled = true;
 					return;
 				}
@@ -773,7 +773,7 @@ namespace TShockAPI
 			catch
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from weird confusing flow control from {0}", args.Player.Name);
-				TShock.Log.ConsoleDebug("If you're seeing this message and you know what that player did, please report it to TShock for further investigation.");
+				TShock.Log.ConsoleDebug("如果这个玩家不是挂逼，请向TShock报告他们被禁用这个阈值，这样我们就可以改进它了！");
 				args.Player.SendTileSquareCentered(tileX, tileY, 4);
 				args.Handled = true;
 				return;
@@ -927,7 +927,7 @@ namespace TShockAPI
 			if ((Main.ServerSideCharacter) && (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond - args.Player.LoginMS < TShock.ServerSideCharacterConfig.Settings.LogonDiscardThreshold))
 			{
 				//Player is probably trying to sneak items onto the server in their hands!!!
-				TShock.Log.ConsoleInfo("Player {0} tried to sneak {1} onto the server!", args.Player.Name, item.Name);
+				TShock.Log.ConsoleInfo("玩家 {0} 试图将 {1} 带入服务器!", args.Player.Name, item.Name);
 				TShock.Log.ConsoleDebug("Bouncer / OnItemDrop rejected from sneaky from {0}", args.Player.Name);
 				args.Player.SendData(PacketTypes.ItemDrop, "", id);
 				args.Handled = true;
@@ -969,9 +969,9 @@ namespace TShockAPI
 
 			if (TShock.ProjectileBans.ProjectileIsBanned(type, args.Player))
 			{
-				args.Player.Disable(String.Format("Player does not have permission to create projectile {0}.", type), DisableFlags.WriteToLogAndConsole);
+				args.Player.Disable(String.Format("玩家没有权限生成射弹 {0}.", type), DisableFlags.WriteToLogAndConsole);
 				TShock.Log.ConsoleDebug("Bouncer / OnNewProjectile rejected from permission check from {0} {1}", args.Player.Name, type);
-				args.Player.SendErrorMessage("You do not have permission to create that projectile.");
+				args.Player.SendErrorMessage("你没有权限生成这个射弹.");
 				args.Player.RemoveProjectile(ident, owner);
 				args.Handled = true;
 				return;
@@ -1057,7 +1057,7 @@ namespace TShockAPI
 					|| type == ProjectileID.CultistBossLightningOrb)
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnNewProjectile rejected from weird check from {0} {1}", args.Player.Name, type);
-					TShock.Log.Debug("Certain projectiles have been ignored for cheat detection.");
+					TShock.Log.Debug("某些射弹在作弊检测中被忽略了.");
 				}
 				else
 				{
@@ -1082,7 +1082,7 @@ namespace TShockAPI
 				}
 				
 				TShock.Log.ConsoleDebug("Bouncer / OnNewProjectile rejected from projectile update threshold from {0} {1}/{2}", args.Player.Name, args.Player.ProjectileThreshold, TShock.Config.Settings.ProjectileThreshold);
-				TShock.Log.ConsoleDebug("If this player wasn't hacking, please report the projectile update threshold they were disabled for to TShock so we can improve this!");
+				TShock.Log.ConsoleDebug("如果这个玩家不是挂逼，请向TShock报告他们被禁用这个阈值，这样我们就可以改进它了！");
 				args.Handled = true;
 				return;
 			}
@@ -1128,7 +1128,7 @@ namespace TShockAPI
 			{
 				if (type == ProjectileID.CrystalShard && TShock.Config.Settings.ProjIgnoreShrapnel) // Ignore crystal shards
 				{
-					TShock.Log.Debug("Ignoring shrapnel per config..");
+					TShock.Log.Debug("忽略每个配置中的子弹...");
 				}
 				else if (!Main.projectile[index].active)
 				{
@@ -1169,16 +1169,16 @@ namespace TShockAPI
 			{
 				if (TShock.Config.Settings.KickOnDamageThresholdBroken)
 				{
-					args.Player.Kick(string.Format("NPC damage exceeded {0}.", TShock.Config.Settings.MaxDamage));
+					args.Player.Kick(string.Format("超过对NPC伤害阈值 {0}.", TShock.Config.Settings.MaxDamage));
 				}
 				else
 				{
-					args.Player.Disable(String.Format("NPC damage exceeded {0}.", TShock.Config.Settings.MaxDamage), DisableFlags.WriteToLogAndConsole);
+					args.Player.Disable(String.Format("超过对NPC伤害阈值 {0}.", TShock.Config.Settings.MaxDamage), DisableFlags.WriteToLogAndConsole);
 					args.Player.SendData(PacketTypes.NpcUpdate, "", id);
 				}
 				
 				TShock.Log.ConsoleDebug("Bouncer / OnNPCStrike rejected from damage threshold from {0} {1}/{2}", args.Player.Name, damage, TShock.Config.Settings.MaxDamage);
-				TShock.Log.ConsoleDebug("If this player wasn't hacking, please report the damage threshold they were disabled for to TShock so we can improve this!");
+				TShock.Log.ConsoleDebug("如果这个玩家不是挂逼，请向TShock报告他们被禁用这个阈值，这样我们就可以改进它了！");
 				args.Handled = true;
 				return;
 			}
@@ -1472,16 +1472,16 @@ namespace TShockAPI
 			{
 				if (TShock.Config.Settings.KickOnTileLiquidThresholdBroken)
 				{
-					args.Player.Kick(string.Format("Reached TileLiquid threshold {0}.", TShock.Config.Settings.TileLiquidThreshold));
+					args.Player.Kick(string.Format("超过液体放置阈值 {0}.", TShock.Config.Settings.TileLiquidThreshold));
 				}
 				else
 				{
-					args.Player.Disable("Reached TileLiquid threshold.", DisableFlags.WriteToLogAndConsole);
+					args.Player.Disable("超过液体放置阈值.", DisableFlags.WriteToLogAndConsole);
 					args.Player.SendTileSquareCentered(tileX, tileY, 1);
 				}
 				
 				TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected from liquid threshold from {0} {1}/{2}", args.Player.Name, args.Player.TileLiquidThreshold, TShock.Config.Settings.TileLiquidThreshold);
-				TShock.Log.ConsoleDebug("If this player wasn't hacking, please report the tile liquid threshold they were disabled for to TShock so we can improve this!");
+				TShock.Log.ConsoleDebug("如果这个玩家不是挂逼，请向TShock报告他们被禁用这个阈值，这样我们就可以改进它了！");
 				args.Handled = true;
 				return;
 			}
@@ -1548,8 +1548,8 @@ namespace TShockAPI
 				if (!wasThereABombNearby && type == LiquidType.Lava && !(bucket == 2 || bucket == 0 || bucket == 5 || bucket == 6))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected bucket check 1 from {0}", args.Player.Name);
-					args.Player.SendErrorMessage("You do not have permission to perform this action.");
-					args.Player.Disable("Spreading lava without holding a lava bucket", DisableFlags.WriteToLogAndConsole);
+					args.Player.SendErrorMessage("你没有权限执行该操作.");
+					args.Player.Disable("在没有提着熔岩桶的情况下撒出熔岩", DisableFlags.WriteToLogAndConsole);
 					args.Player.SendTileSquareCentered(tileX, tileY, 1);
 					args.Handled = true;
 					return;
@@ -1558,8 +1558,8 @@ namespace TShockAPI
 				if (!wasThereABombNearby && type == LiquidType.Lava && TShock.ItemBans.DataModel.ItemIsBanned("Lava Bucket", args.Player))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected lava bucket from {0}", args.Player.Name);
-					args.Player.SendErrorMessage("You do not have permission to perform this action.");
-					args.Player.Disable("Using banned lava bucket without permissions", DisableFlags.WriteToLogAndConsole);
+					args.Player.SendErrorMessage("你没有权限执行该操作.");
+					args.Player.Disable("没有权限使用被禁止的岩浆桶", DisableFlags.WriteToLogAndConsole);
 					args.Player.SendTileSquareCentered(tileX, tileY, 1);
 					args.Handled = true;
 					return;
@@ -1568,8 +1568,8 @@ namespace TShockAPI
 				if (!wasThereABombNearby && type == LiquidType.Water && !(bucket == 1 || bucket == 0 || bucket == 4))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected bucket check 2 from {0}", args.Player.Name);
-					args.Player.SendErrorMessage("You do not have permission to perform this action.");
-					args.Player.Disable("Spreading water without holding a water bucket", DisableFlags.WriteToLogAndConsole);
+					args.Player.SendErrorMessage("你没有权限执行该操作.");
+					args.Player.Disable("在没有提着水桶的情况下撒出水", DisableFlags.WriteToLogAndConsole);
 					args.Player.SendTileSquareCentered(tileX, tileY, 1);
 					args.Handled = true;
 					return;
@@ -1578,8 +1578,8 @@ namespace TShockAPI
 				if (!wasThereABombNearby && type == LiquidType.Water && TShock.ItemBans.DataModel.ItemIsBanned("Water Bucket", args.Player))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected bucket check 3 from {0}", args.Player.Name);
-					args.Player.SendErrorMessage("You do not have permission to perform this action.");
-					args.Player.Disable("Using banned water bucket without permissions", DisableFlags.WriteToLogAndConsole);
+					args.Player.SendErrorMessage("你没有权限执行该操作.");
+					args.Player.Disable("没有权限使用被禁止的水桶", DisableFlags.WriteToLogAndConsole);
 					args.Player.SendTileSquareCentered(tileX, tileY, 1);
 					args.Handled = true;
 					return;
@@ -1588,8 +1588,8 @@ namespace TShockAPI
 				if (!wasThereABombNearby && type == LiquidType.Honey && !(bucket == 3 || bucket == 0))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected bucket check 4 from {0}", args.Player.Name);
-					args.Player.SendErrorMessage("You do not have permission to perform this action.");
-					args.Player.Disable("Spreading honey without holding a honey bucket", DisableFlags.WriteToLogAndConsole);
+					args.Player.SendErrorMessage("你没有权限执行该操作.");
+					args.Player.Disable("在没有提着蜂蜜桶的情况下撒出蜂蜜", DisableFlags.WriteToLogAndConsole);
 					args.Player.SendTileSquareCentered(tileX, tileY, 1);
 					args.Handled = true;
 					return;
@@ -1598,8 +1598,8 @@ namespace TShockAPI
 				if (!wasThereABombNearby && type == LiquidType.Honey && TShock.ItemBans.DataModel.ItemIsBanned("Honey Bucket", args.Player))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected bucket check 5 from {0}", args.Player.Name);
-					args.Player.SendErrorMessage("You do not have permission to perform this action.");
-					args.Player.Disable("Using banned honey bucket without permissions", DisableFlags.WriteToLogAndConsole);
+					args.Player.SendErrorMessage("你没有权限执行该操作.");
+					args.Player.Disable("没有权限使用被禁止的蜂蜜桶", DisableFlags.WriteToLogAndConsole);
 					args.Player.SendTileSquareCentered(tileX, tileY, 1);
 					args.Handled = true;
 					return;
@@ -1750,12 +1750,12 @@ namespace TShockAPI
 				detectedNPCBuffTimeCheat = true;
 			}
 
-			if (detectedNPCBuffTimeCheat)
-			{
-				TShock.Log.ConsoleDebug("Bouncer / OnNPCAddBuff rejected abnormal buff ({0}) added to {1} ({2}) from {3}.", type, npc.TypeName, npc.netID, args.Player.Name);
-				args.Player.Kick($"Added buff to {npc.TypeName} NPC abnormally.", true);
-				args.Handled = true;
-			}
+			// if (detectedNPCBuffTimeCheat)
+			// {
+			// 	TShock.Log.ConsoleDebug("Bouncer / OnNPCAddBuff rejected abnormal buff ({0}) added to {1} ({2}) from {3}.", type, npc.TypeName, npc.netID, args.Player.Name);
+			// 	args.Player.Kick($"异常对 {npc.TypeName} NPC 施加BUFF.", true);
+			// 	args.Handled = true;
+			// }
 		}
 
 		/// <summary>The Bouncer handler for when an NPC is rehomed.</summary>
@@ -1808,7 +1808,7 @@ namespace TShockAPI
 			if (amount >= TShock.Config.Settings.MaxDamage * 0.2 && !args.Player.HasPermission(Permissions.ignoredamagecap))
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnHealOtherPlayer 0.2 check from {0}", args.Player.Name);
-				args.Player.Disable("HealOtherPlayer cheat attempt!", DisableFlags.WriteToLogAndConsole);
+				args.Player.Disable("企图通过作弊治疗其他玩家!", DisableFlags.WriteToLogAndConsole);
 				args.Handled = true;
 				return;
 			}
@@ -1817,14 +1817,14 @@ namespace TShockAPI
 			{
 				if (TShock.Config.Settings.KickOnHealOtherThresholdBroken)
 				{
-					args.Player.Kick(string.Format("HealOtherPlayer threshold exceeded {0}.", TShock.Config.Settings.HealOtherThreshold));
+					args.Player.Kick(string.Format("超过治疗其他玩家速率阈值 {0}.", TShock.Config.Settings.HealOtherThreshold));
 				}
 				else 
 				{
-					args.Player.Disable("Reached HealOtherPlayer threshold.", DisableFlags.WriteToLogAndConsole);
+					args.Player.Disable("超过治疗其他玩家速率阈值.", DisableFlags.WriteToLogAndConsole);
 				}
 				TShock.Log.ConsoleDebug("Bouncer / OnHealOtherPlayer rejected heal other threshold from {0} {1}/{2}", args.Player.Name, args.Player.HealOtherThreshold, TShock.Config.Settings.HealOtherThreshold);
-				TShock.Log.ConsoleDebug("If this player wasn't hacking, please report the HealOtherPlayer threshold they were disabled for to TShock so we can improve this!");
+				TShock.Log.ConsoleDebug("如果这个玩家不是挂逼，请向TShock报告他们被禁用这个阈值，这样我们就可以改进它了！");
 				args.Handled = true;
 				return;
 			}
@@ -1874,7 +1874,7 @@ namespace TShockAPI
 			if (args.Player.TPlayer.lastVisualizedSelectedItem.makeNPC != type && args.Player.TPlayer.lastVisualizedSelectedItem.placeStyle != style)
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnReleaseNPC released different critter from {0}", args.Player.Name);
-				args.Player.Kick("Released critter was not from its item.", true);
+				args.Player.Kick("释放的小动物不是来自其物品.", true);
 				args.Handled = true;
 				return;
 			}
@@ -1947,7 +1947,7 @@ namespace TShockAPI
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnPlaceObject rejected banned tiles from {0}", args.Player.Name);
 				args.Player.SendTileSquareCentered(x, y, 1);
-				args.Player.SendErrorMessage("You do not have permission to place this tile.");
+				args.Player.SendErrorMessage("你没有权限发送替换这个图格.");
 				args.Handled = true;
 				return;
 			}
@@ -2022,7 +2022,7 @@ namespace TShockAPI
 			if (args.Player.TilePlaceThreshold >= TShock.Config.Settings.TilePlaceThreshold)
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnPlaceObject rejected tile place threshold from {0} {1}/{2}", args.Player.Name, args.Player.TilePlaceThreshold, TShock.Config.Settings.TilePlaceThreshold);
-				args.Player.Disable("Reached TilePlace threshold.", DisableFlags.WriteToLogAndConsole);
+				args.Player.Disable("超过图格放置阈值.", DisableFlags.WriteToLogAndConsole);
 				args.Player.SendTileSquareCentered(x, y, 4);
 				args.Handled = true;
 				return;
@@ -2117,7 +2117,7 @@ namespace TShockAPI
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnPlayerPortalTeleport rejected untargetable teleport from {0}", args.Player.Name);
 				//If the player who sent the packet is not the player being teleported, cancel this packet
-				args.Player.Disable("Malicious portal attempt.", DisableFlags.WriteToLogAndConsole); //Todo: this message is not particularly clear - suggestions wanted
+				args.Player.Disable("恶意端口尝试.", DisableFlags.WriteToLogAndConsole); //Todo: this message is not particularly clear - suggestions wanted
 				args.Handled = true;
 				return;
 			}
@@ -2250,14 +2250,14 @@ namespace TShockAPI
 				if (TShock.Config.Settings.KickOnDamageThresholdBroken)
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnPlayerDamage rejected damage threshold from {0} {1}/{2}", args.Player.Name, damage, TShock.Config.Settings.MaxDamage);
-					args.Player.Kick(string.Format("Player damage exceeded {0}.", TShock.Config.Settings.MaxDamage));
+					args.Player.Kick(string.Format("超过玩家伤害阈值 {0}.", TShock.Config.Settings.MaxDamage));
 					args.Handled = true;
 					return;
 				}
 				else
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnPlayerDamage rejected damage threshold2 from {0} {1}/{2}", args.Player.Name, damage, TShock.Config.Settings.MaxDamage);
-					args.Player.Disable(String.Format("Player damage exceeded {0}.", TShock.Config.Settings.MaxDamage), DisableFlags.WriteToLogAndConsole);
+					args.Player.Disable(String.Format("超过玩家伤害阈值 {0}.", TShock.Config.Settings.MaxDamage), DisableFlags.WriteToLogAndConsole);
 				}
 				args.Player.SendData(PacketTypes.PlayerHp, "", id);
 				args.Player.SendData(PacketTypes.PlayerUpdate, "", id);
@@ -2331,8 +2331,8 @@ namespace TShockAPI
 			if (damage > 42000) //Abnormal values have the potential to cause infinite loops in the server.
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnKillMe rejected high damage from {0} {1}", args.Player.Name, damage);
-				args.Player.Kick("Failed to shade polygon normals.", true, true);
-				TShock.Log.ConsoleError("Death Exploit Attempt: Damage {0}", damage);
+				args.Player.Kick("未能对多边形法线进行阴影处理.", true, true);
+				TShock.Log.ConsoleError("企图死亡攻击：伤害为 {0}", damage);
 				args.Handled = true;
 				return;
 			}
@@ -2350,7 +2350,7 @@ namespace TShockAPI
 				if (playerDeathReason.GetDeathText(TShock.Players[id].Name).ToString().Length > 500)
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnKillMe rejected bad length death text from {0}", args.Player.Name);
-					TShock.Players[id].Kick("Death reason outside of normal bounds.", true);
+					TShock.Players[id].Kick("非正常死亡.", true);
 					args.Handled = true;
 					return;
 				}

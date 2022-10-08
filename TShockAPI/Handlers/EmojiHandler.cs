@@ -16,7 +16,7 @@ namespace TShockAPI.Handlers
 		{
 			if (!args.Player.HasPermission(Permissions.sendemoji))
 			{
-				args.Player.SendErrorMessage("You do not have permission to send emotes!");
+				args.Player.SendErrorMessage("你没有权限发送Emoji!");
 				args.Handled = true;
 				return;
 			}

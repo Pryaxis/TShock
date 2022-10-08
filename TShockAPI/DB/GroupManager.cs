@@ -208,14 +208,14 @@ namespace TShockAPI.DB
 		{
 			if (!GroupExists(TShock.Config.Settings.DefaultGuestGroupName))
 			{
-				TShock.Log.ConsoleError("The guest group could not be found. This may indicate a typo in the configuration file, or that the group was renamed or deleted.");
-				throw new Exception("The guest group could not be found.");
+				TShock.Log.ConsoleError("游客组(默认为guest)未找到.这可能是配置文件名称错误,或者该组已被移除.");
+				throw new Exception("游客组(默认为guest)未找到.");
 			}
 
 			if (!GroupExists(TShock.Config.Settings.DefaultRegistrationGroupName))
 			{
-				TShock.Log.ConsoleError("The default usergroup could not be found. This may indicate a typo in the configuration file, or that the group was renamed or deleted.");
-				throw new Exception("The default usergroup could not be found.");
+				TShock.Log.ConsoleError("默认组(默认为default)未找到.这可能是配置文件名称错误,或者该组已被移除.");
+				throw new Exception("默认组(默认为default)未找到.");
 			}
 		}
 
@@ -232,9 +232,9 @@ namespace TShockAPI.DB
 			if (group == null)
 			{
 				if (kick)
-					player.Disconnect("Your account's group could not be loaded. Please contact server administrators about this.");
+					player.Disconnect("你账号所在组未被服务器加载.请联系服务器技术管理员处理.");
 				else
-					player.SendErrorMessage("Your account's group could not be loaded. Please contact server administrators about this.");
+					player.SendErrorMessage("你账号所在组未被服务器加载.请联系服务器技术管理员处理.");
 				return false;
 			}
 
@@ -306,7 +306,7 @@ namespace TShockAPI.DB
 				var parent = groups.FirstOrDefault(gp => gp.Name == parentname);
 				if (parent == null || name == parentname)
 				{
-					var error = "Invalid parent {0} for group {1}".SFormat(parentname, group.Name);
+					var error = "组{1}的父级{0}无效".SFormat(parentname, group.Name);
 					TShock.Log.ConsoleError(error);
 					throw new GroupManagerException(error);
 				}
@@ -321,7 +321,7 @@ namespace TShockAPI.DB
 				groups.Add(group);
 			}
 			else
-				throw new GroupManagerException("Failed to add group '" + name + ".'");
+				throw new GroupManagerException("添加组'" + name + "失败.'");
 		}
 
 		/// <summary>
@@ -353,7 +353,7 @@ namespace TShockAPI.DB
 				{
 					if (groupChain.Contains(checkingGroup))
 						throw new GroupManagerException(
-							string.Format("Invalid parent \"{0}\" for group \"{1}\" would cause loops in the parent chain.", parentname, name));
+							string.Format("组\"{0}\" 的父级 \"{1}\" 会在父链中引起循环.", parentname, name));
 
 					groupChain.Add(checkingGroup);
 					checkingGroup = checkingGroup.Parent;
@@ -366,7 +366,7 @@ namespace TShockAPI.DB
 			newGroup.Suffix = suffix;
 			string query = "UPDATE GroupList SET Parent=@0, Commands=@1, ChatColor=@2, Suffix=@3, Prefix=@4 WHERE GroupName=@5";
 			if (database.Query(query, parentname, newGroup.Permissions, newGroup.ChatColor, suffix, prefix, name) != 1)
-				throw new GroupManagerException(string.Format("Failed to update group \"{0}\".", name));
+				throw new GroupManagerException(string.Format("更新组 \"{0}\"失败.", name));
 
 			group.ChatColor = chatcolor;
 			group.Permissions = permissions;
@@ -460,24 +460,24 @@ namespace TShockAPI.DB
 						}
 
 						transaction.Commit();
-						return $"Group \"{name}\" has been renamed to \"{newName}\".";
+						return $"组 \"{name}\" 成功被重命名为 \"{newName}\".";
 					}
 					catch (Exception ex)
 					{
-						TShock.Log.Error($"An exception has occurred during database transaction: {ex.Message}");
+						TShock.Log.Error($"在数据库事务期间发生了异常: {ex.Message}");
 						try
 						{
 							transaction.Rollback();
 						}
 						catch (Exception rollbackEx)
 						{
-							TShock.Log.Error($"An exception has occurred during database rollback: {rollbackEx.Message}");
+							TShock.Log.Error($"在数据库回滚期间发生了异常: {rollbackEx.Message}");
 						}
 					}
 				}
 			}
 
-			throw new GroupManagerException($"Failed to rename group \"{name}\".");
+			throw new GroupManagerException($"重命名组 \"{name}\"失败.");
 		}
 
 		/// <summary>
@@ -492,25 +492,25 @@ namespace TShockAPI.DB
 			{
 				if (exceptions)
 					throw new GroupNotExistException(name);
-				return "Error: Group doesn't exist.";
+				return "Error: 该组不存在.";
 			}
 
 			if (name == Group.DefaultGroup.Name)
 			{
 				if (exceptions)
-					throw new GroupManagerException("Unable to remove default guest group.");
-				return "Error: Unable to remove the default guest group.";
+					throw new GroupManagerException("无法删除设定的游客组.");
+				return "Error:无法删除设定的游客组.";
 			}
 
 			if (database.Query("DELETE FROM GroupList WHERE GroupName=@0", name) == 1)
 			{
 				groups.Remove(TShock.Groups.GetGroupByName(name));
-				return "Group " + name + " has been deleted successfully.";
+				return "组 " + name + " 已被成功添加.";
 			}
 
 			if (exceptions)
-				throw new GroupManagerException("Failed to delete group '" + name + ".'");
-			return "Failed to delete group '" + name + ".'";
+				throw new GroupManagerException("删除组 '" + name + "失败.'");
+			return "删除组 '" + name + "失败.'";
 		}
 
 		/// <summary>
@@ -522,14 +522,14 @@ namespace TShockAPI.DB
 		public String AddPermissions(String name, List<String> permissions)
 		{
 			if (!GroupExists(name))
-				return "Error: Group doesn't exist.";
+				return "Error: 该组不存在.";
 
 			var group = TShock.Groups.GetGroupByName(name);
 			var oldperms = group.Permissions; // Store old permissions in case of error
 			permissions.ForEach(p => group.AddPermission(p));
 
 			if (database.Query("UPDATE GroupList SET Commands=@0 WHERE GroupName=@1", group.Permissions, name) == 1)
-				return "Group " + name + " has been modified successfully.";
+				return "组 " + name + " 修改成功.";
 
 			// Restore old permissions so DB and internal object are in a consistent state
 			group.Permissions = oldperms;
@@ -545,14 +545,13 @@ namespace TShockAPI.DB
 		public String DeletePermissions(String name, List<String> permissions)
 		{
 			if (!GroupExists(name))
-				return "Error: Group doesn't exist.";
-
+				return "Error: 该组不存在";
 			var group = TShock.Groups.GetGroupByName(name);
 			var oldperms = group.Permissions; // Store old permissions in case of error
 			permissions.ForEach(p => group.RemovePermission(p));
 
 			if (database.Query("UPDATE GroupList SET Commands=@0 WHERE GroupName=@1", group.Permissions, name) == 1)
-				return "Group " + name + " has been modified successfully.";
+				return "组 " + name + " 修改成功.";
 
 			// Restore old permissions so DB and internal object are in a consistent state
 			group.Permissions = oldperms;
@@ -575,7 +574,7 @@ namespace TShockAPI.DB
 						string groupName = reader.Get<string>("GroupName");
 						if (groupName == "superadmin")
 						{
-							TShock.Log.ConsoleInfo("WARNING: Group \"superadmin\" is defined in the database even though it's a reserved group name.");
+							TShock.Log.ConsoleInfo("WARNING: 超级管理员组 \"superadmin\" 已在数据库中定义，即使它是一个保留的组名(这可能导致改组无法正常使用).");
 							continue;
 						}
 
@@ -592,7 +591,7 @@ namespace TShockAPI.DB
 						catch (ArgumentException)
 						{
 							// Just in case somebody messed with the unique primary key.
-							TShock.Log.ConsoleError("ERROR: Group name \"{0}\" occurs more than once. Keeping current group settings.");
+							TShock.Log.ConsoleError("ERROR: 组名称 \"{0}\" 出现多次. 请保留当前组设置.");
 							return;
 						}
 					}
@@ -628,14 +627,14 @@ namespace TShockAPI.DB
 						if (group.Parent == null)
 						{
 							TShock.Log.ConsoleError(
-								"ERROR: Group \"{0}\" is referencing non existent parent group \"{1}\", parent reference was removed.",
+								"ERROR: 组 \"{0}\" 引用的父组 \"{1}\"不存在, 父组引用已被暂时移除.",
 								group.Name, parentGroupName);
 						}
 						else
 						{
 							if (group.Parent == group)
 								TShock.Log.ConsoleInfo(
-									"WARNING: Group \"{0}\" is referencing itself as parent group, parent reference was removed.", group.Name);
+									"WARNING: 组 \"{0}\"正在引用自己作为父组, 父组引用已被暂时移除.", group.Name);
 
 							List<Group> groupChain = new List<Group> { group };
 							Group checkingGroup = group;
@@ -644,7 +643,7 @@ namespace TShockAPI.DB
 								if (groupChain.Contains(checkingGroup.Parent))
 								{
 									TShock.Log.ConsoleError(
-										"ERROR: Group \"{0}\" is referencing parent group \"{1}\" which is already part of the parent chain. Parent reference removed.",
+										"ERROR: 组 \"{0}\" 正在引用父组 \"{1}\" ,该组已经是父链的一部分. 父组引用已被暂时移除.",
 										checkingGroup.Name, checkingGroup.Parent.Name);
 
 									checkingGroup.Parent = null;
@@ -664,7 +663,7 @@ namespace TShockAPI.DB
 			}
 			catch (Exception ex)
 			{
-				TShock.Log.ConsoleError("Error on reloading groups: " + ex);
+				TShock.Log.ConsoleError("[Error]加载组时出现错误: " + ex);
 			}
 		}
 	}
@@ -707,7 +706,7 @@ namespace TShockAPI.DB
 		/// </summary>
 		/// <param name="name">The group name.</param>
 		public GroupExistsException(string name)
-			: base("Group '" + name + "' already exists")
+			: base("组 '" + name + "' 已存在")
 		{
 		}
 	}
@@ -724,7 +723,7 @@ namespace TShockAPI.DB
 		/// </summary>
 		/// <param name="name">The group name.</param>
 		public GroupNotExistException(string name)
-			: base("Group '" + name + "' does not exist")
+			: base("组 '" + name + "' 不存在")
 		{
 		}
 	}

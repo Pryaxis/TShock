@@ -78,8 +78,8 @@ namespace TShockAPI.DB
 			}
 			catch (DllNotFoundException)
 			{
-				System.Console.WriteLine("Possible problem with your database - is Sqlite3.dll present?");
-				throw new Exception("Could not find a database library (probably Sqlite3.dll)");
+				System.Console.WriteLine("您的数据库可能存在的问题—— Sqlite3.dll 是否正确加载？");
+				throw new Exception("找不到数据库 (你可能缺失Sqlite3.dll文件)");
 			}
 
 			EnsureBansCollection();
@@ -205,12 +205,12 @@ namespace TShockAPI.DB
 			{
 				if (ban.ExpirationDateTime == DateTime.MaxValue)
 				{
-					player.Disconnect($"#{ban.TicketNumber} - You are banned: {ban.Reason}");
+					player.Disconnect($"#{ban.TicketNumber} - 你被ban了: {ban.Reason}");
 					return true;
 				}
 
 				TimeSpan ts = ban.ExpirationDateTime - DateTime.UtcNow;
-				player.Disconnect($"#{ban.TicketNumber} - You are banned: {ban.Reason} ({ban.GetPrettyExpirationString()} remaining)");
+				player.Disconnect($"#{ban.TicketNumber} - 你被ban了: {ban.Reason} (剩余{ban.GetPrettyExpirationString()})");
 				return true;
 			}
 
@@ -255,7 +255,7 @@ namespace TShockAPI.DB
 				//E.g., if a previous ban has expired, a new ban is valid.
 				//However, if a previous ban on the provided identifier is still in effect, a new ban is not valid
 				args.Valid = !Bans.Any(b => b.Value.Identifier == args.Identifier && b.Value.ExpirationDateTime > DateTime.UtcNow);
-				args.Message = args.Valid ? null : "a current ban for this identifier already exists.";
+				args.Message = args.Valid ? null : "该标识符已禁用";
 			}
 		}
 
@@ -292,7 +292,7 @@ namespace TShockAPI.DB
 
 			if (!args.Valid)
 			{
-				string message = $"Ban was not valid: {(args.Message ?? "no further information provided.")}";
+				string message = $"Ban无效: {(args.Message ?? "你提供的信息不足")}";
 				return new AddBanResult { Message = message };
 			}
 
@@ -311,7 +311,7 @@ namespace TShockAPI.DB
 
 			if (ticketId == 0)
 			{
-				return new AddBanResult { Message = "Database insert failed." };
+				return new AddBanResult { Message = "无法插入数据库" };
 			}
 
 			Ban b = new Ban(ticketId, args.Identifier, args.Reason, args.BanningUser, args.BanDateTime, args.ExpirationDateTime);
@@ -633,19 +633,19 @@ namespace TShockAPI.DB
 		/// <summary>
 		/// IP identifier
 		/// </summary>
-		public static Identifier IP = Register("ip:", $"An identifier for an IP Address in octet format. Eg., '{"127.0.0.1".Color(Utils.RedHighlight)}'.");
+		public static Identifier IP = Register("ip:", $"IP结构的标识符,例如: '{"127.0.0.1".Color(Utils.RedHighlight)}'.");
 		/// <summary>
 		/// UUID identifier
 		/// </summary>
-		public static Identifier UUID = Register("uuid:", "An identifier for a UUID.");
+		public static Identifier UUID = Register("uuid:", "UUID标识符.");
 		/// <summary>
 		/// Player name identifier
 		/// </summary>
-		public static Identifier Name = Register("name:", "An identifier for a character name.");
+		public static Identifier Name = Register("name:", "角色名标识符.");
 		/// <summary>
 		/// User account identifier
 		/// </summary>
-		public static Identifier Account = Register("acc:", "An identifier for a TShock User Account name.");
+		public static Identifier Account = Register("acc:", "用户名标识符.");
 
 		private Identifier(string prefix, string description)
 		{

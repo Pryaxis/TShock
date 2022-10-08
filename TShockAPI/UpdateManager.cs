@@ -80,11 +80,11 @@ namespace TShockAPI
 				string msg = ex.BuildExceptionString();
 				//Give the console a brief
 				Console.ForegroundColor = ConsoleColor.Yellow;
-				Console.WriteLine($"UpdateManager warning: {msg}");
+				Console.WriteLine($"UpdateManager 警告: {msg}");
 				Console.ForegroundColor = ConsoleColor.Gray;
 				//And log the full exception
-				TShock.Log.Warn($"UpdateManager warning: {ex.ToString()}");
-				TShock.Log.ConsoleError("Retrying in 5 minutes.");
+				TShock.Log.Warn($"UpdateManager 警告: {ex.ToString()}");
+				TShock.Log.ConsoleError("在5分钟内重试.");
 				CheckXMinutes = 5;
 			}
 		}
@@ -117,8 +117,8 @@ namespace TShockAPI
 				{
 					reason = "none";
 				}
-				throw new WebException("Update server did not respond with an OK. "
-					+ $"Server message: [error {resp.StatusCode}] {reason}");
+				throw new WebException("更新服务器没有响应确定. "
+					+ $"服务器消息: [错误 {resp.StatusCode}] {reason}");
 			}
 
 			string json = await resp.Content.ReadAsStringAsync();
@@ -148,7 +148,7 @@ namespace TShockAPI
 
 		private void NotifyAdministrator(TSPlayer player, string[] changes)
 		{
-			player.SendMessage("The server is out of date. Latest version: ", Color.Red);
+			player.SendMessage("这个服务器版本已经过期啦. TShock的最新发布版是: ", Color.Red);
 			for (int j = 0; j < changes.Length; j++)
 			{
 				player.SendMessage(changes[j], Color.Red);

@@ -78,7 +78,7 @@ namespace TShockAPI
 				set
 				{
 					if (value <= 0)
-						throw new ArgumentException("The value has to be greater than zero.");
+						throw new ArgumentException("该值必须大于零.");
 
 					this.maxLinesPerPage = value;
 				}
@@ -92,7 +92,7 @@ namespace TShockAPI
 				set
 				{
 					if (value < 0)
-						throw new ArgumentException("The value has to be greater than or equal to zero.");
+						throw new ArgumentException("该值必须大于或等于零.");
 
 					this.pageLimit = value;
 				}
@@ -102,10 +102,10 @@ namespace TShockAPI
 			public Settings()
 			{
 				this.IncludeHeader = true;
-				this.headerFormat = "Page {0} of {1}";
+				this.headerFormat = "{1} 的第{0}页 ";
 				this.HeaderTextColor = Color.Green;
 				this.IncludeFooter = true;
-				this.footerFormat = "Type /<command> {0} for more.";
+				this.footerFormat = "输入 /<命令> {0} 翻页.";
 				this.FooterTextColor = Color.Yellow;
 				this.NothingToDisplayString = null;
 				this.LineFormatter = null;
@@ -182,7 +182,7 @@ namespace TShockAPI
 					catch (Exception ex)
 					{
 						throw new InvalidOperationException(
-						  "The method referenced by LineFormatter has thrown an exception. See inner exception for details.", ex);
+						  "LineForMatter引用的方法引发了异常. 有关详细信息, 请参阅内部异常.", ex);
 					}
 				}
 				else
@@ -244,7 +244,7 @@ namespace TShockAPI
 					catch (Exception ex)
 					{
 						throw new ArgumentException(
-						  "The method represented by termFormatter has thrown an exception. See inner exception for details.", ex);
+						  "TermForMatter表示的方法引发了异常. 有关详细信息, 请参阅内部异常.", ex);
 					}
 				}
 				else
@@ -280,7 +280,7 @@ namespace TShockAPI
 			if (!int.TryParse(pageNumberRaw, out pageNumber) || pageNumber < 1)
 			{
 				if (errorMessageReceiver != null)
-					errorMessageReceiver.SendErrorMessage("\"{0}\" is not a valid page number.", pageNumberRaw);
+					errorMessageReceiver.SendErrorMessage("\"{0}\" 不是一个有效的页码.", pageNumberRaw);
 
 				pageNumber = 1;
 				return false;

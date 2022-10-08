@@ -29,7 +29,7 @@ namespace TShockAPI
 	public class FileTools
 	{
 		private const string MotdFormat =
-			"Welcome to [c/ffff00:%map%] on [c/7ddff8:T][c/81dbf6:S][c/86d7f4:h][c/8ad3f3:o][c/8ecef1:c][c/93caef:k] for [c/55d284:T][c/62d27a:e][c/6fd16f:r][c/7cd165:r][c/89d15a:a][c/95d150:r][c/a4d145:i][c/b1d03b:a].\n[c/FFFFFF:Online players (%onlineplayers%/%serverslots%):] [c/FFFF00:%players%]\nType [c/55D284:%specifier%][c/62D27A:h][c/6FD16F:e][c/7CD165:l][c/89D15A:p] for a list of commands.\n";
+			"欢迎来到 [c/ffff00:%map%] 运行在 [c/7ddff8:T][c/81dbf6:S][c/86d7f4:h][c/8ad3f3:o][c/8ecef1:c][c/93caef:k] 的 [c/55d284:T][c/62d27a:e][c/6fd16f:r][c/7cd165:r][c/89d15a:a][c/95d150:r][c/a4d145:i][c/b1d03b:a]服务器.\n[c/FFFFFF:在线玩家 (%onlineplayers%/%serverslots%):] [c/FFFF00:%players%]\n输入 [c/55D284:%specifier%][c/62D27A:h][c/6FD16F:e][c/7CD165:l][c/89D15A:p] 获取命令清单.\n";
 		/// <summary>
 		/// Path to the file containing the rules.
 		/// </summary>
@@ -102,7 +102,7 @@ namespace TShockAPI
 				Directory.CreateDirectory(TShock.SavePath);
 			}
 
-			CreateIfNot(RulesPath, "Respect the admins!\nDon't use TNT!");
+			CreateIfNot(RulesPath, "开挂的爬!\n炸图的爬!");
 			CreateIfNot(MotdPath, MotdFormat);
 						
 			CreateIfNot(WhitelistPath);
