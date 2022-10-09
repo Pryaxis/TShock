@@ -34,9 +34,10 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Fixed `/tempgroup` breaking on durations greater than roughly 24 days. (@punchready)
 * Fixed player not being checked for permissions to use the Shellphone (Ocean), Shellphone (Underworld) and Shellphone (Spawn). (@hufang360)
 * Updated to OTAPI 3.1.10-alpha, which allows FreeBSD .NET 6 to use Re-Logic's Linux platform. (@SignatureBeef)
+* Update Github CI to not tarball files for Windows only (@PotatoCider)
 
 ## TShock 4.5.18
-* Fixed `TSPlayer.GiveItem` not working if the player is in lava. (@gohjoseph)
+* Fixed `TSPlayer.GiveItem` not working if the player is in lava. (@PotatoCider)
 * Only allow using Teleportation Potions, Magic Conch, and Demon Conch whilst holding them. (@drunderscore)
 * Updated server startup language to be more clear when encountering a fatal startup error. Now, the server gives more context as to what happened so that there's a better chance of people being able to help themselves. (@hakusaro)
 * Added `-worldevil <type>` command line argument (@NotGeri)
@@ -47,8 +48,8 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Bumped Newtonsoft Json to 13.0.1. (@dependabot)
 
 ## TShock 4.5.17
-* Fixed duplicate characters (twins) after repeatedly logging in as the same character due to connection not being immediately closed during `NetHooks_NameCollision`. (@gohjoseph)
-* Fixed mobs not dropping picked up coins. (@gohjoseph)
+* Fixed duplicate characters (twins) after repeatedly logging in as the same character due to connection not being immediately closed during `NetHooks_NameCollision`. (@PotatoCider)
+* Fixed mobs not dropping picked up coins. (@PotatoCider)
 
 ## TShock 4.5.16
 * Added preliminary support for Terraria 1.4.3.6. (@SignatureBeef, @hakusaro)
