@@ -44,12 +44,22 @@ jobs:
             chmod +x TShockLauncher/bin/Release/net6.0/${{ matrix.arch }}/publish/TShock.Server
 
       # preserve file perms: https://github.com/actions/upload-artifact#maintaining-file-permissions-and-case-sensitive-files
-      - name: Archive artifact
+      - name: Tarball artifact (non-Windows)
+        if: ${{ matrix.arch != 'win-x64' }}
         run: |
             cd TShockLauncher/bin/Release/net6.0/${{ matrix.arch }}/publish/
             tar -cvf ../../../../../../TShock-Beta-${{ matrix.arch }}-Release.tar *
 
-      - uses: actions/upload-artifact@v3
+      - name: Upload artifact (non-Windows)
+        uses: actions/upload-artifact@v3
+        if: ${{ matrix.arch != 'win-x64' }}
         with:
           name: TShock-Beta-${{ matrix.arch }}-Release
           path: TShock-Beta-${{ matrix.arch }}-Release.tar
+
+      - name: Upload artifact (Windows)
+        uses: actions/upload-artifact@v3
+        if: ${{ matrix.arch == 'win-x64' }}
+        with:
+          name: TShock-Beta-${{ matrix.arch }}-Release
+          path: TShockLauncher/bin/Release/net6.0/${{ matrix.arch }}/publish/
