@@ -35,6 +35,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Fixed player not being checked for permissions to use the Shellphone (Ocean), Shellphone (Underworld) and Shellphone (Spawn). (@hufang360)
 * Updated to OTAPI 3.1.10-alpha, which allows FreeBSD .NET 6 to use Re-Logic's Linux platform. (@SignatureBeef)
 * Update Github CI to not tarball files for Windows only (@PotatoCider)
+* Allow Blood Butcherer and Shimmer buffs to be applied to NPCs by players (@drunderscore)
 
 ## TShock 4.5.18
 * Fixed `TSPlayer.GiveItem` not working if the player is in lava. (@PotatoCider)

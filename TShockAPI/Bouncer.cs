@@ -1739,7 +1739,8 @@ namespace TShockAPI
 				if (npc.townNPC && npc.netID != NPCID.Guide && npc.netID != NPCID.Clothier)
 				{
 					if (type != BuffID.Lovestruck && type != BuffID.Stinky && type != BuffID.DryadsWard &&
-						type != BuffID.Wet && type != BuffID.Slimed && type != BuffID.GelBalloonBuff && type != BuffID.Frostburn2)
+						type != BuffID.Wet && type != BuffID.Slimed && type != BuffID.GelBalloonBuff && type != BuffID.Frostburn2 &&
+						type != BuffID.Shimmer)
 					{
 						detectedNPCBuffTimeCheat = true;
 					}
@@ -2529,7 +2530,9 @@ namespace TShockAPI
 			{ BuffID.OnFire3, 360 },                // BuffID: 323
 			{ BuffID.Frostburn2, 900 },             // BuffID: 324
 			{ BuffID.BoneWhipNPCDebuff, 240 },      // BuffID: 326
-			{ BuffID.TentacleSpike, 540 }           // BuffID: 337
+			{ BuffID.TentacleSpike, 540 },          // BuffID: 337
+			{ BuffID.BloodButcherer, 540 },         // BuffID: 344
+			{ BuffID.Shimmer, 100 },		// BuffID: 353
 		};
 
 		/// <summary>
