@@ -1296,6 +1296,7 @@ namespace TShockAPI
 			Water = 0,
 			Lava = 1,
 			Honey = 2,
+			Shimmer = 3,
 			Removal = 255 //@Olink: lets hope they never invent 255 fluids or decide to also use this :(
 		}
 
