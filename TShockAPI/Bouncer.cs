@@ -1544,6 +1544,10 @@ namespace TShockAPI
 				{
 					bucket = 6;
 				}
+				else if (selectedItemType == ItemID.BottomlessHoneyBucket)
+				{
+					bucket = 7;
+				}
 
 				if (!wasThereABombNearby && type == LiquidType.Lava && !(bucket == 2 || bucket == 0 || bucket == 5 || bucket == 6))
 				{
@@ -1585,7 +1589,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (!wasThereABombNearby && type == LiquidType.Honey && !(bucket == 3 || bucket == 0))
+				if (!wasThereABombNearby && type == LiquidType.Honey && !(bucket == 3 || bucket == 0 || bucket == 7))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected bucket check 4 from {0}", args.Player.Name);
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
