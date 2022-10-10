@@ -1932,13 +1932,6 @@ namespace TShockAPI
 				return;
 			}
 
-			if (args.Player.SelectedItem.placeStyle != style)
-			{
-				TShock.Log.ConsoleError(string.Format("Bouncer / OnPlaceObject rejected object placement with invalid style from {0}", args.Player.Name));
-				args.Handled = true;
-				return;
-			}
-
 			//style 52 and 53 are used by ItemID.Fake_newchest1 and ItemID.Fake_newchest2
 			//These two items cause localised lag and rendering issues
 			if (type == TileID.FakeContainers && (style == 52 || style == 53))
@@ -1975,15 +1968,48 @@ namespace TShockAPI
 				return;
 			}
 
-			// This is necessary to check in order to prevent special tiles such as
-			// queen bee larva, paintings etc that use this packet from being placed
-			// without selecting the right item.
-			if (type != args.Player.TPlayer.inventory[args.Player.TPlayer.selectedItem].createTile)
+			if (args.Player.SelectedItem.type is ItemID.RubblemakerSmall or ItemID.RubblemakerMedium or ItemID.RubblemakerLarge)
 			{
-				TShock.Log.ConsoleDebug("Bouncer / OnPlaceObject rejected awkward tile creation/selection from {0}", args.Player.Name);
-				args.Player.SendTileSquareCentered(x, y, 4);
-				args.Handled = true;
-				return;
+				if (type != TileID.LargePilesEcho && type != TileID.LargePiles2Echo && type != TileID.SmallPiles2x1Echo &&
+				    type != TileID.SmallPiles1x1Echo && type != TileID.PlantDetritus3x2Echo && type != TileID.PlantDetritus2x2Echo)
+				{
+					TShock.Log.ConsoleDebug("Bouncer / OnPlaceObject rejected rubblemaker I can't believe it's not rubble! from {0}",
+						args.Player.Name);
+					args.Player.SendTileSquareCentered(x, y, 4);
+					args.Handled = true;
+					return;
+				}
+			}
+			else if(args.Player.SelectedItem.type == ItemID.AcornAxe)
+			{
+				if (type != TileID.Saplings)
+				{
+					TShock.Log.ConsoleDebug("Bouncer / OnPlaceObject rejected Axe of Regrowth only places saplings {0}", args.Player.Name);
+					args.Player.SendTileSquareCentered(x, y, 4);
+					args.Handled = true;
+					return;
+				}
+			}
+			else
+			{
+				// This is necessary to check in order to prevent special tiles such as
+				// queen bee larva, paintings etc that use this packet from being placed
+				// without selecting the right item.
+				if (type != args.Player.TPlayer.inventory[args.Player.TPlayer.selectedItem].createTile)
+				{
+					TShock.Log.ConsoleDebug("Bouncer / OnPlaceObject rejected awkward tile creation/selection from {0}", args.Player.Name);
+					args.Player.SendTileSquareCentered(x, y, 4);
+					args.Handled = true;
+					return;
+				}
+
+				if (args.Player.SelectedItem.placeStyle != style)
+				{
+					TShock.Log.ConsoleError(string.Format("Bouncer / OnPlaceObject rejected object placement with invalid style from {0}", args.Player.Name));
+					args.Player.SendTileSquareCentered(x, y, 4);
+					args.Handled = true;
+					return;
+				}
 			}
 
 			TileObjectData tileData = TileObjectData.GetTileData(type, style, 0);
