@@ -510,10 +510,16 @@ namespace TShockAPI
 					// If the tile is a pickaxe tile and they aren't selecting a pickaxe, they're hacking.
 					// Item frames can be modified without pickaxe tile.
 					// also add an exception for snake coils, they can be removed when the player places a new one or after x amount of time
+					// If the tile is part of the breakable when placing set, it might be getting broken by a placement.
 					else if (tile.type != TileID.ItemFrame && tile.type != TileID.MysticSnakeRope
-						&& !Main.tileAxe[tile.type] && !Main.tileHammer[tile.type] && tile.wall == 0 && args.Player.TPlayer.mount.Type != 8 && selectedItem.pick == 0 && selectedItem.type != ItemID.GravediggerShovel && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0)
+					                                       && !Main.tileAxe[tile.type] && !Main.tileHammer[tile.type] && tile.wall == 0 &&
+					                                       args.Player.TPlayer.mount.Type != MountID.Drill && selectedItem.pick == 0 &&
+					                                       selectedItem.type != ItemID.GravediggerShovel &&
+					                                       !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0
+					                                       && !TileID.Sets.BreakableWhenPlacing[tile.type])
 					{
-						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (pick) {0} {1} {2}", args.Player.Name, action, editData);
+						TShock.Log.ConsoleDebug("Bouncer / OnTileEdit rejected from (pick) {0} {1} {2}", args.Player.Name, action,
+							editData);
 						args.Player.SendTileSquareCentered(tileX, tileY, 4);
 						args.Handled = true;
 						return;
