@@ -38,7 +38,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Allow Blood Butcherer and Shimmer buffs to be applied to NPCs by players. (@drunderscore)
 * In OTAPI 3.1.11-alpha, chest stacking was fixed. (@SignatureBeef)
 * In OTAPI 3.1.12-alpha, "server world deletions" were fixed. (@SignatureBeef)
-* Fixed NetTile errors by implementing new packet read/write data
+* Fixed NetTile errors by implementing new packet read/write data. (@SignatureBeef)
 
 ## TShock 4.5.18
 * Fixed `TSPlayer.GiveItem` not working if the player is in lava. (@PotatoCider)
