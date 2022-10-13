@@ -34,7 +34,7 @@
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="MySql.Data" Version="8.0.31" />
-    <PackageReference Include="Microsoft.Data.Sqlite" Version="6.0.9" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="6.0.10" />
   </ItemGroup>
 
   <ItemGroup>
