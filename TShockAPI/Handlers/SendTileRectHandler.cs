@@ -463,11 +463,15 @@ namespace TShockAPI.Handlers
 			if ((updateType & TileDataType.TilePaint) != 0)
 			{
 				tile.color(newTile.TileColor);
+				tile.fullbrightBlock(newTile.FullbrightBlock);
+				tile.invisibleBlock(newTile.InvisibleBlock);
 			}
 
 			if ((updateType & TileDataType.WallPaint) != 0)
 			{
 				tile.wallColor(newTile.WallColor);
+				tile.fullbrightWall(newTile.FullbrightWall);
+				tile.invisibleWall(newTile.InvisibleWall);
 			}
 
 			if ((updateType & TileDataType.Liquid) != 0)
