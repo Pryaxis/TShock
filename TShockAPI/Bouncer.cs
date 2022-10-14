@@ -2531,6 +2531,7 @@ namespace TShockAPI
 			{ BuffID.Frostburn2, 900 },             // BuffID: 324
 			{ BuffID.BoneWhipNPCDebuff, 240 },      // BuffID: 326
 			{ BuffID.TentacleSpike, 540 },          // BuffID: 337
+			{ BuffID.CoolWhipNPCDebuff, 240 },      // BuffID: 340
 			{ BuffID.BloodButcherer, 540 },         // BuffID: 344
 			{ BuffID.Shimmer, 100 },		// BuffID: 353
 		};
