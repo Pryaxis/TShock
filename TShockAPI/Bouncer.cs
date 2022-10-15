@@ -1544,6 +1544,14 @@ namespace TShockAPI
 				{
 					bucket = 6;
 				}
+				else if (selectedItemType == ItemID.BottomlessHoneyBucket)
+				{
+					bucket = 7;
+				}
+				else if (selectedItemType == ItemID.BottomlessShimmerBucket)
+				{
+					bucket = 8;
+				}
 
 				if (!wasThereABombNearby && type == LiquidType.Lava && !(bucket == 2 || bucket == 0 || bucket == 5 || bucket == 6))
 				{
@@ -1585,7 +1593,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (!wasThereABombNearby && type == LiquidType.Honey && !(bucket == 3 || bucket == 0))
+				if (!wasThereABombNearby && type == LiquidType.Honey && !(bucket == 3 || bucket == 0 || bucket == 7))
 				{
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected bucket check 4 from {0}", args.Player.Name);
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
@@ -1600,6 +1608,27 @@ namespace TShockAPI
 					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected bucket check 5 from {0}", args.Player.Name);
 					args.Player.SendErrorMessage("You do not have permission to perform this action.");
 					args.Player.Disable("Using banned honey bucket without permissions", DisableFlags.WriteToLogAndConsole);
+					args.Player.SendTileSquareCentered(tileX, tileY, 1);
+					args.Handled = true;
+					return;
+				}
+
+				if (!wasThereABombNearby && type == LiquidType.Shimmer && bucket != 8)
+				{
+					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected bucket check 6 from {0}", args.Player.Name);
+					args.Player.SendErrorMessage("You do not have permission to perform this action.");
+					args.Player.Disable("Spreading shimmer without holding a honey bucket", DisableFlags.WriteToLogAndConsole);
+					args.Player.SendTileSquareCentered(tileX, tileY, 1);
+					args.Handled = true;
+					return;
+				}
+
+				if (!wasThereABombNearby && type == LiquidType.Shimmer &&
+				    TShock.ItemBans.DataModel.ItemIsBanned("Bottomless Shimmer Bucket", args.Player))
+				{
+					TShock.Log.ConsoleDebug("Bouncer / OnLiquidSet rejected bucket check 7 from {0}", args.Player.Name);
+					args.Player.SendErrorMessage("You do not have permission to perform this action.");
+					args.Player.Disable("Using banned bottomless shimmer bucket without permissions", DisableFlags.WriteToLogAndConsole);
 					args.Player.SendTileSquareCentered(tileX, tileY, 1);
 					args.Handled = true;
 					return;
