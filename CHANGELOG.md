@@ -47,6 +47,12 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Made Bouncer allow Bottomless Honey Bucket usage. (@drunderscore)
 * Made Bouncer reject Shimmer placement without bucket or whilst banned. (@drunderscore)
 * Fixed Bouncer rejecting Explosive Bunny critter release when using the Bunny Cannon, if the player had since stopped selecting the Explosive Bunny. (@drunderscore)
+* Update Github CI to not tarball files for Windows only (@PotatoCider)
+* Allow Blood Butcherer and Shimmer buffs to be applied to NPCs by players (@drunderscore)
+* Always allow breaking of tiles that are in `BreakableWhenPlacing` set. This will allow you to place tiles over other tiles (like piles) properly, without being rejected. (@drunderscore)
+* Allow the Axe of Regrowth and the Rubblemaker to pass Bouncer checks. (@drunderscore)
+  * The Axe of Regrowth places a `Saplings` where a tree used to be, which previously failed.
+  * The Rubblemaker places rubble (which are echo piles), of varying styles, which previously failed.
 
 ## TShock 4.5.18
 * Fixed `TSPlayer.GiveItem` not working if the player is in lava. (@PotatoCider)
