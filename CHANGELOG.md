@@ -51,6 +51,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Changed SendTileRect handling from a denylist to an allowlist with stricter checks. This prevents essentially all exploits involving this packet. Most notably this stops people from placing arbitrary tiles with arbitrary framing values, which are the root of most exploits. (@punchready)
 * Removed the config options `TileRectangleSizeThreshold` and `KickOnTileRectangleSizeThresholdBroken` because they are made obsolete by the new system, which will only allow valid rectangle sizes (at a maximum of only 4 by 4 tiles in 1.4.3.6). (@punchready)
 * Bumped Newtonsoft Json to 13.0.1. (@dependabot)
+* Allow the Cool Whip to apply `CoolWhipNPCDebuff` for `240` ticks, fixing abnormal NPC buff add rejects in Bouncer. (@drunderscore)
 
 ## TShock 4.5.17
 * Fixed duplicate characters (twins) after repeatedly logging in as the same character due to connection not being immediately closed during `NetHooks_NameCollision`. (@PotatoCider)
