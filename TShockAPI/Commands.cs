@@ -1954,12 +1954,15 @@ namespace TShockAPI
 
 		private static void Broadcast(CommandArgs args)
 		{
-			string message = string.Join(" ", args.Parameters);
+			if (args.Parameters.Count > 0)
+			{
+				string message = string.Join(" ", args.Parameters);
 
-			TShock.Utils.Broadcast(
-				"(Server Broadcast) " + message,
-				Convert.ToByte(TShock.Config.Settings.BroadcastRGB[0]), Convert.ToByte(TShock.Config.Settings.BroadcastRGB[1]),
-				Convert.ToByte(TShock.Config.Settings.BroadcastRGB[2]));
+				TShock.Utils.Broadcast(
+					"(Server Broadcast) " + message,
+					Convert.ToByte(TShock.Config.Settings.BroadcastRGB[0]), Convert.ToByte(TShock.Config.Settings.BroadcastRGB[1]),
+					Convert.ToByte(TShock.Config.Settings.BroadcastRGB[2]));
+			}
 		}
 
 		private static void Off(CommandArgs args)
