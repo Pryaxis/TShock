@@ -46,6 +46,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Added `LiquidType.Shimmer`. (@drunderscore)
 * Made Bouncer allow Bottomless Honey Bucket usage. (@drunderscore)
 * Made Bouncer reject Shimmer placement without bucket or whilst banned. (@drunderscore)
+* Fixed Bouncer rejecting Explosive Bunny critter release when using the Bunny Cannon, if the player had since stopped selecting the Explosive Bunny. (@drunderscore)
 
 ## TShock 4.5.18
 * Fixed `TSPlayer.GiveItem` not working if the player is in lava. (@PotatoCider)
@@ -58,7 +59,6 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Removed the config options `TileRectangleSizeThreshold` and `KickOnTileRectangleSizeThresholdBroken` because they are made obsolete by the new system, which will only allow valid rectangle sizes (at a maximum of only 4 by 4 tiles in 1.4.3.6). (@punchready)
 * Bumped Newtonsoft Json to 13.0.1. (@dependabot)
 * Allow the Cool Whip to apply `CoolWhipNPCDebuff` for `240` ticks, fixing abnormal NPC buff add rejects in Bouncer. (@drunderscore)
-* Fixed Bouncer rejecting Explosive Bunny critter release when using the Bunny Cannon, if the player had since stopped selecting the Explosive Bunny. (@drunderscore)
 
 ## TShock 4.5.17
 * Fixed duplicate characters (twins) after repeatedly logging in as the same character due to connection not being immediately closed during `NetHooks_NameCollision`. (@PotatoCider)
