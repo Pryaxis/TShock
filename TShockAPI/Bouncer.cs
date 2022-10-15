@@ -45,6 +45,27 @@ namespace TShockAPI
 		internal Handlers.SyncTilePickingHandler SyncTilePickingHandler { get; private set; }
 
 		/// <summary>
+		/// A class that represents the limits for a particular buff when a client applies it with PlayerAddBuff.
+		/// </summary>
+		internal class BuffLimit
+		{
+			/// <summary>
+			/// How many ticks at the maximum a player can apply this to another player for.
+			/// </summary>
+			public int MaxTicks { get; set; }
+			/// <summary>
+			/// Can this buff be added without the receiver being hostile (PvP)
+			/// </summary>
+			public bool CanBeAddedWithoutHostile { get; set; }
+			/// <summary>
+			/// Can this buff only be applied to the sender?
+			/// </summary>
+			public bool CanOnlyBeAppliedToSender { get; set; }
+		}
+
+		internal static BuffLimit[] PlayerAddBuffWhitelist;
+
+		/// <summary>
 		/// Represents a place style corrector.
 		/// </summary>
 		/// <param name="player">The player placing the tile.</param>
@@ -231,6 +252,172 @@ namespace TShockAPI
 						return actualItemPlaceStyle;
 					}
 				});
+
+			#region PlayerAddBuff Whitelist
+
+			PlayerAddBuffWhitelist = new BuffLimit[Main.maxBuffTypes];
+			PlayerAddBuffWhitelist[BuffID.Poisoned] = new BuffLimit
+			{
+				MaxTicks = 60 * 60
+			};
+			PlayerAddBuffWhitelist[BuffID.OnFire] = new BuffLimit
+			{
+				MaxTicks = 60 * 20
+			};
+			PlayerAddBuffWhitelist[BuffID.Confused] = new BuffLimit
+			{
+				MaxTicks = 60 * 4
+			};
+			PlayerAddBuffWhitelist[BuffID.CursedInferno] = new BuffLimit
+			{
+				MaxTicks = 60 * 7
+			};
+			PlayerAddBuffWhitelist[BuffID.Wet] = new BuffLimit
+			{
+				MaxTicks = 60 * 30,
+				// The Water Gun can be shot at other players and inflict Wet while not in PvP
+				CanBeAddedWithoutHostile = true
+			};
+			PlayerAddBuffWhitelist[BuffID.Ichor] = new BuffLimit
+			{
+				MaxTicks = 60 * 20
+			};
+			PlayerAddBuffWhitelist[BuffID.Venom] = new BuffLimit
+			{
+				MaxTicks = 60 * 30
+			};
+			PlayerAddBuffWhitelist[BuffID.GelBalloonBuff] = new BuffLimit
+			{
+				MaxTicks = 60 * 30,
+				// The Sparkle Slime Balloon inflicts this while not in PvP
+				CanBeAddedWithoutHostile = true
+			};
+			PlayerAddBuffWhitelist[BuffID.Frostburn] = new BuffLimit
+			{
+				MaxTicks = 60 * 8
+			};
+			PlayerAddBuffWhitelist[BuffID.Campfire] = new BuffLimit
+			{
+				MaxTicks = 2,
+				CanBeAddedWithoutHostile = true,
+				CanOnlyBeAppliedToSender = true,
+			};
+			PlayerAddBuffWhitelist[BuffID.Sunflower] = new BuffLimit
+			{
+				MaxTicks = 2,
+				CanBeAddedWithoutHostile = true,
+				CanOnlyBeAppliedToSender = true,
+			};
+			PlayerAddBuffWhitelist[BuffID.WaterCandle] = new BuffLimit
+			{
+				MaxTicks = 2,
+				CanBeAddedWithoutHostile = true,
+				CanOnlyBeAppliedToSender = true,
+			};
+			PlayerAddBuffWhitelist[BuffID.BeetleEndurance1] = new BuffLimit
+			{
+				MaxTicks = 5,
+				CanBeAddedWithoutHostile = true,
+				CanOnlyBeAppliedToSender = true,
+			};
+			PlayerAddBuffWhitelist[BuffID.BeetleEndurance2] = new BuffLimit
+			{
+				MaxTicks = 5,
+				CanBeAddedWithoutHostile = true,
+				CanOnlyBeAppliedToSender = true,
+			};
+			PlayerAddBuffWhitelist[BuffID.BeetleEndurance3] = new BuffLimit
+			{
+				MaxTicks = 5,
+				CanBeAddedWithoutHostile = true,
+				CanOnlyBeAppliedToSender = true,
+			};
+			PlayerAddBuffWhitelist[BuffID.BeetleMight1] = new BuffLimit
+			{
+				MaxTicks = 5,
+				CanBeAddedWithoutHostile = true,
+				CanOnlyBeAppliedToSender = true,
+			};
+			PlayerAddBuffWhitelist[BuffID.BeetleMight2] = new BuffLimit
+			{
+				MaxTicks = 5,
+				CanBeAddedWithoutHostile = true,
+				CanOnlyBeAppliedToSender = true,
+			};
+			PlayerAddBuffWhitelist[BuffID.BeetleMight3] = new BuffLimit
+			{
+				MaxTicks = 5,
+				CanBeAddedWithoutHostile = true,
+				CanOnlyBeAppliedToSender = true,
+			};
+			PlayerAddBuffWhitelist[BuffID.SolarShield1] = new BuffLimit
+			{
+				MaxTicks = 5,
+				CanBeAddedWithoutHostile = true,
+				CanOnlyBeAppliedToSender = false,
+			};
+			PlayerAddBuffWhitelist[BuffID.SolarShield2] = new BuffLimit
+			{
+				MaxTicks = 5,
+				CanBeAddedWithoutHostile = true,
+				CanOnlyBeAppliedToSender = false,
+			};
+			PlayerAddBuffWhitelist[BuffID.SolarShield3] = new BuffLimit
+			{
+				MaxTicks = 5,
+				CanBeAddedWithoutHostile = true,
+				CanOnlyBeAppliedToSender = false,
+			};
+			PlayerAddBuffWhitelist[BuffID.MonsterBanner] = new BuffLimit
+			{
+				MaxTicks = 2,
+				CanBeAddedWithoutHostile = true,
+				CanOnlyBeAppliedToSender = true
+			};
+			PlayerAddBuffWhitelist[BuffID.HeartLamp] = new BuffLimit
+			{
+				MaxTicks = 2,
+				CanBeAddedWithoutHostile = true,
+				CanOnlyBeAppliedToSender = true
+			};
+			PlayerAddBuffWhitelist[BuffID.PeaceCandle] = new BuffLimit
+			{
+				MaxTicks = 2,
+				CanBeAddedWithoutHostile = true,
+				CanOnlyBeAppliedToSender = true
+			};
+			PlayerAddBuffWhitelist[BuffID.StarInBottle] = new BuffLimit
+			{
+				MaxTicks = 2,
+				CanBeAddedWithoutHostile = true,
+				CanOnlyBeAppliedToSender = true
+			};
+			PlayerAddBuffWhitelist[BuffID.CatBast] = new BuffLimit
+			{
+				MaxTicks = 2,
+				CanBeAddedWithoutHostile = true,
+				CanOnlyBeAppliedToSender = true
+			};
+			PlayerAddBuffWhitelist[BuffID.OnFire3] = new BuffLimit
+			{
+				MaxTicks = 60 * 5,
+				CanBeAddedWithoutHostile = false,
+				CanOnlyBeAppliedToSender = false
+			};
+			PlayerAddBuffWhitelist[BuffID.HeartyMeal] = new BuffLimit
+			{
+				MaxTicks = 60 * 7,
+				CanBeAddedWithoutHostile = true,
+				CanOnlyBeAppliedToSender = true
+			};
+			PlayerAddBuffWhitelist[BuffID.Frostburn2] = new BuffLimit
+			{
+				MaxTicks = 60 * 7,
+				CanBeAddedWithoutHostile = false,
+				CanOnlyBeAppliedToSender = false
+			};
+
+			#endregion Whitelist
 		}
 
 		internal void OnGetSection(object sender, GetDataHandlers.GetSectionEventArgs args)
@@ -1675,9 +1862,24 @@ namespace TShockAPI
 			int type = args.Type;
 			int time = args.Time;
 
+			if (id >= Main.maxPlayers)
+			{
+				TShock.Log.ConsoleDebug("Bouncer / OnPlayerBuff rejected player cap from {0}", args.Player.Name);
+				args.Handled = true;
+				return;
+			}
+
 			if (TShock.Players[id] == null)
 			{
-				TShock.Log.ConsoleDebug("Bouncer / OnPlayerBuff rejected null check");
+				TShock.Log.ConsoleDebug("Bouncer / OnPlayerBuff rejected null check from {0}", args.Player.Name);
+				args.Handled = true;
+				return;
+			}
+
+			if (type >= Main.maxBuffTypes)
+			{
+				TShock.Log.ConsoleDebug("Bouncer / OnPlayerBuff rejected invalid buff type {0}", args.Player.Name);
+				args.Player.SendData(PacketTypes.PlayerBuff, "", id);
 				args.Handled = true;
 				return;
 			}
@@ -1685,31 +1887,7 @@ namespace TShockAPI
 			if (args.Player.IsBeingDisabled())
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnPlayerBuff rejected disabled from {0}", args.Player.Name);
-				args.Player.SendData(PacketTypes.PlayerAddBuff, "", id);
-				args.Handled = true;
-				return;
-			}
-
-			if (id >= Main.maxPlayers)
-			{
-				TShock.Log.ConsoleDebug("Bouncer / OnPlayerBuff rejected player cap from {0}", args.Player.Name);
-				args.Player.SendData(PacketTypes.PlayerAddBuff, "", id);
-				args.Handled = true;
-				return;
-			}
-
-			if (!TShock.Players[id].TPlayer.hostile || !Main.pvpBuff[type])
-			{
-				TShock.Log.ConsoleDebug("Bouncer / OnPlayerBuff rejected hostile/pvp from {0}", args.Player.Name);
-				args.Player.SendData(PacketTypes.PlayerAddBuff, "", id);
-				args.Handled = true;
-				return;
-			}
-
-			if (!args.Player.IsInRange(TShock.Players[id].TileX, TShock.Players[id].TileY, 50))
-			{
-				TShock.Log.ConsoleDebug("Bouncer / OnPlayerBuff rejected range check from {0}", args.Player.Name);
-				args.Player.SendData(PacketTypes.PlayerAddBuff, "", id);
+				args.Player.SendData(PacketTypes.PlayerBuff, "", id);
 				args.Handled = true;
 				return;
 			}
@@ -1717,15 +1895,51 @@ namespace TShockAPI
 			if (args.Player.IsBouncerThrottled())
 			{
 				TShock.Log.ConsoleDebug("Bouncer / OnPlayerBuff rejected throttled from {0}", args.Player.Name);
-				args.Player.SendData(PacketTypes.PlayerAddBuff, "", id);
+				args.Player.SendData(PacketTypes.PlayerBuff, "", id);
 				args.Handled = true;
 				return;
 			}
 
-			if (WhitelistBuffMaxTime[type] > 0 && time <= WhitelistBuffMaxTime[type])
+			var targetPlayer = TShock.Players[id];
+			var buffLimit = PlayerAddBuffWhitelist[type];
+
+			if (!args.Player.IsInRange(targetPlayer.TileX, targetPlayer.TileY, 50))
 			{
-				TShock.Log.ConsoleDebug("Bouncer / OnPlayerBuff rejected buff time whitelists from {0}", args.Player.Name);
-				args.Handled = false;
+				TShock.Log.ConsoleDebug("Bouncer / OnPlayerBuff rejected range check from {0}", args.Player.Name);
+				args.Player.SendData(PacketTypes.PlayerBuff, "", id);
+				args.Handled = true;
+				return;
+			}
+
+			if (buffLimit == null)
+			{
+				TShock.Log.ConsoleDebug("Bouncer / OnPlayerBuff rejected non-whitelisted buff {0}", args.Player.Name);
+				args.Player.SendData(PacketTypes.PlayerBuff, "", id);
+				args.Handled = true;
+				return;
+			}
+
+			if (buffLimit.CanOnlyBeAppliedToSender && id != args.Player.Index)
+			{
+				TShock.Log.ConsoleDebug("Bouncer / OnPlayerBuff rejected applied to non-sender from {0}", args.Player.Name);
+				args.Player.SendData(PacketTypes.PlayerBuff, "", id);
+				args.Handled = true;
+				return;
+			}
+
+			if (!buffLimit.CanBeAddedWithoutHostile && !targetPlayer.TPlayer.hostile)
+			{
+				TShock.Log.ConsoleDebug("Bouncer / OnPlayerBuff rejected hostile/pvp from {0}", args.Player.Name);
+				args.Player.SendData(PacketTypes.PlayerBuff, "", id);
+				args.Handled = true;
+				return;
+			}
+
+			if (time <= 0 || time > buffLimit.MaxTicks)
+			{
+				TShock.Log.ConsoleDebug("Bouncer / OnPlayerBuff rejected time too long from {0}", args.Player.Name);
+				args.Player.SendData(PacketTypes.PlayerBuff, "", id);
+				args.Handled = true;
 				return;
 			}
 		}

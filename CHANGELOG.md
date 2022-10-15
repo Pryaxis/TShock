@@ -49,6 +49,12 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Allowed the Axe of Regrowth and the Rubblemaker to pass Bouncer checks. (@drunderscore)
   * The Axe of Regrowth places a `Saplings` where a tree used to be, which previously failed.
   * The Rubblemaker places rubble (which are echo piles), of varying styles, which previously failed.
+* Fixed `HandlePlayerAddBuff` data handler always being marked as `Handled`, and therefore never allowing the `PlayerAddBuff` to be sent to anyone. (@drunderscore)
+* Improved `OnPlayerBuff` logic to properly handle players adding buffs to other players. (@drunderscore)
+  * Check if the target ID is within bounds as the first thing to check.
+  * Check if the buff type being applied is within bounds.
+  * Introduce `AddPlayerBuffWhitelist` (replacing `WhitelistBuffMaxTime`), which allows us to specify the maximum amount of ticks a buff can be applied for, and if it can be applied without the target being in PvP.
+  * When rejecting from `OnPlayerBuff`, instead of sending a `PlayerAddBuff` packet with the rejected buff (essentially a no-op, as the sender implicitly applies the buff to the target, and causes desync as the buff was rejected), send a `PlayerBuff` to re-sync the target's buffs, without the buff we just rejected.
 
 ## TShock 4.5.18
 * Fixed `TSPlayer.GiveItem` not working if the player is in lava. (@PotatoCider)
