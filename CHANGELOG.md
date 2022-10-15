@@ -41,12 +41,11 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * Fixed NetTile errors by implementing new packet read/write data. (@SignatureBeef)
 * Fixed Inferno Fork causing kick from rejected abnormal buff. (@Stealownz)
 * Prevented Server Broadcast from executing without a message. (@PackmanDude, @punchready)
-
-* Update Github CI to not tarball files for Windows only (@PotatoCider)
-* Allow Blood Butcherer and Shimmer buffs to be applied to NPCs by players (@drunderscore)
-* Add `LiquidType.Shimmer` (@drunderscore)
-* Make Bouncer allow Bottomless Honey Bucket usage (@drunderscore)
-* Make Bouncer reject Shimmer placement without bucket or whilst banned (@drunderscore)
+* Update Github CI to not tarball files for Windows only. (@PotatoCider)
+* Allow Blood Butcherer and Shimmer buffs to be applied to NPCs by players. (@drunderscore)
+* Added `LiquidType.Shimmer`. (@drunderscore)
+* Made Bouncer allow Bottomless Honey Bucket usage. (@drunderscore)
+* Made Bouncer reject Shimmer placement without bucket or whilst banned. (@drunderscore)
 
 ## TShock 4.5.18
 * Fixed `TSPlayer.GiveItem` not working if the player is in lava. (@PotatoCider)
