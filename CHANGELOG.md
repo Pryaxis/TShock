@@ -39,6 +39,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
 * In OTAPI 3.1.11-alpha, chest stacking was fixed. (@SignatureBeef)
 * In OTAPI 3.1.12-alpha, "server world deletions" were fixed. (@SignatureBeef)
 * Fixed NetTile errors by implementing new packet read/write data. (@SignatureBeef)
+* Fixed Inferno Fork causing kick from rejected abnormal buff. (@Stealownz)
 
 ## TShock 4.5.18
 * Fixed `TSPlayer.GiveItem` not working if the player is in lava. (@PotatoCider)
