@@ -1,0 +1,1 @@
+This permission gives the [[account]] the permission to run the [[antibuild]] command.

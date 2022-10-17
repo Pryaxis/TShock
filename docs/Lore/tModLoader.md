@@ -1,0 +1,1 @@
+tModLoader is a mod for Terraria servers and clients that can be downloaded on [Steam](https://store.steampowered.com/app/1281930/tModLoader/), and is functionally separate from [[TShock]].

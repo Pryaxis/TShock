@@ -1,0 +1,1 @@
+Gives the [[account]] the ability to use the [[broadcast]] command.

@@ -1,0 +1,1 @@
+A chat prefix text that goes before the player's name in chat, assigned on a [[group]] level. Typically, this is used for identifying the group the player belongs to.

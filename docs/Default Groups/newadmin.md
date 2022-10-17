@@ -1,0 +1,3 @@
+The newadmin group is the lowest of the [[admin]] default groups. It doesn't contain the ability for the users to kick admins, for example.
+
+The intended purpose for this group is to be a lower permission admin group that can be used for users that need basic admin functions, like removing griefers with the kick command, but without giving them too much power, like the ability to bypass anticheat, as [[trustedadmin]] does.

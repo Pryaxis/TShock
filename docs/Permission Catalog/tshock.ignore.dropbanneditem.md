@@ -1,0 +1,1 @@
+This is part of the [[tshock.ignore]] group. When a player has this permission, they will be able to drop banned items on the server. This effectively bypasses the [[item ban]] subsystem.
