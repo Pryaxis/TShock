@@ -1,0 +1,59 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<AssemblyName>TShock.Server</AssemblyName> <!-- TShock was initially decided on by a community poll, however tshock already exists as a folder and will clash -->
+		<RunPostBuildEvent>Always</RunPostBuildEvent>
+		<DebugType>embedded</DebugType>
+		<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract> <!-- needed for sqlite native libs -->
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\TerrariaServerAPI\TerrariaServerAPI\TerrariaServerAPI.csproj" ExcludeFromSingleFile="true" />
+		<ProjectReference Include="..\TShockAPI\TShockAPI.csproj" ExcludeFromSingleFile="true" ReferenceOutputAssembly="false" /> <!-- allow api to rebuilt with this project, so ServerPlugins are refreshed -->
+		<Reference Include="HttpServer" ExcludeFromSingleFile="true">
+			<HintPath>..\prebuilts\HttpServer.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+		<PackageReference Include="MySql.Data" Version="8.0.31" />
+		<PackageReference Include="Microsoft.Data.Sqlite" Version="6.0.10" />
+		<PackageReference Include="ModFramework" Version="1.1.6" GeneratePathProperty="true" /> <!-- only used to extract out to ./bin. -->
+
+		<!-- the launcher doesnt need the direct OTAPI reference, but since PackageReference[ExcludeFromSingleFile] doesnt work, exclude the assets and copy manually -->
+		<PackageReference Include="OTAPI.Upcoming" Version="3.1.14" ExcludeAssets="all" GeneratePathProperty="true" />
+		<None Include="$(PkgOTAPI_Upcoming)\lib\net6.0\OTAPI.dll">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+		</None>
+		<None Include="$(PkgOTAPI_Upcoming)\lib\net6.0\OTAPI.Runtime.dll">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+		</None>
+		<None Include="$(PkgModFramework)\lib\net6.0\ModFramework.dll">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		  <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+		</None>
+	</ItemGroup>
+
+	<Target Name="CreateServerPlugins" AfterTargets="PostBuildEvent;Publish">
+		<MakeDir Directories="$(OutDir)ServerPlugins" />
+		<MakeDir Directories="$(PublishDir)ServerPlugins" />
+		<ItemGroup>
+			<ApiFiles Include="$(ProjectDir)../TShockAPI/bin/$(Configuration)/$(TargetFramework)/TShockAPI*" />
+		</ItemGroup>
+		<Copy SourceFiles="@(ApiFiles)" DestinationFolder="$(OutDir)ServerPlugins" ContinueOnError="true" />
+		<Copy SourceFiles="@(ApiFiles)" DestinationFolder="$(PublishDir)ServerPlugins" ContinueOnError="true" />
+	</Target>
+	<Target Name="MoveBin" AfterTargets="Publish">
+		<ItemGroup>
+			<MoveBinaries Include="$(PublishDir)*" Exclude="$(PublishDir)\TShock.Server*" />
+		</ItemGroup>
+		<Move SourceFiles="@(MoveBinaries)" DestinationFolder="$(PublishDir)bin" ContinueOnError="true" />
+	</Target>
+</Project>

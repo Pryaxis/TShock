@@ -1,6 +1,4 @@
-﻿using OTAPI.Tile;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -20,13 +18,55 @@ namespace TShockAPI.Handlers
 	public class SendTileRectHandler : IPacketHandler<GetDataHandlers.SendTileRectEventArgs>
 	{
 		/// <summary>
-		/// Maps grass-type blocks to flowers that can be grown on them with flower boots
+		/// Maps plant tile types to their valid grass ground tiles when using flower boots
 		/// </summary>
-		public static Dictionary<ushort, List<ushort>> GrassToPlantMap = new Dictionary<ushort, List<ushort>>
+		private static readonly Dictionary<ushort, HashSet<ushort>> FlowerBootPlantToGrassMap = new Dictionary<ushort, HashSet<ushort>>
 		{
-			{ TileID.Grass, new List<ushort>            { TileID.Plants,         TileID.Plants2 } },
-			{ TileID.HallowedGrass, new List<ushort>    { TileID.HallowedPlants, TileID.HallowedPlants2 } },
-			{ TileID.JungleGrass, new List<ushort>      { TileID.JunglePlants,   TileID.JunglePlants2 } }
+			{ TileID.Plants, new HashSet<ushort>()
+			{
+				TileID.Grass, TileID.GolfGrass
+			} },
+			{ TileID.HallowedPlants, new HashSet<ushort>()
+			{
+				TileID.HallowedGrass, TileID.GolfGrassHallowed
+			} },
+			{ TileID.HallowedPlants2, new HashSet<ushort>()
+			{
+				TileID.HallowedGrass, TileID.GolfGrassHallowed
+			} },
+			{ TileID.JunglePlants2, new HashSet<ushort>()
+			{
+				TileID.JungleGrass
+			} },
+		};
+
+		/// <summary>
+		/// Maps plant tile types to a list of valid styles, which are used to determine the FrameX value of the plant tile
+		/// See `Player.DoBootsEffect_PlaceFlowersOnTile`
+		/// </summary>
+		private static readonly Dictionary<ushort, HashSet<ushort>> FlowerBootPlantToStyleMap = new Dictionary<ushort, HashSet<ushort>>()
+		{
+			{ TileID.Plants, new HashSet<ushort>()
+			{
+				// The upper line is from a `NextFromList` call
+				// The lower line is from an additional switch which will add the listed options by adding a random value to a select set of styles
+				6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 24, 27, 30, 33, 36, 39, 42,
+				22, 23, 25, 26, 28, 29, 31, 32, 34, 35, 37, 38, 40, 41, 43, 44,
+			} },
+			{ TileID.HallowedPlants, new HashSet<ushort>()
+			{
+				// 5 is intentionally missing here because it is being skipped by vanilla
+				4, 6,
+			} },
+			{ TileID.HallowedPlants2, new HashSet<ushort>()
+			{
+				// 5 is intentionally missing here because it is being skipped by vanilla
+				2, 3, 4, 6, 7,
+			} },
+			{ TileID.JunglePlants2, new HashSet<ushort>()
+			{
+				9, 10, 11, 12, 13, 14, 15, 16,
+			} },
 		};
 
 		/// <summary>
@@ -40,7 +80,7 @@ namespace TShockAPI.Handlers
 
 		/// <summary>
 		/// Maps TileIDs to Tile Entity IDs.
-		/// Note: <see cref="Terraria.ID.TileEntityID"/> is empty at the time of writing, but entities are dynamically assigned their ID at initialize time
+		/// Note: <see cref="TileEntityID"/> is empty at the time of writing, but entities are dynamically assigned their ID at initialize time
 		/// which is why we can use the _myEntityId field on each entity type
 		/// </summary>
 		public static Dictionary<int, int> TileEntityIdToTileIdMap = new Dictionary<int, int>
@@ -139,24 +179,75 @@ namespace TShockAPI.Handlers
 					// and process them as a tile object
 					if (newTile.Type < TileObjectData._data.Count && TileObjectData._data[newTile.Type] != null)
 					{
+						// Verify that the changes are actually valid conceptually
+						// Many tiles that are never placed or modified using this packet are valid TileObjectData entries, which is the main attack vector for most exploits using this packet
+						if (Main.tile[realX, realY].type == newTile.Type)
+						{
+							switch (newTile.Type)
+							{
+								// Some individual cases might still allow crashing exploits, as the actual framing is not being checked here
+								// Doing so requires hard-coding the individual valid framing values and is a lot of effort
+								case TileID.ProjectilePressurePad:
+								case TileID.WirePipe:
+								case TileID.Traps:
+								case TileID.Candles:
+								case TileID.PeaceCandle:
+								case TileID.WaterCandle:
+								case TileID.PlatinumCandle:
+								case TileID.Firework:
+								case TileID.WaterFountain:
+								case TileID.BloodMoonMonolith:
+								case TileID.VoidMonolith:
+								case TileID.LunarMonolith:
+								case TileID.MusicBoxes:
+								case TileID.ArrowSign:
+								case TileID.PaintedArrowSign:
+								case TileID.Cannon:
+								case TileID.Campfire:
+								case TileID.Plants:
+								case TileID.MinecartTrack:
+								case TileID.ChristmasTree:
+									{
+										// Allowed changes
+									}
+									break;
+								default:
+									{
+										continue;
+									}
+							}
+						}
+						else
+						{
+							// Together with Flower Boots and Land Mine destruction, these are the only cases where a tile type is allowed to be modified
+							switch (newTile.Type)
+							{
+								case TileID.LogicSensor:
+								case TileID.FoodPlatter:
+								case TileID.WeaponsRack2:
+								case TileID.ItemFrame:
+								case TileID.HatRack:
+								case TileID.DisplayDoll:
+								case TileID.TeleportationPylon:
+								case TileID.TargetDummy:
+									{
+										// Allowed placements
+									}
+									break;
+								default:
+									{
+										continue;
+									}
+							}
+						}
+
 						data = TileObjectData._data[newTile.Type];
 						NetTile[,] newTiles;
 						int objWidth = data.Width;
 						int objHeight = data.Height;
-						int offsetY = 0;
-
-						if (newTile.Type == TileID.TrapdoorClosed)
-						{
-							// Trapdoors can modify a 2x3 space. When it closes it will have leftover tiles either on top or bottom.
-							// If we don't update these tiles, the trapdoor gets confused and disappears.
-							// So we capture all 6 possible tiles and offset ourselves 1 tile above the closed trapdoor to capture the entire 2x3 area
-							objWidth = 2;
-							objHeight = 3;
-							offsetY = -1;
-						}
 
 						// Ensure the tile object fits inside the rect before processing it
-						if (!DoesTileObjectFitInTileRect(x, y, objWidth, objHeight, width, length, offsetY, processed))
+						if (!DoesTileObjectFitInTileRect(x, y, objWidth, objHeight, width, length, processed))
 						{
 							continue;
 						}
@@ -167,11 +258,11 @@ namespace TShockAPI.Handlers
 						{
 							for (int j = 0; j < objHeight; j++)
 							{
-								newTiles[i, j] = tiles[x + i, y + j + offsetY];
-								processed[x + i, y + j + offsetY] = true;
+								newTiles[i, j] = tiles[x + i, y + j];
+								processed[x + i, y + j] = true;
 							}
 						}
-						ProcessTileObject(newTile.Type, realX, realY + offsetY, objWidth, objHeight, newTiles, args);
+						ProcessTileObject(newTile.Type, realX, realY, objWidth, objHeight, newTiles, args);
 						continue;
 					}
 
@@ -231,25 +322,41 @@ namespace TShockAPI.Handlers
 		{
 			// Some boots allow growing flowers on grass. This process sends a 1x1 tile rect to grow the flowers
 			// The rect size must be 1 and the player must have an accessory that allows growing flowers in order for this rect to be valid
-			if (rectWidth == 1 && rectLength == 1 && args.Player.Accessories.Any(a => a != null && FlowerBootItems.Contains(a.type)))
+			if (rectWidth == 1 && rectLength == 1 && WorldGen.InWorld(realX, realY + 1) && args.Player.Accessories.Any(a => a != null && FlowerBootItems.Contains(a.type)))
 			{
-				ProcessFlowerBoots(realX, realY, newTile, args);
+				ProcessFlowerBoots(realX, realY, newTile);
 				return;
 			}
 
 			ITile tile = Main.tile[realX, realY];
 
-			if (tile.type == TileID.LandMine && !newTile.Active)
+			// Triggering a single land mine tile
+			if (rectWidth == 1 && rectLength == 1 && tile.type == TileID.LandMine && !newTile.Active)
 			{
 				UpdateServerTileState(tile, newTile, TileDataType.Tile);
 			}
 
-			if (tile.type == TileID.WirePipe)
+			// Hammering a single junction box
+			if (rectWidth == 1 && rectLength == 1 && tile.type == TileID.WirePipe)
 			{
 				UpdateServerTileState(tile, newTile, TileDataType.Tile);
 			}
 
-			ProcessConversionSpreads(Main.tile[realX, realY], newTile);
+			// Mowing a single grass tile: Grass -> GolfGrass OR HallowedGrass -> GolfGrassHallowed
+			if (rectWidth == 1 && rectLength == 1 &&
+				(
+					tile.type == TileID.Grass && newTile.Type == TileID.GolfGrass ||
+					tile.type == TileID.HallowedGrass && newTile.Type == TileID.GolfGrassHallowed
+				))
+			{
+				UpdateServerTileState(tile, newTile, TileDataType.Tile);
+			}
+
+			// Conversion: only sends a 1x1 rect
+			if (rectWidth == 1 && rectLength == 1)
+			{
+				ProcessConversionSpreads(tile, newTile);
+			}
 
 			// All other single tile updates should not be processed.
 		}
@@ -260,24 +367,22 @@ namespace TShockAPI.Handlers
 		/// <param name="realX">The tile x position of the tile rect packet - this is where the flowers are intending to grow</param>
 		/// <param name="realY">The tile y position of the tile rect packet - this is where the flowers are intending to grow</param>
 		/// <param name="newTile">The NetTile containing information about the flowers that are being grown</param>
-		/// <param name="args">SendTileRectEventArgs containing event information</param>
-		internal void ProcessFlowerBoots(int realX, int realY, NetTile newTile, GetDataHandlers.SendTileRectEventArgs args)
+		internal void ProcessFlowerBoots(int realX, int realY, NetTile newTile)
 		{
-			// We need to get the tile below the tile rect to determine what grass types are allowed
-			if (!WorldGen.InWorld(realX, realY + 1))
+			ITile tile = Main.tile[realX, realY];
+			// Ensure that:
+			//  - the placed plant is valid for the grass below
+			//  - the target tile is empty
+			//  - and the placed plant has valid framing (style * 18 = FrameX)
+			if (
+				FlowerBootPlantToGrassMap.TryGetValue(newTile.Type, out HashSet<ushort> grassTiles) &&
+				!tile.active() &&
+				grassTiles.Contains(Main.tile[realX, realY + 1].type) &&
+				FlowerBootPlantToStyleMap[newTile.Type].Contains((ushort)(newTile.FrameX / 18))
+			)
 			{
-				// If the tile below the tile rect isn't valid, we return here and don't update the server tile state
-				return;
+				UpdateServerTileState(tile, newTile, TileDataType.Tile);
 			}
-
-			ITile tile = Main.tile[realX, realY + 1];
-			if (!GrassToPlantMap.TryGetValue(tile.type, out List<ushort> plantTiles) && !plantTiles.Contains(newTile.Type))
-			{
-				// If the tile below the tile rect isn't a valid plant tile (eg grass) then we don't update the server tile state
-				return;
-			}
-
-			UpdateServerTileState(Main.tile[realX, realY], newTile, TileDataType.Tile);
 		}
 
 		/// <summary>
@@ -358,11 +463,15 @@ namespace TShockAPI.Handlers
 			if ((updateType & TileDataType.TilePaint) != 0)
 			{
 				tile.color(newTile.TileColor);
+				tile.fullbrightBlock(newTile.FullbrightBlock);
+				tile.invisibleBlock(newTile.InvisibleBlock);
 			}
 
 			if ((updateType & TileDataType.WallPaint) != 0)
 			{
 				tile.wallColor(newTile.WallColor);
+				tile.fullbrightWall(newTile.FullbrightWall);
+				tile.invisibleWall(newTile.InvisibleWall);
 			}
 
 			if ((updateType & TileDataType.Liquid) != 0)
@@ -446,15 +555,9 @@ namespace TShockAPI.Handlers
 				return true;
 			}
 
-			var rectSize = args.Width * args.Length;
-			if (rectSize > TShock.Config.Settings.TileRectangleSizeThreshold)
+			if (args.Width > 4 || args.Length > 4) // as of 1.4.3.6 this is the biggest size the client will send in any case
 			{
 				TShock.Log.ConsoleDebug("Bouncer / SendTileRect rejected from non-vanilla tilemod from {0}", args.Player.Name);
-				if (TShock.Config.Settings.KickOnTileRectangleSizeThresholdBroken)
-				{
-					args.Player.Kick("Unexpected tile threshold reached");
-				}
-
 				return true;
 			}
 
@@ -484,24 +587,16 @@ namespace TShockAPI.Handlers
 		/// <param name="height"></param>
 		/// <param name="rectWidth"></param>
 		/// <param name="rectLength"></param>
-		/// <param name="offsetY"></param>
 		/// <param name="processed"></param>
 		/// <returns></returns>
-		static bool DoesTileObjectFitInTileRect(int x, int y, int width, int height, short rectWidth, short rectLength, int offsetY, bool[,] processed)
+		static bool DoesTileObjectFitInTileRect(int x, int y, int width, int height, short rectWidth, short rectLength, bool[,] processed)
 		{
-			// If the starting y position of this tile object is at (x, 0) and the y offset is negative, we'll be accessing tiles outside the rect
-			if (y + offsetY < 0)
-			{
-				TShock.Log.ConsoleDebug("Bouncer / SendTileRectHandler - rejected tile object because object dimensions fall outside the tile rect (negative y value)");
-				return false;
-			}
-
-			if (x + width > rectWidth || y + height + offsetY > rectLength)
+			if (x + width > rectWidth || y + height > rectLength)
 			{
 				// This is ugly, but we want to mark all these tiles as processed so that we're not hitting this check multiple times for one dodgy tile object
 				for (int i = x; i < rectWidth; i++)
 				{
-					for (int j = Math.Max(0, y + offsetY); j < rectLength; j++) // This is also ugly. Using Math.Max to make sure y + offsetY >= 0
+					for (int j = y; j < rectLength; j++)
 					{
 						processed[i, j] = true;
 					}

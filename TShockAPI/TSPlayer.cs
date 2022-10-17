@@ -25,7 +25,6 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Timers;
-using OTAPI.Tile;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -651,6 +650,12 @@ namespace TShockAPI
 		/// <returns>True if the player can build at the given point from build, spawn, and region protection.</returns>
 		public bool HasBuildPermission(int x, int y, bool shouldWarnPlayer = true)
 		{
+			PermissionHookResult hookResult = PlayerHooks.OnPlayerHasBuildPermission(this, x, y);
+			if (hookResult != PermissionHookResult.Unhandled)
+			{
+				return hookResult == PermissionHookResult.Granted;
+			}
+
 			BuildPermissionFailPoint failure = BuildPermissionFailPoint.GeneralBuild;
 			// The goal is to short circuit on easy stuff as much as possible.
 			// Don't compute permissions unless needed, and don't compute taxing stuff unless needed.
@@ -895,6 +900,18 @@ namespace TShockAPI
 							: "127.0.0.1";
 				else
 					return CacheIP;
+			}
+		}
+
+		/// <summary>
+		/// Gets the player's inventory (first 5 rows)
+		/// </summary>
+		public IEnumerable<Item> Inventory
+		{
+			get
+			{
+				for (int i = 0; i < 50; i++)
+					yield return TPlayer.inventory[i];
 			}
 		}
 
@@ -1215,7 +1232,7 @@ namespace TShockAPI
 				y = 992;
 			}
 
-			SendTileSquare((int)(x / 16), (int)(y / 16), 15);
+			SendTileSquareCentered((int)(x / 16), (int)(y / 16), 15);
 			TPlayer.Teleport(new Vector2(x, y), style);
 			NetMessage.SendData((int)PacketTypes.Teleport, -1, -1, NetworkText.Empty, 0, TPlayer.whoAmI, x, y, style);
 			return true;
@@ -1297,9 +1314,25 @@ namespace TShockAPI
 		/// <param name="y">The y coordinate to send.</param>
 		/// <param name="size">The size square set of tiles to send.</param>
 		/// <returns>true if the tile square was sent successfully, else false</returns>
+		[Obsolete("This method may not send tiles the way you would expect it to. The (x,y) coordinates are the top left corner of the tile square, switch to " + nameof(SendTileSquareCentered) + " if you wish for the coordindates to be the center of the square.")]
 		public virtual bool SendTileSquare(int x, int y, int size = 10)
 		{
 			return SendTileRect((short)x, (short)y, (byte)size, (byte)size);
+		}
+
+		/// <summary>
+		/// Sends a tile square at a center location with a given size.
+		/// Typically used to revert changes by Bouncer through sending the
+		/// "old" version of modified data back to a client.
+		/// Prevents desync issues.
+		/// </summary>
+		/// <param name="x">The x coordinates of the center of the square.</param>
+		/// <param name="y">The y coordinates of the center of the square.</param>
+		/// <param name="size">The size square set of tiles to send.</param>
+		/// <returns>true if the tile square was sent successfully, else false</returns>
+		public virtual bool SendTileSquareCentered(int x, int y, byte size = 10)
+		{
+			return SendTileRect((short)(x - (size / 2)), (short)(y - (size / 2)), size, size);
 		}
 
 		/// <summary>
@@ -1336,7 +1369,7 @@ namespace TShockAPI
 		public bool GiveItemCheck(int type, string name, int stack, int prefix = 0)
 		{
 			if ((TShock.ItemBans.DataModel.ItemIsBanned(name) && TShock.Config.Settings.PreventBannedItemSpawn) &&
-			    (TShock.ItemBans.DataModel.ItemIsBanned(name, this) || !TShock.Config.Settings.AllowAllowedGroupsToSpawnBannedItems))
+				(TShock.ItemBans.DataModel.ItemIsBanned(name, this) || !TShock.Config.Settings.AllowAllowedGroupsToSpawnBannedItems))
 				return false;
 
 			GiveItem(type, stack, prefix);
@@ -1351,8 +1384,10 @@ namespace TShockAPI
 		/// <param name="prefix">The item prefix.</param>
 		public virtual void GiveItem(int type, int stack, int prefix = 0)
 		{
-			int itemIndex = Item.NewItem((int)X, (int)Y, TPlayer.width, TPlayer.height, type, stack, true, prefix, true);
-			SendData(PacketTypes.ItemDrop, "", itemIndex);
+			int itemIndex = Item.NewItem(new EntitySource_DebugCommand(), (int)X, (int)Y, TPlayer.width, TPlayer.height, type, stack, true, prefix, true);
+			Main.item[itemIndex].playerIndexTheItemIsReservedFor = this.Index;
+			SendData(PacketTypes.ItemDrop, "", itemIndex, 1);
+			SendData(PacketTypes.ItemOwner, null, itemIndex);
 		}
 
 		/// <summary>
@@ -1666,30 +1701,26 @@ namespace TShockAPI
 		/// Bans and disconnects the player from the server.
 		/// </summary>
 		/// <param name="reason">The reason to be displayed to the server.</param>
-		/// <param name="force">If the ban should bypass immunity to ban checks.</param>
 		/// <param name="adminUserName">The player who initiated the ban.</param>
-		public bool Ban(string reason, bool force = false, string adminUserName = null)
+		public bool Ban(string reason, string adminUserName = null)
 		{
 			if (!ConnectionAlive)
 				return true;
-			if (force)
-			{
-				TShock.Bans.InsertBan($"{Identifier.IP}{IP}", reason, adminUserName, DateTime.UtcNow, DateTime.MaxValue);
-				TShock.Bans.InsertBan($"{Identifier.UUID}{UUID}", reason, adminUserName, DateTime.UtcNow, DateTime.MaxValue);
-				if (Account != null)
-				{
-					TShock.Bans.InsertBan($"{Identifier.Account}{Account.Name}", reason, adminUserName, DateTime.UtcNow, DateTime.MaxValue);
-				}
 
-				Disconnect(string.Format("Banned: {0}", reason));
-				string verb = force ? "force " : "";
-				if (string.IsNullOrWhiteSpace(adminUserName))
-					TSPlayer.All.SendInfoMessage("{0} was {1}banned for '{2}'.", Name, verb, reason);
-				else
-					TSPlayer.All.SendInfoMessage("{0} {1}banned {2} for '{3}'.", adminUserName, verb, Name, reason);
-				return true;
+			TShock.Bans.InsertBan($"{Identifier.IP}{IP}", reason, adminUserName, DateTime.UtcNow, DateTime.MaxValue);
+			TShock.Bans.InsertBan($"{Identifier.UUID}{UUID}", reason, adminUserName, DateTime.UtcNow, DateTime.MaxValue);
+			if (Account != null)
+			{
+				TShock.Bans.InsertBan($"{Identifier.Account}{Account.Name}", reason, adminUserName, DateTime.UtcNow, DateTime.MaxValue);
 			}
-			return false;
+
+			Disconnect(string.Format("Banned: {0}", reason));
+
+			if (string.IsNullOrWhiteSpace(adminUserName))
+				TSPlayer.All.SendInfoMessage("{0} was banned for '{1}'.", Name, reason);
+			else
+				TSPlayer.All.SendInfoMessage("{0} banned {1} for '{2}'.", adminUserName, Name, reason);
+			return true;
 		}
 
 		/// <summary>

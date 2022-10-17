@@ -33,7 +33,6 @@ using TerrariaApi.Server;
 using TShockAPI.Hooks;
 using Terraria.GameContent.Events;
 using Microsoft.Xna.Framework;
-using OTAPI.Tile;
 using TShockAPI.Localization;
 using System.Text.RegularExpressions;
 using Terraria.DataStructures;
@@ -911,6 +910,12 @@ namespace TShockAPI
 				return;
 			}
 
+			if (args.Player.TPlayer.talkNPC != -1)
+			{
+				args.Player.SendErrorMessage("Please close NPC windows before logging out.");
+				return;
+			}
+
 			args.Player.Logout();
 			args.Player.SendSuccessMessage("You have been successfully logged out of your account.");
 			if (Main.ServerSideCharacter)
@@ -1506,7 +1511,7 @@ namespace TShockAPI
 					}
 				}
 
-				if (TShock.Utils.TryParseTime(duration, out int seconds))
+				if (TShock.Utils.TryParseTime(duration, out ulong seconds))
 				{
 					expiration = DateTime.UtcNow.AddSeconds(seconds);
 				}
@@ -1874,7 +1879,7 @@ namespace TShockAPI
 
 			if (args.Parameters.Count > 2)
 			{
-				int time;
+				ulong time;
 				if (!TShock.Utils.TryParseTime(args.Parameters[2], out time))
 				{
 					args.Player.SendErrorMessage("Invalid time string! Proper format: _d_h_m_s, with at least one time specifier.");
@@ -1882,7 +1887,7 @@ namespace TShockAPI
 					return;
 				}
 
-				ply[0].tempGroupTimer = new System.Timers.Timer(time * 1000);
+				ply[0].tempGroupTimer = new System.Timers.Timer(time * 1000d);
 				ply[0].tempGroupTimer.Elapsed += ply[0].TempGroupTimerElapsed;
 				ply[0].tempGroupTimer.Start();
 			}
@@ -1949,12 +1954,15 @@ namespace TShockAPI
 
 		private static void Broadcast(CommandArgs args)
 		{
-			string message = string.Join(" ", args.Parameters);
+			if (args.Parameters.Count > 0)
+			{
+				string message = string.Join(" ", args.Parameters);
 
-			TShock.Utils.Broadcast(
-				"(Server Broadcast) " + message,
-				Convert.ToByte(TShock.Config.Settings.BroadcastRGB[0]), Convert.ToByte(TShock.Config.Settings.BroadcastRGB[1]),
-				Convert.ToByte(TShock.Config.Settings.BroadcastRGB[2]));
+				TShock.Utils.Broadcast(
+					"(Server Broadcast) " + message,
+					Convert.ToByte(TShock.Config.Settings.BroadcastRGB[0]), Convert.ToByte(TShock.Config.Settings.BroadcastRGB[1]),
+					Convert.ToByte(TShock.Config.Settings.BroadcastRGB[2]));
+			}
 		}
 
 		private static void Off(CommandArgs args)
@@ -2060,7 +2068,8 @@ namespace TShockAPI
 			"eclipse",
 			"invasion",
 			"sandstorm",
-			"rain"
+			"rain",
+			"lanternsnight"
 		};
 		static readonly List<string> _validInvasions = new List<string>()
 		{
@@ -2157,6 +2166,16 @@ namespace TShockAPI
 						return;
 					}
 					Rain(args);
+					return;
+
+				case "lanternsnight":
+				case "lanterns":
+					if (!args.Player.HasPermission(Permissions.managelanternsnightevent))
+					{
+						FailedPermissionCheck();
+						return;
+					}
+					LanternsNight(args);
 					return;
 
 				default:
@@ -2371,6 +2390,20 @@ namespace TShockAPI
 				TSPlayer.All.SendData(PacketTypes.WorldInfo);
 				TSPlayer.All.SendInfoMessage("{0} caused it to rain.", args.Player.Name);
 				return;
+			}
+		}
+
+		private static void LanternsNight(CommandArgs args)
+		{
+			LanternNight.ToggleManualLanterns();
+			string msg = $" st{(LanternNight.LanternsUp ? "art" : "opp")}ed a lantern night.";
+			if (args.Silent)
+			{
+				args.Player.SendInfoMessage("You" + msg);
+			}
+			else
+			{
+				TSPlayer.All.SendInfoMessage(args.Player.Name + msg);
 			}
 		}
 
@@ -4874,7 +4907,7 @@ namespace TShockAPI
 
 									try
 									{
-										args.Player.SendTileSquare(boundaryPoint.X, boundaryPoint.Y, 1);
+										args.Player.SendTileSquareCentered(boundaryPoint.X, boundaryPoint.Y, 1);
 									}
 									finally
 									{
@@ -4888,7 +4921,7 @@ namespace TShockAPI
 							{
 								foreach (Point boundaryPoint in Utils.Instance.EnumerateRegionBoundaries(regionArea))
 									if ((boundaryPoint.X + boundaryPoint.Y & 1) == 0)
-										args.Player.SendTileSquare(boundaryPoint.X, boundaryPoint.Y, 1);
+										args.Player.SendTileSquareCentered(boundaryPoint.X, boundaryPoint.Y, 1);
 
 								Debug.Assert(boundaryHideTimer != null);
 								boundaryHideTimer.Dispose();
@@ -5645,7 +5678,7 @@ namespace TShockAPI
 
 		private static void SyncLocalArea(CommandArgs args)
 		{
-			args.Player.SendTileSquare((int) args.Player.TileX, (int) args.Player.TileY, 32);
+			args.Player.SendTileSquareCentered(args.Player.TileX, args.Player.TileY, 32);
 			args.Player.SendWarningMessage("Sync'd!");
 			return;
 		}
@@ -6301,7 +6334,7 @@ namespace TShockAPI
 
 		public static void Grow(CommandArgs args)
 		{
-			bool growevilAmb = args.Player.HasPermission(Permissions.growevil);
+			bool canGrowEvil = args.Player.HasPermission(Permissions.growevil);
 			string subcmd = args.Parameters.Count == 0 ? "help" : args.Parameters[0].ToLower();
 
 			var name = "Fail";
@@ -6343,284 +6376,163 @@ namespace TShockAPI
 					}
 					break;
 
-				case "basic":
-					for (int i = x - 2; i < x + 3; i++)
+					bool rejectCannotGrowEvil()
 					{
-						Main.tile[i, y].active(true);
-						Main.tile[i, y].type = 2;
-						Main.tile[i, y].wall = 0;
+						if(!canGrowEvil)
+						{
+							args.Player.SendErrorMessage("You do not have permission to grow this tree type");
+							return false;
+						}
+
+						return true;
 					}
-					Main.tile[x, y - 1].wall = 0;
-					WorldGen.GrowTree(x, y);
-					name = "Basic Tree";
+
+					bool prepareAreaForGrow(ushort groundType = TileID.Grass, bool evil = false)
+					{
+						if(evil && !rejectCannotGrowEvil())
+							return false;
+
+						for (var i = x - 2; i < x + 3; i++)
+						{
+							Main.tile[i, y].active(true);
+							Main.tile[i, y].type = groundType;
+							Main.tile[i, y].wall = WallID.None;
+						}
+						Main.tile[x, y - 1].wall = WallID.None;
+
+						return true;
+					}
+
+					bool growTree(ushort groundType, string fancyName, bool evil = false)
+					{
+						if(!prepareAreaForGrow(groundType, evil))
+							return false;
+						WorldGen.GrowTree(x, y);
+						name = fancyName;
+
+						return true;
+					}
+
+					bool growTreeByType(ushort groundType, string fancyName, ushort typeToPrepare = 2, bool evil = false)
+					{
+						if(!prepareAreaForGrow(typeToPrepare, evil))
+							return false;
+						WorldGen.TryGrowingTreeByType(groundType, x, y);
+						name = fancyName;
+
+						return true;
+					}
+
+					bool growPalmTree(ushort sandType, ushort supportingType, string properName, bool evil = false)
+					{
+						if(evil && !rejectCannotGrowEvil())
+							return false;
+
+						for (int i = x - 2; i < x + 3; i++)
+						{
+							Main.tile[i, y].active(true);
+							Main.tile[i, y].type = sandType;
+							Main.tile[i, y].wall = WallID.None;
+						}
+						for (int i = x - 2; i < x + 3; i++)
+						{
+							Main.tile[i, y + 1].active(true);
+							Main.tile[i, y + 1].type = supportingType;
+							Main.tile[i, y + 1].wall = WallID.None;
+						}
+
+						Main.tile[x, y - 1].wall = WallID.None;
+						WorldGen.GrowPalmTree(x, y);
+
+						name = properName;
+
+						return true;
+					}
+
+				case "basic":
+					growTree(TileID.Grass, "Basic Tree");
 					break;
 
 				case "boreal":
-					for (int i = x - 2; i < x + 3; i++)
-					{
-						Main.tile[i, y].active(true);
-						Main.tile[i, y].type = 147;
-						Main.tile[i, y].wall = 0;
-					}
-					Main.tile[x, y - 1].wall = 0;
-					WorldGen.GrowTree(x, y);
-					name = "Boreal Tree";
+					growTree(TileID.SnowBlock, "Boreal Tree");
 					break;
 
 				case "mahogany":
-					for (int i = x - 2; i < x + 3; i++)
-					{
-						Main.tile[i, y].active(true);
-						Main.tile[i, y].type = 60;
-						Main.tile[i, y].wall = 0;
-					}
-					Main.tile[x, y - 1].wall = 0;
-					WorldGen.GrowTree(x, y);
-					name = "Rich Mahogany";
+					growTree(TileID.JungleGrass, "Rich Mahogany");
 					break;
 
 				case "sakura":
-					for (int i = x - 2; i < x + 3; i++)
-					{
-						Main.tile[i, y].active(true);
-						Main.tile[i, y].type = 2;
-						Main.tile[i, y].wall = 0;
-					}
-					Main.tile[x, y - 1].wall = 0;
-					WorldGen.TryGrowingTreeByType(596, x, y);
-					name = "Sakura Tree";
+					growTreeByType(TileID.VanityTreeSakura, "Sakura Tree");
 					break;
 
 				case "willow":
-					for (int i = x - 2; i < x + 3; i++)
-					{
-						Main.tile[i, y].active(true);
-						Main.tile[i, y].type = 2;
-						Main.tile[i, y].wall = 0;
-					}
-					Main.tile[x, y - 1].wall = 0;
-					WorldGen.TryGrowingTreeByType(616, x, y);
-					name = "Willow Tree";
+					growTreeByType(TileID.VanityTreeYellowWillow, "Willow Tree");
 					break;
 
 				case "shadewood":
-					if (growevilAmb)
-					{
-						for (int i = x - 2; i < x + 3; i++)
-						{
-							Main.tile[i, y].active(true);
-							Main.tile[i, y].type = 199;
-							Main.tile[i, y].wall = 0;
-						}
-						Main.tile[x, y - 1].wall = 0;
-						WorldGen.GrowTree(x, y);
-						name = "Shadewood tree";
-					}
-					else args.Player.SendErrorMessage("You do not have permission to grow this tree type");
+					if(!growTree(TileID.CrimsonGrass, "Shadewood Tree", true))
+						return;
 					break;
 
 				case "ebonwood":
-					if (growevilAmb)
-					{
-						for (int i = x - 2; i < x + 3; i++)
-						{
-							Main.tile[i, y].active(true);
-							Main.tile[i, y].type = 23;
-							Main.tile[i, y].wall = 0;
-						}
-						Main.tile[x, y - 1].wall = 0;
-						WorldGen.GrowTree(x, y);
-						name = "Ebonwood Tree";
-					}
-					else args.Player.SendErrorMessage("You do not have permission to grow this tree type");
+					if(!growTree(TileID.CorruptGrass, "Ebonwood Tree", true))
+						return;
 					break;
 
 				case "pearlwood":
-					if (growevilAmb)
-					{
-						for (int i = x - 2; i < x + 3; i++)
-						{
-							Main.tile[i, y].active(true);
-							Main.tile[i, y].type = 109;
-							Main.tile[i, y].wall = 0;
-						}
-						Main.tile[x, y - 1].wall = 0;
-						WorldGen.GrowTree(x, y);
-						name = "Pearlwood Tree";
-					}
-					else args.Player.SendErrorMessage("You do not have permission to grow this tree type");
+					if(!growTree(TileID.HallowedGrass, "Pearlwood Tree", true))
+						return;
 					break;
 
 				case "palm":
-					for (int i = x - 2; i < x + 3; i++)
-					{
-						Main.tile[i, y].active(true);
-						Main.tile[i, y].type = 53;
-						Main.tile[i, y].wall = 0;
-					}
-					for (int i = x - 2; i < x + 3; i++)
-					{
-						Main.tile[i, y + 1].active(true);
-						Main.tile[i, y + 1].type = 397;
-						Main.tile[i, y + 1].wall = 0;
-					}
-					Main.tile[x, y - 1].wall = 0;
-					WorldGen.GrowPalmTree(x, y);
-					name = "Desert Palm";
+					growPalmTree(TileID.Sand, TileID.HardenedSand, "Desert Palm");
 					break;
 
 				case "hallowpalm":
-					if (growevilAmb)
-					{
-						for (int i = x - 2; i < x + 3; i++)
-						{
-							Main.tile[i, y].active(true);
-							Main.tile[i, y].type = 116;
-							Main.tile[i, y].wall = 0;
-						}
-						for (int i = x - 2; i < x + 3; i++)
-						{
-							Main.tile[i, y + 1].active(true);
-							Main.tile[i, y + 1].type = 402;
-							Main.tile[i, y + 1].wall = 0;
-						}
-						Main.tile[x, y - 1].wall = 0;
-						WorldGen.GrowPalmTree(x, y);
-						name = "Hallow Palm";
-					}
-					else args.Player.SendErrorMessage("You do not have permission to grow this tree type");
+					if(!growPalmTree(TileID.Pearlsand, TileID.HallowHardenedSand, "Hallow Palm", true))
+						return;
 					break;
 
 				case "crimsonpalm":
-					if (growevilAmb)
-					{
-						for (int i = x - 2; i < x + 3; i++)
-						{
-							Main.tile[i, y].active(true);
-							Main.tile[i, y].type = 234;
-							Main.tile[i, y].wall = 0;
-						}
-						for (int i = x - 2; i < x + 3; i++)
-						{
-							Main.tile[i, y + 1].active(true);
-							Main.tile[i, y + 1].type = 399;
-							Main.tile[i, y + 1].wall = 0;
-						}
-						Main.tile[x, y - 1].wall = 0;
-						WorldGen.GrowPalmTree(x, y);
-						name = "Crimson Palm";
-					}
-					else args.Player.SendErrorMessage("You do not have permission to grow this tree type");
+					if(!growPalmTree(TileID.Crimsand, TileID.CrimsonHardenedSand, "Crimson Palm", true))
+						return;
 					break;
 
 				case "corruptpalm":
-					if (growevilAmb)
-					{
-						for (int i = x - 2; i < x + 3; i++)
-						{
-							Main.tile[i, y].active(true);
-							Main.tile[i, y].type = 112;
-							Main.tile[i, y].wall = 0;
-						}
-						for (int i = x - 2; i < x + 3; i++)
-						{
-							Main.tile[i, y + 1].active(true);
-							Main.tile[i, y + 1].type = 398;
-							Main.tile[i, y + 1].wall = 0;
-						}
-						Main.tile[x, y - 1].wall = 0;
-						WorldGen.GrowPalmTree(x, y);
-						name = "Corruption Palm";
-					}
-					else args.Player.SendErrorMessage("You do not have permission to grow this tree type");
+					if(!growPalmTree(TileID.Ebonsand, TileID.CorruptHardenedSand, "Corruption Palm", true))
+						return;
 					break;
 
 				case "topaz":
-					for (int i = x - 2; i < x + 3; i++)
-					{
-						Main.tile[i, y].active(true);
-						Main.tile[i, y].type = 1;
-						Main.tile[i, y].wall = 0;
-					}
-					Main.tile[x, y - 1].wall = 0;
-					WorldGen.TryGrowingTreeByType(583, x, y);
-					name = "Topaz Gemtree";
+					growTreeByType(TileID.TreeTopaz, "Topaz Gemtree", 1);
 					break;
 
 				case "amethyst":
-					for (int i = x - 2; i < x + 3; i++)
-					{
-						Main.tile[i, y].active(true);
-						Main.tile[i, y].type = 1;
-						Main.tile[i, y].wall = 0;
-					}
-					Main.tile[x, y - 1].wall = 0;
-					WorldGen.TryGrowingTreeByType(584, x, y);
-					name = "Amethyst Gemtree";
+					growTreeByType(TileID.TreeAmethyst, "Amethyst Gemtree", 1);
 					break;
 
 				case "sapphire":
-					for (int i = x - 2; i < x + 3; i++)
-					{
-						Main.tile[i, y].active(true);
-						Main.tile[i, y].type = 1;
-						Main.tile[i, y].wall = 0;
-					}
-					Main.tile[x, y - 1].wall = 0;
-					WorldGen.TryGrowingTreeByType(585, x, y);
-					name = "Sapphire Gemtree";
+					growTreeByType(TileID.TreeSapphire, "Sapphire Gemtree", 1);
 					break;
 
 				case "emerald":
-					for (int i = x - 2; i < x + 3; i++)
-					{
-						Main.tile[i, y].active(true);
-						Main.tile[i, y].type = 1;
-						Main.tile[i, y].wall = 0;
-					}
-					Main.tile[x, y - 1].wall = 0;
-					WorldGen.TryGrowingTreeByType(586, x, y);
-					name = "Emerald Gemtree";
+					growTreeByType(TileID.TreeEmerald, "Emerald Gemtree", 1);
 					break;
 
 				case "ruby":
-					for (int i = x - 2; i < x + 3; i++)
-					{
-						Main.tile[i, y].active(true);
-						Main.tile[i, y].type = 1;
-						Main.tile[i, y].wall = 0;
-					}
-					Main.tile[x, y - 1].wall = 0;
-					WorldGen.TryGrowingTreeByType(587, x, y);
-					name = "Ruby Gemtree";
+					growTreeByType(TileID.TreeRuby, "Ruby Gemtree", 1);
 					break;
 
 				case "diamond":
-					for (int i = x - 2; i < x + 3; i++)
-					{
-						Main.tile[i, y].active(true);
-						Main.tile[i, y].type = 1;
-						Main.tile[i, y].wall = 0;
-					}
-					Main.tile[x, y - 1].wall = 0;
-					WorldGen.TryGrowingTreeByType(588, x, y);
-					name = "Diamond Gemtree";
+					growTreeByType(TileID.TreeDiamond, "Diamond Gemtree", 1);
 					break;
 
 				case "amber":
-					for (int i = x - 2; i < x + 3; i++)
-					{
-						Main.tile[i, y].active(true);
-						Main.tile[i, y].type = 1;
-						Main.tile[i, y].wall = 0;
-					}
-					Main.tile[x, y - 1].wall = 0;
-					WorldGen.TryGrowingTreeByType(589, x, y);
-					name = "Amber Gemtree";
+					growTreeByType(TileID.TreeAmber, "Amber Gemtree", 1);
 					break;
 
 				case "cactus":
-					Main.tile[x, y].type = 53;
+					Main.tile[x, y].type = TileID.Sand;
 					WorldGen.GrowCactus(x, y);
 					name = "Cactus";
 					break;
@@ -6628,19 +6540,13 @@ namespace TShockAPI
 				case "herb":
 					Main.tile[x, y].active(true);
 					Main.tile[x, y].frameX = 36;
-					Main.tile[x, y].type = 83;
+					Main.tile[x, y].type = TileID.MatureHerbs;
 					WorldGen.GrowAlch(x, y);
 					name = "Herb";
 					break;
 
 				case "mushroom":
-					for (int i = x - 2; i < x + 3; i++)
-					{
-						Main.tile[i, y].active(true);
-						Main.tile[i, y].type = 70;
-						Main.tile[i, y].wall = 0;
-					}
-					Main.tile[x, y - 1].wall = 0;
+					prepareAreaForGrow(TileID.MushroomGrass);
 					WorldGen.GrowShroom(x, y);
 					name = "Glowing Mushroom Tree";
 					break;
@@ -6651,7 +6557,7 @@ namespace TShockAPI
 			}
 			if (args.Parameters.Count == 1)
 			{
-				args.Player.SendTileSquare(x - 2, y - 20, 25);
+				args.Player.SendTileSquareCentered(x - 2, y - 20, 25);
 				args.Player.SendSuccessMessage("Tried to grow a " + name + ".");
 			}
 		}

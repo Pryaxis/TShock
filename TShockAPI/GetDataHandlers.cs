@@ -34,7 +34,6 @@ using Terraria.DataStructures;
 using Terraria.GameContent.Tile_Entities;
 using Terraria.Localization;
 using Microsoft.Xna.Framework;
-using OTAPI.Tile;
 using TShockAPI.Localization;
 using TShockAPI.Models;
 using TShockAPI.Models.PlayerUpdate;
@@ -80,20 +79,8 @@ namespace TShockAPI
 	{
 		private static Dictionary<PacketTypes, GetDataHandlerDelegate> GetDataHandlerDelegates;
 
-		public static int[] WhitelistBuffMaxTime;
-
 		public static void InitGetDataHandler()
 		{
-			#region Blacklists
-
-			WhitelistBuffMaxTime = new int[Main.maxBuffTypes];
-			WhitelistBuffMaxTime[20] = 600;
-			WhitelistBuffMaxTime[0x18] = 1200;
-			WhitelistBuffMaxTime[0x1f] = 120;
-			WhitelistBuffMaxTime[0x27] = 420;
-
-			#endregion Blacklists
-
 			GetDataHandlerDelegates = new Dictionary<PacketTypes, GetDataHandlerDelegate>
 				{
 					{ PacketTypes.PlayerInfo, HandlePlayerInfo },
@@ -118,9 +105,11 @@ namespace TShockAPI
 					{ PacketTypes.PlaceChest, HandlePlaceChest },
 					{ PacketTypes.Zones, HandlePlayerZone },
 					{ PacketTypes.PasswordSend, HandlePassword },
+					{ PacketTypes.NpcTalk, HandleNpcTalk },
 					{ PacketTypes.PlayerAnimation, HandlePlayerAnimation },
 					{ PacketTypes.PlayerMana, HandlePlayerMana },
 					{ PacketTypes.PlayerTeam, HandlePlayerTeam },
+					{ PacketTypes.SignRead, HandleSignRead },
 					{ PacketTypes.SignNew, HandleSign },
 					{ PacketTypes.LiquidSet, HandleLiquidSet },
 					{ PacketTypes.PlayerBuff, HandlePlayerBuffList },
@@ -134,6 +123,7 @@ namespace TShockAPI
 					{ PacketTypes.Teleport, HandleTeleport },
 					{ PacketTypes.PlayerHealOther, HandleHealOther },
 					{ PacketTypes.CatchNPC, HandleCatchNpc },
+					{ PacketTypes.ReleaseNPC, HandleReleaseNpc },
 					{ PacketTypes.TeleportationPotion, HandleTeleportationPotion },
 					{ PacketTypes.CompleteAnglerQuest, HandleCompleteAnglerQuest },
 					{ PacketTypes.NumberOfAnglerQuestsCompleted, HandleNumberOfAnglerQuestsCompleted },
@@ -160,7 +150,8 @@ namespace TShockAPI
 					{ PacketTypes.LandGolfBallInCup, HandleLandGolfBallInCup },
 					{ PacketTypes.FishOutNPC, HandleFishOutNPC },
 					{ PacketTypes.FoodPlatterTryPlacing, HandleFoodPlatterTryPlacing },
-					{ PacketTypes.SyncCavernMonsterType, HandleSyncCavernMonsterType }
+					{ PacketTypes.SyncCavernMonsterType, HandleSyncCavernMonsterType },
+					{ PacketTypes.SyncLoadout, HandleSyncLoadout }
 				};
 		}
 
@@ -1067,6 +1058,40 @@ namespace TShockAPI
 		}
 
 		/// <summary>
+		/// Using when player trying to talk to a NPC
+		/// </summary>
+		public class NpcTalkEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// The Terraria ID of the player talking to the NPC
+			/// </summary>
+			public byte PlayerId { get; set; }
+			
+			/// <summary>
+			/// The NPC ID of the NPC the player is talking to
+			/// </summary>
+			public short NPCTalkTarget { get; set; }
+		}
+		public static HandlerList<NpcTalkEventArgs> NpcTalk = new HandlerList<NpcTalkEventArgs>();
+		private static bool OnNpcTalk(TSPlayer player, MemoryStream data, byte _plr, short _npctarget)
+		{
+			if (NpcTalk == null)
+			{
+				return false;
+			}
+
+			var args = new NpcTalkEventArgs
+			{
+				Player = player,
+				Data = data,
+				PlayerId = _plr,
+				NPCTalkTarget = _npctarget,
+			};
+			NpcTalk.Invoke(null, args);
+			return args.Handled;
+		}		
+		
+		/// <summary>
 		/// For use with a PlayerAnimation event
 		/// </summary>
 		public class PlayerAnimationEventArgs : GetDataHandledEventArgs { }
@@ -1153,6 +1178,43 @@ namespace TShockAPI
 		}
 
 		/// <summary>
+		/// For use in a SignRead event
+		/// </summary>
+		public class SignReadEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// X location of the sign
+			/// </summary>
+			public int X { get; set; }
+
+			/// <summary>
+			/// Y location of the sign
+			/// </summary>
+			public int Y { get; set; }
+		}
+
+		/// <summary>
+		/// Sign - Called when a sign is read
+		/// </summary>
+		public static HandlerList<SignReadEventArgs> SignRead = new HandlerList<SignReadEventArgs>();
+
+		private static bool OnSignRead(TSPlayer player, MemoryStream data, int x, int y)
+		{
+			if (SignRead == null)
+				return false;
+
+			var args = new SignReadEventArgs
+			{
+				Player = player,
+				Data = data,
+				X = x,
+				Y = y,
+			};
+			SignRead.Invoke(null, args);
+			return args.Handled;
+		}
+
+		/// <summary>
 		/// For use in a Sign event
 		/// </summary>
 		public class SignEventArgs : GetDataHandledEventArgs
@@ -1222,6 +1284,7 @@ namespace TShockAPI
 			Water = 0,
 			Lava = 1,
 			Honey = 2,
+			Shimmer = 3,
 			Removal = 255 //@Olink: lets hope they never invent 255 fluids or decide to also use this :(
 		}
 
@@ -1603,6 +1666,56 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		/// <summary>
+		/// The ReleaseNPC event arguments
+		/// </summary>
+		public class ReleaseNpcEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// The X value of where NPC released
+			/// </summary>
+			public int X { get; set; }
+
+			/// <summary>
+			/// The Y value of where NPC released
+			/// </summary>
+			public int Y { get; set; }
+
+			/// <summary>
+			/// The NPC Type that player release
+			/// </summary>
+			public short Type { get; set; }
+
+			/// <summary>
+			/// The NPC release style
+			/// </summary>
+			public byte Style { get; set; }
+		}
+
+		/// <summary>
+		/// Called when player release a NPC, for checking critter released from item.
+		/// </summary>
+		public static HandlerList<ReleaseNpcEventArgs> ReleaseNPC = new HandlerList<ReleaseNpcEventArgs>();
+		private static bool OnReleaseNpc(TSPlayer player, MemoryStream data, int _x, int _y, short _type, byte _style)
+		{
+			if (ReleaseNPC == null)
+			{
+				return false;
+			}
+
+			var args = new ReleaseNpcEventArgs
+			{
+				Player = player,
+				Data = data,				
+				X = _x,
+				Y = _y,
+				Type = _type,
+				Style = _style
+			};
+			ReleaseNPC.Invoke(null, args);
+			return args.Handled;
+		}		
+		
 		/// <summary>The arguments to the PlaceObject hook.</summary>
 		public class PlaceObjectEventArgs : GetDataHandledEventArgs
 		{
@@ -3104,6 +3217,37 @@ namespace TShockAPI
 			return true;
 		}
 
+		private static bool HandleNpcTalk(GetDataHandlerArgs args)
+		{
+			var plr = args.Data.ReadInt8();
+			var npc = args.Data.ReadInt16();
+
+			if (OnNpcTalk(args.Player, args.Data, plr, npc))
+				return true;
+			
+			//Rejecting player who trying to talk to a npc if player were disabled, mainly for unregistered and logged out players. Preventing smuggling or duplicating their items if player put it in a npc's item slot
+			if (args.Player.IsBeingDisabled())
+			{
+				TShock.Log.ConsoleDebug("GetDataHandlers / HandleNpcTalk rejected npc talk {0}", args.Player.Name);
+				args.Player.SendData(PacketTypes.NpcTalk, "", plr, -1);
+				return true;
+			}
+
+			if (args.Player.IsBouncerThrottled())
+			{
+				TShock.Log.ConsoleDebug("Bouncer / HandleNpcTalk rejected from bouncer throttle from {0}", args.Player.Name);
+				return true;
+			}
+
+			// -1 is a magic value, represents not talking to an NPC
+			if (npc < -1 || npc >= Main.maxNPCs)
+			{
+				TShock.Log.ConsoleDebug("Bouncer / HandleNpcTalk rejected from bouncer out of bounds from {0}", args.Player.Name);
+				return true;
+			}
+			return false;
+		}
+
 		private static bool HandlePlayerAnimation(GetDataHandlerArgs args)
 		{
 			if (OnPlayerAnimation(args.Player, args.Data))
@@ -3155,6 +3299,23 @@ namespace TShockAPI
 			}
 
 			args.Player.LastPvPTeamChange = DateTime.UtcNow;
+			return false;
+		}
+
+		private static bool HandleSignRead(GetDataHandlerArgs args)
+		{
+			var x = args.Data.ReadInt16();
+			var y = args.Data.ReadInt16();
+
+			if (OnSignRead(args.Player, args.Data, x, y))
+				return true;
+
+			if (x < 0 || y < 0 || x >= Main.maxTilesX || y >= Main.maxTilesY)
+			{
+				TShock.Log.ConsoleDebug("GetDataHandlers / HandleSignRead rejected out of bounds {0}", args.Player.Name);
+				return true;
+			}
+
 			return false;
 		}
 
@@ -3294,8 +3455,7 @@ namespace TShockAPI
 			if (OnPlayerBuff(args.Player, args.Data, id, type, time))
 				return true;
 
-			args.Player.SendData(PacketTypes.PlayerAddBuff, "", id);
-			return true;
+			return false;
 		}
 
 		private static bool HandleUpdateNPCHome(GetDataHandlerArgs args)
@@ -3412,6 +3572,12 @@ namespace TShockAPI
 			return false;
 		}
 
+		private static bool HasPaintSprayerAbilities(Item item)
+			=> item is not null && item.stack > 0 && (
+			   item.type == ItemID.PaintSprayer ||
+			   item.type == ItemID.ArchitectGizmoPack ||
+			   item.type == ItemID.HandOfCreation);
+
 		private static bool HandlePaintTile(GetDataHandlerArgs args)
 		{
 			var x = args.Data.ReadInt16();
@@ -3435,8 +3601,8 @@ namespace TShockAPI
 				args.Player.SelectedItem.type != ItemID.SpectrePaintRoller &&
 				args.Player.SelectedItem.type != ItemID.SpectrePaintScraper &&
 				args.Player.SelectedItem.type != ItemID.SpectrePaintbrush &&
-				!args.Player.Accessories.Any(i => i != null && i.stack > 0 &&
-					(i.type == ItemID.PaintSprayer || i.type == ItemID.ArchitectGizmoPack)))
+				!args.Player.Accessories.Any(HasPaintSprayerAbilities) &&
+				!args.Player.Inventory.Any(HasPaintSprayerAbilities))
 			{
 				TShock.Log.ConsoleDebug("GetDataHandlers / HandlePaintTile rejected select consistency {0}", args.Player.Name);
 				args.Player.SendData(PacketTypes.PaintTile, "", x, y, Main.tile[x, y].color());
@@ -3482,8 +3648,8 @@ namespace TShockAPI
 				args.Player.SelectedItem.type != ItemID.SpectrePaintRoller &&
 				args.Player.SelectedItem.type != ItemID.SpectrePaintScraper &&
 				args.Player.SelectedItem.type != ItemID.SpectrePaintbrush &&
-				!args.Player.Accessories.Any(i => i != null && i.stack > 0 &&
-					(i.type == ItemID.PaintSprayer || i.type == ItemID.ArchitectGizmoPack)))
+				!args.Player.Accessories.Any(HasPaintSprayerAbilities) &&
+				!args.Player.Inventory.Any(HasPaintSprayerAbilities))
 			{
 				TShock.Log.ConsoleDebug("GetDataHandlers / HandlePaintWall rejected selector consistency {0}", args.Player.Name);
 				args.Player.SendData(PacketTypes.PaintWall, "", x, y, Main.tile[x, y].wallColor());
@@ -3599,10 +3765,31 @@ namespace TShockAPI
 				NetMessage.SendData((int)PacketTypes.NpcUpdate, -1, -1, NetworkText.Empty, npcID);
 				return true;
 			}
+			
+			if(args.Player.IsBeingDisabled())
+			{
+				TShock.Log.ConsoleDebug("GetDataHandlers / HandleCatchNpc rejected catch npc {0}", args.Player.Name);
+				return true;
+			}
 
 			return false;
 		}
 
+		private static bool HandleReleaseNpc(GetDataHandlerArgs args)
+		{
+			var x = args.Data.ReadInt32();
+			var y = args.Data.ReadInt32();
+			var type = args.Data.ReadInt16();
+			var style = args.Data.ReadInt8();
+			
+			if (OnReleaseNpc(args.Player, args.Data, x, y, type, style))
+			{
+				return true;
+			}
+
+			return false;
+		}		
+		
 		private static bool HandleTeleportationPotion(GetDataHandlerArgs args)
 		{
 			var type = args.Data.ReadByte();
@@ -3616,23 +3803,69 @@ namespace TShockAPI
 			switch (type)
 			{
 				case 0: // Teleportation Potion
+					if (args.Player.ItemInHand.type != ItemID.TeleportationPotion &&
+					    args.Player.SelectedItem.type != ItemID.TeleportationPotion)
+					{
+						TShock.Log.ConsoleDebug("GetDataHandlers / HandleTeleportationPotion rejected not holding the correct item {0} {1}", args.Player.Name, type);
+						return true;
+					}
+
 					if (!args.Player.HasPermission(Permissions.tppotion))
 					{
 						Fail("Teleportation Potions");
 						return true;
 					}
 					break;
-				case 1: // Magic Conch
+				case 1: // Magic Conch or Shellphone (Ocean)
+					if (args.Player.ItemInHand.type != ItemID.MagicConch &&
+						args.Player.SelectedItem.type != ItemID.MagicConch &&
+						args.Player.ItemInHand.type != ItemID.ShellphoneOcean &&
+						args.Player.SelectedItem.type != ItemID.ShellphoneOcean)
+					{
+						TShock.Log.ConsoleDebug("GetDataHandlers / HandleTeleportationPotion rejected not holding the correct item {0} {1}", args.Player.Name, type);
+						return true;
+					}
+
 					if (!args.Player.HasPermission(Permissions.magicconch))
 					{
-						Fail("the Magic Conch");
+						if (args.Player.ItemInHand.type == ItemID.ShellphoneOcean || args.Player.SelectedItem.type == ItemID.ShellphoneOcean)
+						{
+							Fail("the Shellphone (Ocean)");
+						}
+						else
+						{
+							Fail("the Magic Conch");
+						}
 						return true;
 					}
 					break;
-				case 2: // Demon Conch
+				case 2: // Demon Conch or Shellphone (Underworld)
+					if (args.Player.ItemInHand.type != ItemID.DemonConch &&
+						args.Player.SelectedItem.type != ItemID.DemonConch &&
+						args.Player.ItemInHand.type != ItemID.ShellphoneHell &&
+						args.Player.SelectedItem.type != ItemID.ShellphoneHell)
+					{
+						TShock.Log.ConsoleDebug("GetDataHandlers / HandleTeleportationPotion rejected not holding the correct item {0} {1}", args.Player.Name, type);
+						return true;
+					}
+
 					if (!args.Player.HasPermission(Permissions.demonconch))
 					{
-						Fail("the Demon Conch");
+						if (args.Player.ItemInHand.type == ItemID.ShellphoneHell || args.Player.SelectedItem.type == ItemID.ShellphoneHell)
+						{
+							Fail("the Shellphone (Underworld)");
+						}
+						else
+						{
+							Fail("the Demon Conch");
+						}
+						return true;
+					}
+					break;
+				case 3: // Shellphone (Spawn)
+					if (args.Player.ItemInHand.type != ItemID.ShellphoneSpawn && args.Player.SelectedItem.type != ItemID.ShellphoneSpawn)
+					{
+						TShock.Log.ConsoleDebug("GetDataHandlers / HandleTeleportationPotion rejected not holding the correct item {0} {1}", args.Player.Name, type);
 						return true;
 					}
 					break;
@@ -3697,7 +3930,7 @@ namespace TShockAPI
 
 			if (TShock.TileBans.TileIsBanned((short)TileID.LogicSensor, args.Player))
 			{
-				args.Player.SendTileSquare(x, y, 1);
+				args.Player.SendTileSquareCentered(x, y, 1);
 				args.Player.SendErrorMessage("You do not have permission to place Logic Sensors.");
 				return true;
 			}
@@ -3760,7 +3993,7 @@ namespace TShockAPI
 				return true;
 			}
 
-			return true;
+			return false;
 		}
 
 		private static bool HandleKillPortal(GetDataHandlerArgs args)
@@ -3939,7 +4172,7 @@ namespace TShockAPI
 
 				if (shouldBan)
 				{
-					if (!args.Player.Ban(banReason, false, "TShock"))
+					if (!args.Player.Ban(banReason, "TShock"))
 					{
 						TShock.Log.ConsoleDebug("GetDataHandlers / HandlePlayerKillMeV2 kicked with difficulty {0} {1}", args.Player.Name, args.TPlayer.difficulty);
 						args.Player.Kick("You died! Normally, you'd be banned.", true, true);
@@ -4105,6 +4338,27 @@ namespace TShockAPI
 			args.Player.Kick("Exploit attempt detected!");
 			TShock.Log.ConsoleDebug($"HandleSyncCavernMonsterType: Player is trying to modify NPC cavernMonsterType; this is a crafted packet! - From {args.Player.Name}");
 			return true;
+		}
+
+		private static bool HandleSyncLoadout(GetDataHandlerArgs args)
+		{
+			var playerIndex = args.Data.ReadInt8();
+			var loadoutIndex = args.Data.ReadInt8();
+
+			// When syncing a player's own loadout index, they then sync it back to us...
+			// So let's only care if the index has actually changed, otherwise we might end up in a loop...
+			if (loadoutIndex == args.TPlayer.CurrentLoadoutIndex)
+				return false;
+
+			if (args.Player.IsBeingDisabled())
+			{
+				TShock.Log.ConsoleDebug("GetDataHandlers / HandleSyncLoadout rejected loadout index sync {0}", args.Player.Name);
+				NetMessage.SendData((int)PacketTypes.SyncLoadout, number: args.Player.Index, number2: args.TPlayer.CurrentLoadoutIndex);
+
+				return true;
+			}
+
+			return false;
 		}
 
 		public enum DoorAction

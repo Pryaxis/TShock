@@ -307,6 +307,9 @@ namespace TShockAPI
 		[Description("User can use the 'rain' subcommand of the 'worldevent' command")]
 		public static readonly string managerainevent = "tshock.world.events.rain";
 
+		[Description("User can use the 'lanternsnight' subcommand of the 'worldevent' command")]
+		public static readonly string managelanternsnightevent = "tshock.world.events.lanternsnight";
+
 		[Description("User can change expert state.")]
 		public static readonly string toggleexpert = "tshock.world.toggleexpert";
 

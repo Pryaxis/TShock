@@ -1,0 +1,13 @@
+version: '{build}'
+max_jobs: 16
+image: Visual Studio 2022
+build_script:
+- ps: >-
+    git submodule update --init --recursive
+
+    dotnet build TShock.sln
+
+    dotnet test
+artifacts:
+- path: ./TShockLauncher/bin/Debug/net6.0
+  name: TShockAVDebug

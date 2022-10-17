@@ -28,7 +28,6 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using MaxMind;
-using Mono.Data.Sqlite;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using Rests;
@@ -45,6 +44,8 @@ using TShockAPI.CLI;
 using TShockAPI.Localization;
 using TShockAPI.Configuration;
 using Terraria.GameContent.Creative;
+using System.Runtime.InteropServices;
+using TShockAPI.Modules;
 
 namespace TShockAPI
 {
@@ -58,7 +59,7 @@ namespace TShockAPI
 		/// <summary>VersionNum - The version number the TerrariaAPI will return back to the API. We just use the Assembly info.</summary>
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
 		/// <summary>VersionCodename - The version codename is displayed when the server starts. Inspired by software codenames conventions.</summary>
-		public static readonly string VersionCodename = "Herrscher of Logic";
+		public static readonly string VersionCodename = "Audaciously Artistic";
 
 		/// <summary>SavePath - This is the path TShock saves its data in. This path is relative to the TerrariaServer.exe (not in ServerPlugins).</summary>
 		public static string SavePath = "tshock";
@@ -148,6 +149,8 @@ namespace TShockAPI
 		/// </summary>
 		public static event Action Initialized;
 
+		public static ModuleManager ModuleManager { get; } = new ModuleManager();
+
 		/// <summary>Version - The version required by the TerrariaAPI to be passed back for checking &amp; loading the plugin.</summary>
 		/// <value>value - The version number specified in the Assembly, based on the VersionNum variable set in this class.</value>
 		public override Version Version
@@ -190,6 +193,55 @@ namespace TShockAPI
 			instance = this;
 		}
 
+
+		static Dictionary<string, IntPtr> _nativeCache = new Dictionary<string, IntPtr>();
+		static IntPtr ResolveNativeDep(string libraryName, Assembly assembly, DllImportSearchPath? searchPath)
+		{
+			if (_nativeCache.TryGetValue(libraryName, out IntPtr cached))
+				return cached;
+
+			IEnumerable<string> matches = Enumerable.Empty<string>();
+
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+			{
+				var osx = Path.Combine(Environment.CurrentDirectory, "runtimes", "osx-x64");
+				if(Directory.Exists(osx))
+					matches = Directory.GetFiles(osx, "*" + libraryName + "*", SearchOption.AllDirectories);
+			}
+			else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+			{
+				var lib64 = Path.Combine(Environment.CurrentDirectory, "runtimes", "linux-x64");
+				if (Directory.Exists(lib64))
+					matches = Directory.GetFiles(lib64, "*" + libraryName + "*", SearchOption.AllDirectories);
+			}
+			else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+			{
+				var x64 = Path.Combine(Environment.CurrentDirectory, "runtimes", "win-x64");
+				if (Directory.Exists(x64))
+					matches = Directory.GetFiles(x64, "*" + libraryName + "*", SearchOption.AllDirectories);
+			}
+
+			if (matches.Count() == 0)
+			{
+				matches = Directory.GetFiles(Environment.CurrentDirectory, "*" + libraryName + "*");
+			}
+
+			Debug.WriteLine($"Looking for `{libraryName}` with {matches.Count()} match(es)");
+
+			var handle = IntPtr.Zero;
+
+			if (matches.Count() == 1)
+			{
+				var match = matches.Single();
+				handle = NativeLibrary.Load(match);
+			}
+
+			// cache either way. if zero, no point calling IO if we've checked this assembly before.
+			_nativeCache.Add(libraryName, handle);
+
+			return handle;
+		}
+
 		/// <summary>Initialize - Called by the TerrariaServerAPI during initialization.</summary>
 		[SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands")]
 		public override void Initialize()
@@ -197,17 +249,14 @@ namespace TShockAPI
 			string logFilename;
 			string logPathSetupWarning;
 
-			OTAPI.Hooks.Net.Socket.Create = () =>
+			OTAPI.Hooks.Netplay.CreateTcpListener += (sender, args) =>
 			{
-				//Console.WriteLine($"Creating socket {nameof(LinuxTcpSocket)}");
-				return new LinuxTcpSocket();
-				//return new OTAPI.Sockets.PoolSocket();
-				//return new Terraria.Net.Sockets.TcpSocket();
+				args.Result = new LinuxTcpSocket();
 			};
-			OTAPI.Hooks.Player.Announce = (int playerId) =>
+			OTAPI.Hooks.NetMessage.PlayerAnnounce += (sender, args) =>
 			{
 				//TShock handles this
-				return OTAPI.HookResult.Cancel;
+				args.Result = OTAPI.Hooks.NetMessage.PlayerAnnounceResult.None;
 			};
 
 			Main.SettingsUnlock_WorldEvil = true;
@@ -269,7 +318,7 @@ namespace TShockAPI
 				{
 					string sql = Path.Combine(SavePath, Config.Settings.SqliteDBPath);
 					Directory.CreateDirectory(Path.GetDirectoryName(sql));
-					DB = new SqliteConnection(string.Format("uri=file://{0},Version=3", sql));
+					DB = new Microsoft.Data.Sqlite.SqliteConnection(string.Format("Data Source={0}", sql));
 				}
 				else if (Config.Settings.StorageType.ToLower() == "mysql")
 				{
@@ -371,6 +420,8 @@ namespace TShockAPI
 
 				EnglishLanguage.Initialize();
 
+				ModuleManager.Initialise(new object[] { this });
+
 				if (Config.Settings.RestApiEnabled)
 					RestApi.Start();
 
@@ -386,8 +437,15 @@ namespace TShockAPI
 			}
 			catch (Exception ex)
 			{
-				Log.ConsoleError("Fatal Startup Exception");
-				Log.ConsoleError(ex.ToString());
+				// handle if Log was not initialised
+				void SafeError(string message)
+				{
+					if(Log is not null) Log.ConsoleError(message);
+					else Console.WriteLine(message);
+				};
+				SafeError("TShock encountered a problem from which it cannot recover. The following message may help diagnose the problem.");
+				SafeError("Until the problem is resolved, TShock will not be able to start (and will crash on startup).");
+				SafeError(ex.ToString());
 				Environment.Exit(1);
 			}
 		}
@@ -412,6 +470,8 @@ namespace TShockAPI
 					Geo.Dispose();
 				}
 				SaveManager.Instance.Dispose();
+
+				ModuleManager.Dispose();
 
 				ServerApi.Hooks.GamePostInitialize.Deregister(this, OnPostInit);
 				ServerApi.Hooks.GameUpdate.Deregister(this, OnUpdate);
@@ -521,7 +581,7 @@ namespace TShockAPI
 			{
 				if (player.IP == ip)
 				{
-					Netplay.Clients[player.Index].PendingTermination = true;
+					player.Kick("You logged in from the same IP.", true, true, null, true);
 					args.Handled = true;
 					return;
 				}
@@ -530,7 +590,7 @@ namespace TShockAPI
 					var ips = JsonConvert.DeserializeObject<List<string>>(player.Account.KnownIps);
 					if (ips.Contains(ip))
 					{
-						Netplay.Clients[player.Index].PendingTermination = true;
+						player.Kick("You logged in from another location.", true, true, null, true);
 						args.Handled = true;
 					}
 				}
@@ -767,6 +827,28 @@ namespace TShockAPI
 						}
 					})
 
+				.AddFlag("-worldevil", (value) =>
+				{
+
+					int worldEvil;
+					switch (value.ToLower())
+					{
+						case "random":
+							worldEvil = -1;
+							break;
+						case "corrupt":
+							worldEvil = 0;
+							break;
+						case "crimson":
+							worldEvil = 1;
+							break;
+						default:
+							throw new InvalidOperationException("Invalid value given for command line argument \"-worldevil\".");
+					}
+
+					ServerApi.LogWriter.PluginWriteLine(this, String.Format("New worlds will be generated with the {0} world evil type!", value), TraceLevel.Verbose);
+					WorldGen.WorldGenParam_Evil = worldEvil;
+				})
 
 				//Flags without arguments
 				.AddFlag("-logclear", () => LogClear = true)
@@ -1279,7 +1361,7 @@ namespace TShockAPI
 
 			//Reset toggle creative powers to default, preventing potential power transfer & desync on another user occupying this slot later.
 
-			foreach(var kv in CreativePowerManager.Instance._powersById)
+			foreach (var kv in CreativePowerManager.Instance._powersById)
 			{
 				var power = kv.Value;
 

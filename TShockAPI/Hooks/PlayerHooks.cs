@@ -273,6 +273,32 @@ namespace TShockAPI.Hooks
 	}
 
 	/// <summary>
+	/// EventArgs used for the <see cref="PlayerHooks.PlayerHasBuildPermission"/> event.
+	/// </summary>
+	public class PlayerHasBuildPermissionEventArgs
+	{
+		/// <summary>
+		/// The player who fired the event.
+		/// </summary>
+		public TSPlayer Player { get; set; }
+
+		/// <summary>
+		/// The X coordinate being checked.
+		/// </summary>
+		public int X { get; set; }
+
+		/// <summary>
+		/// The Y coordinate being checked.
+		/// </summary>
+		public int Y { get; set; }
+
+		/// <summary>
+		/// <see cref="PermissionHookResult"/> of the hook.
+		/// </summary>
+		public PermissionHookResult Result { get; set; }
+	}
+
+	/// <summary>
 	/// A collection of events fired by players that can be hooked to.
 	/// </summary>
 	public static class PlayerHooks
@@ -367,6 +393,16 @@ namespace TShockAPI.Hooks
 		/// Fired by players every time a permission check on banned tiles involving them occurs.
 		/// </summary>
 		public static event PlayerTilebanPermissionD PlayerTilebanPermission;
+
+		/// <summary>
+		/// The delegate of the <see cref="PlayerHasBuildPermission"/> event.
+		/// </summary>
+		/// <param name="e">The EventArgs for this event.</param>
+		public delegate void PlayerHasBuildPermissionD(PlayerHasBuildPermissionEventArgs e);
+		/// <summary>
+		/// Fired by players every time a build permission check occurs.
+		/// </summary>
+		public static event PlayerHasBuildPermissionD PlayerHasBuildPermission;
 
 
 		/// <summary>
@@ -521,6 +557,22 @@ namespace TShockAPI.Hooks
 
 			var args = new PlayerTilebanPermissionEventArgs(player, bannedTile);
 			PlayerTilebanPermission(args);
+
+			return args.Result;
+		}
+
+		/// <summary>
+		/// Fires the <see cref="PlayerHasBuildPermission"/> event.
+		/// </summary>
+		/// <param name="player">The player firing the event.</param>
+		/// <returns>Event result if the event has been handled, otherwise <see cref="PermissionHookResult.Unhandled"/>.</returns>
+		public static PermissionHookResult OnPlayerHasBuildPermission(TSPlayer player, int x, int y)
+		{
+			if (PlayerHasBuildPermission == null)
+				return PermissionHookResult.Unhandled;
+
+			var args = new PlayerHasBuildPermissionEventArgs {Player = player, X = x, Y = y};
+			PlayerHasBuildPermission(args);
 
 			return args.Result;
 		}

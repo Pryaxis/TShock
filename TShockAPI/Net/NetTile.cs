@@ -45,6 +45,10 @@ namespace TShockAPI.Net
 		public bool Slope1 { get; set; }
 		public bool Slope2 { get; set; }
 		public bool Slope3 { get; set; }
+		public bool FullbrightBlock { get; set; }
+		public bool FullbrightWall { get; set; }
+		public bool InvisibleBlock { get; set; }
+		public bool InvisibleWall { get; set; }
 
 		public byte Slope
 		{
@@ -172,6 +176,22 @@ namespace TShockAPI.Net
 
 			stream.WriteByte(bits);
 
+			bits = new BitsByte();
+
+			if (FullbrightBlock)
+				bits[0] = true;
+
+			if (FullbrightWall)
+				bits[1] = true;
+
+			if (InvisibleBlock)
+				bits[2] = true;
+
+			if (InvisibleWall)
+				bits[3] = true;
+
+			stream.WriteByte(bits);
+
 			if (HasColor)
 			{
 				stream.WriteByte(TileColor);
@@ -206,6 +226,7 @@ namespace TShockAPI.Net
 		{
 			var flags = (BitsByte) stream.ReadInt8();
 			var flags2 = (BitsByte)stream.ReadInt8();
+			var flags3 = (BitsByte)stream.ReadInt8();
 
 			Wire2 = flags2[0];
 			Wire3 = flags2[1];
@@ -213,6 +234,11 @@ namespace TShockAPI.Net
 			Slope2 = flags2[5];
 			Slope3 = flags2[6];
 			Wire4 = flags2[7];
+
+			FullbrightBlock = flags3[0];
+			FullbrightWall = flags3[1];
+			InvisibleBlock = flags3[2];
+			InvisibleWall = flags3[3];
 
 			if (flags2[2])
 			{

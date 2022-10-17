@@ -4,7 +4,7 @@
     <img src="https://ci.appveyor.com/api/projects/status/chhe61q227lqdlg1?svg=true" alt="AppVeyor Build Status">
   </a>
   <a href="https://github.com/Pryaxis/TShock/actions">
-    <img src="https://github.com/Pryaxis/TShock/workflows/Build%20Server/badge.svg" alt="GitHub Actions Build Status">
+    <img src="https://github.com/Pryaxis/TShock/actions/workflows/Build%20Server/badge.svg" alt="GitHub Actions Build Status">
   </a>
   <a href="#contributors">
     <img src="https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square" alt="All contributors">
@@ -207,7 +207,7 @@ You need to re-run the patcher any time `OTAPI` updates. You need to rebuild `Te
 
           $ cd ./TerrariaServerAPI/TShock.Modifications.Bootstrapper/bin/$BUILD_MODE/
           $ mono TShock.Modifications.Bootstrapper.exe -in=OTAPI.dll \
-                -mod=../../../TShock.Modifications.**/bin/$BUILD_MODE/TShock.Modifications.*.dll \ 
+                -mod=../../../TShock.Modifications.**/bin/$BUILD_MODE/TShock.Modifications.*.dll \
                 -o=Output/OTAPI.dll
 
 1. Verify that non-zero modifications ran successfully. Then, build the Terraria Server API executable.
