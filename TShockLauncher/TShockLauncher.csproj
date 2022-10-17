@@ -23,10 +23,10 @@
 		<PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
 		<PackageReference Include="MySql.Data" Version="8.0.31" />
 		<PackageReference Include="Microsoft.Data.Sqlite" Version="6.0.10" />
-		<PackageReference Include="ModFramework" Version="1.1.3-alpha" GeneratePathProperty="true" /> <!-- only used to extract out to ./bin. -->
+		<PackageReference Include="ModFramework" Version="1.1.6" GeneratePathProperty="true" /> <!-- only used to extract out to ./bin. -->
 
 		<!-- the launcher doesnt need the direct OTAPI reference, but since PackageReference[ExcludeFromSingleFile] doesnt work, exclude the assets and copy manually -->
-		<PackageReference Include="OTAPI.Upcoming" Version="3.1.12-alpha" ExcludeAssets="all" GeneratePathProperty="true" />
+		<PackageReference Include="OTAPI.Upcoming" Version="3.1.14" ExcludeAssets="all" GeneratePathProperty="true" />
 		<None Include="$(PkgOTAPI_Upcoming)\lib\net6.0\OTAPI.dll">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
