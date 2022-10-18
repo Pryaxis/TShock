@@ -7,6 +7,7 @@
 * Join [Discord](https://discord.gg/Cav9nYX).
 * Talk on [GitHub discussions](https://github.com/Pryaxis/TShock/discussions) to ask for help, chat, and other things. This is the best way to get help if Discord isn't your thing.
 * For news, follow [@Pryaxis](https://twitter.com/Pryaxis) on Twitter.
+* Contribute changes and hack on the project [on GitHub](https://github.com/Pryaxis/TShock).
 
 ----
 
