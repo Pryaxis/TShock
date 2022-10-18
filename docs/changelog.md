@@ -561,7 +561,7 @@ Please note that the permissions previously tied to the removed commands are als
 * Updated ServerBroadcast hook to provide a NetworkText object. (@tylerjwatson)
 * Fixed levers and things not updating properly. (@deathcradle)
 * Deprecated PacketTypes.ChatText. Chat is now handled using the NetTextModule and packet 82. (@QuiCM, @Hakusaro)
-* Removed the -lang command-line flag from TShock. It is now a vanilla feature. (@Hakusaro)
+* Removed the -lang command-line flag from TShock. It is now a vanilla feature. (@hakusaro)
 
 ## TShock 4.3.23
 * Added evil type option during world creation (@mistzzt)
