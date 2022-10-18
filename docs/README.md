@@ -19,6 +19,7 @@ TShock supports any system that .NET 6 supports, except for Apple Silicon. You s
 
 1. Download [the latest stable version](https://github.com/TShock/TShock/releases) and `unzip` the folder using your favorite unzip tool. Make sure that all of the files in the zip get into one folder. This is where your server will be stored. The file structure looks like this:
 
+          TShock.Server.exe
           bin\
           |------HttpServer.dll
           |------ModFramework.dll
@@ -27,7 +28,6 @@ TShock supports any system that .NET 6 supports, except for Apple Silicon. You s
           |------TerrariaServer.dll
           ServerPlugins\
           |------TShockAPI.dll
-          TShock.Server.exe
 
 1. Start `TShock.Server.exe` (or `TShock.Server` on other platforms) and TShock will boot, creating a folder called `tshock` to store its database and configuration files. Answer the startup questions, and you should be ready to roll. In the background, TShock made some folders for you. We'll come back to those later.
 
@@ -40,6 +40,10 @@ TShock supports any system that .NET 6 supports, except for Apple Silicon. You s
 1. Login to your newly created account with `/login [account name] [password]` (example: `/login shank grilled-cheese`). You should see a login success message.
 
 1. Turn off the setup system with `/setup` and your server is setup for initial use. TShock also created several files inside a new `tshock` folder. These files include `config.json` (our big configuration file), `sscconfig.json` (the server side characters configuration file), and `tshock.sqlite`. Don't lose your `tshock.sqlite` or you'll have to re-setup TShock.
+
+1. To install more plugins, add them to the `ServerPlugins` folder.
+
+1. To upgrade TShock 5 to future versions of TShock 5, simply download the latest release, extract the archive, and then merge all of the files in the release archive with your existing installation. The `tshock` folder contains user data, and any database changes will be automatically performed to bring your server up-to-date with the latest stuff from us.
 
 ### Upgrading from TShock 4?
 
