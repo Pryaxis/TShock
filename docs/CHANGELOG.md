@@ -1,8 +1,10 @@
 # TShock for Terraria
 
-This is the rolling changelog for TShock for Terraria. Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
+This is the rolling changelog for TShock for Terraria. Changes listed under "upcoming changes" are only available in experimental builds.
 
-## How to add a changelog entry
+<!-- ## How to add a changelog entry
+Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
+
 * Put your entry in terms of what you changed in the past mood. For example: "Changed the world by adding new grommets."
   * Not "fix" or "change".
   * The entry must start with a verb.
@@ -10,7 +12,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * Write in complete sentences that are understandable by anyone who does not have experience programming, unless the change is related to programming.
   * Do not insert tabs into this file, under any circumstances, ever.
   * Do not forget to sign every line you change with your name. (@hakusaro)
-  * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change.
+  * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change. -->
 
 ## Upcoming changes
 * Reduced load/save console spam. (@SignatureBeef, @YehnBeep)
