@@ -43,9 +43,11 @@ TShock supports any system that .NET 6 supports, except for Apple Silicon. You s
 
 1. To install more plugins, add them to the `ServerPlugins` folder.
 
-1. To upgrade TShock 5 to future versions of TShock 5, simply download the latest release, extract the archive, and then merge all of the files in the release archive with your existing installation. The `tshock` folder contains user data, and any database changes will be automatically performed to bring your server up-to-date with the latest stuff from us.
+### Upgrading
 
-### Upgrading from TShock 4?
+To upgrade TShock 5 to future versions of TShock 5, simply download the latest release, extract the archive, and then merge all of the files in the release archive with your existing installation. The `tshock` folder contains user data, and any database changes will be automatically performed to bring your server up-to-date with the latest stuff from us.
+
+#### Upgrading from TShock 4?
 
 If you're upgrading from TShock 4, we suggest downloading the new release of TShock, copying the `tshock` configuration folder over (containing the `sqlitedb` file as well as the `json` configuration files, etc) to the new server, and starting the new server that way. This is because many files are removed and the existing files are no longer required from TShock 4. In addition, the new binary you need to run is called `TShock.Server.exe` or `TShock.Server`, not `TerrariaServer.exe`.
 
@@ -57,4 +59,6 @@ To download experimental versions of TShock, you have two real options: AppVeyor
 
 On [AppVeyor](https://ci.appveyor.com/project/hakusaro/tshock/), click on history, find the build you want, click on the commit message, and then click on the artifacts tab. You can download either the debug or the release build. AppVeyor only keeps builds back 6 months though, and there's a bandwidth limit.
 
-On [GitHub](https://github.com/Pryaxis/TShock/), click on the actions tab, then click on "CI OTAPI3" on the commit or branch you want. If it was successful, you can download either the experimental release or debug artifacts. You must be signed into GitHub for the links to work. These instructions are also available as a [video tutorial on Streamable](https://streamable.com/qmi6gq).
+On [GitHub](https://github.com/Pryaxis/TShock/), click on the actions tab, then click on "CI OTAPI3" on the commit or branch you want. If it was successful, you can download either the experimental release or debug artifacts. You must be signed into GitHub for the links to work.
+
+<div style="width:100%;height:0px;position:relative;padding-bottom:83.333%;"><iframe src="https://streamable.com/e/qmi6gq?loop=0" frameborder="0" width="100%" height="100%" allowfullscreen style="width:100%;height:100%;position:absolute;left:0px;top:0px;overflow:hidden;"></iframe></div>
