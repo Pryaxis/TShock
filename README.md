@@ -40,40 +40,6 @@ TShock is a toolbox for Terraria servers and communities. That toolbox is jam pa
     * [Working with Terraria](#working-with-terraria)
   * [Code of Conduct](#code-of-conduct)
 
-## New to TShock?
-
-_These instructions assume Windows. If you're setting up on Linux or macOS, please refer to [the in-depth guide](https://tshock.readme.io/docs/getting-started) (and don't forget to install the *latest version* of `mono-complete` on Linux)._
-
-1. Download [the latest stable version](https://github.com/TShock/TShock/releases) and `unzip` the folder using your favorite unzip tool. Make sure that all of the files in the zip get into one folder. This is where your server will be stored. The file structure looks like this:
-
-      
-          GeoIP.dat
-          Newtonsoft.Json.dll
-          OTAPI.dll
-          ServerPlugins\
-          |------BCrypt.Net.dll
-          |------HttpServer.dll
-          |------Mono.Data.Sqlite.dll
-          |------MySql.Data.dll
-          |------TShockAPI.dll
-          TerrariaServer.exe
-          sqlite3.dll
-      
-
-1. Start `TShock.Server.exe` or `TShock.Server` (on non-Windows platforms) and TShock will boot. Answer the startup questions, and you should be ready to roll. In the background, TShock made some folders for you. We'll come back to those later.
-
-1. Startup Terraria. Connect to a `multiplayer` server via IP and enter `localhost` if you're doing this on your local computer. If you're doing it on another computer, you need its IP address.
-
-1. Look at the server console for the _setup code_. Type `/setup [code]` (example: `/setup 12345`), then a space, then the code you see in the console in your game chat. Instead of chatting, you'll run a command on the server. This one makes you temporary admin. All commands are prefixed with `/` or `!` (to make them silent).
-
-1. Use the in-game command `/user add [account name] [password] owner` (example: `/user add shank lovely-ashes owner`) to create an account. This gives you owner rights on your server, which you can configure more to your liking later.
-
-1. Login to your newly created account with `/login [account name] [password]` (example: `/login shank grilled-cheese`). You should see a login success message.
-
-1. Turn off the setup system with `/setup` and your server is setup for initial use. TShock also created several files inside a new `tshock` folder. These files include `config.json` (our big configuration file), `sscconfig.json` (the server side characters configuration file), and `tshock.sqlite`. Don't lose your `tshock.sqlite` or you'll have to re-setup TShock.
-
-1. You can now [customize your configuration](https://tshock.readme.io/docs/config-settings), build groups, ban items, and install more plugins.
-
 ## Experimental downloads
 
 To download experimental versions of TShock, you have two real options: AppVeyor builds or GitHub builds. Fair warning though: experimental versions of TShock are point-in-time releases that are not technically supported by us. If you have to report an issue, please make it clear which commit or branch you downloaded your build from, which service, and the build number if applicable.
