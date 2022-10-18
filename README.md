@@ -78,11 +78,9 @@ _These instructions assume Windows. If you're setting up on Linux or macOS, plea
 
 To download experimental versions of TShock, you have two real options: AppVeyor builds or GitHub builds. You can also get archived Travis CI builds. Fair warning though: experimental versions of TShock are point-in-time releases that are not technically supported by us. If you have to report an issue, please make it clear which commit or branch you downloaded your build from, which service, and the build number if applicable.
 
-On [AppVeyor](https://ci.appveyor.com/project/hakusaro/tshock/), click on history, find the build you want, click on the commit message, and then click on the artifacts tab. You can download either the debug or the release build. AppVeyor only keeps builds back 6 months though.
+On [AppVeyor](https://ci.appveyor.com/project/hakusaro/tshock/), click on history, find the build you want, click on the commit message, and then click on the artifacts tab. You can download either the debug or the release build. AppVeyor only keeps builds back 6 months though, and there's a bandwidth limit.
 
-On [GitHub](https://github.com/Pryaxis/TShock/), click on the actions tab, then click on "build server" on the commit or branch you want. If it was successful, you can download either the experimental release or debug artifacts.
-
-These instructions are also available as a [video tutorial on Streamable](https://streamable.com/i9mfh9).
+On [GitHub](https://github.com/Pryaxis/TShock/), click on the actions tab, then click on "CI OTAPI3" on the commit or branch you want. If it was successful, you can download either the experimental release or debug artifacts. You must be signed into GitHub for the links to work. These instructions are also available as a [video tutorial on Streamable](https://streamable.com/qmi6gq).
 
 ## Developer's Guide
 
