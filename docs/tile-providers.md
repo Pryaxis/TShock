@@ -8,7 +8,7 @@ Constileation is the newest tile provider shipped by TShock. It's faster than He
 
 ## HeapTile
 
-HeapTile is one of the earliest tile providers shipped by TShock. Again, it offers memory advantages, but is really slow compared to Constileation. Start your TShock server with the `-heaptile` command line argument to use this provider.
+HeapTile is one of the earliest tile providers shipped by TShock. Again, it offers memory advantages, but is really slow compared to Constileation and Tiled. Start your TShock server with the `-heaptile` command line argument to use this provider.
 
 ## Tiled
 
