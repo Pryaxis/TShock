@@ -11,7 +11,7 @@
 
 ----
 
-## New to TShock?
+## Installing TShock
 
 TShock supports any system that .NET 6 supports, except for Apple Silicon. You should be able to run TShock on x86, x86_64, arm32, and arm64 on macOS, Windows, or Linux. TShock has also been used successfully on an unofficial port of TShock to FreeBSD using an unofficial version of .NET 6. Generally, TShock needs at least 1GB of memory, but alternative tile providers may be able to lower the minimum memory threshold.
 
