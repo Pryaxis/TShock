@@ -8,6 +8,7 @@
 * Talk on [GitHub discussions](https://github.com/Pryaxis/TShock/discussions) to ask for help, chat, and other things. This is the best way to get help if Discord isn't your thing.
 * For news, follow [@Pryaxis](https://twitter.com/Pryaxis) on Twitter.
 * Contribute changes and hack on the project [on GitHub](https://github.com/Pryaxis/TShock).
+* Nuget packages for [TShock](https://www.nuget.org/packages/TShock/) and [TSAPI](https://www.nuget.org/packages/TSAPI/) are available.
 
 ----
 
