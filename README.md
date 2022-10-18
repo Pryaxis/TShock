@@ -22,7 +22,7 @@ TShock is a toolbox for Terraria servers and communities. That toolbox is jam pa
 
 ----
 
-## Table of Contents
+## Table of contents
 
   * [New to TShock?](#new-to-tshock)
   * [Experimental Downloads](#experimental-downloads)
@@ -74,15 +74,15 @@ _These instructions assume Windows. If you're setting up on Linux or macOS, plea
 
 1. You can now [customize your configuration](https://tshock.readme.io/docs/config-settings), build groups, ban items, and install more plugins.
 
-## Experimental Downloads
+## Experimental downloads
 
-To download experimental versions of TShock, you have two real options: AppVeyor builds or GitHub builds. You can also get archived Travis CI builds. Fair warning though: experimental versions of TShock are point-in-time releases that are not technically supported by us. If you have to report an issue, please make it clear which commit or branch you downloaded your build from, which service, and the build number if applicable.
+To download experimental versions of TShock, you have two real options: AppVeyor builds or GitHub builds. Fair warning though: experimental versions of TShock are point-in-time releases that are not technically supported by us. If you have to report an issue, please make it clear which commit or branch you downloaded your build from, which service, and the build number if applicable.
 
 On [AppVeyor](https://ci.appveyor.com/project/hakusaro/tshock/), click on history, find the build you want, click on the commit message, and then click on the artifacts tab. You can download either the debug or the release build. AppVeyor only keeps builds back 6 months though, and there's a bandwidth limit.
 
 On [GitHub](https://github.com/Pryaxis/TShock/), click on the actions tab, then click on "CI OTAPI3" on the commit or branch you want. If it was successful, you can download either the experimental release or debug artifacts. You must be signed into GitHub for the links to work. These instructions are also available as a [video tutorial on Streamable](https://streamable.com/qmi6gq).
 
-## Developer's Guide
+## Developer's guide
 
 Whether you want to contribute to TShock by sending a pull request, customize it to suit your own elvish desires, or want to build your own plugin, this is the best starting point. By the end of this, you'll be able to build TShock from source, start to finish. More than that, though, you'll know how to start on the path of becoming an expert TShock developer.
 
