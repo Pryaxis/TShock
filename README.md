@@ -60,7 +60,7 @@ _These instructions assume Windows. If you're setting up on Linux or macOS, plea
           sqlite3.dll
       
 
-1. Start `TShock.Server.exe` and TShock will boot. Answer the startup questions, and you should be ready to roll. In the background, TShock made some folders for you. We'll come back to those later.
+1. Start `TShock.Server.exe` or `TShock.Server` (on non-Windows platforms) and TShock will boot. Answer the startup questions, and you should be ready to roll. In the background, TShock made some folders for you. We'll come back to those later.
 
 1. Startup Terraria. Connect to a `multiplayer` server via IP and enter `localhost` if you're doing this on your local computer. If you're doing it on another computer, you need its IP address.
 
