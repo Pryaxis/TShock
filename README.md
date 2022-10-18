@@ -12,7 +12,7 @@
 
 TShock is a toolbox for Terraria servers and communities. That toolbox is jam packed with anti-cheat tools, server-side characters, groups, permissions, item bans, tons of commands, and limitless potential. It's one of a kind.
 
-This is the readme for TShock developers and hackers. We're building out new[TShock documentation](https://ikebukuro.tshock.co/) for server operators and plugin developers, but this is a work-in-progress right now.
+This is the readme for TShock developers and hackers. We're building out new [TShock documentation](https://ikebukuro.tshock.co/) for server operators and plugin developers, but this is a work-in-progress right now.
 
 ## Developing TShock
 
