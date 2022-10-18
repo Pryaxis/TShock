@@ -35,7 +35,7 @@ TShock supports any system that .NET 6 supports, except for Apple Silicon. You s
 
 1. Look at the server console for the _setup code_. Type `/setup [code]` (example: `/setup 12345`), then a space, then the code you see in the console in your game chat. Instead of chatting, you'll run a command on the server. This one makes you temporary admin. All commands are prefixed with `/` or `!` (to make them silent).
 
-1. Use the in-game command `/user add [account name] [password] owner` (example: `/user add shank lovely-ashes owner`) to create an account. This gives you owner rights on your server, which you can configure more to your liking later.
+1. Use the in-game command `/user add [account name] [password] owner` (example: `/user add shank lovely-grilled-cheese owner`) to create an account. This gives you owner rights on your server, which you can configure more to your liking later.
 
 1. Login to your newly created account with `/login [account name] [password]` (example: `/login shank grilled-cheese`). You should see a login success message.
 
