@@ -1,8 +1,10 @@
 # TShock for Terraria
 
-This is the rolling changelog for TShock for Terraria. Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
+This is the rolling changelog for TShock for Terraria. Changes listed under "upcoming changes" are only available in experimental builds.
 
-## How to add a changelog entry
+<!-- ## How to add a changelog entry
+Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
+
 * Put your entry in terms of what you changed in the past mood. For example: "Changed the world by adding new grommets."
   * Not "fix" or "change".
   * The entry must start with a verb.
@@ -10,7 +12,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * Write in complete sentences that are understandable by anyone who does not have experience programming, unless the change is related to programming.
   * Do not insert tabs into this file, under any circumstances, ever.
   * Do not forget to sign every line you change with your name. (@hakusaro)
-  * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change.
+  * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change. -->
 
 ## Upcoming changes
 * Reduced load/save console spam. (@SignatureBeef, @YehnBeep)
@@ -55,8 +57,7 @@ This is the rolling changelog for TShock for Terraria. Use past tense when addin
   * Check if the buff type being applied is within bounds.
   * Introduce `AddPlayerBuffWhitelist` (replacing `WhitelistBuffMaxTime`), which allows us to specify the maximum amount of ticks a buff can be applied for, and if it can be applied without the target being in PvP.
   * When rejecting from `OnPlayerBuff`, instead of sending a `PlayerAddBuff` packet with the rejected buff (essentially a no-op, as the sender implicitly applies the buff to the target, and causes desync as the buff was rejected), send a `PlayerBuff` to re-sync the target's buffs, without the buff we just rejected.
-* Added new tile provider. Use `-constileation` or `-c` to use it. Constileation is an alternative tile provider to Tiled and HeapTile. (@SignatureBeef) (AN: Someone please write a better changelog entry for this kthx.)
-
+* Added new tile provider. Use `-constileation` or `-c` to use it. Constileation is an alternative tile provider to Tiled and HeapTile. (@SignatureBeef)
 
 ## TShock 4.5.18
 * Fixed `TSPlayer.GiveItem` not working if the player is in lava. (@PotatoCider)
@@ -559,7 +560,7 @@ Please note that the permissions previously tied to the removed commands are als
 * Updated ServerBroadcast hook to provide a NetworkText object. (@tylerjwatson)
 * Fixed levers and things not updating properly. (@deathcradle)
 * Deprecated PacketTypes.ChatText. Chat is now handled using the NetTextModule and packet 82. (@QuiCM, @Hakusaro)
-* Removed the -lang command-line flag from TShock. It is now a vanilla feature. (@Hakusaro)
+* Removed the -lang command-line flag from TShock. It is now a vanilla feature. (@hakusaro)
 
 ## TShock 4.3.23
 * Added evil type option during world creation (@mistzzt)
