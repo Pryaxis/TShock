@@ -7,9 +7,7 @@ The following parameters can be added to TShock to alter the way a server initia
 * `-worldselectpath` - Starts the server and changes the location for worlds to be the specified path. The server will look in this path for worlds to load. For example: `-worldselectpath /root` or `-worldselectpath C:\Terraria`.
 * `-worldname` - Starts the server using the world name that exists in the set `world select path`. For example, if `MyWorld.wld` is inside `C:\Terraria\` and `-worldselectpath C:\Terraria\` is set, then `-worldname MyWorld` will load that world.
 * `-autocreate` - Starts the server and, if a world file isn't found, automatically create the world file with a given size, 1-3, 1 being small. For example, set `-autocreate 3` to create a large world.
-* `-config` - Starts the server with a given config file.
-* `-connperip` - Allows n number of connections per IP.
-* `-killinactivesocket` - Kills connections which have not started the protocol handshake.
+* `-config` - Starts the server with a given config file. For example, `-config C:\Terraria\config.json`.
 * `-ignoreversion` - Ignores API version checks for plugins allowing for old plugins to run.
 * `-forceupdate` - Forces the server to continue running, and not hibernating when no players are on. This results in time passing, grass growing, and cpu running.
 * `-configpath` - Specifies the path tshock uses to resolve configs, log files, and sqlite db.
