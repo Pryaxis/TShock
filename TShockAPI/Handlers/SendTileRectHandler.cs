@@ -157,9 +157,8 @@ namespace TShockAPI.Handlers
 					int realY = tileY + y;
 
 					// Do not process tiles outside of the world boundaries
-					// The hidden world strip is 40 tiles wide/tall, use 10 instead just to be safe to avoid off-by-one errors
-					if ((realX < 10 || realX >= Main.maxTilesX - 10)
-						|| (realY < 10 || realY > Main.maxTilesY - 10))
+					if ((realX < 0 || realX >= Main.maxTilesX)
+						|| (realY < 0 || realY > Main.maxTilesY))
 					{
 						processed[x, y] = true;
 						continue;
@@ -351,7 +350,7 @@ namespace TShockAPI.Handlers
 				))
 			{
 				UpdateServerTileState(tile, newTile, TileDataType.Tile);
-				if (TileID.Sets.IsVine[Main.tile[realX, realY + 1].type]) // vanilla does in theory break the vines on its own, but we can't trust that
+				if (WorldGen.InWorld(realX, realY + 1) && TileID.Sets.IsVine[Main.tile[realX, realY + 1].type]) // vanilla does in theory break the vines on its own, but we can't trust that
 				{
 					WorldGen.KillTile(realX, realY + 1);
 				}
