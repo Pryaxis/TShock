@@ -38,6 +38,8 @@ using System.Text.RegularExpressions;
 using Terraria.DataStructures;
 using Terraria.GameContent.Creative;
 
+using static TShockAPI.Utils;
+
 namespace TShockAPI
 {
 	public delegate void CommandDelegate(CommandArgs args);
@@ -814,9 +816,9 @@ namespace TShockAPI
 					args.Player.SendMessage($"{Specifier}login - Logs in using your UUID and character name.", Color.White);
 
 				if (TShock.Config.Settings.AllowLoginAnyUsername)
-					args.Player.SendMessage($"{Specifier}login {"username".Color(Utils.GreenHighlight)} {"password".Color(Utils.BoldHighlight)} - Logs in using your username and password.", Color.White);
+					args.Player.SendMessage($"{Specifier}login {Highlight("username", GreenHighlight)} {Highlight("password", BlueHighlight)} - Logs in using your username and password.", Color.White);
 				else
-					args.Player.SendMessage($"{Specifier}login {"password".Color(Utils.BoldHighlight)} - Logs in using your password and character name.", Color.White);
+					args.Player.SendMessage($"{Specifier}login {Highlight("password", BlueHighlight)} - Logs in using your password and character name.", Color.White);
 
 				args.Player.SendWarningMessage("If you forgot your password, there is no way to recover it.");
 				return;
@@ -1016,9 +1018,9 @@ namespace TShockAPI
 						args.Player.SendMessage($"Type {Specifier}login to sign in to your account using your UUID.", Color.White);
 
 					if (TShock.Config.Settings.AllowLoginAnyUsername)
-						args.Player.SendMessage($"Type {Specifier}login \"{account.Name.Color(Utils.GreenHighlight)}\" {echoPassword.Color(Utils.BoldHighlight)} to sign in to your account.", Color.White);
+						args.Player.SendMessage($"Type {Specifier}login \"{Highlight(account.Name, GreenHighlight)}\" {Highlight(echoPassword, BlueHighlight)} to sign in to your account.", Color.White);
 					else
-						args.Player.SendMessage($"Type {Specifier}login {echoPassword.Color(Utils.BoldHighlight)} to sign in to your account.", Color.White);
+						args.Player.SendMessage($"Type {Specifier}login {Highlight(echoPassword, BlueHighlight)} to sign in to your account.", Color.White);
 					
 					TShock.UserAccounts.AddUserAccount(account);
 					TShock.Log.ConsoleInfo("{0} registered an account: \"{1}\".", args.Player.Name, account.Name);
@@ -1309,20 +1311,6 @@ namespace TShockAPI
 
 		private static void Ban(CommandArgs args)
 		{
-			//Ban syntax:
-			// ban add <target> [reason] [duration] [flags (default: -a -u -ip)]
-			//						Duration is in the format 0d0h0m0s. Any part can be ignored. E.g., 1s is a valid ban time, as is 1d1s, etc. If no duration is specified, ban is permanent
-			//						Valid flags: -a (ban account name), -u (ban UUID), -n (ban character name), -ip (ban IP address), -e (exact, ban the identifier provided as 'target')
-			//						Unless -e is passed to the command, <target> is assumed to be a player or player index.
-			// ban del <ban ID>
-			//						Target is expected to be a ban Unique ID
-			// ban list [page]
-			//						Displays a paginated list of bans
-			// ban details <ban ID>
-			//						Target is expected to be a ban Unique ID
-			//ban help [command]
-			//						Provides extended help on specific ban commands
-
 			void Help()
 			{
 				if (args.Parameters.Count > 1)
@@ -1333,12 +1321,12 @@ namespace TShockAPI
 
 				args.Player.SendMessage("TShock Ban Help", Color.White);
 				args.Player.SendMessage("Available Ban commands:", Color.White);
-				args.Player.SendMessage($"ban {"add".Color(Utils.RedHighlight)} <Target> [Flags]", Color.White);
-				args.Player.SendMessage($"ban {"del".Color(Utils.RedHighlight)} <Ban ID>", Color.White);
-				args.Player.SendMessage($"ban {"list".Color(Utils.RedHighlight)}", Color.White);
-				args.Player.SendMessage($"ban {"details".Color(Utils.RedHighlight)} <Ban ID>", Color.White);
-				args.Player.SendMessage($"Quick usage: {"ban add".Color(Utils.BoldHighlight)} {args.Player.Name.Color(Utils.RedHighlight)} \"Griefing\"", Color.White);
-				args.Player.SendMessage($"For more info, use {"ban help".Color(Utils.BoldHighlight)} {"command".Color(Utils.RedHighlight)} or {"ban help".Color(Utils.BoldHighlight)} {"examples".Color(Utils.RedHighlight)}", Color.White);
+				args.Player.SendMessage($"ban {Highlight("add", RedHighlight)} <Target> [Flags]", Color.White);
+				args.Player.SendMessage($"ban {Highlight("del", RedHighlight)} <Ban ID>", Color.White);
+				args.Player.SendMessage($"ban {Highlight("list", RedHighlight)}", Color.White);
+				args.Player.SendMessage($"ban {Highlight("details", RedHighlight)} <Ban ID>", Color.White);
+				args.Player.SendMessage($"Quick usage: {Highlight("ban add", BlueHighlight)} {Highlight(args.Player.Name, RedHighlight)} \"Griefing\"", Color.White);
+				args.Player.SendMessage($"For more info, use {Highlight("ban help", BlueHighlight)} {Highlight("command", RedHighlight)} or {Highlight("ban help", BlueHighlight)} {Highlight("examples", RedHighlight)}", Color.White);
 			}
 
 			void MoreHelp(string cmd)
@@ -1348,38 +1336,39 @@ namespace TShockAPI
 					case "add":
 						args.Player.SendMessage("", Color.White);
 						args.Player.SendMessage("Ban Add Syntax", Color.White);
-						args.Player.SendMessage($"{"ban add".Color(Utils.BoldHighlight)} <{"Target".Color(Utils.RedHighlight)}> [{"Reason".Color(Utils.BoldHighlight)}] [{"Duration".Color(Utils.PinkHighlight)}] [{"Flags".Color(Utils.GreenHighlight)}]", Color.White);
-						args.Player.SendMessage($"- {"Duration".Color(Utils.PinkHighlight)}: uses the format {"0d0m0s".Color(Utils.PinkHighlight)} to determine the length of the ban.", Color.White);
-						args.Player.SendMessage($"   Eg a value of {"10d30m0s".Color(Utils.PinkHighlight)} would represent 10 days, 30 minutes, 0 seconds.", Color.White);
+						args.Player.SendMessage($"{Highlight("ban add", BlueHighlight)} <{Highlight("Target", RedHighlight)}> [{Highlight("Reason", BlueHighlight)}] [{Highlight("Duration", PinkHighlight)}] [{Highlight("Flags", GreenHighlight)}]", Color.White);
+						args.Player.SendMessage($"- {Highlight("Duration", PinkHighlight)}: uses the format {Highlight("0d0m0s", PinkHighlight)} to determine the length of the ban.", Color.White);
+						args.Player.SendMessage($"   Eg a value of {Highlight("10d30m0s", PinkHighlight)} would represent 10 days, 30 minutes, 0 seconds.", Color.White);
 						args.Player.SendMessage($"   If no duration is provided, the ban will be permanent.", Color.White);
-						args.Player.SendMessage($"- {"Flags".Color(Utils.GreenHighlight)}: -a (account name), -u (UUID), -n (character name), -ip (IP address), -e (exact, {"Target".Color(Utils.RedHighlight)} will be treated as identifier)", Color.White);
-						args.Player.SendMessage($"   Unless {"-e".Color(Utils.GreenHighlight)} is passed to the command, {"Target".Color(Utils.RedHighlight)} is assumed to be a player or player index", Color.White);
-						args.Player.SendMessage($"   If no {"Flags".Color(Utils.GreenHighlight)} are specified, the command uses {"-a -u -ip".Color(Utils.GreenHighlight)} by default.", Color.White);
-						args.Player.SendMessage($"Example usage: {"ban add".Color(Utils.BoldHighlight)} {args.Player.Name.Color(Utils.RedHighlight)} {"\"Cheating\"".Color(Utils.BoldHighlight)} {"10d30m0s".Color(Utils.PinkHighlight)} {"-a -u -ip".Color(Utils.GreenHighlight)}", Color.White);
+						args.Player.SendMessage($"- {Highlight("Flags", GreenHighlight)}: -a (account name), -u (UUID), -n (character name), -ip (IP address)", Color.White);
+						args.Player.SendMessage($"   -e (exact, {Highlight("Target", RedHighlight)} will be treated as a raw identifier)", Color.White);
+						args.Player.SendMessage($"   -o (offline, {Highlight("Target", RedHighlight)} will be treated as a username)", Color.White);
+						args.Player.SendMessage($"   If no {Highlight("Flags", GreenHighlight)} are specified, the command uses {Highlight("-a -u -ip", GreenHighlight)} by default.", Color.White);
+						args.Player.SendMessage($"Example usage: {Highlight("ban add", BlueHighlight)} {Highlight(args.Player.Name, RedHighlight)} {Highlight("\"Cheating\"", BlueHighlight)} {Highlight("10d30m0s", PinkHighlight)} {Highlight("-a -u -ip", GreenHighlight)}", Color.White);
 						break;
 
 					case "del":
 						args.Player.SendMessage("", Color.White);
 						args.Player.SendMessage("Ban Del Syntax", Color.White);
-						args.Player.SendMessage($"{"ban del".Color(Utils.BoldHighlight)} <{"Ticket Number".Color(Utils.RedHighlight)}>", Color.White);
-						args.Player.SendMessage($"- {"Ticket Numbers".Color(Utils.RedHighlight)} are provided when you add a ban, and can also be viewed with the {"ban list".Color(Utils.BoldHighlight)} command.", Color.White);
-						args.Player.SendMessage($"Example usage: {"ban del".Color(Utils.BoldHighlight)} {"12345".Color(Utils.RedHighlight)}", Color.White);
+						args.Player.SendMessage($"{Highlight("ban del", BlueHighlight)} <{Highlight("Ticket Number", RedHighlight)}>", Color.White);
+						args.Player.SendMessage($"- {Highlight("Ticket Numbers", RedHighlight)} are provided when you add a ban, and can also be viewed with the {Highlight("ban list", BlueHighlight)} command.", Color.White);
+						args.Player.SendMessage($"Example usage: {Highlight("ban del", BlueHighlight)} {Highlight("12345", RedHighlight)}", Color.White);
 						break;
 
 					case "list":
 						args.Player.SendMessage("", Color.White);
 						args.Player.SendMessage("Ban List Syntax", Color.White);
-						args.Player.SendMessage($"{"ban list".Color(Utils.BoldHighlight)} [{"Page".Color(Utils.PinkHighlight)}]", Color.White);
+						args.Player.SendMessage($"{Highlight("ban list", BlueHighlight)} [{Highlight("Page", PinkHighlight)}]", Color.White);
 						args.Player.SendMessage("- Lists active bans. Color trends towards green as the ban approaches expiration", Color.White);
-						args.Player.SendMessage($"Example usage: {"ban list".Color(Utils.BoldHighlight)}", Color.White);
+						args.Player.SendMessage($"Example usage: {Highlight("ban list", BlueHighlight)}", Color.White);
 						break;
 
 					case "details":
 						args.Player.SendMessage("", Color.White);
 						args.Player.SendMessage("Ban Details Syntax", Color.White);
-						args.Player.SendMessage($"{"ban details".Color(Utils.BoldHighlight)} <{"Ticket Number".Color(Utils.RedHighlight)}>", Color.White);
-						args.Player.SendMessage($"- {"Ticket Numbers".Color(Utils.RedHighlight)} are provided when you add a ban, and can be found with the {"ban list".Color(Utils.BoldHighlight)} command.", Color.White);
-						args.Player.SendMessage($"Example usage: {"ban details".Color(Utils.BoldHighlight)} {"12345".Color(Utils.RedHighlight)}", Color.White);
+						args.Player.SendMessage($"{Highlight("ban details", BlueHighlight)} <{Highlight("Ticket Number", RedHighlight)}>", Color.White);
+						args.Player.SendMessage($"- {Highlight("Ticket Numbers", RedHighlight)} are provided when you add a ban, and can be found with the {Highlight("ban list", BlueHighlight)} command.", Color.White);
+						args.Player.SendMessage($"Example usage: {Highlight("ban details", BlueHighlight)} {Highlight("12345", RedHighlight)}", Color.White);
 						break;
 
 					case "identifiers":
@@ -1390,7 +1379,7 @@ namespace TShockAPI
 						}
 
 						var idents = from ident in Identifier.Available
-									 select $"{ident.Color(Utils.RedHighlight)} - {ident.Description}";
+									 select $"{Highlight(ident, RedHighlight)} - {ident.Description}";
 
 						args.Player.SendMessage("", Color.White);
 						PaginationTools.SendPage(args.Player, pageNumber, idents.ToList(),
@@ -1408,44 +1397,44 @@ namespace TShockAPI
 						args.Player.SendMessage("", Color.White);
 						args.Player.SendMessage("Ban Usage Examples", Color.White);
 						args.Player.SendMessage("- Ban an offline player by account name", Color.White);
-						args.Player.SendMessage($"   {Specifier}{"ban add".Color(Utils.BoldHighlight)} \"{"acc:".Color(Utils.RedHighlight)}{args.Player.Account.Color(Utils.RedHighlight)}\" {"\"Multiple accounts are not allowed\"".Color(Utils.BoldHighlight)} {"-e".Color(Utils.GreenHighlight)} (Permanently bans this account name)", Color.White);
+						args.Player.SendMessage($"   {Specifier}{Highlight("ban add", BlueHighlight)} \"{Highlight("acc:", RedHighlight)}{Highlight(args.Player.Account, RedHighlight)}\" {Highlight("\"Multiple accounts are not allowed\"", BlueHighlight)} {Highlight("-e", GreenHighlight)} (Permanently bans this account name)", Color.White);
 						args.Player.SendMessage("- Ban an offline player by IP address", Color.White);
-						args.Player.SendMessage($"   {Specifier}{"ai".Color(Utils.BoldHighlight)} \"{args.Player.Account.Color(Utils.RedHighlight)}\" (Find the IP associated with the offline target's account)", Color.White);
-						args.Player.SendMessage($"   {Specifier}{"ban add".Color(Utils.BoldHighlight)} {"ip:".Color(Utils.RedHighlight)}{args.Player.IP.Color(Utils.RedHighlight)} {"\"Griefing\"".Color(Utils.BoldHighlight)} {"-e".Color(Utils.GreenHighlight)} (Permanently bans this IP address)", Color.White);
+						args.Player.SendMessage($"   {Specifier}{Highlight("ai", BlueHighlight)} \"{Highlight(args.Player.Account, RedHighlight)}\" (Find the IP associated with the offline target's account)", Color.White);
+						args.Player.SendMessage($"   {Specifier}{Highlight("ban add", BlueHighlight)} {Highlight("ip:", RedHighlight)}{Highlight(args.Player.IP, RedHighlight)} {Highlight("\"Griefing\"", BlueHighlight)} {Highlight("-e", GreenHighlight)} (Permanently bans this IP address)", Color.White);
 						args.Player.SendMessage($"- Ban an online player by index (Useful for hard to type names)", Color.White);
-						args.Player.SendMessage($"   {Specifier}{"who".Color(Utils.BoldHighlight)} {"-i".Color(Utils.GreenHighlight)} (Find the player index for the target)", Color.White);
-						args.Player.SendMessage($"   {Specifier}{"ban add".Color(Utils.BoldHighlight)} {"tsi:".Color(Utils.RedHighlight)}{args.Player.Index.Color(Utils.RedHighlight)} {"\"Trolling\"".Color(Utils.BoldHighlight)} {"-a -u -ip".Color(Utils.GreenHighlight)} (Permanently bans the online player by Account, UUID, and IP)", Color.White);
+						args.Player.SendMessage($"   {Specifier}{Highlight("who", BlueHighlight)} {Highlight("-i", GreenHighlight)} (Find the player index for the target)", Color.White);
+						args.Player.SendMessage($"   {Specifier}{Highlight("ban add", BlueHighlight)} {Highlight("tsi:", RedHighlight)}{Highlight(args.Player.Index, RedHighlight)} {Highlight("\"Trolling\"", BlueHighlight)} {Highlight("-a -u -ip", GreenHighlight)} (Permanently bans the online player by Account, UUID, and IP)", Color.White);
 						// Ban by account ID when?
 						break;
 
 					default:
-						args.Player.SendMessage($"Unknown ban command. Try {"ban help".Color(Utils.BoldHighlight)} {"add".Color(Utils.RedHighlight)}, {"del".Color(Utils.RedHighlight)}, {"list".Color(Utils.RedHighlight)}, {"details".Color(Utils.RedHighlight)}, {"identifiers".Color(Utils.RedHighlight)}, or {"examples".Color(Utils.RedHighlight)}.", Color.White);						break;
+						args.Player.SendMessage($"Unknown ban command. Try {Highlight("ban help", BlueHighlight)} {Highlight("add", RedHighlight)}, {Highlight("del", RedHighlight)}, {Highlight("list", RedHighlight)}, {Highlight("details", RedHighlight)}, {Highlight("identifiers", RedHighlight)}, or {Highlight("examples", RedHighlight)}.", Color.White);						break;
 				}
 			}
 
 			void DisplayBanDetails(Ban ban)
 			{
-				args.Player.SendMessage($"{"Ban Details".Color(Utils.BoldHighlight)} - Ticket Number: {ban.TicketNumber.Color(Utils.GreenHighlight)}", Color.White);
-				args.Player.SendMessage($"{"Identifier:".Color(Utils.BoldHighlight)} {ban.Identifier}", Color.White);
-				args.Player.SendMessage($"{"Reason:".Color(Utils.BoldHighlight)} {ban.Reason}", Color.White);
-				args.Player.SendMessage($"{"Banned by:".Color(Utils.BoldHighlight)} {ban.BanningUser.Color(Utils.GreenHighlight)} on {ban.BanDateTime.ToString("yyyy/MM/dd").Color(Utils.RedHighlight)} ({ban.GetPrettyTimeSinceBanString().Color(Utils.YellowHighlight)} ago)", Color.White);
+				args.Player.SendMessage($"{Highlight("Ban Details", BlueHighlight)} - Ticket Number: {Highlight(ban.TicketNumber, GreenHighlight)}", Color.White);
+				args.Player.SendMessage($"{Highlight("Identifier:", BlueHighlight)} {ban.Identifier}", Color.White);
+				args.Player.SendMessage($"{Highlight("Reason:", BlueHighlight)} {ban.Reason}", Color.White);
+				args.Player.SendMessage($"{Highlight("Banned by:", BlueHighlight)} {Highlight(ban.BanningUser, GreenHighlight)} on {Highlight(ban.BanDateTime.ToString("yyyy/MM/dd"), RedHighlight)} ({Highlight(ban.GetPrettyTimeSinceBanString(), YellowHighlight)} ago)", Color.White);
 				if (ban.ExpirationDateTime < DateTime.UtcNow)
 				{
-					args.Player.SendMessage($"{"Ban expired:".Color(Utils.BoldHighlight)} {ban.ExpirationDateTime.ToString("yyyy/MM/dd").Color(Utils.RedHighlight)} ({ban.GetPrettyExpirationString().Color(Utils.YellowHighlight)} ago)", Color.White);
+					args.Player.SendMessage($"{Highlight("Ban expired:", BlueHighlight)} {Highlight(ban.ExpirationDateTime.ToString("yyyy/MM/dd"), RedHighlight)} ({Highlight(ban.GetPrettyExpirationString(), YellowHighlight)} ago)", Color.White);
 				}
 				else
 				{
 					string remaining;
 					if (ban.ExpirationDateTime == DateTime.MaxValue)
 					{
-						remaining = "Never".Color(Utils.YellowHighlight);
+						remaining = Highlight("Never", YellowHighlight);
 					}
 					else
 					{
-						remaining = $"{ban.GetPrettyExpirationString().Color(Utils.YellowHighlight)} remaining";
+						remaining = $"{Highlight(ban.GetPrettyExpirationString(), YellowHighlight)} remaining";
 					}
 
-					args.Player.SendMessage($"{"Ban expires:".Color(Utils.BoldHighlight)} {ban.ExpirationDateTime.ToString("yyyy/MM/dd").Color(Utils.RedHighlight)} ({remaining})", Color.White);
+					args.Player.SendMessage($"{Highlight("Ban expires:", BlueHighlight)} {Highlight(ban.ExpirationDateTime.ToString("yyyy/MM/dd"), RedHighlight)} ({remaining})", Color.White);
 				}
 			}
 
@@ -1454,11 +1443,11 @@ namespace TShockAPI
 				AddBanResult banResult = TShock.Bans.InsertBan(ident, reason, args.Player.Account.Name, DateTime.UtcNow, expiration);
 				if (banResult.Ban != null)
 				{
-					args.Player.SendSuccessMessage($"Ban added. Ticket Number {banResult.Ban.TicketNumber.Color(Utils.GreenHighlight)} was created for identifier {ident.Color(Utils.WhiteHighlight)}.");
+					args.Player.SendSuccessMessage($"Ban added. Ticket Number {Highlight(banResult.Ban.TicketNumber, GreenHighlight)} was created for identifier {Highlight(ident, WhiteHighlight)}.");
 				}
 				else
 				{
-					args.Player.SendWarningMessage($"Failed to add ban for identifier: {ident.Color(Utils.WhiteHighlight)}");
+					args.Player.SendWarningMessage($"Failed to add ban for identifier: {Highlight(ident, WhiteHighlight)}");
 					args.Player.SendWarningMessage($"Reason: {banResult.Message}");
 				}
 
@@ -1469,7 +1458,7 @@ namespace TShockAPI
 			{
 				if (!args.Parameters.TryGetValue(1, out string target))
 				{
-					args.Player.SendMessage($"Invalid Ban Add syntax. Refer to {"ban help add".Color(Utils.BoldHighlight)} for details on how to use the {"ban add".Color(Utils.BoldHighlight)} command", Color.White);
+					args.Player.SendMessage($"Invalid Ban Add syntax. Refer to {Highlight("ban help add", BlueHighlight)} for details on how to use the {Highlight("ban add", BlueHighlight)} command", Color.White);
 					return;
 				}
 
@@ -1478,8 +1467,9 @@ namespace TShockAPI
 				bool banUuid = args.Parameters.Any(p => p == "-u");
 				bool banName = args.Parameters.Any(p => p == "-n");
 				bool banIp = args.Parameters.Any(p => p == "-ip");
+				bool banOffline = args.Parameters.Any(p => p == "-o");
 
-				List<string> flags = new List<string>() { "-e", "-a", "-u", "-n", "-ip" };
+				List<string> flags = new List<string>() { "-e", "-a", "-u", "-n", "-ip", "-o" };
 
 				string reason = "Banned.";
 				string duration = null;
@@ -1535,6 +1525,18 @@ namespace TShockAPI
 					return;
 				}
 
+				if (banOffline)
+				{
+					UserAccount account = TShock.UserAccounts.GetUserAccountByName(target);
+					if (account == null)
+					{
+						args.Player.SendErrorMessage("Could not find the account target specified. Check that you have the correct spelling.");
+						return;
+					}
+
+
+				}
+
 				var players = TSPlayer.FindByNameOrID(target);
 
 				if (players.Count > 1)
@@ -1546,59 +1548,47 @@ namespace TShockAPI
 				if (players.Count < 1)
 				{
 					args.Player.SendErrorMessage("Could not find the target specified. Check that you have the correct spelling.");
+					args.Player.SendInfoMessage($"To ban an offline user, please use the {Highlight("-o", GreenHighlight)} flag.");
 					return;
 				}
 
 				var player = players[0];
-				AddBanResult banResult = null;
-
-				if (banAccount)
+				IEnumerable<AddBanResult> banResults = TShock.Bans.DoPlayerBan(player, new BanAction
 				{
-					if (player.Account != null)
-					{
-						banResult = DoBan($"{Identifier.Account}{player.Account.Name}", reason, expiration);
-					}
-				}
+					BanAccount = banAccount,
+					BanIp = banIp,
+					BanName = banName,
+					BanUuid = banUuid,
+					ExecutingUser = args.Player,
+					Expiration = expiration,
+					Reason = reason
+				});
 
-				if (banUuid)
-				{
-					banResult = DoBan($"{Identifier.UUID}{player.UUID}", reason, expiration);					
-				}
-
-				if (banName)
-				{
-					banResult = DoBan($"{Identifier.Name}{player.Name}", reason, expiration);
-				}
-
-				if (banIp)
-				{
-					banResult = DoBan($"{Identifier.IP}{player.IP}", reason, expiration);
-				}
-
-				if (banResult?.Ban != null)
+				//TODO: group bans better. Display parent ban ID to user
+				/*if (banResult?.Ban != null)
 				{
 					player.Disconnect($"#{banResult.Ban.TicketNumber} - You have been banned: {banResult.Ban.Reason}.");
-				}
+				}*/
 			}
 
 			void DelBan()
 			{
 				if (!args.Parameters.TryGetValue(1, out string target))
 				{
-					args.Player.SendMessage($"Invalid Ban Del syntax. Refer to {"ban help del".Color(Utils.BoldHighlight)} for details on how to use the {"ban del".Color(Utils.BoldHighlight)} command", Color.White);
+					args.Player.SendMessage($"Invalid Ban Del syntax. Refer to {Highlight("ban help del", BlueHighlight)} for details on how to use the {Highlight("ban del", BlueHighlight)} command", Color.White);
 					return;
 				}
 
 				if (!int.TryParse(target, out int banId))
 				{
-					args.Player.SendMessage($"Invalid Ticket Number. Refer to {"ban help del".Color(Utils.BoldHighlight)} for details on how to use the {"ban del".Color(Utils.BoldHighlight)} command", Color.White);
+					args.Player.SendMessage($"Invalid Ticket Number. Refer to {Highlight("ban help del", BlueHighlight)} for details on how to use the {Highlight("ban del", BlueHighlight)} command", Color.White);
 					return;
 				}
 
 				if (TShock.Bans.RemoveBan(banId))
 				{
 					TShock.Log.ConsoleInfo($"Ban {banId} has been revoked by {args.Player.Account.Name}.");
-					args.Player.SendSuccessMessage($"Ban {banId.Color(Utils.GreenHighlight)} has now been marked as expired.");
+					args.Player.SendSuccessMessage($"Ban {Highlight(banId, GreenHighlight)} has now been marked as expired.");
 				}
 				else
 				{
@@ -1622,14 +1612,14 @@ namespace TShockAPI
 
 				if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out int pageNumber))
 				{
-					args.Player.SendMessage($"Invalid Ban List syntax. Refer to {"ban help list".Color(Utils.BoldHighlight)} for details on how to use the {"ban list".Color(Utils.BoldHighlight)} command", Color.White);
+					args.Player.SendMessage($"Invalid Ban List syntax. Refer to {Highlight("ban help list", BlueHighlight)} for details on how to use the {Highlight("ban list", BlueHighlight)} command", Color.White);
 					return;
 				}
 				
 				var bans = from ban in TShock.Bans.Bans
 							   where ban.Value.ExpirationDateTime > DateTime.UtcNow
 							   orderby ban.Value.ExpirationDateTime ascending
-							   select $"[{ban.Key.Color(Utils.GreenHighlight)}] {ban.Value.Identifier.Color(PickColorForBan(ban.Value))}";
+							   select $"[{Highlight(ban.Key, GreenHighlight)}] {Highlight(ban.Value.Identifier, PickColorForBan(ban.Value))}";
 
 				PaginationTools.SendPage(args.Player, pageNumber, bans.ToList(),
 					new PaginationTools.Settings
@@ -1644,13 +1634,13 @@ namespace TShockAPI
 			{
 				if (!args.Parameters.TryGetValue(1, out string target))
 				{
-					args.Player.SendMessage($"Invalid Ban Details syntax. Refer to {"ban help details".Color(Utils.BoldHighlight)} for details on how to use the {"ban details".Color(Utils.BoldHighlight)} command", Color.White);
+					args.Player.SendMessage($"Invalid Ban Details syntax. Refer to {Highlight("ban help details", BlueHighlight)} for details on how to use the {Highlight("ban details", BlueHighlight)} command", Color.White);
 					return;
 				}
 
 				if (!int.TryParse(target, out int banId))
 				{
-					args.Player.SendMessage($"Invalid Ticket Number. Refer to {"ban help details".Color(Utils.BoldHighlight)} for details on how to use the {"ban details".Color(Utils.BoldHighlight)} command", Color.White);
+					args.Player.SendMessage($"Invalid Ticket Number. Refer to {Highlight("ban help details", BlueHighlight)} for details on how to use the {Highlight("ban details", BlueHighlight)} command", Color.White);
 					return;
 				}
 
