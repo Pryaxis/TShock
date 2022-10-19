@@ -25,6 +25,7 @@ The following parameters can be added to TShock to alter the way a server initia
 * `-difficulty` - Sets the world's difficulty (`0` for `normal`, `1` for `expert`, `2` for `master`, `3` for `journey`). This only affects new worlds.
 * `-loadlib` - Instructs the base game to load the library at the path. For example, `-loadlib C:\Terraria\MyLibrary.dll` will load the library `MyLibrary.dll` from the path `C:\Terraria\`.
 * `-crashdir` - Instructs the base game to save crash dumps to the path. For example, `-crashdir C:\Terraria\CrashDumps` will save crash dumps to `C:\Terraria\CrashDumps`.
+* `-additionalplugins` - Instructs the server to load plugins from the directory specified, in addition to the `ServerPlugins` folder. For example, `-additionalplugins C:\Terraria\MyPlugins` will load plugins from `C:\Terraria\MyPlugins`. This is useful if you run multiple servers with the same plugins (generally).
 
 These command line flags are in-addition to the ones that the Terraria server offers (for example, `-lang` is now a vanilla flag, and still works).
 

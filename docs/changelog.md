@@ -59,6 +59,7 @@ Use past tense when adding new entries; sign your name off when you add or chang
   * When rejecting from `OnPlayerBuff`, instead of sending a `PlayerAddBuff` packet with the rejected buff (essentially a no-op, as the sender implicitly applies the buff to the target, and causes desync as the buff was rejected), send a `PlayerBuff` to re-sync the target's buffs, without the buff we just rejected.
 * Added new tile provider. Use `-constileation` or `-c` to use it. Constileation is an alternative tile provider to Tiled and HeapTile. (@SignatureBeef)
 * Fixed an exploit with grass mowing not removing hanging vines. (@punchready)
+* Added `-additionalplugins` command line argument to load additional plugins. (@pontaoski)
 
 ## TShock 4.5.18
 * Fixed `TSPlayer.GiveItem` not working if the player is in lava. (@PotatoCider)
