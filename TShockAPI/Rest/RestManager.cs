@@ -1189,45 +1189,46 @@ namespace TShockAPI
 
 				if (descattr != null && !string.IsNullOrWhiteSpace(descattr.Description) && routeattr != null && !string.IsNullOrWhiteSpace(routeattr.Route))
 				{
-					sb.AppendLine("{0}  ".SFormat(name));
-					sb.AppendLine("Description: {0}  ".SFormat(descattr.Description));
+					sb.AppendLine("## {0}".SFormat(name));
+					sb.AppendLine("{0}".SFormat(descattr.Description));
 
 					var permission = method.GetCustomAttributes(false).Where(o => o is Permission);
 					if (permission.Count() > 0)
 					{
-						sb.AppendLine("Permissions: {0}".SFormat(String.Join(", ", permission.Select(p => ((Permission)p).Name))));
+						sb.AppendLine("* **Permissions**: `{0}`".SFormat(String.Join(", ", permission.Select(p => ((Permission)p).Name))));
 					}
 					else
 					{
 						sb.AppendLine("No special permissions are required for this route.");
 					}
-
+					sb.AppendLine();
 					var verbs = method.GetCustomAttributes(false).Where(o => o is Verb);
 					if (verbs.Count() > 0)
 					{
-						sb.AppendLine("Verbs:");
+						sb.AppendLine("**Verbs**:");
 						foreach (Verb verb in verbs)
 						{
-							sb.AppendLine("\t{0}({1}) [{2}] - {3}".SFormat(verb.Name, verb.Required ? "Required" : "Optional", verb.ArgumentType.Name, verb.Description));
+							sb.AppendLine("* `{0}` ({1}) `[{2}]` - {3}".SFormat(verb.Name, verb.Required ? "Required" : "Optional", verb.ArgumentType.Name, verb.Description));
 						}
 					}
-
+					sb.AppendLine();
 					var nouns = method.GetCustomAttributes(false).Where(o => o is Noun);
 					if (nouns.Count() > 0)
 					{
-						sb.AppendLine("Nouns:");
+						sb.AppendLine("**Nouns**:");
 						foreach (Noun noun in nouns)
 						{
-							sb.AppendLine("\t{0}({1}) [{2}] - {3}".SFormat(noun.Name, noun.Required ? "Required" : "Optional", noun.ArgumentType.Name, noun.Description));
+							sb.AppendLine("* `{0}` ({1}) `[{2}]` - {3}".SFormat(noun.Name, noun.Required ? "Required" : "Optional", noun.ArgumentType.Name, noun.Description));
 						}
 					}
-					sb.AppendLine("Example Usage: {0}?{1}".SFormat(routeattr.Route,
+					sb.AppendLine();
+					sb.AppendLine("**Example Usage**: `{0}?{1}`".SFormat(routeattr.Route,
 						string.Join("&", nouns.Select(n => String.Format("{0}={0}", ((Noun)n).Name)))));
 					sb.AppendLine();
 				}
 			}
 
-			File.WriteAllText("RestDescriptions.txt", sb.ToString());
+			File.WriteAllText("docs/rest-fields.md", sb.ToString());
 		}
 
 		private RestObject RestError(string message, string status = "400")
