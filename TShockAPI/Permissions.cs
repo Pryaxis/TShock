@@ -537,15 +537,15 @@ namespace TShockAPI
 				var strs =
 					commands.Select(
 						c =>
-						c.Name + (c.Names.Count > 1 ? "({0})".SFormat(string.Join(" ", c.Names.ToArray(), 1, c.Names.Count - 1)) : ""));
+						c.Name + (c.Names.Count > 1 ? " ({0})".SFormat(string.Join(" ", c.Names.ToArray(), 1, c.Names.Count - 1)) : ""));
 
-				sb.AppendLine("{0}".SFormat(name));
-				sb.AppendLine("Description: {0}  ".SFormat(desc));
-				sb.AppendLine("Commands: {0}  ".SFormat(strs.Count() > 0 ? string.Join(" ", strs) : "None"));
+				sb.AppendLine("## {0}".SFormat(name));
+				sb.AppendLine("{0}".SFormat(desc));
+				sb.AppendLine("* **Commands**: `{0}`".SFormat(strs.Count() > 0 ? string.Join(", ", strs) : "None"));
 				sb.AppendLine();
 			}
 
-			File.WriteAllText("PermissionsDescriptions.txt", sb.ToString());
+			File.WriteAllText("docs/permission-descriptions.md", sb.ToString());
 		}
 	}
 }
