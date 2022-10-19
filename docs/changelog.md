@@ -60,6 +60,7 @@ Use past tense when adding new entries; sign your name off when you add or chang
 * Added new tile provider. Use `-constileation` or `-c` to use it. Constileation is an alternative tile provider to Tiled and HeapTile. (@SignatureBeef)
 * Fixed an exploit with grass mowing not removing hanging vines. (@punchready)
 * Added `-additionalplugins` command line argument to load additional plugins. (@pontaoski)
+* Added localization support for console spam reduction. (@KawaiiYuyu)
 
 ## TShock 4.5.18
 * Fixed `TSPlayer.GiveItem` not working if the player is in lava. (@PotatoCider)

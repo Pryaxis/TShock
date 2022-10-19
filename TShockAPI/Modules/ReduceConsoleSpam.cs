@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 using System;
+using Terraria.Localization;
 
 namespace TShockAPI.Modules;
 
@@ -31,6 +32,13 @@ public class ReduceConsoleSpam : Module
 	/// Holds the last status text value, to determine if there is a suitable change to report.
 	/// </summary>
 	private string _lastStatusText = null;
+
+	private readonly string _resettingObjectText = LanguageManager.Instance.GetTextValue("LegacyWorldGen.47");
+	private readonly string _loadingText = LanguageManager.Instance.GetTextValue("LegacyWorldGen.51");
+	private readonly string _settlingText = LanguageManager.Instance.GetTextValue("LegacyWorldGen.27");
+	private readonly string _savingText = LanguageManager.Instance.GetTextValue("LegacyWorldGen.49");
+	private readonly string _validatingText = LanguageManager.Instance.GetTextValue("LegacyWorldGen.73");
+	private readonly string _finalizingText = LanguageManager.Instance.GetTextValue("LegacyWorldGen.87");
 
 	/// <summary>
 	/// Aims to reduce the amount of console spam by filtering out load/save progress
@@ -59,11 +67,11 @@ public class ReduceConsoleSpam : Module
 			return false;
 		}
 
-		if (replace("Resetting game objects")
-			|| replace("Settling liquids")
-			|| replace("Loading world data")
-			|| replace("Saving world data")
-			|| replace("Validating world save"))
+		if (replace(_resettingObjectText)
+			|| replace(_settlingText)
+			|| replace(_loadingText)
+			|| replace(_savingText)
+			|| replace(_validatingText))
 			return;
 
 		// try parsing % - [text] - %
@@ -84,10 +92,10 @@ public class ReduceConsoleSpam : Module
 					if (text.Length > 0 && !(
 						// relogic has made a mess of this
 						(
-							_lastStatusText != "Validating world save"
-							|| _lastStatusText != "Saving world data"
+							_lastStatusText != _validatingText
+							|| _lastStatusText != _savingText
 						)
-						&& text == "Finalizing world"
+						&& text == _finalizingText
 					))
 						WriteIfChange(text);
 
