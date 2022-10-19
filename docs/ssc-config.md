@@ -21,7 +21,7 @@ The starting default health for new players when SSC is enabled.
 ## StartingInventory  
 The starting default inventory for new players when SSC is enabled.
 * **Field type**: `List`1`
-* **Default**: `System.Collections.Generic.List`1[TShockAPI.NetItem]`
+* **Default**: `System.Collections.Generic.List\`1[TShockAPI.NetItem]`
 
 ## StartingMana  
 The starting default mana for new players when SSC is enabled.
