@@ -2,3 +2,4 @@
 * [Changelog](/changelog.md)
 * [Command line parameters](/command-line-parameters.md)
 * [Tile providers](/tile-providers.md)
+* [Message of the day](/motd.md)
