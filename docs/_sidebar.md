@@ -6,5 +6,6 @@
 
 * Field definitions
   * [Permissions](/permission-descriptions.md)
+  * [REST fields](/rest-fields.md)
   * [config.json fields](/config-file-descriptions.md)
   * [sscconfig.json fields](/ssc-config.md)
