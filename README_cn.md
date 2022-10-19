@@ -1,95 +1,51 @@
 <p align="center">
   <img src="https://tshock.co/newlogo.png" alt="TShock for Terraria"><br />
-  <a href="https://ci.appveyor.com/project/hakusaro/tshock"><img src="https://ci.appveyor.com/api/projects/status/chhe61q227lqdlg1?svg=true" alt="AppVeyor Build Status"></a><a href="https://github.com/Pryaxis/TShock/actions"><img src="https://github.com/Pryaxis/TShock/actions/workflows/Build%20Server/badge.svg" alt="GitHub Actions Build Status"></a><a href="#contributors"><img src="https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square" alt="All contributors"></a><br />
+  <a href="https://ci.appveyor.com/project/hakusaro/tshock">
+    <img src="https://ci.appveyor.com/api/projects/status/chhe61q227lqdlg1?svg=true" alt="AppVeyor Build Status">
+  </a>
+  <a href="https://github.com/Pryaxis/TShock/actions">
+    <img src="https://github.com/Pryaxis/TShock/actions/workflows/build.yml/badge.svg" alt="GitHub Actions Build Status">
+  </a>
 </p>
 
-TShock是为泰拉瑞亚设计的多功能服务端。它拥有反作弊/强制开荒/用户组/权限管理/物品封禁/大量指令和无限的扩展性。
+TShock是为泰拉瑞亚服务器和社区开发的一个工具箱。这个工具箱拥有反作弊、服务端存档、用户组、权限、物品禁止、大量指令和无限的可能性。它是独一无二的。
 
-* 下载: [稳定版](https://github.com/TShock/TShock/releases) or [测试版](#experimental-downloads) 
-* 使用方法请阅读 [文档](https://tshock.readme.io/) 
-* 你可以加入 [我们的官方QQ群](https://jq.qq.com/?_wv=1027&k=5GJZCe4) 交流
-* 也可以加入 [我们的Discord服务器](https://discord.gg/Cav9nYX) 提问
-* 如果想要深度技术支持，可以加入 [我们的Telegram群](https://t.me/pryaxis) 
-* 你可以在 [这里](https://tshock.co/xf/index.php?resources/) 下载插件增强你的服务器
+这是面向TShock开发者和修改者的说明。我们正在为服务器运营者和插件开发者建设新的[TShock文档](https://ikebukuro.tshock.co/)，但还在进行中。
 
-----
+## 进行TShock开发
 
-## 内容索引
+如果你想通过PR给TShock贡献代码或者想按照你美妙的想法定制它，这里是最好的出发点。看完之后你就能独立从源码编译出TShock。不止这样，你还能知道如何成为一名出色的TShock开发者。
 
-  * [第一次使用TShock?](#new-to-tshock)
-  * [下载测试版](#experimental-downloads)
+本指南假设你已经安装了[.NET 6 SDK](https://dotnet.microsoft.com/zh-cn/download/dotnet/6.0)并了解命令行。如果你不满足这些条件，你应该能通过Visual Studio 2022或者Visual Studio Code做到同样的事情。
 
-## 第一次使用TShock?
+1. 克隆仓库：`git clone https://github.com/Pryaxis/TShock.git --recurse-submodules`
+1. 运行`cd TShock`来进入仓库文件夹
+1. 运行`dotnet build`。不开玩笑，这样就编译完了
 
-_这篇指南基于Windows。如果你在使用Unix或者Linux，请参考 [深度指南](https://tshock.readme.io/docs/getting-started) (不要忘记在你的Linux系统上安装 **最新版** 的 `mono-complete` )._
 
-1. 下载 [最新稳定版](https://github.com/TShock/TShock/releases) 然后解压。解压后文件所在的文件夹就是你服务器的工作目录。文件夹结构大致如下:
+如果你想运行`TShockLauncher`（启动服务器），运行：
 
-      
-          GeoIP.dat
-          Newtonsoft.Json.dll
-          OTAPI.dll
-          ServerPlugins\
-          |------BCrypt.Net.dll
-          |------HttpServer.dll
-          |------Mono.Data.Sqlite.dll
-          |------MySql.Data.dll
-          |------TShockAPI.dll
-          TerrariaServer.exe
-          sqlite3.dll
-      
+1. `dotnet run --project TShockLauncher`
 
-1. 运行 `TerrariaServer.exe` ，TShock就会启动了。 TShock会自动创建一些文件夹，具体用途稍后讨论。
+如果要生成打包后的发行版，运行：
 
-1. 启动你的游戏，选择 `多人模式` 并选择 `通过IP加入`。输入 `localhost` 或者 `127.0.0.1` 如果你的服务器和游戏运行在同一台电脑上。如果你在用其他设备开服，你需要输入它的IP地址。
+1. `cd TShockLauncher`
+1. `dotnet publish -r win-x64 -f net6.0 -c Release -p:PublishSingleFile=true --self-contained false`
 
-1. 查看服务器控制台上的 _验证码_。在游戏里打开聊天窗口输入 `/setup [验证码]` (举个例子: `/setup 12345`)然后回车。这条指令可以让你成为临时管理。 所有指令都需要以 `/` 或者 `!` 开头。
+注意在这个例子中你将会生成`win-x64`架构的版本。你也可以生成`win-x64`、`osx-x64`、`linux-x64`、`linux-arm64`、`linux-arm`的版本。你可以在`TShockLauncher/bin/Release/net6.0/`文件夹下对应架构的文件夹里找到生成后的发行版。
 
-1. 在游戏里输入指令 `/user add [账号名] [密码] owner` (举个例子: `/user add 鱼鱼 真可爱 owner`) 来创建一个账号并且给这个账号服主权限。
+### 跟泰拉瑞亚本体代码交互
 
-1. 登录你刚刚创建的账号，方法是输入指令 `/login [账号名] [密码]` (举个例子: `/login 鱼鱼 真可爱`) 然后你就会看到登录成功的提示。
+在TShock和其他TSAPI的插件里跟本体代码交互会跟其他API不同。因为OTAPI的原因，`Terraria`命名空间里的所有字段都变成public了。这意味着你可以直接访问所有本体代码的成员。TShock和其他插件经常会这样做，基本上是修改地图、发送和接收数据包。调用`Main`就是一个直接访问的例子。相当于CraftBukkit里对`net.minecraft.server` (NMS)的调用。
 
-1. 输入指令 `/setup` 关闭初始化设置功能，因为你已经搞定了。TShock会在 `tshock` 文件夹内创建数个文件。包括 `config.json` (服务器配置文件), `sscconfig.json` (强制开荒配置文件) 和 `tshock.sqlite` (服务器数据库)。不要把 `tshock.sqlite` 搞丢了，不然就白折腾了。
+你也许会好奇这些字段在哪里能找到。Pryaxis提供了反编译原版服务端得到的[源码](https://github.com/pryaxis/Sources)，会随着游戏版本持续更新。由于版权方要求，这些源码只对TShock的开发者开放。如果你提交过TShock的PR，可以直接在Discord里索要访问权限。你也可以下载`ILSpy`自己反编译服务端。
 
-1. 现在你可以 [调整配置](https://tshock.readme.io/docs/config-settings) ，创建用户组，封禁物品或者安装插件了。
+最后，你也许会对开发TSAPI插件感兴趣。[TShock资源]这个组织有数个你可以参考学习的插件。TShock自身也是一个TSAPI的插件，并且大多数插件都是开源的。这给了你足够的空间去找到接下来的方向。
 
-## 下载测试版
+需要帮助吗？加入我们的[Discord](https://discord.gg/Cav9nYX)服务器。或者[QQ群](https://jq.qq.com/?_wv=1027&k=5GJZCe4)。
 
-想下载测试版的TShock，你有两个选择：AppVeyor或者GitHub。你也可以获取Travis CI上的旧版本。注意: 测试版的TShock理论上不受我们的支持。如果你遇到问题需要发Issue，请提前声明你的版本信息。
+## 行为准则
 
-在 [AppVeyor](https://ci.appveyor.com/project/hakusaro/tshock/) 上，点击History，找到需要的版本并点击, 然后点击Artifacts就可以下载它的发布版或者调试版。AppVeyor只会保留半年内的版本。
+> 如果参与泰拉瑞亚TShock社区，所有成员都需坚持对社区内外的所有人保持礼仪。成员不可参与不恰当地贬低或边缘化任何群体或个人的讨论。成员不会试图将议程推进或推进到专横或不开明的地步（例如通过灌输负面观念）。成员不会滥用向他们提供的服务，并将根据具体情况遵循社区领袖关于滥用行为的指导。成员将遵守美国和国际法。如果成员发现违反此行为准则的行为，他们将不会参与，而是会在论坛或Discord上联系领导团队。
 
-在 [GitHub项目](https://github.com/Pryaxis/TShock/) 页面里，点击 `Actions`，然后点击你想要的branch的 `build server` 就可以下载它的发布版或者调试版。
-
-关于Travis CI上的旧版本，现在还可以在 [我们的Travis CI产物镜像](https://travis.tshock.co/) 上获取。但是请注意这些旧版本已经不再受支持。
-
-## Contributors
-
-Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
-
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-<table>
-  <tr>
-    <td align="center"><a href="https://avikav.net"><img src="https://avatars2.githubusercontent.com/u/18518861?v=4" width="100px;" alt=""/><br /><sub><b>AviKav</b></sub></a><br /><a href="https://github.com/Pryaxis/TShock/issues?q=author%3AAviKav" title="Bug reports">🐛</a> <a href="https://github.com/Pryaxis/TShock/commits?author=AviKav" title="Tests">⚠️</a></td>
-    <td align="center"><a href="https://tshock.co"><img src="https://avatars0.githubusercontent.com/u/3332657?v=4" width="100px;" alt=""/><br /><sub><b>Rodrigo Rente</b></sub></a><br /><a href="https://github.com/Pryaxis/TShock/commits?author=AxisKriel" title="Code">💻</a> <a href="#projectManagement-AxisKriel" title="Project Management">📆</a> <a href="https://github.com/Pryaxis/TShock/commits?author=AxisKriel" title="Tests">⚠️</a></td>
-    <td align="center"><a href="https://sgkoi.dev"><img src="https://avatars2.githubusercontent.com/u/9637711?v=4" width="100px;" alt=""/><br /><sub><b>Stargazing Koishi</b></sub></a><br /><a href="https://github.com/Pryaxis/TShock/commits?author=sgkoishi" title="Code">💻</a> <a href="#infra-sgkoishi" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a></td>
-    <td align="center"><a href="https://github.com/AxeelAnder"><img src="https://avatars2.githubusercontent.com/u/25691207?v=4" width="100px;" alt=""/><br /><sub><b>Axeel</b></sub></a><br /><a href="https://github.com/Pryaxis/TShock/commits?author=AxeelAnder" title="Documentation">📖</a> <a href="#projectManagement-AxeelAnder" title="Project Management">📆</a></td>
-    <td align="center"><a href="https://aurora-gaming.org/"><img src="https://avatars0.githubusercontent.com/u/58985873?v=4" width="100px;" alt=""/><br /><sub><b>Patrikkk</b></sub></a><br /><a href="https://github.com/Pryaxis/TShock/commits?author=Patrikkk" title="Code">💻</a> <a href="https://github.com/Pryaxis/TShock/commits?author=Patrikkk" title="Documentation">📖</a> <a href="https://github.com/Pryaxis/TShock/commits?author=Patrikkk" title="Tests">⚠️</a></td>
-    <td align="center"><a href="http://www.nathaneaston.com/"><img src="https://avatars2.githubusercontent.com/u/10368650?v=4" width="100px;" alt=""/><br /><sub><b>Nathan Easton</b></sub></a><br /><a href="https://github.com/Pryaxis/TShock/commits?author=ndragon798" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/Ristellise"><img src="https://avatars2.githubusercontent.com/u/7894419?v=4" width="100px;" alt=""/><br /><sub><b>Shinon</b></sub></a><br /><a href="https://github.com/Pryaxis/TShock/commits?author=Ristellise" title="Tests">⚠️</a> <a href="https://github.com/Pryaxis/TShock/commits?author=Ristellise" title="Code">💻</a> <a href="https://github.com/Pryaxis/TShock/commits?author=Ristellise" title="Documentation">📖</a></td>
-  </tr>
-  <tr>
-    <td align="center"><a href="https://github.com/Retrograde-i486"><img src="https://avatars1.githubusercontent.com/u/65242258?v=4" width="100px;" alt=""/><br /><sub><b>Retrograde-i486</b></sub></a><br /><a href="https://github.com/Pryaxis/TShock/commits?author=Retrograde-i486" title="Code">💻</a></td>
-    <td align="center"><a href="http://colinbohn.me"><img src="https://avatars0.githubusercontent.com/u/1351268?v=4" width="100px;" alt=""/><br /><sub><b>Colin Bohn</b></sub></a><br /><a href="https://github.com/Pryaxis/TShock/commits?author=ColinBohn" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/mrshroomy"><img src="https://avatars0.githubusercontent.com/u/52048952?v=4" width="100px;" alt=""/><br /><sub><b>mrshroomy</b></sub></a><br /><a href="https://github.com/Pryaxis/TShock/commits?author=mrshroomy" title="Tests">⚠️</a></td>
-    <td align="center"><a href="https://github.com/agentsparrow"><img src="https://avatars0.githubusercontent.com/u/16114336?v=4" width="100px;" alt=""/><br /><sub><b>agentsparrow</b></sub></a><br /><a href="https://github.com/Pryaxis/TShock/commits?author=agentsparrow" title="Tests">⚠️</a></td>
-  </tr>
-</table>
-
-<!-- markdownlint-enable -->
-<!-- prettier-ignore-end -->
-<!-- ALL-CONTRIBUTORS-LIST:END -->
-
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+> 不要试图通过巧妙的逻辑或理由来规避或绕过行为准则（例如侮辱 Facepunch上的成员，因为他们不会在这里被直接提及）。
