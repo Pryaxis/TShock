@@ -85,7 +85,7 @@ namespace TShockAPI.Configuration
 		public static void DumpDescriptions()
 		{
 			var sb = new StringBuilder();
-			var defaults = new ServerSideConfig();
+			var defaults = new SscSettings();
 
 			foreach (var field in defaults.GetType().GetFields().OrderBy(f => f.Name))
 			{
@@ -103,8 +103,8 @@ namespace TShockAPI.Configuration
 
 				sb.AppendLine("## {0}  ".SFormat(name));
 				sb.AppendLine("{0}".SFormat(desc));
-				sb.AppendLine("* *Field type*: `{0}`".SFormat(type));
-				sb.AppendLine("* *Default*: `{0}`".SFormat(def));
+				sb.AppendLine("* **Field type**: `{0}`".SFormat(type));
+				sb.AppendLine("* **Default**: `{0}`".SFormat(def));
 				sb.AppendLine();
 			}
 
