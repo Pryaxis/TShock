@@ -15,7 +15,6 @@ Use past tense when adding new entries; sign your name off when you add or chang
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change. -->
 
 ## Upcoming changes
-* Added localization support for console spam reduction. (@KawaiiYuyu)
 * Reduced load/save console spam. (@SignatureBeef, @YehnBeep)
 * Replaced SQLite library with Microsoft.Data.Sqlite for arm64 support. (@SignatureBeef)
 * Initial support for MonoMod hooks on Raspberry Pi (arm64). (@kevzhao2)
@@ -61,6 +60,7 @@ Use past tense when adding new entries; sign your name off when you add or chang
 * Added new tile provider. Use `-constileation` or `-c` to use it. Constileation is an alternative tile provider to Tiled and HeapTile. (@SignatureBeef)
 * Fixed an exploit with grass mowing not removing hanging vines. (@punchready)
 * Added `-additionalplugins` command line argument to load additional plugins. (@pontaoski)
+* Added localization support for console spam reduction. (@KawaiiYuyu)
 
 ## TShock 4.5.18
 * Fixed `TSPlayer.GiveItem` not working if the player is in lava. (@PotatoCider)

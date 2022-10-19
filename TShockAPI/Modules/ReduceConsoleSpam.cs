@@ -33,12 +33,12 @@ public class ReduceConsoleSpam : Module
 	/// </summary>
 	private string _lastStatusText = null;
 
-	private static readonly string ResettingObjectText = LanguageManager.Instance.GetTextValue("LegacyWorldGen.47");
-	private static readonly string LoadingText = LanguageManager.Instance.GetTextValue("LegacyWorldGen.51");
-	private static readonly string SettlingText = LanguageManager.Instance.GetTextValue("LegacyWorldGen.27");
-	private static readonly string SavingText = LanguageManager.Instance.GetTextValue("LegacyWorldGen.49");
-	private static readonly string ValidatingText = LanguageManager.Instance.GetTextValue("LegacyWorldGen.73");
-	private static readonly string FinalizingText = LanguageManager.Instance.GetTextValue("LegacyWorldGen.87");
+	private readonly string _resettingObjectText = LanguageManager.Instance.GetTextValue("LegacyWorldGen.47");
+	private readonly string _loadingText = LanguageManager.Instance.GetTextValue("LegacyWorldGen.51");
+	private readonly string _settlingText = LanguageManager.Instance.GetTextValue("LegacyWorldGen.27");
+	private readonly string _savingText = LanguageManager.Instance.GetTextValue("LegacyWorldGen.49");
+	private readonly string _validatingText = LanguageManager.Instance.GetTextValue("LegacyWorldGen.73");
+	private readonly string _finalizingText = LanguageManager.Instance.GetTextValue("LegacyWorldGen.87");
 
 	/// <summary>
 	/// Aims to reduce the amount of console spam by filtering out load/save progress
@@ -67,11 +67,11 @@ public class ReduceConsoleSpam : Module
 			return false;
 		}
 
-		if (replace(ResettingObjectText)
-			|| replace(SettlingText)
-			|| replace(LoadingText)
-			|| replace(SavingText)
-			|| replace(ValidatingText))
+		if (replace(_resettingObjectText)
+			|| replace(_settlingText)
+			|| replace(_loadingText)
+			|| replace(_savingText)
+			|| replace(_validatingText))
 			return;
 
 		// try parsing % - [text] - %
@@ -92,10 +92,10 @@ public class ReduceConsoleSpam : Module
 					if (text.Length > 0 && !(
 						// relogic has made a mess of this
 						(
-							_lastStatusText != ValidatingText
-							|| _lastStatusText != SavingText
+							_lastStatusText != _validatingText
+							|| _lastStatusText != _savingText
 						)
-						&& text == FinalizingText
+						&& text == _finalizingText
 					))
 						WriteIfChange(text);
 
