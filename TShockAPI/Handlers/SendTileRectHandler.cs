@@ -350,9 +350,13 @@ namespace TShockAPI.Handlers
 				))
 			{
 				UpdateServerTileState(tile, newTile, TileDataType.Tile);
+				if (TileID.Sets.IsVine[Main.tile[realX, realY + 1].type]) // vanilla does in theory break the vines on its own, but we can't trust that
+				{
+					WorldGen.KillTile(realX, realY + 1);
+				}
 			}
 
-			// Conversion: only sends a 1x1 rect
+			// Conversion: only sends a 1x1 rect; has to happen AFTER grass mowing as it would otherwise also let mowing through, but without fixing vines
 			if (rectWidth == 1 && rectLength == 1)
 			{
 				ProcessConversionSpreads(tile, newTile);
