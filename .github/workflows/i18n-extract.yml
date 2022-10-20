@@ -1,7 +1,6 @@
 name: i18n extraction
 on:
   push:
-    branches: [ general-devel ]
 jobs:
   extract:
     runs-on: ubuntu-latest
