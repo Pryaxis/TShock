@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TShock\n"
-"POT-Creation-Date: 2022-11-28 07:52:13+0000\n"
-"PO-Revision-Date: 2022-11-28 07:52:13+0000\n"
+"POT-Creation-Date: 2022-11-28 08:14:57-0500\n"
+"PO-Revision-Date: 2022-11-28 08:14:58-0500\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -1172,11 +1172,35 @@ msgstr ""
 msgid "<From {0}> {1}"
 msgstr ""
 
+#: ../../TShockPluginManager/NugetCLI.cs:187
+#, csharp-format
+msgid "<green>{0} <black>from <blue>{1} <black>[{2}]"
+msgstr ""
+
+#: ../../TShockPluginManager/NugetCLI.cs:178
+#, csharp-format
+msgid "<green>{0}<black> from <blue>{1} <black>[{2}]"
+msgstr ""
+
 #: ../../TShockAPI/Commands.cs:5551
 #: ../../TShockAPI/Commands.cs:5582
 #, csharp-format
 msgid "<To {0}> {1}"
 msgstr ""
+
+#: ../../TShockPluginManager/NugetCLI.cs:136
+#, csharp-format
+msgid "=== Dependency ==="
+msgid_plural "=== Dependencies ==="
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../../TShockPluginManager/NugetCLI.cs:133
+#, csharp-format
+msgid "=== Requested Plugin ==="
+msgid_plural "=== Requested Plugins ==="
+msgstr[0] ""
+msgstr[1] ""
 
 #: ../../TShockAPI/Commands.cs:2818
 msgid "a Deerclops"
@@ -1331,6 +1355,10 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:2626
 msgid "all bosses"
+msgstr ""
+
+#: ../../TShockPluginManager/NugetCLI.cs:169
+msgid "All done! :)"
 msgstr ""
 
 #: ../../TShockAPI/Commands.cs:2104
@@ -2798,6 +2826,10 @@ msgid ""
 "require a server restart."
 msgstr ""
 
+#: ../../TShockPluginManager/NugetCLI.cs:100
+msgid "Connect to the internet to figure out what to download?"
+msgstr ""
+
 #: ../../TShockAPI/TShock.cs:1329
 msgid "Connecting via a proxy is not allowed."
 msgstr ""
@@ -2819,8 +2851,8 @@ msgid ""
 "{0}"
 msgstr ""
 
-#: ../../TShockAPI/DB/ResearchDatastore.cs:54
 #: ../../TShockAPI/DB/BanManager.cs:82
+#: ../../TShockAPI/DB/ResearchDatastore.cs:54
 msgid "Could not find a database library (probably Sqlite3.dll)"
 msgstr ""
 
@@ -3032,6 +3064,11 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:4328
 msgid "disallow <tile ID> <group> - Disallows a group from place a tile."
+msgstr ""
+
+#: ../../TShockPluginManager/NugetCLI.cs:140
+#: ../../TShockPluginManager/NugetCLI.cs:161
+msgid "Download and install the given packages?"
 msgstr ""
 
 #: ../../TShockAPI/Commands.cs:2648
@@ -3720,8 +3757,8 @@ msgstr ""
 msgid "Group {0} deleted successfully"
 msgstr ""
 
-#: ../../TShockAPI/DB/UserManager.cs:638
 #: ../../TShockAPI/DB/GroupManager.cs:725
+#: ../../TShockAPI/DB/UserManager.cs:638
 #, csharp-format
 msgid "Group {0} does not exist"
 msgstr ""
@@ -3943,6 +3980,15 @@ msgid ""
 "{0}setup."
 msgstr ""
 
+#: ../../TShockPluginManager/NugetCLI.cs:142
+msgid "If you want to know which plugins need which dependencies, press E."
+msgstr ""
+
+#: ../../TShockPluginManager/NugetCLI.cs:162
+msgid ""
+"If you'd like to see which plugins need which dependencies again, press E."
+msgstr ""
+
 #: ../../TShockAPI/Bouncer.cs:980
 msgid ""
 "If you're seeing this message and you know what that player did, please "
@@ -3976,8 +4022,8 @@ msgstr ""
 msgid "Incorrect setup code. This incident has been logged."
 msgstr ""
 
-#: ../../TShockAPI/DB/TileManager.cs:223
 #: ../../TShockAPI/DB/ProjectileManager.cs:223
+#: ../../TShockAPI/DB/TileManager.cs:223
 #, csharp-format
 msgid "Infinite group parenting ({0})"
 msgstr ""
@@ -3998,6 +4044,10 @@ msgstr ""
 
 #: ../../TShockAPI/DB/BanManager.cs:314
 msgid "Inserting the ban into the database failed."
+msgstr ""
+
+#: ../../TShockPluginManager/NugetCLI.cs:39
+msgid "Install the plugins as specified in the plugins.json"
 msgstr ""
 
 #: ../../TShockAPI/Rest/Rest.cs:426
@@ -4810,8 +4860,16 @@ msgstr ""
 msgid "Machine name: {0}"
 msgstr ""
 
+#: ../../TShockPluginManager/NugetCLI.cs:141
+msgid "Make sure that you trust the plugins you're installing."
+msgstr ""
+
 #: ../../TShockAPI/Bouncer.cs:2489
 msgid "Malicious portal attempt."
+msgstr ""
+
+#: ../../TShockPluginManager/NugetCLI.cs:35
+msgid "Manage plugins and their requirements"
 msgstr ""
 
 #: ../../TShockAPI/Commands.cs:280
@@ -5057,6 +5115,10 @@ msgstr ""
 msgid "NPC damage exceeded {0}."
 msgstr ""
 
+#: ../../TShockPluginManager/NugetCLI.cs:103
+msgid "One moment..."
+msgstr ""
+
 #: ../../TShockAPI/DB/RegionManager.cs:102
 #, csharp-format
 msgid "One of your UserIDs is not a usable integer: {0}"
@@ -5260,8 +5322,8 @@ msgstr ""
 msgid "Port overridden by startup argument. Set to {0}"
 msgstr ""
 
-#: ../../TShockAPI/DB/ResearchDatastore.cs:53
 #: ../../TShockAPI/DB/BanManager.cs:81
+#: ../../TShockAPI/DB/ResearchDatastore.cs:53
 msgid "Possible problem with your database - is Sqlite3.dll present?"
 msgstr ""
 
@@ -5382,6 +5444,10 @@ msgstr ""
 #: ../../TShockAPI/Bouncer.cs:934
 #: ../../TShockAPI/Bouncer.cs:2394
 msgid "Reached TilePlace threshold."
+msgstr ""
+
+#: ../../TShockPluginManager/NugetCLI.cs:128
+msgid "Read the message below to find out more."
 msgstr ""
 
 #: ../../TShockAPI/Commands.cs:1495
@@ -6327,6 +6393,10 @@ msgstr ""
 msgid "The value has to be greater than zero."
 msgstr ""
 
+#: ../../TShockPluginManager/NugetCLI.cs:127
+msgid "The versions of plugins you requested aren't compatible with eachother."
+msgstr ""
+
 #: ../../TShockAPI/Commands.cs:2722
 msgid "the Wall of Flesh"
 msgstr ""
@@ -6392,6 +6462,21 @@ msgstr ""
 msgid ""
 "There was an error processing your login or authentication related request."
 msgstr ""
+
+#: ../../TShockPluginManager/NugetCLI.cs:121
+msgid "There was an issue figuring out what to download."
+msgstr ""
+
+#: ../../TShockPluginManager/NugetCLI.cs:90
+msgid "There was an issue reading the packages.json."
+msgstr ""
+
+#: ../../TShockPluginManager/NugetCLI.cs:99
+#, csharp-format
+msgid "This is the plugin you requested to install."
+msgid_plural "These are the plugins you requested to install"
+msgstr[0] ""
+msgstr[1] ""
 
 #: ../../TShockAPI/TShock.cs:1013
 #: ../../TShockAPI/TShock.cs:1023
@@ -6949,6 +7034,10 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:6608
 msgid "Willow Tree"
+msgstr ""
+
+#: ../../TShockPluginManager/NugetCLI.cs:85
+msgid "Without a list of plugins to install, no plugins can be installed."
 msgstr ""
 
 #: ../../TShockAPI/BackupManager.cs:80
@@ -7588,6 +7677,10 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:6485
 msgid "You're not allowed to change tiles here!"
+msgstr ""
+
+#: ../../TShockPluginManager/NugetCLI.cs:84
+msgid "You're trying to sync, but you don't have a packages.json file."
 msgstr ""
 
 #: ../../TShockAPI/Commands.cs:1987
