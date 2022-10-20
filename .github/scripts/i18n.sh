@@ -41,7 +41,6 @@ if [ -z "$GIT_USER_NAME" ]; then
 fi
 
 # make sure branches are up-to-date
-git fetch
 echo "Setting up git credentials..."
 git remote set-url origin https://x-access-token:"$GITHUB_TOKEN"@github.com/"$GITHUB_REPOSITORY".git
 git config --global user.email "$GIT_USER_EMAIL"
