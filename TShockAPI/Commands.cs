@@ -649,7 +649,7 @@ namespace TShockAPI
 			string cmdName;
 			if (index == 0) // Space after the command specifier should not be supported
 			{
-				player.SendErrorMessage(I18n.C.GetString("Invalid command entered. Type {0}help for a list of valid commands.", Specifier));
+				player.SendErrorMessage(GetString("Invalid command entered. Type {0}help for a list of valid commands.", Specifier));
 				return true;
 			}
 			else if (index < 0)
@@ -677,28 +677,28 @@ namespace TShockAPI
 					call(new CommandArgs(cmdText, player, args));
 					return true;
 				}
-				player.SendErrorMessage(I18n.C.GetString("Invalid command entered. Type {0}help for a list of valid commands.", Specifier));
+				player.SendErrorMessage(GetString($"Invalid command entered. Type {0}help for a list of valid commands.", Specifier));
 				return true;
 			}
 			foreach (Command cmd in cmds)
 			{
 				if (!cmd.CanRun(player))
 				{
-					TShock.Utils.SendLogs(I18n.C.GetString("{0} tried to execute {1}{2}.", player.Name, Specifier, cmdText), Color.PaleVioletRed, player);
-					player.SendErrorMessage(I18n.C.GetString("You do not have access to this command."));
+					TShock.Utils.SendLogs(GetString("{0} tried to execute {1}{2}.", player.Name, Specifier, cmdText), Color.PaleVioletRed, player);
+					player.SendErrorMessage(GetString("You do not have access to this command."));
 					if (player.HasPermission(Permissions.su))
 					{
-						player.SendInfoMessage(I18n.C.GetString("You can use '{0}sudo {0}{1}' to override this check.", Specifier, cmdText));
+						player.SendInfoMessage(GetString("You can use '{0}sudo {0}{1}' to override this check.", Specifier, cmdText));
 					}
 				}
 				else if (!cmd.AllowServer && !player.RealPlayer)
 				{
-					player.SendErrorMessage(I18n.C.GetString("You must use this command in-game."));
+					player.SendErrorMessage(GetString("You must use this command in-game."));
 				}
 				else
 				{
 					if (cmd.DoLog)
-						TShock.Utils.SendLogs(I18n.C.GetString("{0} executed: {1}{2}.", player.Name, silent ? SilentSpecifier : Specifier, cmdText), Color.PaleVioletRed, player);
+						TShock.Utils.SendLogs(GetString("{0} executed: {1}{2}.", player.Name, silent ? SilentSpecifier : Specifier, cmdText), Color.PaleVioletRed, player);
 					cmd.Run(cmdText, silent, player, args);
 				}
 			}
@@ -769,7 +769,7 @@ namespace TShockAPI
 			{
 				TShock.Log.Warn(String.Format("{0} ({1}) had {2} or more invalid login attempts and was kicked automatically.",
 					args.Player.IP, args.Player.Name, TShock.Config.Settings.MaximumLoginAttempts));
-				args.Player.Kick(I18n.C.GetString("Too many invalid login attempts."));
+				args.Player.Kick(GetString("Too many invalid login attempts."));
 				return;
 			}
 
@@ -798,7 +798,7 @@ namespace TShockAPI
 			{
 				if (String.IsNullOrEmpty(args.Parameters[0]))
 				{
-					args.Player.SendErrorMessage(I18n.C.GetString("Bad login attempt."));
+					args.Player.SendErrorMessage(GetString("Bad login attempt."));
 					return;
 				}
 
