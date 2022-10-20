@@ -798,7 +798,7 @@ namespace TShockAPI
 			{
 				if (String.IsNullOrEmpty(args.Parameters[0]))
 				{
-					args.Player.SendErrorMessage("Bad login attempt.");
+					args.Player.SendErrorMessage(I18n.C.GetString("Bad login attempt."));
 					return;
 				}
 
