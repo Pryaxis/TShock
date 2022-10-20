@@ -649,7 +649,7 @@ namespace TShockAPI
 			string cmdName;
 			if (index == 0) // Space after the command specifier should not be supported
 			{
-				player.SendErrorMessage("Invalid command entered. Type {0}help for a list of valid commands.", Specifier);
+				player.SendErrorMessage(I18n.C.GetString("Invalid command entered. Type {0}help for a list of valid commands.", Specifier));
 				return true;
 			}
 			else if (index < 0)
@@ -677,28 +677,28 @@ namespace TShockAPI
 					call(new CommandArgs(cmdText, player, args));
 					return true;
 				}
-				player.SendErrorMessage("Invalid command entered. Type {0}help for a list of valid commands.", Specifier);
+				player.SendErrorMessage(I18n.C.GetString("Invalid command entered. Type {0}help for a list of valid commands.", Specifier));
 				return true;
 			}
 			foreach (Command cmd in cmds)
 			{
 				if (!cmd.CanRun(player))
 				{
-					TShock.Utils.SendLogs(string.Format("{0} tried to execute {1}{2}.", player.Name, Specifier, cmdText), Color.PaleVioletRed, player);
-					player.SendErrorMessage("You do not have access to this command.");
+					TShock.Utils.SendLogs(I18n.C.GetString("{0} tried to execute {1}{2}.", player.Name, Specifier, cmdText), Color.PaleVioletRed, player);
+					player.SendErrorMessage(I18n.C.GetString("You do not have access to this command."));
 					if (player.HasPermission(Permissions.su))
 					{
-						player.SendInfoMessage("You can use '{0}sudo {0}{1}' to override this check.", Specifier, cmdText);
+						player.SendInfoMessage(I18n.C.GetString("You can use '{0}sudo {0}{1}' to override this check.", Specifier, cmdText));
 					}
 				}
 				else if (!cmd.AllowServer && !player.RealPlayer)
 				{
-					player.SendErrorMessage("You must use this command in-game.");
+					player.SendErrorMessage(I18n.C.GetString("You must use this command in-game."));
 				}
 				else
 				{
 					if (cmd.DoLog)
-						TShock.Utils.SendLogs(string.Format("{0} executed: {1}{2}.", player.Name, silent ? SilentSpecifier : Specifier, cmdText), Color.PaleVioletRed, player);
+						TShock.Utils.SendLogs(I18n.C.GetString("{0} executed: {1}{2}.", player.Name, silent ? SilentSpecifier : Specifier, cmdText), Color.PaleVioletRed, player);
 					cmd.Run(cmdText, silent, player, args);
 				}
 			}
@@ -1011,7 +1011,7 @@ namespace TShockAPI
 				{
 					args.Player.SendSuccessMessage("Account \"{0}\" has been registered.", account.Name);
 					args.Player.SendSuccessMessage("Your password is {0}.", echoPassword);
-					
+
 					if (!TShock.Config.Settings.DisableUUIDLogin)
 						args.Player.SendMessage($"Type {Specifier}login to sign in to your account using your UUID.", Color.White);
 
@@ -1019,7 +1019,7 @@ namespace TShockAPI
 						args.Player.SendMessage($"Type {Specifier}login \"{account.Name.Color(Utils.GreenHighlight)}\" {echoPassword.Color(Utils.BoldHighlight)} to sign in to your account.", Color.White);
 					else
 						args.Player.SendMessage($"Type {Specifier}login {echoPassword.Color(Utils.BoldHighlight)} to sign in to your account.", Color.White);
-					
+
 					TShock.UserAccounts.AddUserAccount(account);
 					TShock.Log.ConsoleInfo("{0} registered an account: \"{1}\".", args.Player.Name, account.Name);
 				}
@@ -1145,7 +1145,7 @@ namespace TShockAPI
 					TShock.UserAccounts.SetUserGroup(account, args.Parameters[2]);
 					TShock.Log.ConsoleInfo(args.Player.Name + " changed account " + account.Name + " to group " + args.Parameters[2] + ".");
 					args.Player.SendSuccessMessage("Account " + account.Name + " has been changed to group " + args.Parameters[2] + "!");
-					
+
 					//send message to player with matching account name
 					var player = TShock.Players.FirstOrDefault(p => p != null && p.Account?.Name == account.Name);
 					if (player != null && !args.Silent)
@@ -1403,7 +1403,7 @@ namespace TShockAPI
 								LineTextColor = Color.White
 							});
 						break;
-					
+
 					case "examples":
 						args.Player.SendMessage("", Color.White);
 						args.Player.SendMessage("Ban Usage Examples", Color.White);
@@ -1562,7 +1562,7 @@ namespace TShockAPI
 
 				if (banUuid)
 				{
-					banResult = DoBan($"{Identifier.UUID}{player.UUID}", reason, expiration);					
+					banResult = DoBan($"{Identifier.UUID}{player.UUID}", reason, expiration);
 				}
 
 				if (banName)
@@ -1625,7 +1625,7 @@ namespace TShockAPI
 					args.Player.SendMessage($"Invalid Ban List syntax. Refer to {"ban help list".Color(Utils.BoldHighlight)} for details on how to use the {"ban list".Color(Utils.BoldHighlight)} command", Color.White);
 					return;
 				}
-				
+
 				var bans = from ban in TShock.Bans.Bans
 							   where ban.Value.ExpirationDateTime > DateTime.UtcNow
 							   orderby ban.Value.ExpirationDateTime ascending
@@ -1664,7 +1664,7 @@ namespace TShockAPI
 
 				DisplayBanDetails(ban);
 			}
-			
+
 			string subcmd = args.Parameters.Count == 0 ? "help" : args.Parameters[0].ToLower();
 			switch (subcmd)
 			{
@@ -2698,7 +2698,7 @@ namespace TShockAPI
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
 					spawnName = "a Solar Pillar";
 					break;
-				case "nebula pillar": 
+				case "nebula pillar":
 					npc.SetDefaults(507);
 					TSPlayer.Server.SpawnNPC(npc.type, npc.FullName, amount, args.Player.TileX, args.Player.TileY);
 					spawnName = "a Nebula Pillar";
@@ -5827,7 +5827,7 @@ namespace TShockAPI
 					target.SendErrorMessage($"{user.Name} just killed you!");
 			}
 		}
-									
+
 		private static void Respawn(CommandArgs args)
 		{
 			if (!args.Player.RealPlayer && args.Parameters.Count == 0)
@@ -5857,7 +5857,7 @@ namespace TShockAPI
 				}
 				playerToRespawn = players[0];
 			}
-			else 
+			else
 				playerToRespawn = args.Player;
 
 			if (!playerToRespawn.Dead)
