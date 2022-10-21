@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-21 08:25:41+0000\n"
-"PO-Revision-Date: 2022-10-21 16:19\n"
+"PO-Revision-Date: 2022-10-21 16:23\n"
 "Last-Translator: \n"
 "Language-Team: toki pona\n"
 "MIME-Version: 1.0\n"
@@ -20,37 +20,37 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:701
 #, csharp-format
 msgid "{0} executed: {1}{2}."
-msgstr ""
+msgstr "jan {0} li kepeken {1}{2}."
 
 #: ../../TShockAPI/Commands.cs:687
 #, csharp-format
 msgid "{0} tried to execute {1}{2}."
-msgstr ""
+msgstr "jan {0} li wile kepeken {1}{2}. taso ona li ken ala."
 
 #: ../../TShockAPI/Commands.cs:801
 msgid "Bad login attempt."
-msgstr ""
+msgstr "sona jan ni li pakala."
 
 #: ../../TShockAPI/Commands.cs:652
 #: ../../TShockAPI/Commands.cs:680
 #, csharp-format
 msgid "Invalid command entered. Type {0}help for a list of valid commands."
-msgstr ""
+msgstr "ilo ni li lon ala. sina wile sona e ilo lon la o toki e {0}help."
 
 #: ../../TShockAPI/Commands.cs:772
 msgid "Too many invalid login attempts."
-msgstr ""
+msgstr "sina awen pana e sona jan pakala."
 
 #: ../../TShockAPI/Commands.cs:691
 #, csharp-format
 msgid "You can use '{0}sudo {0}{1}' to override this check."
-msgstr ""
+msgstr "sina wile weka e awen pona ni la o kepeken '{0}sudo {0}{1}'."
 
 #: ../../TShockAPI/Commands.cs:688
 msgid "You do not have access to this command."
-msgstr ""
+msgstr "sina ken ala kepeken ilo ni."
 
 #: ../../TShockAPI/Commands.cs:696
 msgid "You must use this command in-game."
-msgstr ""
+msgstr "ilo ni li pali lon musi taso."
 
