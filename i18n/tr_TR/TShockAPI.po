@@ -1,0 +1,56 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: tshock\n"
+"POT-Creation-Date: 2022-10-21 08:25:41+0000\n"
+"PO-Revision-Date: 2022-10-21 15:28\n"
+"Last-Translator: \n"
+"Language-Team: Turkish\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: GetText.NET Extractor\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: tshock\n"
+"X-Crowdin-Project-ID: 544368\n"
+"X-Crowdin-Language: tr\n"
+"X-Crowdin-File: /general-devel/i18n/template.pot\n"
+"X-Crowdin-File-ID: 6\n"
+"Language: tr_TR\n"
+
+#: ../../TShockAPI/Commands.cs:701
+#, csharp-format
+msgid "{0} executed: {1}{2}."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:687
+#, csharp-format
+msgid "{0} tried to execute {1}{2}."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:801
+msgid "Bad login attempt."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:652
+#: ../../TShockAPI/Commands.cs:680
+#, csharp-format
+msgid "Invalid command entered. Type {0}help for a list of valid commands."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:772
+msgid "Too many invalid login attempts."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:691
+#, csharp-format
+msgid "You can use '{0}sudo {0}{1}' to override this check."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:688
+msgid "You do not have access to this command."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:696
+msgid "You must use this command in-game."
+msgstr ""
+
