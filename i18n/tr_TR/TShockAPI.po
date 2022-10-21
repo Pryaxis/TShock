@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-21 08:25:41+0000\n"
-"PO-Revision-Date: 2022-10-21 15:28\n"
+"PO-Revision-Date: 2022-10-21 15:35\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -20,37 +20,37 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:701
 #, csharp-format
 msgid "{0} executed: {1}{2}."
-msgstr ""
+msgstr "{0} çalıştırdı: {1}{2}."
 
 #: ../../TShockAPI/Commands.cs:687
 #, csharp-format
 msgid "{0} tried to execute {1}{2}."
-msgstr ""
+msgstr "{0} çalıştırmayı denedi: {1}{2}."
 
 #: ../../TShockAPI/Commands.cs:801
 msgid "Bad login attempt."
-msgstr ""
+msgstr "Başarısız giriş denemesi."
 
 #: ../../TShockAPI/Commands.cs:652
 #: ../../TShockAPI/Commands.cs:680
 #, csharp-format
 msgid "Invalid command entered. Type {0}help for a list of valid commands."
-msgstr ""
+msgstr "Geçersiz komut girildi. {0}help yazarak komut listesine ulaşabilirsin."
 
 #: ../../TShockAPI/Commands.cs:772
 msgid "Too many invalid login attempts."
-msgstr ""
+msgstr "Çok fazla başarısız giriş denemesi."
 
 #: ../../TShockAPI/Commands.cs:691
 #, csharp-format
 msgid "You can use '{0}sudo {0}{1}' to override this check."
-msgstr ""
+msgstr "'{0}sudo {0}{1}' yazarak bu korumayı atlayabilirsin."
 
 #: ../../TShockAPI/Commands.cs:688
 msgid "You do not have access to this command."
-msgstr ""
+msgstr "Bu komut için erişimin yok."
 
 #: ../../TShockAPI/Commands.cs:696
 msgid "You must use this command in-game."
-msgstr ""
+msgstr "Bu komutu oyun içinden kullanman gerek."
 
