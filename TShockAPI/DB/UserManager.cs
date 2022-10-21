@@ -78,7 +78,7 @@ namespace TShockAPI.DB
 				// Detect duplicate user using a regexp as Sqlite doesn't have well structured exceptions
 				if (Regex.IsMatch(ex.Message, "Username.*not unique|UNIQUE constraint failed: Users\\.Username"))
 					throw new UserAccountExistsException(account.Name);
-				throw new UserAccountManagerException("AddUser SQL returned an error (" + ex.Message + ")", ex);
+				throw new UserAccountManagerException(GetString($"AddUser SQL returned an error ({ex.Message})"), ex);
 			}
 
 			if (1 > ret)
@@ -109,7 +109,7 @@ namespace TShockAPI.DB
 			}
 			catch (Exception ex)
 			{
-				throw new UserAccountManagerException("RemoveUser SQL returned an error", ex);
+				throw new UserAccountManagerException(GetString("RemoveUser SQL returned an error"), ex);
 			}
 		}
 
@@ -131,7 +131,7 @@ namespace TShockAPI.DB
 			}
 			catch (Exception ex)
 			{
-				throw new UserAccountManagerException("SetUserPassword SQL returned an error", ex);
+				throw new UserAccountManagerException(GetString("SetUserPassword SQL returned an error"), ex);
 			}
 		}
 
@@ -151,7 +151,7 @@ namespace TShockAPI.DB
 			}
 			catch (Exception ex)
 			{
-				throw new UserAccountManagerException("SetUserUUID SQL returned an error", ex);
+				throw new UserAccountManagerException(GetString("SetUserUUID SQL returned an error"), ex);
 			}
 		}
 
@@ -168,7 +168,7 @@ namespace TShockAPI.DB
 
 			if (_database.Query("UPDATE Users SET UserGroup = @0 WHERE Username = @1;", group, account.Name) == 0)
 				throw new UserAccountNotExistException(account.Name);
-			
+
 			try
 			{
 				// Update player group reference for any logged in player
@@ -179,7 +179,7 @@ namespace TShockAPI.DB
 			}
 			catch (Exception ex)
 			{
-				throw new UserAccountManagerException("SetUserGroup SQL returned an error", ex);
+				throw new UserAccountManagerException(GetString("SetUserGroup SQL returned an error"), ex);
 			}
 		}
 
@@ -194,7 +194,7 @@ namespace TShockAPI.DB
 			}
 			catch (Exception ex)
 			{
-				throw new UserAccountManagerException("UpdateLogin SQL returned an error", ex);
+				throw new UserAccountManagerException(GetString("UpdateLogin SQL returned an error"), ex);
 			}
 		}
 
@@ -215,7 +215,7 @@ namespace TShockAPI.DB
 			}
 			catch (Exception ex)
 			{
-				TShock.Log.ConsoleError("FetchHashedPasswordAndGroup SQL returned an error: " + ex);
+				TShock.Log.ConsoleError(GetString($"FetchHashedPasswordAndGroup SQL returned an error: {ex}"));
 			}
 			return -1;
 		}
@@ -288,10 +288,10 @@ namespace TShockAPI.DB
 			}
 			catch (Exception ex)
 			{
-				throw new UserAccountManagerException("GetUser SQL returned an error (" + ex.Message + ")", ex);
+				throw new UserAccountManagerException(GetString($"GetUser SQL returned an error {ex.Message}"), ex);
 			}
 			if (multiple)
-				throw new UserAccountManagerException(String.Format("Multiple user accounts found for {0} '{1}'", type, arg));
+				throw new UserAccountManagerException(GetString($"Multiple user accounts found for {type} '{arg}'"));
 
 			throw new UserAccountNotExistException(account.Name);
 		}
@@ -447,7 +447,7 @@ namespace TShockAPI.DB
 			}
 			catch (SaltParseException)
 			{
-				TShock.Log.ConsoleError("Error: Unable to verify the password hash for user {0} ({1})", Name, ID);
+				TShock.Log.ConsoleError(GetString($"Unable to verify the password hash for user {Name} ({ID})"));
 				return false;
 			}
 			return false;
@@ -465,7 +465,7 @@ namespace TShockAPI.DB
 			}
 			catch (FormatException)
 			{
-				TShock.Log.ConsoleError("Warning: Not upgrading work factor because bcrypt hash in an invalid format.");
+				TShock.Log.ConsoleWarn(GetString("Not upgrading work factor because bcrypt hash in an invalid format."));
 				return;
 			}
 
@@ -488,7 +488,8 @@ namespace TShockAPI.DB
 		{
 			if (password.Trim().Length < Math.Max(4, TShock.Config.Settings.MinimumPasswordLength))
 			{
-				throw new ArgumentOutOfRangeException("password", "Password must be > " + TShock.Config.Settings.MinimumPasswordLength + " characters.");
+				int minLength = TShock.Config.Settings.MinimumPasswordLength;
+				throw new ArgumentOutOfRangeException("password", GetString($"Password must be at least {minLength} characters."));
 			}
 			try
 			{
@@ -496,7 +497,7 @@ namespace TShockAPI.DB
 			}
 			catch (ArgumentOutOfRangeException)
 			{
-				TShock.Log.ConsoleError("Invalid BCrypt work factor in config file! Creating new hash using default work factor.");
+				TShock.Log.ConsoleError(GetString("Invalid BCrypt work factor in config file! Creating new hash using default work factor."));
 				Password = BCrypt.Net.BCrypt.HashPassword(password.Trim());
 			}
 		}
@@ -508,7 +509,8 @@ namespace TShockAPI.DB
 		{
 			if (password.Trim().Length < Math.Max(4, TShock.Config.Settings.MinimumPasswordLength))
 			{
-				throw new ArgumentOutOfRangeException("password", "Password must be > " + TShock.Config.Settings.MinimumPasswordLength + " characters.");
+				int minLength = TShock.Config.Settings.MinimumPasswordLength;
+				throw new ArgumentOutOfRangeException("password", GetString($"Password must be at least {minLength} characters."));
 			}
 			Password = BCrypt.Net.BCrypt.HashPassword(password.Trim(), workFactor);
 		}
@@ -607,7 +609,7 @@ namespace TShockAPI.DB
 		/// <param name="name">The name of the user account that already exists.</param>
 		/// <returns>A UserAccountExistsException object with the user's name passed in the message.</returns>
 		public UserAccountExistsException(string name)
-			: base("User account '" + name + "' already exists")
+			: base(GetString($"User account {name} already exists"))
 		{
 		}
 	}
@@ -620,7 +622,7 @@ namespace TShockAPI.DB
 		/// <param name="name">The user account name to be pasesd in the message.</param>
 		/// <returns>A new UserAccountNotExistException object with a message containing the user account name that does not exist.</returns>
 		public UserAccountNotExistException(string name)
-			: base("User account '" + name + "' does not exist")
+			: base(GetString($"User account {name} does not exist"))
 		{
 		}
 	}
@@ -633,7 +635,7 @@ namespace TShockAPI.DB
 		/// <param name="group">The group name.</param>
 		/// <returns>A new GroupNotExistsException with the group that does not exist's name in the message.</returns>
 		public GroupNotExistsException(string group)
-			: base("Group '" + group + "' does not exist")
+			: base(GetString($"Group {group} does not exist"))
 		{
 		}
 	}

@@ -78,8 +78,8 @@ namespace TShockAPI.DB
 			}
 			catch (DllNotFoundException)
 			{
-				System.Console.WriteLine("Possible problem with your database - is Sqlite3.dll present?");
-				throw new Exception("Could not find a database library (probably Sqlite3.dll)");
+				System.Console.WriteLine(GetString("Possible problem with your database - is Sqlite3.dll present?"));
+				throw new Exception(GetString("Could not find a database library (probably Sqlite3.dll)"));
 			}
 
 			EnsureBansCollection();
@@ -205,12 +205,12 @@ namespace TShockAPI.DB
 			{
 				if (ban.ExpirationDateTime == DateTime.MaxValue)
 				{
-					player.Disconnect($"#{ban.TicketNumber} - You are banned: {ban.Reason}");
+					player.Disconnect(GetParticularString("{0} is ban number, {1} is ban reason", $"#{ban.TicketNumber} - You are banned: {ban.Reason}"));
 					return true;
 				}
 
 				TimeSpan ts = ban.ExpirationDateTime - DateTime.UtcNow;
-				player.Disconnect($"#{ban.TicketNumber} - You are banned: {ban.Reason} ({ban.GetPrettyExpirationString()} remaining)");
+				player.Disconnect(GetParticularString("{0} is ban number, {1} is ban reason, {2} is a timestamp", $"#{ban.TicketNumber} - You are banned: {ban.Reason} ({ban.GetPrettyExpirationString()} remaining)"));
 				return true;
 			}
 
@@ -255,7 +255,7 @@ namespace TShockAPI.DB
 				//E.g., if a previous ban has expired, a new ban is valid.
 				//However, if a previous ban on the provided identifier is still in effect, a new ban is not valid
 				args.Valid = !Bans.Any(b => b.Value.Identifier == args.Identifier && b.Value.ExpirationDateTime > DateTime.UtcNow);
-				args.Message = args.Valid ? null : "a current ban for this identifier already exists.";
+				args.Message = args.Valid ? null : GetString("The ban is invalid because a current ban for this identifier already exists.");
 			}
 		}
 
@@ -292,7 +292,7 @@ namespace TShockAPI.DB
 
 			if (!args.Valid)
 			{
-				string message = $"Ban was not valid: {(args.Message ?? "no further information provided.")}";
+				string message = args.Message ?? GetString("The ban was not valid for an unknown reason.");
 				return new AddBanResult { Message = message };
 			}
 
@@ -311,7 +311,7 @@ namespace TShockAPI.DB
 
 			if (ticketId == 0)
 			{
-				return new AddBanResult { Message = "Database insert failed." };
+				return new AddBanResult { Message = GetString("Inserting the ban into the database failed.") };
 			}
 
 			Ban b = new Ban(ticketId, args.Identifier, args.Reason, args.BanningUser, args.BanDateTime, args.ExpirationDateTime);
@@ -633,19 +633,19 @@ namespace TShockAPI.DB
 		/// <summary>
 		/// IP identifier
 		/// </summary>
-		public static Identifier IP = Register("ip:", $"An identifier for an IP Address in octet format. Eg., '{"127.0.0.1".Color(Utils.RedHighlight)}'.");
+		public static Identifier IP = Register("ip:", GetString($"An identifier for an IP Address in octet format. e.g., '{"127.0.0.1".Color(Utils.RedHighlight)}'."));
 		/// <summary>
 		/// UUID identifier
 		/// </summary>
-		public static Identifier UUID = Register("uuid:", "An identifier for a UUID.");
+		public static Identifier UUID = Register("uuid:", GetString("An identifier for a UUID."));
 		/// <summary>
 		/// Player name identifier
 		/// </summary>
-		public static Identifier Name = Register("name:", "An identifier for a character name.");
+		public static Identifier Name = Register("name:", GetString("An identifier for a character name."));
 		/// <summary>
 		/// User account identifier
 		/// </summary>
-		public static Identifier Account = Register("acc:", "An identifier for a TShock User Account name.");
+		public static Identifier Account = Register("acc:", GetString("An identifier for a TShock User Account name."));
 
 		private Identifier(string prefix, string description)
 		{

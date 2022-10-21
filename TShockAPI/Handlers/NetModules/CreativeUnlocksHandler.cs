@@ -52,8 +52,7 @@ namespace TShockAPI.Handlers.NetModules
 			if (!Main.GameModeInfo.IsJourneyMode)
 			{
 				TShock.Log.ConsoleDebug(
-					"NetModuleHandler received attempt to unlock sacrifice while not in journey mode from",
-					player.Name
+					GetString($"NetModuleHandler received attempt to unlock sacrifice while not in journey mode from {player.Name}")
 				);
 
 				rejectPacket = true;
@@ -63,9 +62,7 @@ namespace TShockAPI.Handlers.NetModules
 			if (UnknownField != 0)
 			{
 				TShock.Log.ConsoleDebug(
-					"CreativeUnlocksHandler received non-vanilla unlock request. Random field value: {0} but should be 0 from {1}",
-					UnknownField,
-					player.Name
+					GetString($"CreativeUnlocksHandler received non-vanilla unlock request. Random field value: {UnknownField} but should be 0 from {player.Name}")
 				);
 
 				rejectPacket = true;
@@ -74,7 +71,7 @@ namespace TShockAPI.Handlers.NetModules
 
 			if (!player.HasPermission(Permissions.journey_contributeresearch))
 			{
-				player.SendErrorMessage("You do not have permission to contribute research.");
+				player.SendErrorMessage(GetString("You do not have permission to contribute research."));
 				rejectPacket = true;
 				return;
 			}

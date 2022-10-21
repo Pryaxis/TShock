@@ -126,7 +126,7 @@ namespace TShockAPI.Handlers
 			if (args.Handled == true)
 			{
 				TSPlayer.All.SendTileRect(args.TileX, args.TileY, args.Width, args.Length);
-				TShock.Log.ConsoleDebug("Bouncer / SendTileRect reimplemented from carbonara from {0}", args.Player.Name);
+				TShock.Log.ConsoleDebug(GetString($"Bouncer / SendTileRect reimplemented from carbonara from {args.Player.Name}"));
 			}
 		}
 
@@ -289,13 +289,13 @@ namespace TShockAPI.Handlers
 			// More in depth checks should take place in handlers for the Place Object (79), Update Tile Entity (86), and Place Tile Entity (87) packets
 			if (!args.Player.HasBuildPermissionForTileObject(realX, realY, width, height))
 			{
-				TShock.Log.ConsoleDebug("Bouncer / SendTileRect rejected from no permission for tile object from {0}", args.Player.Name);
+				TShock.Log.ConsoleDebug(GetString($"Bouncer / SendTileRect rejected from no permission for tile object from {args.Player.Name}"));
 				return;
 			}
 
 			if (TShock.TileBans.TileIsBanned((short)tileType))
 			{
-				TShock.Log.ConsoleDebug("Bouncer / SendTileRect rejected for banned tile");
+				TShock.Log.ConsoleDebug(GetString("Bouncer / SendTileRect rejected for banned tile"));
 				return;
 			}
 
@@ -410,7 +410,7 @@ namespace TShockAPI.Handlers
 				TileID.Sets.Conversion.MossBrick[tile.type] && TileID.Sets.Conversion.MossBrick[newTile.Type]
 			)
 			{
-				TShock.Log.ConsoleDebug("Bouncer / SendTileRect processing a tile conversion update - [{0}] -> [{1}]", tile.type, newTile.Type);
+				TShock.Log.ConsoleDebug(GetString($"Bouncer / SendTileRect processing a tile conversion update - [{tile.type}] -> [{newTile.Type}]"));
 				UpdateServerTileState(tile, newTile, TileDataType.Tile);
 			}
 
@@ -425,7 +425,7 @@ namespace TShockAPI.Handlers
 				WallID.Sets.Conversion.NewWall4[tile.wall] && WallID.Sets.Conversion.NewWall4[newTile.Wall]
 			)
 			{
-				TShock.Log.ConsoleDebug("Bouncer / SendTileRect processing a wall conversion update - [{0}] -> [{1}]", tile.wall, newTile.Wall);
+				TShock.Log.ConsoleDebug($"Bouncer / SendTileRect processing a wall conversion update - [{tile.wall}] -> [{newTile.Wall}]");
 				UpdateServerTileState(tile, newTile, TileDataType.Wall);
 			}
 		}
@@ -554,27 +554,27 @@ namespace TShockAPI.Handlers
 		{
 			if (args.Player.HasPermission(Permissions.allowclientsideworldedit))
 			{
-				TShock.Log.ConsoleDebug("Bouncer / SendTileRect accepted clientside world edit from {0}", args.Player.Name);
+				TShock.Log.ConsoleDebug(GetString($"Bouncer / SendTileRect accepted clientside world edit from {args.Player.Name}"));
 				args.Handled = false;
 				return true;
 			}
 
 			if (args.Width > 4 || args.Length > 4) // as of 1.4.3.6 this is the biggest size the client will send in any case
 			{
-				TShock.Log.ConsoleDebug("Bouncer / SendTileRect rejected from non-vanilla tilemod from {0}", args.Player.Name);
+				TShock.Log.ConsoleDebug(GetString($"Bouncer / SendTileRect rejected from non-vanilla tilemod from {args.Player.Name}"));
 				return true;
 			}
 
 			if (args.Player.IsBouncerThrottled())
 			{
-				TShock.Log.ConsoleDebug("Bouncer / SendTileRect rejected from throttle from {0}", args.Player.Name);
+				TShock.Log.ConsoleDebug(GetString($"Bouncer / SendTileRect rejected from throttle from {args.Player.Name}"));
 				args.Player.SendTileRect(args.TileX, args.TileY, args.Length, args.Width);
 				return true;
 			}
 
 			if (args.Player.IsBeingDisabled())
 			{
-				TShock.Log.ConsoleDebug("Bouncer / SendTileRect rejected from being disabled from {0}", args.Player.Name);
+				TShock.Log.ConsoleDebug(GetString($"Bouncer / SendTileRect rejected from being disabled from {args.Player.Name}"));
 				args.Player.SendTileRect(args.TileX, args.TileY, args.Length, args.Width);
 				return true;
 			}
@@ -606,7 +606,7 @@ namespace TShockAPI.Handlers
 					}
 				}
 
-				TShock.Log.ConsoleDebug("Bouncer / SendTileRectHandler - rejected tile object because object dimensions fall outside the tile rect (excessive size)");
+				TShock.Log.ConsoleDebug(GetString("Bouncer / SendTileRectHandler - rejected tile object because object dimensions fall outside the tile rect (excessive size)"));
 				return false;
 			}
 

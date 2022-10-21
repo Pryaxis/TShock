@@ -220,7 +220,7 @@ namespace TShockAPI.DB
 				}
 				if (traversed.Contains(cur))
 				{
-					throw new InvalidOperationException("Infinite group parenting ({0})".SFormat(cur.Name));
+					throw new InvalidOperationException(GetString($"Infinite group parenting ({cur.Name})"));
 				}
 				traversed.Add(cur);
 				cur = cur.Parent;

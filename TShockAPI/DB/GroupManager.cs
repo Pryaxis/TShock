@@ -208,14 +208,14 @@ namespace TShockAPI.DB
 		{
 			if (!GroupExists(TShock.Config.Settings.DefaultGuestGroupName))
 			{
-				TShock.Log.ConsoleError("The guest group could not be found. This may indicate a typo in the configuration file, or that the group was renamed or deleted.");
-				throw new Exception("The guest group could not be found.");
+				TShock.Log.ConsoleError(GetString("The guest group could not be found. This may indicate a typo in the configuration file, or that the group was renamed or deleted."));
+				throw new Exception(GetString("The guest group could not be found."));
 			}
 
 			if (!GroupExists(TShock.Config.Settings.DefaultRegistrationGroupName))
 			{
-				TShock.Log.ConsoleError("The default usergroup could not be found. This may indicate a typo in the configuration file, or that the group was renamed or deleted.");
-				throw new Exception("The default usergroup could not be found.");
+				TShock.Log.ConsoleError(GetString("The default usergroup could not be found. This may indicate a typo in the configuration file, or that the group was renamed or deleted."));
+				throw new Exception(GetString("The default usergroup could not be found."));
 			}
 		}
 
@@ -232,9 +232,9 @@ namespace TShockAPI.DB
 			if (group == null)
 			{
 				if (kick)
-					player.Disconnect("Your account's group could not be loaded. Please contact server administrators about this.");
+					player.Disconnect(GetString("Your account's group could not be loaded. Please contact server administrators about this."));
 				else
-					player.SendErrorMessage("Your account's group could not be loaded. Please contact server administrators about this.");
+					player.SendErrorMessage(GetString("Your account's group could not be loaded. Please contact server administrators about this."));
 				return false;
 			}
 
@@ -306,7 +306,7 @@ namespace TShockAPI.DB
 				var parent = groups.FirstOrDefault(gp => gp.Name == parentname);
 				if (parent == null || name == parentname)
 				{
-					var error = "Invalid parent {0} for group {1}".SFormat(parentname, group.Name);
+					var error = GetString($"Invalid parent group {parentname} for group {group.Name}");
 					TShock.Log.ConsoleError(error);
 					throw new GroupManagerException(error);
 				}
@@ -321,7 +321,7 @@ namespace TShockAPI.DB
 				groups.Add(group);
 			}
 			else
-				throw new GroupManagerException("Failed to add group '" + name + ".'");
+				throw new GroupManagerException(GetString($"Failed to add group {name}."));
 		}
 
 		/// <summary>
@@ -344,7 +344,7 @@ namespace TShockAPI.DB
 			{
 				parent = GetGroupByName(parentname);
 				if (parent == null || parent == group)
-					throw new GroupManagerException("Invalid parent \"{0}\" for group \"{1}\".".SFormat(parentname, name));
+					throw new GroupManagerException(GetString($"Invalid parent group {parentname} for group {name}."));
 
 				// Check if the new parent would cause loops.
 				List<Group> groupChain = new List<Group> { group, parent };
@@ -353,7 +353,7 @@ namespace TShockAPI.DB
 				{
 					if (groupChain.Contains(checkingGroup))
 						throw new GroupManagerException(
-							string.Format("Invalid parent \"{0}\" for group \"{1}\" would cause loops in the parent chain.", parentname, name));
+							GetString($"Parenting group {group} to {parentname} would cause loops in the parent chain."));
 
 					groupChain.Add(checkingGroup);
 					checkingGroup = checkingGroup.Parent;
@@ -366,7 +366,7 @@ namespace TShockAPI.DB
 			newGroup.Suffix = suffix;
 			string query = "UPDATE GroupList SET Parent=@0, Commands=@1, ChatColor=@2, Suffix=@3, Prefix=@4 WHERE GroupName=@5";
 			if (database.Query(query, parentname, newGroup.Permissions, newGroup.ChatColor, suffix, prefix, name) != 1)
-				throw new GroupManagerException(string.Format("Failed to update group \"{0}\".", name));
+				throw new GroupManagerException(GetString($"Failed to update group \"{name}\"."));
 
 			group.ChatColor = chatcolor;
 			group.Permissions = permissions;
@@ -417,7 +417,7 @@ namespace TShockAPI.DB
 						groups.Remove(oldGroup);
 						groups.Add(newGroup);
 
-						// We need to check if the old group has been referenced as a parent and update those references accordingly 
+						// We need to check if the old group has been referenced as a parent and update those references accordingly
 						using (var command = db.CreateCommand())
 						{
 							command.CommandText = "UPDATE GroupList SET Parent = @0 WHERE Parent = @1";
@@ -460,24 +460,24 @@ namespace TShockAPI.DB
 						}
 
 						transaction.Commit();
-						return $"Group \"{name}\" has been renamed to \"{newName}\".";
+						return GetString($"Group {name} has been renamed to {newName}.");
 					}
 					catch (Exception ex)
 					{
-						TShock.Log.Error($"An exception has occurred during database transaction: {ex.Message}");
+						TShock.Log.Error(GetString($"An exception has occurred during database transaction: {ex.Message}"));
 						try
 						{
 							transaction.Rollback();
 						}
 						catch (Exception rollbackEx)
 						{
-							TShock.Log.Error($"An exception has occurred during database rollback: {rollbackEx.Message}");
+							TShock.Log.Error(GetString($"An exception has occurred during database rollback: {rollbackEx.Message}"));
 						}
 					}
 				}
 			}
 
-			throw new GroupManagerException($"Failed to rename group \"{name}\".");
+			throw new GroupManagerException(GetString($"Failed to rename group {name}."));
 		}
 
 		/// <summary>
@@ -492,25 +492,25 @@ namespace TShockAPI.DB
 			{
 				if (exceptions)
 					throw new GroupNotExistException(name);
-				return "Error: Group doesn't exist.";
+				return GetString($"Group {name} doesn't exist.");
 			}
 
 			if (name == Group.DefaultGroup.Name)
 			{
 				if (exceptions)
-					throw new GroupManagerException("Unable to remove default guest group.");
-				return "Error: Unable to remove the default guest group.";
+					throw new GroupManagerException(GetString("You can't remove the default guest group."));
+				return GetString("You can't remove the default guest group.");
 			}
 
 			if (database.Query("DELETE FROM GroupList WHERE GroupName=@0", name) == 1)
 			{
 				groups.Remove(TShock.Groups.GetGroupByName(name));
-				return "Group " + name + " has been deleted successfully.";
+				return GetString($"Group {name} has been deleted successfully.");
 			}
 
 			if (exceptions)
-				throw new GroupManagerException("Failed to delete group '" + name + ".'");
-			return "Failed to delete group '" + name + ".'";
+				throw new GroupManagerException(GetString($"Failed to delete group {name}."));
+			return GetString($"Failed to delete group {name}.");
 		}
 
 		/// <summary>
@@ -522,7 +522,7 @@ namespace TShockAPI.DB
 		public String AddPermissions(String name, List<String> permissions)
 		{
 			if (!GroupExists(name))
-				return "Error: Group doesn't exist.";
+				return GetString($"Group {name} doesn't exist.");
 
 			var group = TShock.Groups.GetGroupByName(name);
 			var oldperms = group.Permissions; // Store old permissions in case of error
@@ -545,7 +545,7 @@ namespace TShockAPI.DB
 		public String DeletePermissions(String name, List<String> permissions)
 		{
 			if (!GroupExists(name))
-				return "Error: Group doesn't exist.";
+				return GetString($"Group {name} doesn't exist.");
 
 			var group = TShock.Groups.GetGroupByName(name);
 			var oldperms = group.Permissions; // Store old permissions in case of error
@@ -575,7 +575,7 @@ namespace TShockAPI.DB
 						string groupName = reader.Get<string>("GroupName");
 						if (groupName == "superadmin")
 						{
-							TShock.Log.ConsoleInfo("WARNING: Group \"superadmin\" is defined in the database even though it's a reserved group name.");
+							TShock.Log.ConsoleWarn(GetString("Group \"superadmin\" is defined in the database even though it's a reserved group name."));
 							continue;
 						}
 
@@ -592,7 +592,7 @@ namespace TShockAPI.DB
 						catch (ArgumentException)
 						{
 							// Just in case somebody messed with the unique primary key.
-							TShock.Log.ConsoleError("ERROR: Group name \"{0}\" occurs more than once. Keeping current group settings.");
+							TShock.Log.ConsoleError(GetString($"The group {groupName} appeared more than once. Keeping current group settings."));
 							return;
 						}
 					}
@@ -628,14 +628,13 @@ namespace TShockAPI.DB
 						if (group.Parent == null)
 						{
 							TShock.Log.ConsoleError(
-								"ERROR: Group \"{0}\" is referencing non existent parent group \"{1}\", parent reference was removed.",
-								group.Name, parentGroupName);
+								GetString($"Group {group.Name} is referencing a non existent parent group {parentGroupName}, parent reference was removed."));
 						}
 						else
 						{
 							if (group.Parent == group)
-								TShock.Log.ConsoleInfo(
-									"WARNING: Group \"{0}\" is referencing itself as parent group, parent reference was removed.", group.Name);
+								TShock.Log.ConsoleWarn(
+									GetString($"Group {group.Name} is referencing itself as parent group; parent reference was removed."));
 
 							List<Group> groupChain = new List<Group> { group };
 							Group checkingGroup = group;
@@ -644,8 +643,7 @@ namespace TShockAPI.DB
 								if (groupChain.Contains(checkingGroup.Parent))
 								{
 									TShock.Log.ConsoleError(
-										"ERROR: Group \"{0}\" is referencing parent group \"{1}\" which is already part of the parent chain. Parent reference removed.",
-										checkingGroup.Name, checkingGroup.Parent.Name);
+										GetString($"Group \"{checkingGroup.Name}\" is referencing parent group {checkingGroup.Parent.Name} which is already part of the parent chain. Parent reference removed."));
 
 									checkingGroup.Parent = null;
 									break;
@@ -664,7 +662,7 @@ namespace TShockAPI.DB
 			}
 			catch (Exception ex)
 			{
-				TShock.Log.ConsoleError("Error on reloading groups: " + ex);
+				TShock.Log.ConsoleError(GetString($"Error on reloading groups: {ex}"));
 			}
 		}
 	}
@@ -707,7 +705,7 @@ namespace TShockAPI.DB
 		/// </summary>
 		/// <param name="name">The group name.</param>
 		public GroupExistsException(string name)
-			: base("Group '" + name + "' already exists")
+			: base(GetString($"Group {name} already exists"))
 		{
 		}
 	}
@@ -724,7 +722,7 @@ namespace TShockAPI.DB
 		/// </summary>
 		/// <param name="name">The group name.</param>
 		public GroupNotExistException(string name)
-			: base("Group '" + name + "' does not exist")
+			: base(GetString($"Group {name} does not exist"))
 		{
 		}
 	}

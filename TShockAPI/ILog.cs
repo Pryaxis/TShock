@@ -51,6 +51,19 @@ namespace TShockAPI
 		void ConsoleInfo(string format, params object[] args);
 
 		/// <summary>
+		/// Writes a warning message to the log and to the console.
+		/// </summary>
+		/// <param name="message">The message to be written.</param>
+		void ConsoleWarn(string message);
+
+		/// <summary>
+		/// Writes a warning message to the log and to the console.
+		/// </summary>
+		/// <param name="format">The format of the message to be written.</param>
+		/// <param name="args">The format arguments.</param>
+		void ConsoleWarn(string format, params object[] args);
+
+		/// <summary>
 		/// Writes an error message to the log and to the console.
 		/// </summary>
 		/// <param name="message">The message to be written.</param>

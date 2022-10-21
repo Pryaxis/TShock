@@ -53,7 +53,7 @@ namespace TShockAPI.Modules
 		public void InitialiseModule(Type moduleType, object[] parameters)
 		{
 			if (!typeof(Module).IsAssignableFrom(moduleType))
-				throw new NotSupportedException($"Cannot load module {moduleType.FullName} as it does not derive from {typeof(Module).FullName}");
+				throw new NotSupportedException(GetString($"Cannot load module {moduleType.FullName} as it does not derive from {typeof(Module).FullName}"));
 
 			var args = new List<object>();
 			ConstructorInfo constructor = null;

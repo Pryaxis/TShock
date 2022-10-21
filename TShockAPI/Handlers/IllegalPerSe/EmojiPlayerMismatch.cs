@@ -16,7 +16,7 @@ namespace TShockAPI.Handlers.IllegalPerSe
 		{
 			if (args.PlayerIndex != args.Player.Index)
 			{
-				TShock.Log.ConsoleError($"IllegalPerSe: Emoji packet rejected for ID spoofing. Expected {args.Player.Index}, received {args.PlayerIndex} from {args.Player.Name}.");
+				TShock.Log.ConsoleError(GetString($"IllegalPerSe: Emoji packet rejected for ID spoofing. Expected {args.Player.Index}, received {args.PlayerIndex} from {args.Player.Name}."));
 				args.Handled = true;
 				return;
 			}

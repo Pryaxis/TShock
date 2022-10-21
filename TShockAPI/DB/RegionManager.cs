@@ -99,13 +99,13 @@ namespace TShockAPI.DB
 								if (Int32.TryParse(splitids[i], out userid)) // if unparsable, it's not an int, so silently skip
 									r.AllowedIDs.Add(userid);
 								else
-									TShock.Log.Warn("One of your UserIDs is not a usable integer: " + splitids[i]);
+									TShock.Log.Warn(GetString($"One of your UserIDs is not a usable integer: {splitids[i]}"));
 							}
 						}
 						catch (Exception e)
 						{
-							TShock.Log.Error("Your database contains invalid UserIDs (they should be ints).");
-							TShock.Log.Error("A lot of things will fail because of this. You must manually delete and re-create the allowed field.");
+							TShock.Log.Error(GetString("Your database contains invalid UserIDs (they should be integers)."));
+							TShock.Log.Error(GetString("A lot of things will fail because of this. You must manually delete and re-create the allowed field."));
 							TShock.Log.Error(e.ToString());
 							TShock.Log.Error(e.StackTrace);
 						}
@@ -283,7 +283,7 @@ namespace TShockAPI.DB
 				if (region.InArea(x, y))
 				{
 					if (top == null || region.Z > top.Z)
-						top = region;	
+						top = region;
 				}
 			}
 			return top == null || top.HasPermissionToBuildInRegion(ply);
@@ -313,7 +313,7 @@ namespace TShockAPI.DB
 		}
 
 		/// <summary>
-		/// Checks if any regions exist at the given (x, y) coordinate 
+		/// Checks if any regions exist at the given (x, y) coordinate
 		/// and returns an IEnumerable containing their IDs
 		/// </summary>
 		/// <param name="x">X coordinate</param>
@@ -390,7 +390,7 @@ namespace TShockAPI.DB
 					default:
 						return false;
 				}
-				
+
 				foreach (var region in Regions.Where(r => r.Name == regionName))
 					region.Area = new Rectangle(X, Y, width, height);
 				int q = database.Query("UPDATE Regions SET X1 = @0, Y1 = @1, width = @2, height = @3 WHERE RegionName = @4 AND WorldID=@5", X, Y, width,
@@ -404,7 +404,7 @@ namespace TShockAPI.DB
 			}
 			return false;
 		}
-		
+
 		/// <summary>
 		/// Renames a region
 		/// </summary>
@@ -438,7 +438,7 @@ namespace TShockAPI.DB
 
 			return result;
 		}
-		
+
 		/// <summary>
 		/// Removes an allowed user from a region
 		/// </summary>
@@ -769,7 +769,7 @@ namespace TShockAPI.DB
 			*/
 			return x >= Area.X && x <= Area.X + Area.Width && y >= Area.Y && y <= Area.Y + Area.Height;
 		}
-		
+
 		/// <summary>
 		/// Checks if a given player has permission to build in the region
 		/// </summary>
@@ -785,7 +785,7 @@ namespace TShockAPI.DB
 			{
 				if (!ply.HasBeenNaggedAboutLoggingIn)
 				{
-					ply.SendMessage("You must be logged in to take advantage of protected regions.", Color.Red);
+					ply.SendMessage(GetString("You must be logged in to take advantage of protected regions."), Color.Red);
 					ply.HasBeenNaggedAboutLoggingIn = true;
 				}
 				return false;
