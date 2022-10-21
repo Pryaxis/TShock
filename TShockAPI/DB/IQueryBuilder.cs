@@ -316,8 +316,7 @@ namespace TShockAPI.DB
 			{
 				if (x.DefaultCurrentTimestamp && x.Type != MySqlDbType.DateTime)
 				{
-					throw new SqlColumnException("Can't set to true SqlColumn.DefaultCurrentTimestamp " +
-						"when the MySqlDbType is not DateTime");
+					throw new SqlColumnException(GetString("Can't set to true SqlColumn.DefaultCurrentTimestamp when the MySqlDbType is not DateTime"));
 				}
 			});
 		}
@@ -343,7 +342,7 @@ namespace TShockAPI.DB
 		public string UpdateValue(string table, List<SqlValue> values, List<SqlValue> wheres)
 		{
 			if (0 == values.Count)
-				throw new ArgumentException("No values supplied");
+				throw new ArgumentException(GetString("No values supplied"));
 
 			return "UPDATE {0} SET {1} {2}".SFormat(EscapeTableName(table), string.Join(", ", values.Select(v => v.Name + " = " + v.Value)), BuildWhere(wheres));
 		}

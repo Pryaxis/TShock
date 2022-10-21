@@ -87,10 +87,10 @@ namespace Rests
 			catch (Exception)
 			{
 				return new RestObject("400")
-				{ Error = "The specified token queued for destruction failed to be deleted." };
+				{ Error = GetString("The specified token queued for destruction failed to be deleted.") };
 			}
 			return new RestObject()
-			{ Response = "Requested token was successfully destroyed." };
+			{ Response = GetString("Requested token was successfully destroyed.") };
 		}
 
 		private object DestroyAllTokens(RestRequestArgs args)
@@ -117,7 +117,7 @@ namespace Rests
 			{
 				if (tokens >= TShock.Config.Settings.RESTMaximumRequestsPerInterval)
 				{
-					TShock.Log.ConsoleError("A REST login from {0} was blocked as it currently has {1} rate-limit tokens and is at the RESTMaximumRequestsPerInterval threshold.", context.RemoteEndPoint.Address.ToString(), tokens);
+					TShock.Log.ConsoleError(GetString("A REST login from {0} was blocked as it currently has {1} rate-limit tokens and is at the RESTMaximumRequestsPerInterval threshold.", context.RemoteEndPoint.Address.ToString(), tokens));
 					tokenBucket[context.RemoteEndPoint.Address.ToString()] += 1; // Tokens over limit, increment by one and reject request
 					return new RestObject("403")
 					{
@@ -135,13 +135,13 @@ namespace Rests
 			if (userAccount == null)
 			{
 				AddTokenToBucket(context.RemoteEndPoint.Address.ToString());
-				return new RestObject("403") { Error = "Username or password may be incorrect or this account may not have sufficient privileges." };
+				return new RestObject("403") { Error = GetString("Username or password may be incorrect or this account may not have sufficient privileges.") };
 			}
 
 			if (!userAccount.VerifyPassword(password))
 			{
 				AddTokenToBucket(context.RemoteEndPoint.Address.ToString());
-				return new RestObject("403") { Error = "Username or password may be incorrect or this account may not have sufficient privileges." };
+				return new RestObject("403") { Error = GetString("Username or password may be incorrect or this account may not have sufficient privileges.") };
 			}
 
 			Group userGroup = TShock.Groups.GetGroupByName(userAccount.Group);
@@ -149,7 +149,7 @@ namespace Rests
 			{
 				AddTokenToBucket(context.RemoteEndPoint.Address.ToString());
 				return new RestObject("403")
-				{ Error = "Username or password may be incorrect or this account may not have sufficient privileges." };
+				{ Error = GetString("Username or password may be incorrect or this account may not have sufficient privileges.") };
 			}
 
 			string tokenHash;
@@ -164,7 +164,7 @@ namespace Rests
 
 			AddTokenToBucket(context.RemoteEndPoint.Address.ToString());
 
-			RestObject response = new RestObject() { Response = "Successful login" };
+			RestObject response = new RestObject() { Response = GetString("Successful login") };
 			response["token"] = tokenHash;
 			return response;
 		}
@@ -177,13 +177,13 @@ namespace Rests
 			var token = parms["token"];
 			if (token == null)
 				return new RestObject("401")
-				{ Error = "Not authorized. The specified API endpoint requires a token." };
+				{ Error = GetString("Not authorized. The specified API endpoint requires a token.") };
 
 			SecureRestCommand secureCmd = (SecureRestCommand)cmd;
 			TokenData tokenData;
 			if (!Tokens.TryGetValue(token, out tokenData) && !AppTokens.TryGetValue(token, out tokenData))
 				return new RestObject("403")
-				{ Error = "Not authorized. The specified API endpoint requires a token, but the provided token was not valid." };
+				{ Error = GetString("Not authorized. The specified API endpoint requires a token, but the provided token was not valid.") };
 
 			Group userGroup = TShock.Groups.GetGroupByName(tokenData.UserGroupName);
 			if (userGroup == null)
@@ -191,13 +191,13 @@ namespace Rests
 				Tokens.Remove(token);
 
 				return new RestObject("403")
-				{ Error = "Not authorized. The provided token became invalid due to group changes, please create a new token." };
+				{ Error = GetString("Not authorized. The provided token became invalid due to group changes, please create a new token.") };
 			}
 
 			if (secureCmd.Permissions.Length > 0 && secureCmd.Permissions.All(perm => !userGroup.HasPermission(perm)))
 			{
 				return new RestObject("403")
-				{ Error = string.Format("Not authorized. User \"{0}\" has no access to use the specified API endpoint.", tokenData.Username) };
+				{ Error = GetString("Not authorized. User \"{0}\" has no access to use the specified API endpoint.", tokenData.Username) };
 			}
 
 			//Main.rand being null can cause issues in command execution.
@@ -209,7 +209,7 @@ namespace Rests
 
 			object result = secureCmd.Execute(verbs, parms, tokenData, request, context);
 			if (cmd.DoLog && TShock.Config.Settings.LogRest)
-				TShock.Utils.SendLogs(string.Format(
+				TShock.Utils.SendLogs(GetString(
 					"\"{0}\" requested REST endpoint: {1}", tokenData.Username, this.BuildRequestUri(cmd, verbs, parms, false)),
 					Color.PaleVioletRed);
 

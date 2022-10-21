@@ -76,7 +76,7 @@ namespace TShockAPI.DB
 			}
 			catch (Exception ex)
 			{
-				throw new Exception("Fatal TShock initialization exception: failed to connect to MySQL database. See inner exception for details.", ex);
+				throw new Exception(GetString("Fatal TShock initialization exception: failed to connect to MySQL database. See inner exception for details."), ex);
 			}
 		}
 
@@ -251,7 +251,7 @@ namespace TShockAPI.DB
 			if (typeof(T) != (t = reader.GetFieldType(column)))
 			{
 				string columnName = reader.GetName(column);
-				throw new InvalidCastException($"Received type '{typeof(T).Name}', however column '{columnName}' expects type '{t.Name}'");
+				throw new InvalidCastException(GetString($"Received type '{typeof(T).Name}', however column '{columnName}' expects type '{t.Name}'"));
 			}
 
 			if (reader.IsDBNull(column))

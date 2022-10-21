@@ -146,6 +146,28 @@ namespace TShockAPI
 		}
 
 		/// <summary>
+		/// Writes an error to the log file.
+		/// </summary>
+		/// <param name="message">The message to be written.</param>
+		public void ConsoleWarn(string message)
+		{
+			Console.ForegroundColor = ConsoleColor.Yellow;
+			Console.WriteLine(message);
+			Console.ForegroundColor = ConsoleColor.Gray;
+			Write(message, TraceLevel.Warning);
+		}
+
+		/// <summary>
+		/// Writes an error to the log file.
+		/// </summary>
+		/// <param name="format">The format of the message to be written.</param>
+		/// <param name="args">The format arguments.</param>
+		public void ConsoleWarn(string format, params object[] args)
+		{
+			ConsoleWarn(string.Format(format, args));
+		}
+
+		/// <summary>
 		/// Writes a warning to the log file.
 		/// </summary>
 		/// <param name="message">The message to be written.</param>

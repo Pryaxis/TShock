@@ -50,7 +50,7 @@ namespace TShockAPI.Handlers.NetModules
 		{
 			if (!PowerToPermissionMap.ContainsKey(powerType))
 			{
-				TShock.Log.ConsoleDebug("CreativePowerHandler received permission check request for unknown creative power");
+				TShock.Log.ConsoleDebug(GetString("CreativePowerHandler received permission check request for unknown creative power"));
 				return false;
 			}
 
@@ -65,7 +65,7 @@ namespace TShockAPI.Handlers.NetModules
 
 			if (!player.HasPermission(permission))
 			{
-				player.SendErrorMessage("You do not have permission to {0}.", PermissionToDescriptionMap[permission]);
+				player.SendErrorMessage(PermissionToDescriptionMap[permission]);
 				return false;
 			}
 
@@ -100,18 +100,18 @@ namespace TShockAPI.Handlers.NetModules
 		/// </summary>
 		public static Dictionary<string, string> PermissionToDescriptionMap = new Dictionary<string, string>
 		{
-			{ Permissions.journey_timefreeze,			"freeze the time of the server"						},
-			{ Permissions.journey_timeset,				"modify the time of the server"						},
-			{ Permissions.journey_godmode,				"toggle godmode"									},
-			{ Permissions.journey_windstrength,			"modify the wind strength of the server"			},
-			{ Permissions.journey_rainstrength,			"modify the rain strength of the server"			},
-			{ Permissions.journey_timespeed,			"modify the time speed of the server"				},
-			{ Permissions.journey_rainfreeze,			"freeze the rain strength of the server"			},
-			{ Permissions.journey_windfreeze,			"freeze the wind strength of the server"			},
-			{ Permissions.journey_placementrange,		"modify the tile placement range of your character" },
-			{ Permissions.journey_setdifficulty,		"modify the world difficulty of the server"			},
-			{ Permissions.journey_biomespreadfreeze,	"freeze the biome spread of the server"				},
-			{ Permissions.journey_setspawnrate,			"modify the NPC spawn rate of the server"			},
+			{ Permissions.journey_timefreeze,			GetString("You do not have permission to freeze the time of the server.")						},
+			{ Permissions.journey_timeset,				GetString("You do not have permission to modify the time of the server.")						},
+			{ Permissions.journey_godmode,				GetString("You do not have permission to toggle godmode.")										},
+			{ Permissions.journey_windstrength,			GetString("You do not have permission to modify the wind strength of the server.")				},
+			{ Permissions.journey_rainstrength,			GetString("You do not have permission to modify the rain strength of the server.")				},
+			{ Permissions.journey_timespeed,			GetString("You do not have permission to modify the time speed of the server.")					},
+			{ Permissions.journey_rainfreeze,			GetString("You do not have permission to freeze the rain strength of the server.")				},
+			{ Permissions.journey_windfreeze,			GetString("You do not have permission to freeze the wind strength of the server.")				},
+			{ Permissions.journey_placementrange,		GetString("You do not have permission to modify the tile placement range of your character.") 	},
+			{ Permissions.journey_setdifficulty,		GetString("You do not have permission to modify the world difficulty of the server.")			},
+			{ Permissions.journey_biomespreadfreeze,	GetString("You do not have permission to freeze the biome spread of the server.")				},
+			{ Permissions.journey_setspawnrate,			GetString("You do not have permission to modify the NPC spawn rate of the server.")				},
 		};
 	}
 }

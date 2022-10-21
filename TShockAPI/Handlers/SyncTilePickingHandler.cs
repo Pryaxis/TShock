@@ -20,7 +20,7 @@ namespace TShockAPI.Handlers
 			if (args.TileX > Main.maxTilesX || args.TileX < 0
 			   || args.TileY > Main.maxTilesY || args.TileY < 0)
 			{
-				TShock.Log.ConsoleDebug($"SyncTilePickingHandler: X and Y position is out of world bounds! - From {args.Player.Name}");
+				TShock.Log.ConsoleDebug(GetString($"SyncTilePickingHandler: X and Y position is out of world bounds! - From {args.Player.Name}"));
 				args.Handled = true;
 				return;
 			}

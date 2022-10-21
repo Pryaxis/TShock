@@ -51,7 +51,7 @@ namespace TShockAPI.Handlers.NetModules
 				if (!player.HasPermission(Permissions.pylon))
 				{
 					rejectPacket = true;
-					player.SendErrorMessage("You do not have permission to teleport using pylons.");
+					player.SendErrorMessage(GetString("You do not have permission to teleport using pylons."));
 					return;
 				}
 			}
