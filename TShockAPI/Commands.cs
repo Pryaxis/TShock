@@ -769,7 +769,7 @@ namespace TShockAPI
 			{
 				TShock.Log.Warn(String.Format("{0} ({1}) had {2} or more invalid login attempts and was kicked automatically.",
 					args.Player.IP, args.Player.Name, TShock.Config.Settings.MaximumLoginAttempts));
-				args.Player.Kick("Too many invalid login attempts.");
+				args.Player.Kick(I18n.C.GetString("Too many invalid login attempts."));
 				return;
 			}
 
