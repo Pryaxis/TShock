@@ -2,7 +2,6 @@ name: i18n check trigger
 on:
   push:
     branches: [ general-devel ]
-  workflow_dispatch:
 jobs:
   extract:
     runs-on: ubuntu-latest
