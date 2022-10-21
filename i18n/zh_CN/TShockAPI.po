@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-21 08:25:41+0000\n"
-"PO-Revision-Date: 2022-10-21 18:36\n"
+"PO-Revision-Date: 2022-10-21 19:31\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -20,7 +20,7 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:701
 #, csharp-format
 msgid "{0} executed: {1}{2}."
-msgstr "{0} 执行了: {1}{2}."
+msgstr "{0} 执行了: {1}{2}。"
 
 #: ../../TShockAPI/Commands.cs:687
 #, csharp-format
@@ -35,7 +35,7 @@ msgstr "尝试登录失败。"
 #: ../../TShockAPI/Commands.cs:680
 #, csharp-format
 msgid "Invalid command entered. Type {0}help for a list of valid commands."
-msgstr "输入的命令无效。输入 {0}help 获取可用的指令列表。"
+msgstr "输入的命令无效。输入{0}help 获取可用的指令列表。"
 
 #: ../../TShockAPI/Commands.cs:772
 msgid "Too many invalid login attempts."
@@ -52,5 +52,5 @@ msgstr "你没有权限使用该命令!"
 
 #: ../../TShockAPI/Commands.cs:696
 msgid "You must use this command in-game."
-msgstr ""
+msgstr "你必须在游戏内使用该命令。"
 
