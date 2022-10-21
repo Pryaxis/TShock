@@ -6,6 +6,7 @@
   <a href="https://github.com/Pryaxis/TShock/actions">
     <img src="https://github.com/Pryaxis/TShock/actions/workflows/build.yml/badge.svg" alt="GitHub Actions Build Status">
   </a>
+  <a title="Crowdin" target="_blank" href="https://crowdin.com/project/tshock"><img src="https://badges.crowdin.net/tshock/localized.svg"></a>
   <br/><br/>
   <a href="https://github.com/Pryaxis/TShock/blob/general-devel/README_cn.md">查看中文版</a>
 </p>
