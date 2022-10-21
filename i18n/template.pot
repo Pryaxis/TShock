@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TShock\n"
-"POT-Creation-Date: 2022-10-20 00:16:51-0400\n"
-"PO-Revision-Date: 2022-10-20 00:16:51-0400\n"
+"POT-Creation-Date: 2022-10-21 05:59:35+0000\n"
+"PO-Revision-Date: 2022-10-21 05:59:36+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -18,6 +18,10 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:687
 #, csharp-format
 msgid "{0} tried to execute {1}{2}."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:801
+msgid "Bad login attempt."
 msgstr ""
 
 #: ../../TShockAPI/Commands.cs:652
