@@ -1,3 +1,5 @@
+commit_message: "[skip actions]"
+
 files:
   - source: /i18n/template.pot
     translation: /i18n/%locale_with_underscore%/TShockAPI.po
