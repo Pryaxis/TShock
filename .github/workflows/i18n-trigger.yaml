@@ -1,0 +1,18 @@
+name: i18n check trigger
+on:
+  push:
+    branches: [ general-devel ]
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.ACTIONS_REMOTE_TRIGGER_PAT }}
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: 'hakusaro',
+              repo: 'tshock_i18n',
+              workflow_id: 'i18n-extract.yml',
+              ref: 'main'
+            })
