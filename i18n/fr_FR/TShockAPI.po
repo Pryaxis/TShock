@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-21 08:25:41+0000\n"
-"PO-Revision-Date: 2022-10-21 19:31\n"
+"PO-Revision-Date: 2022-10-21 20:32\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -29,28 +29,28 @@ msgstr "{0} a essayé d'exécuter {1}{2}."
 
 #: ../../TShockAPI/Commands.cs:801
 msgid "Bad login attempt."
-msgstr ""
+msgstr "La tentative de connexion est invalide."
 
 #: ../../TShockAPI/Commands.cs:652
 #: ../../TShockAPI/Commands.cs:680
 #, csharp-format
 msgid "Invalid command entered. Type {0}help for a list of valid commands."
-msgstr ""
+msgstr "La commande est invalide. Tapez-vous {0}help pour une liste de commandes valides."
 
 #: ../../TShockAPI/Commands.cs:772
 msgid "Too many invalid login attempts."
-msgstr ""
+msgstr "Il y a trop de tentatives de connexion invalides."
 
 #: ../../TShockAPI/Commands.cs:691
 #, csharp-format
 msgid "You can use '{0}sudo {0}{1}' to override this check."
-msgstr ""
+msgstr "Vous pouvez utiliser '{0}sudo {0}{1}' pour remplacer cette vérification."
 
 #: ../../TShockAPI/Commands.cs:688
 msgid "You do not have access to this command."
-msgstr ""
+msgstr "Vouz n'avez pas accès à cette commande."
 
 #: ../../TShockAPI/Commands.cs:696
 msgid "You must use this command in-game."
-msgstr ""
+msgstr "Vous devez utiliser cette commande dans le jeu."
 
