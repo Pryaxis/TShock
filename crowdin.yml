@@ -1,0 +1,3 @@
+files:
+  - source: /i18n/template.pot
+    translation: /i18n/%two_letters_code%/TShockAPI.po
