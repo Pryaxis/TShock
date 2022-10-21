@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-21 08:25:41+0000\n"
-"PO-Revision-Date: 2022-10-21 15:26\n"
+"PO-Revision-Date: 2022-10-21 18:36\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -20,35 +20,35 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:701
 #, csharp-format
 msgid "{0} executed: {1}{2}."
-msgstr ""
+msgstr "{0} 执行了: {1}{2}."
 
 #: ../../TShockAPI/Commands.cs:687
 #, csharp-format
 msgid "{0} tried to execute {1}{2}."
-msgstr ""
+msgstr "{0} 试图执行 {1}{2}。"
 
 #: ../../TShockAPI/Commands.cs:801
 msgid "Bad login attempt."
-msgstr ""
+msgstr "尝试登录失败。"
 
 #: ../../TShockAPI/Commands.cs:652
 #: ../../TShockAPI/Commands.cs:680
 #, csharp-format
 msgid "Invalid command entered. Type {0}help for a list of valid commands."
-msgstr ""
+msgstr "输入的命令无效。输入 {0}help 获取可用的指令列表。"
 
 #: ../../TShockAPI/Commands.cs:772
 msgid "Too many invalid login attempts."
-msgstr ""
+msgstr "登陆失败次数过多!"
 
 #: ../../TShockAPI/Commands.cs:691
 #, csharp-format
 msgid "You can use '{0}sudo {0}{1}' to override this check."
-msgstr ""
+msgstr "你可以使用{0}sudo {0}{1} 来越过该检查。"
 
 #: ../../TShockAPI/Commands.cs:688
 msgid "You do not have access to this command."
-msgstr ""
+msgstr "你没有权限使用该命令!"
 
 #: ../../TShockAPI/Commands.cs:696
 msgid "You must use this command in-game."
