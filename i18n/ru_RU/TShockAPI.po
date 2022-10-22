@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-21 22:39:29+0000\n"
-"PO-Revision-Date: 2022-10-22 06:55\n"
+"PO-Revision-Date: 2022-10-22 07:16\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -200,67 +200,67 @@ msgstr "Bouncer / OnChestItemChange отказано из-за защиты ре
 #: ../../TShockAPI/Bouncer.cs:1482
 #, csharp-format
 msgid "Bouncer / OnChestOpen rejected from disabled from {0}"
-msgstr ""
+msgstr "Bouncer / OnChestItemChange отказано из-за того, что он был отключен в {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1489
 #, csharp-format
 msgid "Bouncer / OnChestOpen rejected from range check from {0}"
-msgstr ""
+msgstr "Bouncer / OnChestItemChange отказано после проверки досягаемости в {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1496
 #, csharp-format
 msgid "Bouncer / OnChestOpen rejected from region check from {0}"
-msgstr ""
+msgstr "Bouncer / OnChestItemChange отказано после проверки региона в {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2694
 #, csharp-format
 msgid "Bouncer / OnFishOutNPC rejected for not finding active bobber projectile! - From {0}"
-msgstr ""
+msgstr "Bouncer / OnFishOutNPC был отклонен так как не был найден активный проджектайл попловка! - в {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2688
 #, csharp-format
 msgid "Bouncer / OnFishOutNPC rejected for not using a fishing rod! - From {0}"
-msgstr ""
+msgstr "Bouncer / OnFishOutNPC был отклонен так как удочка не была использована! - в {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2700
 #, csharp-format
 msgid "Bouncer / OnFishOutNPC rejected for the NPC not being on the fishable NPCs list! - From {0}"
-msgstr ""
+msgstr "Bouncer / OnFishOutNPC был отклонен так как данного НПС нет в списке тех, кого можно выловить! - From {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2712
 #, csharp-format
 msgid "Bouncer / OnFishOutNPC rejected range checks from {0}"
-msgstr ""
+msgstr "Bouncer / OnFishOutNPC отклонил проверку диапазона в {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2706
 #, csharp-format
 msgid "Bouncer / OnFishOutNPC rejected summon boss permissions from {0}"
-msgstr ""
+msgstr "Bouncer / OnFishOutNPC отклонил разрешения на вызов босса в {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2740
 #, csharp-format
 msgid "Bouncer / OnFoodPlatterTryPlacing rejected disabled from {0}"
-msgstr ""
+msgstr "Bouncer / OnFooPlatterTryPlacing отклонен так как был отключен в {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2733
 #, csharp-format
 msgid "Bouncer / OnFoodPlatterTryPlacing rejected item not placed by hand from {0}"
-msgstr ""
+msgstr "Bouncer / OnFoodPlatterTryPlacing отклонил предмет, не помещенный вручную в {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2751
 #, csharp-format
 msgid "Bouncer / OnFoodPlatterTryPlacing rejected permissions from {0}"
-msgstr ""
+msgstr "Bouncer / OnFoodPlatterTryPlacing отклонил разрешения в {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2762
 #, csharp-format
 msgid "Bouncer / OnFoodPlatterTryPlacing rejected range checks from {0}"
-msgstr ""
+msgstr "Bouncer / OnFoodPlatterTryPlacing отклонил проверку досягаемости в {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2726
 #, csharp-format
 msgid "Bouncer / OnFoodPlatterTryPlacing rejected tile placement valid from {0}"
-msgstr ""
+msgstr "Bouncer / OnFoodTryPlacing отказано в размещении тайла в {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2467
 #, csharp-format
@@ -284,17 +284,17 @@ msgstr ""
 
 #: ../../TShockAPI/Bouncer.cs:435
 msgid "Bouncer / OnGetSection rejected empty player name."
-msgstr ""
+msgstr "Bouncer / OnGetSection отклонил пустое имя игрока."
 
 #: ../../TShockAPI/Bouncer.cs:427
 #, csharp-format
 msgid "Bouncer / OnGetSection rejected GetSection packet from {0}"
-msgstr ""
+msgstr "Bouncer / OnGetSection отклонил пакет GetSection в {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2060
 #, csharp-format
 msgid "Bouncer / OnHealOtherPlayer 0.2 check from {0}"
-msgstr ""
+msgstr "Bouncer / OnHealOtherPlayer 0.2 проверка в {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2084
 #, csharp-format
