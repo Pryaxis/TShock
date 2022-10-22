@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-21 22:39:29+0000\n"
-"PO-Revision-Date: 2022-10-22 06:55\n"
+"PO-Revision-Date: 2022-10-22 08:10\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -305,7 +305,7 @@ msgstr "Bouncer / OnHealOtherPlayer rejected heal other threshold from {0} {1}/{
 
 #: ../../TShockAPI/Bouncer.cs:2050
 msgid "Bouncer / OnHealOtherPlayer rejected null checks"
-msgstr ""
+msgstr "Bouncer / OnHealOtherPlayer 拒绝了无效检查"
 
 #: ../../TShockAPI/Bouncer.cs:1057
 #, csharp-format
@@ -330,12 +330,12 @@ msgstr ""
 #: ../../TShockAPI/Bouncer.cs:1103
 #, csharp-format
 msgid "Bouncer / OnItemDrop rejected from item drop/pickup check from {0}"
-msgstr ""
+msgstr "Bouncer / OnItemDrop 被拒绝来自 {0} 的物品/拾取检查"
 
 #: ../../TShockAPI/Bouncer.cs:1067
 #, csharp-format
 msgid "Bouncer / OnItemDrop rejected from prefix check from {0}"
-msgstr ""
+msgstr "Bouncer / OnItemDrop 被拒绝来自 {0} 的前缀检查"
 
 #: ../../TShockAPI/Bouncer.cs:1093
 #, csharp-format
@@ -355,12 +355,12 @@ msgstr ""
 #: ../../TShockAPI/Bouncer.cs:2669
 #, csharp-format
 msgid "Bouncer / OnKillMe rejected custom death message from {0}"
-msgstr ""
+msgstr "Bouncer / OnKillMe 拒绝了来自 {0} 的自定义死亡消息"
 
 #: ../../TShockAPI/Bouncer.cs:2643
 #, csharp-format
 msgid "Bouncer / OnKillMe rejected high damage from {0} {1}"
-msgstr ""
+msgstr "Bouncer / OnKillMe 拒绝了 {0} {1} 造成的高伤害"
 
 #: ../../TShockAPI/Bouncer.cs:2652
 #, csharp-format
@@ -620,12 +620,12 @@ msgstr ""
 #: ../../TShockAPI/Bouncer.cs:2264
 #, csharp-format
 msgid "Bouncer / OnPlaceObject rejected Axe of Regrowth only places saplings {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceObject 拒绝仅使用再生之斧放置树苗 {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2225
 #, csharp-format
 msgid "Bouncer / OnPlaceObject rejected banned tiles from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceObject 拒绝被禁止方块 {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2234
 #, csharp-format
@@ -1037,7 +1037,7 @@ msgstr ""
 #: ../../TShockAPI/Bouncer.cs:820
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from wire cutter from {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit 被 {0} {1} {2} 的钢丝钳拒绝"
 
 #: ../../TShockAPI/Bouncer.cs:614
 #, csharp-format
@@ -1698,11 +1698,11 @@ msgstr "无法验证用户 {0} （{1}） 的密码 hash 值"
 
 #: ../../TShockAPI/Bouncer.cs:246
 msgid "Unrecognized player direction"
-msgstr ""
+msgstr "无法识别玩家方位。"
 
 #: ../../TShockAPI/DB/UserManager.cs:197
 msgid "UpdateLogin SQL returned an error"
-msgstr ""
+msgstr "更新登录数据库时返回一个错误。"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1335
 #, csharp-format
@@ -1790,16 +1790,16 @@ msgstr "你没有权限冻结服务器的风力强度。"
 
 #: ../../TShockAPI/Handlers/RequestTileEntityInteractionHandler.cs:22
 msgid "You do not have permission to modify a Hat Rack in a protected area!"
-msgstr ""
+msgstr "您没有权限修改受保护区域内的帽架。"
 
 #: ../../TShockAPI/Handlers/DisplayDollItemSyncHandler.cs:21
 #: ../../TShockAPI/Handlers/RequestTileEntityInteractionHandler.cs:28
 msgid "You do not have permission to modify a Mannequin in a protected area!"
-msgstr ""
+msgstr "您没有权限修改受保护区域内的人体模型。"
 
 #: ../../TShockAPI/Handlers/RequestTileEntityInteractionHandler.cs:34
 msgid "You do not have permission to modify a TileEntity in a protected area!"
-msgstr ""
+msgstr "您没有权限修改受保护区域内的方块实体。"
 
 #: ../../TShockAPI/Handlers/NetModules/CreativePowerHandler.cs:114
 msgid "You do not have permission to modify the NPC spawn rate of the server."
@@ -1811,7 +1811,7 @@ msgstr "你没有权限更改服务器的雨量。"
 
 #: ../../TShockAPI/Handlers/NetModules/CreativePowerHandler.cs:111
 msgid "You do not have permission to modify the tile placement range of your character."
-msgstr ""
+msgstr "您没有权限修改您角色的放置范围。"
 
 #: ../../TShockAPI/Handlers/NetModules/CreativePowerHandler.cs:104
 msgid "You do not have permission to modify the time of the server."
@@ -1847,7 +1847,7 @@ msgstr "你没有权限放置此图格。"
 
 #: ../../TShockAPI/Handlers/EmojiHandler.cs:19
 msgid "You do not have permission to send emotes!"
-msgstr ""
+msgstr "您没有权限发送表情。"
 
 #: ../../TShockAPI/Handlers/NetModules/PylonHandler.cs:54
 msgid "You do not have permission to teleport using pylons."
@@ -1867,7 +1867,7 @@ msgstr "你的禁言已被解除"
 
 #: ../../TShockAPI/DB/RegionManager.cs:788
 msgid "You must be logged in to take advantage of protected regions."
-msgstr ""
+msgstr "您必须登录才能修改受保护区域。"
 
 #: ../../TShockAPI/Commands.cs:696
 msgid "You must use this command in-game."
@@ -1875,12 +1875,12 @@ msgstr "你必须在游戏内使用该命令。"
 
 #: ../../TShockAPI/Bouncer.cs:533
 msgid "You need to rejoin to ensure your trash can is cleared!"
-msgstr ""
+msgstr "请重新加入以确保您的垃圾箱已清空。"
 
 #: ../../TShockAPI/DB/GroupManager.cs:235
 #: ../../TShockAPI/DB/GroupManager.cs:237
 msgid "Your account's group could not be loaded. Please contact server administrators about this."
-msgstr ""
+msgstr "您的用户组无法被加载，请联系服务器管理员处理此错误。"
 
 #: ../../TShockAPI/Bouncer.cs:436
 msgid "Your client sent a blank character name."
