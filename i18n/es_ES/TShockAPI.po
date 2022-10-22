@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-21 22:39:29+0000\n"
-"PO-Revision-Date: 2022-10-21 22:43\n"
+"PO-Revision-Date: 2022-10-22 00:37\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -21,7 +21,7 @@ msgstr ""
 #, csharp-format
 msgctxt "{0} is a player name"
 msgid "Skipping SSC save (due to tshock.ignore.ssc) for {0}"
-msgstr ""
+msgstr "Omitiendo guardado SSC (debido a tshock.ignore.ssc) para {0}"
 
 #: ../../TShockAPI/DB/CharacterManager.cs:244
 msgctxt "{0} is a player name"
@@ -53,14 +53,14 @@ msgstr "{0} ejecutó: {1}{2}."
 #: ../../TShockAPI/Rest/RestManager.cs:1068
 #, csharp-format
 msgid "{0} just killed you!"
-msgstr ""
+msgstr "¡{0} te acaba de matar!"
 
 #: ../../TShockAPI/Rest/RestManager.cs:847
 #, csharp-format
 msgid "{0} NPC has been killed."
 msgid_plural "{killcount} NPCs have been killed."
 msgstr[0] ""
-msgstr[1] ""
+msgstr[1] "{killcount} NPCs fueron asesinados."
 
 #: ../../TShockAPI/Commands.cs:687
 #, csharp-format
@@ -84,7 +84,7 @@ msgstr ""
 #: ../../TShockAPI/Bouncer.cs:2006
 #, csharp-format
 msgid "Added buff to {0} NPC abnormally."
-msgstr ""
+msgstr "Añadido buff al NPC {0} de forma anormal."
 
 #: ../../TShockAPI/DB/UserManager.cs:81
 #, csharp-format
@@ -125,28 +125,28 @@ msgstr ""
 
 #: ../../TShockAPI/Rest/RestManager.cs:811
 msgid "AutoSave has been disabled"
-msgstr ""
+msgstr "Se ha desactivado el AutoGuardado"
 
 #: ../../TShockAPI/Rest/RestManager.cs:807
 msgid "AutoSave has been enabled"
-msgstr ""
+msgstr "Se ha activado el AutoGuardado"
 
 #: ../../TShockAPI/Rest/RestManager.cs:800
 msgid "Autosave is currently disabled"
-msgstr ""
+msgstr "El autoguardado esta actualmente desactivado"
 
 #: ../../TShockAPI/Rest/RestManager.cs:796
 msgid "Autosave is currently enabled"
-msgstr ""
+msgstr "El autoguardado está actualmente activo"
 
 #: ../../TShockAPI/BackupManager.cs:75
 msgid "Backing up world..."
-msgstr ""
+msgstr "Respaldando mundo..."
 
 #: ../../TShockAPI/BackupManager.cs:87
 #: ../../TShockAPI/BackupManager.cs:89
 msgid "Backup failed!"
-msgstr ""
+msgstr "¡Respaldo fallido!"
 
 #: ../../TShockAPI/BackupManager.cs:51
 msgid "Backup Thread"
@@ -1109,7 +1109,7 @@ msgstr ""
 
 #: ../../TShockAPI/Bouncer.cs:1253
 msgid "Certain projectiles have been ignored for cheat detection."
-msgstr ""
+msgstr "Algunos proyectiles fueron ignorados por detección de trampas."
 
 #: ../../TShockAPI/DB/BanManager.cs:82
 #: ../../TShockAPI/DB/ResearchDatastore.cs:54
@@ -1128,7 +1128,7 @@ msgstr ""
 #: ../../TShockAPI/Bouncer.cs:2645
 #, csharp-format
 msgid "Death Exploit Attempt: Damage {0}"
-msgstr ""
+msgstr "Intento de Exploit de Muerte: Daño {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2663
 msgid "Death reason outside of normal bounds."
