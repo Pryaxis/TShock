@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-21 22:39:29+0000\n"
-"PO-Revision-Date: 2022-10-21 22:43\n"
+"PO-Revision-Date: 2022-10-22 01:33\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -21,29 +21,29 @@ msgstr ""
 #, csharp-format
 msgctxt "{0} is a player name"
 msgid "Skipping SSC save (due to tshock.ignore.ssc) for {0}"
-msgstr ""
+msgstr "Пропускается сохранение SSC (из-за tshock.ignore.ssc) для {0}"
 
 #: ../../TShockAPI/DB/CharacterManager.cs:244
 msgctxt "{0} is a player name"
 msgid "Skipping SSC save (due to tshock.ignore.ssc) for {player.Account.Name}"
-msgstr ""
+msgstr "Пропускается сохранение SSC (из-за tshock.ignore.ssc) для {player.Account.Name}"
 
 #: ../../TShockAPI/DB/BanManager.cs:213
 #, csharp-format
 msgctxt "{0} is ban number, {1} is ban reason, {2} is a timestamp"
 msgid "#{0} - You are banned: {1} ({2} remaining)"
-msgstr ""
+msgstr "#{0} - Вы забанены: {1} (осталось {2})"
 
 #: ../../TShockAPI/DB/BanManager.cs:208
 #, csharp-format
 msgctxt "{0} is ban number, {1} is ban reason"
 msgid "#{0} - You are banned: {1}"
-msgstr ""
+msgstr "#{0} - Вы забанены: {1}"
 
 #: ../../TShockAPI/Rest/SecureRest.cs:213
 #, csharp-format
 msgid "\"{0}\" requested REST endpoint: {1}"
-msgstr ""
+msgstr "\"{0}\" запросил эндпоинт REST: {1}"
 
 #: ../../TShockAPI/Commands.cs:701
 #, csharp-format
@@ -53,16 +53,16 @@ msgstr "{0} выполнил: {1}{2}."
 #: ../../TShockAPI/Rest/RestManager.cs:1068
 #, csharp-format
 msgid "{0} just killed you!"
-msgstr ""
+msgstr "{0} убил вас!"
 
 #: ../../TShockAPI/Rest/RestManager.cs:847
 #, csharp-format
 msgid "{0} NPC has been killed."
 msgid_plural "{killcount} NPCs have been killed."
-msgstr[0] ""
+msgstr[0] "НИП {0} был убит."
 msgstr[1] ""
 msgstr[2] ""
-msgstr[3] ""
+msgstr[3] "{killcount} НИПов были убиты."
 
 #: ../../TShockAPI/Commands.cs:687
 #, csharp-format
@@ -71,12 +71,12 @@ msgstr "{0} попытался выполнить {1}{2}."
 
 #: ../../TShockAPI/DB/RegionManager.cs:108
 msgid "A lot of things will fail because of this. You must manually delete and re-create the allowed field."
-msgstr ""
+msgstr "Из-за этого многие вещи не сработают. Вы должны вручную удалить и пересоздать разрешенное поле."
 
 #: ../../TShockAPI/Rest/SecureRest.cs:120
 #, csharp-format
 msgid "A REST login from {0} was blocked as it currently has {1} rate-limit tokens and is at the RESTMaximumRequestsPerInterval threshold."
-msgstr ""
+msgstr "Вход в аккаунт через REST от {0} был заблокирован, поскольку в настоящее время он имеет {1} токенов ограничения запросов и находится на пороге RESTMaximumRequestsPerval."
 
 #: ../../TShockAPI/Bouncer.cs:529
 #, csharp-format
