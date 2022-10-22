@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TShock\n"
-"POT-Creation-Date: 2022-10-22 08:09:52+0000\n"
-"PO-Revision-Date: 2022-10-22 08:09:53+0000\n"
+"POT-Creation-Date: 2022-10-22 21:54:33+0000\n"
+"PO-Revision-Date: 2022-10-22 21:54:34+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -10,13 +10,13 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: GetText.NET Extractor\n"
 
-#: ../../TShockAPI/DB/CharacterManager.cs:174
+#: ../../TShockAPI/DB/CharacterManager.cs:176
 #, csharp-format
 msgctxt "{0} is a player name"
 msgid "Skipping SSC save (due to tshock.ignore.ssc) for {0}"
 msgstr ""
 
-#: ../../TShockAPI/DB/CharacterManager.cs:244
+#: ../../TShockAPI/DB/CharacterManager.cs:246
 msgctxt "{0} is a player name"
 msgid "Skipping SSC save (due to tshock.ignore.ssc) for {player.Account.Name}"
 msgstr ""
@@ -43,12 +43,12 @@ msgstr ""
 msgid "\"{0}\" requested REST endpoint: {1}"
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:940
+#: ../../TShockAPI/Commands.cs:967
 #, csharp-format
 msgid "{0} ({1}) changed the password for account {2}."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:950
+#: ../../TShockAPI/Commands.cs:977
 #, csharp-format
 msgid "{0} ({1}) failed to change the password for account {2}."
 msgstr ""
@@ -60,26 +60,26 @@ msgid ""
 "automatically."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1070
+#: ../../TShockAPI/Commands.cs:1097
 #, csharp-format
 msgid "{0} added account {1} to group {2}"
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1028
+#: ../../TShockAPI/Commands.cs:1055
 msgid "{0} attempted to register for the account {1} but it was already taken."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:869
+#: ../../TShockAPI/Commands.cs:896
 #, csharp-format
 msgid "{0} authenticated successfully as user: {1}."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1144
+#: ../../TShockAPI/Commands.cs:1171
 #, csharp-format
 msgid "{0} changed account {1} to group {2}."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1118
+#: ../../TShockAPI/Commands.cs:1145
 #, csharp-format
 msgid "{0} changed the password for account {1}"
 msgstr ""
@@ -89,12 +89,12 @@ msgstr ""
 msgid "{0} executed: {1}{2}."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:894
+#: ../../TShockAPI/Commands.cs:921
 #, csharp-format
 msgid "{0} failed to authenticate as user: {1}"
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1150
+#: ../../TShockAPI/Commands.cs:1177
 #, csharp-format
 msgid "{0} has changed your group to {1}."
 msgstr ""
@@ -111,12 +111,12 @@ msgid_plural "{killcount} NPCs have been killed."
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../../TShockAPI/Commands.cs:1022
+#: ../../TShockAPI/Commands.cs:1049
 #, csharp-format
 msgid "{0} registered an account: \"{1}\"."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1096
+#: ../../TShockAPI/Commands.cs:1123
 #, csharp-format
 msgid "{0} successfully deleted account: {1}"
 msgstr ""
@@ -126,38 +126,38 @@ msgstr ""
 msgid "{0} tried to execute {1}{2}."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:814
+#: ../../TShockAPI/Commands.cs:841
 #, csharp-format
 msgid "{0}login - Logs in using your UUID and character name."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:819
+#: ../../TShockAPI/Commands.cs:846
 #, csharp-format
 msgid "{0}login {1} - Logs in using your password and character name.password"
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:817
+#: ../../TShockAPI/Commands.cs:844
 #, csharp-format
 msgid ""
 "{0}login {1} {2} - Logs in using your username and password.usernamepassword"
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1169
+#: ../../TShockAPI/Commands.cs:1196
 #, csharp-format
 msgid "{0}user add username password group   -- Adds a specified user"
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1170
+#: ../../TShockAPI/Commands.cs:1197
 #, csharp-format
 msgid "{0}user del username                  -- Removes a specified user"
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1172
+#: ../../TShockAPI/Commands.cs:1199
 #, csharp-format
 msgid "{0}user group username newgroup       -- Changes a user's group"
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1171
+#: ../../TShockAPI/Commands.cs:1198
 #, csharp-format
 msgid "{0}user password username newpassword -- Changes a user's password"
 msgstr ""
@@ -175,26 +175,26 @@ msgid ""
 "and is at the RESTMaximumRequestsPerInterval threshold."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:828
+#: ../../TShockAPI/Commands.cs:855
 msgid "A user account by that name does not exist."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1010
+#: ../../TShockAPI/Commands.cs:1037
 #, csharp-format
 msgid "Account \"{0}\" has been registered."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1123
+#: ../../TShockAPI/Commands.cs:1150
 #, csharp-format
 msgid "Account {0} does not exist! Therefore, the password cannot be changed."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1069
+#: ../../TShockAPI/Commands.cs:1096
 #, csharp-format
 msgid "Account {0} has been added to group {1}!"
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1145
+#: ../../TShockAPI/Commands.cs:1172
 #, csharp-format
 msgid "Account {0} has been changed to group {1}."
 msgstr ""
@@ -204,7 +204,7 @@ msgstr ""
 msgid "Account needed! Please {0}register or {0}login to play!"
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1095
+#: ../../TShockAPI/Commands.cs:1122
 msgid "Account removed successfully."
 msgstr ""
 
@@ -218,7 +218,7 @@ msgstr ""
 msgid "AddUser SQL returned an error ({0})"
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1187
+#: ../../TShockAPI/Commands.cs:1214
 #, csharp-format
 msgid "Allocated memory: {0}"
 msgstr ""
@@ -259,7 +259,7 @@ msgstr ""
 msgid "Anonymous requested REST endpoint: {0}"
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:867
+#: ../../TShockAPI/Commands.cs:894
 #, csharp-format
 msgid "Authenticated as {0} successfully."
 msgstr ""
@@ -293,7 +293,7 @@ msgstr ""
 msgid "Backup Thread"
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:801
+#: ../../TShockAPI/Commands.cs:828
 msgid "Bad login attempt."
 msgstr ""
 
@@ -1460,6 +1460,18 @@ msgstr ""
 msgid "Forces all liquids to update immediately."
 msgstr ""
 
+#: ../../TShockAPI/GetDataHandlers.cs:4364
+#, csharp-format
+msgid "GetDataHandlers / HandleSyncLoadout rejected loadout index sync {0}"
+msgstr ""
+
+#: ../../TShockAPI/GetDataHandlers.cs:4355
+#, csharp-format
+msgid ""
+"GetDataHandlers / HandleSyncLoadout rejected loadout index sync out of bounds "
+"{0}"
+msgstr ""
+
 #: ../../TShockAPI/DB/UserManager.cs:291
 #, csharp-format
 msgid "GetUser SQL returned an error {0}"
@@ -1526,7 +1538,7 @@ msgstr ""
 msgid "Group {0} does not exist"
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1074
+#: ../../TShockAPI/Commands.cs:1101
 #, csharp-format
 msgid "Group {0} does not exist!"
 msgstr ""
@@ -1589,7 +1601,7 @@ msgstr ""
 msgid "Heals a player in HP and MP."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1199
+#: ../../TShockAPI/Commands.cs:1226
 #, csharp-format
 msgid "ID: {0}"
 msgstr ""
@@ -1630,7 +1642,7 @@ msgid ""
 "were disabled for to TShock so we can improve this!"
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:821
+#: ../../TShockAPI/Commands.cs:848
 msgid "If you forgot your password, contact the administrator for help."
 msgstr ""
 
@@ -1657,7 +1669,7 @@ msgstr ""
 msgid "Infinite group parenting ({0})"
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1196
+#: ../../TShockAPI/Commands.cs:1223
 msgid "Information about the currently running world"
 msgstr ""
 
@@ -1691,7 +1703,7 @@ msgstr ""
 msgid "Invalid parent group {0} for group {1}."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:892
+#: ../../TShockAPI/Commands.cs:919
 msgid "Invalid password!"
 msgstr ""
 
@@ -1704,7 +1716,7 @@ msgid ""
 "Press any key to exit."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1001
+#: ../../TShockAPI/Commands.cs:1028
 #, csharp-format
 msgid "Invalid syntax! Proper syntax: {0}register <password>"
 msgstr ""
@@ -1714,8 +1726,8 @@ msgstr ""
 msgid "Invalid Type: '{0}'"
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1043
-#: ../../TShockAPI/Commands.cs:1176
+#: ../../TShockAPI/Commands.cs:1070
+#: ../../TShockAPI/Commands.cs:1203
 #, csharp-format
 msgid "Invalid user syntax. Try {0}user help."
 msgstr ""
@@ -1767,7 +1779,7 @@ msgstr ""
 msgid "Lists commands or gives help on them."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:838
+#: ../../TShockAPI/Commands.cs:865
 msgid "Login attempt failed - see the message above."
 msgstr ""
 
@@ -1779,7 +1791,7 @@ msgstr ""
 msgid "Logs you out of your current account."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1191
+#: ../../TShockAPI/Commands.cs:1218
 #, csharp-format
 msgid "Machine name: {0}"
 msgstr ""
@@ -1824,7 +1836,7 @@ msgstr ""
 msgid "Manages user accounts."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1186
+#: ../../TShockAPI/Commands.cs:1213
 #, csharp-format
 msgid "Memory usage: {0}"
 msgstr ""
@@ -1843,7 +1855,7 @@ msgstr ""
 msgid "Missing or invalid {0} parameter"
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1201
+#: ../../TShockAPI/Commands.cs:1228
 #, csharp-format
 msgid "Mode: {0}"
 msgstr ""
@@ -1857,7 +1869,7 @@ msgstr ""
 msgid "Multiple user accounts found for {0} '{1}'"
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1197
+#: ../../TShockAPI/Commands.cs:1224
 #, csharp-format
 msgid "Name: {0}"
 msgstr ""
@@ -1905,7 +1917,7 @@ msgid ""
 "Not authorized. User \"{0}\" has no access to use the specified API endpoint."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:955
+#: ../../TShockAPI/Commands.cs:982
 #, csharp-format
 msgid ""
 "Not logged in or invalid syntax! Proper syntax: {0}password <oldpassword> "
@@ -1927,7 +1939,7 @@ msgstr ""
 msgid "One of your UserIDs is not a usable integer: {0}"
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1189
+#: ../../TShockAPI/Commands.cs:1216
 #, csharp-format
 msgid "Operating system: {0}"
 msgstr ""
@@ -1941,14 +1953,14 @@ msgstr ""
 msgid "Parenting group {0} to {1} would cause loops in the parent chain."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1127
+#: ../../TShockAPI/Commands.cs:1154
 #, csharp-format
 msgid ""
 "Password change attempt for {0} failed for an unknown reason. Check the "
 "server console for more details."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1119
+#: ../../TShockAPI/Commands.cs:1146
 #, csharp-format
 msgid "Password change succeeded for {0}."
 msgstr ""
@@ -1959,21 +1971,21 @@ msgstr ""
 msgid "Password must be at least {0} characters."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:944
-#: ../../TShockAPI/Commands.cs:981
-#: ../../TShockAPI/Commands.cs:995
-#: ../../TShockAPI/Commands.cs:1061
-#: ../../TShockAPI/Commands.cs:1132
+#: ../../TShockAPI/Commands.cs:971
+#: ../../TShockAPI/Commands.cs:1008
+#: ../../TShockAPI/Commands.cs:1022
+#: ../../TShockAPI/Commands.cs:1088
+#: ../../TShockAPI/Commands.cs:1159
 #, csharp-format
 msgid "Password must be greater than or equal to {0} characters."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:961
+#: ../../TShockAPI/Commands.cs:988
 #, csharp-format
 msgid "PasswordUser returned an error: {0}"
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1202
+#: ../../TShockAPI/Commands.cs:1229
 #, csharp-format
 msgid "Path: {0}"
 msgstr ""
@@ -2021,11 +2033,11 @@ msgstr ""
 msgid "Player does not have permission to create projectile {0}."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:915
+#: ../../TShockAPI/Commands.cs:942
 msgid "Please close NPC windows before logging out."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1027
+#: ../../TShockAPI/Commands.cs:1054
 msgid "Please try a different username."
 msgstr ""
 
@@ -2038,7 +2050,7 @@ msgstr ""
 msgid "Prevents a player from talking."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1190
+#: ../../TShockAPI/Commands.cs:1217
 #, csharp-format
 msgid "Proc count: {0}"
 msgstr ""
@@ -2083,7 +2095,7 @@ msgstr ""
 msgid "Registers you an account."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1034
+#: ../../TShockAPI/Commands.cs:1061
 #, csharp-format
 msgid "RegisterUser returned an error: {0}"
 msgstr ""
@@ -2148,7 +2160,7 @@ msgstr ""
 msgid "Saves the world file."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1200
+#: ../../TShockAPI/Commands.cs:1227
 #, csharp-format
 msgid "Seed: {0}"
 msgstr ""
@@ -2183,7 +2195,7 @@ msgstr ""
 msgid "Server map saving..."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:923
+#: ../../TShockAPI/Commands.cs:950
 msgid "Server side characters are enabled. You need to be logged-in to play."
 msgstr ""
 
@@ -2263,7 +2275,7 @@ msgstr ""
 msgid "Shuts down the server without saving."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1198
+#: ../../TShockAPI/Commands.cs:1225
 #, csharp-format
 msgid "Size: {0}x{1}"
 msgstr ""
@@ -2272,13 +2284,13 @@ msgstr ""
 msgid "Slaps a player, dealing damage."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1026
+#: ../../TShockAPI/Commands.cs:1053
 #, csharp-format
 msgid "Sorry, {0} was already taken by another person."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:960
-#: ../../TShockAPI/Commands.cs:1033
+#: ../../TShockAPI/Commands.cs:987
+#: ../../TShockAPI/Commands.cs:1060
 #, csharp-format
 msgid "Sorry, an error occurred: {0}."
 msgstr ""
@@ -2315,6 +2327,24 @@ msgstr ""
 
 #: ../../TShockAPI/Bouncer.cs:1773
 msgid "Spreading water without holding a water bucket"
+msgstr ""
+
+#: ../../TShockAPI/TSPlayer.cs:618
+#: ../../TShockAPI/TSPlayer.cs:638
+#, csharp-format
+msgid "Stack cheat detected. Remove Loadout 1 item {0} ({1}) and then rejoin."
+msgstr ""
+
+#: ../../TShockAPI/TSPlayer.cs:658
+#: ../../TShockAPI/TSPlayer.cs:678
+#, csharp-format
+msgid "Stack cheat detected. Remove Loadout 2 item {0} ({1}) and then rejoin."
+msgstr ""
+
+#: ../../TShockAPI/TSPlayer.cs:698
+#: ../../TShockAPI/TSPlayer.cs:718
+#, csharp-format
+msgid "Stack cheat detected. Remove Loadout 3 item {0} ({1}) and then rejoin."
 msgstr ""
 
 #: ../../TShockAPI/Rest/SecureRest.cs:167
@@ -2355,7 +2385,7 @@ msgstr ""
 msgid "Temporarily sets another player's group."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1154
+#: ../../TShockAPI/Commands.cs:1181
 msgid "That group does not exist!"
 msgstr ""
 
@@ -2413,7 +2443,7 @@ msgstr ""
 msgid "The specified token queued for destruction failed to be deleted."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1100
+#: ../../TShockAPI/Commands.cs:1127
 #, csharp-format
 msgid "The user {0} does not exist! Therefore, the account was not deleted!"
 msgstr ""
@@ -2430,7 +2460,7 @@ msgstr ""
 msgid "The world's chest limit has been reached - unable to place more."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:900
+#: ../../TShockAPI/Commands.cs:927
 msgid ""
 "There was an error processing your login or authentication related request."
 msgstr ""
@@ -2485,22 +2515,22 @@ msgstr ""
 msgid "Too many invalid login attempts."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1188
+#: ../../TShockAPI/Commands.cs:1215
 #, csharp-format
 msgid "Total processor time: {0}"
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1017
+#: ../../TShockAPI/Commands.cs:1044
 #, csharp-format
 msgid "Type {0}login \"{1}\" {2} to sign in to your account."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1019
+#: ../../TShockAPI/Commands.cs:1046
 #, csharp-format
 msgid "Type {0}login {1} to sign in to your account."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1014
+#: ../../TShockAPI/Commands.cs:1041
 #, csharp-format
 msgid "Type {0}login to sign in to your account using your UUID."
 msgstr ""
@@ -2533,22 +2563,22 @@ msgstr ""
 msgid "User {0} '{1}' doesn't exist"
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1078
+#: ../../TShockAPI/Commands.cs:1105
 #, csharp-format
 msgid "User {0} already exists!"
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1082
+#: ../../TShockAPI/Commands.cs:1109
 #, csharp-format
 msgid "User {0} could not be added, check console for details."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1162
+#: ../../TShockAPI/Commands.cs:1189
 #, csharp-format
 msgid "User {0} could not be added. Check console for details."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1158
+#: ../../TShockAPI/Commands.cs:1185
 #, csharp-format
 msgid "User {0} does not exist!"
 msgstr ""
@@ -2563,7 +2593,7 @@ msgstr ""
 msgid "User account {0} does not exist"
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1168
+#: ../../TShockAPI/Commands.cs:1195
 msgid "User management command help:"
 msgstr ""
 
@@ -2591,7 +2621,7 @@ msgstr ""
 msgid "Using banned water bucket without permissions"
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:888
+#: ../../TShockAPI/Commands.cs:915
 msgid "UUID does not match this character!"
 msgstr ""
 
@@ -2608,7 +2638,7 @@ msgstr ""
 msgid "You are already logged in, and cannot login again."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:909
+#: ../../TShockAPI/Commands.cs:936
 msgid "You are not logged-in. Therefore, you cannot logout."
 msgstr ""
 
@@ -2620,6 +2650,18 @@ msgstr ""
 #: ../../TShockAPI/DB/GroupManager.cs:501
 #: ../../TShockAPI/DB/GroupManager.cs:502
 msgid "You can't remove the default guest group."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:805
+msgid "You cannot login whilst crowd controlled."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:791
+msgid "You cannot login whilst dead."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:799
+msgid "You cannot login whilst using an item."
 msgstr ""
 
 #: ../../TShockAPI/Commands.cs:688
@@ -2722,7 +2764,7 @@ msgstr ""
 msgid "You do not have permission to toggle godmode."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:949
+#: ../../TShockAPI/Commands.cs:976
 msgid "You failed to change your password!"
 msgstr ""
 
@@ -2734,11 +2776,11 @@ msgstr ""
 msgid "You have been remotely unmmuted"
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:920
+#: ../../TShockAPI/Commands.cs:947
 msgid "You have been successfully logged out of your account."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:938
+#: ../../TShockAPI/Commands.cs:965
 msgid "You have successfully changed your password."
 msgstr ""
 
@@ -2769,7 +2811,7 @@ msgstr ""
 msgid "Your database contains invalid UserIDs (they should be integers)."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:1011
+#: ../../TShockAPI/Commands.cs:1038
 #, csharp-format
 msgid "Your password is {0}."
 msgstr ""
