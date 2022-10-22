@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-21 22:39:29+0000\n"
-"PO-Revision-Date: 2022-10-22 05:56\n"
+"PO-Revision-Date: 2022-10-22 06:55\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -301,7 +301,7 @@ msgstr "Bouncer / OnHealOtherPlayer 拒绝了来自 {0} 的禁用/调整"
 #: ../../TShockAPI/Bouncer.cs:2076
 #, csharp-format
 msgid "Bouncer / OnHealOtherPlayer rejected heal other threshold from {0} {1}/{2}"
-msgstr ""
+msgstr "Bouncer / OnHealOtherPlayer rejected heal other threshold from {0} {1}/{2}"
 
 #: ../../TShockAPI/Bouncer.cs:2050
 msgid "Bouncer / OnHealOtherPlayer rejected null checks"
@@ -1576,36 +1576,36 @@ msgstr "收到类型 '{0}'，但列'{1}的类型是 '{2}'"
 
 #: ../../TShockAPI/Bouncer.cs:2125
 msgid "Released critter was not from its item."
-msgstr ""
+msgstr "产生的碎石并非来自本该生成它的物品。"
 
 #: ../../TShockAPI/DB/UserManager.cs:112
 msgid "RemoveUser SQL returned an error"
-msgstr ""
+msgstr "RemoveUser 方法在执行SQL语句时返回了一个错误"
 
 #: ../../TShockAPI/Rest/SecureRest.cs:93
 msgid "Requested token was successfully destroyed."
-msgstr ""
+msgstr "请求的令牌已经被成功地销毁。"
 
 #: ../../TShockAPI/Handlers/RequestTileEntityInteractionHandler.cs:35
 #, csharp-format
 msgid "RequestTileEntityInteractionHandler: Rejected packet due to lack of building permissions! - From {0} | Position X:{1} Y:{2}, TileEntity type: {3}, Tile type: {4}"
-msgstr ""
+msgstr "RequestTileEntityInteractionHandler：由于缺少构建权限而拒绝数据包！ - 从 {0} | 位置 X:{1} Y:{2}, 图格实体类型: {3}, 图格类型: {4}"
 
 #: ../../TShockAPI/BackupManager.cs:73
 msgid "Server map saving..."
-msgstr ""
+msgstr "服务器地图正在保存..."
 
 #: ../../TShockAPI/DB/UserManager.cs:182
 msgid "SetUserGroup SQL returned an error"
-msgstr ""
+msgstr "SetUserGroup 方法在执行 SQL 语句时返回了一个错误"
 
 #: ../../TShockAPI/DB/UserManager.cs:134
 msgid "SetUserPassword SQL returned an error"
-msgstr ""
+msgstr "SetUserPassword 方法在执行SQL语句时发生了一个错误"
 
 #: ../../TShockAPI/DB/UserManager.cs:154
 msgid "SetUserUUID SQL returned an error"
-msgstr ""
+msgstr "SetUserUUID 方法在执行 SQL 语句时发生了一个错误"
 
 #: ../../TShockAPI/Rest/Rest.cs:433
 msgid "Specified API endpoint doesn't exist. Refer to the documentation for a list of valid endpoints."
@@ -1621,11 +1621,11 @@ msgstr "在不手持岩浆桶的情况下撒岩浆"
 
 #: ../../TShockAPI/Bouncer.cs:1813
 msgid "Spreading shimmer without holding a honey bucket"
-msgstr ""
+msgstr "在手上没有蜂蜜桶的情况下撒蜂蜜"
 
 #: ../../TShockAPI/Bouncer.cs:1773
 msgid "Spreading water without holding a water bucket"
-msgstr ""
+msgstr "在手上没有水桶的时候放置水"
 
 #: ../../TShockAPI/Rest/SecureRest.cs:167
 msgid "Successful login"
@@ -1634,15 +1634,15 @@ msgstr "登录成功"
 #: ../../TShockAPI/Handlers/SyncTilePickingHandler.cs:23
 #, csharp-format
 msgid "SyncTilePickingHandler: X and Y position is out of world bounds! - From {0}"
-msgstr ""
+msgstr "SyncTilePickingHander: X 和 Y 位置超越了世界边界! - 来自 {0}"
 
 #: ../../TShockAPI/DB/BanManager.cs:258
 msgid "The ban is invalid because a current ban for this identifier already exists."
-msgstr ""
+msgstr "禁令无效，因为当前禁止此标识符的禁令已经存在。"
 
 #: ../../TShockAPI/DB/BanManager.cs:295
 msgid "The ban was not valid for an unknown reason."
-msgstr ""
+msgstr "封禁无效，因为没有确切的原因。"
 
 #: ../../TShockAPI/DB/GroupManager.cs:218
 msgid "The default usergroup could not be found."
@@ -1655,7 +1655,7 @@ msgstr "未找到默认用户组。这可能是配置文件中出现了错别字
 #: ../../TShockAPI/DB/GroupManager.cs:595
 #, csharp-format
 msgid "The group {0} appeared more than once. Keeping current group settings."
-msgstr ""
+msgstr "组 {0} 出现了多次。保持当前组设置。"
 
 #: ../../TShockAPI/DB/GroupManager.cs:212
 msgid "The guest group could not be found."
