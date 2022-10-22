@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-22 08:09:52+0000\n"
-"PO-Revision-Date: 2022-10-22 08:11\n"
+"PO-Revision-Date: 2022-10-22 17:37\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -21,110 +21,110 @@ msgstr ""
 #, csharp-format
 msgctxt "{0} is a player name"
 msgid "Skipping SSC save (due to tshock.ignore.ssc) for {0}"
-msgstr ""
+msgstr "La sauvegarde SSC est ignoré(e) (à cause de tshock.ignoré.ssc) pour {0}"
 
 #: ../../TShockAPI/DB/CharacterManager.cs:244
 msgctxt "{0} is a player name"
 msgid "Skipping SSC save (due to tshock.ignore.ssc) for {player.Account.Name}"
-msgstr ""
+msgstr "La sauvegarde SSC est ignoré(e) (à cause de tshock.ignoré.ssc) pour {player.Account.Name}"
 
 #: ../../TShockAPI/DB/BanManager.cs:213
 #, csharp-format
 msgctxt "{0} is ban number, {1} is ban reason, {2} is a timestamp"
 msgid "#{0} - You are banned: {1} ({2} remaining)"
-msgstr ""
+msgstr "#{0} - Vous êtes banni(e): {1} ({2} restant)"
 
 #: ../../TShockAPI/DB/BanManager.cs:208
 #, csharp-format
 msgctxt "{0} is ban number, {1} is ban reason"
 msgid "#{0} - You are banned: {1}"
-msgstr ""
+msgstr "#{0} - Vous êtes banni(e): {1}"
 
 #: ../../TShockAPI/PaginationTools.cs:283
 #, csharp-format
 msgid "\"{0}\" is not a valid page number."
-msgstr ""
+msgstr "Le numéro de page \"{0}\" n'est pas valide."
 
 #: ../../TShockAPI/Rest/SecureRest.cs:213
 #, csharp-format
 msgid "\"{0}\" requested REST endpoint: {1}"
-msgstr ""
+msgstr "\"{0}\" a demandé un point de terminaison REST: {1}"
 
 #: ../../TShockAPI/Commands.cs:940
 #, csharp-format
 msgid "{0} ({1}) changed the password for account {2}."
-msgstr ""
+msgstr "{0} ({1}) a changé le mot de passe pour le compte {2}."
 
 #: ../../TShockAPI/Commands.cs:950
 #, csharp-format
 msgid "{0} ({1}) failed to change the password for account {2}."
-msgstr ""
+msgstr "{0} ({1}) ne pouvait pas changer le mot de passe du compte {2}."
 
 #: ../../TShockAPI/Commands.cs:770
 #, csharp-format
 msgid "{0} ({1}) had {2} or more invalid login attempts and was kicked automatically."
-msgstr ""
+msgstr "{0} ({1}) a eu {2} ou plus tentatives de connexion invalides et a été expulse(e) automatiquement."
 
 #: ../../TShockAPI/Commands.cs:1070
 #, csharp-format
 msgid "{0} added account {1} to group {2}"
-msgstr ""
+msgstr "{0} a ajouté le compte {1} au groupe {2}"
 
 #: ../../TShockAPI/Commands.cs:1028
 msgid "{0} attempted to register for the account {1} but it was already taken."
-msgstr ""
+msgstr "{0} a tenté de créer le compte {1} mais il a déjà été pris."
 
 #: ../../TShockAPI/Commands.cs:869
 #, csharp-format
 msgid "{0} authenticated successfully as user: {1}."
-msgstr ""
+msgstr "{0} s'est connecté avec succès au compte {1}."
 
 #: ../../TShockAPI/Commands.cs:1144
 #, csharp-format
 msgid "{0} changed account {1} to group {2}."
-msgstr ""
+msgstr "{0} a changé le compte {1} au groupe {2}."
 
 #: ../../TShockAPI/Commands.cs:1118
 #, csharp-format
 msgid "{0} changed the password for account {1}"
-msgstr ""
+msgstr "{0} a changé le mot de passe pour le compte {1}"
 
 #: ../../TShockAPI/Commands.cs:701
 #, csharp-format
 msgid "{0} executed: {1}{2}."
-msgstr "{0} a exécuté(e): {1}{2}."
+msgstr "{0} a exécuté: {1}{2}."
 
 #: ../../TShockAPI/Commands.cs:894
 #, csharp-format
 msgid "{0} failed to authenticate as user: {1}"
-msgstr ""
+msgstr "{0} n'a pas pu se connecter au compte {1}"
 
 #: ../../TShockAPI/Commands.cs:1150
 #, csharp-format
 msgid "{0} has changed your group to {1}."
-msgstr ""
+msgstr "{0} a changé votre groupe en {1}."
 
 #: ../../TShockAPI/Rest/RestManager.cs:1068
 #, csharp-format
 msgid "{0} just killed you!"
-msgstr ""
+msgstr "{0} vous a tué !"
 
 #: ../../TShockAPI/Rest/RestManager.cs:847
 #, csharp-format
 msgid "{0} NPC has been killed."
 msgid_plural "{killcount} NPCs have been killed."
-msgstr[0] ""
+msgstr[0] "{0} NPC a été tué."
 msgstr[1] ""
 
 #: ../../TShockAPI/Commands.cs:1022
 #, csharp-format
 msgid "{0} registered an account: \"{1}\"."
-msgstr ""
+msgstr "{0} a créé un compte \"{1}\"."
 
 #: ../../TShockAPI/Commands.cs:1096
 #, csharp-format
 msgid "{0} successfully deleted account: {1}"
-msgstr ""
+msgstr "{0} a effacé le compte \"{1}\"."
 
 #: ../../TShockAPI/Commands.cs:687
 #, csharp-format
@@ -134,7 +134,7 @@ msgstr "{0} a essayé d'exécuter {1}{2}."
 #: ../../TShockAPI/Commands.cs:814
 #, csharp-format
 msgid "{0}login - Logs in using your UUID and character name."
-msgstr ""
+msgstr "{0}login - Se connecter avec votre UUID et votre nom de personnage."
 
 #: ../../TShockAPI/Commands.cs:819
 #, csharp-format
@@ -149,60 +149,60 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:1169
 #, csharp-format
 msgid "{0}user add username password group   -- Adds a specified user"
-msgstr ""
+msgstr "{0}user add username password group - Ajouter un utilisateur spécifique"
 
 #: ../../TShockAPI/Commands.cs:1170
 #, csharp-format
 msgid "{0}user del username                  -- Removes a specified user"
-msgstr ""
+msgstr "{0}user del username  - Effacer un utilisateur spécifique"
 
 #: ../../TShockAPI/Commands.cs:1172
 #, csharp-format
 msgid "{0}user group username newgroup       -- Changes a user's group"
-msgstr ""
+msgstr "{0}user group username newgroup - Changer un utilisateur spécifique"
 
 #: ../../TShockAPI/Commands.cs:1171
 #, csharp-format
 msgid "{0}user password username newpassword -- Changes a user's password"
-msgstr ""
+msgstr "{0}user password username newpassword - Changer le mot de passe d'un utilisateur"
 
 #: ../../TShockAPI/DB/RegionManager.cs:108
 msgid "A lot of things will fail because of this. You must manually delete and re-create the allowed field."
-msgstr ""
+msgstr "Il y a beaucoup de choses qui échoueront à cause de cela. Vous devez supprimer et recréer le domaine autorisé."
 
 #: ../../TShockAPI/Rest/SecureRest.cs:120
 #, csharp-format
 msgid "A REST login from {0} was blocked as it currently has {1} rate-limit tokens and is at the RESTMaximumRequestsPerInterval threshold."
-msgstr ""
+msgstr "Une connexion REST de {0} a été bloquée parce qu'il a {1} jetons de limite des taux et est seuil de RESTMaximumRequestsPerInterval."
 
 #: ../../TShockAPI/Commands.cs:828
 msgid "A user account by that name does not exist."
-msgstr ""
+msgstr "Le compte utilisateur n'existe pas."
 
 #: ../../TShockAPI/Commands.cs:1010
 #, csharp-format
 msgid "Account \"{0}\" has been registered."
-msgstr ""
+msgstr "Le compte «{0}» a été enregistré."
 
 #: ../../TShockAPI/Commands.cs:1123
 #, csharp-format
 msgid "Account {0} does not exist! Therefore, the password cannot be changed."
-msgstr ""
+msgstr "Le compte {0} n'existe pas ! Alors, le mot de passe ne peut pas être changé."
 
 #: ../../TShockAPI/Commands.cs:1069
 #, csharp-format
 msgid "Account {0} has been added to group {1}!"
-msgstr ""
+msgstr "Le compte {0} a été ajouté en groupe {1} !"
 
 #: ../../TShockAPI/Commands.cs:1145
 #, csharp-format
 msgid "Account {0} has been changed to group {1}."
-msgstr ""
+msgstr "Le compte {0} a été changé en groupe {1}."
 
 #: ../../TShockAPI/Bouncer.cs:529
 #, csharp-format
 msgid "Account needed! Please {0}register or {0}login to play!"
-msgstr ""
+msgstr "Un compte est nécessaire ! {0}register ou {0}login pour jouer !"
 
 #: ../../TShockAPI/Commands.cs:1095
 msgid "Account removed successfully."
