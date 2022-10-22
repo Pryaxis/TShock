@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-21 22:39:29+0000\n"
-"PO-Revision-Date: 2022-10-22 00:37\n"
+"PO-Revision-Date: 2022-10-22 01:33\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -1243,29 +1243,29 @@ msgstr ""
 #: ../../TShockAPI/DB/GroupManager.cs:725
 #, csharp-format
 msgid "Group {0} does not exist"
-msgstr ""
+msgstr "El grupo {0} no existe"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1348
 #, csharp-format
 msgid "Group {0} doesn't exist"
-msgstr ""
+msgstr "El grupo {0} no existe"
 
 #: ../../TShockAPI/DB/GroupManager.cs:495
 #: ../../TShockAPI/DB/GroupManager.cs:525
 #: ../../TShockAPI/DB/GroupManager.cs:548
 #, csharp-format
 msgid "Group {0} doesn't exist."
-msgstr ""
+msgstr "El grupo {0} no existe."
 
 #: ../../TShockAPI/DB/GroupManager.cs:508
 #, csharp-format
 msgid "Group {0} has been deleted successfully."
-msgstr ""
+msgstr "El grupo {0} fue eliminado exitosamente."
 
 #: ../../TShockAPI/DB/GroupManager.cs:463
 #, csharp-format
 msgid "Group {0} has been renamed to {1}."
-msgstr ""
+msgstr "El grupo {0} fue renombrado a {1}."
 
 #: ../../TShockAPI/DB/GroupManager.cs:631
 #, csharp-format
@@ -1280,7 +1280,7 @@ msgstr ""
 #: ../../TShockAPI/Rest/RestManager.cs:1187
 #, csharp-format
 msgid "Group {0} updated successfully"
-msgstr ""
+msgstr "Grupo {0} actualizado exitosamente"
 
 #: ../../TShockAPI/Bouncer.cs:2061
 msgid "HealOtherPlayer cheat attempt!"
@@ -1377,7 +1377,7 @@ msgstr ""
 
 #: ../../TShockAPI/Rest/RestManager.cs:1049
 msgid "Kicked via web"
-msgstr ""
+msgstr "Expulsado vía web"
 
 #: ../../TShockAPI/Handlers/LandGolfBallInCupHandler.cs:114
 #, csharp-format
@@ -1406,21 +1406,21 @@ msgstr ""
 
 #: ../../TShockAPI/Bouncer.cs:2430
 msgid "Malicious portal attempt."
-msgstr ""
+msgstr "Intento malicioso de uso de portal."
 
 #: ../../TShockAPI/Rest/RestManager.cs:874
 msgid "Meteor has been spawned"
-msgstr ""
+msgstr "Se ha generado un meteoro"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1268
 #, csharp-format
 msgid "Missing or empty {0} parameter"
-msgstr ""
+msgstr "Parámetro {0} faltante o vacío"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1278
 #, csharp-format
 msgid "Missing or invalid {0} parameter"
-msgstr ""
+msgstr "Parámetro {0} faltante o inválido"
 
 #: ../../TShockAPI/Net/BaseMsg.cs:29
 msgid "Msg ID not implemented"
@@ -1429,7 +1429,7 @@ msgstr ""
 #: ../../TShockAPI/DB/UserManager.cs:294
 #, csharp-format
 msgid "Multiple user accounts found for {0} '{1}'"
-msgstr ""
+msgstr "Se encontraron múltiples cuentas para {0} '{1}'"
 
 #: ../../TShockAPI/Handlers/NetModules/CreativeUnlocksHandler.cs:55
 #, csharp-format
@@ -1438,7 +1438,7 @@ msgstr ""
 
 #: ../../TShockAPI/Rest/RestManager.cs:721
 msgid "No matching bans found."
-msgstr ""
+msgstr "No se encontraron baneos que coincidan."
 
 #: ../../TShockAPI/DB/IQueryBuilder.cs:345
 msgid "No values supplied"
@@ -1471,7 +1471,7 @@ msgstr ""
 #: ../../TShockAPI/Bouncer.cs:1369
 #, csharp-format
 msgid "NPC damage exceeded {0}."
-msgstr ""
+msgstr "Daño a NPC excedió {0}."
 
 #: ../../TShockAPI/DB/RegionManager.cs:102
 #, csharp-format
@@ -1487,17 +1487,17 @@ msgstr ""
 #: ../../TShockAPI/DB/UserManager.cs:513
 #, csharp-format
 msgid "Password must be at least {0} characters."
-msgstr ""
+msgstr "La contraseña debe tener al menos {0} caracteres."
 
 #: ../../TShockAPI/Rest/RestManager.cs:1388
 #, csharp-format
 msgid "Player {0} has been muted"
-msgstr ""
+msgstr "El jugador {0} fue silenciado"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1393
 #, csharp-format
 msgid "Player {0} has been unmuted"
-msgstr ""
+msgstr "Al jugador {0} se le revocó su silencio"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1301
 #, csharp-format
@@ -1514,23 +1514,23 @@ msgstr ""
 #: ../../TShockAPI/Rest/RestManager.cs:1069
 #, csharp-format
 msgid "Player {0} was killed"
-msgstr ""
+msgstr "El jugador {0} fue asesinado"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1299
 #, csharp-format
 msgid "Player {0} was not found"
-msgstr ""
+msgstr "No se encontró al jugador {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2563
 #: ../../TShockAPI/Bouncer.cs:2570
 #, csharp-format
 msgid "Player damage exceeded {0}."
-msgstr ""
+msgstr "El daño al jugador excedió {0}."
 
 #: ../../TShockAPI/Bouncer.cs:1165
 #, csharp-format
 msgid "Player does not have permission to create projectile {0}."
-msgstr ""
+msgstr "El jugador no tiene permiso para crear el proyectil {0}."
 
 #: ../../TShockAPI/DB/BanManager.cs:81
 #: ../../TShockAPI/DB/ResearchDatastore.cs:53
@@ -1540,7 +1540,7 @@ msgstr ""
 #: ../../TShockAPI/Bouncer.cs:1175
 #, csharp-format
 msgid "Projectile damage is higher than {0}."
-msgstr ""
+msgstr "El daño del proyectil es mas alto que {0}."
 
 #: ../../TShockAPI/Bouncer.cs:1269
 #, csharp-format
@@ -1674,7 +1674,7 @@ msgstr ""
 
 #: ../../TShockAPI/Bouncer.cs:788
 msgid "The world's chest limit has been reached - unable to place more."
-msgstr ""
+msgstr "El límite de cofres del mundo fue alcanzado - imposible colocar más."
 
 #: ../../TShockAPI/Bouncer.cs:901
 #, csharp-format
@@ -1858,15 +1858,15 @@ msgstr ""
 
 #: ../../TShockAPI/Rest/RestManager.cs:1387
 msgid "You have been remotely muted"
-msgstr ""
+msgstr "Has sido silenciado de forma remota"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1392
 msgid "You have been remotely unmmuted"
-msgstr ""
+msgstr "Se revocó tu silencio de forma remota"
 
 #: ../../TShockAPI/DB/RegionManager.cs:788
 msgid "You must be logged in to take advantage of protected regions."
-msgstr ""
+msgstr "Debes estar conectado para poder aprovechar las regiones protegidas."
 
 #: ../../TShockAPI/Commands.cs:696
 msgid "You must use this command in-game."
