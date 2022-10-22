@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-21 22:39:29+0000\n"
-"PO-Revision-Date: 2022-10-22 04:51\n"
+"PO-Revision-Date: 2022-10-22 05:56\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -296,7 +296,7 @@ msgstr "保镖/健康其他玩家0.2检查从{0}"
 #: ../../TShockAPI/Bouncer.cs:2084
 #, csharp-format
 msgid "Bouncer / OnHealOtherPlayer rejected disabled/throttled from {0}"
-msgstr ""
+msgstr "Bouncer / OnHealOtherPlayer 拒绝了来自 {0} 的禁用/调整"
 
 #: ../../TShockAPI/Bouncer.cs:2076
 #, csharp-format
@@ -1117,17 +1117,17 @@ msgstr "找不到数据库的库(可能是 Sqlite3.dll)"
 
 #: ../../TShockAPI/Handlers/NetModules/CreativePowerHandler.cs:53
 msgid "CreativePowerHandler received permission check request for unknown creative power"
-msgstr ""
+msgstr "CreativePowerHandler 收到了为未知创造力的权限检查请求。"
 
 #: ../../TShockAPI/Handlers/NetModules/CreativeUnlocksHandler.cs:65
 #, csharp-format
 msgid "CreativeUnlocksHandler received non-vanilla unlock request. Random field value: {0} but should be 0 from {1}"
-msgstr ""
+msgstr "CreativeUnlocksHandler 收到了非原版解锁请求。随机字段值： {0} 但该值应为 0 到 {1}"
 
 #: ../../TShockAPI/Bouncer.cs:2645
 #, csharp-format
 msgid "Death Exploit Attempt: Damage {0}"
-msgstr ""
+msgstr "死因：尝试伤害{0}"
 
 #: ../../TShockAPI/Bouncer.cs:2663
 msgid "Death reason outside of normal bounds."
@@ -1184,7 +1184,7 @@ msgstr "重命名组失败。{0}"
 
 #: ../../TShockAPI/Bouncer.cs:2644
 msgid "Failed to shade polygon normals."
-msgstr ""
+msgstr "使阴影多边形正常化失败。"
 
 #: ../../TShockAPI/DB/GroupManager.cs:369
 #, csharp-format
@@ -1202,7 +1202,7 @@ msgstr "致命的TShock初始化错误：连接MySQL失败。查看内部异常�
 #: ../../TShockAPI/DB/UserManager.cs:218
 #, csharp-format
 msgid "FetchHashedPasswordAndGroup SQL returned an error: {0}"
-msgstr ""
+msgstr "FetchHashedPasswordAndGroup SQL 返回了一个错误： {0}"
 
 #: ../../TShockAPI/DB/UserManager.cs:291
 #, csharp-format
@@ -1212,7 +1212,7 @@ msgstr "GetUser方法在执行SQL语句时返回了一个错误{0}"
 #: ../../TShockAPI/Handlers/LandGolfBallInCupHandler.cs:123
 #, csharp-format
 msgid "GolfPacketHandler: Player did not have create a golf club projectile the last 5 seconds! - From {0}"
-msgstr ""
+msgstr "GolfPacketHandler钩子: 玩家没有在过去5s内创建高尔夫类弹幕！从{0}"
 
 #: ../../TShockAPI/DB/GroupManager.cs:646
 #, csharp-format
@@ -1325,7 +1325,7 @@ msgstr "正在忽略每个配置项..."
 #: ../../TShockAPI/Handlers/IllegalPerSe/EmojiPlayerMismatch.cs:19
 #, csharp-format
 msgid "IllegalPerSe: Emoji packet rejected for ID spoofing. Expected {0}, received {1} from {2}."
-msgstr ""
+msgstr "IllegalPerse: Emoji 数据包因伪装ID而被拒绝。预计 {0}将从 {1} 收到 {2}。"
 
 #: ../../TShockAPI/DB/TileManager.cs:223
 #: ../../TShockAPI/DB/ProjectileManager.cs:223
@@ -1389,26 +1389,26 @@ msgstr "LandGolfBallInCupHandler: 无效的高尔夫球射弹ID {0}- 来自 {1}"
 #: ../../TShockAPI/Handlers/LandGolfBallInCupHandler.cs:130
 #, csharp-format
 msgid "LandGolfBallInCupHandler: Item selected is not a golf club! - From {0}"
-msgstr ""
+msgstr "LandGolfBallInCupHandler: 选中的物品不是高尔夫类的! - 来自 {0}"
 
 #: ../../TShockAPI/Handlers/LandGolfBallInCupHandler.cs:92
 #, csharp-format
 msgid "LandGolfBallInCupHandler: Packet rejected for ID spoofing. Expected {0}, received {1} from {2}."
-msgstr ""
+msgstr "LandGolfBallInCupHandler: 数据包因伪装ID而被拒绝。应该 {0}，从 {1} 收到 {2}。"
 
 #: ../../TShockAPI/Handlers/LandGolfBallInCupHandler.cs:107
 #, csharp-format
 msgid "LandGolfBallInCupHandler: Tile at packet position X:{0} Y:{1} is not a golf hole! - From {2}"
-msgstr ""
+msgstr "LandGolfBallInCupHandler：在数据包中的图格位置 X：{0} Y：{1} 不是高尔夫球洞！- 来自 {2}"
 
 #: ../../TShockAPI/Handlers/LandGolfBallInCupHandler.cs:100
 #, csharp-format
 msgid "LandGolfBallInCupHandler: X and Y position is out of world bounds! - From {0}"
-msgstr ""
+msgstr "LandGolfBallInCupHandler: 位置 X 和 Y 超越了世界边界! - 从 {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2430
 msgid "Malicious portal attempt."
-msgstr ""
+msgstr "尝试开启一个恶意的后门。"
 
 #: ../../TShockAPI/Rest/RestManager.cs:874
 msgid "Meteor has been spawned"
@@ -1426,29 +1426,29 @@ msgstr "缺少或无效的 {0} 参数"
 
 #: ../../TShockAPI/Net/BaseMsg.cs:29
 msgid "Msg ID not implemented"
-msgstr ""
+msgstr "Msg ID 尚未实现"
 
 #: ../../TShockAPI/DB/UserManager.cs:294
 #, csharp-format
 msgid "Multiple user accounts found for {0} '{1}'"
-msgstr ""
+msgstr "为 {0} '{1}' 找到多个用户帐户"
 
 #: ../../TShockAPI/Handlers/NetModules/CreativeUnlocksHandler.cs:55
 #, csharp-format
 msgid "NetModuleHandler received attempt to unlock sacrifice while not in journey mode from {0}"
-msgstr ""
+msgstr "NetModuleHandler 接收到在非旅行模式下解锁祭祀的尝试，来自 {0}"
 
 #: ../../TShockAPI/Rest/RestManager.cs:721
 msgid "No matching bans found."
-msgstr ""
+msgstr "未发现匹配的封禁项目！"
 
 #: ../../TShockAPI/DB/IQueryBuilder.cs:345
 msgid "No values supplied"
-msgstr ""
+msgstr "未提供值"
 
 #: ../../TShockAPI/Rest/SecureRest.cs:194
 msgid "Not authorized. The provided token became invalid due to group changes, please create a new token."
-msgstr ""
+msgstr "未授权。因群组更改导致提供的令牌失效，请创建一个新的令牌。"
 
 #: ../../TShockAPI/Rest/SecureRest.cs:186
 msgid "Not authorized. The specified API endpoint requires a token, but the provided token was not valid."
@@ -1473,7 +1473,7 @@ msgstr ""
 #: ../../TShockAPI/Bouncer.cs:1369
 #, csharp-format
 msgid "NPC damage exceeded {0}."
-msgstr ""
+msgstr "NPC 伤害超过 {0}。"
 
 #: ../../TShockAPI/DB/RegionManager.cs:102
 #, csharp-format
@@ -1505,12 +1505,12 @@ msgstr "玩家{0}已被解除禁言"
 #, csharp-format
 msgid "Player {0} matches {1} player"
 msgid_plural "Player {0} matches {1} players"
-msgstr[0] ""
+msgstr[0] "玩家 {0} 匹配了 {1} 个玩家"
 
 #: ../../TShockAPI/Bouncer.cs:1123
 #, csharp-format
 msgid "Player {0} tried to sneak {1} onto the server!"
-msgstr ""
+msgstr "玩家 {0} 试图将 {1} 偷偷带入服务器！"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1069
 #, csharp-format
@@ -1526,7 +1526,7 @@ msgstr "未找到玩家 {0}"
 #: ../../TShockAPI/Bouncer.cs:2570
 #, csharp-format
 msgid "Player damage exceeded {0}."
-msgstr ""
+msgstr "玩家伤害超过了 {0}。"
 
 #: ../../TShockAPI/Bouncer.cs:1165
 #, csharp-format
@@ -1546,33 +1546,33 @@ msgstr "射弹伤害高于 {0}。"
 #: ../../TShockAPI/Bouncer.cs:1269
 #, csharp-format
 msgid "Projectile update threshold exceeded {0}."
-msgstr ""
+msgstr "弹射物更新阈值超过 {0}。"
 
 #: ../../TShockAPI/Bouncer.cs:2074
 msgid "Reached HealOtherPlayer threshold."
-msgstr ""
+msgstr "达到了治愈其他玩家的临界值。"
 
 #: ../../TShockAPI/Bouncer.cs:1273
 msgid "Reached projectile update threshold."
-msgstr ""
+msgstr "已达到弹幕更新阈值。"
 
 #: ../../TShockAPI/Bouncer.cs:905
 msgid "Reached TileKill threshold."
-msgstr ""
+msgstr "已达到图格破坏阈值。"
 
 #: ../../TShockAPI/Bouncer.cs:1672
 msgid "Reached TileLiquid threshold."
-msgstr ""
+msgstr "已到达液体阈值。"
 
 #: ../../TShockAPI/Bouncer.cs:923
 #: ../../TShockAPI/Bouncer.cs:2335
 msgid "Reached TilePlace threshold."
-msgstr ""
+msgstr "以达到图格防止阈值。"
 
 #: ../../TShockAPI/Extensions/DbExt.cs:254
 #, csharp-format
 msgid "Received type '{0}', however column '{1}' expects type '{2}'"
-msgstr ""
+msgstr "收到类型 '{0}'，但列'{1}的类型是 '{2}'"
 
 #: ../../TShockAPI/Bouncer.cs:2125
 msgid "Released critter was not from its item."
