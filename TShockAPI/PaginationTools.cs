@@ -78,7 +78,7 @@ namespace TShockAPI
 				set
 				{
 					if (value <= 0)
-						throw new ArgumentException("The value has to be greater than zero.");
+						throw new ArgumentException(GetString("The value has to be greater than zero."));
 
 					this.maxLinesPerPage = value;
 				}
@@ -92,7 +92,7 @@ namespace TShockAPI
 				set
 				{
 					if (value < 0)
-						throw new ArgumentException("The value has to be greater than or equal to zero.");
+						throw new ArgumentException(GetString("The value has to be greater than or equal to zero."));
 
 					this.pageLimit = value;
 				}
@@ -182,7 +182,7 @@ namespace TShockAPI
 					catch (Exception ex)
 					{
 						throw new InvalidOperationException(
-						  "The method referenced by LineFormatter has thrown an exception. See inner exception for details.", ex);
+						  GetString("The method referenced by LineFormatter has thrown an exception. See inner exception for details."), ex);
 					}
 				}
 				else
@@ -244,7 +244,7 @@ namespace TShockAPI
 					catch (Exception ex)
 					{
 						throw new ArgumentException(
-						  "The method represented by termFormatter has thrown an exception. See inner exception for details.", ex);
+						  GetString("The method represented by termFormatter has thrown an exception. See inner exception for details."), ex);
 					}
 				}
 				else
@@ -280,7 +280,7 @@ namespace TShockAPI
 			if (!int.TryParse(pageNumberRaw, out pageNumber) || pageNumber < 1)
 			{
 				if (errorMessageReceiver != null)
-					errorMessageReceiver.SendErrorMessage("\"{0}\" is not a valid page number.", pageNumberRaw);
+					errorMessageReceiver.SendErrorMessage(GetString("\"{0}\" is not a valid page number.", pageNumberRaw));
 
 				pageNumber = 1;
 				return false;
