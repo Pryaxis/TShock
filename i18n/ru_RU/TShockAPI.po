@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-21 22:39:29+0000\n"
-"PO-Revision-Date: 2022-10-22 02:33\n"
+"PO-Revision-Date: 2022-10-22 06:55\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -96,29 +96,29 @@ msgstr "AddUser SQL-запрос вернул ошибку ({0})"
 #: ../../TShockAPI/DB/GroupManager.cs:474
 #, csharp-format
 msgid "An exception has occurred during database rollback: {0}"
-msgstr ""
+msgstr "Произошла ошибка во время отката базы данных: {0}"
 
 #: ../../TShockAPI/DB/GroupManager.cs:467
 #, csharp-format
 msgid "An exception has occurred during database transaction: {0}"
-msgstr ""
+msgstr "Во время транзакции с базой данных произошла ошибка: {0}"
 
 #: ../../TShockAPI/DB/BanManager.cs:644
 msgid "An identifier for a character name."
-msgstr ""
+msgstr "Идентификатор для имени персонажа."
 
 #: ../../TShockAPI/DB/BanManager.cs:648
 msgid "An identifier for a TShock User Account name."
-msgstr ""
+msgstr "Идентификатор учетной записи пользователя TShock."
 
 #: ../../TShockAPI/DB/BanManager.cs:640
 msgid "An identifier for a UUID."
-msgstr ""
+msgstr "Идентификатор для UUID."
 
 #: ../../TShockAPI/DB/BanManager.cs:636
 #, csharp-format
 msgid "An identifier for an IP Address in octet format. e.g., '{0}'.127.0.0.1"
-msgstr ""
+msgstr "Идентификатор для IP-адреса в формате octet, например, '{0}'.127.0.0.1"
 
 #: ../../TShockAPI/Rest/Rest.cs:452
 #, csharp-format
@@ -127,7 +127,7 @@ msgstr ""
 
 #: ../../TShockAPI/Rest/RestManager.cs:811
 msgid "AutoSave has been disabled"
-msgstr ""
+msgstr "Автосохранение отключено"
 
 #: ../../TShockAPI/Rest/RestManager.cs:807
 msgid "AutoSave has been enabled"
@@ -135,7 +135,7 @@ msgstr ""
 
 #: ../../TShockAPI/Rest/RestManager.cs:800
 msgid "Autosave is currently disabled"
-msgstr ""
+msgstr "Автосохранение отключено"
 
 #: ../../TShockAPI/Rest/RestManager.cs:796
 msgid "Autosave is currently enabled"
@@ -143,16 +143,16 @@ msgstr ""
 
 #: ../../TShockAPI/BackupManager.cs:75
 msgid "Backing up world..."
-msgstr ""
+msgstr "Резервное копирование мира..."
 
 #: ../../TShockAPI/BackupManager.cs:87
 #: ../../TShockAPI/BackupManager.cs:89
 msgid "Backup failed!"
-msgstr ""
+msgstr "Не удалось выполнить резервное копирование!"
 
 #: ../../TShockAPI/BackupManager.cs:51
 msgid "Backup Thread"
-msgstr ""
+msgstr "Резервное копирование потока"
 
 #: ../../TShockAPI/Commands.cs:801
 msgid "Bad login attempt."
@@ -161,41 +161,41 @@ msgstr "Неудачная попытка входа."
 #: ../../TShockAPI/Rest/RestManager.cs:668
 #, csharp-format
 msgid "Ban added. Ticket number: {0}"
-msgstr ""
+msgstr "Бан добавлен. Номер тикета: {0}"
 
 #: ../../TShockAPI/Rest/RestManager.cs:695
 msgid "Ban removed."
-msgstr ""
+msgstr "Бан снят."
 
 #: ../../TShockAPI/Rest/RestManager.cs:889
 #, csharp-format
 msgid "Blood Moon has been set to {0}"
-msgstr ""
+msgstr "Кровавая Луна была установлена на {0}"
 
 #: ../../TShockAPI/Rest/RestManager.cs:904
 #, csharp-format
 msgid "Bloodmoon state: {0}EnabledDisabled"
-msgstr ""
+msgstr "Состояние Кровавой Луны: {0}Включено Отключено"
 
 #: ../../TShockAPI/Bouncer.cs:1447
 #, csharp-format
 msgid "Bouncer / OnChestItemChange rejected from chest mismatch from {0}"
-msgstr ""
+msgstr "Bouncer / OnChestItemChange отказано из-за несоответствия сундука в {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1454
 #, csharp-format
 msgid "Bouncer / OnChestItemChange rejected from disable from {0}"
-msgstr ""
+msgstr "Bouncer / OnChestItemChange отказано из-за отключения в {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1469
 #, csharp-format
 msgid "Bouncer / OnChestItemChange rejected from range check from {0}"
-msgstr ""
+msgstr "Bouncer / OnChestItemChange отказано из-за досягаемости в {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1462
 #, csharp-format
 msgid "Bouncer / OnChestItemChange rejected from region protection? from {0}"
-msgstr ""
+msgstr "Bouncer / OnChestItemChange отказано из-за защиты региона в {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1482
 #, csharp-format
