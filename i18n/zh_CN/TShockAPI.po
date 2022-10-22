@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-21 22:39:29+0000\n"
-"PO-Revision-Date: 2022-10-21 22:43\n"
+"PO-Revision-Date: 2022-10-22 02:33\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -21,29 +21,29 @@ msgstr ""
 #, csharp-format
 msgctxt "{0} is a player name"
 msgid "Skipping SSC save (due to tshock.ignore.ssc) for {0}"
-msgstr ""
+msgstr "由于{0}拥有tshock.ignore.ssc权限，跳过服务端存档"
 
 #: ../../TShockAPI/DB/CharacterManager.cs:244
 msgctxt "{0} is a player name"
 msgid "Skipping SSC save (due to tshock.ignore.ssc) for {player.Account.Name}"
-msgstr ""
+msgstr "由于{player.Account.Name}拥有tshock.ignore.ssc权限，跳过服务端存档"
 
 #: ../../TShockAPI/DB/BanManager.cs:213
 #, csharp-format
 msgctxt "{0} is ban number, {1} is ban reason, {2} is a timestamp"
 msgid "#{0} - You are banned: {1} ({2} remaining)"
-msgstr ""
+msgstr "#{0} - 你已被封禁，原因：{1} (剩余时间{2} )"
 
 #: ../../TShockAPI/DB/BanManager.cs:208
 #, csharp-format
 msgctxt "{0} is ban number, {1} is ban reason"
 msgid "#{0} - You are banned: {1}"
-msgstr ""
+msgstr "#{0} - 你已被封禁，原因： {1}"
 
 #: ../../TShockAPI/Rest/SecureRest.cs:213
 #, csharp-format
 msgid "\"{0}\" requested REST endpoint: {1}"
-msgstr ""
+msgstr "“{0}”请求了REST端点：{1}"
 
 #: ../../TShockAPI/Commands.cs:701
 #, csharp-format
@@ -53,13 +53,13 @@ msgstr "{0} 执行了: {1}{2}。"
 #: ../../TShockAPI/Rest/RestManager.cs:1068
 #, csharp-format
 msgid "{0} just killed you!"
-msgstr ""
+msgstr "{0}杀死了你！"
 
 #: ../../TShockAPI/Rest/RestManager.cs:847
 #, csharp-format
 msgid "{0} NPC has been killed."
 msgid_plural "{killcount} NPCs have been killed."
-msgstr[0] ""
+msgstr[0] "{killcount}个NPC已被杀死。"
 
 #: ../../TShockAPI/Commands.cs:687
 #, csharp-format
@@ -78,39 +78,39 @@ msgstr ""
 #: ../../TShockAPI/Bouncer.cs:529
 #, csharp-format
 msgid "Account needed! Please {0}register or {0}login to play!"
-msgstr ""
+msgstr "需要帐户！请使用{0}register或{0}login指令以开始游玩！"
 
 #: ../../TShockAPI/Bouncer.cs:2006
 #, csharp-format
 msgid "Added buff to {0} NPC abnormally."
-msgstr ""
+msgstr "对NPC：{0}异常地添加了Buff。"
 
 #: ../../TShockAPI/DB/UserManager.cs:81
 #, csharp-format
 msgid "AddUser SQL returned an error ({0})"
-msgstr ""
+msgstr "AddUser SQL语句返回了一个错误：{0}"
 
 #: ../../TShockAPI/DB/GroupManager.cs:474
 #, csharp-format
 msgid "An exception has occurred during database rollback: {0}"
-msgstr ""
+msgstr "在数据库回滚时发生了异常：{0}"
 
 #: ../../TShockAPI/DB/GroupManager.cs:467
 #, csharp-format
 msgid "An exception has occurred during database transaction: {0}"
-msgstr ""
+msgstr "在数据库事务进行时发生了异常：{0}"
 
 #: ../../TShockAPI/DB/BanManager.cs:644
 msgid "An identifier for a character name."
-msgstr ""
+msgstr "一个角色名字的标识符。"
 
 #: ../../TShockAPI/DB/BanManager.cs:648
 msgid "An identifier for a TShock User Account name."
-msgstr ""
+msgstr "一个TShock用户名的标识符。"
 
 #: ../../TShockAPI/DB/BanManager.cs:640
 msgid "An identifier for a UUID."
-msgstr ""
+msgstr "一个UUID的标识符。"
 
 #: ../../TShockAPI/DB/BanManager.cs:636
 #, csharp-format
