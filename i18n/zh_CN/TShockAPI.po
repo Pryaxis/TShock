@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
-"POT-Creation-Date: 2022-10-21 22:39:29+0000\n"
-"PO-Revision-Date: 2022-10-22 06:55\n"
+"POT-Creation-Date: 2022-10-22 08:09:52+0000\n"
+"PO-Revision-Date: 2022-10-22 17:37\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -40,15 +40,69 @@ msgctxt "{0} is ban number, {1} is ban reason"
 msgid "#{0} - You are banned: {1}"
 msgstr "#{0} - 你已被封禁，原因： {1}"
 
+#: ../../TShockAPI/PaginationTools.cs:283
+#, csharp-format
+msgid "\"{0}\" is not a valid page number."
+msgstr "”{0}”不是一个有效的页码。"
+
 #: ../../TShockAPI/Rest/SecureRest.cs:213
 #, csharp-format
 msgid "\"{0}\" requested REST endpoint: {1}"
 msgstr "“{0}”请求了REST端点：{1}"
 
+#: ../../TShockAPI/Commands.cs:940
+#, csharp-format
+msgid "{0} ({1}) changed the password for account {2}."
+msgstr "{0}（{1}）更改了帐号{2}的密码。"
+
+#: ../../TShockAPI/Commands.cs:950
+#, csharp-format
+msgid "{0} ({1}) failed to change the password for account {2}."
+msgstr "{0}（{1}）更改帐号{2}的密码失败。"
+
+#: ../../TShockAPI/Commands.cs:770
+#, csharp-format
+msgid "{0} ({1}) had {2} or more invalid login attempts and was kicked automatically."
+msgstr "{0}（{1}）尝试了{2}或更多次无效的登录被自动踢出了。"
+
+#: ../../TShockAPI/Commands.cs:1070
+#, csharp-format
+msgid "{0} added account {1} to group {2}"
+msgstr "{0}将账号{1}添加到了用户组{2}"
+
+#: ../../TShockAPI/Commands.cs:1028
+msgid "{0} attempted to register for the account {1} but it was already taken."
+msgstr "{0}试图注册帐号“{1}” ，但它已被占用。"
+
+#: ../../TShockAPI/Commands.cs:869
+#, csharp-format
+msgid "{0} authenticated successfully as user: {1}."
+msgstr "{0}已成功登录账号{1}。"
+
+#: ../../TShockAPI/Commands.cs:1144
+#, csharp-format
+msgid "{0} changed account {1} to group {2}."
+msgstr "{0}将账号{1}所属的用户组更改为了{2}。"
+
+#: ../../TShockAPI/Commands.cs:1118
+#, csharp-format
+msgid "{0} changed the password for account {1}"
+msgstr "{0}更改了帐号{1}的密码。"
+
 #: ../../TShockAPI/Commands.cs:701
 #, csharp-format
 msgid "{0} executed: {1}{2}."
 msgstr "{0} 执行了: {1}{2}。"
+
+#: ../../TShockAPI/Commands.cs:894
+#, csharp-format
+msgid "{0} failed to authenticate as user: {1}"
+msgstr "{0}尝试登录账号“{1}”失败"
+
+#: ../../TShockAPI/Commands.cs:1150
+#, csharp-format
+msgid "{0} has changed your group to {1}."
+msgstr "{0}已将你所属的用户组更改为{1}。"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1068
 #, csharp-format
@@ -61,10 +115,55 @@ msgid "{0} NPC has been killed."
 msgid_plural "{killcount} NPCs have been killed."
 msgstr[0] "{killcount}个NPC已被杀死。"
 
+#: ../../TShockAPI/Commands.cs:1022
+#, csharp-format
+msgid "{0} registered an account: \"{1}\"."
+msgstr "{0}注册了一个账号：“{1}”。"
+
+#: ../../TShockAPI/Commands.cs:1096
+#, csharp-format
+msgid "{0} successfully deleted account: {1}"
+msgstr "{0}成功删除了账号“{1}”"
+
 #: ../../TShockAPI/Commands.cs:687
 #, csharp-format
 msgid "{0} tried to execute {1}{2}."
-msgstr "{0} 试图执行 {1}{2}。"
+msgstr "{0}试图执行{1}{2}。"
+
+#: ../../TShockAPI/Commands.cs:814
+#, csharp-format
+msgid "{0}login - Logs in using your UUID and character name."
+msgstr "{0}login - 使用你的UUID和角色名登录。"
+
+#: ../../TShockAPI/Commands.cs:819
+#, csharp-format
+msgid "{0}login {1} - Logs in using your password and character name.password"
+msgstr "{0}login {1} - 使用你的密码和角色名登录。"
+
+#: ../../TShockAPI/Commands.cs:817
+#, csharp-format
+msgid "{0}login {1} {2} - Logs in using your username and password.usernamepassword"
+msgstr "{0}login {1} {2} - 使用你的用户名和密码登录。"
+
+#: ../../TShockAPI/Commands.cs:1169
+#, csharp-format
+msgid "{0}user add username password group   -- Adds a specified user"
+msgstr "{0}user add 用户名 密码 组 -- 添加指定用户"
+
+#: ../../TShockAPI/Commands.cs:1170
+#, csharp-format
+msgid "{0}user del username                  -- Removes a specified user"
+msgstr "{0}user del 用户名 -- 移除指定用户"
+
+#: ../../TShockAPI/Commands.cs:1172
+#, csharp-format
+msgid "{0}user group username newgroup       -- Changes a user's group"
+msgstr "{0}user group 用户名 新组 -- 更改用户群组"
+
+#: ../../TShockAPI/Commands.cs:1171
+#, csharp-format
+msgid "{0}user password username newpassword -- Changes a user's password"
+msgstr "{0}user password 用户名 新密码 -- 更改用户密码"
 
 #: ../../TShockAPI/DB/RegionManager.cs:108
 msgid "A lot of things will fail because of this. You must manually delete and re-create the allowed field."
@@ -75,10 +174,38 @@ msgstr "很多事情都会因为它失败。你必须手动删除并重新创建
 msgid "A REST login from {0} was blocked as it currently has {1} rate-limit tokens and is at the RESTMaximumRequestsPerInterval threshold."
 msgstr "{0}的REST登录已被阻止，因为它目前有{1}个限流标识，并且达到了RESTMaximumRequestsPerInterval（一段时间内最大请求数量）的上限。"
 
+#: ../../TShockAPI/Commands.cs:828
+msgid "A user account by that name does not exist."
+msgstr "用户名不存在。"
+
+#: ../../TShockAPI/Commands.cs:1010
+#, csharp-format
+msgid "Account \"{0}\" has been registered."
+msgstr "账户 {0} 已被注册。"
+
+#: ../../TShockAPI/Commands.cs:1123
+#, csharp-format
+msgid "Account {0} does not exist! Therefore, the password cannot be changed."
+msgstr "账户 {0} 不存在！因此，无法更改密码。"
+
+#: ../../TShockAPI/Commands.cs:1069
+#, csharp-format
+msgid "Account {0} has been added to group {1}!"
+msgstr "账户 {0} 已被添加到组 {1}！"
+
+#: ../../TShockAPI/Commands.cs:1145
+#, csharp-format
+msgid "Account {0} has been changed to group {1}."
+msgstr "账户 {0} 已移动到组 {1}。"
+
 #: ../../TShockAPI/Bouncer.cs:529
 #, csharp-format
 msgid "Account needed! Please {0}register or {0}login to play!"
 msgstr "需要帐户！请使用{0}register或{0}login指令以开始游玩！"
+
+#: ../../TShockAPI/Commands.cs:1095
+msgid "Account removed successfully."
+msgstr "账户移除成功。"
 
 #: ../../TShockAPI/Bouncer.cs:2006
 #, csharp-format
@@ -89,6 +216,11 @@ msgstr "对NPC：{0}异常地添加了Buff。"
 #, csharp-format
 msgid "AddUser SQL returned an error ({0})"
 msgstr "AddUser SQL语句返回了一个错误：{0}"
+
+#: ../../TShockAPI/Commands.cs:1187
+#, csharp-format
+msgid "Allocated memory: {0}"
+msgstr "已分配内存： {0}"
 
 #: ../../TShockAPI/DB/GroupManager.cs:474
 #, csharp-format
@@ -117,10 +249,19 @@ msgstr "UUID的标识。"
 msgid "An identifier for an IP Address in octet format. e.g., '{0}'.127.0.0.1"
 msgstr "一个八位元组格式的IP地址标识符，例如'{0}'.127.0.0.1"
 
+#: ../../TShockAPI/Commands.cs:338
+msgid "Annoys a player for an amount of time."
+msgstr "骚扰一个玩家一段时间。"
+
 #: ../../TShockAPI/Rest/Rest.cs:452
 #, csharp-format
 msgid "Anonymous requested REST endpoint: {0}"
 msgstr "REST 端点{0}收到了匿名请求"
+
+#: ../../TShockAPI/Commands.cs:867
+#, csharp-format
+msgid "Authenticated as {0} successfully."
+msgstr "已成功认证为 {0}"
 
 #: ../../TShockAPI/Rest/RestManager.cs:811
 msgid "AutoSave has been disabled"
@@ -277,7 +418,7 @@ msgstr "Bouncer / OnGemLockToggle（宝石锁防护）因玩家被拘束阻止�
 #: ../../TShockAPI/Bouncer.cs:2483
 #, csharp-format
 msgid "Bouncer / OnGemLockToggle rejected permissions check from {0}"
-msgstr "保镖/锁定开关拒绝了来自{0}的权限检查"
+msgstr "Bouncer / OnGemLockToggle（宝石锁防护）因没有权限阻止了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:435
 msgid "Bouncer / OnGetSection rejected empty player name."
@@ -301,801 +442,805 @@ msgstr "Bouncer / OnHealOtherPlayer 拒绝了来自 {0} 的禁用/调整"
 #: ../../TShockAPI/Bouncer.cs:2076
 #, csharp-format
 msgid "Bouncer / OnHealOtherPlayer rejected heal other threshold from {0} {1}/{2}"
-msgstr "Bouncer / OnHealOtherPlayer rejected heal other threshold from {0} {1}/{2}"
+msgstr "Bouncer / OnHealOtherPlayer 因治疗量超过上限而拒绝了 {0} {1}/{2}"
 
 #: ../../TShockAPI/Bouncer.cs:2050
 msgid "Bouncer / OnHealOtherPlayer rejected null checks"
-msgstr ""
+msgstr "Bouncer / OnHealOtherPlayer 拒绝了无效检查"
 
 #: ../../TShockAPI/Bouncer.cs:1057
 #, csharp-format
 msgid "Bouncer / OnItemDrop rejected from attempt crash from {0}"
-msgstr ""
+msgstr "Bouncer / OnItemDrop 因{0}的尝试崩溃而拒绝"
 
 #: ../../TShockAPI/Bouncer.cs:1133
 #, csharp-format
 msgid "Bouncer / OnItemDrop rejected from disabled from {0}"
-msgstr ""
+msgstr "Bouncer / OnItemDrop 因{0}禁用而拒绝。"
 
 #: ../../TShockAPI/Bouncer.cs:1113
 #, csharp-format
 msgid "Bouncer / OnItemDrop rejected from drop item ban check / max stack check / min stack check from {0}"
-msgstr ""
+msgstr "Bouncer / OnItemDrop 拒绝了来自 {0} 的掉落物品检查/最大堆栈检查/最小堆栈检查"
 
 #: ../../TShockAPI/Bouncer.cs:1082
 #, csharp-format
 msgid "Bouncer / OnItemDrop rejected from dupe range check from {0}"
-msgstr ""
+msgstr "Bouncer / OnItemDrop 拒绝了来自 {0} 的重复范围检查"
 
 #: ../../TShockAPI/Bouncer.cs:1103
 #, csharp-format
 msgid "Bouncer / OnItemDrop rejected from item drop/pickup check from {0}"
-msgstr ""
+msgstr "Bouncer / OnItemDrop 被拒绝来自 {0} 的物品/拾取检查"
 
 #: ../../TShockAPI/Bouncer.cs:1067
 #, csharp-format
 msgid "Bouncer / OnItemDrop rejected from prefix check from {0}"
-msgstr ""
+msgstr "Bouncer / OnItemDrop 被拒绝来自 {0} 的前缀检查"
 
 #: ../../TShockAPI/Bouncer.cs:1093
 #, csharp-format
 msgid "Bouncer / OnItemDrop rejected from range check from {0}"
-msgstr ""
+msgstr "Bouncer / OnItemDrop 被拒绝来自 {0} 的范围检查"
 
 #: ../../TShockAPI/Bouncer.cs:1124
 #, csharp-format
 msgid "Bouncer / OnItemDrop rejected from sneaky from {0}"
-msgstr ""
+msgstr "炸弹/OnItemDrop 因 {0}的潜入而拒绝"
 
 #: ../../TShockAPI/Bouncer.cs:2662
 #, csharp-format
 msgid "Bouncer / OnKillMe rejected bad length death text from {0}"
-msgstr ""
+msgstr "Bouncer / OnKillMe 拒绝了来自 {0} 的长度异常的死亡消息"
 
 #: ../../TShockAPI/Bouncer.cs:2669
 #, csharp-format
 msgid "Bouncer / OnKillMe rejected custom death message from {0}"
-msgstr ""
+msgstr "Bouncer / OnKillMe 拒绝了来自 {0} 的自定义死亡消息"
 
 #: ../../TShockAPI/Bouncer.cs:2643
 #, csharp-format
 msgid "Bouncer / OnKillMe rejected high damage from {0} {1}"
-msgstr ""
+msgstr "Bouncer / OnKillMe 拒绝了 {0} {1} 造成的高伤害"
 
 #: ../../TShockAPI/Bouncer.cs:2652
 #, csharp-format
 msgid "Bouncer / OnKillMe rejected index check from {0}"
-msgstr ""
+msgstr "Bouncer / OnKillMe 拒绝了来自 {0} 的索引检查"
 
 #: ../../TShockAPI/Bouncer.cs:1751
 #, csharp-format
 msgid "Bouncer / OnLiquidSet rejected bucket check 1 from {0}"
-msgstr ""
+msgstr "Bouncer / OnLiquidSet（液体防护）因水桶检查一阻止了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1771
 #, csharp-format
 msgid "Bouncer / OnLiquidSet rejected bucket check 2 from {0}"
-msgstr ""
+msgstr "Bouncer / OnLiquidSet（液体防护）因水桶检查二阻止了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1781
 #, csharp-format
 msgid "Bouncer / OnLiquidSet rejected bucket check 3 from {0}"
-msgstr ""
+msgstr "Bouncer / OnLiquidSet（液体防护）因水桶检查三阻止了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1791
 #, csharp-format
 msgid "Bouncer / OnLiquidSet rejected bucket check 4 from {0}"
-msgstr ""
+msgstr "Bouncer / OnLiquidSet（液体防护）因水桶检查四阻止了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1801
 #, csharp-format
 msgid "Bouncer / OnLiquidSet rejected bucket check 5 from {0}"
-msgstr ""
+msgstr "Bouncer / OnLiquidSet（液体防护）因水桶检查五阻止了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1811
 #, csharp-format
 msgid "Bouncer / OnLiquidSet rejected bucket check 6 from {0}"
-msgstr ""
+msgstr "Bouncer / OnLiquidSet（液体防护）因水桶检查六阻止了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1822
 #, csharp-format
 msgid "Bouncer / OnLiquidSet rejected bucket check 7 from {0}"
-msgstr ""
+msgstr "Bouncer / OnLiquidSet（液体防护）因水桶检查七阻止了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1833
 #, csharp-format
 msgid "Bouncer / OnLiquidSet rejected build permission from {0}"
-msgstr ""
+msgstr "Bouncer / OnLiquidSet（液体防护）因没有建筑权限阻止了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1658
 #, csharp-format
 msgid "Bouncer / OnLiquidSet rejected disabled from {0}"
-msgstr ""
+msgstr "Bouncer / OnLiquidSet（液体防护）因玩家被拘束阻止了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1676
 #, csharp-format
 msgid "Bouncer / OnLiquidSet rejected from liquid threshold from {0} {1}/{2}"
-msgstr ""
+msgstr "Bouncer / OnLiquidSet（液体防护）因达到液体操作量上限（{1}/{2}）阻止了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1651
 #, csharp-format
 msgid "Bouncer / OnLiquidSet rejected invalid check from {0}"
-msgstr ""
+msgstr "Bouncer / OnLiquidSet（液体防护）因无效检查阻止了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1761
 #, csharp-format
 msgid "Bouncer / OnLiquidSet rejected lava bucket from {0}"
-msgstr ""
+msgstr "Bouncer / OnLiquidSet（液体防护）阻止了{0}使用岩浆桶"
 
 #: ../../TShockAPI/Bouncer.cs:1841
 #, csharp-format
 msgid "Bouncer / OnLiquidSet rejected range checks from {0}"
-msgstr ""
+msgstr "Bouncer / OnLiquidSet（液体防护）因范围检查阻止了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1849
 #, csharp-format
 msgid "Bouncer / OnLiquidSet rejected throttle from {0}"
-msgstr ""
+msgstr "Bouncer / OnLiquidSet（液体防护）因限流阻止了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:2532
 #, csharp-format
 msgid "Bouncer / OnMassWireOperation rejected build perms from {0}"
-msgstr ""
+msgstr "Bouncer / OnMassWireOperation（蓝图操作防护）因没有建筑权限阻止了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:2525
 #, csharp-format
 msgid "Bouncer / OnMassWireOperation rejected disabled from {0}"
-msgstr ""
+msgstr "Bouncer / OnMassWireOperation（蓝图操作防护）因玩家被拘束阻止了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:2518
 #, csharp-format
 msgid "Bouncer / OnMassWireOperation rejected valid placement from {0}"
-msgstr ""
+msgstr "Bouncer / OnMassWireOperation（蓝图操作防护）因位置无效阻止了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1257
 #, csharp-format
 msgid "Bouncer / OnNewProjectile please report to tshock about this! normally this is a reject from {0} {1}"
-msgstr ""
+msgstr "Bouncer / OnNewProjectile（弹幕防护）请向TShock报告这条信息! 正常来说这是阻止{0}创建弹幕{1}"
 
 #: ../../TShockAPI/Bouncer.cs:1213
 #, csharp-format
 msgid "Bouncer / OnNewProjectile please report to tshock about this! normally this is a reject from {0} {1} (golf)"
-msgstr ""
+msgstr "Bouncer / OnNewProjectile（弹幕防护）请向TShock报告这条信息! 正常来说这是阻止{0}创建弹幕{1}（高尔夫）"
 
 #: ../../TShockAPI/Bouncer.cs:1157
 #, csharp-format
 msgid "Bouncer / OnNewProjectile rejected from above projectile limit from {0}"
-msgstr ""
+msgstr "Bouncer / OnNewProjectile（弹幕防护）因超过弹幕上限阻止了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1298
 #, csharp-format
 msgid "Bouncer / OnNewProjectile rejected from bouncer modified AI from {0}."
-msgstr ""
+msgstr "Bouncer / OnNewProjectile（弹幕防护）因修改弹幕AI阻止了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1314
 #, csharp-format
 msgid "Bouncer / OnNewProjectile rejected from bouncer modified Zenith projectile from {0}."
-msgstr ""
+msgstr "Bouncer / OnNewProjectile（弹幕防护）因修改天顶剑弹幕阻止了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1285
 #, csharp-format
 msgid "Bouncer / OnNewProjectile rejected from bouncer throttle from {0}"
-msgstr ""
+msgstr "Bouncer / OnNewProjectile（弹幕防护）因限流阻止了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1184
 #, csharp-format
 msgid "Bouncer / OnNewProjectile rejected from disabled from {0}"
-msgstr ""
+msgstr "Bouncer / OnNewProjectile（弹幕防护）因玩家被拘束阻止了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1221
 #, csharp-format
 msgid "Bouncer / OnNewProjectile rejected from hostile projectile from {0}"
-msgstr ""
+msgstr "Bouncer / OnNewProjectile（弹幕防护）因创建敌对弹幕阻止了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1166
 #, csharp-format
 msgid "Bouncer / OnNewProjectile rejected from permission check from {0} {1}"
-msgstr ""
+msgstr "Bouncer / OnNewProjectile 拒绝了来自 {0} {1} 的权限检查"
 
 #: ../../TShockAPI/Bouncer.cs:1176
 #, csharp-format
 msgid "Bouncer / OnNewProjectile rejected from projectile damage limit from {0} {1}/{2}"
-msgstr ""
+msgstr "Bouncer / OnNewProjectile（弹幕防护）因超过弹幕伤害上限（{1}/{2}）阻止了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1277
 #, csharp-format
 msgid "Bouncer / OnNewProjectile rejected from projectile update threshold from {0} {1}/{2}"
-msgstr ""
+msgstr "Bouncer / OnNewProjectile（弹幕防护）因超过弹幕更新上限（{1}/{2}）阻止了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1232
 #, csharp-format
 msgid "Bouncer / OnNewProjectile rejected from tombstones from {0}"
-msgstr ""
+msgstr "Bouncer / OnNewProjectile（弹幕防护）阻止了{0}生成墓碑"
 
 #: ../../TShockAPI/Bouncer.cs:1252
 #, csharp-format
 msgid "Bouncer / OnNewProjectile rejected from weird check from {0} {1}"
-msgstr ""
+msgstr "Bouncer / OnNewProjectile（弹幕防护）因奇怪的检测阻止了{0}创建弹幕{1}"
 
 #: ../../TShockAPI/Bouncer.cs:2005
 #, csharp-format
 msgid "Bouncer / OnNPCAddBuff rejected abnormal buff ({0}) added to {1} ({2}) from {3}."
-msgstr ""
+msgstr "Bouncer / OnNPCAddBuff（NPCBuff防护）阻止了{3}对NPC{1}（{2}）添加Buff：{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1974
 #, csharp-format
 msgid "Bouncer / OnNPCAddBuff rejected disabled from {0}"
-msgstr ""
+msgstr "Bouncer / OnNPCAddBuff（NPCBuff防护）因玩家被拘束阻止了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1967
 #, csharp-format
 msgid "Bouncer / OnNPCAddBuff rejected null npc from {0}"
-msgstr ""
+msgstr "Bouncer / OnNPCAddBuff 拒绝空的npc对象，从 {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1958
 #, csharp-format
 msgid "Bouncer / OnNPCAddBuff rejected out of bounds NPC update from {0}"
-msgstr ""
+msgstr "Bouncer / OnNPCAddBuff（NPCBuff防护）阻止了{0}的越界NPC更新"
 
 #: ../../TShockAPI/Bouncer.cs:1398
 #, csharp-format
 msgid "Bouncer / OnNPCStrike rejected from bouncer throttle from {0}"
-msgstr ""
+msgstr "Bouncer / OnNPCStrike（攻击NPC防护）因限流阻止了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1373
 #, csharp-format
 msgid "Bouncer / OnNPCStrike rejected from damage threshold from {0} {1}/{2}"
-msgstr ""
+msgstr "Bouncer / OnNPCStrike（攻击NPC防护）因伤害超过上限（{1}/{2}）阻止了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1381
 #, csharp-format
 msgid "Bouncer / OnNPCStrike rejected from disabled from {0}"
-msgstr ""
+msgstr "Bouncer / OnNPCStrike（攻击NPC防护）因玩家被拘束阻止了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1390
 #, csharp-format
 msgid "Bouncer / OnNPCStrike rejected from range checks from {0}"
-msgstr ""
+msgstr "Bouncer / OnNPCStrike 拒绝来自{0}的范围检查"
 
 #: ../../TShockAPI/Bouncer.cs:1532
 #, csharp-format
 msgid "Bouncer / OnPlaceChest / rejected from invalid place style from {0}"
-msgstr ""
+msgstr "Bouncer / OnplaceChest / 拒绝来自 {0} 的无效的位置样式"
 
 #: ../../TShockAPI/Bouncer.cs:1524
 #, csharp-format
 msgid "Bouncer / OnPlaceChest rejected from disabled from {0}"
-msgstr ""
+msgstr "Bouncer / OnplaceChest 因禁用而拒绝了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1517
 #, csharp-format
 msgid "Bouncer / OnPlaceChest rejected from invalid check from {0}"
-msgstr ""
+msgstr "Bouncer / OnplaceChest 拒绝了来自 {0} 的无效的检查"
 
 #: ../../TShockAPI/Bouncer.cs:1565
 #, csharp-format
 msgid "Bouncer / OnPlaceChest rejected from invalid permission from {0}"
-msgstr ""
+msgstr "Bouncer / OnplaceChest 拒绝了来自 {0} 的无效权限"
 
 #: ../../TShockAPI/Bouncer.cs:1573
 #, csharp-format
 msgid "Bouncer / OnPlaceChest rejected from range check from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceChest 拒绝了来自 {0} 的范围检查"
 
 #: ../../TShockAPI/Bouncer.cs:1544
 #, csharp-format
 msgid "Bouncer / OnPlaceChest rejected from weird check from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceChest 拒绝了来自 {0} 的奇怪的检查"
 
 #: ../../TShockAPI/Bouncer.cs:1555
 #, csharp-format
 msgid "Bouncer / OnPlaceChest rejected from weird placement check from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceChest 拒绝了来自 {0} 的奇怪放置检查"
 
 #: ../../TShockAPI/Bouncer.cs:2399
 #, csharp-format
 msgid "Bouncer / OnPlaceItemFrame rejected disabled from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceItemFrame 因禁用而拒绝了 {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2407
 #, csharp-format
 msgid "Bouncer / OnPlaceItemFrame rejected permissions from {0}"
-msgstr ""
+msgstr "Bouncer / OnplaceItemFrame 拒绝了来自 {0} 的权限"
 
 #: ../../TShockAPI/Bouncer.cs:2415
 #, csharp-format
 msgid "Bouncer / OnPlaceItemFrame rejected range checks from {0}"
-msgstr ""
+msgstr "Bouncer / OnplaceItemFrame 拒绝了来自 {0} 的范围检查"
 
 #: ../../TShockAPI/Bouncer.cs:2392
 #, csharp-format
 msgid "Bouncer / OnPlaceItemFrame rejected tile placement valid from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceItemFrame 因图格防止检查而拒绝了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:2277
 #, csharp-format
 msgid "Bouncer / OnPlaceObject rejected awkward tile creation/selection from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceObject 因创建/选择图格而拒绝了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:2264
 #, csharp-format
 msgid "Bouncer / OnPlaceObject rejected Axe of Regrowth only places saplings {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceObject 拒绝仅使用再生之斧放置树苗 {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2225
 #, csharp-format
 msgid "Bouncer / OnPlaceObject rejected banned tiles from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceObject 拒绝被禁止方块 {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2234
 #, csharp-format
 msgid "Bouncer / OnPlaceObject rejected dead people don't do things from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceObject 拒绝死亡玩家 {0} 做任何事情"
 
 #: ../../TShockAPI/Bouncer.cs:2242
 #, csharp-format
 msgid "Bouncer / OnPlaceObject rejected disabled from {0}"
-msgstr ""
+msgstr "Bouncer / OnplaceObject 拒绝了 {0} 禁用"
 
 #: ../../TShockAPI/Bouncer.cs:2216
 #, csharp-format
 msgid "Bouncer / OnPlaceObject rejected fake containers from {0}"
-msgstr ""
+msgstr "Bouncer / OnplaceObject 拒绝了 {0} 的假容器"
 
 #: ../../TShockAPI/Bouncer.cs:2310
 #, csharp-format
 msgid "Bouncer / OnPlaceObject rejected mad loop from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceObject 拒绝无限制的循环 {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2295
 #, csharp-format
 msgid "Bouncer / OnPlaceObject rejected null tile data from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceObject 拒绝无效方块数据 {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2285
 #, csharp-format
 msgid "Bouncer / OnPlaceObject rejected object placement with invalid style from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceObject 拒绝以无效方式放置方块 {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2193
 #, csharp-format
 msgid "Bouncer / OnPlaceObject rejected out of bounds tile from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceObject 拒绝在此位置放置方块 {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2200
 #, csharp-format
 msgid "Bouncer / OnPlaceObject rejected out of bounds tile x from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceObject 拒绝在此横坐标放置方块 {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2207
 #, csharp-format
 msgid "Bouncer / OnPlaceObject rejected out of bounds tile y from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceObject 拒绝在此纵坐标放置方块 {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2326
 #, csharp-format
 msgid "Bouncer / OnPlaceObject rejected range checks from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceObject 拒绝范围检查 {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2253
 #, csharp-format
 msgid "Bouncer / OnPlaceObject rejected rubblemaker I can't believe it's not rubble! from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceObject 拒绝使用堆石器—此位置已存在碎石（我不信这不是碎石！） {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2334
 #, csharp-format
 msgid "Bouncer / OnPlaceObject rejected tile place threshold from {0} {1}/{2}"
-msgstr ""
+msgstr "Bouncer / OnPlaceObject 拒绝超阈值放置方块 {0} {1}/{2}"
 
 #: ../../TShockAPI/Bouncer.cs:2186
 #, csharp-format
 msgid "Bouncer / OnPlaceObject rejected valid placements from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceObject 因有效位置检查而拒绝了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:2365
 #, csharp-format
 msgid "Bouncer / OnPlaceTileEntity rejected disabled from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceTileEntity 因被禁用而拒绝了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:2372
 #, csharp-format
 msgid "Bouncer / OnPlaceTileEntity rejected permissions from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceTileEntity 拒绝改许可 {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2379
 #, csharp-format
 msgid "Bouncer / OnPlaceTileEntity rejected range checks from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceTileEntity 拒绝范围检查 {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2358
 #, csharp-format
 msgid "Bouncer / OnPlaceTileEntity rejected tile placement valid from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceTileEntity 因放置位置无效受阻止 {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1624
 #, csharp-format
 msgid "Bouncer / OnPlayerAnimation rejected from disabled from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerAnimation 因被禁用而拒绝了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1632
 #, csharp-format
 msgid "Bouncer / OnPlayerAnimation rejected from throttle from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerAnimation 阻止玩家窒息 {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1924
 #, csharp-format
 msgid "Bouncer / OnPlayerBuff rejected applied to non-sender from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerBuff 因回复了非发送者而被拒绝{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1889
 #, csharp-format
 msgid "Bouncer / OnPlayerBuff rejected disabled from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerBuff 拒绝（玩家buff）消失 {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1932
 #, csharp-format
 msgid "Bouncer / OnPlayerBuff rejected hostile/pvp from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerBuff 拒绝怪物敌对/PVP {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1881
 #, csharp-format
 msgid "Bouncer / OnPlayerBuff rejected invalid buff type {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerBuff 拒绝无效的buff类型{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1916
 #, csharp-format
 msgid "Bouncer / OnPlayerBuff rejected non-whitelisted buff {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerBuff拒绝了非白名单的Buff {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1874
 #, csharp-format
 msgid "Bouncer / OnPlayerBuff rejected null check from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerBuff 因{0}为空而拒绝。"
 
 #: ../../TShockAPI/Bouncer.cs:1867
 #, csharp-format
 msgid "Bouncer / OnPlayerBuff rejected player cap from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerBuff 因玩家上限而拒绝了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1908
 #, csharp-format
 msgid "Bouncer / OnPlayerBuff rejected range check from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerBuff 因范围检查而拒绝了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1897
 #, csharp-format
 msgid "Bouncer / OnPlayerBuff rejected throttled from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerBuff 拒绝了来自{0}的线程"
 
 #: ../../TShockAPI/Bouncer.cs:1940
 #, csharp-format
 msgid "Bouncer / OnPlayerBuff rejected time too long from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerBuff 拒绝了来自{0}的过长时间。"
 
 #: ../../TShockAPI/Bouncer.cs:2626
 #, csharp-format
 msgid "Bouncer / OnPlayerDamage rejected custom death message from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerDamage 因自定义死亡消息而拒绝了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:2562
 #, csharp-format
 msgid "Bouncer / OnPlayerDamage rejected damage threshold from {0} {1}/{2}"
-msgstr ""
+msgstr "Bouncer / OnPlayerDamage 因伤害超过上限而拒绝了 {0} {1}/{2}"
 
 #: ../../TShockAPI/Bouncer.cs:2589
 #, csharp-format
 msgid "Bouncer / OnPlayerDamage rejected disabled from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerDamage 因被禁用而拒绝了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:2580
 #, csharp-format
 msgid "Bouncer / OnPlayerDamage rejected hostile from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerDamage 因敌对而拒绝了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:2553
 msgid "Bouncer / OnPlayerDamage rejected null check"
-msgstr ""
+msgstr "Bouncer / OnPlayerDamage 拒绝了空值检查"
 
 #: ../../TShockAPI/Bouncer.cs:2598
 #, csharp-format
 msgid "Bouncer / OnPlayerDamage rejected range checks from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerDamage 因范围检查而拒绝了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:2607
 #, csharp-format
 msgid "Bouncer / OnPlayerDamage rejected throttled from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerDamage 拒绝了{0}的调整"
 
 #: ../../TShockAPI/Bouncer.cs:2447
 msgid "Bouncer / OnPlayerPortalTeleport rejected disabled/throttled from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerPortalTeleport 因被禁用/调整而拒绝了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:2439
 msgid "Bouncer / OnPlayerPortalTeleport rejected teleport out of bounds from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerPortalTeleport 因传送超出边界而拒绝了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:2428
 #, csharp-format
 msgid "Bouncer / OnPlayerPortalTeleport rejected untargetable teleport from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerPortalTeleport 因传送目标不准确而拒绝了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:499
 #, csharp-format
 msgid "Bouncer / OnPlayerUpdate *would have rejected* from (last network position zero) {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerUpdate 将会因（最后上线的位置为0）而被拒绝{0}"
 
 #: ../../TShockAPI/Bouncer.cs:477
 #, csharp-format
 msgid "Bouncer / OnPlayerUpdate force kicked (attempted to set velocity +/- 50000) from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerUpdate已从 {0}踢出 (试图设置速度+/-50000)"
 
 #: ../../TShockAPI/Bouncer.cs:461
 #, csharp-format
 msgid "Bouncer / OnPlayerUpdate force kicked (attempted to set velocity to infinity) from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerUpdate已从 {0}踢出 (试图将速度设置为无限)"
 
 #: ../../TShockAPI/Bouncer.cs:469
 #, csharp-format
 msgid "Bouncer / OnPlayerUpdate force kicked (attempted to set velocity to NaN) from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerUpdate已从 {0}踢出 (试图将速度设置为空)"
 
 #: ../../TShockAPI/Bouncer.cs:543
 #, csharp-format
 msgid "Bouncer / OnPlayerUpdate rejected from (??) {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerUpdate（玩家更新防护）阻止了{0}（??）"
 
 #: ../../TShockAPI/Bouncer.cs:547
 #, csharp-format
 msgid "Bouncer / OnPlayerUpdate rejected from (below ??) {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerUpdate（玩家更新防护）阻止了{0}（??下面）"
 
 #: ../../TShockAPI/Bouncer.cs:555
 #, csharp-format
 msgid "Bouncer / OnPlayerUpdate rejected from (corpses don't move) {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerUpdate 因（移动尸体）而拒绝了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:492
 #, csharp-format
 msgid "Bouncer / OnPlayerUpdate rejected from (inventory length) {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerUpdate 因（背包长度）而拒绝了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:485
 #, csharp-format
 msgid "Bouncer / OnPlayerUpdate rejected from (position check) {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerUpdate 因（位置检查）而拒绝了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1610
 #, csharp-format
 msgid "Bouncer / OnPlayerZone rejected from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerZone 拒绝了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1427
 #, csharp-format
 msgid "Bouncer / OnProjectileKill rejected from bouncer throttle from {0}"
-msgstr ""
+msgstr "Bouncer / OnProjectileKill 因安全调整而拒绝了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1419
 #, csharp-format
 msgid "Bouncer / OnProjectileKill rejected from disabled from {0}"
-msgstr ""
+msgstr "Bouncer / OnProjectileKill 因被禁用而拒绝了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1412
 #, csharp-format
 msgid "Bouncer / OnProjectileKill rejected from negative projectile index from {0}"
-msgstr ""
+msgstr "Bouncer / OnProjectileKill 因负的弹幕索引而拒绝了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:2117
 #, csharp-format
 msgid "Bouncer / OnReleaseNPC rejected npc release from {0}"
-msgstr ""
+msgstr "Bouncer / OnReleaseNPC 因npc生成而拒绝了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:2109
 #, csharp-format
 msgid "Bouncer / OnReleaseNPC rejected out of bounds from {0}"
-msgstr ""
+msgstr "Bouncer / OnReleaseNPC 因超出边界而拒绝了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:2168
 #, csharp-format
 msgid "Bouncer / OnReleaseNPC rejected throttle from {0}"
-msgstr ""
+msgstr "Bouncer / OnReleaseNPC 因限流而拒绝了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:2124
 #, csharp-format
 msgid "Bouncer / OnReleaseNPC released different critter from {0}"
-msgstr ""
+msgstr "Bouncer / OnReleaseNPC 从{0}生成了不同的生物"
 
 #: ../../TShockAPI/Bouncer.cs:684
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from (axe) {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit（物块防护）阻止了{0}的操作（斧头）。{1} {2} "
 
 #: ../../TShockAPI/Bouncer.cs:787
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from (chestcap) {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit（物块防护）阻止了{0}的操作（箱子上限）。{1} {2} "
 
 #: ../../TShockAPI/Bouncer.cs:692
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from (hammer) {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit（物块防护）阻止了{0}的操作（锤子）。{1} {2} "
 
 #: ../../TShockAPI/Bouncer.cs:720
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from (hammer2) {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit（物块防护）阻止了{0}的操作（锤子2）。{1} {2} "
 
 #: ../../TShockAPI/Bouncer.cs:739
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from (inconceivable rope coil) {0} {1} {2} selectedItem:{3} itemCreateTile:{4}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit（物块防护）阻止了{0}的操作（不合理的绳索）。{1} {2}，选中物品：{3} 物品创建物块类型：{4}"
 
 #: ../../TShockAPI/Bouncer.cs:750
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from (ms1) {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit（物块防护）阻止了{0}的操作（最大形态1）。{1} {2} "
 
 #: ../../TShockAPI/Bouncer.cs:621
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from (pdm) {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit（物块防护）阻止了{0}的操作（防止死亡状态下修改）。{1} {2} "
 
 #: ../../TShockAPI/Bouncer.cs:708
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from (pick) {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit（物块防护）阻止了{0}的操作（镐子）。{1} {2} "
 
 #: ../../TShockAPI/Bouncer.cs:657
 #: ../../TShockAPI/Bouncer.cs:668
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from (placestyle) {0} {1} {2} placeStyle: {3} expectedStyle: {4}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit（物块防护）阻止了{0}的操作（形态）。{1}，{2} 放置的形态：{3}，预期的形态：{4}"
 
 #: ../../TShockAPI/Bouncer.cs:635
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from (tb) {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit（物块防护）阻止了{0}的操作（物块被封禁）。{1}，{2} "
 
 #: ../../TShockAPI/Bouncer.cs:585
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from (tile placement valid) {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit（物块防护）阻止了{0}的操作（放置位置）。{1}，{2} "
 
 #: ../../TShockAPI/Bouncer.cs:831
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from actuator/presserator from {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit（物块防护）阻止了{0}的促动操作。{1} {2} "
 
 #: ../../TShockAPI/Bouncer.cs:594
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from build from {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit（物块防护）阻止了{0}的建筑操作。{1}，{2} "
 
 #: ../../TShockAPI/Bouncer.cs:852
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from disable from {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit（物块防护）因玩家被拘束阻止了{0}的操作。{1}，{2} "
 
 #: ../../TShockAPI/Bouncer.cs:606
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from editData out of bounds {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit（物块防护）阻止了{0}的越界操作。{1}，{2} "
 
 #: ../../TShockAPI/Bouncer.cs:891
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from explosives/fuses from {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit（物块防护）阻止了{0}的爆炸物操作。{1}，{2} "
 
 #: ../../TShockAPI/Bouncer.cs:861
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from ice/build from {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit（物块防护）阻止了{0}的冰块或建筑操作。{1}，{2} "
 
 #: ../../TShockAPI/Bouncer.cs:806
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from place wire from {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit（物块防护）阻止了{0}放置电线。{1}，{2} "
 
 #: ../../TShockAPI/Bouncer.cs:841
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from sts allow cut from {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit（物块防护）阻止了{0}的操作（在检测允许劈砍的矩形物块操作时）。{1}，{2} "
 
 #: ../../TShockAPI/Bouncer.cs:935
 msgid "Bouncer / OnTileEdit rejected from throttled from {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit（物块防护）因限流阻止了{0}的操作。{1}，{2} "
 
 #: ../../TShockAPI/Bouncer.cs:909
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from tile kill threshold from {0}, (value: {1})"
-msgstr ""
+msgstr "Bouncer / OnTileEdit（物块防护）因超过物块破坏上限阻止了{0}。（值：{1}）"
 
 #: ../../TShockAPI/Bouncer.cs:927
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from tile place threshold from {0}, (value: {1})"
-msgstr ""
+msgstr "Bouncer / OnTileEdit（物块防护）因超过物块放置上限阻止了{0}。（值：{1}）"
 
 #: ../../TShockAPI/Bouncer.cs:769
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from tile placement not matching selected item createTile {0} {1} {2} selectedItemID:{3} createTile:{4}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit（物块防护）因放置的物块与所持物品不匹配阻止了{0}。{1}，{2}，所持物品：{3}，创建的物块：{4}"
 
 #: ../../TShockAPI/Bouncer.cs:759
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from using ice rod but not placing ice block {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit（物块防护）因使用了冰块法杖放置的却不是冰块阻止了{0}。{1}，{2}"
 
 #: ../../TShockAPI/Bouncer.cs:778
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from wall placement not matching selected item createWall {0} {1} {2} selectedItemID:{3} createWall:{4}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit（物块防护）因放置的墙壁与所持物品不匹配阻止了{0}。{1}，{2}，所持物品：{3}，创建的墙壁：{4}"
 
 #: ../../TShockAPI/Bouncer.cs:968
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from weird confusing flow control from {0}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit（物块防护）因奇怪的迷惑操作阻止了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:820
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from wire cutter from {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit（物块防护）阻止了{0}删除电线。{1} {2} "
 
 #: ../../TShockAPI/Bouncer.cs:614
 #, csharp-format
 msgid "Bouncer / OnTileEdit super accepted from (ice block) {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit（物块防护）允许了{0}的冰块操作。{1} {2} "
 
 #: ../../TShockAPI/Bouncer.cs:2024
 #, csharp-format
 msgid "Bouncer / OnUpdateNPCHome rejected npc home build permission from {0}"
-msgstr ""
+msgstr "Bouncer / OnUpdateNPCHome 因npc房屋建造权限而拒绝了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:2034
 #, csharp-format
 msgid "Bouncer / OnUpdateNPCHome rejected range checks from {0}"
-msgstr ""
+msgstr "Bouncer / OnUpdateNPCHome 因范围检查而拒绝了{0}"
 
 #: ../../TShockAPI/Handlers/SendTileRectHandler.cs:557
 #, csharp-format
 msgid "Bouncer / SendTileRect accepted clientside world edit from {0}"
-msgstr ""
+msgstr "Bouncer / SendTileRect（矩形物块操作防护）接受了{0}的客户端图格修改请求"
 
 #: ../../TShockAPI/Handlers/SendTileRectHandler.cs:413
 #, csharp-format
 msgid "Bouncer / SendTileRect processing a tile conversion update - [{0}] -> [{1}]"
-msgstr ""
+msgstr "Bouncer / SendTileRect 正在处理一个图格转换更新 -[{0}] -> [{1}]"
 
 #: ../../TShockAPI/Handlers/SendTileRectHandler.cs:129
 #, csharp-format
 msgid "Bouncer / SendTileRect reimplemented from carbonara from {0}"
-msgstr ""
+msgstr "Bouncer / SendTileRect 从图格中重新实现了{0}"
 
 #: ../../TShockAPI/Handlers/SendTileRectHandler.cs:298
 msgid "Bouncer / SendTileRect rejected for banned tile"
-msgstr ""
+msgstr "Bouncer / SendTileRect 因封禁的图格而拒绝"
 
 #: ../../TShockAPI/Handlers/SendTileRectHandler.cs:577
 #, csharp-format
 msgid "Bouncer / SendTileRect rejected from being disabled from {0}"
-msgstr ""
+msgstr "Bouncer / SendTileRect 因被禁用而拒绝了{0}"
 
 #: ../../TShockAPI/Handlers/SendTileRectHandler.cs:292
 #, csharp-format
 msgid "Bouncer / SendTileRect rejected from no permission for tile object from {0}"
-msgstr ""
+msgstr "Bouncer / SendTileRect 因 {0} 没有物块对象权限而被拒绝"
 
 #: ../../TShockAPI/Handlers/SendTileRectHandler.cs:564
 #, csharp-format
 msgid "Bouncer / SendTileRect rejected from non-vanilla tilemod from {0}"
-msgstr ""
+msgstr "Bouncer / SendTileRect 拒绝来自 {0} 的非原版图格"
 
 #: ../../TShockAPI/Handlers/SendTileRectHandler.cs:570
 #, csharp-format
 msgid "Bouncer / SendTileRect rejected from throttle from {0}"
-msgstr ""
+msgstr "Bouncer / SendTileRect 因限流而拒绝了{0}"
 
 #: ../../TShockAPI/Handlers/SendTileRectHandler.cs:609
 msgid "Bouncer / SendTileRectHandler - rejected tile object because object dimensions fall outside the tile rect (excessive size)"
-msgstr ""
+msgstr "Bouncer / SendTileRechtHandler - 拒绝图格对象，因为对象尺寸不在图格矩形之内(过大)"
+
+#: ../../TShockAPI/Commands.cs:272
+msgid "Broadcasts a message to everyone on the server."
+msgstr "向服务器上的所有人广播一条消息。"
 
 #: ../../TShockAPI/DB/IQueryBuilder.cs:319
 msgid "Can't set to true SqlColumn.DefaultCurrentTimestamp when the MySqlDbType is not DateTime"
@@ -1110,10 +1255,42 @@ msgstr "无法加载模块 {0} ，因为它不是从 {1} 派生的"
 msgid "Certain projectiles have been ignored for cheat detection."
 msgstr "某些弹幕已经因防作弊而被忽略。"
 
+#: ../../TShockAPI/Commands.cs:368
+msgid "Changes the server password."
+msgstr "更改服务器密码。"
+
+#: ../../TShockAPI/Commands.cs:522
+msgid "Changes the wind speed."
+msgstr "更改风速。"
+
+#: ../../TShockAPI/Commands.cs:467
+msgid "Changes the world mode."
+msgstr "更改世界模式。"
+
+#: ../../TShockAPI/Commands.cs:252
+msgid "Changes your account's password."
+msgstr "更改你的密码。"
+
+#: ../../TShockAPI/Commands.cs:352
+msgid "Checks for TShock updates."
+msgstr "检查TShock更新。"
+
+#: ../../TShockAPI/Commands.cs:537
+msgid "Clears item drops or projectiles."
+msgstr "清除掉落物或弹幕。"
+
+#: ../../TShockAPI/Commands.cs:162
+msgid "Command failed, check logs for more details."
+msgstr "指令执行失败，请查看日志获取更多信息。"
+
 #: ../../TShockAPI/DB/BanManager.cs:82
 #: ../../TShockAPI/DB/ResearchDatastore.cs:54
 msgid "Could not find a database library (probably Sqlite3.dll)"
 msgstr "找不到数据库的库(可能是 Sqlite3.dll)"
+
+#: ../../TShockAPI/Commands.cs:595
+msgid "Creates a reference tables for Terraria data types and the TShock permission system in the server folder."
+msgstr "在服务器目录下生成泰拉瑞亚和TShock权限的参考信息表。"
 
 #: ../../TShockAPI/Handlers/NetModules/CreativePowerHandler.cs:53
 msgid "CreativePowerHandler received permission check request for unknown creative power"
@@ -1152,10 +1329,18 @@ msgstr "禁止的行为。您过分地使用了被封禁的盔甲。"
 msgid "Disabled. You went too far with hacked item stacks."
 msgstr "禁止的行为，您的物品数量多的过分了。"
 
+#: ../../TShockAPI/Commands.cs:488
+msgid "Enables starting and stopping various world events."
+msgstr "开始或停止各种世界事件。"
+
 #: ../../TShockAPI/DB/GroupManager.cs:665
 #, csharp-format
 msgid "Error on reloading groups: {0}"
 msgstr "在重新加载组时发生了错误:{0}"
+
+#: ../../TShockAPI/Commands.cs:328
+msgid "Executes a command as the super admin."
+msgstr "以超级管理员的身份执行指令。"
 
 #: ../../TShockAPI/Rest/RestManager.cs:671
 #, csharp-format
@@ -1204,10 +1389,30 @@ msgstr "致命的TShock初始化错误：连接MySQL失败。查看内部异常�
 msgid "FetchHashedPasswordAndGroup SQL returned an error: {0}"
 msgstr "FetchHashedPasswordAndGroup SQL 返回了一个错误： {0}"
 
+#: ../../TShockAPI/Commands.cs:514
+msgid "Forces all liquids to update immediately."
+msgstr "立即强制更新所有液体。"
+
 #: ../../TShockAPI/DB/UserManager.cs:291
 #, csharp-format
 msgid "GetUser SQL returned an error {0}"
 msgstr "GetUser方法在执行SQL语句时返回了一个错误{0}"
+
+#: ../../TShockAPI/Commands.cs:541
+msgid "Gives another player a buff or debuff for an amount of time. Putting -1 for time will set it to 415 days."
+msgstr "给另一位玩家添加一段时间的Buff或Debuff。如果时间为-1会持续约415天。"
+
+#: ../../TShockAPI/Commands.cs:382
+msgid "Gives another player an item."
+msgstr "给另一位玩家一件物品。"
+
+#: ../../TShockAPI/Commands.cs:533
+msgid "Gives yourself a buff or debuff for an amount of time. Putting -1 for time will set it to 415 days."
+msgstr "给自己添加一段时间的Buff或Debuff。如果时间为-1会持续约415天。"
+
+#: ../../TShockAPI/Commands.cs:387
+msgid "Gives yourself an item."
+msgstr "给自己一件道具。"
 
 #: ../../TShockAPI/Handlers/LandGolfBallInCupHandler.cs:123
 #, csharp-format
@@ -1243,6 +1448,11 @@ msgstr "用户组 {0} 删除成功"
 #, csharp-format
 msgid "Group {0} does not exist"
 msgstr "用户组 {0} 不存在"
+
+#: ../../TShockAPI/Commands.cs:1074
+#, csharp-format
+msgid "Group {0} does not exist!"
+msgstr "用户组{0}不存在！"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1348
 #, csharp-format
@@ -1281,6 +1491,10 @@ msgstr "组{0}试图将自己作为父组。父组的引用已被删除。"
 msgid "Group {0} updated successfully"
 msgstr "用户组 {0} 更新成功"
 
+#: ../../TShockAPI/Commands.cs:476
+msgid "Grows plants at your location."
+msgstr "在你的位置种下植物。"
+
 #: ../../TShockAPI/Bouncer.cs:2061
 msgid "HealOtherPlayer cheat attempt!"
 msgstr "有人正在尝试作弊地治疗其他玩家！"
@@ -1289,6 +1503,15 @@ msgstr "有人正在尝试作弊地治疗其他玩家！"
 #, csharp-format
 msgid "HealOtherPlayer threshold exceeded {0}."
 msgstr "治疗其他玩家阈值超过 {0}。"
+
+#: ../../TShockAPI/Commands.cs:549
+msgid "Heals a player in HP and MP."
+msgstr "治愈玩家的血量和魔力。"
+
+#: ../../TShockAPI/Commands.cs:1199
+#, csharp-format
+msgid "ID: {0}"
+msgstr "ID: {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1374
 msgid "If this player wasn't hacking, please report the damage threshold they were disabled for to TShock so we can improve this!"
@@ -1314,6 +1537,10 @@ msgstr "如果这个玩家并没有作弊，那么请向TShock报告他们被禁
 msgid "If this player wasn't hacking, please report the tile place threshold they were disabled for to TShock so we can improve this!"
 msgstr "如果这个玩家并没有作弊，那么请向TShock报告他们被禁用的图格放置阈值，以便我们可以改进它！"
 
+#: ../../TShockAPI/Commands.cs:821
+msgid "If you forgot your password, contact the administrator for help."
+msgstr "如果您忘记了密码，请联系管理员以获取帮助。"
+
 #: ../../TShockAPI/Bouncer.cs:969
 msgid "If you're seeing this message and you know what that player did, please report it to TShock for further investigation."
 msgstr "如果您看到此消息并且您知道该玩家做了什么，请报告TShock以便进一步调查。"
@@ -1332,6 +1559,10 @@ msgstr "IllegalPerse: Emoji 数据包因伪装ID而被拒绝。预计 {0}将从 
 #, csharp-format
 msgid "Infinite group parenting ({0})"
 msgstr "无限递归的父组引用({0})"
+
+#: ../../TShockAPI/Commands.cs:1196
+msgid "Information about the currently running world"
+msgstr "获取当前运行的世界信息。"
 
 #: ../../TShockAPI/DB/BanManager.cs:314
 msgid "Inserting the ban into the database failed."
@@ -1361,6 +1592,10 @@ msgstr "组 {0} 作为 {1} 的父组是无效的"
 msgid "Invalid parent group {0} for group {1}."
 msgstr "组 {0} 作为 {1} 的父组是无效的。"
 
+#: ../../TShockAPI/Commands.cs:892
+msgid "Invalid password!"
+msgstr "密码错误！"
+
 #: ../../TShockAPI/Rest/Rest.cs:247
 #, csharp-format
 msgid "Invalid REST configuration: \n"
@@ -1372,14 +1607,33 @@ msgstr "REST 配置无效： \n"
 "请调整您的配置并重启服务器。 \n"
 "按任意键退出。"
 
+#: ../../TShockAPI/Commands.cs:1001
+#, csharp-format
+msgid "Invalid syntax! Proper syntax: {0}register <password>"
+msgstr "语法需哦呜！ 正确的语法： {0}register <password>"
+
 #: ../../TShockAPI/Rest/RestManager.cs:1326
 #, csharp-format
 msgid "Invalid Type: '{0}'"
 msgstr "无效类型：“{0}”"
 
+#: ../../TShockAPI/Commands.cs:1043
+#: ../../TShockAPI/Commands.cs:1176
+#, csharp-format
+msgid "Invalid user syntax. Try {0}user help."
+msgstr "用户命令语法错误。尝试 {0}user help。"
+
 #: ../../TShockAPI/Rest/RestManager.cs:1049
 msgid "Kicked via web"
 msgstr "通过网络踢出"
+
+#: ../../TShockAPI/Commands.cs:553
+msgid "Kills another player."
+msgstr "击杀其他玩家。"
+
+#: ../../TShockAPI/Commands.cs:393
+msgid "Kills hostile NPCs or NPCs of a certain type."
+msgstr "击杀敌对NPC或者一种指定类型的NPC。"
 
 #: ../../TShockAPI/Handlers/LandGolfBallInCupHandler.cs:114
 #, csharp-format
@@ -1406,9 +1660,71 @@ msgstr "LandGolfBallInCupHandler：在数据包中的图格位置 X：{0} Y：{1
 msgid "LandGolfBallInCupHandler: X and Y position is out of world bounds! - From {0}"
 msgstr "LandGolfBallInCupHandler: 位置 X 和 Y 超越了世界边界! - 从 {0}"
 
+#: ../../TShockAPI/Commands.cs:613
+msgid "Lists commands or gives help on them."
+msgstr "列出命令或者给予帮助。"
+
+#: ../../TShockAPI/Commands.cs:838
+msgid "Login attempt failed - see the message above."
+msgstr "尝试登录失败 - 请查看上面的信息。"
+
+#: ../../TShockAPI/Commands.cs:240
+msgid "Logs you into an account."
+msgstr "登录。"
+
+#: ../../TShockAPI/Commands.cs:246
+msgid "Logs you out of your current account."
+msgstr "从当前账号登出。"
+
+#: ../../TShockAPI/Commands.cs:1191
+#, csharp-format
+msgid "Machine name: {0}"
+msgstr "机器名称： {0}"
+
 #: ../../TShockAPI/Bouncer.cs:2430
 msgid "Malicious portal attempt."
 msgstr "尝试开启一个恶意的后门。"
+
+#: ../../TShockAPI/Commands.cs:280
+msgid "Manages groups."
+msgstr "管理用户组。"
+
+#: ../../TShockAPI/Commands.cs:284
+msgid "Manages item bans."
+msgstr "管理物品封禁。"
+
+#: ../../TShockAPI/Commands.cs:268
+msgid "Manages player bans."
+msgstr "管理玩家封禁。"
+
+#: ../../TShockAPI/Commands.cs:288
+msgid "Manages projectile bans."
+msgstr "管理弹幕封禁。"
+
+#: ../../TShockAPI/Commands.cs:296
+msgid "Manages regions."
+msgstr "管理区域。"
+
+#: ../../TShockAPI/Commands.cs:570
+msgid "Manages the REST API."
+msgstr "管理REST API。"
+
+#: ../../TShockAPI/Commands.cs:376
+msgid "Manages the server whitelist."
+msgstr "管理服务器白名单。"
+
+#: ../../TShockAPI/Commands.cs:292
+msgid "Manages tile bans."
+msgstr "管理物块封禁。"
+
+#: ../../TShockAPI/Commands.cs:232
+msgid "Manages user accounts."
+msgstr "管理用户账号。"
+
+#: ../../TShockAPI/Commands.cs:1186
+#, csharp-format
+msgid "Memory usage: {0}"
+msgstr "内存占用：{0}"
 
 #: ../../TShockAPI/Rest/RestManager.cs:874
 msgid "Meteor has been spawned"
@@ -1424,6 +1740,11 @@ msgstr "缺少或空白的 {0} 参数"
 msgid "Missing or invalid {0} parameter"
 msgstr "缺少或无效的 {0} 参数"
 
+#: ../../TShockAPI/Commands.cs:1201
+#, csharp-format
+msgid "Mode: {0}"
+msgstr "模式：{0}"
+
 #: ../../TShockAPI/Net/BaseMsg.cs:29
 msgid "Msg ID not implemented"
 msgstr "Msg ID 尚未实现"
@@ -1433,10 +1754,19 @@ msgstr "Msg ID 尚未实现"
 msgid "Multiple user accounts found for {0} '{1}'"
 msgstr "为 {0} '{1}' 找到多个用户帐户"
 
+#: ../../TShockAPI/Commands.cs:1197
+#, csharp-format
+msgid "Name: {0}"
+msgstr "名称：{0}"
+
 #: ../../TShockAPI/Handlers/NetModules/CreativeUnlocksHandler.cs:55
 #, csharp-format
 msgid "NetModuleHandler received attempt to unlock sacrifice while not in journey mode from {0}"
 msgstr "NetModuleHandler 接收到在非旅行模式下解锁祭祀的尝试，来自 {0}"
+
+#: ../../TShockAPI/Commands.cs:145
+msgid "No help available."
+msgstr "没有可用的帮助"
 
 #: ../../TShockAPI/Rest/RestManager.cs:721
 msgid "No matching bans found."
@@ -1452,22 +1782,27 @@ msgstr "未授权。因群组更改导致提供的令牌失效，请创建一个
 
 #: ../../TShockAPI/Rest/SecureRest.cs:186
 msgid "Not authorized. The specified API endpoint requires a token, but the provided token was not valid."
-msgstr ""
+msgstr "未授权。指定的 API 终结点需要令牌，但提供的令牌无效。"
 
 #: ../../TShockAPI/Rest/RestCommand.cs:95
 #: ../../TShockAPI/Rest/RestCommand.cs:101
 #: ../../TShockAPI/Rest/SecureRest.cs:180
 msgid "Not authorized. The specified API endpoint requires a token."
-msgstr ""
+msgstr "未授权。指定的 API 终结点需要一个令牌。"
 
 #: ../../TShockAPI/Rest/SecureRest.cs:200
 #, csharp-format
 msgid "Not authorized. User \"{0}\" has no access to use the specified API endpoint."
-msgstr ""
+msgstr "未授权。用户 \"{0}\" 没有权限使用指定的 API 终结点。"
+
+#: ../../TShockAPI/Commands.cs:955
+#, csharp-format
+msgid "Not logged in or invalid syntax! Proper syntax: {0}password <oldpassword> <newpassword>"
+msgstr "未登录或无效的语法！正确的语法： {0} password <oldpassword> <newpassword>"
 
 #: ../../TShockAPI/DB/UserManager.cs:468
 msgid "Not upgrading work factor because bcrypt hash in an invalid format."
-msgstr ""
+msgstr "没有升级Work Factor，因为BCrypt的哈希值格式有误。"
 
 #: ../../TShockAPI/Bouncer.cs:1365
 #: ../../TShockAPI/Bouncer.cs:1369
@@ -1478,18 +1813,56 @@ msgstr "NPC 伤害超过 {0}。"
 #: ../../TShockAPI/DB/RegionManager.cs:102
 #, csharp-format
 msgid "One of your UserIDs is not a usable integer: {0}"
-msgstr ""
+msgstr "您的一个用户ID不是可用整数： {0}"
+
+#: ../../TShockAPI/Commands.cs:1189
+#, csharp-format
+msgid "Operating system: {0}"
+msgstr "操作系统: {0}"
+
+#: ../../TShockAPI/Commands.cs:308
+msgid "Overrides serverside characters for a player, temporarily."
+msgstr "临时覆盖玩家的SSC存档。"
 
 #: ../../TShockAPI/DB/GroupManager.cs:356
 #, csharp-format
 msgid "Parenting group {0} to {1} would cause loops in the parent chain."
-msgstr ""
+msgstr "父组 {0} 到 {1} 会导致父组的循环。"
+
+#: ../../TShockAPI/Commands.cs:1127
+#, csharp-format
+msgid "Password change attempt for {0} failed for an unknown reason. Check the server console for more details."
+msgstr "{0} 的密码更改失败，原因不明。请检查服务器控制台了解更多详情。"
+
+#: ../../TShockAPI/Commands.cs:1119
+#, csharp-format
+msgid "Password change succeeded for {0}."
+msgstr "{0} 的密码更改成功。"
 
 #: ../../TShockAPI/DB/UserManager.cs:492
 #: ../../TShockAPI/DB/UserManager.cs:513
 #, csharp-format
 msgid "Password must be at least {0} characters."
 msgstr "密码至少需要 {0} 个字符。"
+
+#: ../../TShockAPI/Commands.cs:944
+#: ../../TShockAPI/Commands.cs:981
+#: ../../TShockAPI/Commands.cs:995
+#: ../../TShockAPI/Commands.cs:1061
+#: ../../TShockAPI/Commands.cs:1132
+#, csharp-format
+msgid "Password must be greater than or equal to {0} characters."
+msgstr "密码长度必须大于或等于 {0} 个字符。"
+
+#: ../../TShockAPI/Commands.cs:961
+#, csharp-format
+msgid "PasswordUser returned an error: {0}"
+msgstr "密码用户返回了一个错误： {0}"
+
+#: ../../TShockAPI/Commands.cs:1202
+#, csharp-format
+msgid "Path: {0}"
+msgstr "路径: {0}"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1388
 #, csharp-format
@@ -1533,10 +1906,27 @@ msgstr "玩家伤害超过了 {0}。"
 msgid "Player does not have permission to create projectile {0}."
 msgstr "玩家没有权限创建射弹 {0}。"
 
+#: ../../TShockAPI/Commands.cs:915
+msgid "Please close NPC windows before logging out."
+msgstr "请在登出之前关闭NPC对话框。"
+
+#: ../../TShockAPI/Commands.cs:1027
+msgid "Please try a different username."
+msgstr "请尝试其他用户名"
+
 #: ../../TShockAPI/DB/BanManager.cs:81
 #: ../../TShockAPI/DB/ResearchDatastore.cs:53
 msgid "Possible problem with your database - is Sqlite3.dll present?"
 msgstr "你的数据库可能存在问题 - Sqlite3.dll 是否存在？"
+
+#: ../../TShockAPI/Commands.cs:304
+msgid "Prevents a player from talking."
+msgstr "阻止一名玩家发言"
+
+#: ../../TShockAPI/Commands.cs:1190
+#, csharp-format
+msgid "Proc count: {0}"
+msgstr "进程数量：{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1175
 #, csharp-format
@@ -1574,13 +1964,38 @@ msgstr "以达到图格防止阈值。"
 msgid "Received type '{0}', however column '{1}' expects type '{2}'"
 msgstr "收到类型 '{0}'，但列'{1}的类型是 '{2}'"
 
+#: ../../TShockAPI/Commands.cs:258
+msgid "Registers you an account."
+msgstr "注册一个账号"
+
+#: ../../TShockAPI/Commands.cs:1034
+#, csharp-format
+msgid "RegisterUser returned an error: {0}"
+msgstr "注册用户时出现了一个错误：{0}"
+
 #: ../../TShockAPI/Bouncer.cs:2125
 msgid "Released critter was not from its item."
 msgstr "产生的碎石并非来自本该生成它的物品。"
 
+#: ../../TShockAPI/Commands.cs:364
+msgid "Reloads the server configuration file."
+msgstr "重新加载服务器配置文件。"
+
+#: ../../TShockAPI/Commands.cs:300
+msgid "Removes a player from the server."
+msgstr "将一位玩家从服务器中移除。"
+
 #: ../../TShockAPI/DB/UserManager.cs:112
 msgid "RemoveUser SQL returned an error"
 msgstr "RemoveUser 方法在执行SQL语句时返回了一个错误"
+
+#: ../../TShockAPI/Commands.cs:397
+msgid "Renames an NPC."
+msgstr "重命名一个NPC"
+
+#: ../../TShockAPI/Commands.cs:566
+msgid "Replies to a PM sent to you."
+msgstr "回复私聊"
 
 #: ../../TShockAPI/Rest/SecureRest.cs:93
 msgid "Requested token was successfully destroyed."
@@ -1591,9 +2006,86 @@ msgstr "请求的令牌已经被成功地销毁。"
 msgid "RequestTileEntityInteractionHandler: Rejected packet due to lack of building permissions! - From {0} | Position X:{1} Y:{2}, TileEntity type: {3}, Tile type: {4}"
 msgstr "RequestTileEntityInteractionHandler：由于缺少构建权限而拒绝数据包！ - 从 {0} | 位置 X:{1} Y:{2}, 图格实体类型: {3}, 图格类型: {4}"
 
+#: ../../TShockAPI/Commands.cs:419
+msgid "Resets the list of users who have completed an angler quest that day."
+msgstr "重置当天已完成渔夫任务的用户列表。"
+
+#: ../../TShockAPI/Commands.cs:603
+msgid "Respawn yourself or another player."
+msgstr "复活你自己或其他玩家。"
+
+#: ../../TShockAPI/Commands.cs:456
+msgid "Returns the user's or specified user's current position."
+msgstr "返回你或指定用户当前的位置。"
+
+#: ../../TShockAPI/Commands.cs:342
+msgid "Rockets a player upwards. Requires SSC."
+msgstr "把一名玩家射上天。需要启用服务端存档。"
+
+#: ../../TShockAPI/Commands.cs:312
+msgid "Saves all serverside characters."
+msgstr "保存所有玩家的服务端存档。"
+
+#: ../../TShockAPI/Commands.cs:500
+msgid "Saves the world file."
+msgstr "保存世界文件。"
+
+#: ../../TShockAPI/Commands.cs:1200
+#, csharp-format
+msgid "Seed: {0}"
+msgstr "地图种子：{0}"
+
+#: ../../TShockAPI/Commands.cs:562
+msgid "Sends a message to everyone on your team."
+msgstr "向您的团队中的每个人发送一条消息。"
+
+#: ../../TShockAPI/Commands.cs:586
+msgid "Sends a PM to a player."
+msgstr "给玩家发送一条私聊消息"
+
+#: ../../TShockAPI/Commands.cs:599
+msgid "Sends all tiles from the server to the player to resync the client with the actual world state."
+msgstr "从服务器发送所有物块到玩家以重新同步客户端和实际世界状态。"
+
+#: ../../TShockAPI/Commands.cs:557
+msgid "Sends an action message to everyone."
+msgstr "向所有人发送一个动作消息。"
+
+#: ../../TShockAPI/Commands.cs:431
+msgid "Sends you to the world's spawn point."
+msgstr "将您传送到世界的出生点。"
+
+#: ../../TShockAPI/Commands.cs:426
+msgid "Sends you to your spawn point."
+msgstr "将您传送到您的出生点。"
+
 #: ../../TShockAPI/BackupManager.cs:73
 msgid "Server map saving..."
 msgstr "服务器地图正在保存..."
+
+#: ../../TShockAPI/Commands.cs:923
+msgid "Server side characters are enabled. You need to be logged-in to play."
+msgstr "服务器角色存档（ssc）已启用。您需要登录才能游玩。"
+
+#: ../../TShockAPI/Commands.cs:510
+msgid "Sets the dungeon's position to your location."
+msgstr "把地牢的位置设置为您的位置。"
+
+#: ../../TShockAPI/Commands.cs:401
+msgid "Sets the maximum number of NPCs."
+msgstr "设置NPC的最大数量。"
+
+#: ../../TShockAPI/Commands.cs:415
+msgid "Sets the spawn rate of NPCs."
+msgstr "设置NPC的生成速率。"
+
+#: ../../TShockAPI/Commands.cs:518
+msgid "Sets the world time."
+msgstr "设置世界时间。"
+
+#: ../../TShockAPI/Commands.cs:505
+msgid "Sets the world's spawn point to your location."
+msgstr "将世界的出生点设置为您的位置。"
 
 #: ../../TShockAPI/DB/UserManager.cs:182
 msgid "SetUserGroup SQL returned an error"
@@ -1606,6 +2098,82 @@ msgstr "SetUserPassword 方法在执行SQL语句时发生了一个错误"
 #: ../../TShockAPI/DB/UserManager.cs:154
 msgid "SetUserUUID SQL returned an error"
 msgstr "SetUserUUID 方法在执行 SQL 语句时发生了一个错误"
+
+#: ../../TShockAPI/Commands.cs:609
+msgid "Shows a command's aliases."
+msgstr "显示一个命令的别名。"
+
+#: ../../TShockAPI/Commands.cs:332
+msgid "Shows information about a player."
+msgstr "显示一个玩家的信息。"
+
+#: ../../TShockAPI/Commands.cs:262
+msgid "Shows information about a user."
+msgstr "显示一个用户的信息。"
+
+#: ../../TShockAPI/Commands.cs:526
+msgid "Shows information about the current world."
+msgstr "显示当前世界的信息。"
+
+#: ../../TShockAPI/Commands.cs:621
+msgid "Shows the currently connected players."
+msgstr "显示当前在线的玩家。"
+
+#: ../../TShockAPI/Commands.cs:617
+msgid "Shows the message of the day."
+msgstr "显示当天的信息。"
+
+#: ../../TShockAPI/Commands.cs:578
+msgid "Shows the server information."
+msgstr "显示服务器信息"
+
+#: ../../TShockAPI/Commands.cs:625
+msgid "Shows the server's rules."
+msgstr "显示服务器规则"
+
+#: ../../TShockAPI/Commands.cs:372
+msgid "Shows the TShock version."
+msgstr "显示TShock版本"
+
+#: ../../TShockAPI/Commands.cs:356
+msgid "Shuts down the server while saving."
+msgstr "保存并关闭服务器"
+
+#: ../../TShockAPI/Commands.cs:360
+msgid "Shuts down the server without saving."
+msgstr "关闭服务器但不保存数据。"
+
+#: ../../TShockAPI/Commands.cs:1198
+#, csharp-format
+msgid "Size: {0}x{1}"
+msgstr "大小：{0}x{1}"
+
+#: ../../TShockAPI/Commands.cs:574
+msgid "Slaps a player, dealing damage."
+msgstr "击打一名玩家，造成伤害。"
+
+#: ../../TShockAPI/Commands.cs:1026
+#, csharp-format
+msgid "Sorry, {0} was already taken by another person."
+msgstr "抱歉，{0} 已被他人使用。"
+
+#: ../../TShockAPI/Commands.cs:960
+#: ../../TShockAPI/Commands.cs:1033
+#, csharp-format
+msgid "Sorry, an error occurred: {0}."
+msgstr "抱歉，一个错误发生了： {0}"
+
+#: ../../TShockAPI/Commands.cs:406
+msgid "Spawns a number of bosses around you."
+msgstr "在您的周围生成一些Boss。"
+
+#: ../../TShockAPI/Commands.cs:411
+msgid "Spawns a number of mobs around you."
+msgstr "在您的周围生成一些生物。"
+
+#: ../../TShockAPI/Commands.cs:346
+msgid "Spawns fireworks at a player."
+msgstr "在一个玩家身上生成烟花。"
 
 #: ../../TShockAPI/Rest/Rest.cs:433
 msgid "Specified API endpoint doesn't exist. Refer to the documentation for a list of valid endpoints."
@@ -1636,6 +2204,38 @@ msgstr "登录成功"
 msgid "SyncTilePickingHandler: X and Y position is out of world bounds! - From {0}"
 msgstr "SyncTilePickingHander: X 和 Y 位置超越了世界边界! - 来自 {0}"
 
+#: ../../TShockAPI/Commands.cs:436
+msgid "Teleports a player to another player."
+msgstr "将一个玩家传送至另一个玩家。"
+
+#: ../../TShockAPI/Commands.cs:441
+msgid "Teleports a player to yourself."
+msgstr "将一个玩家传送到您。"
+
+#: ../../TShockAPI/Commands.cs:582
+msgid "Teleports you to a warp point or manages warps."
+msgstr "将您传送到一个传送点或者管理传送点。"
+
+#: ../../TShockAPI/Commands.cs:446
+msgid "Teleports you to an npc."
+msgstr "将您传送到一个npc。"
+
+#: ../../TShockAPI/Commands.cs:451
+msgid "Teleports you to tile coordinates."
+msgstr "将您传送到一个图格坐标。"
+
+#: ../../TShockAPI/Commands.cs:324
+msgid "Temporarily elevates you to Super Admin."
+msgstr "暂时将您提升为超级管理员。"
+
+#: ../../TShockAPI/Commands.cs:320
+msgid "Temporarily sets another player's group."
+msgstr "暂时设置另外的组。"
+
+#: ../../TShockAPI/Commands.cs:1154
+msgid "That group does not exist!"
+msgstr "这个组不存在！"
+
 #: ../../TShockAPI/DB/BanManager.cs:258
 msgid "The ban is invalid because a current ban for this identifier already exists."
 msgstr "禁令无效，因为当前禁止此标识符的禁令已经存在。"
@@ -1665,31 +2265,112 @@ msgstr "未找到访客用户组。"
 msgid "The guest group could not be found. This may indicate a typo in the configuration file, or that the group was renamed or deleted."
 msgstr "未找到访客用户组。这可能是配置文件中出现了错别字，也可能是该用户组已被重命名或删除。"
 
+#: ../../TShockAPI/PaginationTools.cs:185
+msgid "The method referenced by LineFormatter has thrown an exception. See inner exception for details."
+msgstr "LineFormater引用的方法已经抛出异常。详情请查看内部异常。"
+
+#: ../../TShockAPI/PaginationTools.cs:247
+msgid "The method represented by termFormatter has thrown an exception. See inner exception for details."
+msgstr "用 termFormater 代表的方法已经抛出异常。详情请查看内部异常。"
+
 #: ../../TShockAPI/Rest/RestManager.cs:158
 msgid "The REST authentication token."
 msgstr "REST 身份验证令牌。"
 
 #: ../../TShockAPI/Rest/SecureRest.cs:90
 msgid "The specified token queued for destruction failed to be deleted."
-msgstr ""
+msgstr "指定销毁队列中的令牌未能被删除。"
+
+#: ../../TShockAPI/Commands.cs:1100
+#, csharp-format
+msgid "The user {0} does not exist! Therefore, the account was not deleted!"
+msgstr "用户 {0} 不存在！因此，账户未被删除！"
+
+#: ../../TShockAPI/PaginationTools.cs:95
+msgid "The value has to be greater than or equal to zero."
+msgstr "值应大于等于0"
+
+#: ../../TShockAPI/PaginationTools.cs:81
+msgid "The value has to be greater than zero."
+msgstr "该值因大于零。"
 
 #: ../../TShockAPI/Bouncer.cs:788
 msgid "The world's chest limit has been reached - unable to place more."
 msgstr "当前世界宝箱数量已达上限，无法放置更多宝箱。"
 
+#: ../../TShockAPI/Commands.cs:900
+msgid "There was an error processing your login or authentication related request."
+msgstr "在处理您的登录或认证时出错。"
+
 #: ../../TShockAPI/Bouncer.cs:901
 #, csharp-format
 msgid "Tile kill threshold exceeded {0}."
-msgstr ""
+msgstr "破坏图格速度超出最大值{0}。"
 
 #: ../../TShockAPI/Bouncer.cs:919
 #, csharp-format
 msgid "Tile place threshold exceeded {0}."
-msgstr ""
+msgstr "放置图格速度超出最大值{0}。"
+
+#: ../../TShockAPI/Commands.cs:471
+msgid "Toggles build protection."
+msgstr "切换建造保护。"
+
+#: ../../TShockAPI/Commands.cs:484
+msgid "Toggles christmas mode (present spawning, santa, etc)."
+msgstr "切换圣诞模式（当前生成速度，圣诞老人，等）。"
+
+#: ../../TShockAPI/Commands.cs:545
+msgid "Toggles godmode on a player."
+msgstr "切换一个玩家的无敌模式。"
+
+#: ../../TShockAPI/Commands.cs:480
+msgid "Toggles halloween mode (goodie bags, pumpkins, etc)."
+msgstr "切换万圣节模式（口袋，南瓜，等）。"
+
+#: ../../TShockAPI/Commands.cs:496
+msgid "Toggles spawn protection."
+msgstr "启用或关闭出生点保护。"
+
+#: ../../TShockAPI/Commands.cs:492
+msgid "Toggles the world's hardmode status."
+msgstr "启用或关闭肉山后。"
+
+#: ../../TShockAPI/Commands.cs:591
+msgid "Toggles to either ignore or recieve whispers from other players."
+msgstr "开关是否接收他人的私聊。"
+
+#: ../../TShockAPI/Commands.cs:461
+msgid "Toggles whether other people can teleport you."
+msgstr "是否允许他人传送至您。"
+
+#: ../../TShockAPI/Commands.cs:276
+msgid "Toggles whether you receive server logs."
+msgstr "开关是否接收服务器日志。"
 
 #: ../../TShockAPI/Commands.cs:772
 msgid "Too many invalid login attempts."
 msgstr "登陆失败次数过多!"
+
+#: ../../TShockAPI/Commands.cs:1188
+#, csharp-format
+msgid "Total processor time: {0}"
+msgstr "处理总时间：{0}"
+
+#: ../../TShockAPI/Commands.cs:1017
+#, csharp-format
+msgid "Type {0}login \"{1}\" {2} to sign in to your account."
+msgstr "输入 {0}login \"{1}\" {2} 来登录您的账号。"
+
+#: ../../TShockAPI/Commands.cs:1019
+#, csharp-format
+msgid "Type {0}login {1} to sign in to your account."
+msgstr "输入 {0}login {1} 来登录您的账号。"
+
+#: ../../TShockAPI/Commands.cs:1014
+#, csharp-format
+msgid "Type {0}login to sign in to your account using your UUID."
+msgstr "输入 {0}login 来通过您的UUID登录您的账号。"
 
 #: ../../TShockAPI/DB/UserManager.cs:450
 #, csharp-format
@@ -1698,16 +2379,44 @@ msgstr "无法验证用户 {0} （{1}） 的密码 hash 值"
 
 #: ../../TShockAPI/Bouncer.cs:246
 msgid "Unrecognized player direction"
-msgstr ""
+msgstr "无法识别玩家方位。"
 
 #: ../../TShockAPI/DB/UserManager.cs:197
 msgid "UpdateLogin SQL returned an error"
-msgstr ""
+msgstr "更新登录数据库时返回一个错误。"
+
+#: ../../TShockAPI/Commands.cs:316
+msgid "Upload the account information when you joined the server as your Server Side Character data."
+msgstr "当您加入服务器时上传您的账户信息作为服务器端玩家数据。"
+
+#: ../../TShockAPI/Commands.cs:227
+msgid "Used to authenticate as superadmin when first setting up TShock."
+msgstr "首次设置 TShock时用作超级管理员身份验证。"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1335
 #, csharp-format
 msgid "User {0} '{1}' doesn't exist"
 msgstr "用户 {0} “{1}”不存在"
+
+#: ../../TShockAPI/Commands.cs:1078
+#, csharp-format
+msgid "User {0} already exists!"
+msgstr "用户{0}已存在！"
+
+#: ../../TShockAPI/Commands.cs:1082
+#, csharp-format
+msgid "User {0} could not be added, check console for details."
+msgstr "无法添加用户{0}，请查看控制台获取更多信息。"
+
+#: ../../TShockAPI/Commands.cs:1162
+#, csharp-format
+msgid "User {0} could not be added. Check console for details."
+msgstr "无法添加用户{0}。请查看控制台获取更多信息。"
+
+#: ../../TShockAPI/Commands.cs:1158
+#, csharp-format
+msgid "User {0} does not exist!"
+msgstr "用户{0}不存在！"
 
 #: ../../TShockAPI/DB/UserManager.cs:612
 #, csharp-format
@@ -1718,6 +2427,10 @@ msgstr "用户 {0} 已存在"
 #, csharp-format
 msgid "User account {0} does not exist"
 msgstr "用户 {0} 不存在"
+
+#: ../../TShockAPI/Commands.cs:1168
+msgid "User management command help:"
+msgstr "用户管理指令帮助："
 
 #: ../../TShockAPI/Rest/SecureRest.cs:138
 #: ../../TShockAPI/Rest/SecureRest.cs:144
@@ -1741,6 +2454,10 @@ msgstr "没有权限使用被禁止的岩浆桶"
 msgid "Using banned water bucket without permissions"
 msgstr "没有权限使用被禁止的水桶"
 
+#: ../../TShockAPI/Commands.cs:888
+msgid "UUID does not match this character!"
+msgstr "UUID与该角色不匹配！"
+
 #: ../../TShockAPI/BackupManager.cs:80
 #, csharp-format
 msgid "World backed up ({0})."
@@ -1749,6 +2466,14 @@ msgstr "世界已备份({0})。"
 #: ../../TShockAPI/BackupManager.cs:78
 msgid "World backed up."
 msgstr "世界已备份。"
+
+#: ../../TShockAPI/Commands.cs:778
+msgid "You are already logged in, and cannot login again."
+msgstr "你已经登录了，不能再次登录。"
+
+#: ../../TShockAPI/Commands.cs:909
+msgid "You are not logged-in. Therefore, you cannot logout."
+msgstr "你还没有登录所以不能登出。"
 
 #: ../../TShockAPI/Commands.cs:691
 #, csharp-format
@@ -1790,16 +2515,16 @@ msgstr "你没有权限冻结服务器的风力强度。"
 
 #: ../../TShockAPI/Handlers/RequestTileEntityInteractionHandler.cs:22
 msgid "You do not have permission to modify a Hat Rack in a protected area!"
-msgstr ""
+msgstr "您没有权限修改受保护区域内的帽架。"
 
 #: ../../TShockAPI/Handlers/DisplayDollItemSyncHandler.cs:21
 #: ../../TShockAPI/Handlers/RequestTileEntityInteractionHandler.cs:28
 msgid "You do not have permission to modify a Mannequin in a protected area!"
-msgstr ""
+msgstr "您没有权限修改受保护区域内的人体模型。"
 
 #: ../../TShockAPI/Handlers/RequestTileEntityInteractionHandler.cs:34
 msgid "You do not have permission to modify a TileEntity in a protected area!"
-msgstr ""
+msgstr "您没有权限修改受保护区域内的方块实体。"
 
 #: ../../TShockAPI/Handlers/NetModules/CreativePowerHandler.cs:114
 msgid "You do not have permission to modify the NPC spawn rate of the server."
@@ -1811,7 +2536,7 @@ msgstr "你没有权限更改服务器的雨量。"
 
 #: ../../TShockAPI/Handlers/NetModules/CreativePowerHandler.cs:111
 msgid "You do not have permission to modify the tile placement range of your character."
-msgstr ""
+msgstr "您没有权限修改您角色的放置范围。"
 
 #: ../../TShockAPI/Handlers/NetModules/CreativePowerHandler.cs:104
 msgid "You do not have permission to modify the time of the server."
@@ -1847,7 +2572,7 @@ msgstr "你没有权限放置此图格。"
 
 #: ../../TShockAPI/Handlers/EmojiHandler.cs:19
 msgid "You do not have permission to send emotes!"
-msgstr ""
+msgstr "您没有权限发送表情。"
 
 #: ../../TShockAPI/Handlers/NetModules/PylonHandler.cs:54
 msgid "You do not have permission to teleport using pylons."
@@ -1857,6 +2582,10 @@ msgstr "你没有权限使用晶塔进行传送。"
 msgid "You do not have permission to toggle godmode."
 msgstr "你没有权限切换“上帝模式”。"
 
+#: ../../TShockAPI/Commands.cs:949
+msgid "You failed to change your password!"
+msgstr "你更改自己的密码失败！"
+
 #: ../../TShockAPI/Rest/RestManager.cs:1387
 msgid "You have been remotely muted"
 msgstr "你已被禁言"
@@ -1865,9 +2594,17 @@ msgstr "你已被禁言"
 msgid "You have been remotely unmmuted"
 msgstr "你的禁言已被解除"
 
+#: ../../TShockAPI/Commands.cs:920
+msgid "You have been successfully logged out of your account."
+msgstr "您已成功登出。"
+
+#: ../../TShockAPI/Commands.cs:938
+msgid "You have successfully changed your password."
+msgstr "您已成功改变您的密码。"
+
 #: ../../TShockAPI/DB/RegionManager.cs:788
 msgid "You must be logged in to take advantage of protected regions."
-msgstr ""
+msgstr "您必须登录才能修改受保护区域。"
 
 #: ../../TShockAPI/Commands.cs:696
 msgid "You must use this command in-game."
@@ -1875,12 +2612,12 @@ msgstr "你必须在游戏内使用该命令。"
 
 #: ../../TShockAPI/Bouncer.cs:533
 msgid "You need to rejoin to ensure your trash can is cleared!"
-msgstr ""
+msgstr "请重新加入以确保您的垃圾箱已清空。"
 
 #: ../../TShockAPI/DB/GroupManager.cs:235
 #: ../../TShockAPI/DB/GroupManager.cs:237
 msgid "Your account's group could not be loaded. Please contact server administrators about this."
-msgstr ""
+msgstr "您的用户组无法被加载，请联系服务器管理员处理此错误。"
 
 #: ../../TShockAPI/Bouncer.cs:436
 msgid "Your client sent a blank character name."
@@ -1889,4 +2626,9 @@ msgstr "您的客户端发送了一个空白的角色名称。"
 #: ../../TShockAPI/DB/RegionManager.cs:107
 msgid "Your database contains invalid UserIDs (they should be integers)."
 msgstr "你的数据库中包含了无效的用户 ID （它们应该是整数）"
+
+#: ../../TShockAPI/Commands.cs:1011
+#, csharp-format
+msgid "Your password is {0}."
+msgstr "您的密码是{0}。"
 
