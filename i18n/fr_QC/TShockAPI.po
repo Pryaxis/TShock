@@ -2,123 +2,121 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-21 22:39:29+0000\n"
-"PO-Revision-Date: 2022-10-22 06:55\n"
+"PO-Revision-Date: 2022-10-21 22:43\n"
 "Last-Translator: \n"
-"Language-Team: Russian\n"
+"Language-Team: French, Quebec\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: GetText.NET Extractor\n"
-"Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Crowdin-Project: tshock\n"
 "X-Crowdin-Project-ID: 544368\n"
-"X-Crowdin-Language: ru\n"
+"X-Crowdin-Language: fr-QC\n"
 "X-Crowdin-File: /general-devel/i18n/template.pot\n"
 "X-Crowdin-File-ID: 6\n"
-"Language: ru_RU\n"
+"Language: fr_QC\n"
 
 #: ../../TShockAPI/DB/CharacterManager.cs:174
 #, csharp-format
 msgctxt "{0} is a player name"
 msgid "Skipping SSC save (due to tshock.ignore.ssc) for {0}"
-msgstr "Пропускается сохранение SSC (из-за tshock.ignore.ssc) для {0}"
+msgstr ""
 
 #: ../../TShockAPI/DB/CharacterManager.cs:244
 msgctxt "{0} is a player name"
 msgid "Skipping SSC save (due to tshock.ignore.ssc) for {player.Account.Name}"
-msgstr "Пропускается сохранение SSC (из-за tshock.ignore.ssc) для {player.Account.Name}"
+msgstr ""
 
 #: ../../TShockAPI/DB/BanManager.cs:213
 #, csharp-format
 msgctxt "{0} is ban number, {1} is ban reason, {2} is a timestamp"
 msgid "#{0} - You are banned: {1} ({2} remaining)"
-msgstr "#{0} - Вы забанены: {1} (осталось {2})"
+msgstr ""
 
 #: ../../TShockAPI/DB/BanManager.cs:208
 #, csharp-format
 msgctxt "{0} is ban number, {1} is ban reason"
 msgid "#{0} - You are banned: {1}"
-msgstr "#{0} - Вы забанены: {1}"
+msgstr ""
 
 #: ../../TShockAPI/Rest/SecureRest.cs:213
 #, csharp-format
 msgid "\"{0}\" requested REST endpoint: {1}"
-msgstr "\"{0}\" запросил эндпоинт REST: {1}"
+msgstr ""
 
 #: ../../TShockAPI/Commands.cs:701
 #, csharp-format
 msgid "{0} executed: {1}{2}."
-msgstr "{0} выполнил: {1}{2}."
+msgstr ""
 
 #: ../../TShockAPI/Rest/RestManager.cs:1068
 #, csharp-format
 msgid "{0} just killed you!"
-msgstr "{0} убил вас!"
+msgstr ""
 
 #: ../../TShockAPI/Rest/RestManager.cs:847
 #, csharp-format
 msgid "{0} NPC has been killed."
 msgid_plural "{killcount} NPCs have been killed."
-msgstr[0] "НИП {0} был убит."
+msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
-msgstr[3] "{killcount} НИПов были убиты."
 
 #: ../../TShockAPI/Commands.cs:687
 #, csharp-format
 msgid "{0} tried to execute {1}{2}."
-msgstr "{0} попытался выполнить {1}{2}."
+msgstr ""
 
 #: ../../TShockAPI/DB/RegionManager.cs:108
 msgid "A lot of things will fail because of this. You must manually delete and re-create the allowed field."
-msgstr "Из-за этого многие вещи не сработают. Вы должны вручную удалить и пересоздать разрешенное поле."
+msgstr ""
 
 #: ../../TShockAPI/Rest/SecureRest.cs:120
 #, csharp-format
 msgid "A REST login from {0} was blocked as it currently has {1} rate-limit tokens and is at the RESTMaximumRequestsPerInterval threshold."
-msgstr "Вход в аккаунт через REST от {0} был заблокирован, поскольку в настоящее время он имеет {1} токенов ограничения запросов и находится на пороге RESTMaximumRequestsPerval."
+msgstr ""
 
 #: ../../TShockAPI/Bouncer.cs:529
 #, csharp-format
 msgid "Account needed! Please {0}register or {0}login to play!"
-msgstr "Необходима учетная запись! Чтобы играть, введите, пожалуйста, {0}register или {0}login!"
+msgstr ""
 
 #: ../../TShockAPI/Bouncer.cs:2006
 #, csharp-format
 msgid "Added buff to {0} NPC abnormally."
-msgstr "Добавлен аномальный бафф НИПу {0}."
+msgstr ""
 
 #: ../../TShockAPI/DB/UserManager.cs:81
 #, csharp-format
 msgid "AddUser SQL returned an error ({0})"
-msgstr "AddUser SQL-запрос вернул ошибку ({0})"
+msgstr ""
 
 #: ../../TShockAPI/DB/GroupManager.cs:474
 #, csharp-format
 msgid "An exception has occurred during database rollback: {0}"
-msgstr "Произошла ошибка во время отката базы данных: {0}"
+msgstr ""
 
 #: ../../TShockAPI/DB/GroupManager.cs:467
 #, csharp-format
 msgid "An exception has occurred during database transaction: {0}"
-msgstr "Во время транзакции с базой данных произошла ошибка: {0}"
+msgstr ""
 
 #: ../../TShockAPI/DB/BanManager.cs:644
 msgid "An identifier for a character name."
-msgstr "Идентификатор для имени персонажа."
+msgstr ""
 
 #: ../../TShockAPI/DB/BanManager.cs:648
 msgid "An identifier for a TShock User Account name."
-msgstr "Идентификатор учетной записи пользователя TShock."
+msgstr ""
 
 #: ../../TShockAPI/DB/BanManager.cs:640
 msgid "An identifier for a UUID."
-msgstr "Идентификатор для UUID."
+msgstr ""
 
 #: ../../TShockAPI/DB/BanManager.cs:636
 #, csharp-format
 msgid "An identifier for an IP Address in octet format. e.g., '{0}'.127.0.0.1"
-msgstr "Идентификатор для IP-адреса в формате octet, например, '{0}'.127.0.0.1"
+msgstr ""
 
 #: ../../TShockAPI/Rest/Rest.cs:452
 #, csharp-format
@@ -127,7 +125,7 @@ msgstr ""
 
 #: ../../TShockAPI/Rest/RestManager.cs:811
 msgid "AutoSave has been disabled"
-msgstr "Автосохранение отключено"
+msgstr ""
 
 #: ../../TShockAPI/Rest/RestManager.cs:807
 msgid "AutoSave has been enabled"
@@ -135,7 +133,7 @@ msgstr ""
 
 #: ../../TShockAPI/Rest/RestManager.cs:800
 msgid "Autosave is currently disabled"
-msgstr "Автосохранение отключено"
+msgstr ""
 
 #: ../../TShockAPI/Rest/RestManager.cs:796
 msgid "Autosave is currently enabled"
@@ -143,59 +141,59 @@ msgstr ""
 
 #: ../../TShockAPI/BackupManager.cs:75
 msgid "Backing up world..."
-msgstr "Резервное копирование мира..."
+msgstr ""
 
 #: ../../TShockAPI/BackupManager.cs:87
 #: ../../TShockAPI/BackupManager.cs:89
 msgid "Backup failed!"
-msgstr "Не удалось выполнить резервное копирование!"
+msgstr ""
 
 #: ../../TShockAPI/BackupManager.cs:51
 msgid "Backup Thread"
-msgstr "Резервное копирование потока"
+msgstr ""
 
 #: ../../TShockAPI/Commands.cs:801
 msgid "Bad login attempt."
-msgstr "Неудачная попытка входа."
+msgstr ""
 
 #: ../../TShockAPI/Rest/RestManager.cs:668
 #, csharp-format
 msgid "Ban added. Ticket number: {0}"
-msgstr "Бан добавлен. Номер тикета: {0}"
+msgstr ""
 
 #: ../../TShockAPI/Rest/RestManager.cs:695
 msgid "Ban removed."
-msgstr "Бан снят."
+msgstr ""
 
 #: ../../TShockAPI/Rest/RestManager.cs:889
 #, csharp-format
 msgid "Blood Moon has been set to {0}"
-msgstr "Кровавая Луна была установлена на {0}"
+msgstr ""
 
 #: ../../TShockAPI/Rest/RestManager.cs:904
 #, csharp-format
 msgid "Bloodmoon state: {0}EnabledDisabled"
-msgstr "Состояние Кровавой Луны: {0}Включено Отключено"
+msgstr ""
 
 #: ../../TShockAPI/Bouncer.cs:1447
 #, csharp-format
 msgid "Bouncer / OnChestItemChange rejected from chest mismatch from {0}"
-msgstr "Bouncer / OnChestItemChange отказано из-за несоответствия сундука в {0}"
+msgstr ""
 
 #: ../../TShockAPI/Bouncer.cs:1454
 #, csharp-format
 msgid "Bouncer / OnChestItemChange rejected from disable from {0}"
-msgstr "Bouncer / OnChestItemChange отказано из-за отключения в {0}"
+msgstr ""
 
 #: ../../TShockAPI/Bouncer.cs:1469
 #, csharp-format
 msgid "Bouncer / OnChestItemChange rejected from range check from {0}"
-msgstr "Bouncer / OnChestItemChange отказано из-за досягаемости в {0}"
+msgstr ""
 
 #: ../../TShockAPI/Bouncer.cs:1462
 #, csharp-format
 msgid "Bouncer / OnChestItemChange rejected from region protection? from {0}"
-msgstr "Bouncer / OnChestItemChange отказано из-за защиты региона в {0}"
+msgstr ""
 
 #: ../../TShockAPI/Bouncer.cs:1482
 #, csharp-format
@@ -1352,7 +1350,7 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:680
 #, csharp-format
 msgid "Invalid command entered. Type {0}help for a list of valid commands."
-msgstr "Введена неправильная команда. Введите {0}help для списка существующих команд."
+msgstr ""
 
 #: ../../TShockAPI/DB/GroupManager.cs:309
 #, csharp-format
@@ -1507,8 +1505,6 @@ msgid "Player {0} matches {1} player"
 msgid_plural "Player {0} matches {1} players"
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
 
 #: ../../TShockAPI/Bouncer.cs:1123
 #, csharp-format
@@ -1692,7 +1688,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:772
 msgid "Too many invalid login attempts."
-msgstr "Слишком много неудачных попыток входа в аккаунт."
+msgstr ""
 
 #: ../../TShockAPI/DB/UserManager.cs:450
 #, csharp-format
@@ -1756,7 +1752,7 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:691
 #, csharp-format
 msgid "You can use '{0}sudo {0}{1}' to override this check."
-msgstr "Вы можете использовать '{0}sudo {0}{1}' для принудительного выполнения."
+msgstr ""
 
 #: ../../TShockAPI/DB/GroupManager.cs:501
 #: ../../TShockAPI/DB/GroupManager.cs:502
@@ -1765,7 +1761,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:688
 msgid "You do not have access to this command."
-msgstr "У вас нет доступа к этой команде."
+msgstr ""
 
 #: ../../TShockAPI/Handlers/NetModules/CreativeUnlocksHandler.cs:74
 msgid "You do not have permission to contribute research."
@@ -1874,7 +1870,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:696
 msgid "You must use this command in-game."
-msgstr "Эту команду можно выполнять только в игре."
+msgstr ""
 
 #: ../../TShockAPI/Bouncer.cs:533
 msgid "You need to rejoin to ensure your trash can is cleared!"
