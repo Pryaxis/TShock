@@ -20,6 +20,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<None Include="..\prebuilts\GeoIP.dat">
+		  <Link>GeoIP.dat</Link>
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
 		<PackageReference Include="MySql.Data" Version="8.0.31" />
 		<PackageReference Include="Microsoft.Data.Sqlite" Version="6.0.10" />
@@ -84,7 +91,7 @@
 	</Target>
 	<Target Name="MoveBin" AfterTargets="Publish">
 		<ItemGroup>
-			<MoveBinaries Include="$(PublishDir)*" Exclude="$(PublishDir)\TShock.Server*" />
+			<MoveBinaries Include="$(PublishDir)*" Exclude="$(PublishDir)\TShock.Server*;$(PublishDir)\GeoIP.dat" />
 		</ItemGroup>
 		<Move SourceFiles="@(MoveBinaries)" DestinationFolder="$(PublishDir)bin" ContinueOnError="true" />
 	</Target>
