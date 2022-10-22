@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-21 22:39:29+0000\n"
-"PO-Revision-Date: 2022-10-22 01:33\n"
+"PO-Revision-Date: 2022-10-22 02:33\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -81,17 +81,17 @@ msgstr "Вход в аккаунт через REST от {0} был заблок�
 #: ../../TShockAPI/Bouncer.cs:529
 #, csharp-format
 msgid "Account needed! Please {0}register or {0}login to play!"
-msgstr ""
+msgstr "Необходима учетная запись! Чтобы играть, введите, пожалуйста, {0}register или {0}login!"
 
 #: ../../TShockAPI/Bouncer.cs:2006
 #, csharp-format
 msgid "Added buff to {0} NPC abnormally."
-msgstr ""
+msgstr "Добавлен аномальный бафф НИПу {0}."
 
 #: ../../TShockAPI/DB/UserManager.cs:81
 #, csharp-format
 msgid "AddUser SQL returned an error ({0})"
-msgstr ""
+msgstr "AddUser SQL-запрос вернул ошибку ({0})"
 
 #: ../../TShockAPI/DB/GroupManager.cs:474
 #, csharp-format
