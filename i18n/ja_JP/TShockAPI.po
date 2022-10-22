@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-22 08:09:52+0000\n"
-"PO-Revision-Date: 2022-10-22 08:11\n"
+"PO-Revision-Date: 2022-10-22 17:37\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
@@ -21,18 +21,18 @@ msgstr ""
 #, csharp-format
 msgctxt "{0} is a player name"
 msgid "Skipping SSC save (due to tshock.ignore.ssc) for {0}"
-msgstr ""
+msgstr "{0}のSSCセーブをスキップ中 (tshock.ignore.ssc による)"
 
 #: ../../TShockAPI/DB/CharacterManager.cs:244
 msgctxt "{0} is a player name"
 msgid "Skipping SSC save (due to tshock.ignore.ssc) for {player.Account.Name}"
-msgstr ""
+msgstr "{player.Account.Name}のSSCセーブをスキップ中 (tshock.ignore.ssc による)"
 
 #: ../../TShockAPI/DB/BanManager.cs:213
 #, csharp-format
 msgctxt "{0} is ban number, {1} is ban reason, {2} is a timestamp"
 msgid "#{0} - You are banned: {1} ({2} remaining)"
-msgstr ""
+msgstr "#{0} - あなたがBANされた：{1} （残り時間：{2}）"
 
 #: ../../TShockAPI/DB/BanManager.cs:208
 #, csharp-format
@@ -53,12 +53,12 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:940
 #, csharp-format
 msgid "{0} ({1}) changed the password for account {2}."
-msgstr ""
+msgstr "{0} ({1}) はアカウント {2} のパスワードを変更しました。"
 
 #: ../../TShockAPI/Commands.cs:950
 #, csharp-format
 msgid "{0} ({1}) failed to change the password for account {2}."
-msgstr ""
+msgstr "{0} ({1}) はアカウント {2} のパスワード変更に失敗しました。"
 
 #: ../../TShockAPI/Commands.cs:770
 #, csharp-format
@@ -113,7 +113,7 @@ msgstr ""
 #, csharp-format
 msgid "{0} NPC has been killed."
 msgid_plural "{killcount} NPCs have been killed."
-msgstr[0] ""
+msgstr[0] "{0} NPCが殺される。"
 
 #: ../../TShockAPI/Commands.cs:1022
 #, csharp-format
@@ -265,11 +265,11 @@ msgstr ""
 
 #: ../../TShockAPI/Rest/RestManager.cs:811
 msgid "AutoSave has been disabled"
-msgstr ""
+msgstr "自動保存は停止されています"
 
 #: ../../TShockAPI/Rest/RestManager.cs:807
 msgid "AutoSave has been enabled"
-msgstr ""
+msgstr "自動保存はすでにオンになっています"
 
 #: ../../TShockAPI/Rest/RestManager.cs:800
 msgid "Autosave is currently disabled"
@@ -281,16 +281,16 @@ msgstr ""
 
 #: ../../TShockAPI/BackupManager.cs:75
 msgid "Backing up world..."
-msgstr ""
+msgstr "世界をバックアップしている……"
 
 #: ../../TShockAPI/BackupManager.cs:87
 #: ../../TShockAPI/BackupManager.cs:89
 msgid "Backup failed!"
-msgstr ""
+msgstr "バックアップに失敗！"
 
 #: ../../TShockAPI/BackupManager.cs:51
 msgid "Backup Thread"
-msgstr ""
+msgstr "バックアップスレッド"
 
 #: ../../TShockAPI/Commands.cs:801
 msgid "Bad login attempt."
@@ -303,17 +303,17 @@ msgstr ""
 
 #: ../../TShockAPI/Rest/RestManager.cs:695
 msgid "Ban removed."
-msgstr ""
+msgstr "禁止を解く"
 
 #: ../../TShockAPI/Rest/RestManager.cs:889
 #, csharp-format
 msgid "Blood Moon has been set to {0}"
-msgstr ""
+msgstr "「Blood Moon」 が {0} に設定されました。"
 
 #: ../../TShockAPI/Rest/RestManager.cs:904
 #, csharp-format
 msgid "Bloodmoon state: {0}EnabledDisabled"
-msgstr ""
+msgstr "「Blood Moon」状態です： {0}EnabledDisabled"
 
 #: ../../TShockAPI/Bouncer.cs:1447
 #, csharp-format
@@ -1257,40 +1257,40 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:368
 msgid "Changes the server password."
-msgstr ""
+msgstr "サーバーのパスワードを変更する。"
 
 #: ../../TShockAPI/Commands.cs:522
 msgid "Changes the wind speed."
-msgstr ""
+msgstr "風速を変更する。"
 
 #: ../../TShockAPI/Commands.cs:467
 msgid "Changes the world mode."
-msgstr ""
+msgstr "世界のモードを変更する。"
 
 #: ../../TShockAPI/Commands.cs:252
 msgid "Changes your account's password."
-msgstr ""
+msgstr "アカウントのパスワードを変更する。"
 
 #: ../../TShockAPI/Commands.cs:352
 msgid "Checks for TShock updates."
-msgstr ""
+msgstr "TShockのアップデートをチェックします。"
 
 #: ../../TShockAPI/Commands.cs:537
 msgid "Clears item drops or projectiles."
-msgstr ""
+msgstr "ドロップや投射物をクリアします。"
 
 #: ../../TShockAPI/Commands.cs:162
 msgid "Command failed, check logs for more details."
-msgstr ""
+msgstr "コマンドが失敗しました。詳細はログで確認してください。"
 
 #: ../../TShockAPI/DB/BanManager.cs:82
 #: ../../TShockAPI/DB/ResearchDatastore.cs:54
 msgid "Could not find a database library (probably Sqlite3.dll)"
-msgstr ""
+msgstr "データベースのライブラリが見つかりませんでした (おそらくSqlite3.dll)"
 
 #: ../../TShockAPI/Commands.cs:595
 msgid "Creates a reference tables for Terraria data types and the TShock permission system in the server folder."
-msgstr ""
+msgstr "ゲームデータと権限システムの参考表をサーバーフォルダに作成します。"
 
 #: ../../TShockAPI/Handlers/NetModules/CreativePowerHandler.cs:53
 msgid "CreativePowerHandler received permission check request for unknown creative power"
