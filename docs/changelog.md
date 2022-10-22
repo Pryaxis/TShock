@@ -62,6 +62,7 @@ Use past tense when adding new entries; sign your name off when you add or chang
 * Added `-additionalplugins` command line argument to load additional plugins. (@pontaoski)
 * Added localization support for console spam reduction. (@KawaiiYuyu)
 * Added an internationalization system. The base for the i18n system was built by Janet Blackquill ([@pontaoski](https://github.com/pontaoski)). A small donation in her honor was made to the [KDE project](https://kde.org/) as a thankyou for this work. This also includes the `TSHOCK_LANGUAGE` environment variable. Setting `TSHOCK_LANGUAGE=tok` will enable a small number of [Toki Pona](https://tokipona.org/) translations as a proof-of-concept. (@pontaoski)
+* Added support for Terraria 1.4.4.6, through OTAPI 3.1.5. (@SignatureBeef)
 
 ## TShock 4.5.18
 * Fixed `TSPlayer.GiveItem` not working if the player is in lava. (@PotatoCider)
