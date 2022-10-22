@@ -779,6 +779,33 @@ namespace TShockAPI
 				return;
 			}
 
+			// We need to emulate the checks done in Player.TrySwitchingLoadout, because otherwise the server is not allowed to sync the
+			// loadout index to the player, causing catastrophic desync.
+			// The player must not be dead, using an item, or CC'd to switch loadouts.
+			// FIXME: There is always the chance that in-between the time we check these requirements on the server, and the loadout sync
+			//		  packet reaches the client, that the client state has changed, causing the loadout sync to be rejected, even though
+			//		  we expected it to succeed.
+
+			if (args.TPlayer.dead)
+			{
+				args.Player.SendErrorMessage(GetString("You cannot login whilst dead."));
+				return;
+			}
+
+			// FIXME: This check is not correct -- even though we reject PlayerAnimation whilst disabled, we don't re-sync it to the client,
+			//		  meaning these will still be set on the client, and they WILL reject the loadout sync.
+			if (args.TPlayer.itemTime > 0 || args.TPlayer.itemAnimation > 0)
+			{
+				args.Player.SendErrorMessage(GetString("You cannot login whilst using an item."));
+				return;
+			}
+
+			if (args.TPlayer.CCed)
+			{
+				args.Player.SendErrorMessage(GetString("You cannot login whilst crowd controlled."));
+				return;
+			}
+
 			UserAccount account = TShock.UserAccounts.GetUserAccountByName(args.Player.Name);
 			string password = "";
 			bool usingUUID = false;

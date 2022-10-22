@@ -82,9 +82,21 @@ namespace TShockAPI
 		public static readonly int TrashSlots = 1;
 
 		/// <summary>
+		/// The number of armor slots in a loadout.
+		/// </summary>
+		public static readonly int LoadoutArmorSlots = ArmorSlots;
+
+		/// <summary>
+		/// The number of dye slots in a loadout.
+		/// </summary>
+		public static readonly int LoadoutDyeSlots = DyeSlots;
+
+		/// <summary>
 		/// 180 - The inventory size (inventory, held item, armour, dies, coins, ammo, piggy, safe, and trash)
 		/// </summary>
-		public static readonly int MaxInventory = InventorySlots + ArmorSlots + DyeSlots + MiscEquipSlots + MiscDyeSlots + PiggySlots + SafeSlots + ForgeSlots + VoidSlots + 1;
+		public static readonly int MaxInventory = InventorySlots + ArmorSlots + DyeSlots + MiscEquipSlots + MiscDyeSlots + PiggySlots +
+		                                          SafeSlots + ForgeSlots + VoidSlots + TrashSlots + (LoadoutArmorSlots * 3) +
+		                                          (LoadoutDyeSlots * 3);
 
 		public static readonly Tuple<int, int> InventoryIndex = new Tuple<int, int>(0, InventorySlots);
 		public static readonly Tuple<int, int> ArmorIndex = new Tuple<int, int>(InventoryIndex.Item2, InventoryIndex.Item2 + ArmorSlots);
@@ -96,6 +108,15 @@ namespace TShockAPI
 		public static readonly Tuple<int, int> TrashIndex = new Tuple<int, int>(SafeIndex.Item2, SafeIndex.Item2 + TrashSlots);
 		public static readonly Tuple<int, int> ForgeIndex = new Tuple<int, int>(TrashIndex.Item2, TrashIndex.Item2 + ForgeSlots);
 		public static readonly Tuple<int, int> VoidIndex = new Tuple<int, int>(ForgeIndex.Item2, ForgeIndex.Item2 + VoidSlots);
+
+		public static readonly Tuple<int, int> Loadout1Armor = new Tuple<int, int>(VoidIndex.Item2, VoidIndex.Item2 + LoadoutArmorSlots);
+		public static readonly Tuple<int, int> Loadout1Dye = new Tuple<int, int>(Loadout1Armor.Item2, Loadout1Armor.Item2 + LoadoutDyeSlots);
+
+		public static readonly Tuple<int, int> Loadout2Armor = new Tuple<int, int>(Loadout1Dye.Item2, Loadout1Dye.Item2 + LoadoutArmorSlots);
+		public static readonly Tuple<int, int> Loadout2Dye = new Tuple<int, int>(Loadout2Armor.Item2, Loadout2Armor.Item2 + LoadoutDyeSlots);
+
+		public static readonly Tuple<int, int> Loadout3Armor = new Tuple<int, int>(Loadout2Dye.Item2, Loadout2Dye.Item2 + LoadoutArmorSlots);
+		public static readonly Tuple<int, int> Loadout3Dye = new Tuple<int, int>(Loadout3Armor.Item2, Loadout3Armor.Item2 + LoadoutDyeSlots);
 
 		[JsonProperty("netID")]
 		private int _netId;

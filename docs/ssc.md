@@ -6,6 +6,12 @@ When enabled in TShock, SSC takes over control of inventory management for a pla
 
 For developers, TShock's SSC implementation should be considered the reference implementation. More things are possible with this system than what TShock does.
 
+## Limitations
+
+In TShock 5 (Terraria 1.4.4.x), loadouts have some caveats. **Data loss or corruption may occur if you aren't careful.** If a player is de-buffed, crowd-controlled, or dead, and the player's client will ignore the loadout synchronization packet. TShock's `Disable()` method, webbing, and other de-buffs may cause desyncs between the server and client. Further, if players use items or otherwise become debuffed, they may also desynchronize. Because of this, we strongly advise telling players to be careful and not use items during loadout changes, or they risk data loss or corruption.
+
+Admins that use `Dimensions` or other proxy tools that join multiple servers together may experience this if those proxies disable or de-buff players during the server switch window, before the player is logged in and synchronized.
+
 ## Setting up SSC
 
 To setup SSC, simply change `Enabled` to `true` in `sscconfig.json` in the `tshock` config folder.
@@ -90,7 +96,3 @@ If a TShock player has `tshock.ignore.ssc`, and `WarnPlayersAboutBypassPermissio
 Sometimes, you want to import player data from players that join your server. For example, if you trust your friends not to bring hacked items in, you can import their data into the system. This is done with the `/uploadssc` command.
 
 The `/overridessc` command can be used to upload SSC data from a given player. The difference between this command is that `/uploadssc` uploads their data from when they joined, whereas `/overridessc` will just save whatever their current state is to the database.
-
-## Limitations
-
-Currently, SSC does not support loadouts (1.4.4.x content).
