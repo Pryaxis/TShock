@@ -1,6 +1,6 @@
 ﻿/*
 TShock, a server mod for Terraria
-Copyright (C) 2011-2019 Pryaxis & TShock Contributors
+Copyright (C) 2011-2022 Pryaxis & TShock Contributors
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -411,7 +411,7 @@ namespace TShockAPI
 							check = true;
 							if (shouldWarnPlayer)
 							{
-								SendErrorMessage("Stack cheat detected. Remove item {0} ({1}) and then rejoin.", item.Name, inventory[i].stack);
+								SendErrorMessage(GetString("Stack cheat detected. Remove item {0} ({1}) and then rejoin.", item.Name, inventory[i].stack));
 							}
 						}
 					}
@@ -431,7 +431,7 @@ namespace TShockAPI
 							check = true;
 							if (shouldWarnPlayer)
 							{
-								SendErrorMessage("Stack cheat detected. Remove armor {0} ({1}) and then rejoin.", item.Name, armor[index].stack);
+								SendErrorMessage(GetString("Stack cheat detected. Remove armor {0} ({1}) and then rejoin.", item.Name, armor[index].stack));
 							}
 						}
 					}
@@ -451,7 +451,7 @@ namespace TShockAPI
 							check = true;
 							if (shouldWarnPlayer)
 							{
-								SendErrorMessage("Stack cheat detected. Remove dye {0} ({1}) and then rejoin.", item.Name, dye[index].stack);
+								SendErrorMessage(GetString("Stack cheat detected. Remove dye {0} ({1}) and then rejoin.", item.Name, dye[index].stack));
 							}
 						}
 					}
@@ -471,7 +471,7 @@ namespace TShockAPI
 							check = true;
 							if (shouldWarnPlayer)
 							{
-								SendErrorMessage("Stack cheat detected. Remove item {0} ({1}) and then rejoin.", item.Name, miscEquips[index].stack);
+								SendErrorMessage(GetString("Stack cheat detected. Remove item {0} ({1}) and then rejoin.", item.Name, miscEquips[index].stack));
 							}
 						}
 					}
@@ -491,7 +491,7 @@ namespace TShockAPI
 							check = true;
 							if (shouldWarnPlayer)
 							{
-								SendErrorMessage("Stack cheat detected. Remove item dye {0} ({1}) and then rejoin.", item.Name, miscDyes[index].stack);
+								SendErrorMessage(GetString("Stack cheat detected. Remove item dye {0} ({1}) and then rejoin.", item.Name, miscDyes[index].stack));
 							}
 						}
 					}
@@ -512,7 +512,7 @@ namespace TShockAPI
 							check = true;
 							if (shouldWarnPlayer)
 							{
-								SendErrorMessage("Stack cheat detected. Remove piggy-bank item {0} ({1}) and then rejoin.", item.Name, piggy[index].stack);
+								SendErrorMessage(GetString("Stack cheat detected. Remove piggy-bank item {0} ({1}) and then rejoin.", item.Name, piggy[index].stack));
 							}
 						}
 					}
@@ -533,7 +533,7 @@ namespace TShockAPI
 							check = true;
 							if (shouldWarnPlayer)
 							{
-								SendErrorMessage("Stack cheat detected. Remove safe item {0} ({1}) and then rejoin.", item.Name, safe[index].stack);
+								SendErrorMessage(GetString("Stack cheat detected. Remove safe item {0} ({1}) and then rejoin.", item.Name, safe[index].stack));
 							}
 						}
 					}
@@ -553,7 +553,7 @@ namespace TShockAPI
 							check = true;
 							if (shouldWarnPlayer)
 							{
-								SendErrorMessage("Stack cheat detected. Remove trash item {0} ({1}) and then rejoin.", item.Name, trash.stack);
+								SendErrorMessage(GetString("Stack cheat detected. Remove trash item {0} ({1}) and then rejoin.", item.Name, trash.stack));
 							}
 						}
 					}
@@ -574,7 +574,7 @@ namespace TShockAPI
 							check = true;
 							if (shouldWarnPlayer)
 							{
-								SendErrorMessage("Stack cheat detected. Remove Defender's Forge item {0} ({1}) and then rejoin.", item.Name, forge[index].stack);
+								SendErrorMessage(GetString("Stack cheat detected. Remove Defender's Forge item {0} ({1}) and then rejoin.", item.Name, forge[index].stack));
 							}
 						}
 					}
@@ -595,7 +595,7 @@ namespace TShockAPI
 							check = true;
 							if (shouldWarnPlayer)
 							{
-								SendErrorMessage("Stack cheat detected. Remove Void Vault item {0} ({1}) and then rejoin.", item.Name, voidVault[index].stack);
+								SendErrorMessage(GetString("Stack cheat detected. Remove Void Vault item {0} ({1}) and then rejoin.", item.Name, voidVault[index].stack));
 							}
 						}
 					}
@@ -755,7 +755,7 @@ namespace TShockAPI
 			int rgY = Math.Abs(TileY - y);
 			if (TShock.Config.Settings.RangeChecks && ((rgX > range) || (rgY > range)))
 			{
-				TShock.Log.ConsoleDebug("Rangecheck failed for {0} ({1}, {2}) (rg: {3}/{5}, {4}/{5})", Name, x, y, rgX, rgY, range);
+				TShock.Log.ConsoleDebug(GetString("Rangecheck failed for {0} ({1}, {2}) (rg: {3}/{5}, {4}/{5})", Name, x, y, rgX, rgY, range));
 				return false;
 			}
 			return true;
@@ -822,13 +822,13 @@ namespace TShockAPI
 				switch (failure)
 				{
 					case BuildPermissionFailPoint.GeneralBuild:
-						SendErrorMessage("You do not have permission to build on this server.");
+						SendErrorMessage(GetString("You do not have permission to build on this server."));
 						break;
 					case BuildPermissionFailPoint.SpawnProtect:
-						SendErrorMessage("You do not have permission to build in the spawn point.");
+						SendErrorMessage(GetString("You do not have permission to build in the spawn point."));
 						break;
 					case BuildPermissionFailPoint.Regions:
-						SendErrorMessage("You do not have permission to build in this region.");
+						SendErrorMessage(GetString("You do not have permission to build in this region."));
 						break;
 				}
 			}
@@ -1066,7 +1066,7 @@ namespace TShockAPI
 			{
 				if (HasPermission(Permissions.bypassssc))
 				{
-					TShock.Log.ConsoleInfo("Skipping SSC save (due to tshock.ignore.ssc) for " + Account.Name);
+					TShock.Log.ConsoleInfo(GetString($"Skipping SSC save (due to tshock.ignore.ssc) for {Account.Name}"));
 					return true;
 				}
 				PlayerData.CopyCharacter(this);
@@ -1322,7 +1322,7 @@ namespace TShockAPI
 		/// <param name="args"></param>
 		public void TempGroupTimerElapsed(object sender, ElapsedEventArgs args)
 		{
-			SendWarningMessage("Your temporary group access has expired.");
+			SendWarningMessage(GetString("Your temporary group access has expired."));
 
 			tempGroup = null;
 			if (sender != null)
@@ -1771,11 +1771,11 @@ namespace TShockAPI
 					{
 						if (flags.HasFlag(DisableFlags.WriteToLog))
 						{
-							TShock.Log.ConsoleInfo("Player {0} has been disabled for {1}.", Name, reason);
+							TShock.Log.ConsoleInfo(GetString("Player {0} has been disabled for {1}.", Name, reason));
 						}
 						else
 						{
-							Server.SendInfoMessage("Player {0} has been disabled for {1}.", Name, reason);
+							Server.SendInfoMessage(GetString("Player {0} has been disabled for {1}.", Name, reason));
 						}
 					}
 
@@ -1807,15 +1807,14 @@ namespace TShockAPI
 				SilentKickInProgress = silent;
 				if (IsLoggedIn && saveSSI)
 					SaveServerCharacter();
-				Disconnect(string.Format("Kicked: {0}", reason));
-				TShock.Log.ConsoleInfo(string.Format("Kicked {0} for : '{1}'", Name, reason));
-				string verb = force ? "force " : "";
+				Disconnect(GetString("Kicked: {0}", reason));
+				TShock.Log.ConsoleInfo(GetString("Kicked {0} for : '{1}'", Name, reason));
 				if (!silent)
 				{
 					if (string.IsNullOrWhiteSpace(adminUserName))
-						TShock.Utils.Broadcast(string.Format("{0} was {1}kicked for '{2}'", Name, verb, reason.ToLower()), Color.Green);
+						TShock.Utils.Broadcast(GetString("{0} was kicked for '{1}'", Name, reason.ToLower()), Color.Green);
 					else
-						TShock.Utils.Broadcast(string.Format("{0} {1}kicked {2} for '{3}'", adminUserName, verb, Name, reason.ToLower()), Color.Green);
+						TShock.Utils.Broadcast(GetString("{0} kicked {1} for '{2}'", adminUserName, Name, reason.ToLower()), Color.Green);
 				}
 				return true;
 			}
@@ -1855,13 +1854,13 @@ namespace TShockAPI
 		/// <param name="matches">An enumerable list with the matches</param>
 		public void SendMultipleMatchError(IEnumerable<object> matches)
 		{
-			SendErrorMessage("More than one match found -- unable to decide which is correct: ");
+			SendErrorMessage(GetString("More than one match found -- unable to decide which is correct: "));
 
 			var lines = PaginationTools.BuildLinesFromTerms(matches.ToArray());
 			lines.ForEach(SendInfoMessage);
 
-			SendErrorMessage("Use \"my query\" for items with spaces.");
-			SendErrorMessage("Use tsi:[number] or tsn:[username] to distinguish between user IDs and usernames.");
+			SendErrorMessage(GetString("Use \"my query\" for items with spaces."));
+			SendErrorMessage(GetString("Use tsi:[number] or tsn:[username] to distinguish between user IDs and usernames."));
 		}
 
 		[Conditional("DEBUG")]
