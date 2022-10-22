@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-22 08:09:52+0000\n"
-"PO-Revision-Date: 2022-10-22 08:11\n"
+"PO-Revision-Date: 2022-10-22 17:37\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -32,13 +32,13 @@ msgstr ""
 #, csharp-format
 msgctxt "{0} is ban number, {1} is ban reason, {2} is a timestamp"
 msgid "#{0} - You are banned: {1} ({2} remaining)"
-msgstr ""
+msgstr "#{0} - Yasaklandın: {1} ({2} kaldı)"
 
 #: ../../TShockAPI/DB/BanManager.cs:208
 #, csharp-format
 msgctxt "{0} is ban number, {1} is ban reason"
 msgid "#{0} - You are banned: {1}"
-msgstr ""
+msgstr "#{0} - Yasaklandın: {1}"
 
 #: ../../TShockAPI/PaginationTools.cs:283
 #, csharp-format
@@ -48,7 +48,7 @@ msgstr ""
 #: ../../TShockAPI/Rest/SecureRest.cs:213
 #, csharp-format
 msgid "\"{0}\" requested REST endpoint: {1}"
-msgstr ""
+msgstr "\"{0}\" REST çıkışını istedi: {1}"
 
 #: ../../TShockAPI/Commands.cs:940
 #, csharp-format
@@ -107,7 +107,7 @@ msgstr ""
 #: ../../TShockAPI/Rest/RestManager.cs:1068
 #, csharp-format
 msgid "{0} just killed you!"
-msgstr ""
+msgstr "{0} seni öldürdü!"
 
 #: ../../TShockAPI/Rest/RestManager.cs:847
 #, csharp-format
@@ -202,11 +202,11 @@ msgstr ""
 #: ../../TShockAPI/Bouncer.cs:529
 #, csharp-format
 msgid "Account needed! Please {0}register or {0}login to play!"
-msgstr ""
+msgstr "Hesap gerekli! Lütfen {0}register veya {0}login komutlarını kullan!"
 
 #: ../../TShockAPI/Commands.cs:1095
 msgid "Account removed successfully."
-msgstr ""
+msgstr "Hesap başarıyla silindi."
 
 #: ../../TShockAPI/Bouncer.cs:2006
 #, csharp-format
@@ -221,7 +221,7 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:1187
 #, csharp-format
 msgid "Allocated memory: {0}"
-msgstr ""
+msgstr "Ayrılmış hafıza: {0}"
 
 #: ../../TShockAPI/DB/GroupManager.cs:474
 #, csharp-format
@@ -2032,7 +2032,7 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:1200
 #, csharp-format
 msgid "Seed: {0}"
-msgstr ""
+msgstr "Seed: {0}"
 
 #: ../../TShockAPI/Commands.cs:562
 msgid "Sends a message to everyone on your team."
@@ -2060,11 +2060,11 @@ msgstr ""
 
 #: ../../TShockAPI/BackupManager.cs:73
 msgid "Server map saving..."
-msgstr ""
+msgstr "Sunucu haritası kaydediliyor..."
 
 #: ../../TShockAPI/Commands.cs:923
 msgid "Server side characters are enabled. You need to be logged-in to play."
-msgstr ""
+msgstr "Sunucu taraflı karakter etkin. Oynayabilmek için giriş yapman gerekli."
 
 #: ../../TShockAPI/Commands.cs:510
 msgid "Sets the dungeon's position to your location."
@@ -2145,11 +2145,11 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:1198
 #, csharp-format
 msgid "Size: {0}x{1}"
-msgstr ""
+msgstr "Boyut: {0}x{1}"
 
 #: ../../TShockAPI/Commands.cs:574
 msgid "Slaps a player, dealing damage."
-msgstr ""
+msgstr "Oyuncuyu tokatlayıp hasar verir."
 
 #: ../../TShockAPI/Commands.cs:1026
 #, csharp-format
@@ -2196,7 +2196,7 @@ msgstr ""
 
 #: ../../TShockAPI/Rest/SecureRest.cs:167
 msgid "Successful login"
-msgstr ""
+msgstr "Başarılı giriş"
 
 #: ../../TShockAPI/Handlers/SyncTilePickingHandler.cs:23
 #, csharp-format
@@ -2225,15 +2225,15 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:324
 msgid "Temporarily elevates you to Super Admin."
-msgstr ""
+msgstr "Geçici olarak Super Admin'e yükseltir."
 
 #: ../../TShockAPI/Commands.cs:320
 msgid "Temporarily sets another player's group."
-msgstr ""
+msgstr "Geçici olarak başka bir oyuncunun grubunu değiştirir."
 
 #: ../../TShockAPI/Commands.cs:1154
 msgid "That group does not exist!"
-msgstr ""
+msgstr "Bu grup mevcut değil!"
 
 #: ../../TShockAPI/DB/BanManager.cs:258
 msgid "The ban is invalid because a current ban for this identifier already exists."
@@ -2629,5 +2629,5 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:1011
 #, csharp-format
 msgid "Your password is {0}."
-msgstr ""
+msgstr "Şifren {0}."
 
