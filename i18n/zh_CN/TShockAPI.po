@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-22 08:09:52+0000\n"
-"PO-Revision-Date: 2022-10-22 08:11\n"
+"PO-Revision-Date: 2022-10-22 08:21\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -43,7 +43,7 @@ msgstr "#{0} - 你已被封禁，原因： {1}"
 #: ../../TShockAPI/PaginationTools.cs:283
 #, csharp-format
 msgid "\"{0}\" is not a valid page number."
-msgstr ""
+msgstr "”{0}”不是一个有效的页码。"
 
 #: ../../TShockAPI/Rest/SecureRest.cs:213
 #, csharp-format
@@ -53,12 +53,12 @@ msgstr "“{0}”请求了REST端点：{1}"
 #: ../../TShockAPI/Commands.cs:940
 #, csharp-format
 msgid "{0} ({1}) changed the password for account {2}."
-msgstr ""
+msgstr "{0}（{1}）更改了帐号{2}的密码。"
 
 #: ../../TShockAPI/Commands.cs:950
 #, csharp-format
 msgid "{0} ({1}) failed to change the password for account {2}."
-msgstr ""
+msgstr "{0}（{1}）更改帐号{2}的密码失败。"
 
 #: ../../TShockAPI/Commands.cs:770
 #, csharp-format
@@ -786,22 +786,22 @@ msgstr ""
 #: ../../TShockAPI/Bouncer.cs:2310
 #, csharp-format
 msgid "Bouncer / OnPlaceObject rejected mad loop from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceObject 拒绝无限制的循环 {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2295
 #, csharp-format
 msgid "Bouncer / OnPlaceObject rejected null tile data from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceObject 拒绝无效方块数据 {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2285
 #, csharp-format
 msgid "Bouncer / OnPlaceObject rejected object placement with invalid style from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceObject 拒绝以无效方式放置方块 {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2193
 #, csharp-format
 msgid "Bouncer / OnPlaceObject rejected out of bounds tile from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceObject 拒绝失去联系的无效方块 {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2200
 #, csharp-format
