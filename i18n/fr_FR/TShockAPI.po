@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
-"POT-Creation-Date: 2022-10-23 05:28:17+0000\n"
-"PO-Revision-Date: 2022-10-23 05:37\n"
+"POT-Creation-Date: 2022-10-23 14:23:32+0000\n"
+"PO-Revision-Date: 2022-10-23 17:34\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -18,15 +18,11 @@ msgstr ""
 "Language: fr_FR\n"
 
 #: ../../TShockAPI/DB/CharacterManager.cs:176
+#: ../../TShockAPI/DB/CharacterManager.cs:246
 #, csharp-format
 msgctxt "{0} is a player name"
 msgid "Skipping SSC save (due to tshock.ignore.ssc) for {0}"
 msgstr "La sauvegarde SSC est ignoré(e) (à cause de tshock.ignoré.ssc) pour {0}"
-
-#: ../../TShockAPI/DB/CharacterManager.cs:246
-msgctxt "{0} is a player name"
-msgid "Skipping SSC save (due to tshock.ignore.ssc) for {player.Account.Name}"
-msgstr "La sauvegarde SSC est ignoré(e) (à cause de tshock.ignoré.ssc) pour {player.Account.Name}"
 
 #: ../../TShockAPI/DB/BanManager.cs:213
 #, csharp-format
@@ -43,7 +39,7 @@ msgstr "#{0} - Vous êtes banni(e): {1}"
 #: ../../TShockAPI/Commands.cs:1253
 #, csharp-format
 msgid " -> Logged-in as: {0}; in group {1}."
-msgstr ""
+msgstr "→ Vous êtes connecté en tant que {0} dans le groupe {1}."
 
 #: ../../TShockAPI/PaginationTools.cs:283
 #, csharp-format
@@ -57,12 +53,12 @@ msgstr "\"{0}\" a demandé un point de terminaison REST: {1}"
 
 #: ../../TShockAPI/Commands.cs:2003
 msgid "(Server Broadcast) "
-msgstr ""
+msgstr "(Une annonce du serveur) "
 
 #: ../../TShockAPI/Commands.cs:2071
 #, csharp-format
 msgid "{0} ({1} tokens)"
-msgstr ""
+msgstr "{0} ({1} jeton(s))"
 
 #: ../../TShockAPI/Commands.cs:967
 #, csharp-format
@@ -82,7 +78,7 @@ msgstr "{0} ({1}) a eu {2} ou plus tentatives de connexion invalides et a été 
 #: ../../TShockAPI/Commands.cs:1097
 #, csharp-format
 msgid "{0} added account {1} to group {2}."
-msgstr ""
+msgstr "{0} a ajouté le compte {1} au groupe {2}."
 
 #: ../../TShockAPI/Commands.cs:1055
 msgid "{0} attempted to register for the account {1} but it was already taken."
@@ -96,12 +92,12 @@ msgstr "{0} s'est connecté avec succès au compte {1}."
 #: ../../TShockAPI/Commands.cs:2445
 #, csharp-format
 msgid "{0} caused it to rain slime."
-msgstr ""
+msgstr "{0} a commencé la pluie de gelées."
 
 #: ../../TShockAPI/Commands.cs:2460
 #, csharp-format
 msgid "{0} caused it to rain."
-msgstr ""
+msgstr "{0} a commencé la pluie."
 
 #: ../../TShockAPI/Commands.cs:1171
 #, csharp-format
@@ -116,12 +112,12 @@ msgstr "{0} a changé le mot de passe pour le compte {1}"
 #: ../../TShockAPI/Commands.cs:2452
 #, csharp-format
 msgid "{0} ended the rain."
-msgstr ""
+msgstr "{0} a arrêté la pluie."
 
 #: ../../TShockAPI/Commands.cs:2437
 #, csharp-format
 msgid "{0} ended the slime rain."
-msgstr ""
+msgstr "{0} a arrêté la pluie de gelées."
 
 #: ../../TShockAPI/Commands.cs:701
 #, csharp-format
@@ -131,17 +127,17 @@ msgstr "{0} a exécuté: {1}{2}."
 #: ../../TShockAPI/Commands.cs:921
 #, csharp-format
 msgid "{0} failed to authenticate as user: {1}."
-msgstr ""
+msgstr "{0} n'a past pu se connecter au compte {1}."
 
 #: ../../TShockAPI/Commands.cs:3864
 #, csharp-format
 msgid "{0} has been allowed to use {1}."
-msgstr ""
+msgstr "{0} est autorisé à utiliser {1}."
 
 #: ../../TShockAPI/Commands.cs:3935
 #, csharp-format
 msgid "{0} has been disallowed to use {1}."
-msgstr ""
+msgstr "{0} n'est pas autorisé à utiliser {1}."
 
 #: ../../TShockAPI/Commands.cs:1177
 #, csharp-format
@@ -153,63 +149,63 @@ msgstr "{0} a changé votre groupe en {1}."
 #: ../../TShockAPI/Commands.cs:3009
 #, csharp-format
 msgid "{0} has disabled incoming teleports."
-msgstr ""
+msgstr "{0} a désactivé les téléportations entrantes."
 
 #: ../../TShockAPI/Commands.cs:2395
 #, csharp-format
 msgid "{0} has ended the current invasion event."
-msgstr ""
+msgstr "{0} a fini l'événement d'invasion actuel."
 
 #: ../../TShockAPI/Commands.cs:2391
 #, csharp-format
 msgid "{0} has ended the Old One's Army event."
-msgstr ""
+msgstr "{0} a arrêté l'armée de l'ancien."
 
 #: ../../TShockAPI/Commands.cs:2861
 #, csharp-format
 msgid "{0} has spawned {1} {2} time(s)."
-msgstr ""
+msgstr "{0} a produit {1} {2} fois."
 
 #: ../../TShockAPI/Commands.cs:2878
 #, csharp-format
 msgid "{0} has spawned a Wall of Flesh."
-msgstr ""
+msgstr "{0} a produit le mur de chair."
 
 #: ../../TShockAPI/Commands.cs:2325
 #, csharp-format
 msgid "{0} has started a goblin army invasion."
-msgstr ""
+msgstr "{0} a commencé l'invasion de l'armée de gobelins."
 
 #: ../../TShockAPI/Commands.cs:2379
 #, csharp-format
 msgid "{0} has started a martian invasion."
-msgstr ""
+msgstr "{0} a commencé la folie martienne."
 
 #: ../../TShockAPI/Commands.cs:2337
 #, csharp-format
 msgid "{0} has started a pirate invasion."
-msgstr ""
+msgstr "{0} a commencé l'invasion pirate."
 
 #: ../../TShockAPI/Commands.cs:2331
 #, csharp-format
 msgid "{0} has started a snow legion invasion."
-msgstr ""
+msgstr "{0} a commence l'invasion de la légion de givre."
 
 #: ../../TShockAPI/Commands.cs:3868
 #, csharp-format
 msgid "{0} is already allowed to use {1}."
-msgstr ""
+msgstr "{0} est autorisé à utiliser {1}."
 
 #: ../../TShockAPI/Commands.cs:3939
 #, csharp-format
 msgid "{0} is already disallowed to use {1}."
-msgstr ""
+msgstr "{0} n'est pas autorisé à utiliser {1}."
 
 #: ../../TShockAPI/Commands.cs:3858
 #: ../../TShockAPI/Commands.cs:3929
 #, csharp-format
 msgid "{0} is not banned."
-msgstr ""
+msgstr "{0} n'est pas banni(e)."
 
 #: ../../TShockAPI/Rest/RestManager.cs:1068
 #, csharp-format
@@ -236,7 +232,7 @@ msgstr "{0} a créé un compte \"{1}\"."
 #: ../../TShockAPI/Commands.cs:1469
 #, csharp-format
 msgid "{0} remaining."
-msgstr ""
+msgstr "{0} restant(s)."
 
 #: ../../TShockAPI/Commands.cs:2814
 #, csharp-format
