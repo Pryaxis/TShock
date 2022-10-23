@@ -68,6 +68,7 @@ Use past tense when adding new entries; sign your name off when you add or chang
 * Introduced support for loadouts, and saving the current loadout index to SSC. Both `NetItem` and `PlayerData` were modified to support this. (@drunderscore)
 * Check loadout slots for hacked item stacks. (@drunderscore)
 * Fix players being kicked after using the Flamethrower to apply the `OnFire3` debuff for `1200` ticks. (@BashGuy10)
+* Fix being kicked for using the new sponge types on liquid. (@BashGuy10)
 
 ## TShock 4.5.18
 * Fixed `TSPlayer.GiveItem` not working if the player is in lava. (@PotatoCider)

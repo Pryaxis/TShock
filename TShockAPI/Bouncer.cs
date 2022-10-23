@@ -1737,7 +1737,8 @@ namespace TShockAPI
 				{
 					bucket = 6;
 				}
-				else if (selectedItemType == ItemID.BottomlessHoneyBucket)
+				else if (selectedItemType == ItemID.BottomlessHoneyBucket 
+					|| selectedItemType == ItemID.HoneyAbsorbantSponge)
 				{
 					bucket = 7;
 				}
@@ -1745,8 +1746,12 @@ namespace TShockAPI
 				{
 					bucket = 8;
 				}
+				else if (selectedItemType == ItemID.UltraAbsorbantSponge)
+				{
+					bucket = 9;
+				}
 
-				if (!wasThereABombNearby && type == LiquidType.Lava && !(bucket == 2 || bucket == 0 || bucket == 5 || bucket == 6))
+				if (!wasThereABombNearby && type == LiquidType.Lava && !(bucket == 2 || bucket == 0 || bucket == 5 || bucket == 6 || bucket == 9))
 				{
 					TShock.Log.ConsoleDebug(GetString("Bouncer / OnLiquidSet rejected bucket check 1 from {0}", args.Player.Name));
 					args.Player.SendErrorMessage(GetString("You do not have permission to perform this action."));
@@ -1766,7 +1771,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (!wasThereABombNearby && type == LiquidType.Water && !(bucket == 1 || bucket == 0 || bucket == 4))
+				if (!wasThereABombNearby && type == LiquidType.Water && !(bucket == 1 || bucket == 0 || bucket == 4 || bucket == 9))
 				{
 					TShock.Log.ConsoleDebug(GetString("Bouncer / OnLiquidSet rejected bucket check 2 from {0}", args.Player.Name));
 					args.Player.SendErrorMessage(GetString("You do not have permission to perform this action."));
@@ -1786,7 +1791,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (!wasThereABombNearby && type == LiquidType.Honey && !(bucket == 3 || bucket == 0 || bucket == 7))
+				if (!wasThereABombNearby && type == LiquidType.Honey && !(bucket == 3 || bucket == 0 || bucket == 7 || bucket == 9))
 				{
 					TShock.Log.ConsoleDebug(GetString("Bouncer / OnLiquidSet rejected bucket check 4 from {0}", args.Player.Name));
 					args.Player.SendErrorMessage(GetString("You do not have permission to perform this action."));
@@ -1806,11 +1811,11 @@ namespace TShockAPI
 					return;
 				}
 
-				if (!wasThereABombNearby && type == LiquidType.Shimmer && bucket != 8)
+				if (!wasThereABombNearby && type == LiquidType.Shimmer && !(bucket == 8 || bucket == 9))
 				{
 					TShock.Log.ConsoleDebug(GetString("Bouncer / OnLiquidSet rejected bucket check 6 from {0}", args.Player.Name));
 					args.Player.SendErrorMessage(GetString("You do not have permission to perform this action."));
-					args.Player.Disable(GetString("Spreading shimmer without holding a honey bucket"), DisableFlags.WriteToLogAndConsole);
+					args.Player.Disable(GetString("Spreading shimmer without holding a shimmer bucket"), DisableFlags.WriteToLogAndConsole);
 					args.Player.SendTileSquareCentered(tileX, tileY, 1);
 					args.Handled = true;
 					return;
