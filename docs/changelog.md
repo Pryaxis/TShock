@@ -67,6 +67,7 @@ Use past tense when adding new entries; sign your name off when you add or chang
 * Allow loadouts to properly sync by allowing the `SyncLoadout` packet during early connection. (@drunderscore)
 * Introduced support for loadouts, and saving the current loadout index to SSC. Both `NetItem` and `PlayerData` were modified to support this. (@drunderscore)
 * Check loadout slots for hacked item stacks. (@drunderscore)
+* Fix players being kicked after using the Flamethrower to apply the `OnFire3` debuff for `1200` ticks. (@BashGuy10)
 
 ## TShock 4.5.18
 * Fixed `TSPlayer.GiveItem` not working if the player is in lava. (@PotatoCider)
