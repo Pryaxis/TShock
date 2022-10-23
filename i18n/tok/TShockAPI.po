@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
-"POT-Creation-Date: 2022-10-23 05:28:17+0000\n"
-"PO-Revision-Date: 2022-10-23 05:37\n"
+"POT-Creation-Date: 2022-10-23 14:23:32+0000\n"
+"PO-Revision-Date: 2022-10-23 17:34\n"
 "Last-Translator: \n"
 "Language-Team: toki pona\n"
 "MIME-Version: 1.0\n"
@@ -18,14 +18,10 @@ msgstr ""
 "Language: tok\n"
 
 #: ../../TShockAPI/DB/CharacterManager.cs:176
+#: ../../TShockAPI/DB/CharacterManager.cs:246
 #, csharp-format
 msgctxt "{0} is a player name"
 msgid "Skipping SSC save (due to tshock.ignore.ssc) for {0}"
-msgstr ""
-
-#: ../../TShockAPI/DB/CharacterManager.cs:246
-msgctxt "{0} is a player name"
-msgid "Skipping SSC save (due to tshock.ignore.ssc) for {player.Account.Name}"
 msgstr ""
 
 #: ../../TShockAPI/DB/BanManager.cs:213
