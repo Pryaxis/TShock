@@ -6276,7 +6276,7 @@ namespace TShockAPI
 			string targetName = args.Parameters[0];
 			var players = TSPlayer.FindByNameOrID(targetName);
 			if (players.Count == 0)
-				user.SendErrorMessage($"Unable to find any players named \"{targetName}\"");
+				user.SendErrorMessage(GetString($"Unable to find any players named \"{targetName}\""));
 			else if (players.Count > 1)
 				user.SendMultipleMatchError(players.Select(p => p.Name));
 			else
@@ -6286,7 +6286,7 @@ namespace TShockAPI
 
 				if (target.Dead)
 				{
-					user.SendErrorMessage("You can't heal a dead player!");
+					user.SendErrorMessage(GetString("You can't heal a dead player!"));
 					return;
 				}
 
@@ -6297,9 +6297,9 @@ namespace TShockAPI
 				target.Heal(amount);
 
 				if (args.Silent)
-					user.SendSuccessMessage($"You healed {(target == user ? "yourself" : target.Name)} for {amount} HP.");
+					user.SendSuccessMessage(GetString($"You healed {(target == user ? "yourself" : target.Name)} for {amount} HP."));
 				else
-					TSPlayer.All.SendInfoMessage($"{user.Name} healed {(target == user ? (target.TPlayer.Male ? "himself" : "herself") : target.Name)} for {amount} HP.");
+					TSPlayer.All.SendInfoMessage(GetString($"{user.Name} healed {(target == user ? (target.TPlayer.Male ? "himself" : "herself") : target.Name)} for {amount} HP."));
 			}
 		}
 
@@ -6309,11 +6309,11 @@ namespace TShockAPI
 			var user = args.Player;
 			if (args.Parameters.Count < 1 || args.Parameters.Count > 2)
 			{
-				user.SendMessage("Buff Syntax and Example", Color.White);
-				user.SendMessage($"{"buff".Color(Utils.BoldHighlight)} <\"{"buff name".Color(Utils.RedHighlight)}|{"ID".Color(Utils.RedHighlight)}\"> [{"duration".Color(Utils.GreenHighlight)}]", Color.White);
-				user.SendMessage($"Example usage: {"buff".Color(Utils.BoldHighlight)} \"{"obsidian skin".Color(Utils.RedHighlight)}\" {"-1".Color(Utils.GreenHighlight)}", Color.White);
-				user.SendMessage($"If you don't specify the duration, it will default to {"60".Color(Utils.GreenHighlight)} seconds.", Color.White);
-				user.SendMessage($"If you put {"-1".Color(Utils.GreenHighlight)} as the duration, it will use the max possible time of 415 days.", Color.White);
+				user.SendMessage(GetString("Buff Syntax and Example"), Color.White);
+				user.SendMessage(GetString($"{"buff".Color(Utils.BoldHighlight)} <\"{"buff name".Color(Utils.RedHighlight)}|{"ID".Color(Utils.RedHighlight)}\"> [{"duration".Color(Utils.GreenHighlight)}]"), Color.White);
+				user.SendMessage(GetString($"Example usage: {"buff".Color(Utils.BoldHighlight)} \"{"obsidian skin".Color(Utils.RedHighlight)}\" {"-1".Color(Utils.GreenHighlight)}"), Color.White);
+				user.SendMessage(GetString($"If you don't specify the duration, it will default to {"60".Color(Utils.GreenHighlight)} seconds."), Color.White);
+				user.SendMessage(GetString($"If you put {"-1".Color(Utils.GreenHighlight)} as the duration, it will use the max possible time of 415 days."), Color.White);
 				return;
 			}
 
@@ -6327,7 +6327,7 @@ namespace TShockAPI
 
 				if (found.Count == 0)
 				{
-					user.SendErrorMessage($"Unable to find any buffs named \"{args.Parameters[0]}\"");
+					user.SendErrorMessage(GetString($"Unable to find any buffs named \"{args.Parameters[0]}\""));
 					return;
 				}
 
@@ -6348,10 +6348,10 @@ namespace TShockAPI
 				if (time < 0 || time > timeLimit)
 					time = timeLimit;
 				user.SetBuff(id, time * 60);
-				user.SendSuccessMessage($"You buffed yourself with {TShock.Utils.GetBuffName(id)} ({TShock.Utils.GetBuffDescription(id)}) for {time} seconds.");
+				user.SendSuccessMessage(GetString($"You buffed yourself with {TShock.Utils.GetBuffName(id)} ({TShock.Utils.GetBuffDescription(id)}) for {time} seconds."));
 			}
 			else
-				user.SendErrorMessage($"\"{id}\" is not a valid buff ID!");
+				user.SendErrorMessage(GetString($"\"{id}\" is not a valid buff ID!"));
 		}
 
 		private static void GBuff(CommandArgs args)
@@ -6359,10 +6359,10 @@ namespace TShockAPI
 			var user = args.Player;
 			if (args.Parameters.Count < 2 || args.Parameters.Count > 3)
 			{
-				user.SendMessage("Give Buff Syntax and Example", Color.White);
-				user.SendMessage($"{"gbuff".Color(Utils.BoldHighlight)} <{"player".Color(Utils.RedHighlight)}> <{"buff name".Color(Utils.PinkHighlight)}|{"ID".Color(Utils.PinkHighlight)}> [{"seconds".Color(Utils.GreenHighlight)}]", Color.White);
-				user.SendMessage($"Example usage: {"gbuff".Color(Utils.BoldHighlight)} {user.Name.Color(Utils.RedHighlight)} {"regen".Color(Utils.PinkHighlight)} {"-1".Color(Utils.GreenHighlight)}", Color.White);
-				user.SendMessage($"To buff a player without them knowing, use {SilentSpecifier.Color(Utils.RedHighlight)} instead of {Specifier.Color(Utils.GreenHighlight)}", Color.White);
+				user.SendMessage(GetString("Give Buff Syntax and Example"), Color.White);
+				user.SendMessage(GetString($"{"gbuff".Color(Utils.BoldHighlight)} <{"player".Color(Utils.RedHighlight)}> <{"buff name".Color(Utils.PinkHighlight)}|{"ID".Color(Utils.PinkHighlight)}> [{"seconds".Color(Utils.GreenHighlight)}]"), Color.White);
+				user.SendMessage(GetString($"Example usage: {"gbuff".Color(Utils.BoldHighlight)} {user.Name.Color(Utils.RedHighlight)} {"regen".Color(Utils.PinkHighlight)} {"-1".Color(Utils.GreenHighlight)}"), Color.White);
+				user.SendMessage(GetString($"To buff a player without them knowing, use {SilentSpecifier.Color(Utils.RedHighlight)} instead of {Specifier.Color(Utils.GreenHighlight)}"), Color.White);
 				return;
 			}
 			int id = 0;
@@ -6371,7 +6371,7 @@ namespace TShockAPI
 			var foundplr = TSPlayer.FindByNameOrID(args.Parameters[0]);
 			if (foundplr.Count == 0)
 			{
-				user.SendErrorMessage($"Unable to find any player named \"{args.Parameters[0]}\"");
+				user.SendErrorMessage(GetString($"Unable to find any player named \"{args.Parameters[0]}\""));
 				return;
 			}
 			else if (foundplr.Count > 1)
@@ -6386,7 +6386,7 @@ namespace TShockAPI
 					var found = TShock.Utils.GetBuffByName(args.Parameters[1]);
 					if (found.Count == 0)
 					{
-						user.SendErrorMessage($"Unable to find any buff named \"{args.Parameters[1]}\"");
+						user.SendErrorMessage(GetString($"Unable to find any buff named \"{args.Parameters[1]}\""));
 						return;
 					}
 					else if (found.Count > 1)
@@ -6404,9 +6404,9 @@ namespace TShockAPI
 					if (time < 0 || time > timeLimit)
 						time = timeLimit;
 					target.SetBuff(id, time * 60);
-					user.SendSuccessMessage($"You have buffed {(target == user ? "yourself" : target.Name)} with {TShock.Utils.GetBuffName(id)} ({TShock.Utils.GetBuffDescription(id)}) for {time} seconds!");
+					user.SendSuccessMessage(GetString($"You have buffed {(target == user ? GetString("yourself") : target.Name)} with {TShock.Utils.GetBuffName(id)} ({TShock.Utils.GetBuffDescription(id)}) for {time} seconds!"));
 					if (!args.Silent && target != user)
-						target.SendSuccessMessage($"{user.Name} has buffed you with {TShock.Utils.GetBuffName(id)} ({TShock.Utils.GetBuffDescription(id)}) for {time} seconds!");
+						target.SendSuccessMessage(GetString($"{user.Name} has buffed you with {TShock.Utils.GetBuffName(id)} ({TShock.Utils.GetBuffDescription(id)}) for {time} seconds!"));
 				}
 				else
 					user.SendErrorMessage("Invalid buff ID!");
@@ -6688,16 +6688,16 @@ namespace TShockAPI
 
 			if (playerToGod != args.Player)
 			{
-				args.Player.SendSuccessMessage(playerToGod.GodMode ?
-					GetString("{0} is now in god mode.", playerToGod.Name),
-					GetString("{0} is no longer in god mode.", playerToGod.Name));
+				args.Player.SendSuccessMessage(playerToGod.GodMode
+					? GetString("{0} is now in god mode.", playerToGod.Name)
+					: GetString("{0} is no longer in god mode.", playerToGod.Name));
 			}
 
 			if (!args.Silent || (playerToGod == args.Player))
 			{
-				playerToGod.SendSuccessMessage(playerToGod.GodMode ?
-					GetString("You are now in god mode.", playerToGod.Name),
-					GetString("You are no longer in god mode.", playerToGod.Name));
+				playerToGod.SendSuccessMessage(playerToGod.GodMode
+					? GetString("You are now in god mode.", playerToGod.Name)
+					: GetString("You are no longer in god mode.", playerToGod.Name));
 			}
 		}
 
