@@ -2434,6 +2434,16 @@ namespace TShockAPI
 			bool usingBiomeTorches = torchFlags[0];
 			bool happyFunTorchTime = torchFlags[1];
 			bool unlockedBiomeTorches = torchFlags[2];
+			bool unlockedSuperCart = torchFlags[3];
+			bool enabledSuperCart = torchFlags[4];
+			BitsByte bitsByte10 = args.Data.ReadInt8();
+			bool usedAegisCrystal = bitsByte10[0];
+			bool usedAegisFruit = bitsByte10[1];
+			bool usedArcaneCrystal = bitsByte10[2];
+			bool usedGalaxyPearl = bitsByte10[3];
+			bool usedGummyWorm = bitsByte10[4];
+			bool usedAmbrosia = bitsByte10[5];
+			bool ateArtisanBread = bitsByte10[6];
 
 			if (OnPlayerInfo(args.Player, args.Data, playerid, hair, skinVariant, difficulty, name))
 			{
@@ -2482,6 +2492,15 @@ namespace TShockAPI
 				args.Player.TPlayer.UsingBiomeTorches = usingBiomeTorches;
 				args.Player.TPlayer.happyFunTorchTime = happyFunTorchTime;
 				args.Player.TPlayer.unlockedBiomeTorches = unlockedBiomeTorches;
+				args.Player.TPlayer.ateArtisanBread = ateArtisanBread;
+				args.Player.TPlayer.usedAegisCrystal = usedAegisCrystal;
+				args.Player.TPlayer.usedAegisFruit = usedAegisFruit;
+				args.Player.TPlayer.usedArcaneCrystal = usedArcaneCrystal;
+				args.Player.TPlayer.usedGalaxyPearl = usedGalaxyPearl;
+				args.Player.TPlayer.usedGummyWorm = usedGummyWorm;
+				args.Player.TPlayer.usedAmbrosia = usedAmbrosia;
+				args.Player.TPlayer.unlockedSuperCart = unlockedSuperCart;
+				args.Player.TPlayer.enabledSuperCart = enabledSuperCart;
 
 				NetMessage.SendData((int)PacketTypes.PlayerInfo, -1, args.Player.Index, NetworkText.FromLiteral(args.Player.Name), args.Player.Index);
 				return true;

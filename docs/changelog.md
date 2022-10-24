@@ -69,6 +69,7 @@ Use past tense when adding new entries; sign your name off when you add or chang
 * Check loadout slots for hacked item stacks. (@drunderscore)
 * Fix players being kicked after using the Flamethrower to apply the `OnFire3` debuff for `1200` ticks. (@BashGuy10)
 * Fix being kicked for using the new sponge types on liquid. (@BashGuy10)
+* Fixed SSC not save `ateArtisanBread`, `usedAegisCrystal`, `usedAegisFruit`, `usedArcaneCrystal`, `usedGalaxyPearl`, `usedGummyWorm`, `usedAmbrosia`, `unlockedSuperCart`, `enabledSuperCart` flags, and Server will correct read them. (@hufang360)
 
 ## TShock 4.5.18
 * Fixed `TSPlayer.GiveItem` not working if the player is in lava. (@PotatoCider)
