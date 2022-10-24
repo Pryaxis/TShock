@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-23 14:23:32+0000\n"
-"PO-Revision-Date: 2022-10-23 17:34\n"
+"PO-Revision-Date: 2022-10-24 05:43\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -1880,7 +1880,7 @@ msgstr "GolfPacketHandler: Игроку не удалось создать пр�
 #: ../../TShockAPI/Commands.cs:3489
 #, csharp-format
 msgid "Group \"{0}\" has no parent."
-msgstr "Группа \"{0}\" не имеет главной группы."
+msgstr "Группа \"{0}\" не имеет родительской группы."
 
 #: ../../TShockAPI/Commands.cs:3579
 #, csharp-format
@@ -2029,11 +2029,11 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:848
 msgid "If you forgot your password, contact the administrator for help."
-msgstr ""
+msgstr "Если вы забыли свой пароль, обратитесь к администратору за помощью."
 
 #: ../../TShockAPI/Bouncer.cs:969
 msgid "If you're seeing this message and you know what that player did, please report it to TShock for further investigation."
-msgstr ""
+msgstr "Если вы видите это сообщение, и вы знаете, что сделал этот игрок, пожалуйста, сообщите об этом в TShock для дальнейших разбирательств."
 
 #: ../../TShockAPI/Bouncer.cs:1324
 msgid "Ignoring shrapnel per config.."
@@ -2056,7 +2056,7 @@ msgstr "Входящие телепортации теперь отключен�
 #: ../../TShockAPI/DB/ProjectileManager.cs:223
 #, csharp-format
 msgid "Infinite group parenting ({0})"
-msgstr ""
+msgstr "Бесконечное воспроизведение групп ({0})"
 
 #: ../../TShockAPI/Commands.cs:1223
 msgid "Information about the currently running world"
@@ -2371,7 +2371,7 @@ msgstr "Неверный синтаксис. Правильный синтакс
 #: ../../TShockAPI/Commands.cs:2531
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}worldmode <mode>."
-msgstr ""
+msgstr "Неверный синтаксис. Правильный синтаксис: {0}worldmode <mode>."
 
 #: ../../TShockAPI/Commands.cs:3134
 #: ../../TShockAPI/Commands.cs:3295
@@ -2380,7 +2380,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:1926
 msgid "Invalid time string! Proper format: _d_h_m_s, with at least one time specifier."
-msgstr ""
+msgstr "Недопустимая строка времени! Правильный формат: _d_h_m_s, с хотя бы 1 указателем времени."
 
 #: ../../TShockAPI/Rest/RestManager.cs:1326
 #, csharp-format
@@ -2391,30 +2391,30 @@ msgstr "Неизвестный тип: '{0}'"
 #: ../../TShockAPI/Commands.cs:1203
 #, csharp-format
 msgid "Invalid user syntax. Try {0}user help."
-msgstr ""
+msgstr "Неверный синтаксис пользователя. Попробуйте {0}user help."
 
 #: ../../TShockAPI/Commands.cs:3225
 msgid "Invalid warp name. The names 'list', 'hide', 'del' and 'add' are reserved for commands."
-msgstr ""
+msgstr "Недопустимое значение варпа. Для команд зарезервированы значения 'list', 'hide', 'del' и 'add'."
 
 #: ../../TShockAPI/Commands.cs:2542
 #, csharp-format
 msgid "Invalid world mode. Valid world modes: {0}"
-msgstr ""
+msgstr "Некорректный режим мира. Действительные режимы: {0}"
 
 #: ../../TShockAPI/Commands.cs:1251
 #, csharp-format
 msgid "IP Address: {0}."
-msgstr ""
+msgstr "IP Адрес: {0}."
 
 #: ../../TShockAPI/TSPlayer.cs:1811
 #, csharp-format
 msgid "Kicked {0} for : '{1}'"
-msgstr ""
+msgstr "{0} кикнут по причине: '{1}'"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1049
 msgid "Kicked via web"
-msgstr ""
+msgstr "Кикнут через сеть"
 
 #: ../../TShockAPI/TSPlayer.cs:1810
 #, csharp-format
@@ -2423,7 +2423,7 @@ msgstr "Кикнут: {0}."
 
 #: ../../TShockAPI/Commands.cs:553
 msgid "Kills another player."
-msgstr "Убивает другого игрока."
+msgstr "Убивает указанного игрока."
 
 #: ../../TShockAPI/Commands.cs:393
 msgid "Kills hostile NPCs or NPCs of a certain type."
@@ -2691,11 +2691,11 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:1216
 #, csharp-format
 msgid "Operating system: {0}"
-msgstr ""
+msgstr "Операционная система: {0}"
 
 #: ../../TShockAPI/Commands.cs:308
 msgid "Overrides serverside characters for a player, temporarily."
-msgstr ""
+msgstr "Временно переопределяет серверные данные персонажа для игрока."
 
 #: ../../TShockAPI/Commands.cs:3429
 msgid "parent <group> <parent group> - Changes a group's parent group."
@@ -2719,18 +2719,18 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:1154
 #, csharp-format
 msgid "Password change attempt for {0} failed for an unknown reason. Check the server console for more details."
-msgstr ""
+msgstr "Попытка смены пароля для {0} не удалась по неизвестной причине. Проверьте консоль сервера для получения дополнительной информации."
 
 #: ../../TShockAPI/Commands.cs:1146
 #, csharp-format
 msgid "Password change succeeded for {0}."
-msgstr ""
+msgstr "Пароль для {0} успешно изменен."
 
 #: ../../TShockAPI/DB/UserManager.cs:492
 #: ../../TShockAPI/DB/UserManager.cs:513
 #, csharp-format
 msgid "Password must be at least {0} characters."
-msgstr ""
+msgstr "Пароль должен содержать не менее {0} символов."
 
 #: ../../TShockAPI/Commands.cs:971
 #: ../../TShockAPI/Commands.cs:1008
@@ -2739,12 +2739,12 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:1159
 #, csharp-format
 msgid "Password must be greater than or equal to {0} characters."
-msgstr ""
+msgstr "Пароль должен содержать {0} или более символов."
 
 #: ../../TShockAPI/Commands.cs:988
 #, csharp-format
 msgid "PasswordUser returned an error: {0}."
-msgstr ""
+msgstr "PasswordUser выдал ошибку: {0}."
 
 #: ../../TShockAPI/Commands.cs:1229
 #, csharp-format
@@ -2758,7 +2758,7 @@ msgstr "Плантера"
 #: ../../TShockAPI/Commands.cs:1794
 #, csharp-format
 msgid "Player \"{0}\" has to perform a /login attempt first."
-msgstr ""
+msgstr "Игрок \"{0}\" должен сперва выполнить попытку /login."
 
 #: ../../TShockAPI/Commands.cs:1799
 #, csharp-format
@@ -2979,7 +2979,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:603
 msgid "Respawn yourself or another player."
-msgstr "Респавнит вас или указанного игрока."
+msgstr "Возрождает вас или указанного игрока."
 
 #: ../../TShockAPI/Commands.cs:456
 msgid "Returns the user's or specified user's current position."
@@ -2987,7 +2987,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:342
 msgid "Rockets a player upwards. Requires SSC."
-msgstr "Запускает игрока в космос. (SSC должен быть включен)."
+msgstr "Запускает игрока вверх (SSC должен быть включен)."
 
 #: ../../TShockAPI/Commands.cs:2766
 msgid "Santa-NK1"
@@ -2995,7 +2995,7 @@ msgstr "Санта-НК1"
 
 #: ../../TShockAPI/Commands.cs:312
 msgid "Saves all serverside characters."
-msgstr "Сохраняет данные персонажей сервера. "
+msgstr "Сохраняет серверные данные персонажей (SSC) всех игроков."
 
 #: ../../TShockAPI/Commands.cs:500
 msgid "Saves the world file."
@@ -3020,7 +3020,7 @@ msgstr "Отправляет игроку все тайлы с сервера д
 
 #: ../../TShockAPI/Commands.cs:557
 msgid "Sends an action message to everyone."
-msgstr "Отправляет сообщение-действие в общий чат."
+msgstr "Отправляет сообщение от третьего лица в общий чат."
 
 #: ../../TShockAPI/Commands.cs:431
 msgid "Sends you to the world's spawn point."
@@ -3037,7 +3037,7 @@ msgstr "Сохранение карты сервера..."
 #: ../../TShockAPI/Commands.cs:2023
 #: ../../TShockAPI/Commands.cs:2029
 msgid "Server shutting down: "
-msgstr "Сервер выключается:"
+msgstr "Сервер выключается: "
 
 #: ../../TShockAPI/Commands.cs:2023
 msgid "Server shutting down!"
@@ -3049,28 +3049,28 @@ msgstr "Сервер выключается."
 
 #: ../../TShockAPI/Commands.cs:950
 msgid "Server side characters are enabled. You need to be logged-in to play."
-msgstr "Данные персонажей хранятся на сервере. Для игры вы должны войти в учетную запись."
+msgstr "Данные персонажей хранятся на сервере. Для игры вы должны войти в аккаунт."
 
 #: ../../TShockAPI/Commands.cs:1804
 #, csharp-format
 msgid "Server-side character data from \"{0}\" has been replaced by their current local data."
-msgstr "Серверные данные персонажа от \"{0}\" были заменены на его текущие локальные данные."
+msgstr "Серверные данные персонажа (SSC) от \"{0}\" были заменены на его текущие локальные данные."
 
 #: ../../TShockAPI/Commands.cs:1764
 msgid "Server-side characters is disabled."
-msgstr "Серверные персонажи отключены."
+msgstr "SSC (серверные персонажи) отключен."
 
 #: ../../TShockAPI/Commands.cs:510
 msgid "Sets the dungeon's position to your location."
-msgstr "Устанавливает позицию данжа на вашу текущую."
+msgstr "Устанавливает точку входа в данж на вашу текущую позицию."
 
 #: ../../TShockAPI/Commands.cs:401
 msgid "Sets the maximum number of NPCs."
-msgstr "Устанавливает максимальное количество НПС."
+msgstr "Устанавливает максимальное количество мобов."
 
 #: ../../TShockAPI/Commands.cs:415
 msgid "Sets the spawn rate of NPCs."
-msgstr "Устанавливает частоту появления НПС."
+msgstr "Устанавливает частоту появления мобов."
 
 #: ../../TShockAPI/Commands.cs:518
 msgid "Sets the world time."
@@ -3078,19 +3078,19 @@ msgstr "Устанавливает время мира."
 
 #: ../../TShockAPI/Commands.cs:505
 msgid "Sets the world's spawn point to your location."
-msgstr "Устанавливает точку появления на вашу текущую позицию."
+msgstr "Устанавливает точку спавна на вашу текущую позицию."
 
 #: ../../TShockAPI/DB/UserManager.cs:182
 msgid "SetUserGroup SQL returned an error"
-msgstr "SetUserGroup SQL выдал ошибку"
+msgstr "SetUserGroup SQL выдал исключение"
 
 #: ../../TShockAPI/DB/UserManager.cs:134
 msgid "SetUserPassword SQL returned an error"
-msgstr "SetUserPassword SQL выдал ошибку"
+msgstr "SetUserPassword SQL выдал исключение"
 
 #: ../../TShockAPI/DB/UserManager.cs:154
 msgid "SetUserUUID SQL returned an error"
-msgstr "SetUserUUID SQL выдал ошибку"
+msgstr "SetUserUUID SQL выдал исключение"
 
 #: ../../TShockAPI/Commands.cs:609
 msgid "Shows a command's aliases."
@@ -3130,7 +3130,7 @@ msgstr "Показывает версию TShock."
 
 #: ../../TShockAPI/Commands.cs:356
 msgid "Shuts down the server while saving."
-msgstr "Выключает сервер во время сохранения."
+msgstr "Выключает сервер, сохраняя мир."
 
 #: ../../TShockAPI/Commands.cs:360
 msgid "Shuts down the server without saving."
@@ -3389,7 +3389,7 @@ msgstr "Временно повышает вас до супер админис�
 
 #: ../../TShockAPI/Commands.cs:320
 msgid "Temporarily sets another player's group."
-msgstr "Временно устанавливает группу другому игроку."
+msgstr "Временно устанавливает группу указанному игроку."
 
 #: ../../TShockAPI/Commands.cs:1181
 msgid "That group does not exist."
@@ -3827,7 +3827,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:778
 msgid "You are already logged in, and cannot login again."
-msgstr "Вы уже вошли в систему и не можете войти снова."
+msgstr "Вы уже вошли в аккаунт, и не можете войти снова."
 
 #: ../../TShockAPI/Commands.cs:2896
 msgid "You are dead. Dead players can't go home."
