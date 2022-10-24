@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-23 14:23:32+0000\n"
-"PO-Revision-Date: 2022-10-23 17:34\n"
+"PO-Revision-Date: 2022-10-24 05:43\n"
 "Last-Translator: \n"
 "Language-Team: Pirate English\n"
 "MIME-Version: 1.0\n"
@@ -28,13 +28,13 @@ msgstr "Arr! Shiver me timbers! Skipping yer SSC save due to tshock.ignore.ssc f
 #, csharp-format
 msgctxt "{0} is ban number, {1} is ban reason, {2} is a timestamp"
 msgid "#{0} - You are banned: {1} ({2} remaining)"
-msgstr ""
+msgstr "#{0} - Yer ship be blocked: {1} ({2} be left)"
 
 #: ../../TShockAPI/DB/BanManager.cs:208
 #, csharp-format
 msgctxt "{0} is ban number, {1} is ban reason"
 msgid "#{0} - You are banned: {1}"
-msgstr ""
+msgstr "#{0} - Yer ship be blocked: {1}"
 
 #: ../../TShockAPI/Commands.cs:1253
 #, csharp-format
@@ -53,7 +53,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:2003
 msgid "(Server Broadcast) "
-msgstr ""
+msgstr "(Captain's Order)"
 
 #: ../../TShockAPI/Commands.cs:2071
 #, csharp-format
