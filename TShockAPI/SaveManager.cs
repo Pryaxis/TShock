@@ -134,7 +134,7 @@ namespace TShockAPI
 								if (TShock.Config.Settings.AnnounceSave)
 									TShock.Utils.Broadcast("World saved.", Color.Yellow);
 
-								TShock.Log.Info(string.Format("World saved at ({0})", Main.worldPathName));
+								TShock.Log.Info(GetString("World saved at ({0})", Main.worldPathName));
 							}
 							catch (Exception e)
 							{
@@ -160,7 +160,7 @@ namespace TShockAPI
 
 			public override string ToString()
 			{
-				return string.Format("resetTime {0}, direct {1}", resetTime, direct);
+				return GetString("resetTime {0}, direct {1}", resetTime, direct);
 			}
 		}
 	}

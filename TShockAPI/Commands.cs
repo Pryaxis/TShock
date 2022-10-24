@@ -4944,30 +4944,30 @@ namespace TShockAPI
 								return string.Concat("{ID: ", userId, "}");
 							});
 							List<string> extraLines = PaginationTools.BuildLinesFromTerms(sharedUsersSelector.Distinct());
-							extraLines[0] = "Shared with: " + extraLines[0];
+							extraLines[0] = GetString("Shared with: ") + extraLines[0];
 							lines.AddRange(extraLines);
 						}
 						else
 						{
-							lines.Add("Region is not shared with any users.");
+							lines.Add(GetString("Region is not shared with any users."));
 						}
 
 						if (region.AllowedGroups.Count > 0)
 						{
 							List<string> extraLines = PaginationTools.BuildLinesFromTerms(region.AllowedGroups.Distinct());
-							extraLines[0] = "Shared with groups: " + extraLines[0];
+							extraLines[0] = GetString("Shared with groups: ") + extraLines[0];
 							lines.AddRange(extraLines);
 						}
 						else
 						{
-							lines.Add("Region is not shared with any groups.");
+							lines.Add(GetString("Region is not shared with any groups."));
 						}
 
 						PaginationTools.SendPage(
 							args.Player, pageNumber, lines, new PaginationTools.Settings
 							{
-								HeaderFormat = string.Format("Information About Region \"{0}\" ({{0}}/{{1}}):", region.Name),
-								FooterFormat = string.Format("Type {0}region info {1} {{0}} for more information.", Specifier, regionName)
+								HeaderFormat = GetString("Information About Region \"{0}\" ({{0}}/{{1}}):", region.Name),
+								FooterFormat = GetString("Type {0}region info {1} {{0}} for more information.", Specifier, regionName)
 							}
 						);
 
@@ -5204,13 +5204,13 @@ namespace TShockAPI
 		private static void ToggleAntiBuild(CommandArgs args)
 		{
 			TShock.Config.Settings.DisableBuild = !TShock.Config.Settings.DisableBuild;
-			TSPlayer.All.SendSuccessMessage(string.Format("Anti-build is now {0}.", (TShock.Config.Settings.DisableBuild ? "on" : "off")));
+			TSPlayer.All.SendSuccessMessage(TShock.Config.Settings.DisableBuild ? GetString("Anti-build is now on.") : GetString("Anti-build is now off."));
 		}
 
 		private static void ProtectSpawn(CommandArgs args)
 		{
 			TShock.Config.Settings.SpawnProtection = !TShock.Config.Settings.SpawnProtection;
-			TSPlayer.All.SendSuccessMessage(string.Format("Spawn is now {0}.", (TShock.Config.Settings.SpawnProtection ? "protected" : "open")));
+			TSPlayer.All.SendSuccessMessage(TShock.Config.Settings.SpawnProtection ? GetString("Spawn is now protected.") : GetString("Spawn is now open."));
 		}
 
 		#endregion World Protection Commands
@@ -5407,7 +5407,7 @@ namespace TShockAPI
 			if (args.Player.mute)
 				args.Player.SendErrorMessage("You are muted.");
 			else
-				TSPlayer.All.SendMessage(string.Format("*{0} {1}", args.Player.Name, String.Join(" ", args.Parameters)), 205, 133, 63);
+				TSPlayer.All.SendMessage(GetString("*{0} {1}", args.Player.Name, String.Join(" ", args.Parameters)), 205, 133, 63);
 		}
 
 		private static void PartyChat(CommandArgs args)
@@ -5423,7 +5423,7 @@ namespace TShockAPI
 				args.Player.SendErrorMessage("You are muted.");
 			else if (playerTeam != 0)
 			{
-				string msg = string.Format("<{0}> {1}", args.Player.Name, String.Join(" ", args.Parameters));
+				string msg = GetString("<{0}> {1}", args.Player.Name, String.Join(" ", args.Parameters));
 				foreach (TSPlayer player in TShock.Players)
 				{
 					if (player != null && player.Active && player.Team == playerTeam)
@@ -6093,7 +6093,7 @@ namespace TShockAPI
 				if (args.Player.GiveItemCheck(item.type, EnglishLanguage.GetItemNameById(item.type), itemAmount, prefixId))
 				{
 					item.prefix = (byte)prefixId;
-					args.Player.SendSuccessMessage("Gave {0} {1}(s).", itemAmount, item.AffixName());
+					args.Player.SendSuccessMessage(GetPluralString("Gave {0} {1}.", "Gave {0} {1}s.", itemAmount, itemAmount, item.AffixName()));
 				}
 				else
 				{
@@ -6231,8 +6231,8 @@ namespace TShockAPI
 								itemAmount = item.maxStack;
 							if (plr.GiveItemCheck(item.type, EnglishLanguage.GetItemNameById(item.type), itemAmount, prefix))
 							{
-								args.Player.SendSuccessMessage(string.Format("Gave {0} {1} {2}(s).", plr.Name, itemAmount, item.Name));
-								plr.SendSuccessMessage(string.Format("{0} gave you {1} {2}(s).", args.Player.Name, itemAmount, item.Name));
+								args.Player.SendSuccessMessage(GetPluralString("Gave {0} {1} {2}.", "Gave {0} {1} {2}s.", itemAmount, plr.Name, itemAmount, item.Name));
+								plr.SendSuccessMessage(GetPluralString("{0} gave you {1} {2}.", "{0} gave you {1} {2}s.", itemAmount, args.Player.Name, itemAmount, item.Name));
 							}
 							else
 							{
@@ -6418,13 +6418,13 @@ namespace TShockAPI
 			bool canGrowEvil = args.Player.HasPermission(Permissions.growevil);
 			string subcmd = args.Parameters.Count == 0 ? "help" : args.Parameters[0].ToLower();
 
-			var name = "Fail";
+			var name = "Fail"; // assigned value never used
 			var x = args.Player.TileX;
 			var y = args.Player.TileY + 3;
 
 			if (!TShock.Regions.CanBuild(x, y, args.Player))
 			{
-				args.Player.SendErrorMessage("You're not allowed to change tiles here!");
+				args.Player.SendErrorMessage(GetString("You're not allowed to change tiles here!"));
 				return;
 			}
 
@@ -6436,22 +6436,22 @@ namespace TShockAPI
 							return;
 
 						var lines = new List<string>
-					{
-						"- Default trees :",
-						"     'basic', 'sakura', 'willow', 'boreal', 'mahogany', 'ebonwood', 'shadewood', 'pearlwood'.",
-						"- Palm trees :",
-						"     'palm', 'corruptpalm', 'crimsonpalm', 'hallowpalm'.",
-						"- Gem trees :",
-						"     'topaz', 'amethyst', 'sapphire', 'emerald', 'ruby', 'diamond', 'amber'.",
-						"- Misc :",
-						"     'cactus', 'herb', 'mushroom'."
-					};
+                        {
+                            GetString("- Default trees :"),
+                            GetString("     'basic', 'sakura', 'willow', 'boreal', 'mahogany', 'ebonwood', 'shadewood', 'pearlwood'."),
+                            GetString("- Palm trees :"),
+                            GetString("     'palm', 'corruptpalm', 'crimsonpalm', 'hallowpalm'."),
+                            GetString("- Gem trees :"),
+                            GetString("     'topaz', 'amethyst', 'sapphire', 'emerald', 'ruby', 'diamond', 'amber'."),
+                            GetString("- Misc :"),
+                            GetString("     'cactus', 'herb', 'mushroom'.")
+                        };
 
 						PaginationTools.SendPage(args.Player, pageNumber, lines,
 								new PaginationTools.Settings
 								{
-									HeaderFormat = "Trees types & misc available to use. ({0}/{1}):",
-									FooterFormat = "Type {0}grow help {{0}} for more sub-commands.".SFormat(Commands.Specifier)
+									HeaderFormat = GetString("Trees types & misc available to use. ({0}/{1}):"),
+									FooterFormat = GetString("Type {0}grow help {{0}} for more sub-commands.", Commands.Specifier)
 								}
 							);
 					}
@@ -6461,7 +6461,7 @@ namespace TShockAPI
 					{
 						if(!canGrowEvil)
 						{
-							args.Player.SendErrorMessage("You do not have permission to grow this tree type");
+							args.Player.SendErrorMessage(GetString("You do not have permission to grow this tree type"));
 							return false;
 						}
 
@@ -6531,91 +6531,91 @@ namespace TShockAPI
 					}
 
 				case "basic":
-					growTree(TileID.Grass, "Basic Tree");
+					growTree(TileID.Grass, GetString("Basic Tree"));
 					break;
 
 				case "boreal":
-					growTree(TileID.SnowBlock, "Boreal Tree");
+					growTree(TileID.SnowBlock, GetString("Boreal Tree"));
 					break;
 
 				case "mahogany":
-					growTree(TileID.JungleGrass, "Rich Mahogany");
+					growTree(TileID.JungleGrass, GetString("Rich Mahogany"));
 					break;
 
 				case "sakura":
-					growTreeByType(TileID.VanityTreeSakura, "Sakura Tree");
+					growTreeByType(TileID.VanityTreeSakura, GetString("Sakura Tree"));
 					break;
 
 				case "willow":
-					growTreeByType(TileID.VanityTreeYellowWillow, "Willow Tree");
+					growTreeByType(TileID.VanityTreeYellowWillow, GetString("Willow Tree"));
 					break;
 
 				case "shadewood":
-					if(!growTree(TileID.CrimsonGrass, "Shadewood Tree", true))
+					if(!growTree(TileID.CrimsonGrass, GetString("Shadewood Tree"), true))
 						return;
 					break;
 
 				case "ebonwood":
-					if(!growTree(TileID.CorruptGrass, "Ebonwood Tree", true))
+					if(!growTree(TileID.CorruptGrass, GetString("Ebonwood Tree"), true))
 						return;
 					break;
 
 				case "pearlwood":
-					if(!growTree(TileID.HallowedGrass, "Pearlwood Tree", true))
+					if(!growTree(TileID.HallowedGrass, GetString("Pearlwood Tree"), true))
 						return;
 					break;
 
 				case "palm":
-					growPalmTree(TileID.Sand, TileID.HardenedSand, "Desert Palm");
+					growPalmTree(TileID.Sand, TileID.HardenedSand, GetString("Desert Palm"));
 					break;
 
 				case "hallowpalm":
-					if(!growPalmTree(TileID.Pearlsand, TileID.HallowHardenedSand, "Hallow Palm", true))
+					if(!growPalmTree(TileID.Pearlsand, TileID.HallowHardenedSand, GetString("Hallow Palm"), true))
 						return;
 					break;
 
 				case "crimsonpalm":
-					if(!growPalmTree(TileID.Crimsand, TileID.CrimsonHardenedSand, "Crimson Palm", true))
+					if(!growPalmTree(TileID.Crimsand, TileID.CrimsonHardenedSand, GetString("Crimson Palm"), true))
 						return;
 					break;
 
 				case "corruptpalm":
-					if(!growPalmTree(TileID.Ebonsand, TileID.CorruptHardenedSand, "Corruption Palm", true))
+					if(!growPalmTree(TileID.Ebonsand, TileID.CorruptHardenedSand, GetString("Corruption Palm"), true))
 						return;
 					break;
 
 				case "topaz":
-					growTreeByType(TileID.TreeTopaz, "Topaz Gemtree", 1);
+					growTreeByType(TileID.TreeTopaz, GetString("Topaz Gemtree"), 1);
 					break;
 
 				case "amethyst":
-					growTreeByType(TileID.TreeAmethyst, "Amethyst Gemtree", 1);
+					growTreeByType(TileID.TreeAmethyst, GetString("Amethyst Gemtree"), 1);
 					break;
 
 				case "sapphire":
-					growTreeByType(TileID.TreeSapphire, "Sapphire Gemtree", 1);
+					growTreeByType(TileID.TreeSapphire, GetString("Sapphire Gemtree"), 1);
 					break;
 
 				case "emerald":
-					growTreeByType(TileID.TreeEmerald, "Emerald Gemtree", 1);
+					growTreeByType(TileID.TreeEmerald, GetString("Emerald Gemtree"), 1);
 					break;
 
 				case "ruby":
-					growTreeByType(TileID.TreeRuby, "Ruby Gemtree", 1);
+					growTreeByType(TileID.TreeRuby, GetString("Ruby Gemtree"), 1);
 					break;
 
 				case "diamond":
-					growTreeByType(TileID.TreeDiamond, "Diamond Gemtree", 1);
+					growTreeByType(TileID.TreeDiamond, GetString("Diamond Gemtree"), 1);
 					break;
 
 				case "amber":
-					growTreeByType(TileID.TreeAmber, "Amber Gemtree", 1);
+					growTreeByType(TileID.TreeAmber, GetString("Amber Gemtree"), 1);
 					break;
 
 				case "cactus":
 					Main.tile[x, y].type = TileID.Sand;
 					WorldGen.GrowCactus(x, y);
-					name = "Cactus";
+					name = GetString("Cactus");
 					break;
 
 				case "herb":
@@ -6623,23 +6623,23 @@ namespace TShockAPI
 					Main.tile[x, y].frameX = 36;
 					Main.tile[x, y].type = TileID.MatureHerbs;
 					WorldGen.GrowAlch(x, y);
-					name = "Herb";
+					name = GetString("Herb");
 					break;
 
 				case "mushroom":
 					prepareAreaForGrow(TileID.MushroomGrass);
 					WorldGen.GrowShroom(x, y);
-					name = "Glowing Mushroom Tree";
+					name = GetString("Glowing Mushroom Tree");
 					break;
 
 				default:
-					args.Player.SendErrorMessage("Unknown plant!");
+					args.Player.SendErrorMessage(GetString("Unknown plant!"));
 					return;
 			}
 			if (args.Parameters.Count == 1)
 			{
 				args.Player.SendTileSquareCentered(x - 2, y - 20, 25);
-				args.Player.SendSuccessMessage("Tried to grow a " + name + ".");
+				args.Player.SendSuccessMessage(GetString($"Tried to grow a {name}."));
 			}
 		}
 
@@ -6650,14 +6650,14 @@ namespace TShockAPI
 			{
 				if (!args.Player.HasPermission(Permissions.godmodeother))
 				{
-					args.Player.SendErrorMessage("You do not have permission to god mode another player.");
+					args.Player.SendErrorMessage(GetString("You do not have permission to god mode another player."));
 					return;
 				}
 				string plStr = String.Join(" ", args.Parameters);
 				var players = TSPlayer.FindByNameOrID(plStr);
 				if (players.Count == 0)
 				{
-					args.Player.SendErrorMessage("Invalid player!");
+					args.Player.SendErrorMessage(GetString("Invalid player!"));
 					return;
 				}
 				else if (players.Count > 1)
@@ -6672,7 +6672,7 @@ namespace TShockAPI
 			}
 			else if (!args.Player.RealPlayer)
 			{
-				args.Player.SendErrorMessage("You can't god mode a non player!");
+				args.Player.SendErrorMessage(GetString("You can't god mode a non player!"));
 				return;
 			}
 			else
@@ -6688,12 +6688,16 @@ namespace TShockAPI
 
 			if (playerToGod != args.Player)
 			{
-				args.Player.SendSuccessMessage(string.Format("{0} is {1} in god mode.", playerToGod.Name, playerToGod.GodMode ? "now" : "no longer"));
+				args.Player.SendSuccessMessage(playerToGod.GodMode ?
+					GetString("{0} is now in god mode.", playerToGod.Name),
+					GetString("{0} is no longer in god mode.", playerToGod.Name));
 			}
 
 			if (!args.Silent || (playerToGod == args.Player))
 			{
-				playerToGod.SendSuccessMessage(string.Format("You are {0} in god mode.", playerToGod.GodMode ? "now" : "no longer"));
+				playerToGod.SendSuccessMessage(playerToGod.GodMode ?
+					GetString("You are now in god mode.", playerToGod.Name),
+					GetString("You are no longer in god mode.", playerToGod.Name));
 			}
 		}
 

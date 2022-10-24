@@ -2955,10 +2955,10 @@ namespace TShockAPI
 				}
 				else if (!TShock.Config.Settings.AnonymousBossInvasions)
 				{
-					TShock.Utils.Broadcast(string.Format($"{args.Player.Name} summoned the Empress of Light!"), 175, 75, 255);
+					TShock.Utils.Broadcast(GetString($"{args.Player.Name} summoned the Empress of Light!"), 175, 75, 255);
 				}
 				else
-					TShock.Utils.SendLogs(string.Format($"{args.Player.Name} summoned the Empress of Light!"), Color.PaleVioletRed, args.Player);
+					TShock.Utils.SendLogs(GetString($"{args.Player.Name} summoned the Empress of Light!"), Color.PaleVioletRed, args.Player);
 			}
 			
 			if (Main.npc[id].netID == NPCID.CultistDevote || Main.npc[id].netID == NPCID.CultistArcherBlue)
@@ -3523,52 +3523,52 @@ namespace TShockAPI
 			switch (thingType)
 			{
 				case -14:
-					thing = "has sent a request to the bunny delivery service";
+					thing = GetString("has sent a request to the bunny delivery service");
 					break;
 				case -13:
-					thing = "has sent a request to the dog delivery service";
+					thing = GetString("has sent a request to the dog delivery service");
 					break;
 				case -12:
-					thing = "has sent a request to the cat delivery service";
+					thing = GetString("has sent a request to the cat delivery service");
 					break;
 				case -11:
-					thing = "applied advanced combat techniques";
+					thing = GetString("applied advanced combat techniques");
 					break;
 				case -10:
-					thing = "summoned a Blood Moon";
+					thing = GetString("summoned a Blood Moon");
 					break;
 				case -8:
-					thing = "summoned a Moon Lord";
+					thing = GetString("summoned a Moon Lord");
 					break;
 				case -7:
-					thing = "summoned a Martian invasion";
+					thing = GetString("summoned a Martian invasion");
 					break;
 				case -6:
-					thing = "summoned an eclipse";
+					thing = GetString("summoned an eclipse");
 					break;
 				case -5:
-					thing = "summoned a frost moon";
+					thing = GetString("summoned a frost moon");
 					break;
 				case -4:
-					thing = "summoned a pumpkin moon";
+					thing = GetString("summoned a pumpkin moon");
 					break;
 				case -3:
-					thing = "summoned the Pirates";
+					thing = GetString("summoned the Pirates");
 					break;
 				case -2:
-					thing = "summoned the Snow Legion";
+					thing = GetString("summoned the Snow Legion");
 					break;
 				case -1:
-					thing = "summoned a Goblin Invasion";
+					thing = GetString("summoned a Goblin Invasion");
 					break;
 				default:
-					thing = String.Format("summoned the {0}", npc.FullName);
+					thing = GetString("summoned the {0}", npc.FullName);
 					break;
 			}
 			if (TShock.Config.Settings.AnonymousBossInvasions)
-				TShock.Utils.SendLogs(string.Format("{0} {1}!", args.Player.Name, thing), Color.PaleVioletRed, args.Player);
+				TShock.Utils.SendLogs(GetString("{0} {1}!", args.Player.Name, thing), Color.PaleVioletRed, args.Player);
 			else
-				TShock.Utils.Broadcast(String.Format("{0} {1}!", args.Player.Name, thing), 175, 75, 255);
+				TShock.Utils.Broadcast(GetString("{0} {1}!", args.Player.Name, thing), 175, 75, 255);
 			return false;
 		}
 
@@ -4114,9 +4114,9 @@ namespace TShockAPI
 			}
 
 			if (TShock.Config.Settings.AnonymousBossInvasions)
-				TShock.Utils.SendLogs(string.Format("{0} started the Old One's Army event!", args.Player.Name), Color.PaleVioletRed, args.Player);
+				TShock.Utils.SendLogs(GetString("{0} started the Old One's Army event!", args.Player.Name), Color.PaleVioletRed, args.Player);
 			else
-				TShock.Utils.Broadcast(string.Format("{0} started the Old One's Army event!", args.Player.Name), 175, 75, 255);
+				TShock.Utils.Broadcast(GetString("{0} started the Old One's Army event!", args.Player.Name), 175, 75, 255);
 			return false;
 		}
 

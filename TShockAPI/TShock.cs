@@ -69,7 +69,7 @@ namespace TShockAPI
 		/// <summary>LogFormat - This is the log format, which is never set again.</summary>
 		private static string LogFormat = LogFormatDefault;
 		/// <summary>LogPathDefault - The default log path.</summary>
-		private const string LogPathDefault = "tshock/logs";
+		private const string LogPathDefault = "tshock/logs"
 		/// <summary>This is the log path, which is initially set to the default log path, and then to the config file log path later.</summary>
 		private static string LogPath = LogPathDefault;
 		/// <summary>LogClear - Determines whether or not the log file should be cleared on initialization.</summary>
@@ -443,8 +443,8 @@ namespace TShockAPI
 					if(Log is not null) Log.ConsoleError(message);
 					else Console.WriteLine(message);
 				};
-				SafeError("TShock encountered a problem from which it cannot recover. The following message may help diagnose the problem.");
-				SafeError("Until the problem is resolved, TShock will not be able to start (and will crash on startup).");
+				SafeError(GetString("TShock encountered a problem from which it cannot recover. The following message may help diagnose the problem."));
+				SafeError(GetString("Until the problem is resolved, TShock will not be able to start (and will crash on startup)."));
 				SafeError(ex.ToString());
 				Environment.Exit(1);
 			}
@@ -780,7 +780,7 @@ namespace TShockAPI
 					{
 						if (!string.IsNullOrWhiteSpace(cfg))
 						{
-							ServerApi.LogWriter.PluginWriteLine(this, string.Format("Loading dedicated config file: {0}", cfg), TraceLevel.Verbose);
+							ServerApi.LogWriter.PluginWriteLine(this, GetString("Loading dedicated config file: {0}", cfg), TraceLevel.Verbose);
 							Main.instance.LoadDedConfig(cfg);
 						}
 					})
@@ -791,7 +791,7 @@ namespace TShockAPI
 						if (int.TryParse(p, out port))
 						{
 							Netplay.ListenPort = port;
-							ServerApi.LogWriter.PluginWriteLine(this, string.Format("Listening on port {0}.", port), TraceLevel.Verbose);
+							ServerApi.LogWriter.PluginWriteLine(this, GetString("Listening on port {0}.", port), TraceLevel.Verbose);
 						}
 					})
 
@@ -800,7 +800,7 @@ namespace TShockAPI
 						if (!string.IsNullOrWhiteSpace(world))
 						{
 							Main.instance.SetWorldName(world);
-							ServerApi.LogWriter.PluginWriteLine(this, string.Format("World name will be overridden by: {0}", world), TraceLevel.Verbose);
+							ServerApi.LogWriter.PluginWriteLine(this, GetString("World name will be overridden by: {0}", world), TraceLevel.Verbose);
 						}
 					})
 
@@ -810,7 +810,7 @@ namespace TShockAPI
 						if (IPAddress.TryParse(ip, out addr))
 						{
 							Netplay.ServerIP = addr;
-							ServerApi.LogWriter.PluginWriteLine(this, string.Format("Listening on IP {0}.", addr), TraceLevel.Verbose);
+							ServerApi.LogWriter.PluginWriteLine(this, GetString("Listening on IP {0}.", addr), TraceLevel.Verbose);
 						}
 						else
 						{
@@ -846,7 +846,7 @@ namespace TShockAPI
 							throw new InvalidOperationException("Invalid value given for command line argument \"-worldevil\".");
 					}
 
-					ServerApi.LogWriter.PluginWriteLine(this, String.Format("New worlds will be generated with the {0} world evil type!", value), TraceLevel.Verbose);
+					ServerApi.LogWriter.PluginWriteLine(this, GetString("New worlds will be generated with the {0} world evil type!", value), TraceLevel.Verbose);
 					WorldGen.WorldGenParam_Evil = worldEvil;
 				})
 
@@ -978,8 +978,8 @@ namespace TShockAPI
 
 				if (File.Exists(Path.Combine(SavePath, "setup-code.txt")))
 				{
-					Log.ConsoleInfo("An account has been detected in the user database, but setup-code.txt is still present.");
-					Log.ConsoleInfo("TShock will now disable the initial setup system and remove setup-code.txt as it is no longer needed.");
+					Log.ConsoleInfo(GetString("An account has been detected in the user database, but setup-code.txt is still present."));
+					Log.ConsoleInfo(GetString("TShock will now disable the initial setup system and remove setup-code.txt as it is no longer needed."));
 					File.Delete(Path.Combine(SavePath, "setup-code.txt"));
 				}
 
@@ -994,8 +994,8 @@ namespace TShockAPI
 				var r = new Random((int)DateTime.Now.ToBinary());
 				SetupToken = r.Next(100000, 10000000);
 				Console.ForegroundColor = ConsoleColor.Yellow;
-				Console.WriteLine("To setup the server, join the game and type {0}setup {1}", Commands.Specifier, SetupToken);
-				Console.WriteLine("This token will display until disabled by verification. ({0}setup)", Commands.Specifier);
+				Console.WriteLine(GetString("To setup the server, join the game and type {0}setup {1}", Commands.Specifier, SetupToken));
+				Console.WriteLine(GetString("This token will display until disabled by verification. ({0}setup)", Commands.Specifier));
 				Console.ResetColor();
 				File.WriteAllText(Path.Combine(SavePath, "setup-code.txt"), SetupToken.ToString());
 			}
@@ -1003,9 +1003,9 @@ namespace TShockAPI
 			{
 				SetupToken = Convert.ToInt32(File.ReadAllText(Path.Combine(SavePath, "setup-code.txt")));
 				Console.ForegroundColor = ConsoleColor.Yellow;
-				Console.WriteLine("TShock Notice: setup-code.txt is still present, and the code located in that file will be used.");
-				Console.WriteLine("To setup the server, join the game and type {0}setup {1}", Commands.Specifier, SetupToken);
-				Console.WriteLine("This token will display until disabled by verification. ({0}setup)", Commands.Specifier);
+				Console.WriteLine(GetString("TShock Notice: setup-code.txt is still present, and the code located in that file will be used."));
+				Console.WriteLine(GetString("To setup the server, join the game and type {0}setup {1}", Commands.Specifier, SetupToken));
+				Console.WriteLine(GetString("This token will display until disabled by verification. ({0}setup)", Commands.Specifier));
 				Console.ResetColor();
 			}
 
@@ -1465,7 +1465,7 @@ namespace TShockAPI
 					if (!Commands.HandleCommand(tsplr, text))
 					{
 						// This is required in case anyone makes HandleCommand return false again
-						tsplr.SendErrorMessage("Unable to parse command. Please contact an administrator for assistance.");
+						tsplr.SendErrorMessage(GetString("Unable to parse command. Please contact an administrator for assistance."));
 						Log.ConsoleError("Unable to parse command '{0}' from player {1}.", text, tsplr.Name);
 					}
 				}
@@ -1483,7 +1483,7 @@ namespace TShockAPI
 				}
 				else if (tsplr.mute)
 				{
-					tsplr.SendErrorMessage("You are muted!");
+					tsplr.SendErrorMessage(GetString("You are muted!"));
 					args.Handled = true;
 				}
 				else if (!TShock.Config.Settings.EnableChatAboveHeads)
@@ -1638,22 +1638,22 @@ namespace TShockAPI
 
 			if (Config.Settings.EnableGeoIP && TShock.Geo != null)
 			{
-				Log.Info("{0} ({1}) from '{2}' group from '{3}' joined. ({4}/{5})", player.Name, player.IP,
+				Log.Info(GetString("{0} ({1}) from '{2}' group from '{3}' joined. ({4}/{5})", player.Name, player.IP,
 									   player.Group.Name, player.Country, TShock.Utils.GetActivePlayerCount(),
-									   TShock.Config.Settings.MaxSlots);
+									   TShock.Config.Settings.MaxSlots));
 				if (!player.SilentJoinInProgress)
-					Utils.Broadcast(string.Format("{0} ({1}) has joined.", player.Name, player.Country), Color.Yellow);
+					Utils.Broadcast(GetString("{0} ({1}) has joined.", player.Name, player.Country), Color.Yellow);
 			}
 			else
 			{
-				Log.Info("{0} ({1}) from '{2}' group joined. ({3}/{4})", player.Name, player.IP,
-									   player.Group.Name, TShock.Utils.GetActivePlayerCount(), TShock.Config.Settings.MaxSlots);
+				Log.Info(GetString("{0} ({1}) from '{2}' group joined. ({3}/{4})", player.Name, player.IP,
+									   player.Group.Name, TShock.Utils.GetActivePlayerCount(), TShock.Config.Settings.MaxSlots));
 				if (!player.SilentJoinInProgress)
-					Utils.Broadcast(player.Name + " has joined.", Color.Yellow);
+					Utils.Broadcast(GetString("{0} has joined.", player.Name), Color.Yellow);
 			}
 
 			if (Config.Settings.DisplayIPToAdmins)
-				Utils.SendLogs(string.Format("{0} has joined. IP: {1}", player.Name, player.IP), Color.Blue);
+				Utils.SendLogs(GetString("{0} has joined. IP: {1}", player.Name, player.IP), Color.Blue);
 
 			player.SendFileTextAsMessage(FileTools.MotdPath);
 
@@ -1670,12 +1670,12 @@ namespace TShockAPI
 				if (Main.ServerSideCharacter)
 				{
 					player.IsDisabledForSSC = true;
-					player.SendErrorMessage(String.Format("Server side characters is enabled! Please {0}register or {0}login to play!", Commands.Specifier));
+					player.SendErrorMessage(GetString("Server side characters is enabled! Please {0}register or {0}login to play!", Commands.Specifier));
 					player.LoginHarassed = true;
 				}
 				else if (Config.Settings.RequireLogin)
 				{
-					player.SendErrorMessage("Please {0}register or {0}login to play!", Commands.Specifier);
+					player.SendErrorMessage(GetString("Please {0}register or {0}login to play!", Commands.Specifier));
 					player.LoginHarassed = true;
 				}
 			}
@@ -1685,7 +1685,7 @@ namespace TShockAPI
 			if (Config.Settings.RememberLeavePos && (RememberedPos.GetLeavePos(player.Name, player.IP) != Vector2.Zero) && !player.LoginHarassed)
 			{
 				player.RPPending = 3;
-				player.SendInfoMessage("You will be teleported to your last known location...");
+				player.SendInfoMessage(GetString("You will be teleported to your last known location..."));
 			}
 
 			args.Handled = true;

@@ -1665,7 +1665,7 @@ namespace TShockAPI
 			{
 				if (TShock.Config.Settings.KickOnTileLiquidThresholdBroken)
 				{
-					args.Player.Kick(string.Format("Reached TileLiquid threshold {0}.", TShock.Config.Settings.TileLiquidThreshold));
+					args.Player.Kick(GetString("Reached TileLiquid threshold {0}.", TShock.Config.Settings.TileLiquidThreshold));
 				}
 				else
 				{
