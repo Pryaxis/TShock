@@ -2807,11 +2807,11 @@ namespace TShockAPI
 
 			if (args.Silent)
 			{
-				args.Player.SendSuccessMessage(GetString("You spawned {0} {1} time(s).", spawnName, amount));
+				args.Player.SendSuccessMessage(GetPluralString("You spawned {0} {1} time.", "You spawned {0} {1} times.", amount, spawnName, amount));
 			}
 			else
 			{
-				TSPlayer.All.SendSuccessMessage(GetString("{0} spawned {1} {2} time(s).", args.Player.Name, spawnName, amount));
+				TSPlayer.All.SendSuccessMessage(GetPluralString("{0} spawned {1} {2} time.", "{0} spawned {1} {2} times.", amount, args.Player.Name, spawnName, amount));
 			}
 		}
 
@@ -2854,11 +2854,11 @@ namespace TShockAPI
 					TSPlayer.Server.SpawnNPC(npc.netID, npc.FullName, amount, args.Player.TileX, args.Player.TileY, 50, 20);
 					if (args.Silent)
 					{
-						args.Player.SendSuccessMessage(GetString("Spawned {0} {1} time(s).", npc.FullName, amount));
+						args.Player.SendSuccessMessage(GetPluralString("Spawned {0} {1} time.", "Spawned {0} {1} times.", amount, npc.FullName, amount));
 					}
 					else
 					{
-						TSPlayer.All.SendSuccessMessage(GetString("{0} has spawned {1} {2} time(s).", args.Player.Name, npc.FullName, amount));
+						TSPlayer.All.SendSuccessMessage(GetPluralString("{0} has spawned {1} {2} time.", "{0} has spawned {1} {2} times.", amount, args.Player.Name, npc.FullName, amount));
 					}
 				}
 				else if (npc.type == 113)
@@ -3230,7 +3230,7 @@ namespace TShockAPI
 					}
 					else
 					{
-						args.Player.SendErrorMessage(GetString("Warp {warpName} already exists."));
+						args.Player.SendErrorMessage(GetString($"Warp {warpName} already exists."));
 					}
 				}
 				else
@@ -3266,9 +3266,9 @@ namespace TShockAPI
 						if (TShock.Warps.Hide(args.Parameters[1], state))
 						{
 							if (state)
-								args.Player.SendSuccessMessage(GetString("Warp {warpName} is now private."));
+								args.Player.SendSuccessMessage(GetString("Warp {0} is now private.", warpName));
 							else
-								args.Player.SendSuccessMessage(GetString("Warp {warpName} is now public."));
+								args.Player.SendSuccessMessage(GetString("Warp {0} is now public.", warpName));
 						}
 						else
 							args.Player.SendErrorMessage(GetString("Could not find specified warp."));
@@ -3821,7 +3821,7 @@ namespace TShockAPI
 							}
 
 							// This returns the localized name to the player, not the item as it was stored.
-							args.Player.SendSuccessMessage(GetString($"Banned ${items[0].Name}."));
+							args.Player.SendSuccessMessage(GetString($"Banned {items[0].Name}."));
 						}
 					}
 					#endregion
