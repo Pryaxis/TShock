@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-23 14:23:32+0000\n"
-"PO-Revision-Date: 2022-10-23 17:34\n"
+"PO-Revision-Date: 2022-10-24 05:43\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -370,12 +370,12 @@ msgstr "{0}login - Inicia tu sesión usando tu UUID y nombre de personaje."
 #: ../../TShockAPI/Commands.cs:846
 #, csharp-format
 msgid "{0}login <password> - Authenticates you using your password and character name."
-msgstr "{0}login <password> - Inicias sesión usando tu contraseña y el nombre del personaje."
+msgstr "{0}login <contraseña> - Inicias sesión usando tu contraseña y el nombre del personaje."
 
 #: ../../TShockAPI/Commands.cs:844
 #, csharp-format
 msgid "{0}login <username> <password> - Authenticates you using your username and password."
-msgstr "{0}login <username> <password> - Inicias sesión usando tu nombre de usuario y contraseña."
+msgstr "{0}login <nombreUsuario> <contraseña> - Inicias sesión usando tu nombre de usuario y contraseña."
 
 #: ../../TShockAPI/Commands.cs:1196
 #, csharp-format
@@ -408,7 +408,7 @@ msgstr "un Ciervíclope"
 
 #: ../../TShockAPI/Commands.cs:3367
 msgid "A group with the same name already exists."
-msgstr "Ya existe un grupo con ese nombre."
+msgstr "Ya existe un grupo con el mismo nombre."
 
 #: ../../TShockAPI/DB/RegionManager.cs:108
 msgid "A lot of things will fail because of this. You must manually delete and re-create the allowed field."
@@ -428,7 +428,7 @@ msgstr "un Pilar de Nebulosa"
 
 #: ../../TShockAPI/Commands.cs:1307
 msgid "A player name must be provided to kick a player. Please provide one."
-msgstr "Debes proporcionar el nombre del usuario para poder expulsarlo. Por favor escribe su nombre."
+msgstr "Debes escribir el nombre del jugador para poder expulsarlo. Por favor escribe su nombre."
 
 #: ../../TShockAPI/Rest/SecureRest.cs:120
 #, csharp-format
@@ -459,7 +459,7 @@ msgstr "¡La cuenta {0} no existe! Por lo tanto, no se puede cambiar la contrase
 #: ../../TShockAPI/Commands.cs:1096
 #, csharp-format
 msgid "Account {0} has been added to group {1}."
-msgstr "Se agregó la cuenta {0} al grupo {1}."
+msgstr "Se añadió la cuenta {0} al grupo {1}."
 
 #: ../../TShockAPI/Commands.cs:1172
 #, csharp-format
@@ -486,7 +486,7 @@ msgstr "add <nombre> <permisos...> - Añade un nuevo grupo."
 #: ../../TShockAPI/Commands.cs:1728
 #, csharp-format
 msgid "Added {0} to the whitelist."
-msgstr "{0} agregado a la lista blanca."
+msgstr "{0} añadido a la lista blanca."
 
 #: ../../TShockAPI/Bouncer.cs:2011
 #, csharp-format
@@ -649,12 +649,12 @@ msgstr "Betsy"
 #: ../../TShockAPI/Rest/RestManager.cs:889
 #, csharp-format
 msgid "Blood Moon has been set to {0}"
-msgstr ""
+msgstr "La Luna Sangrienta fue marcada como {0}"
 
 #: ../../TShockAPI/Rest/RestManager.cs:904
 #, csharp-format
 msgid "Bloodmoon state: {0}EnabledDisabled"
-msgstr ""
+msgstr "Estado de Luna Sangrienta: {0}EnabledDisabled"
 
 #: ../../TShockAPI/Bouncer.cs:1447
 #, csharp-format
@@ -1969,19 +1969,19 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:476
 msgid "Grows plants at your location."
-msgstr ""
+msgstr "Crece plantas en tu ubicación."
 
 #: ../../TShockAPI/Commands.cs:2576
 msgid "Hardmode is disabled in the server configuration file."
-msgstr ""
+msgstr "El modo difícil está deshabilitado en el archivo de configuración del servidor."
 
 #: ../../TShockAPI/Commands.cs:2567
 msgid "Hardmode is now off."
-msgstr ""
+msgstr "Se ha desactivado el modo difícil."
 
 #: ../../TShockAPI/Commands.cs:2572
 msgid "Hardmode is now on."
-msgstr ""
+msgstr "Se ha activado el modo difícil."
 
 #: ../../TShockAPI/Bouncer.cs:2066
 msgid "HealOtherPlayer cheat attempt!"
@@ -1994,12 +1994,12 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:549
 msgid "Heals a player in HP and MP."
-msgstr ""
+msgstr "Restaura los HP y MP del jugador."
 
 #: ../../TShockAPI/Commands.cs:1226
 #, csharp-format
 msgid "ID: {0}"
-msgstr ""
+msgstr "ID: {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1374
 msgid "If this player wasn't hacking, please report the damage threshold they were disabled for to TShock so we can improve this!"
