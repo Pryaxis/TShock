@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
-"POT-Creation-Date: 2022-10-24 07:29:23+0000\n"
-"PO-Revision-Date: 2022-10-25 05:53\n"
+"POT-Creation-Date: 2022-10-25 07:37:44+0000\n"
+"PO-Revision-Date: 2022-10-25 18:02\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -92,7 +92,7 @@ msgstr "{0}已成功登录账号{1}。"
 #: ../../TShockAPI/Commands.cs:2445
 #, csharp-format
 msgid "{0} caused it to rain slime."
-msgstr "{0} 放出了史莱姆雨"
+msgstr "{0} 开始了一场史莱姆雨。"
 
 #: ../../TShockAPI/Commands.cs:2460
 #, csharp-format
@@ -177,7 +177,7 @@ msgstr "{0} 已被禁止放置方块 {1}。"
 #: ../../TShockAPI/Commands.cs:4112
 #, csharp-format
 msgid "{0} has been disallowed from using projectile {1}."
-msgstr "{0} 已被禁止使用弹射物 {1}"
+msgstr "{0} 已被禁止使用射弹 {1}。"
 
 #: ../../TShockAPI/Commands.cs:3935
 #, csharp-format
@@ -214,7 +214,7 @@ msgstr "{0} 已生成 {1} {2} 次。"
 #: ../../TShockAPI/Commands.cs:2878
 #, csharp-format
 msgid "{0} has spawned a Wall of Flesh."
-msgstr "{0} 召唤了血肉墙."
+msgstr "{0} 召唤了血肉墙。"
 
 #: ../../TShockAPI/Commands.cs:2325
 #, csharp-format
@@ -249,7 +249,7 @@ msgstr "组 {0} 已被允许使用 {1}。"
 #: ../../TShockAPI/Commands.cs:4057
 #, csharp-format
 msgid "{0} is already allowed to use projectile {1}."
-msgstr "{0} 已被允许使用弹射物 {1}。"
+msgstr "{0} 已被允许使用射弹 {1}。"
 
 #: ../../TShockAPI/Commands.cs:3939
 #, csharp-format
@@ -264,7 +264,7 @@ msgstr "{0} 已被禁止放置方块 {1}。"
 #: ../../TShockAPI/Commands.cs:4116
 #, csharp-format
 msgid "{0} is already prevented from using projectile {1}."
-msgstr "{0} 已被禁止使用弹射物 {1}。"
+msgstr "{0} 已被禁止使用射弹 {1}。"
 
 #: ../../TShockAPI/Commands.cs:3858
 #: ../../TShockAPI/Commands.cs:3929
@@ -580,7 +580,7 @@ msgstr "add <组名> <权限...> - 添加一个新组."
 
 #: ../../TShockAPI/Commands.cs:4132
 msgid "add <projectile ID> - Adds a projectile ban."
-msgstr "add <射弹ID> - 添加禁止使用的弹射物。"
+msgstr "add <射弹ID> - 添加禁止使用的射弹。"
 
 #: ../../TShockAPI/Commands.cs:4308
 msgid "add <tile ID> - Adds a tile ban."
@@ -634,7 +634,7 @@ msgstr "allow <物品> <组名> - 允许指定组使用被禁用的物品."
 
 #: ../../TShockAPI/Commands.cs:4133
 msgid "allow <projectile ID> <group> - Allows a group to use a projectile."
-msgstr "allow <弹射物ID> <组名> - 允许一个组使用指定弹射物。"
+msgstr "allow <射弹ID> <组名> - 允许一个组使用指定射弹。"
 
 #: ../../TShockAPI/Commands.cs:4309
 msgid "allow <tile ID> <group> - Allows a group to place a tile."
@@ -664,8 +664,8 @@ msgstr "UUID的标识。"
 
 #: ../../TShockAPI/DB/BanManager.cs:636
 #, csharp-format
-msgid "An identifier for an IP Address in octet format. e.g., '{0}'.127.0.0.1"
-msgstr "一个八位元组格式的IP地址标识符，例如'{0}'"
+msgid "An identifier for an IP Address in octet format. e.g., '{0}'."
+msgstr "一个十六进制格式的 IP 地址标识符，例如{0}。"
 
 #: ../../TShockAPI/Commands.cs:2035
 msgid "An update check has been queued. If an update is available, you will be notified shortly."
@@ -762,7 +762,7 @@ msgstr "被封禁 ${0}."
 #: ../../TShockAPI/Commands.cs:4020
 #, csharp-format
 msgid "Banned projectile {0}."
-msgstr "弹射物已被封禁{0}。"
+msgstr "射弹已被封禁{0}。"
 
 #: ../../TShockAPI/Commands.cs:4196
 #, csharp-format
@@ -784,8 +784,8 @@ msgstr "血月已被设置为{0}"
 
 #: ../../TShockAPI/Rest/RestManager.cs:904
 #, csharp-format
-msgid "Bloodmoon state: {0}EnabledDisabled"
-msgstr "血月状态:{0}启用禁用"
+msgid "Bloodmoon state: {0}"
+msgstr "血夜状态: {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1447
 #, csharp-format
@@ -1730,20 +1730,20 @@ msgstr "某些弹幕已经因防作弊而被忽略。"
 #: ../../TShockAPI/Commands.cs:4445
 #, csharp-format
 msgid "Changed the maximum spawns to {0}."
-msgstr "已将最大刷怪量更改为 {0}。"
+msgstr "已将最大生成量更改为 {0}。"
 
 #: ../../TShockAPI/Commands.cs:4426
 msgid "Changed the maximum spawns to 5."
-msgstr "已将最大刷怪量改为5。"
+msgstr "已将最大生成量改为5。"
 
 #: ../../TShockAPI/Commands.cs:4484
 #, csharp-format
 msgid "Changed the spawn rate to {0}."
-msgstr "已将刷怪率更改为 {0}。"
+msgstr "已将生成率更改为 {0}。"
 
 #: ../../TShockAPI/Commands.cs:4466
 msgid "Changed the spawn rate to 600."
-msgstr "将最大刷怪率更改为600。"
+msgstr "将最大生成率更改为600。"
 
 #: ../../TShockAPI/Commands.cs:368
 msgid "Changes the server password."
@@ -1860,12 +1860,12 @@ msgstr "CreativeUnlocksHandler 收到了非原版解锁请求。随机字段值�
 #: ../../TShockAPI/Commands.cs:4417
 #, csharp-format
 msgid "Current maximum spawns: {0}."
-msgstr "当前最大刷怪量： {0}。"
+msgstr "当前最大生成量： {0}。"
 
 #: ../../TShockAPI/Commands.cs:4457
 #, csharp-format
 msgid "Current spawn rate: {0}."
-msgstr "当前刷怪率： {0}。"
+msgstr "当前生成率： {0}。"
 
 #: ../../TShockAPI/Bouncer.cs:2650
 #, csharp-format
@@ -1886,7 +1886,7 @@ msgstr "del <item> - 禁用指定物品"
 
 #: ../../TShockAPI/Commands.cs:4134
 msgid "del <projectile ID> - Deletes an projectile ban."
-msgstr "del <射弹ID> - 禁用指定弹射物。"
+msgstr "del <射弹ID> - 禁用指定射弹。"
 
 #: ../../TShockAPI/Commands.cs:4310
 msgid "del <tile ID> - Deletes a tile ban."
@@ -1930,7 +1930,7 @@ msgstr "disallow <物品id> <组别> - 禁止指定组使用被禁用的物品"
 
 #: ../../TShockAPI/Commands.cs:4135
 msgid "disallow <projectile ID> <group> - Disallows a group from using a projectile."
-msgstr "disallow <射弹ID> <组名> - 允许一个组使用特定弹射物。"
+msgstr "disallow <射弹ID> <组名> - 允许一个组使用特定射弹。"
 
 #: ../../TShockAPI/Commands.cs:4311
 msgid "disallow <tile ID> <group> - Disallows a group from place a tile."
@@ -2342,7 +2342,7 @@ msgstr "无效物品"
 #: ../../TShockAPI/Commands.cs:4438
 #, csharp-format
 msgid "Invalid maximum spawns.  Acceptable range is {0} to {1}."
-msgstr "无效的最大刷怪量。可接受的范围是 {0} 至 {1}。"
+msgstr "无效的最大生成量。可接受的范围是 {0} 至 {1}。"
 
 #: ../../TShockAPI/Commands.cs:2843
 msgid "Invalid mob type!"
@@ -2382,13 +2382,13 @@ msgstr "无效的玩家名"
 
 #: ../../TShockAPI/Commands.cs:4023
 msgid "Invalid projectile ID!"
-msgstr "无效的弹射物ID！"
+msgstr "无效的射弹ID！"
 
 #: ../../TShockAPI/Commands.cs:4060
 #: ../../TShockAPI/Commands.cs:4081
 #: ../../TShockAPI/Commands.cs:4119
 msgid "Invalid projectile ID."
-msgstr "无效的弹射物ID"
+msgstr "无效的射弹ID。"
 
 #: ../../TShockAPI/Commands.cs:2347
 msgid "Invalid pumpkin moon event wave."
@@ -2827,7 +2827,7 @@ msgstr "list [页码] - 列出所有被禁用的物品."
 
 #: ../../TShockAPI/Commands.cs:4136
 msgid "list [page] - Lists all projectile bans."
-msgstr "list [页码] - 列出所有被禁用的弹射物。"
+msgstr "list [页码] - 列出所有被禁用的射弹。"
 
 #: ../../TShockAPI/Commands.cs:4312
 msgid "list [page] - Lists all tile bans."
@@ -3245,7 +3245,7 @@ msgstr "进程数量：{0}"
 #: ../../TShockAPI/Commands.cs:4106
 #, csharp-format
 msgid "Projectile {0} is not banned."
-msgstr "弹射物 {0} 未被禁止"
+msgstr "射弹 {0} 未被禁止。"
 
 #: ../../TShockAPI/Bouncer.cs:1175
 #, csharp-format
@@ -3255,7 +3255,7 @@ msgstr "射弹伤害高于{0}。"
 #: ../../TShockAPI/Bouncer.cs:1269
 #, csharp-format
 msgid "Projectile update threshold exceeded {0}."
-msgstr "弹射物更新阈值超过 {0}。"
+msgstr "射弹更新阈值超过 {0}。"
 
 #: ../../TShockAPI/Commands.cs:4933
 #, csharp-format
@@ -3957,7 +3957,7 @@ msgstr "REST 身份验证令牌。"
 
 #: ../../TShockAPI/Commands.cs:4478
 msgid "The spawn rate you provided is out-of-range or not a number."
-msgstr "您提供的刷怪率已超出范围或不是数字。"
+msgstr "您提供的生成率已超出范围或不是数字。"
 
 #: ../../TShockAPI/Rest/SecureRest.cs:90
 msgid "The specified token queued for destruction failed to be deleted."
@@ -4117,7 +4117,7 @@ msgstr "物品 {0} 已被允许使用."
 #: ../../TShockAPI/Commands.cs:4077
 #, csharp-format
 msgid "Unbanned projectile {0}."
-msgstr "弹射物已被解除封禁{0}。"
+msgstr "射弹已被解除封禁{0}。"
 
 #: ../../TShockAPI/Commands.cs:4253
 #, csharp-format
