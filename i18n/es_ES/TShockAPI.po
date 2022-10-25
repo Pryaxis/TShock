@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-24 07:29:23+0000\n"
-"PO-Revision-Date: 2022-10-24 17:54\n"
+"PO-Revision-Date: 2022-10-25 05:53\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -581,11 +581,11 @@ msgstr "add <nombre> <permisos...> - Añade un nuevo grupo."
 
 #: ../../TShockAPI/Commands.cs:4132
 msgid "add <projectile ID> - Adds a projectile ban."
-msgstr ""
+msgstr "add <ID de Proyectil> - Agrega una prohibición de proyectil."
 
 #: ../../TShockAPI/Commands.cs:4308
 msgid "add <tile ID> - Adds a tile ban."
-msgstr ""
+msgstr "add <ID de bloque> - Agrega una prohibición de bloque."
 
 #: ../../TShockAPI/Commands.cs:1728
 #, csharp-format
@@ -635,11 +635,11 @@ msgstr "allow <objeto> <grupo> - Permite a un grupo usar un objeto."
 
 #: ../../TShockAPI/Commands.cs:4133
 msgid "allow <projectile ID> <group> - Allows a group to use a projectile."
-msgstr ""
+msgstr "allow <ID de proyectil> <grupo> - Permite a un grupo usar un proyectil."
 
 #: ../../TShockAPI/Commands.cs:4309
 msgid "allow <tile ID> <group> - Allows a group to place a tile."
-msgstr ""
+msgstr "allow <ID de bloque> <grupo> - Permite a un grupo colocar un bloque."
 
 #: ../../TShockAPI/DB/GroupManager.cs:474
 #, csharp-format
@@ -758,7 +758,7 @@ msgstr "Ban revocado."
 #: ../../TShockAPI/Commands.cs:3824
 #, csharp-format
 msgid "Banned ${0}."
-msgstr ""
+msgstr "Se ha prohibido usar ${0}."
 
 #: ../../TShockAPI/Commands.cs:4020
 #, csharp-format
@@ -772,7 +772,7 @@ msgstr "Se ha prohibido el bloque {0}."
 
 #: ../../TShockAPI/Commands.cs:1508
 msgid "Banned."
-msgstr ""
+msgstr "Prohibido."
 
 #: ../../TShockAPI/Commands.cs:2738
 msgid "Betsy"
@@ -1748,11 +1748,11 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:368
 msgid "Changes the server password."
-msgstr ""
+msgstr "Cambia la contraseña del servidor."
 
 #: ../../TShockAPI/Commands.cs:522
 msgid "Changes the wind speed."
-msgstr ""
+msgstr "Cambia la velocidad del viento."
 
 #: ../../TShockAPI/Commands.cs:467
 msgid "Changes the world mode."
@@ -1760,7 +1760,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:252
 msgid "Changes your account's password."
-msgstr ""
+msgstr "Cambia la contraseña de tu cuenta."
 
 #: ../../TShockAPI/Commands.cs:3629
 #, csharp-format
@@ -1774,7 +1774,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:352
 msgid "Checks for TShock updates."
-msgstr ""
+msgstr "Busca actualizaciones de TShock."
 
 #: ../../TShockAPI/Commands.cs:2514
 msgid "Cleared all users from the angler quest completion list for today."
@@ -1782,11 +1782,11 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:537
 msgid "Clears item drops or projectiles."
-msgstr ""
+msgstr "Elimina objetos o proyectiles.\n"
 
 #: ../../TShockAPI/Commands.cs:3423
 msgid "color <group> <rrr,ggg,bbb> - Changes a group's chat color."
-msgstr ""
+msgstr "color <group> <rrr,ggg,bbb> - Cambia el color de chat de un grupo."
 
 #: ../../TShockAPI/Commands.cs:162
 msgid "Command failed, check logs for more details."
@@ -1818,16 +1818,16 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:1917
 #, csharp-format
 msgid "Could not find group {0}"
-msgstr ""
+msgstr "No se pudo encontrar el grupo {0}"
 
 #: ../../TShockAPI/Commands.cs:1906
 #, csharp-format
 msgid "Could not find player {0}."
-msgstr ""
+msgstr "No se pudo encontrar al jugador {0}."
 
 #: ../../TShockAPI/Commands.cs:3274
 msgid "Could not find specified warp."
-msgstr ""
+msgstr "No se pudo encontrar el warp especificado."
 
 #: ../../TShockAPI/Commands.cs:4706
 #: ../../TShockAPI/Commands.cs:4713
@@ -1839,11 +1839,11 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:4920
 #, csharp-format
 msgid "Could not find the region {0}."
-msgstr ""
+msgstr "No se pudo encontrar la región {0}."
 
 #: ../../TShockAPI/Commands.cs:1572
 msgid "Could not find the target specified. Check that you have the correct spelling."
-msgstr ""
+msgstr "No se pudo encontrar el objetivo especificado. Compruebe que la escritura sea la correcta.\n"
 
 #: ../../TShockAPI/Commands.cs:595
 msgid "Creates a reference tables for Terraria data types and the TShock permission system in the server folder."
@@ -1915,7 +1915,7 @@ msgstr ""
 #: ../../TShockAPI/Bouncer.cs:525
 #, csharp-format
 msgid "Disabled. You need to {0}login to load your saved data."
-msgstr ""
+msgstr "Deshabilitado. Necesitas {0}login para cargar tus datos guardados."
 
 #: ../../TShockAPI/Bouncer.cs:521
 msgid "Disabled. You went too far with banned armor."
@@ -2017,11 +2017,11 @@ msgstr ""
 
 #: ../../TShockAPI/Rest/Rest.cs:245
 msgid "Fatal Startup Exception"
-msgstr ""
+msgstr "Excepción fatal de arranque."
 
 #: ../../TShockAPI/Extensions/DbExt.cs:79
 msgid "Fatal TShock initialization exception: failed to connect to MySQL database. See inner exception for details."
-msgstr ""
+msgstr "Excepción fatal en la inicialización de TShock: no se pudo conectar a la base de datos MySQL. Vea la excepción interna para más detalles."
 
 #: ../../TShockAPI/DB/UserManager.cs:218
 #, csharp-format
@@ -2034,7 +2034,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:514
 msgid "Forces all liquids to update immediately."
-msgstr ""
+msgstr "Hace que todos los líquidos se actualicen inmediatamente.\n"
 
 #: ../../TShockAPI/GetDataHandlers.cs:4364
 #, csharp-format
@@ -2049,23 +2049,23 @@ msgstr ""
 #: ../../TShockAPI/DB/UserManager.cs:291
 #, csharp-format
 msgid "GetUser SQL returned an error {0}"
-msgstr ""
+msgstr "SQL GetUser devolvió un error ({0}"
 
 #: ../../TShockAPI/Commands.cs:541
 msgid "Gives another player a buff or debuff for an amount of time. Putting -1 for time will set it to 415 days."
-msgstr ""
+msgstr "Da a otro jugador un buff o debuff por un tiempo determinado. Si pones -1 para el tiempo, será de 415 días."
 
 #: ../../TShockAPI/Commands.cs:382
 msgid "Gives another player an item."
-msgstr ""
+msgstr "Da un objeto a otro jugador."
 
 #: ../../TShockAPI/Commands.cs:533
 msgid "Gives yourself a buff or debuff for an amount of time. Putting -1 for time will set it to 415 days."
-msgstr ""
+msgstr "Te da un buff o debuff por un tiempo determinado. Si pones -1 para el tiempo, será de 415 días."
 
 #: ../../TShockAPI/Commands.cs:387
 msgid "Gives yourself an item."
-msgstr ""
+msgstr "Te da un objeto."
 
 #: ../../TShockAPI/Handlers/LandGolfBallInCupHandler.cs:123
 #, csharp-format
@@ -2075,41 +2075,41 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:3489
 #, csharp-format
 msgid "Group \"{0}\" has no parent."
-msgstr ""
+msgstr "El grupo \"{0}\" no tiene padre."
 
 #: ../../TShockAPI/Commands.cs:3579
 #, csharp-format
 msgid "Group \"{0}\" has no prefix."
-msgstr ""
+msgstr "El grupo \"{0}\" no tiene prefijo."
 
 #: ../../TShockAPI/Commands.cs:3534
 #, csharp-format
 msgid "Group \"{0}\" has no suffix."
-msgstr ""
+msgstr "El grupo \"{0}\" no tiene sufijo."
 
 #: ../../TShockAPI/DB/GroupManager.cs:646
 #, csharp-format
 msgid "Group \"{0}\" is referencing parent group {1} which is already part of the parent chain. Parent reference removed."
-msgstr ""
+msgstr "El grupo \"{0}\" hace referencia al grupo padre {1} que ya forma parte de la cadena de parentesco. Se ha eliminado esta referencia. \n"
 
 #: ../../TShockAPI/DB/GroupManager.cs:578
 msgid "Group \"superadmin\" is defined in the database even though it's a reserved group name."
-msgstr ""
+msgstr "El grupo \"superadmin\" está definido en la base de datos aunque es un nombre de grupo reservado.\n"
 
 #: ../../TShockAPI/DB/GroupManager.cs:708
 #, csharp-format
 msgid "Group {0} already exists"
-msgstr ""
+msgstr "El grupo {0} ya existe"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1158
 #, csharp-format
 msgid "Group {0} created successfully"
-msgstr ""
+msgstr "Grupo {0} creado con éxito"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1133
 #, csharp-format
 msgid "Group {0} deleted successfully"
-msgstr ""
+msgstr "Grupo {0} eliminado con éxito"
 
 #: ../../TShockAPI/DB/UserManager.cs:638
 #: ../../TShockAPI/DB/GroupManager.cs:725
@@ -2147,12 +2147,12 @@ msgstr "El grupo {0} fue renombrado a {1}."
 #: ../../TShockAPI/DB/GroupManager.cs:631
 #, csharp-format
 msgid "Group {0} is referencing a non existent parent group {1}, parent reference was removed."
-msgstr ""
+msgstr "El grupo {0} hace referencia a un grupo padre {1} que no existe. Se ha eliminado esta referencia.\n"
 
 #: ../../TShockAPI/DB/GroupManager.cs:637
 #, csharp-format
 msgid "Group {0} is referencing itself as parent group; parent reference was removed."
-msgstr ""
+msgstr "El grupo {0} se está referenciando a sí mismo como grupo padre. Se ha eliminado esta referencia.\n"
 
 #: ../../TShockAPI/Commands.cs:4845
 #: ../../TShockAPI/Commands.cs:4880
@@ -2266,7 +2266,7 @@ msgstr ""
 #: ../../TShockAPI/DB/ProjectileManager.cs:223
 #, csharp-format
 msgid "Infinite group parenting ({0})"
-msgstr ""
+msgstr "Grupo infinito de jerarquía ({0})"
 
 #: ../../TShockAPI/Commands.cs:1223
 msgid "Information about the currently running world"
@@ -2278,7 +2278,7 @@ msgstr ""
 
 #: ../../TShockAPI/Rest/Rest.cs:426
 msgid "Internal server error."
-msgstr ""
+msgstr "Error interno del servidor."
 
 #: ../../TShockAPI/DB/UserManager.cs:500
 msgid "Invalid BCrypt work factor in config file! Creating new hash using default work factor."
@@ -2326,7 +2326,7 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:4217
 #: ../../TShockAPI/Commands.cs:4275
 msgid "Invalid group."
-msgstr ""
+msgstr "Grupo inválido."
 
 #: ../../TShockAPI/Commands.cs:2384
 #, csharp-format
@@ -2366,30 +2366,30 @@ msgstr ""
 #: ../../TShockAPI/DB/GroupManager.cs:309
 #, csharp-format
 msgid "Invalid parent group {0} for group {1}"
-msgstr ""
+msgstr "Grupo padre {0} inválido para el grupo {1}"
 
 #: ../../TShockAPI/DB/GroupManager.cs:347
 #, csharp-format
 msgid "Invalid parent group {0} for group {1}."
-msgstr ""
+msgstr "Grupo padre {0} inválido para el grupo {1}."
 
 #: ../../TShockAPI/Commands.cs:919
 msgid "Invalid password."
-msgstr ""
+msgstr "Contraseña invalida."
 
 #: ../../TShockAPI/Commands.cs:1246
 msgid "Invalid player."
-msgstr ""
+msgstr "Jugador inválido."
 
 #: ../../TShockAPI/Commands.cs:4023
 msgid "Invalid projectile ID!"
-msgstr ""
+msgstr "ID de proyectil inválido."
 
 #: ../../TShockAPI/Commands.cs:4060
 #: ../../TShockAPI/Commands.cs:4081
 #: ../../TShockAPI/Commands.cs:4119
 msgid "Invalid projectile ID."
-msgstr ""
+msgstr "ID de proyectil inválido."
 
 #: ../../TShockAPI/Commands.cs:2347
 msgid "Invalid pumpkin moon event wave."
@@ -2429,7 +2429,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:1898
 msgid "Invalid syntax."
-msgstr ""
+msgstr "Sintáxis inválida."
 
 #: ../../TShockAPI/Commands.cs:2315
 #, csharp-format
@@ -2475,7 +2475,7 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:3449
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}group parent <group name> [new parent group name]."
-msgstr ""
+msgstr "Sintaxis no válida. Sintaxis correcta: {0}grupo parent <nombre de grupo> [nuevo nombre del grupo padre]."
 
 #: ../../TShockAPI/Commands.cs:3544
 #, csharp-format
@@ -2720,7 +2720,7 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:4257
 #: ../../TShockAPI/Commands.cs:4295
 msgid "Invalid tile ID."
-msgstr ""
+msgstr "ID de bloque inválido."
 
 #: ../../TShockAPI/Commands.cs:1926
 msgid "Invalid time string! Proper format: _d_h_m_s, with at least one time specifier."
@@ -2748,7 +2748,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:4615
 msgid "Invalid wind speed."
-msgstr ""
+msgstr "Velocidad de viento inválida."
 
 #: ../../TShockAPI/Commands.cs:2542
 #, csharp-format
@@ -2758,7 +2758,7 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:1251
 #, csharp-format
 msgid "IP Address: {0}."
-msgstr ""
+msgstr "Dirección IP: {0}."
 
 #: ../../TShockAPI/TSPlayer.cs:1811
 #, csharp-format
@@ -3074,22 +3074,22 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:3429
 msgid "parent <group> <parent group> - Changes a group's parent group."
-msgstr ""
+msgstr "parent <group> <parent group> - Cambia el grupo padre de un grupo."
 
 #: ../../TShockAPI/Commands.cs:3487
 #, csharp-format
 msgid "Parent of \"{0}\" is \"{1}\"."
-msgstr ""
+msgstr "El padre de \"{0}\" es \"{1}\"."
 
 #: ../../TShockAPI/Commands.cs:3475
 #, csharp-format
 msgid "Parent of group \"{0}\" set to \"{1}\"."
-msgstr ""
+msgstr "Padre del grupo \"{0}\" establecido a \"{1}\"."
 
 #: ../../TShockAPI/DB/GroupManager.cs:356
 #, csharp-format
 msgid "Parenting group {0} to {1} would cause loops in the parent chain."
-msgstr ""
+msgstr "Hacer superior al grupo {0} a {1} causaría bucles en la cadena de parentesco."
 
 #: ../../TShockAPI/Commands.cs:1154
 #, csharp-format
@@ -3336,7 +3336,7 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:3477
 #, csharp-format
 msgid "Removed parent of group \"{0}\"."
-msgstr ""
+msgstr "Se eliminó el padre del grupo \"{0}\"."
 
 #: ../../TShockAPI/Commands.cs:3567
 #, csharp-format
