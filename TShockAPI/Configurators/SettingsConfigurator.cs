@@ -9,7 +9,7 @@ namespace TShockAPI.Configurators;
 /// <summary>
 /// Configures the configuration provider, adding TShock's configuration options
 /// </summary>
-public class ServerConfigConfigurator : ConfigConfigurator
+public class SettingsConfigurator : ConfigConfigurator
 {
 	/// <summary>
 	/// The name of the file containing TShock's json configuration
@@ -17,9 +17,9 @@ public class ServerConfigConfigurator : ConfigConfigurator
 	const string TSHOCK_CONFIG_FILE = "tshock.json";
 
 	/// <summary>
-	/// Construct a new ServerConfigConfigurator, setting a priority of 100
+	/// Construct a new SettingsConfigurator, setting a priority of 100
 	/// </summary>
-	public ServerConfigConfigurator() : base()
+	public SettingsConfigurator() : base()
 	{
 		// Arbitrarily higher than 0. This configuration provided can be completely or partially overwritten
 		// by a lower priority configurator
@@ -38,6 +38,7 @@ public class ServerConfigConfigurator : ConfigConfigurator
 			.Build();
 
 		// To set the config root via environment variable: export TSHOCK_CONFIG__ROOT=~/my/config dir/
+		// To set the config root via commandline: dotnet run --config:root "~/my/config dir/"
 		string configRoot = tshockEnvVars.GetSection("config:root").Value ?? AppContext.BaseDirectory;
 
 		// We now build a second IConfiguration that first takes values from the json file, 
