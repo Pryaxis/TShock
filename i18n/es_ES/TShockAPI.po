@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
-"POT-Creation-Date: 2022-10-24 07:29:23+0000\n"
-"PO-Revision-Date: 2022-10-25 05:53\n"
+"POT-Creation-Date: 2022-10-25 07:37:44+0000\n"
+"PO-Revision-Date: 2022-10-25 18:02\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -665,8 +665,8 @@ msgstr "Un identificador para un UUID."
 
 #: ../../TShockAPI/DB/BanManager.cs:636
 #, csharp-format
-msgid "An identifier for an IP Address in octet format. e.g., '{0}'.127.0.0.1"
-msgstr "Un identificador para una dirección IP en formato de octeto. ej., '{0}'.127.0.0.1"
+msgid "An identifier for an IP Address in octet format. e.g., '{0}'."
+msgstr ""
 
 #: ../../TShockAPI/Commands.cs:2035
 msgid "An update check has been queued. If an update is available, you will be notified shortly."
@@ -785,8 +785,8 @@ msgstr "La Luna Sangrienta fue marcada como {0}"
 
 #: ../../TShockAPI/Rest/RestManager.cs:904
 #, csharp-format
-msgid "Bloodmoon state: {0}EnabledDisabled"
-msgstr "Estado de Luna Sangrienta: {0}EnabledDisabled"
+msgid "Bloodmoon state: {0}"
+msgstr ""
 
 #: ../../TShockAPI/Bouncer.cs:1447
 #, csharp-format
@@ -1782,7 +1782,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:537
 msgid "Clears item drops or projectiles."
-msgstr "Elimina objetos o proyectiles.\n"
+msgstr "Elimina objetos o proyectiles."
 
 #: ../../TShockAPI/Commands.cs:3423
 msgid "color <group> <rrr,ggg,bbb> - Changes a group's chat color."
@@ -1843,7 +1843,7 @@ msgstr "No se pudo encontrar la región {0}."
 
 #: ../../TShockAPI/Commands.cs:1572
 msgid "Could not find the target specified. Check that you have the correct spelling."
-msgstr "No se pudo encontrar el objetivo especificado. Compruebe que la escritura sea la correcta.\n"
+msgstr "No se pudo encontrar el objetivo especificado. Compruebe que la escritura sea la correcta."
 
 #: ../../TShockAPI/Commands.cs:595
 msgid "Creates a reference tables for Terraria data types and the TShock permission system in the server folder."
@@ -2034,7 +2034,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:514
 msgid "Forces all liquids to update immediately."
-msgstr "Hace que todos los líquidos se actualicen inmediatamente.\n"
+msgstr "Hace que todos los líquidos se actualicen inmediatamente."
 
 #: ../../TShockAPI/GetDataHandlers.cs:4364
 #, csharp-format
@@ -2094,7 +2094,7 @@ msgstr "El grupo \"{0}\" hace referencia al grupo padre {1} que ya forma parte d
 
 #: ../../TShockAPI/DB/GroupManager.cs:578
 msgid "Group \"superadmin\" is defined in the database even though it's a reserved group name."
-msgstr "El grupo \"superadmin\" está definido en la base de datos aunque es un nombre de grupo reservado.\n"
+msgstr "El grupo \"superadmin\" está definido en la base de datos aunque es un nombre de grupo reservado."
 
 #: ../../TShockAPI/DB/GroupManager.cs:708
 #, csharp-format
@@ -2147,12 +2147,12 @@ msgstr "El grupo {0} fue renombrado a {1}."
 #: ../../TShockAPI/DB/GroupManager.cs:631
 #, csharp-format
 msgid "Group {0} is referencing a non existent parent group {1}, parent reference was removed."
-msgstr "El grupo {0} hace referencia a un grupo padre {1} que no existe. Se ha eliminado esta referencia.\n"
+msgstr "El grupo {0} hace referencia a un grupo padre {1} que no existe. Se ha eliminado esta referencia."
 
 #: ../../TShockAPI/DB/GroupManager.cs:637
 #, csharp-format
 msgid "Group {0} is referencing itself as parent group; parent reference was removed."
-msgstr "El grupo {0} se está referenciando a sí mismo como grupo padre. Se ha eliminado esta referencia.\n"
+msgstr "El grupo {0} se está referenciando a sí mismo como grupo padre. Se ha eliminado esta referencia."
 
 #: ../../TShockAPI/Commands.cs:4845
 #: ../../TShockAPI/Commands.cs:4880
