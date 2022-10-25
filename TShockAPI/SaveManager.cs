@@ -55,7 +55,7 @@ namespace TShockAPI
 				// These can be caused by an unexpected error such as a bad or out of date plugin
 				try
 				{
-					TShock.Utils.Broadcast("Saving world...", Color.Yellow);
+					TShock.Utils.Broadcast(GetString("Saving world..."), Color.Yellow);
 				}
 				catch (Exception ex)
 				{
@@ -132,7 +132,7 @@ namespace TShockAPI
 									WorldFile.SaveWorld(task.resetTime);
 
 								if (TShock.Config.Settings.AnnounceSave)
-									TShock.Utils.Broadcast("World saved.", Color.Yellow);
+									TShock.Utils.Broadcast(GetString("World saved."), Color.Yellow);
 
 								TShock.Log.Info(GetString("World saved at ({0})", Main.worldPathName));
 							}

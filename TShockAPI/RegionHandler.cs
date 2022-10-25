@@ -184,7 +184,7 @@ namespace TShockAPI
 				// Set temp point coordinates to current tile coordinates
 				player.TempPoints[player.AwaitingTempPoint - 1].X = e.X;
 				player.TempPoints[player.AwaitingTempPoint - 1].Y = e.Y;
-				player.SendInfoMessage($"Set temp point {player.AwaitingTempPoint}.");
+				player.SendInfoMessage(GetString($"Set temp point {player.AwaitingTempPoint}."));
 
 				// Reset the awaiting temp point
 				player.AwaitingTempPoint = 0;
