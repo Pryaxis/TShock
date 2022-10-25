@@ -46,4 +46,11 @@ public sealed class SaveSettings
 	/// Default: 240.
 	/// </summary>
 	public int BackupExpireInterval { get; set; } = 240;
+
+	/// <summary>
+	/// Directory into which backups will be saved. Must be a relative directory path.
+	/// <para/>
+	/// Default: "backups".
+	/// </summary>
+	public string BackupRoot { get; set; } = "backups";
 }
