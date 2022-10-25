@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
-"POT-Creation-Date: 2022-10-24 07:29:23+0000\n"
-"PO-Revision-Date: 2022-10-24 17:54\n"
+"POT-Creation-Date: 2022-10-25 07:37:44+0000\n"
+"PO-Revision-Date: 2022-10-25 18:02\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -667,8 +667,8 @@ msgstr "Идентификатор для UUID."
 
 #: ../../TShockAPI/DB/BanManager.cs:636
 #, csharp-format
-msgid "An identifier for an IP Address in octet format. e.g., '{0}'.127.0.0.1"
-msgstr "Идентификатор для IP-адреса в формате octet, например, '{0}'.127.0.0.1"
+msgid "An identifier for an IP Address in octet format. e.g., '{0}'."
+msgstr ""
 
 #: ../../TShockAPI/Commands.cs:2035
 msgid "An update check has been queued. If an update is available, you will be notified shortly."
@@ -787,8 +787,8 @@ msgstr "Кровавая Луна была установлена на {0}"
 
 #: ../../TShockAPI/Rest/RestManager.cs:904
 #, csharp-format
-msgid "Bloodmoon state: {0}EnabledDisabled"
-msgstr "Состояние Кровавой Луны: {0}EnabledDisabled"
+msgid "Bloodmoon state: {0}"
+msgstr ""
 
 #: ../../TShockAPI/Bouncer.cs:1447
 #, csharp-format
@@ -2892,11 +2892,11 @@ msgstr "Управляет группами."
 
 #: ../../TShockAPI/Commands.cs:284
 msgid "Manages item bans."
-msgstr "Управляет заблокированными предметами.\n"
+msgstr "Управляет заблокированными предметами."
 
 #: ../../TShockAPI/Commands.cs:268
 msgid "Manages player bans."
-msgstr "Управляет заблокированными игроками.\n"
+msgstr "Управляет заблокированными игроками."
 
 #: ../../TShockAPI/Commands.cs:288
 msgid "Manages projectile bans."
@@ -2916,7 +2916,7 @@ msgstr "Управляет белым списком сервера."
 
 #: ../../TShockAPI/Commands.cs:292
 msgid "Manages tile bans."
-msgstr "Управляет заблокированными блоками.\n"
+msgstr "Управляет заблокированными блоками."
 
 #: ../../TShockAPI/Commands.cs:232
 msgid "Manages user accounts."
@@ -4118,56 +4118,56 @@ msgstr "Не удалось проверить хэш пароля для пол
 #: ../../TShockAPI/Commands.cs:3895
 #, csharp-format
 msgid "Unbanned {0}."
-msgstr "{0} разблокирован."
+msgstr "Снят бан с вещи {0}."
 
 #: ../../TShockAPI/Commands.cs:4077
 #, csharp-format
 msgid "Unbanned projectile {0}."
-msgstr "Снаряд {0} разблокирован."
+msgstr "Снят бан с проджектайла {0}."
 
 #: ../../TShockAPI/Commands.cs:4253
 #, csharp-format
 msgid "Unbanned tile {0}."
-msgstr "Блок {0} разблокирован."
+msgstr "Снят бан с блока {0}."
 
 #: ../../TShockAPI/Bouncer.cs:246
 msgid "Unrecognized player direction"
-msgstr "Направление игрока не распознано."
+msgstr "Неизвестное направление игрока"
 
 #: ../../TShockAPI/DB/UserManager.cs:197
 msgid "UpdateLogin SQL returned an error"
-msgstr "UpdateLogin SQL выдал ошибку"
+msgstr "UpdateLogin SQL выдал исключение"
 
 #: ../../TShockAPI/Commands.cs:316
 msgid "Upload the account information when you joined the server as your Server Side Character data."
-msgstr "Загрузите данные своей учетной записи в качестве SSC данных при присоединении к серверу."
+msgstr "Загружает локальные данные персонажа на сервер (SSC)."
 
 #: ../../TShockAPI/Commands.cs:1899
 #, csharp-format
 msgid "Usage: {0}tempgroup <username> <new group> [time]"
-msgstr "Используйте: {0}tempgroup <username> <new group> [time]"
+msgstr "Применение: {0}tempgroup <имя пользователя> <название группы> [время]"
 
 #: ../../TShockAPI/Commands.cs:1984
 msgid "Usage: /sudo [command]."
-msgstr "Используйте: /sudo [command]."
+msgstr "Применение: /sudo [команда]."
 
 #: ../../TShockAPI/Commands.cs:1835
 #: ../../TShockAPI/Commands.cs:1841
 msgid "Usage: /uploadssc [playername]."
-msgstr "Используйте: /uploadssc [playername]."
+msgstr "Применение: /uploadssc [имя игрока]."
 
 #: ../../TShockAPI/Commands.cs:2424
 #, csharp-format
 msgid "Use \"{0}worldevent rain slime\" to start slime rain!"
-msgstr "Используйте \"{0}worldevent rain slime\" чтобы начать слизневый дождь."
+msgstr "Используйте \"{0}worldevent rain slime\" чтобы начать дождь слизней!"
 
 #: ../../TShockAPI/TSPlayer.cs:1862
 msgid "Use \"my query\" for items with spaces."
-msgstr "Используйте \"кавычки\" для элементов с пробелами."
+msgstr "Используйте \"запрос в кавычках\" для элементов с пробелами."
 
 #: ../../TShockAPI/TSPlayer.cs:1863
 msgid "Use tsi:[number] or tsn:[username] to distinguish between user IDs and usernames."
-msgstr "Используйте tsi:[number] или tsn:[username] для различения между ID пользователей и именами пользователей."
+msgstr "Используйте tsi:[число] или tsn:[имя аккаунта] для различения между ID и именами пользователей."
 
 #: ../../TShockAPI/Commands.cs:227
 msgid "Used to authenticate as superadmin when first setting up TShock."
@@ -4221,19 +4221,19 @@ msgstr "Имя пользователя или пароль, возможно, �
 
 #: ../../TShockAPI/Bouncer.cs:1829
 msgid "Using banned bottomless shimmer bucket without permissions"
-msgstr "Вы используете заблокированное Бездонное мерцающее ведро без соответствующих разрешений."
+msgstr "Использование забаненного бездонного мерцающего ведра без соответствующего разрешения."
 
 #: ../../TShockAPI/Bouncer.cs:1808
 msgid "Using banned honey bucket without permissions"
-msgstr "Вы используете заблокированное Ведро мёда без соответствующих разрешений."
+msgstr "Использование забаненного ведра мёда без соответствующего разрешения."
 
 #: ../../TShockAPI/Bouncer.cs:1768
 msgid "Using banned lava bucket without permissions"
-msgstr "Вы используете заблокированное Ведро лавы без соответствующих разрешений."
+msgstr "Использование забаненного ведра лавы без соответствующего разрешения."
 
 #: ../../TShockAPI/Bouncer.cs:1788
 msgid "Using banned water bucket without permissions"
-msgstr "Вы используете заблокированное Ведро воды без соответствующих разрешений."
+msgstr "Использование забаненного ведра воды без соответствующего разрешения."
 
 #: ../../TShockAPI/Commands.cs:915
 msgid "UUID does not match this character."
@@ -4279,12 +4279,12 @@ msgstr "Варп добавлен: {0}."
 #: ../../TShockAPI/Commands.cs:3248
 #, csharp-format
 msgid "Warp deleted: {0}"
-msgstr "Варп {0} удален."
+msgstr "Варп {0} удалён"
 
 #: ../../TShockAPI/Commands.cs:3328
 #, csharp-format
 msgid "Warped to {0}."
-msgstr "Перемещение на варп {0}."
+msgstr "В были телепортированы на варп {0}."
 
 #: ../../TShockAPI/BackupManager.cs:80
 #, csharp-format
@@ -4315,7 +4315,7 @@ msgstr "Вы мертвы. Мёртвые игроки не могут возв�
 
 #: ../../TShockAPI/Commands.cs:936
 msgid "You are not logged-in. Therefore, you cannot logout."
-msgstr "Вы не вошли. Поэтому вы не можете выйти."
+msgstr "Вы не вошли в аккаунт. Поэтому вы не можете выйти."
 
 #: ../../TShockAPI/Commands.cs:691
 #, csharp-format
@@ -4333,15 +4333,15 @@ msgstr "Вы не можете удалить группу гостя по ум�
 
 #: ../../TShockAPI/Commands.cs:805
 msgid "You cannot login whilst crowd controlled."
-msgstr "Вы не можете войти в систему, находясь под контролем."
+msgstr "Вы не можете войти в аккаунт, находясь под контролем."
 
 #: ../../TShockAPI/Commands.cs:791
 msgid "You cannot login whilst dead."
-msgstr "Вы не можете войти, пока вы мертвы."
+msgstr "Вы не можете войти в аккаунт, пока вы мертвы."
 
 #: ../../TShockAPI/Commands.cs:799
 msgid "You cannot login whilst using an item."
-msgstr "Вы не можете войти во время использования предмета."
+msgstr "Вы не можете войти в аккаунт во время использования предмета."
 
 #: ../../TShockAPI/Commands.cs:688
 msgid "You do not have access to this command."
@@ -4349,19 +4349,19 @@ msgstr "У вас нет доступа к этой команде."
 
 #: ../../TShockAPI/TSPlayer.cs:828
 msgid "You do not have permission to build in the spawn point."
-msgstr "У вас нет разрешения на строительство возле спавна."
+msgstr "У вас недостаточно прав для строительства возле спавна."
 
 #: ../../TShockAPI/TSPlayer.cs:831
 msgid "You do not have permission to build in this region."
-msgstr "У вас нет разрешения на строительство в этом регионе."
+msgstr "У вас недостаточно прав для строительства в этом регионе."
 
 #: ../../TShockAPI/TSPlayer.cs:825
 msgid "You do not have permission to build on this server."
-msgstr "У вас нет разрешения на строительство на этом сервере."
+msgstr "У вас недостаточно прав для строительства на этом сервере."
 
 #: ../../TShockAPI/Handlers/NetModules/CreativeUnlocksHandler.cs:74
 msgid "You do not have permission to contribute research."
-msgstr "У вас нет разрешения на исследование предмета."
+msgstr "У вас недостаточно прав для исследования предмета."
 
 #: ../../TShockAPI/Bouncer.cs:1167
 msgid "You do not have permission to create that projectile."
@@ -4385,20 +4385,20 @@ msgstr "У вас недостаточно прав для заморозки с
 
 #: ../../TShockAPI/Handlers/RequestTileEntityInteractionHandler.cs:22
 msgid "You do not have permission to modify a Hat Rack in a protected area!"
-msgstr "У вас нет прав на взаимодействие с вешалкой для шляп в защищенном регионе."
+msgstr "У вас недостаточно прав для изменения вешалок для шляп в защищённом регионе!"
 
 #: ../../TShockAPI/Handlers/DisplayDollItemSyncHandler.cs:21
 #: ../../TShockAPI/Handlers/RequestTileEntityInteractionHandler.cs:28
 msgid "You do not have permission to modify a Mannequin in a protected area!"
-msgstr "У вас нет прав на взаимодействие с манекеном в защищенном регионе."
+msgstr "У вас недостаточно прав для изменения манекенов в защищённом регионе!"
 
 #: ../../TShockAPI/Handlers/RequestTileEntityInteractionHandler.cs:34
 msgid "You do not have permission to modify a TileEntity in a protected area!"
-msgstr "У вас нет прав на взаимодействие с TileEntity в защищенном регионе."
+msgstr "У вас недостаточно прав для изменения объектов в защищённом регионе!"
 
 #: ../../TShockAPI/Handlers/NetModules/CreativePowerHandler.cs:114
 msgid "You do not have permission to modify the NPC spawn rate of the server."
-msgstr "У вас недостаточно прав для изменения частоты появления НПС на сервере."
+msgstr "У вас недостаточно прав для изменения частоты появления мобов на сервере."
 
 #: ../../TShockAPI/Handlers/NetModules/CreativePowerHandler.cs:107
 msgid "You do not have permission to modify the rain strength of the server."
@@ -4442,24 +4442,24 @@ msgstr "У вас недостаточно прав для размещения 
 
 #: ../../TShockAPI/Handlers/EmojiHandler.cs:19
 msgid "You do not have permission to send emotes!"
-msgstr "У вас недостаточно прав для отправления эмодзи!"
+msgstr "У вас недостаточно прав для отправки эмодзи!"
 
 #: ../../TShockAPI/Commands.cs:2139
 #, csharp-format
 msgid "You do not have permission to start the {0} event."
-msgstr "У вас нет прав, чтобы начать событие {0}."
+msgstr "У вас недостаточно прав, чтобы начать событие {0}."
 
 #: ../../TShockAPI/Commands.cs:3053
 msgid "You do not have permission to teleport all other players."
-msgstr "У вас нет прав на телепортацию всех остальных игроков."
+msgstr "У вас недостаточно прав для телепортации всех других игроков."
 
 #: ../../TShockAPI/Commands.cs:2964
 msgid "You do not have permission to teleport all players."
-msgstr "У вас нет прав на телепортацию всех игроков."
+msgstr "У вас недостаточно прав для телепортации всех игроков."
 
 #: ../../TShockAPI/Commands.cs:2947
 msgid "You do not have permission to teleport other players."
-msgstr "У вас нет прав на телепортацию остальных игроков."
+msgstr "У вас недостаточно прав для телепортации других игроков."
 
 #: ../../TShockAPI/Handlers/NetModules/PylonHandler.cs:54
 msgid "You do not have permission to teleport using pylons."
@@ -4471,7 +4471,7 @@ msgstr "У вас недостаточно прав для переключен�
 
 #: ../../TShockAPI/Commands.cs:1830
 msgid "You do not have permission to upload another player's character join-state server-side-character data."
-msgstr "У вас нет разрешения на загрузку облачных сохранений SSC других игроков."
+msgstr "У вас недостаточно прав для загрузки локальных данных персонажа других игроков на сервер (SSC)."
 
 #: ../../TShockAPI/Commands.cs:976
 msgid "You failed to change your password."
@@ -4479,7 +4479,7 @@ msgstr "Вам не удалось изменить ваш пароль."
 
 #: ../../TShockAPI/Rest/RestManager.cs:1387
 msgid "You have been remotely muted"
-msgstr "Вам был выдан мут."
+msgstr "Вам был выдан мут"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1392
 msgid "You have been remotely unmmuted"
@@ -4497,7 +4497,7 @@ msgstr "Вы изменили группу {0} на {1}"
 #: ../../TShockAPI/Commands.cs:1947
 #, csharp-format
 msgid "You have changed {0}'s group to {1} for {2}"
-msgstr "Вы изменили группу {0} на {1} для {2}"
+msgstr "Вы изменили группу {0} на {1} на {2}"
 
 #: ../../TShockAPI/Commands.cs:965
 msgid "You have successfully changed your password."
@@ -4505,11 +4505,11 @@ msgstr "Ваш пароль от аккаунта был успешно изме
 
 #: ../../TShockAPI/DB/RegionManager.cs:788
 msgid "You must be logged in to take advantage of protected regions."
-msgstr "Вы должны войти, чтобы воспользоваться защищенными регионами."
+msgstr "Вы должны войти в аккаунт, чтобы пользоваться защищёнными регионами."
 
 #: ../../TShockAPI/Commands.cs:2701
 msgid "You must spawn the Wall of Flesh in hell."
-msgstr "Вы должны призвать стену плоти в аду."
+msgstr "Вы можете призывать стену плоти только в аду."
 
 #: ../../TShockAPI/Commands.cs:696
 msgid "You must use this command in-game."
@@ -4522,7 +4522,7 @@ msgstr "Вам нужно переподключиться, чтобы корз�
 #: ../../TShockAPI/Commands.cs:2810
 #, csharp-format
 msgid "You spawned {0} {1} time(s)."
-msgstr "Вы создали {0} {1} раз(а)."
+msgstr "Вы призвали {0} {1} раз(а)."
 
 #: ../../TShockAPI/Commands.cs:3312
 #, csharp-format
@@ -4557,12 +4557,12 @@ msgstr "Ваш клиент отправил пустое имя персона�
 
 #: ../../TShockAPI/DB/RegionManager.cs:107
 msgid "Your database contains invalid UserIDs (they should be integers)."
-msgstr "Ваша база данных содержит неверные ID пользователя (они должны быть целыми)."
+msgstr "Ваша база данных содержит неверные ID пользователей (они должны быть целыми числами)."
 
 #: ../../TShockAPI/Commands.cs:1949
 #, csharp-format
 msgid "Your group has been changed to {0} for {1}"
-msgstr "Ваша группа была изменена на {0} для {1}"
+msgstr "Ваша группа была изменена на {0} на {1}"
 
 #: ../../TShockAPI/Commands.cs:1943
 #, csharp-format
@@ -4571,8 +4571,7 @@ msgstr "Ваша группа временно изменена на {0}"
 
 #: ../../TShockAPI/Commands.cs:1850
 msgid "Your local character data, from your initial connection, has been uploaded to the server."
-msgstr "\n"
-"Данные вашего локального персонажа были загружены на сервер"
+msgstr "Данные вашего локального персонажа были загружены на сервер."
 
 #: ../../TShockAPI/Commands.cs:1038
 #, csharp-format
@@ -4581,13 +4580,13 @@ msgstr "Ваш пароль: {0}."
 
 #: ../../TShockAPI/Commands.cs:1961
 msgid "Your previous permission set has been restored."
-msgstr "Ваши предыдущие разрешения были восстановлены."
+msgstr "Ваш предыдущий набор разрешений был восстановлен."
 
 #: ../../TShockAPI/Commands.cs:1749
 msgid "Your server-side character data has been saved."
-msgstr "Серверные данные вашего персонажа были сохранены."
+msgstr "Серверные данные вашего персонажа (SSC) были сохранены."
 
 #: ../../TShockAPI/TSPlayer.cs:1325
 msgid "Your temporary group access has expired."
-msgstr "Срок действия вашего временного доступа к группе истек."
+msgstr "Срок действия вашего доступа к временной группе истек."
 
