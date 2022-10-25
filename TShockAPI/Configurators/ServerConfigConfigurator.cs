@@ -1,3 +1,5 @@
+using System.IO;
+using System;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using TerrariaApi.Configurator;
@@ -10,14 +12,17 @@ namespace TShockAPI.Configurators;
 /// </summary>
 public class ServerConfigConfigurator : ConfigConfigurator
 {
-	const string DEFAULT_PATH = "tshock.json";
+	/// <summary>
+	/// The name of the file containing TShock's json configuration
+	/// </summary>
+	const string TSHOCK_CONFIG_FILE = "tshock.json";
 
 	/// <summary>
 	/// Construct a new ServerConfigConfigurator, setting a priority of 100
 	/// </summary>
 	public ServerConfigConfigurator() : base()
 	{
-		Priority = 1; // Arbitrarily higher than 0. We need this to run before the log configurator so that the logging configuration is preset on the host context
+		Priority = 100; // Arbitrarily higher than 0. We need this to run before the log configurator so that the logging configuration is present on the host context
 	}
 
 	/// <inheritdoc/>
@@ -31,17 +36,14 @@ public class ServerConfigConfigurator : ConfigConfigurator
 			.AddCommandLine(args)
 			.Build();
 
-		string configPath = tshockEnvVars.GetSection("configpath").Value ?? DEFAULT_PATH;
+		// To set the config root via environment variable: export TSHOCK_CONFIG__ROOT=~/my/config dir/
+		string configRoot = tshockEnvVars.GetSection("config:root").Value ?? AppContext.BaseDirectory;
 
 		// We now build a second IConfiguration that first takes values from the json file, 
 		// then overwrites any duplicates with values from the environment variables, then the commandline
 		IConfiguration tshockConfig = new ConfigurationBuilder()
-			.AddJsonFile(configPath,
-				// potentially temporary to allow testing
-				// feel free to remove this when tshock is creating the file by default
-				// or cleanup comments 
-				optional: true
-			)
+			.SetBasePath(configRoot)
+			.AddJsonFile(TSHOCK_CONFIG_FILE, optional: true, reloadOnChange: true)
 			.AddConfiguration(tshockEnvVars)
 			.Build();
 
