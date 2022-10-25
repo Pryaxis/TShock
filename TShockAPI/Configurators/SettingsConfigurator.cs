@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using TerrariaApi.Configurator;
@@ -15,6 +16,7 @@ public class SettingsConfigurator : ConfigConfigurator
 	/// The name of the file containing TShock's json configuration
 	/// </summary>
 	const string TSHOCK_CONFIG_FILE = "tshock.json";
+	const string DEFAULT_CONFIG_ROOT = "config";
 
 	/// <summary>
 	/// Construct a new SettingsConfigurator, setting a priority of 100
@@ -39,7 +41,7 @@ public class SettingsConfigurator : ConfigConfigurator
 
 		// To set the config root via environment variable: export TSHOCK_CONFIG__ROOT=~/my/config dir/
 		// To set the config root via commandline: dotnet run --config:root "~/my/config dir/"
-		string configRoot = tshockEnvVars.GetSection("config:root").Value ?? AppContext.BaseDirectory;
+		string configRoot = tshockEnvVars.GetSection("config:root").Value ?? Path.Combine(AppContext.BaseDirectory, DEFAULT_CONFIG_ROOT);
 
 		// We now build a second IConfiguration that first takes values from the json file, 
 		// then overwrites any duplicates with values from the environment variables, then the commandline
