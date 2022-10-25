@@ -1420,7 +1420,7 @@ namespace TShockAPI
 						PaginationTools.SendPage(args.Player, pageNumber, idents.ToList(),
 							new PaginationTools.Settings
 							{
-								HeaderFormat = GetString("Available identifiers ({0}/{1}):"),
+								HeaderFormat = GetString("Available identifiers ({{0}}/{{1}}):"),
 								FooterFormat = GetString("Type {0}ban help identifiers {{0}} for more.", Specifier),
 								NothingToDisplayString = GetString("There are currently no available identifiers."),
 								HeaderTextColor = Color.White,
@@ -1658,9 +1658,9 @@ namespace TShockAPI
 				PaginationTools.SendPage(args.Player, pageNumber, bans.ToList(),
 					new PaginationTools.Settings
 					{
-						HeaderFormat = "Bans ({0}/{1}):",
-						FooterFormat = "Type {0}ban list {{0}} for more.".SFormat(Specifier),
-						NothingToDisplayString = "There are currently no active bans."
+						HeaderFormat = GetString("Bans ({{0}}/{{1}}):"),
+						FooterFormat = GetString("Type {0}ban list {{0}} for more.", Specifier),
+						NothingToDisplayString = GetString("There are currently no active bans.")
 					});
 			}
 
@@ -2082,8 +2082,8 @@ namespace TShockAPI
 							args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(restUsers), new PaginationTools.Settings
 							{
 								NothingToDisplayString = GetString("There are currently no active REST users."),
-								HeaderFormat = "Active REST Users ({0}/{1}):",
-								FooterFormat = "Type {0}rest listusers {{0}} for more.".SFormat(Specifier)
+								HeaderFormat = GetString("Active REST Users ({{0}}/{{1}}):"),
+								FooterFormat = GetString("Type {0}rest listusers {{0}} for more.", Specifier)
 							}
 						);
 
@@ -3216,8 +3216,8 @@ namespace TShockAPI
 				PaginationTools.SendPage(args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(warpNames),
 					new PaginationTools.Settings
 					{
-						HeaderFormat = "Warps ({0}/{1}):",
-						FooterFormat = "Type {0}warp list {{0}} for more.".SFormat(Specifier),
+						HeaderFormat = GetString("Warps ({{0}}/{{1}}):"),
+						FooterFormat = GetString("Type {0}warp list {{0}} for more.", Specifier),
 						NothingToDisplayString = GetString("There are currently no warps defined.")
 					});
 				#endregion
@@ -3442,8 +3442,8 @@ namespace TShockAPI
 						PaginationTools.SendPage(args.Player, pageNumber, lines,
 							new PaginationTools.Settings
 							{
-								HeaderFormat = "Group Sub-Commands ({0}/{1}):",
-								FooterFormat = "Type {0}group help {{0}} for more sub-commands.".SFormat(Specifier)
+								HeaderFormat = GetString("Group Sub-Commands ({{0}}/{{1}}):"),
+								FooterFormat = GetString("Type {0}group help {{0}} for more sub-commands.", Specifier)
 							}
 						);
 					}
@@ -3733,8 +3733,8 @@ namespace TShockAPI
 						PaginationTools.SendPage(args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(groupNames),
 							new PaginationTools.Settings
 							{
-								HeaderFormat = "Groups ({0}/{1}):",
-								FooterFormat = "Type {0}group list {{0}} for more.".SFormat(Specifier)
+								HeaderFormat = GetString("Groups ({{0}}/{{1}}):"),
+								FooterFormat = GetString("Type {0}group list {{0}} for more.", Specifier)
 							});
 					}
 					#endregion
@@ -3762,9 +3762,9 @@ namespace TShockAPI
 						PaginationTools.SendPage(args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(permissions),
 							new PaginationTools.Settings
 							{
-								HeaderFormat = "Permissions for " + grp.Name + " ({0}/{1}):",
-								FooterFormat = "Type {0}group listperm {1} {{0}} for more.".SFormat(Specifier, grp.Name),
-								NothingToDisplayString = "There are currently no permissions for " + grp.Name + "."
+								HeaderFormat = GetString("Permissions for {0} ({{0}}/{{1}}):", grp.Name),
+								FooterFormat = GetString("Type {0}group listperm {1} {{0}} for more.", Specifier, grp.Name),
+								NothingToDisplayString = GetString($"There are currently no permissions for {grp.Name}.")
 							});
 					}
 					#endregion
@@ -3969,8 +3969,8 @@ namespace TShockAPI
 						PaginationTools.SendPage(args.Player, pageNumber, lines,
 							new PaginationTools.Settings
 							{
-								HeaderFormat = "Item Ban Sub-Commands ({0}/{1}):",
-								FooterFormat = "Type {0}itemban help {{0}} for more sub-commands.".SFormat(Specifier)
+								HeaderFormat = GetString("Item Ban Sub-Commands ({{0}}/{{1}}):"),
+								FooterFormat = GetString("Type {0}itemban help {{0}} for more sub-commands.", Specifier)
 							}
 						);
 					}
@@ -3987,8 +3987,8 @@ namespace TShockAPI
 						PaginationTools.SendPage(args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(itemNames),
 							new PaginationTools.Settings
 							{
-								HeaderFormat = "Item bans ({0}/{1}):",
-								FooterFormat = "Type {0}itemban list {{0}} for more.".SFormat(Specifier),
+								HeaderFormat = GetString("Item bans ({{0}}/{{1}}):"),
+								FooterFormat = GetString("Type {0}itemban list {{0}} for more.", Specifier),
 								NothingToDisplayString = GetString("There are currently no banned items.")
 							});
 					}
@@ -4147,8 +4147,8 @@ namespace TShockAPI
 						PaginationTools.SendPage(args.Player, pageNumber, lines,
 							new PaginationTools.Settings
 							{
-								HeaderFormat = "Projectile Ban Sub-Commands ({0}/{1}):",
-								FooterFormat = "Type {0}projban help {{0}} for more sub-commands.".SFormat(Specifier)
+								HeaderFormat = GetString("Projectile Ban Sub-Commands ({{0}}/{{1}}):"),
+								FooterFormat = GetString("Type {0}projban help {{0}} for more sub-commands.", Specifier)
 							}
 						);
 					}
@@ -4165,9 +4165,9 @@ namespace TShockAPI
 						PaginationTools.SendPage(args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(projectileIds),
 							new PaginationTools.Settings
 							{
-								HeaderFormat = "Projectile bans ({0}/{1}):",
-								FooterFormat = "Type {0}projban list {{0}} for more.".SFormat(Specifier),
-								NothingToDisplayString = "There are currently no banned projectiles."
+								HeaderFormat = GetString("Projectile bans ({{0}}/{{1}}):"),
+								FooterFormat = GetString("Type {0}projban list {{0}} for more.", Specifier),
+								NothingToDisplayString = GetString("There are currently no banned projectiles.")
 							});
 					}
 					#endregion
@@ -4323,8 +4323,8 @@ namespace TShockAPI
 						PaginationTools.SendPage(args.Player, pageNumber, lines,
 							new PaginationTools.Settings
 							{
-								HeaderFormat = "Tile Ban Sub-Commands ({0}/{1}):",
-								FooterFormat = "Type {0}tileban help {{0}} for more sub-commands.".SFormat(Specifier)
+								HeaderFormat = GetString("Tile Ban Sub-Commands ({{0}}/{{1}}):"),
+								FooterFormat = GetString("Type {0}tileban help {{0}} for more sub-commands.", Specifier)
 							}
 						);
 					}
@@ -4341,8 +4341,8 @@ namespace TShockAPI
 						PaginationTools.SendPage(args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(tileIds),
 							new PaginationTools.Settings
 							{
-								HeaderFormat = "Tile bans ({0}/{1}):",
-								FooterFormat = "Type {0}tileban list {{0}} for more.".SFormat(Specifier),
+								HeaderFormat = GetString("Tile bans ({{0}}/{{1}}):"),
+								FooterFormat = GetString("Type {0}tileban list {{0}} for more.", Specifier),
 								NothingToDisplayString = GetString("There are currently no banned tiles.")
 							});
 					}
@@ -4903,8 +4903,8 @@ namespace TShockAPI
 						PaginationTools.SendPage(args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(regionNames),
 							new PaginationTools.Settings
 							{
-								HeaderFormat = "Regions ({0}/{1}):",
-								FooterFormat = "Type {0}region list {{0}} for more.".SFormat(Specifier),
+								HeaderFormat = GetString("Regions ({{0}}/{{1}}):"),
+								FooterFormat = GetString("Type {0}region list {{0}} for more.", Specifier),
 								NothingToDisplayString = GetString("There are currently no regions defined.")
 							});
 						break;
@@ -5196,7 +5196,7 @@ namespace TShockAPI
 						  args.Player, pageNumber, lines,
 						  new PaginationTools.Settings
 						  {
-							  HeaderFormat = GetString("Available Region Sub-Commands ({0}/{1}):"),
+							  HeaderFormat = GetString("Available Region Sub-Commands ({{0}}/{{1}}):"),
 							  FooterFormat = GetString("Type {0}region {{0}} for more sub-commands.", Specifier)
 						  }
 						);
@@ -5248,8 +5248,8 @@ namespace TShockAPI
 				PaginationTools.SendPage(args.Player, pageNumber, PaginationTools.BuildLinesFromTerms(cmdNames),
 					new PaginationTools.Settings
 					{
-						HeaderFormat = "Commands ({0}/{1}):",
-						FooterFormat = "Type {0}help {{0}} for more.".SFormat(Specifier)
+						HeaderFormat = GetString("Commands ({{0}}/{{1}}):"),
+						FooterFormat = GetString("Type {0}help {{0}} for more.", Specifier)
 					});
 			}
 			else
@@ -5545,7 +5545,10 @@ namespace TShockAPI
 		private static void Wallow(CommandArgs args)
 		{
 			args.Player.AcceptingWhispers = !args.Player.AcceptingWhispers;
-			args.Player.SendSuccessMessage(GetString($"You {(args.Player.AcceptingWhispers ? "may now" : "will no longer")} receive whispers from other players."));
+			if (args.Player.AcceptingWhispers)
+				args.Player.SendInfoMessage(GetString("You may now receive whispers from other players."));
+			else
+				args.Player.SendInfoMessage(GetString("You will no longer receive whispers from other players."));
 			args.Player.SendMessage(GetString($"You can use {Specifier.Color(Utils.GreenHighlight)}{"wa".Color(Utils.GreenHighlight)} to toggle this setting."), Color.White);
 		}
 
@@ -6326,9 +6329,20 @@ namespace TShockAPI
 				target.Heal(amount);
 
 				if (args.Silent)
-					user.SendSuccessMessage(GetString($"You healed {(target == user ? "yourself" : target.Name)} for {amount} HP."));
+					if (target == user)
+						user.SendSuccessMessage(GetString($"You healed yourself for {amount} HP."));
+					else
+						user.SendSuccessMessage(GetString($"You healed {target.Name} for {amount} HP."));
 				else
-					TSPlayer.All.SendInfoMessage(GetString($"{user.Name} healed {(target == user ? (target.TPlayer.Male ? "himself" : "herself") : target.Name)} for {amount} HP."));
+				{
+					if (target == user)
+						if (target.TPlayer.Male)
+							TSPlayer.All.SendInfoMessage(GetString($"{user.Name} healed himself for {amount} HP."));
+						else
+							TSPlayer.All.SendInfoMessage(GetString($"{user.Name} healed herself for {amount} HP."));
+					else
+						TSPlayer.All.SendInfoMessage(GetString($"{user.Name} healed {target.Name} for {amount} HP."));
+				}
 			}
 		}
 
@@ -6479,7 +6493,7 @@ namespace TShockAPI
 						PaginationTools.SendPage(args.Player, pageNumber, lines,
 								new PaginationTools.Settings
 								{
-									HeaderFormat = GetString("Trees types & misc available to use. ({0}/{1}):"),
+									HeaderFormat = GetString("Trees types & misc available to use. ({{0}}/{{1}}):"),
 									FooterFormat = GetString("Type {0}grow help {{0}} for more sub-commands.", Commands.Specifier)
 								}
 							);

@@ -3523,52 +3523,52 @@ namespace TShockAPI
 			switch (thingType)
 			{
 				case -14:
-					thing = GetString("has sent a request to the bunny delivery service");
+					thing = GetString("{0} has sent a request to the bunny delivery service!", args.Player.Name);
 					break;
 				case -13:
-					thing = GetString("has sent a request to the dog delivery service");
+					thing = GetString("{0} has sent a request to the dog delivery service!", args.Player.Name);
 					break;
 				case -12:
-					thing = GetString("has sent a request to the cat delivery service");
+					thing = GetString("{0} has sent a request to the cat delivery service!", args.Player.Name);
 					break;
 				case -11:
-					thing = GetString("applied advanced combat techniques");
+					thing = GetString("{0} applied advanced combat techniques!", args.Player.Name);
 					break;
 				case -10:
-					thing = GetString("summoned a Blood Moon");
+					thing = GetString("{0} summoned a Blood Moon!", args.Player.Name);
 					break;
 				case -8:
-					thing = GetString("summoned a Moon Lord");
+					thing = GetString("{0} summoned a Moon Lord!", args.Player.Name);
 					break;
 				case -7:
-					thing = GetString("summoned a Martian invasion");
+					thing = GetString("{0} summoned a Martian invasion!", args.Player.Name);
 					break;
 				case -6:
-					thing = GetString("summoned an eclipse");
+					thing = GetString("{0} summoned an eclipse!", args.Player.Name);
 					break;
 				case -5:
-					thing = GetString("summoned a frost moon");
+					thing = GetString("{0} summoned a frost moon!", args.Player.Name);
 					break;
 				case -4:
-					thing = GetString("summoned a pumpkin moon");
+					thing = GetString("{0} summoned a pumpkin moon!", args.Player.Name);
 					break;
 				case -3:
-					thing = GetString("summoned the Pirates");
+					thing = GetString("{0} summoned the Pirates!", args.Player.Name);
 					break;
 				case -2:
-					thing = GetString("summoned the Snow Legion");
+					thing = GetString("{0} summoned the Snow Legion!", args.Player.Name);
 					break;
 				case -1:
-					thing = GetString("summoned a Goblin Invasion");
+					thing = GetString("{0} summoned a Goblin Invasion!", args.Player.Name);
 					break;
 				default:
-					thing = GetString("summoned the {0}", npc.FullName);
+					thing = GetString("{0} summoned the {1}!", args.Player.Name, npc.FullName);
 					break;
 			}
 			if (TShock.Config.Settings.AnonymousBossInvasions)
-				TShock.Utils.SendLogs(GetString("{0} {1}!", args.Player.Name, thing), Color.PaleVioletRed, args.Player);
+				TShock.Utils.SendLogs(thing, Color.PaleVioletRed, args.Player);
 			else
-				TShock.Utils.Broadcast(GetString("{0} {1}!", args.Player.Name, thing), 175, 75, 255);
+				TShock.Utils.Broadcast(thing, 175, 75, 255);
 			return false;
 		}
 
