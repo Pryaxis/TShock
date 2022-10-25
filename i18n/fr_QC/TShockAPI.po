@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
-"POT-Creation-Date: 2022-10-24 07:29:23+0000\n"
-"PO-Revision-Date: 2022-10-24 17:54\n"
+"POT-Creation-Date: 2022-10-25 07:37:44+0000\n"
+"PO-Revision-Date: 2022-10-25 18:02\n"
 "Last-Translator: \n"
 "Language-Team: French, Quebec\n"
 "MIME-Version: 1.0\n"
@@ -665,7 +665,7 @@ msgstr ""
 
 #: ../../TShockAPI/DB/BanManager.cs:636
 #, csharp-format
-msgid "An identifier for an IP Address in octet format. e.g., '{0}'.127.0.0.1"
+msgid "An identifier for an IP Address in octet format. e.g., '{0}'."
 msgstr ""
 
 #: ../../TShockAPI/Commands.cs:2035
@@ -785,7 +785,7 @@ msgstr ""
 
 #: ../../TShockAPI/Rest/RestManager.cs:904
 #, csharp-format
-msgid "Bloodmoon state: {0}EnabledDisabled"
+msgid "Bloodmoon state: {0}"
 msgstr ""
 
 #: ../../TShockAPI/Bouncer.cs:1447
