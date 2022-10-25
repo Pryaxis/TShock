@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-24 07:29:23+0000\n"
-"PO-Revision-Date: 2022-10-24 17:54\n"
+"PO-Revision-Date: 2022-10-25 05:53\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -107,12 +107,12 @@ msgstr "{0}将账号“{1}”所属的用户组更改为了{2}。"
 #: ../../TShockAPI/Commands.cs:4449
 #, csharp-format
 msgid "{0} changed the maximum spawns to {1}."
-msgstr "{0}将最大生成速率改变为{1}"
+msgstr "{0}将怪物生成数量上限设置为{1}。"
 
 #: ../../TShockAPI/Commands.cs:4430
 #, csharp-format
 msgid "{0} changed the maximum spawns to 5."
-msgstr "{0}将最大生成速率改变为五"
+msgstr "{0}将怪物生成数量上限设置为5。"
 
 #: ../../TShockAPI/Commands.cs:1145
 #, csharp-format
@@ -122,17 +122,17 @@ msgstr "{0}更改了账号“{1}”的密码。"
 #: ../../TShockAPI/Commands.cs:4488
 #, csharp-format
 msgid "{0} changed the spawn rate to {1}."
-msgstr "{0}将生成速率更改为{1}"
+msgstr "{0}将怪物生成速率设置为{1}。"
 
 #: ../../TShockAPI/Commands.cs:4470
 #, csharp-format
 msgid "{0} changed the spawn rate to 600."
-msgstr "{0}将最大生成速率更改为600"
+msgstr "{0}将怪物生成速率设置为600。"
 
 #: ../../TShockAPI/Commands.cs:4622
 #, csharp-format
 msgid "{0} changed the wind speed to {1}."
-msgstr "{0}改变风速至{1}"
+msgstr "{0}将风速设置为{1}。"
 
 #: ../../TShockAPI/Commands.cs:2452
 #, csharp-format
@@ -665,7 +665,7 @@ msgstr "UUID的标识。"
 #: ../../TShockAPI/DB/BanManager.cs:636
 #, csharp-format
 msgid "An identifier for an IP Address in octet format. e.g., '{0}'.127.0.0.1"
-msgstr "一个八位元组格式的IP地址标识符，例如'{0}'.127.0.0.1"
+msgstr "一个八位元组格式的IP地址标识符，例如'{0}'"
 
 #: ../../TShockAPI/Commands.cs:2035
 msgid "An update check has been queued. If an update is available, you will be notified shortly."
