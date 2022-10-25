@@ -856,7 +856,7 @@ namespace TShockAPI
 			get
 			{
 				return RealPlayer
-				       && (Netplay.Clients[Index] != null && Netplay.Clients[Index].IsActive && !Netplay.Clients[Index].PendingTermination);
+					   && (Netplay.Clients[Index] != null && Netplay.Clients[Index].IsActive && !Netplay.Clients[Index].PendingTermination);
 			}
 		}
 
@@ -1394,7 +1394,7 @@ namespace TShockAPI
 		/// Sends an information message to the player.
 		/// </summary>
 		/// <param name="msg">The message.</param>
-		public virtual void SendInfoMessage(string msg)
+		public virtual void SendInfoMessage(string? msg)
 		{
 			SendMessage(msg, Color.Yellow);
 		}
@@ -1414,7 +1414,7 @@ namespace TShockAPI
 		/// Sends a success message to the player.
 		/// </summary>
 		/// <param name="msg">The message.</param>
-		public virtual void SendSuccessMessage(string msg)
+		public virtual void SendSuccessMessage(string? msg)
 		{
 			SendMessage(msg, Color.LimeGreen);
 		}
@@ -1434,7 +1434,7 @@ namespace TShockAPI
 		/// Sends a warning message to the player.
 		/// </summary>
 		/// <param name="msg">The message.</param>
-		public virtual void SendWarningMessage(string msg)
+		public virtual void SendWarningMessage(string? msg)
 		{
 			SendMessage(msg, Color.OrangeRed);
 		}
@@ -1454,7 +1454,7 @@ namespace TShockAPI
 		/// Sends an error message to the player.
 		/// </summary>
 		/// <param name="msg">The message.</param>
-		public virtual void SendErrorMessage(string msg)
+		public virtual void SendErrorMessage(string? msg)
 		{
 			SendMessage(msg, Color.Red);
 		}
@@ -1475,7 +1475,7 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="msg">The message.</param>
 		/// <param name="color">The message color.</param>
-		public virtual void SendMessage(string msg, Color color)
+		public virtual void SendMessage(string? msg, Color color)
 		{
 			SendMessage(msg, color.R, color.G, color.B);
 		}
@@ -1487,8 +1487,13 @@ namespace TShockAPI
 		/// <param name="red">The amount of red color to factor in. Max: 255.</param>
 		/// <param name="green">The amount of green color to factor in. Max: 255</param>
 		/// <param name="blue">The amount of blue color to factor in. Max: 255</param>
-		public virtual void SendMessage(string msg, byte red, byte green, byte blue)
+		public virtual void SendMessage(string? msg, byte red, byte green, byte blue)
 		{
+			if (msg == null)
+			{
+				return;
+			}
+
 			if (msg.Contains("\n"))
 			{
 				string[] msgs = msg.Split('\n');
@@ -1597,7 +1602,7 @@ namespace TShockAPI
 			Main.player[Index].team = team;
 			NetMessage.SendData((int)PacketTypes.PlayerTeam, -1, -1, NetworkText.Empty, Index);
 		}
-		
+
 		/// <summary>
 		/// Sets the player's pvp.
 		/// </summary>
