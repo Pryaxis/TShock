@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-25 07:37:44+0000\n"
-"PO-Revision-Date: 2022-10-26 06:01\n"
+"PO-Revision-Date: 2022-10-26 18:03\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -2090,7 +2090,7 @@ msgstr "El grupo \"{0}\" no tiene sufijo."
 #: ../../TShockAPI/DB/GroupManager.cs:646
 #, csharp-format
 msgid "Group \"{0}\" is referencing parent group {1} which is already part of the parent chain. Parent reference removed."
-msgstr "El grupo \"{0}\" hace referencia al grupo padre {1} que ya forma parte de la cadena de parentesco. Se ha eliminado esta referencia. \n"
+msgstr "El grupo \"{0}\" hace referencia al grupo padre {1} que ya forma parte de la cadena de parentesco. Se ha eliminado esta referencia."
 
 #: ../../TShockAPI/DB/GroupManager.cs:578
 msgid "Group \"superadmin\" is defined in the database even though it's a reserved group name."
