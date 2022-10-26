@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-25 07:37:44+0000\n"
-"PO-Revision-Date: 2022-10-26 06:01\n"
+"PO-Revision-Date: 2022-10-26 18:03\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -296,27 +296,27 @@ msgstr "{0}注册了一个账号：“{1}”。"
 #: ../../TShockAPI/Commands.cs:1469
 #, csharp-format
 msgid "{0} remaining."
-msgstr "剩余 {0}"
+msgstr "剩余 {0}。"
 
 #: ../../TShockAPI/Commands.cs:4557
 #, csharp-format
 msgid "{0} set the time to {1}:{2:D2}."
-msgstr "{0}设置时间为{1}:{2:D2}。"
+msgstr "{0}设置时间为 {1}:{2:D2}。"
 
 #: ../../TShockAPI/Commands.cs:4525
 #, csharp-format
 msgid "{0} set the time to 00:00."
-msgstr "{0}设置时间为00:00。"
+msgstr "{0} 设置时间为 00:00。"
 
 #: ../../TShockAPI/Commands.cs:4513
 #, csharp-format
 msgid "{0} set the time to 04:30."
-msgstr "{0} 设置时间为04:30。"
+msgstr "{0} 设置时间为 04:30。"
 
 #: ../../TShockAPI/Commands.cs:4521
 #, csharp-format
 msgid "{0} set the time to 12:00."
-msgstr "{0} 设置时间为12:00。"
+msgstr "{0} 设置时间为 12:00。"
 
 #: ../../TShockAPI/Commands.cs:4517
 #, csharp-format
@@ -327,12 +327,12 @@ msgstr "{0} 设置时间为 19:30。"
 #: ../../TShockAPI/Commands.cs:4600
 #, csharp-format
 msgid "{0} slapped {1} for {2} damage."
-msgstr "{0}打了{1}一巴掌，造成{2}点伤害"
+msgstr "{0} 打了 {1} 一巴掌，造成 {2} 点伤害。"
 
 #: ../../TShockAPI/Commands.cs:2814
 #, csharp-format
 msgid "{0} spawned {1} {2} time(s)."
-msgstr "{0} 召唤了 {1} {2} 次。"
+msgstr "{0} 生成了 {1} {2} 次。"
 
 #: ../../TShockAPI/Commands.cs:2273
 #, csharp-format
@@ -503,7 +503,7 @@ msgstr "独眼巨鹿"
 
 #: ../../TShockAPI/Commands.cs:3367
 msgid "A group with the same name already exists."
-msgstr "同名组已存在"
+msgstr "同名用户组已存在"
 
 #: ../../TShockAPI/DB/RegionManager.cs:108
 msgid "A lot of things will fail because of this. You must manually delete and re-create the allowed field."
@@ -757,7 +757,7 @@ msgstr "已解除封禁。"
 #: ../../TShockAPI/Commands.cs:3824
 #, csharp-format
 msgid "Banned ${0}."
-msgstr "被封禁 ${0}."
+msgstr "被封禁 ${0}"
 
 #: ../../TShockAPI/Commands.cs:4020
 #, csharp-format
@@ -1878,7 +1878,7 @@ msgstr "死亡原因过长。"
 
 #: ../../TShockAPI/Commands.cs:3425
 msgid "del <group> - Deletes a group."
-msgstr "del <group> - 删除一个组别"
+msgstr "del <组名> - 删除一个用户组"
 
 #: ../../TShockAPI/Commands.cs:3956
 msgid "del <item> - Deletes an item ban."
@@ -1955,7 +1955,7 @@ msgstr "常绿尖叫怪"
 
 #: ../../TShockAPI/Commands.cs:1985
 msgid "Example: /sudo /ban add particles 2d Hacking."
-msgstr "例如: /sudo /ban add 迅猛龙 30d SB."
+msgstr "例如: /sudo /ban add 迅猛龙 30d SB"
 
 #: ../../TShockAPI/Commands.cs:3189
 #, csharp-format
@@ -1989,7 +1989,7 @@ msgstr "删除用户组{0}失败。"
 
 #: ../../TShockAPI/Commands.cs:2507
 msgid "Failed to find any users by that name on the list."
-msgstr "无法在列表中找到该玩家名称"
+msgstr "指定玩家没有完成今日渔夫任务。"
 
 #: ../../TShockAPI/Commands.cs:1629
 #: ../../TShockAPI/Rest/RestManager.cs:698
@@ -2562,7 +2562,7 @@ msgstr "格式错误! 正确格式: {0}region delete <name>"
 #: ../../TShockAPI/Commands.cs:4908
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}region info <region> [-d] [page]."
-msgstr "格式错误！正确格式: {0}region info <region> [-d] [page]."
+msgstr "格式错误！正确格式: {0}region info <region> [-d] [第几页]"
 
 #: ../../TShockAPI/Commands.cs:4716
 #, csharp-format
@@ -2597,7 +2597,7 @@ msgstr "格式错误。正确格式：{0}slap <玩家名> [一巴掌的伤害值
 #: ../../TShockAPI/Commands.cs:2584
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}spawnboss <boss type> [amount]."
-msgstr "格式错误! 正确格式: {0}spawnboss <Boss类型> [召唤数量]。"
+msgstr "格式错误! 正确格式: {0}spawnboss <Boss类型> [生成数量]。"
 
 #: ../../TShockAPI/Commands.cs:2822
 #: ../../TShockAPI/Commands.cs:2834
@@ -3490,7 +3490,7 @@ msgstr "设置NPC的最大数量。"
 
 #: ../../TShockAPI/Commands.cs:415
 msgid "Sets the spawn rate of NPCs."
-msgstr "设置NPC的生成速率。"
+msgstr "设置NPC的生成率。"
 
 #: ../../TShockAPI/Commands.cs:518
 msgid "Sets the world time."
@@ -3599,16 +3599,16 @@ msgstr "抱歉，一个错误发生了： {0}"
 
 #: ../../TShockAPI/Commands.cs:4361
 msgid "Spawn has now been set at your location."
-msgstr "出生点已设置在您的位置。"
+msgstr "世界的生成点已设置在你的位置。"
 
 #: ../../TShockAPI/Commands.cs:2857
 #, csharp-format
 msgid "Spawned {0} {1} time(s)."
-msgstr "召唤了 {0} {1} 次。"
+msgstr "生成了 {0} {1} 次。"
 
 #: ../../TShockAPI/Commands.cs:2874
 msgid "Spawned a Wall of Flesh."
-msgstr "召唤了血肉墙。"
+msgstr "生成了血肉墙。"
 
 #: ../../TShockAPI/Commands.cs:406
 msgid "Spawns a number of bosses around you."
@@ -3789,7 +3789,7 @@ msgstr "已传送至地图的出生点。"
 
 #: ../../TShockAPI/Commands.cs:2900
 msgid "Teleported to your spawn point (home)."
-msgstr "已传送至地图的出生点（家园）。"
+msgstr "已传送到你的出生点(家)。"
 
 #: ../../TShockAPI/Commands.cs:436
 msgid "Teleports a player to another player."
@@ -3893,11 +3893,11 @@ msgstr "石巨人"
 #: ../../TShockAPI/DB/GroupManager.cs:595
 #, csharp-format
 msgid "The group {0} appeared more than once. Keeping current group settings."
-msgstr "组 {0} 出现了多次。保持当前组设置。"
+msgstr "用户组 {0} 出现了多次。保持当前用户组设置。"
 
 #: ../../TShockAPI/DB/GroupManager.cs:212
 msgid "The guest group could not be found."
-msgstr "未找到访客用户组。"
+msgstr "未找到访客(guest)用户组。"
 
 #: ../../TShockAPI/DB/GroupManager.cs:211
 msgid "The guest group could not be found. This may indicate a typo in the configuration file, or that the group was renamed or deleted."
@@ -3957,7 +3957,7 @@ msgstr "REST 身份验证令牌。"
 
 #: ../../TShockAPI/Commands.cs:4478
 msgid "The spawn rate you provided is out-of-range or not a number."
-msgstr "您提供的生成率已超出范围或不是数字。"
+msgstr "你提供的生成率已超出范围或不是数字。"
 
 #: ../../TShockAPI/Rest/SecureRest.cs:90
 msgid "The specified token queued for destruction failed to be deleted."
@@ -4102,7 +4102,7 @@ msgstr "输入{0}login 以你的UUID作为凭证登录."
 
 #: ../../TShockAPI/Commands.cs:2868
 msgid "Unable to spawn a Wall of Flesh based on its current state or your current location."
-msgstr "你当前的状态或位置无法召唤血肉墙。"
+msgstr "无法生成血肉墙，因为它已经存在或你不在地狱层。"
 
 #: ../../TShockAPI/DB/UserManager.cs:450
 #, csharp-format
@@ -4241,7 +4241,7 @@ msgstr "有效的事件类型： {0}。"
 #: ../../TShockAPI/Commands.cs:2131
 #, csharp-format
 msgid "Valid invasion types if spawning an invasion: {0}."
-msgstr "当你召唤入侵时，有效的入侵类型：{0}。"
+msgstr "当你生成入侵时，有效的入侵类型：{0}。"
 
 #: ../../TShockAPI/Commands.cs:2316
 #, csharp-format
@@ -4388,7 +4388,7 @@ msgstr "您没有权限修改受保护区域内的人体模型。"
 
 #: ../../TShockAPI/Handlers/RequestTileEntityInteractionHandler.cs:34
 msgid "You do not have permission to modify a TileEntity in a protected area!"
-msgstr "您没有权限修改受保护区域内的方块实体。"
+msgstr "您没有权限修改受保护区域内的物块实体。"
 
 #: ../../TShockAPI/Handlers/NetModules/CreativePowerHandler.cs:114
 msgid "You do not have permission to modify the NPC spawn rate of the server."
@@ -4503,7 +4503,7 @@ msgstr "你必须登录才能修改受保护区域。"
 
 #: ../../TShockAPI/Commands.cs:2701
 msgid "You must spawn the Wall of Flesh in hell."
-msgstr "你必须在地狱召唤血肉墙。"
+msgstr "你必须在地狱生成血肉墙。"
 
 #: ../../TShockAPI/Commands.cs:696
 msgid "You must use this command in-game."
@@ -4516,7 +4516,7 @@ msgstr "请重新进入服务器以确保垃圾箱已清空！"
 #: ../../TShockAPI/Commands.cs:2810
 #, csharp-format
 msgid "You spawned {0} {1} time(s)."
-msgstr "你召唤了 {0} {1} 次。"
+msgstr "你生成了 {0} {1} 次。"
 
 #: ../../TShockAPI/Commands.cs:3312
 #, csharp-format
