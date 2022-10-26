@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-25 07:37:44+0000\n"
-"PO-Revision-Date: 2022-10-25 18:02\n"
+"PO-Revision-Date: 2022-10-26 06:01\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -668,7 +668,7 @@ msgstr "Идентификатор для UUID."
 #: ../../TShockAPI/DB/BanManager.cs:636
 #, csharp-format
 msgid "An identifier for an IP Address in octet format. e.g., '{0}'."
-msgstr ""
+msgstr "Идентификатор для IP-адреса в формате octet, например, '{0}'."
 
 #: ../../TShockAPI/Commands.cs:2035
 msgid "An update check has been queued. If an update is available, you will be notified shortly."
