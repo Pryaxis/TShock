@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-25 07:37:44+0000\n"
-"PO-Revision-Date: 2022-10-25 18:02\n"
+"PO-Revision-Date: 2022-10-26 18:03\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -22,7 +22,7 @@ msgstr ""
 #, csharp-format
 msgctxt "{0} is a player name"
 msgid "Skipping SSC save (due to tshock.ignore.ssc) for {0}"
-msgstr ""
+msgstr "SSC kaydı geçiliyor (tshock.ignore.ssc izniyle): {0}"
 
 #: ../../TShockAPI/DB/BanManager.cs:213
 #, csharp-format
@@ -39,12 +39,12 @@ msgstr "#{0} - Yasaklandın: {1}"
 #: ../../TShockAPI/Commands.cs:1253
 #, csharp-format
 msgid " -> Logged-in as: {0}; in group {1}."
-msgstr ""
+msgstr " -> {0} adına {1} grubuna giriş yapıldı."
 
 #: ../../TShockAPI/PaginationTools.cs:283
 #, csharp-format
 msgid "\"{0}\" is not a valid page number."
-msgstr ""
+msgstr "\"{0}\" geçerli bir sayfa numarası değil."
 
 #: ../../TShockAPI/Rest/SecureRest.cs:213
 #, csharp-format
@@ -53,51 +53,51 @@ msgstr "\"{0}\" REST çıkışını istedi: {1}"
 
 #: ../../TShockAPI/Commands.cs:2003
 msgid "(Server Broadcast) "
-msgstr ""
+msgstr "(Sunucu Duyurusu) "
 
 #: ../../TShockAPI/Commands.cs:2071
 #, csharp-format
 msgid "{0} ({1} tokens)"
-msgstr ""
+msgstr "{0} ({1} token)"
 
 #: ../../TShockAPI/Commands.cs:967
 #, csharp-format
 msgid "{0} ({1}) changed the password for account {2}."
-msgstr ""
+msgstr "{0} ({1}) {2} için hesap şifresini değiştirdi."
 
 #: ../../TShockAPI/Commands.cs:977
 #, csharp-format
 msgid "{0} ({1}) failed to change the password for account {2}."
-msgstr ""
+msgstr "{0} ({1}) {2} için hesap şifresini değiştirmede başarısız oldu."
 
 #: ../../TShockAPI/Commands.cs:770
 #, csharp-format
 msgid "{0} ({1}) had {2} or more invalid login attempts and was kicked automatically."
-msgstr ""
+msgstr "{0} ({1}) {2} kere başarısız giriş denemesi yaptı ve otomatik olarak atıldı."
 
 #: ../../TShockAPI/Commands.cs:1097
 #, csharp-format
 msgid "{0} added account {1} to group {2}."
-msgstr ""
+msgstr "{0} {1} hesabını {2} grubuna ekledi."
 
 #: ../../TShockAPI/Commands.cs:1055
 msgid "{0} attempted to register for the account {1} but it was already taken."
-msgstr ""
+msgstr "{0} {1} hesabına kayıt olmaya çalıştı fakat bu hesap zaten alınmış."
 
 #: ../../TShockAPI/Commands.cs:896
 #, csharp-format
 msgid "{0} authenticated successfully as user: {1}."
-msgstr ""
+msgstr "{0} başarıyla şu kullanıcıya giriş yaptı: {1}."
 
 #: ../../TShockAPI/Commands.cs:2445
 #, csharp-format
 msgid "{0} caused it to rain slime."
-msgstr ""
+msgstr "{0} slime yağmuru başlattı."
 
 #: ../../TShockAPI/Commands.cs:2460
 #, csharp-format
 msgid "{0} caused it to rain."
-msgstr ""
+msgstr "{0} yağmur başlattı."
 
 #: ../../TShockAPI/Commands.cs:1171
 #, csharp-format
@@ -107,42 +107,42 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:4449
 #, csharp-format
 msgid "{0} changed the maximum spawns to {1}."
-msgstr ""
+msgstr "{0} maksimum doğmaları {1} ile değiştirdi."
 
 #: ../../TShockAPI/Commands.cs:4430
 #, csharp-format
 msgid "{0} changed the maximum spawns to 5."
-msgstr ""
+msgstr "{0} maksimum doğmaları 5 ile değiştirdi."
 
 #: ../../TShockAPI/Commands.cs:1145
 #, csharp-format
 msgid "{0} changed the password for account {1}"
-msgstr ""
+msgstr "{0} {1} hesabı için şifre değiştirdi"
 
 #: ../../TShockAPI/Commands.cs:4488
 #, csharp-format
 msgid "{0} changed the spawn rate to {1}."
-msgstr ""
+msgstr "{0} doğma oranını {1} yaptı."
 
 #: ../../TShockAPI/Commands.cs:4470
 #, csharp-format
 msgid "{0} changed the spawn rate to 600."
-msgstr ""
+msgstr "{0} doğma oranını 600 yaptı."
 
 #: ../../TShockAPI/Commands.cs:4622
 #, csharp-format
 msgid "{0} changed the wind speed to {1}."
-msgstr ""
+msgstr "{0} rüzgar hızını {1} ile değiştirdi."
 
 #: ../../TShockAPI/Commands.cs:2452
 #, csharp-format
 msgid "{0} ended the rain."
-msgstr ""
+msgstr "{0} yağmuru bitirdi."
 
 #: ../../TShockAPI/Commands.cs:2437
 #, csharp-format
 msgid "{0} ended the slime rain."
-msgstr ""
+msgstr "{0} slime yağmurunu bitirdi."
 
 #: ../../TShockAPI/Commands.cs:701
 #, csharp-format
@@ -152,37 +152,37 @@ msgstr "{0} çalıştırdı: {1}{2}."
 #: ../../TShockAPI/Commands.cs:921
 #, csharp-format
 msgid "{0} failed to authenticate as user: {1}."
-msgstr ""
+msgstr "{0} şu kullanıcıya girişi başarısız oldu: {1}."
 
 #: ../../TShockAPI/Commands.cs:4230
 #, csharp-format
 msgid "{0} has been allowed to place tile {1}."
-msgstr ""
+msgstr "{0} {1} koyması için izin verildi."
 
 #: ../../TShockAPI/Commands.cs:3864
 #, csharp-format
 msgid "{0} has been allowed to use {1}."
-msgstr ""
+msgstr "{0} {1} kullanabilmesi için izin verildi."
 
 #: ../../TShockAPI/Commands.cs:4054
 #, csharp-format
 msgid "{0} has been allowed to use projectile {1}."
-msgstr ""
+msgstr "{0} {1} mermisi için izin verildi."
 
 #: ../../TShockAPI/Commands.cs:4288
 #, csharp-format
 msgid "{0} has been disallowed from placing tile {1}."
-msgstr ""
+msgstr "{0} {1} koyması için izin verilmedi."
 
 #: ../../TShockAPI/Commands.cs:4112
 #, csharp-format
 msgid "{0} has been disallowed from using projectile {1}."
-msgstr ""
+msgstr "{0} {1} mermisi için izin verilmedi."
 
 #: ../../TShockAPI/Commands.cs:3935
 #, csharp-format
 msgid "{0} has been disallowed to use {1}."
-msgstr ""
+msgstr "{0} {1} kullanabilmesi için izin verilmedi."
 
 #: ../../TShockAPI/Commands.cs:1177
 #, csharp-format
