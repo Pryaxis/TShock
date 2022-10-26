@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-25 07:37:44+0000\n"
-"PO-Revision-Date: 2022-10-25 18:02\n"
+"PO-Revision-Date: 2022-10-26 06:01\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -772,7 +772,7 @@ msgstr "Se ha prohibido el bloque {0}."
 
 #: ../../TShockAPI/Commands.cs:1508
 msgid "Banned."
-msgstr "Prohibido."
+msgstr "Baneado."
 
 #: ../../TShockAPI/Commands.cs:2738
 msgid "Betsy"
@@ -791,72 +791,72 @@ msgstr ""
 #: ../../TShockAPI/Bouncer.cs:1447
 #, csharp-format
 msgid "Bouncer / OnChestItemChange rejected from chest mismatch from {0}"
-msgstr "Portero / OnChestItemChange rechazo desde cofre no coincidente de {0}"
+msgstr "Bouncer / OnChestItemChange rechazo desde cofre no coincidente de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1454
 #, csharp-format
 msgid "Bouncer / OnChestItemChange rejected from disable from {0}"
-msgstr "Portero / OnChestItemChange rechazo desde desactivación de {0}"
+msgstr "Bouncer / OnChestItemChange rechazo desde desactivación de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1469
 #, csharp-format
 msgid "Bouncer / OnChestItemChange rejected from range check from {0}"
-msgstr "Portero / OnChestItemChange rechazo desde la comprobación de rango de {0}"
+msgstr "Bouncer / OnChestItemChange rechazo desde la comprobación de rango de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1462
 #, csharp-format
 msgid "Bouncer / OnChestItemChange rejected from region protection? from {0}"
-msgstr "Portero / OnChestItemChange rechazo desde ¿protección de región? de {0}"
+msgstr "Bouncer / OnChestItemChange rechazo desde ¿protección de región? de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1482
 #, csharp-format
 msgid "Bouncer / OnChestOpen rejected from disabled from {0}"
-msgstr "Portero / OnChestOpen rechazo desde desactivación de {0}"
+msgstr "Bouncer / OnChestOpen rechazo desde desactivación de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1489
 #, csharp-format
 msgid "Bouncer / OnChestOpen rejected from range check from {0}"
-msgstr "Portero / OnChestOpen rechazo desde comprobación de rango de {0}"
+msgstr "Bouncer / OnChestOpen rechazo desde comprobación de rango de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1496
 #, csharp-format
 msgid "Bouncer / OnChestOpen rejected from region check from {0}"
-msgstr "Portero / OnChestOpen rechazo desde comprobación de región de {0}"
+msgstr "Bouncer / OnChestOpen rechazo desde comprobación de región de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2699
 #, csharp-format
 msgid "Bouncer / OnFishOutNPC rejected for not finding active bobber projectile! - From {0}"
-msgstr "Portero / OnFishOutNPC rechazo ¡por no encontrar proyectil de señuelo activo! - De {0}"
+msgstr "Bouncer / OnFishOutNPC rechazo ¡por no encontrar proyectil de señuelo activo! - De {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2693
 #, csharp-format
 msgid "Bouncer / OnFishOutNPC rejected for not using a fishing rod! - From {0}"
-msgstr "Portero / OnFishOutNPC rechazo ¡por no usar una caña de pescar! - De {0}"
+msgstr "Bouncer / OnFishOutNPC rechazo ¡por no usar una caña de pescar! - De {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2705
 #, csharp-format
 msgid "Bouncer / OnFishOutNPC rejected for the NPC not being on the fishable NPCs list! - From {0}"
-msgstr "Portero / OnFishOutNPC rechazo ¡por no estar el NPC en la lista de NPC que pueden ser pescados! - De {0}"
+msgstr "Bouncer / OnFishOutNPC rechazo ¡por no estar el NPC en la lista de NPC que pueden ser pescados! - De {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2717
 #, csharp-format
 msgid "Bouncer / OnFishOutNPC rejected range checks from {0}"
-msgstr "Portero / OnFishOutNPC rechazo comprobaciones de rango de {0}"
+msgstr "Bouncer / OnFishOutNPC rechazo comprobaciones de rango de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2711
 #, csharp-format
 msgid "Bouncer / OnFishOutNPC rejected summon boss permissions from {0}"
-msgstr "Portero / OnFishOutNPC rechazo permisos de invocación de jefe de {0}"
+msgstr "Bouncer / OnFishOutNPC rechazo permisos de invocación de jefe de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2745
 #, csharp-format
 msgid "Bouncer / OnFoodPlatterTryPlacing rejected disabled from {0}"
-msgstr "Portero / OnFoodPlatterTryPlacing rechazo desactivación de {0}"
+msgstr "Bouncer / OnFoodPlatterTryPlacing rechazo desactivación de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2738
 #, csharp-format
 msgid "Bouncer / OnFoodPlatterTryPlacing rejected item not placed by hand from {0}"
-msgstr "Portero / OnFoodPlatterTryPlacing rechazo objeto no puesto manualmente de {0}"
+msgstr "Bouncer / OnFoodPlatterTryPlacing rechazo objeto no puesto manualmente de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2756
 #, csharp-format
