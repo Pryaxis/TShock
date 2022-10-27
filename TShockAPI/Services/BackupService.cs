@@ -27,6 +27,7 @@ public sealed class BackupService : PluginService
 	/// Constructs a new BackupService with its required dependencies.
 	/// </summary>
 	/// <param name="saveSettingsMonitor">Settings monitor providing up-to-date save settings</param>
+	/// <param name="saveService">Service providing world saving</param>
 	/// <param name="logger">Logger instance providing logging for this class</param>
 	public BackupService(IOptionsMonitor<SaveSettings> saveSettingsMonitor,
 						 WorldSaveService saveService,
