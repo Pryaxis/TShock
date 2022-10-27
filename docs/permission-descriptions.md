@@ -210,6 +210,10 @@ Prevents you from being disabled by liquid set abuse detection.
 Prevents you from being disabled by abnormal MP.
 * **Commands**: `None`
 
+## tshock.ignore.npcbuff
+Prevents your from being kicked by npc buff hack detection.
+* **Commands**: `None`
+
 ## tshock.ignore.paint
 Prevents you from being disabled by paint abuse detection.
 * **Commands**: `None`
