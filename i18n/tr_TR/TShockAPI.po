@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-25 07:37:44+0000\n"
-"PO-Revision-Date: 2022-10-26 18:03\n"
+"PO-Revision-Date: 2022-10-27 21:23\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -187,14 +187,14 @@ msgstr "{0} {1} kullanabilmesi için izin verilmedi."
 #: ../../TShockAPI/Commands.cs:1177
 #, csharp-format
 msgid "{0} has changed your group to {1}."
-msgstr ""
+msgstr "{0} grubunu {1} ile değiştirdi."
 
 #: ../../TShockAPI/Commands.cs:2932
 #: ../../TShockAPI/Commands.cs:3003
 #: ../../TShockAPI/Commands.cs:3009
 #, csharp-format
 msgid "{0} has disabled incoming teleports."
-msgstr ""
+msgstr "{0} gelen ışınlanmaları devre dışı bıraktı."
 
 #: ../../TShockAPI/Commands.cs:2395
 #, csharp-format
@@ -214,27 +214,27 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:2878
 #, csharp-format
 msgid "{0} has spawned a Wall of Flesh."
-msgstr ""
+msgstr "{0} Wall of Flesh çağırdı."
 
 #: ../../TShockAPI/Commands.cs:2325
 #, csharp-format
 msgid "{0} has started a goblin army invasion."
-msgstr ""
+msgstr "{0} goblin istilasını başlattı."
 
 #: ../../TShockAPI/Commands.cs:2379
 #, csharp-format
 msgid "{0} has started a martian invasion."
-msgstr ""
+msgstr "{0} marslı istilasını başlattı."
 
 #: ../../TShockAPI/Commands.cs:2337
 #, csharp-format
 msgid "{0} has started a pirate invasion."
-msgstr ""
+msgstr "{0} korsan istilasını başlattı."
 
 #: ../../TShockAPI/Commands.cs:2331
 #, csharp-format
 msgid "{0} has started a snow legion invasion."
-msgstr ""
+msgstr "{0} kış istilasını başlattı."
 
 #: ../../TShockAPI/Commands.cs:4233
 #, csharp-format
@@ -270,7 +270,7 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:3929
 #, csharp-format
 msgid "{0} is not banned."
-msgstr ""
+msgstr "{0} yasaklı değil."
 
 #: ../../TShockAPI/Rest/RestManager.cs:1068
 #, csharp-format
@@ -280,14 +280,14 @@ msgstr "{0} seni öldürdü!"
 #: ../../TShockAPI/TSPlayer.cs:1817
 #, csharp-format
 msgid "{0} kicked {1} for '{2}'"
-msgstr ""
+msgstr "{0} {1} adlı kullanıcıyı '{2}' sebebiyle attı"
 
 #: ../../TShockAPI/Rest/RestManager.cs:847
 #, csharp-format
 msgid "{0} NPC has been killed."
 msgid_plural "{killcount} NPCs have been killed."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "{0} NPC öldürüldü."
+msgstr[1] "{killcount} NPC öldürüldü."
 
 #: ../../TShockAPI/Commands.cs:1049
 #, csharp-format
@@ -297,53 +297,53 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:1469
 #, csharp-format
 msgid "{0} remaining."
-msgstr ""
+msgstr "{0} kaldı."
 
 #: ../../TShockAPI/Commands.cs:4557
 #, csharp-format
 msgid "{0} set the time to {1}:{2:D2}."
-msgstr ""
+msgstr "{0} zamanı {1}:{2:D2} yaptı."
 
 #: ../../TShockAPI/Commands.cs:4525
 #, csharp-format
 msgid "{0} set the time to 00:00."
-msgstr ""
+msgstr "{0} zamanı 00:00 yaptı."
 
 #: ../../TShockAPI/Commands.cs:4513
 #, csharp-format
 msgid "{0} set the time to 04:30."
-msgstr ""
+msgstr "{0} zamanı 04:30 yaptı."
 
 #: ../../TShockAPI/Commands.cs:4521
 #, csharp-format
 msgid "{0} set the time to 12:00."
-msgstr ""
+msgstr "{0} zamanı 12:00 yaptı."
 
 #: ../../TShockAPI/Commands.cs:4517
 #, csharp-format
 msgid "{0} set the time to 19:30."
-msgstr ""
+msgstr "{0} zamanı 19:30 yaptı."
 
 #: ../../TShockAPI/Commands.cs:4599
 #: ../../TShockAPI/Commands.cs:4600
 #, csharp-format
 msgid "{0} slapped {1} for {2} damage."
-msgstr ""
+msgstr "{0} {1} adlı oyuncuyu {2} hasarla tokatladı."
 
 #: ../../TShockAPI/Commands.cs:2814
 #, csharp-format
 msgid "{0} spawned {1} {2} time(s)."
-msgstr ""
+msgstr "{0} {1} canavarını {2} kez çağırdı."
 
 #: ../../TShockAPI/Commands.cs:2273
 #, csharp-format
 msgid "{0} started a blood moon event."
-msgstr ""
+msgstr "{0} kanlı ay başlattı."
 
 #: ../../TShockAPI/Commands.cs:2251
 #, csharp-format
 msgid "{0} started a full moon event."
-msgstr ""
+msgstr "{0} tam ay başlattı."
 
 #: ../../TShockAPI/Commands.cs:2483
 #, csharp-format
@@ -353,12 +353,12 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:2410
 #, csharp-format
 msgid "{0} started a sandstorm event."
-msgstr ""
+msgstr "{0} kum fırtınası başlattı."
 
 #: ../../TShockAPI/Commands.cs:2300
 #, csharp-format
 msgid "{0} started an eclipse."
-msgstr ""
+msgstr "{0} tutulma başlattı."
 
 #: ../../TShockAPI/Commands.cs:2374
 #, csharp-format
@@ -420,33 +420,33 @@ msgstr "{0} çalıştırmayı denedi: {1}{2}."
 #: ../../TShockAPI/Commands.cs:2238
 #, csharp-format
 msgid "{0} triggered a meteor."
-msgstr ""
+msgstr "{0} meteor tetikledi."
 
 #: ../../TShockAPI/Commands.cs:3311
 #, csharp-format
 msgid "{0} warped you to {1}."
-msgstr ""
+msgstr "{0} seni {1} konumuna ışınladı."
 
 #: ../../TShockAPI/TSPlayer.cs:1815
 #, csharp-format
 msgid "{0} was kicked for '{1}'"
-msgstr ""
+msgstr "{0} '{1}' sebebi ile atıldı"
 
 #: ../../TShockAPI/Commands.cs:2985
 #: ../../TShockAPI/Commands.cs:3025
 #, csharp-format
 msgid "{0} was teleported to you."
-msgstr ""
+msgstr "{0} sana ışınlandı."
 
 #: ../../TShockAPI/Commands.cs:1287
 #, csharp-format
 msgid "{0}'s group is {1}."
-msgstr ""
+msgstr "{0} adlı oyuncunun grubu {1}."
 
 #: ../../TShockAPI/Commands.cs:1288
 #, csharp-format
 msgid "{0}'s last known IP is {1}."
-msgstr ""
+msgstr "{0} adlı oyuncunun son bilinen IP adresi {1}."
 
 #: ../../TShockAPI/Commands.cs:1277
 #, csharp-format
@@ -585,12 +585,12 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:4308
 msgid "add <tile ID> - Adds a tile ban."
-msgstr ""
+msgstr "add <tile ID> - Karo banı ekler."
 
 #: ../../TShockAPI/Commands.cs:1728
 #, csharp-format
 msgid "Added {0} to the whitelist."
-msgstr ""
+msgstr "{0} beyaz listeye eklendi."
 
 #: ../../TShockAPI/Bouncer.cs:2011
 #, csharp-format
@@ -600,12 +600,12 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:4838
 #, csharp-format
 msgid "Added group {0} to {1}."
-msgstr ""
+msgstr "{0} grubu {1}'e eklendi."
 
 #: ../../TShockAPI/Commands.cs:4768
 #, csharp-format
 msgid "Added user {0} to {1}."
-msgstr ""
+msgstr "{0} kullanıcısı {1}'e eklendi."
 
 #: ../../TShockAPI/Commands.cs:3422
 msgid "addperm <group> <permissions...> - Adds permissions to a group."
@@ -614,7 +614,7 @@ msgstr ""
 #: ../../TShockAPI/DB/UserManager.cs:81
 #, csharp-format
 msgid "AddUser SQL returned an error ({0})"
-msgstr ""
+msgstr "AddUser SQL bir hata döndürdü ({0})"
 
 #: ../../TShockAPI/Commands.cs:2609
 msgid "all bosses"
@@ -622,7 +622,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:2087
 msgid "All REST tokens have been destroyed."
-msgstr ""
+msgstr "Tüm REST tokenleri yok edildi."
 
 #: ../../TShockAPI/Commands.cs:1214
 #, csharp-format
@@ -631,7 +631,7 @@ msgstr "Ayrılmış hafıza: {0}"
 
 #: ../../TShockAPI/Commands.cs:3955
 msgid "allow <item> <group> - Allows a group to use an item."
-msgstr ""
+msgstr "allow <item> <group> - Gruba eşya kullanma izni verir."
 
 #: ../../TShockAPI/Commands.cs:4133
 msgid "allow <projectile ID> <group> - Allows a group to use a projectile."
@@ -644,24 +644,24 @@ msgstr ""
 #: ../../TShockAPI/DB/GroupManager.cs:474
 #, csharp-format
 msgid "An exception has occurred during database rollback: {0}"
-msgstr ""
+msgstr "Veritabanı geri getirmesinde bir hata oluştu: {0}"
 
 #: ../../TShockAPI/DB/GroupManager.cs:467
 #, csharp-format
 msgid "An exception has occurred during database transaction: {0}"
-msgstr ""
+msgstr "Veritabanı etkileşiminde bir hata oluştu: {0}"
 
 #: ../../TShockAPI/DB/BanManager.cs:644
 msgid "An identifier for a character name."
-msgstr ""
+msgstr "Karakter ismi için belirteç."
 
 #: ../../TShockAPI/DB/BanManager.cs:648
 msgid "An identifier for a TShock User Account name."
-msgstr ""
+msgstr "TShock Kullanıcı Hesabı için belirteç."
 
 #: ../../TShockAPI/DB/BanManager.cs:640
 msgid "An identifier for a UUID."
-msgstr ""
+msgstr "UUID için belirteç."
 
 #: ../../TShockAPI/DB/BanManager.cs:636
 #, csharp-format
@@ -674,12 +674,12 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:338
 msgid "Annoys a player for an amount of time."
-msgstr ""
+msgstr "Bir oyuncuyu belli bir süre oyalar."
 
 #: ../../TShockAPI/Rest/Rest.cs:452
 #, csharp-format
 msgid "Anonymous requested REST endpoint: {0}"
-msgstr ""
+msgstr "REST çıkışı istendi: {0}"
 
 #: ../../TShockAPI/Commands.cs:3187
 msgid "Arguments: add [warp name], del [warp name], list [page]."
@@ -692,40 +692,40 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:894
 #, csharp-format
 msgid "Authenticated as {0} successfully."
-msgstr ""
+msgstr "{0} adına giriş yapıldı."
 
 #: ../../TShockAPI/Rest/RestManager.cs:811
 msgid "AutoSave has been disabled"
-msgstr ""
+msgstr "OtoKayıt devre dışı"
 
 #: ../../TShockAPI/Rest/RestManager.cs:807
 msgid "AutoSave has been enabled"
-msgstr ""
+msgstr "OtoKayıt devrede"
 
 #: ../../TShockAPI/Rest/RestManager.cs:800
 msgid "Autosave is currently disabled"
-msgstr ""
+msgstr "Otokayıt şuan devre dışı"
 
 #: ../../TShockAPI/Rest/RestManager.cs:796
 msgid "Autosave is currently enabled"
-msgstr ""
+msgstr "Otokayıt şuan devrede"
 
 #: ../../TShockAPI/Commands.cs:2092
 msgid "Available REST Sub-Commands:"
-msgstr ""
+msgstr "Kullanılabilinir REST alt komutları:"
 
 #: ../../TShockAPI/BackupManager.cs:75
 msgid "Backing up world..."
-msgstr ""
+msgstr "Dünya yedekleniyor..."
 
 #: ../../TShockAPI/BackupManager.cs:87
 #: ../../TShockAPI/BackupManager.cs:89
 msgid "Backup failed!"
-msgstr ""
+msgstr "Yedekleme başarısız!"
 
 #: ../../TShockAPI/BackupManager.cs:51
 msgid "Backup Thread"
-msgstr ""
+msgstr "Yedekleme İşlemi"
 
 #: ../../TShockAPI/Commands.cs:828
 msgid "Bad login attempt."
@@ -734,12 +734,12 @@ msgstr "Başarısız giriş denemesi."
 #: ../../TShockAPI/Commands.cs:1624
 #, csharp-format
 msgid "Ban {0} has been revoked by {1}."
-msgstr ""
+msgstr "{0} yasağı {1} tarafından geri alındı."
 
 #: ../../TShockAPI/Commands.cs:1625
 #, csharp-format
 msgid "Ban {0} has now been marked as expired."
-msgstr ""
+msgstr "{0} yasağı artık süresi geçmiş olarak işaretlendi."
 
 #: ../../TShockAPI/Commands.cs:1481
 #, csharp-format
@@ -753,30 +753,30 @@ msgstr ""
 
 #: ../../TShockAPI/Rest/RestManager.cs:695
 msgid "Ban removed."
-msgstr ""
+msgstr "Yasak kaldırıldı."
 
 #: ../../TShockAPI/Commands.cs:3824
 #, csharp-format
 msgid "Banned ${0}."
-msgstr ""
+msgstr "${0} yasaklandı."
 
 #: ../../TShockAPI/Commands.cs:4020
 #, csharp-format
 msgid "Banned projectile {0}."
-msgstr ""
+msgstr "{0} mermisi yasaklandı."
 
 #: ../../TShockAPI/Commands.cs:4196
 #, csharp-format
 msgid "Banned tile {0}."
-msgstr ""
+msgstr "{0} karosu yasaklandı."
 
 #: ../../TShockAPI/Commands.cs:1508
 msgid "Banned."
-msgstr ""
+msgstr "Yasaklandı."
 
 #: ../../TShockAPI/Commands.cs:2738
 msgid "Betsy"
-msgstr ""
+msgstr "Betsy"
 
 #: ../../TShockAPI/Rest/RestManager.cs:889
 #, csharp-format
@@ -786,7 +786,7 @@ msgstr ""
 #: ../../TShockAPI/Rest/RestManager.cs:904
 #, csharp-format
 msgid "Bloodmoon state: {0}"
-msgstr ""
+msgstr "Kanlı ay durumu: {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1447
 #, csharp-format
@@ -1786,7 +1786,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:3423
 msgid "color <group> <rrr,ggg,bbb> - Changes a group's chat color."
-msgstr ""
+msgstr "color <group> <rrr,ggg,bbb> - Grubun sohbet rengini değiştirir."
 
 #: ../../TShockAPI/Commands.cs:162
 msgid "Command failed, check logs for more details."
@@ -2211,7 +2211,7 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:1226
 #, csharp-format
 msgid "ID: {0}"
-msgstr ""
+msgstr "ID: {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1374
 msgid "If this player wasn't hacking, please report the damage threshold they were disabled for to TShock so we can improve this!"
@@ -2278,7 +2278,7 @@ msgstr ""
 
 #: ../../TShockAPI/Rest/Rest.cs:426
 msgid "Internal server error."
-msgstr ""
+msgstr "İç sunucu hatası."
 
 #: ../../TShockAPI/DB/UserManager.cs:500
 msgid "Invalid BCrypt work factor in config file! Creating new hash using default work factor."
@@ -2290,7 +2290,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:2804
 msgid "Invalid boss type!"
-msgstr ""
+msgstr "Boss türü geçersiz!"
 
 #: ../../TShockAPI/Commands.cs:652
 #: ../../TShockAPI/Commands.cs:680
@@ -2300,14 +2300,14 @@ msgstr "Geçersiz komut girildi. {0}help yazarak komut listesine ulaşabilirsin.
 
 #: ../../TShockAPI/Commands.cs:3114
 msgid "Invalid destination NPC."
-msgstr ""
+msgstr "NPC hedefi geçersiz."
 
 #: ../../TShockAPI/Commands.cs:2924
 #: ../../TShockAPI/Commands.cs:2955
 #: ../../TShockAPI/Commands.cs:2994
 #: ../../TShockAPI/Commands.cs:3067
 msgid "Invalid destination player."
-msgstr ""
+msgstr "Hedef oyuncu geçersiz."
 
 #: ../../TShockAPI/Commands.cs:2223
 #, csharp-format
@@ -2326,7 +2326,7 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:4217
 #: ../../TShockAPI/Commands.cs:4275
 msgid "Invalid group."
-msgstr ""
+msgstr "Grup geçersiz."
 
 #: ../../TShockAPI/Commands.cs:2384
 #, csharp-format
@@ -2338,7 +2338,7 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:3886
 #: ../../TShockAPI/Commands.cs:3912
 msgid "Invalid item."
-msgstr ""
+msgstr "Eşya geçersiz."
 
 #: ../../TShockAPI/Commands.cs:4438
 #, csharp-format
@@ -2758,7 +2758,7 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:1251
 #, csharp-format
 msgid "IP Address: {0}."
-msgstr ""
+msgstr "IP Adresi: {0}."
 
 #: ../../TShockAPI/TSPlayer.cs:1811
 #, csharp-format
@@ -2772,11 +2772,11 @@ msgstr ""
 #: ../../TShockAPI/TSPlayer.cs:1810
 #, csharp-format
 msgid "Kicked: {0}"
-msgstr ""
+msgstr "Atıldı: {0}"
 
 #: ../../TShockAPI/Commands.cs:553
 msgid "Kills another player."
-msgstr ""
+msgstr "Başka bir oyuncuyu öldürür."
 
 #: ../../TShockAPI/Commands.cs:393
 msgid "Kills hostile NPCs or NPCs of a certain type."
