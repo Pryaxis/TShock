@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-25 07:37:44+0000\n"
-"PO-Revision-Date: 2022-10-26 18:03\n"
+"PO-Revision-Date: 2022-10-27 21:23\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -733,12 +733,12 @@ msgstr "尝试登录失败。"
 #: ../../TShockAPI/Commands.cs:1624
 #, csharp-format
 msgid "Ban {0} has been revoked by {1}."
-msgstr "BanID为{0}的标识符已被用户 {1} 标记为无效"
+msgstr "用户{1}解除了封禁{0}。"
 
 #: ../../TShockAPI/Commands.cs:1625
 #, csharp-format
 msgid "Ban {0} has now been marked as expired."
-msgstr "BanID为{0}的标识符已被标记为无效"
+msgstr "封禁{0}已解除。"
 
 #: ../../TShockAPI/Commands.cs:1481
 #, csharp-format
@@ -1903,7 +1903,7 @@ msgstr "delperm <组> <权限...> - 移除用户组指定的权限（不会影�
 
 #: ../../TShockAPI/Commands.cs:2094
 msgid "destroytokens - Destroys all current REST tokens."
-msgstr "destroytokens - 删除当前所有REST密钥"
+msgstr "destroytokens - 删除当前所有REST令牌"
 
 #: ../../TShockAPI/Bouncer.cs:462
 #: ../../TShockAPI/Bouncer.cs:470
@@ -1914,7 +1914,7 @@ msgstr "检测到 DOM 已设置为开启位置。"
 #: ../../TShockAPI/Bouncer.cs:525
 #, csharp-format
 msgid "Disabled. You need to {0}login to load your saved data."
-msgstr "您已被禁止移动，因为您需要{0}login 已载入已保存的数据。"
+msgstr "您已被禁止行动，因为您需要{0}登录以载入已保存的数据。"
 
 #: ../../TShockAPI/Bouncer.cs:521
 msgid "Disabled. You went too far with banned armor."
