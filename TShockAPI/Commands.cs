@@ -1052,7 +1052,7 @@ namespace TShockAPI
 				{
 					args.Player.SendErrorMessage(GetString("Sorry, {0} was already taken by another person.", account.Name));
 					args.Player.SendErrorMessage(GetString("Please try a different username."));
-					TShock.Log.ConsoleInfo(GetString("{0} attempted to register for the account {1} but it was already taken."), args.Player.Name, account.Name);
+					TShock.Log.ConsoleInfo(GetString("{0} attempted to register for the account {1} but it was already taken.", args.Player.Name, account.Name));
 				}
 			}
 			catch (UserAccountManagerException ex)
@@ -1817,7 +1817,7 @@ namespace TShockAPI
 				}
 				else if (players.Count == 0)
 				{
-					args.Player.SendErrorMessage(GetString("No player was found matching '{0}'."), args.Parameters[0]);
+					args.Player.SendErrorMessage(GetString("No player was found matching '{0}'.", args.Parameters[0]));
 					return;
 				}
 				else

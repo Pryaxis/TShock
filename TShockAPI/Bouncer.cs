@@ -452,7 +452,7 @@ namespace TShockAPI
 			byte plr = args.PlayerId;
 			ControlSet control = args.Control;
 			MiscDataSet1 miscData1 = args.MiscData1;
-			byte item = args.SelectedItem ;
+			byte item = args.SelectedItem;
 			var pos = args.Position;
 			var vel = args.Velocity;
 
@@ -699,11 +699,11 @@ namespace TShockAPI
 					// also add an exception for snake coils, they can be removed when the player places a new one or after x amount of time
 					// If the tile is part of the breakable when placing set, it might be getting broken by a placement.
 					else if (tile.type != TileID.ItemFrame && tile.type != TileID.MysticSnakeRope
-					                                       && !Main.tileAxe[tile.type] && !Main.tileHammer[tile.type] && tile.wall == 0 &&
-					                                       args.Player.TPlayer.mount.Type != MountID.Drill && selectedItem.pick == 0 &&
-					                                       selectedItem.type != ItemID.GravediggerShovel &&
-					                                       !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0
-					                                       && !TileID.Sets.BreakableWhenPlacing[tile.type])
+														   && !Main.tileAxe[tile.type] && !Main.tileHammer[tile.type] && tile.wall == 0 &&
+														   args.Player.TPlayer.mount.Type != MountID.Drill && selectedItem.pick == 0 &&
+														   selectedItem.type != ItemID.GravediggerShovel &&
+														   !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0
+														   && !TileID.Sets.BreakableWhenPlacing[tile.type])
 					{
 						TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected from (pick) {0} {1} {2}", args.Player.Name, action,
 							editData));
@@ -932,7 +932,7 @@ namespace TShockAPI
 
 				if (args.Player.IsBouncerThrottled())
 				{
-					TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected from throttled from {0} {1} {2}"), args.Player.Name, action, editData);
+					TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected from throttled from {0} {1} {2}", args.Player.Name, action, editData));
 					args.Player.SendTileSquareCentered(tileX, tileY, 4);
 					args.Handled = true;
 					return;
@@ -1737,7 +1737,7 @@ namespace TShockAPI
 				{
 					bucket = 6;
 				}
-				else if (selectedItemType == ItemID.BottomlessHoneyBucket 
+				else if (selectedItemType == ItemID.BottomlessHoneyBucket
 					|| selectedItemType == ItemID.HoneyAbsorbantSponge)
 				{
 					bucket = 7;
@@ -1822,7 +1822,7 @@ namespace TShockAPI
 				}
 
 				if (!wasThereABombNearby && type == LiquidType.Shimmer &&
-				    TShock.ItemBans.DataModel.ItemIsBanned("Bottomless Shimmer Bucket", args.Player))
+					TShock.ItemBans.DataModel.ItemIsBanned("Bottomless Shimmer Bucket", args.Player))
 				{
 					TShock.Log.ConsoleDebug(GetString("Bouncer / OnLiquidSet rejected bucket check 7 from {0}", args.Player.Name));
 					args.Player.SendErrorMessage(GetString("You do not have permission to perform this action."));
@@ -2253,7 +2253,7 @@ namespace TShockAPI
 			if (args.Player.SelectedItem.type is ItemID.RubblemakerSmall or ItemID.RubblemakerMedium or ItemID.RubblemakerLarge)
 			{
 				if (type != TileID.LargePilesEcho && type != TileID.LargePiles2Echo && type != TileID.SmallPiles2x1Echo &&
-				    type != TileID.SmallPiles1x1Echo && type != TileID.PlantDetritus3x2Echo && type != TileID.PlantDetritus2x2Echo)
+					type != TileID.SmallPiles1x1Echo && type != TileID.PlantDetritus3x2Echo && type != TileID.PlantDetritus2x2Echo)
 				{
 					TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlaceObject rejected rubblemaker I can't believe it's not rubble! from {0}",
 						args.Player.Name));
@@ -2262,7 +2262,7 @@ namespace TShockAPI
 					return;
 				}
 			}
-			else if(args.Player.SelectedItem.type == ItemID.AcornAxe)
+			else if (args.Player.SelectedItem.type == ItemID.AcornAxe)
 			{
 				if (type != TileID.Saplings)
 				{
@@ -2441,7 +2441,7 @@ namespace TShockAPI
 			if (args.NewPosition.X > Main.maxTilesX || args.NewPosition.X < 0
 				|| args.NewPosition.Y > Main.maxTilesY || args.NewPosition.Y < 0)
 			{
-				TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerPortalTeleport rejected teleport out of bounds from {0}"), args.Player.Name);
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerPortalTeleport rejected teleport out of bounds from {0}", args.Player.Name));
 				args.Handled = true;
 				return;
 			}
@@ -2449,7 +2449,7 @@ namespace TShockAPI
 			//May as well reject teleport attempts if the player is being throttled
 			if (args.Player.IsBeingDisabled() || args.Player.IsBouncerThrottled())
 			{
-				TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerPortalTeleport rejected disabled/throttled from {0}"), args.Player.Name);
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerPortalTeleport rejected disabled/throttled from {0}", args.Player.Name));
 				args.Handled = true;
 				return;
 			}
