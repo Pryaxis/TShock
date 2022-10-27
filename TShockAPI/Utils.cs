@@ -945,6 +945,9 @@ namespace TShockAPI
 		{
 			PrepareLangForDump();
 			// Lang.setLang(true);
+
+			Directory.CreateDirectory("docs");
+
 			Configuration.TShockConfig.DumpDescriptions();
 			Permissions.DumpDescriptions();
 			Configuration.ServerSideConfig.DumpDescriptions();

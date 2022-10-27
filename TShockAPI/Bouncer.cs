@@ -1981,35 +1981,51 @@ namespace TShockAPI
 				return;
 			}
 
-			bool detectedNPCBuffTimeCheat = false;
-
-			if (NPCAddBuffTimeMax.ContainsKey(type))
+			if (!args.Player.HasPermission(Permissions.ignorenpcbuffdetection))
 			{
-				if (time > NPCAddBuffTimeMax[type])
+				bool detectedNPCBuffTimeCheat = false;
+
+				if (NPCAddBuffTimeMax.ContainsKey(type))
+				{
+					if (time > NPCAddBuffTimeMax[type])
+					{
+						detectedNPCBuffTimeCheat = true;
+					}
+
+					if (npc.townNPC)
+					{
+						if (type != BuffID.Poisoned
+						    && type != BuffID.OnFire
+						    && type != BuffID.Confused
+						    && type != BuffID.CursedInferno
+						    && type != BuffID.Ichor
+						    && type != BuffID.Venom
+						    && type != BuffID.Midas
+						    && type != BuffID.Wet
+						    && type != BuffID.Lovestruck
+						    && type != BuffID.Stinky
+						    && type != BuffID.Slimed
+						    && type != BuffID.DryadsWard
+						    && type != BuffID.GelBalloonBuff
+						    && type != BuffID.OnFire3
+						    && type != BuffID.Frostburn2
+						    && type != BuffID.Shimmer)
+						{
+							detectedNPCBuffTimeCheat = true;
+						}
+					}
+				}
+				else
 				{
 					detectedNPCBuffTimeCheat = true;
 				}
 
-				if (npc.townNPC && npc.netID != NPCID.Guide && npc.netID != NPCID.Clothier)
+				if (detectedNPCBuffTimeCheat)
 				{
-					if (type != BuffID.Lovestruck && type != BuffID.Stinky && type != BuffID.DryadsWard &&
-						type != BuffID.Wet && type != BuffID.Slimed && type != BuffID.GelBalloonBuff && type != BuffID.Frostburn2 &&
-						type != BuffID.Shimmer)
-					{
-						detectedNPCBuffTimeCheat = true;
-					}
+					TShock.Log.ConsoleDebug(GetString("Bouncer / OnNPCAddBuff rejected abnormal buff ({0}) added to {1} ({2}) from {3}.", type, npc.TypeName, npc.netID, args.Player.Name));
+					args.Player.Kick(GetString($"Added buff to {npc.TypeName} NPC abnormally."), true);
+					args.Handled = true;
 				}
-			}
-			else
-			{
-				detectedNPCBuffTimeCheat = true;
-			}
-
-			if (detectedNPCBuffTimeCheat)
-			{
-				TShock.Log.ConsoleDebug(GetString("Bouncer / OnNPCAddBuff rejected abnormal buff ({0}) added to {1} ({2}) from {3}.", type, npc.TypeName, npc.netID, args.Player.Name));
-				args.Player.Kick(GetString($"Added buff to {npc.TypeName} NPC abnormally."), true);
-				args.Handled = true;
 			}
 		}
 
@@ -2842,12 +2858,12 @@ namespace TShockAPI
 			{ BuffID.MaceWhipNPCDebuff, 240  },     // BuffID: 319
 			{ BuffID.GelBalloonBuff, 1800  },       // BuffID: 320
 			{ BuffID.OnFire3, 1200 },               // BuffID: 323
-			{ BuffID.Frostburn2, 900 },             // BuffID: 324
+			{ BuffID.Frostburn2, 1200 },            // BuffID: 324
 			{ BuffID.BoneWhipNPCDebuff, 240 },      // BuffID: 326
 			{ BuffID.TentacleSpike, 540 },          // BuffID: 337
 			{ BuffID.CoolWhipNPCDebuff, 240 },      // BuffID: 340
 			{ BuffID.BloodButcherer, 540 },         // BuffID: 344
-			{ BuffID.Shimmer, 100 },		// BuffID: 353
+			{ BuffID.Shimmer, 100 },		        // BuffID: 353
 		};
 
 		/// <summary>
