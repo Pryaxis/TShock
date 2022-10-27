@@ -133,7 +133,7 @@ namespace TShockAPI
 		{
 			TSPlayer.All.SendMessage(msg, red, green, blue);
 			TSPlayer.Server.SendMessage(msg, red, green, blue);
-			TShock.Log.Info(string.Format("Broadcast: {0}", msg));
+			TShock.Log.Info(GetString("Broadcast: {0}", msg));
 		}
 
 		/// <summary>>Broadcast - Broadcasts a message to all players on the server, as well as the server console, and the logs.</summary>
@@ -156,7 +156,7 @@ namespace TShockAPI
 		{
 			TSPlayer.All.SendMessageFromPlayer(msg, red, green, blue, ply);
 			TSPlayer.Server.SendMessage(Main.player[ply].name + ": " + msg, red, green, blue);
-			TShock.Log.Info(string.Format("Broadcast: {0}", Main.player[ply].name + ": " + msg));
+			TShock.Log.Info(GetString("Broadcast: {0}: {1}", Main.player[ply].name, msg));
 		}
 
 		/// <summary>
@@ -1063,7 +1063,7 @@ namespace TShockAPI
 		/// <param name="empty">If the server is empty; determines if we should use Utils.GetActivePlayerCount() for player count or 0.</param>
 		internal void SetConsoleTitle(bool empty)
 		{
-			Console.Title = string.Format("{0}{1}/{2} on {3} @ {4}:{5} (TShock for Terraria v{6})",
+			Console.Title = GetString("{0}{1}/{2} on {3} @ {4}:{5} (TShock for Terraria v{6})",
 					!string.IsNullOrWhiteSpace(TShock.Config.Settings.ServerName) ? TShock.Config.Settings.ServerName + " - " : "",
 					empty ? 0 : GetActivePlayerCount(),
 					TShock.Config.Settings.MaxSlots, Main.worldName, Netplay.ServerIP.ToString(), Netplay.ListenPort, TShock.VersionNum);

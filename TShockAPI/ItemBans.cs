@@ -199,7 +199,7 @@ namespace TShockAPI
 				if (args.Player.TPlayer.autoActuator && DataModel.ItemIsBanned("Actuator", args.Player))
 				{
 					args.Player.SendTileSquareCentered(args.X, args.Y, 1);
-					args.Player.SendErrorMessage("You do not have permission to place actuators.");
+					args.Player.SendErrorMessage(GetString("You do not have permission to place actuators."));
 					args.Handled = true;
 					return;
 				}
@@ -231,7 +231,7 @@ namespace TShockAPI
 
 		private void SendCorrectiveMessage(TSPlayer player, string itemName)
 		{
-			player.SendErrorMessage("{0} is banned! Remove it!", itemName);
+			player.SendErrorMessage(GetString("{0} is banned! Remove it!", itemName));
 		}
 	}
 }

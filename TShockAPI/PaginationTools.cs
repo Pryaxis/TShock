@@ -102,10 +102,10 @@ namespace TShockAPI
 			public Settings()
 			{
 				this.IncludeHeader = true;
-				this.headerFormat = "Page {0} of {1}";
+				this.headerFormat = GetString("Page {{0}} of {{1}}");
 				this.HeaderTextColor = Color.Green;
 				this.IncludeFooter = true;
-				this.footerFormat = "Type /<command> {0} for more.";
+				this.footerFormat = GetString("Type /<command> {{0}} for more.");
 				this.FooterTextColor = Color.Yellow;
 				this.NothingToDisplayString = null;
 				this.LineFormatter = null;

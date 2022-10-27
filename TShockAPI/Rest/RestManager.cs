@@ -844,7 +844,7 @@ namespace TShockAPI
 				}
 			}
 
-			return RestResponse(GetPluralString($"{killcount} NPC has been killed.", "{killcount} NPCs have been killed.", killcount));
+			return RestResponse(GetPluralString("{0} NPC has been killed.", "{0} NPCs have been killed.", killcount, killcount));
 		}
 
 		[Description("Get information regarding the world.")]
