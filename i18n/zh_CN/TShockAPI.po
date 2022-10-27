@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
-"POT-Creation-Date: 2022-10-23 05:28:17+0000\n"
-"PO-Revision-Date: 2022-10-23 05:37\n"
+"POT-Creation-Date: 2022-10-25 07:37:44+0000\n"
+"PO-Revision-Date: 2022-10-27 21:23\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -18,15 +18,11 @@ msgstr ""
 "Language: zh_CN\n"
 
 #: ../../TShockAPI/DB/CharacterManager.cs:176
+#: ../../TShockAPI/DB/CharacterManager.cs:246
 #, csharp-format
 msgctxt "{0} is a player name"
 msgid "Skipping SSC save (due to tshock.ignore.ssc) for {0}"
 msgstr "由于{0}拥有tshock.ignore.ssc权限，跳过服务端存档"
-
-#: ../../TShockAPI/DB/CharacterManager.cs:246
-msgctxt "{0} is a player name"
-msgid "Skipping SSC save (due to tshock.ignore.ssc) for {player.Account.Name}"
-msgstr "由于{player.Account.Name}拥有tshock.ignore.ssc权限，跳过服务端存档"
 
 #: ../../TShockAPI/DB/BanManager.cs:213
 #, csharp-format
@@ -43,7 +39,7 @@ msgstr "#{0} - 你已被封禁，原因： {1}"
 #: ../../TShockAPI/Commands.cs:1253
 #, csharp-format
 msgid " -> Logged-in as: {0}; in group {1}."
-msgstr " -> 玩家: {0}; 登陆到组 {1}"
+msgstr " -> 登录为用户 {0} , 在组 {1} 中。"
 
 #: ../../TShockAPI/PaginationTools.cs:283
 #, csharp-format
@@ -62,7 +58,7 @@ msgstr "[服务器广播]"
 #: ../../TShockAPI/Commands.cs:2071
 #, csharp-format
 msgid "{0} ({1} tokens)"
-msgstr "{0} ({1} 密钥)"
+msgstr "{0} ({1} 令牌)"
 
 #: ../../TShockAPI/Commands.cs:967
 #, csharp-format
@@ -77,16 +73,16 @@ msgstr "{0}（{1}）更改账号“{2}”的密码失败。"
 #: ../../TShockAPI/Commands.cs:770
 #, csharp-format
 msgid "{0} ({1}) had {2} or more invalid login attempts and was kicked automatically."
-msgstr "{0}({1}) 登录失败 {2} 次或以上,  已被踢出服务器."
+msgstr "{0}({1})尝试登录失败{2}次或以上而被踢出服务器。"
 
 #: ../../TShockAPI/Commands.cs:1097
 #, csharp-format
 msgid "{0} added account {1} to group {2}."
-msgstr "{0} 将账号 {1} 添加至组 {2}!"
+msgstr "{0} 将账号 {1} 添加至组 {2}！"
 
 #: ../../TShockAPI/Commands.cs:1055
 msgid "{0} attempted to register for the account {1} but it was already taken."
-msgstr "{0}试图注册帐号“{1}” ，但它已被占用。"
+msgstr "{0}尝试注册账号“{1}” ，但它已被注册。"
 
 #: ../../TShockAPI/Commands.cs:896
 #, csharp-format
@@ -96,52 +92,97 @@ msgstr "{0}已成功登录账号{1}。"
 #: ../../TShockAPI/Commands.cs:2445
 #, csharp-format
 msgid "{0} caused it to rain slime."
-msgstr "{0} 开始了一场史莱姆雨."
+msgstr "{0} 开始了一场史莱姆雨。"
 
 #: ../../TShockAPI/Commands.cs:2460
 #, csharp-format
 msgid "{0} caused it to rain."
-msgstr "{0} 开始了一场雨."
+msgstr "{0} 开始了一场雨。"
 
 #: ../../TShockAPI/Commands.cs:1171
 #, csharp-format
 msgid "{0} changed account {1} to group {2}."
 msgstr "{0}将账号“{1}”所属的用户组更改为了{2}。"
 
+#: ../../TShockAPI/Commands.cs:4449
+#, csharp-format
+msgid "{0} changed the maximum spawns to {1}."
+msgstr "{0}将怪物生成数量上限设置为{1}。"
+
+#: ../../TShockAPI/Commands.cs:4430
+#, csharp-format
+msgid "{0} changed the maximum spawns to 5."
+msgstr "{0}将怪物生成数量上限设置为5。"
+
 #: ../../TShockAPI/Commands.cs:1145
 #, csharp-format
 msgid "{0} changed the password for account {1}"
 msgstr "{0}更改了账号“{1}”的密码。"
 
+#: ../../TShockAPI/Commands.cs:4488
+#, csharp-format
+msgid "{0} changed the spawn rate to {1}."
+msgstr "{0}将怪物生成速率设置为{1}。"
+
+#: ../../TShockAPI/Commands.cs:4470
+#, csharp-format
+msgid "{0} changed the spawn rate to 600."
+msgstr "{0}将怪物生成速率设置为600。"
+
+#: ../../TShockAPI/Commands.cs:4622
+#, csharp-format
+msgid "{0} changed the wind speed to {1}."
+msgstr "{0}将风速设置为{1}。"
+
 #: ../../TShockAPI/Commands.cs:2452
 #, csharp-format
 msgid "{0} ended the rain."
-msgstr "{0} 结束了这场雨."
+msgstr "{0} 结束了这场雨。"
 
 #: ../../TShockAPI/Commands.cs:2437
 #, csharp-format
 msgid "{0} ended the slime rain."
-msgstr "{0} 结束了这场史莱姆雨"
+msgstr "{0} 结束了这场史莱姆雨。"
 
 #: ../../TShockAPI/Commands.cs:701
 #, csharp-format
 msgid "{0} executed: {1}{2}."
-msgstr "{0}执行了：{1}{2}。"
+msgstr "{0}执行了{1}{2}。"
 
 #: ../../TShockAPI/Commands.cs:921
 #, csharp-format
 msgid "{0} failed to authenticate as user: {1}."
-msgstr "{0} 登录用户:  {1}  失败."
+msgstr "{0} 登录用户:  {1}  失败。"
+
+#: ../../TShockAPI/Commands.cs:4230
+#, csharp-format
+msgid "{0} has been allowed to place tile {1}."
+msgstr "组 {0} 已被允许放置方块（图格） {1}。"
 
 #: ../../TShockAPI/Commands.cs:3864
 #, csharp-format
 msgid "{0} has been allowed to use {1}."
-msgstr "组 {0} 已被允许使用 {1}"
+msgstr "组 {0} 已被允许使用 {1}。"
+
+#: ../../TShockAPI/Commands.cs:4054
+#, csharp-format
+msgid "{0} has been allowed to use projectile {1}."
+msgstr "组 {0} 已被允许使用弹射物 {1}。"
+
+#: ../../TShockAPI/Commands.cs:4288
+#, csharp-format
+msgid "{0} has been disallowed from placing tile {1}."
+msgstr "{0} 已被禁止放置方块 {1}。"
+
+#: ../../TShockAPI/Commands.cs:4112
+#, csharp-format
+msgid "{0} has been disallowed from using projectile {1}."
+msgstr "{0} 已被禁止使用射弹 {1}。"
 
 #: ../../TShockAPI/Commands.cs:3935
 #, csharp-format
 msgid "{0} has been disallowed to use {1}."
-msgstr "组 {0} 已被禁止使用 {1}."
+msgstr "组 {0} 已被禁止使用 {1}。"
 
 #: ../../TShockAPI/Commands.cs:1177
 #, csharp-format
@@ -153,7 +194,7 @@ msgstr "{0}已将你所属的用户组更改为{1}。"
 #: ../../TShockAPI/Commands.cs:3009
 #, csharp-format
 msgid "{0} has disabled incoming teleports."
-msgstr "{0} 已禁用传送(tp)"
+msgstr "{0} 禁止玩家对其使用传送"
 
 #: ../../TShockAPI/Commands.cs:2395
 #, csharp-format
@@ -173,43 +214,63 @@ msgstr "{0} 已生成 {1} {2} 次。"
 #: ../../TShockAPI/Commands.cs:2878
 #, csharp-format
 msgid "{0} has spawned a Wall of Flesh."
-msgstr "{0} 召唤了血肉墙."
+msgstr "{0}生成了血肉墙。"
 
 #: ../../TShockAPI/Commands.cs:2325
 #, csharp-format
 msgid "{0} has started a goblin army invasion."
-msgstr "{0} 开启了哥布林军队入侵。"
+msgstr "{0} 开始了哥布林军队入侵。"
 
 #: ../../TShockAPI/Commands.cs:2379
 #, csharp-format
 msgid "{0} has started a martian invasion."
-msgstr "{0} 开启了火星人入侵。"
+msgstr "{0} 开始了火星人入侵。"
 
 #: ../../TShockAPI/Commands.cs:2337
 #, csharp-format
 msgid "{0} has started a pirate invasion."
-msgstr "{0} 开启了海盗入侵。"
+msgstr "{0} 开始了一场海盗入侵。"
 
 #: ../../TShockAPI/Commands.cs:2331
 #, csharp-format
 msgid "{0} has started a snow legion invasion."
-msgstr "{0} 开启了雪人军团入侵。"
+msgstr "{0} 开始了一场雪人军团入侵。"
+
+#: ../../TShockAPI/Commands.cs:4233
+#, csharp-format
+msgid "{0} is already allowed to place tile {1}."
+msgstr "{0} 已被允许放置方块 {1}。"
 
 #: ../../TShockAPI/Commands.cs:3868
 #, csharp-format
 msgid "{0} is already allowed to use {1}."
-msgstr "组 {0} 已被允许使用 {1}."
+msgstr "组 {0} 已被允许使用 {1}。"
+
+#: ../../TShockAPI/Commands.cs:4057
+#, csharp-format
+msgid "{0} is already allowed to use projectile {1}."
+msgstr "{0} 已被允许使用射弹 {1}。"
 
 #: ../../TShockAPI/Commands.cs:3939
 #, csharp-format
 msgid "{0} is already disallowed to use {1}."
-msgstr "组 {0} 已被禁止使用 {1}."
+msgstr "组 {0} 已被禁止使用 {1}。"
+
+#: ../../TShockAPI/Commands.cs:4292
+#, csharp-format
+msgid "{0} is already prevented from placing tile {1}."
+msgstr "{0} 已被禁止放置方块 {1}。"
+
+#: ../../TShockAPI/Commands.cs:4116
+#, csharp-format
+msgid "{0} is already prevented from using projectile {1}."
+msgstr "{0} 已被禁止使用射弹 {1}。"
 
 #: ../../TShockAPI/Commands.cs:3858
 #: ../../TShockAPI/Commands.cs:3929
 #, csharp-format
 msgid "{0} is not banned."
-msgstr "{0} 没有被禁用"
+msgstr "{0} 没有被禁用。"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1068
 #, csharp-format
@@ -219,13 +280,13 @@ msgstr "{0}杀死了你！"
 #: ../../TShockAPI/TSPlayer.cs:1817
 #, csharp-format
 msgid "{0} kicked {1} for '{2}'"
-msgstr "{0} 以'{2}'为理由踢出了 {1}."
+msgstr "{0} 以'{2}'为理由踢出了 {1}。"
 
 #: ../../TShockAPI/Rest/RestManager.cs:847
 #, csharp-format
 msgid "{0} NPC has been killed."
 msgid_plural "{killcount} NPCs have been killed."
-msgstr[0] "{killcount}个NPC已被杀死。"
+msgstr[0] "{0}个NPC已被杀死。"
 
 #: ../../TShockAPI/Commands.cs:1049
 #, csharp-format
@@ -235,12 +296,43 @@ msgstr "{0}注册了一个账号：“{1}”。"
 #: ../../TShockAPI/Commands.cs:1469
 #, csharp-format
 msgid "{0} remaining."
-msgstr "剩余 {0}"
+msgstr "剩余 {0}。"
+
+#: ../../TShockAPI/Commands.cs:4557
+#, csharp-format
+msgid "{0} set the time to {1}:{2:D2}."
+msgstr "{0}设置时间为 {1}:{2:D2}。"
+
+#: ../../TShockAPI/Commands.cs:4525
+#, csharp-format
+msgid "{0} set the time to 00:00."
+msgstr "{0} 设置时间为 00:00。"
+
+#: ../../TShockAPI/Commands.cs:4513
+#, csharp-format
+msgid "{0} set the time to 04:30."
+msgstr "{0} 设置时间为 04:30。"
+
+#: ../../TShockAPI/Commands.cs:4521
+#, csharp-format
+msgid "{0} set the time to 12:00."
+msgstr "{0} 设置时间为 12:00。"
+
+#: ../../TShockAPI/Commands.cs:4517
+#, csharp-format
+msgid "{0} set the time to 19:30."
+msgstr "{0} 设置时间为 19:30。"
+
+#: ../../TShockAPI/Commands.cs:4599
+#: ../../TShockAPI/Commands.cs:4600
+#, csharp-format
+msgid "{0} slapped {1} for {2} damage."
+msgstr "{0} 打了 {1} 一巴掌，造成 {2} 点伤害。"
 
 #: ../../TShockAPI/Commands.cs:2814
 #, csharp-format
 msgid "{0} spawned {1} {2} time(s)."
-msgstr "{0} 召唤了 {1} {2} 次。"
+msgstr "{0} 生成了 {1} {2} 次。"
 
 #: ../../TShockAPI/Commands.cs:2273
 #, csharp-format
@@ -265,7 +357,7 @@ msgstr "{0} 开启了沙尘暴。"
 #: ../../TShockAPI/Commands.cs:2300
 #, csharp-format
 msgid "{0} started an eclipse."
-msgstr "{0} 开启了日食。"
+msgstr "{0} 开始了日食."
 
 #: ../../TShockAPI/Commands.cs:2374
 #, csharp-format
@@ -280,22 +372,22 @@ msgstr "{0} 开启了南瓜月（第{1}波）。"
 #: ../../TShockAPI/Commands.cs:2304
 #, csharp-format
 msgid "{0} stopped an eclipse."
-msgstr "{0} 关闭了日食。"
+msgstr "{0} 结束了日食。"
 
 #: ../../TShockAPI/Commands.cs:2277
 #, csharp-format
 msgid "{0} stopped the current blood moon."
-msgstr "{0} 关闭了血月。"
+msgstr "{0} 结束了血月。"
 
 #: ../../TShockAPI/Commands.cs:2405
 #, csharp-format
 msgid "{0} stopped the current sandstorm event."
-msgstr "{0} 关闭了沙尘暴。"
+msgstr "{0} 结束了沙尘暴。"
 
 #: ../../TShockAPI/Commands.cs:2487
 #, csharp-format
 msgid "{0} stopped the lantern night."
-msgstr "{0} 关闭了灯笼夜。"
+msgstr "{0} 结束了灯笼夜。"
 
 #: ../../TShockAPI/Commands.cs:1123
 #, csharp-format
@@ -306,18 +398,18 @@ msgstr "{0} 成功删除了账号：“{1}”。"
 #: ../../TShockAPI/Commands.cs:3027
 #, csharp-format
 msgid "{0} teleported {1} to you."
-msgstr "{0} 将 {1} 传送到你的位置."
+msgstr "{0} 将 {1} 传送到你的位置。"
 
 #: ../../TShockAPI/Commands.cs:2939
 #, csharp-format
 msgid "{0} teleported to you."
-msgstr "{0} 传送到你的位置."
+msgstr "{0} 传送到你的位置。"
 
 #: ../../TShockAPI/Commands.cs:2980
 #: ../../TShockAPI/Commands.cs:3020
 #, csharp-format
 msgid "{0} teleported you to {1}."
-msgstr "{0} 将你传送至 {1}."
+msgstr "{0} 将你传送至 {1}。"
 
 #: ../../TShockAPI/Commands.cs:687
 #, csharp-format
@@ -332,53 +424,53 @@ msgstr "{0} 触发了陨石。"
 #: ../../TShockAPI/Commands.cs:3311
 #, csharp-format
 msgid "{0} warped you to {1}."
-msgstr "{0} 将你传送到传送点 {1}"
+msgstr "{0} 将你传送到传送点 {1}。"
 
 #: ../../TShockAPI/TSPlayer.cs:1815
 #, csharp-format
 msgid "{0} was kicked for '{1}'"
-msgstr "玩家 {0} 因'{1}'被踢出."
+msgstr "玩家 {0} 因'{1}'被踢出。"
 
 #: ../../TShockAPI/Commands.cs:2985
 #: ../../TShockAPI/Commands.cs:3025
 #, csharp-format
 msgid "{0} was teleported to you."
-msgstr "{0} 被传送至你的位置."
+msgstr "{0} 被传送至你的位置。"
 
 #: ../../TShockAPI/Commands.cs:1287
 #, csharp-format
 msgid "{0}'s group is {1}."
-msgstr "{0}的组为 {1}."
+msgstr "{0}的组为 {1}"
 
 #: ../../TShockAPI/Commands.cs:1288
 #, csharp-format
 msgid "{0}'s last known IP is {1}."
-msgstr "{0}的最后记录IP为 {1}."
+msgstr "{0}的最后记录IP为 {1}"
 
 #: ../../TShockAPI/Commands.cs:1277
 #, csharp-format
 msgid "{0}'s last login occurred {1} {2} UTC{3}."
-msgstr "{0}的最后登录时间为 {1} {2} UTC{3}."
+msgstr "{0}的最后登录时间为 {1} {2} UTC{3}"
 
 #: ../../TShockAPI/Commands.cs:1289
 #, csharp-format
 msgid "{0}'s register date is {1} {2} UTC{3}."
-msgstr "{0}的注册时间为 {1} {2} UTC{3}."
+msgstr "{0}的注册时间为 {1} {2} UTC{3}"
 
 #: ../../TShockAPI/Commands.cs:841
 #, csharp-format
 msgid "{0}login - Authenticates you using your UUID and character name."
-msgstr "{0}login - 以你的UUID和角色名作为凭证登录."
+msgstr "{0}login - 以你的UUID和角色名作为凭证登录"
 
 #: ../../TShockAPI/Commands.cs:846
 #, csharp-format
 msgid "{0}login <password> - Authenticates you using your password and character name."
-msgstr "{0}login <密码> - 以你的密码和角色名作为凭证登录."
+msgstr "{0}login <密码> - 以你的密码和角色名作为凭证登录。"
 
 #: ../../TShockAPI/Commands.cs:844
 #, csharp-format
 msgid "{0}login <username> <password> - Authenticates you using your username and password."
-msgstr "{0}login <用户名> <密码> - 以你的密码和用户名作为凭证登录."
+msgstr "{0}login <密码> - 以你的密码和角色名作为凭证登录"
 
 #: ../../TShockAPI/Commands.cs:1196
 #, csharp-format
@@ -411,7 +503,7 @@ msgstr "独眼巨鹿"
 
 #: ../../TShockAPI/Commands.cs:3367
 msgid "A group with the same name already exists."
-msgstr "同名组已存在"
+msgstr "同名用户组已存在"
 
 #: ../../TShockAPI/DB/RegionManager.cs:108
 msgid "A lot of things will fail because of this. You must manually delete and re-create the allowed field."
@@ -423,7 +515,7 @@ msgstr "火星飞碟"
 
 #: ../../TShockAPI/Commands.cs:2234
 msgid "A meteor has been triggered."
-msgstr "一颗流星从天而降."
+msgstr "一颗陨石已经落地"
 
 #: ../../TShockAPI/Commands.cs:2786
 msgid "a Nebula Pillar"
@@ -462,7 +554,7 @@ msgstr "账号“{0}”不存在！所以无法更改密码。"
 #: ../../TShockAPI/Commands.cs:1096
 #, csharp-format
 msgid "Account {0} has been added to group {1}."
-msgstr "已将账号 {0} 添加至组 {1}!"
+msgstr "已将账号 {0} 添加至组 {1}！"
 
 #: ../../TShockAPI/Commands.cs:1172
 #, csharp-format
@@ -486,15 +578,33 @@ msgstr "add <物品> - 禁用指定物品."
 msgid "add <name> <permissions...> - Adds a new group."
 msgstr "add <组名> <权限...> - 添加一个新组."
 
+#: ../../TShockAPI/Commands.cs:4132
+msgid "add <projectile ID> - Adds a projectile ban."
+msgstr "add <射弹ID> - 添加禁止使用的射弹。"
+
+#: ../../TShockAPI/Commands.cs:4308
+msgid "add <tile ID> - Adds a tile ban."
+msgstr "add <图格ID> - 添加禁止使用的图格。"
+
 #: ../../TShockAPI/Commands.cs:1728
 #, csharp-format
 msgid "Added {0} to the whitelist."
-msgstr "已将 {0} 加入白名单白名单."
+msgstr "已将 {0} 加入白名单。"
 
 #: ../../TShockAPI/Bouncer.cs:2011
 #, csharp-format
 msgid "Added buff to {0} NPC abnormally."
 msgstr "对NPC：{0}异常地添加了Buff。"
+
+#: ../../TShockAPI/Commands.cs:4838
+#, csharp-format
+msgid "Added group {0} to {1}."
+msgstr "已将组{0}添加至{1}。"
+
+#: ../../TShockAPI/Commands.cs:4768
+#, csharp-format
+msgid "Added user {0} to {1}."
+msgstr "已将玩家{0}添加至{1}。"
 
 #: ../../TShockAPI/Commands.cs:3422
 msgid "addperm <group> <permissions...> - Adds permissions to a group."
@@ -507,7 +617,7 @@ msgstr "AddUser SQL语句返回了一个错误：{0}"
 
 #: ../../TShockAPI/Commands.cs:2609
 msgid "all bosses"
-msgstr "全Boss"
+msgstr "所有boss"
 
 #: ../../TShockAPI/Commands.cs:2087
 msgid "All REST tokens have been destroyed."
@@ -516,11 +626,19 @@ msgstr "所有临时Rest令牌已被销毁"
 #: ../../TShockAPI/Commands.cs:1214
 #, csharp-format
 msgid "Allocated memory: {0}"
-msgstr "已分配内存： {0}"
+msgstr "已分配内存: {0}"
 
 #: ../../TShockAPI/Commands.cs:3955
 msgid "allow <item> <group> - Allows a group to use an item."
 msgstr "allow <物品> <组名> - 允许指定组使用被禁用的物品."
+
+#: ../../TShockAPI/Commands.cs:4133
+msgid "allow <projectile ID> <group> - Allows a group to use a projectile."
+msgstr "allow <射弹> <用户组> - 给与用户组使用特定射弹的豁免权。"
+
+#: ../../TShockAPI/Commands.cs:4309
+msgid "allow <tile ID> <group> - Allows a group to place a tile."
+msgstr "allow <物块> <用户组> - 给与用户组使用特定物块的豁免权。"
 
 #: ../../TShockAPI/DB/GroupManager.cs:474
 #, csharp-format
@@ -546,8 +664,8 @@ msgstr "UUID的标识。"
 
 #: ../../TShockAPI/DB/BanManager.cs:636
 #, csharp-format
-msgid "An identifier for an IP Address in octet format. e.g., '{0}'.127.0.0.1"
-msgstr "一个八位元组格式的IP地址标识符，例如'{0}'.127.0.0.1"
+msgid "An identifier for an IP Address in octet format. e.g., '{0}'."
+msgstr "用句点分隔的十进制格式的IP地址，例如{0}。"
 
 #: ../../TShockAPI/Commands.cs:2035
 msgid "An update check has been queued. If an update is available, you will be notified shortly."
@@ -573,7 +691,7 @@ msgstr "参数: send [玩家] [传送点名], hide [传送点名] [启用(true/f
 #: ../../TShockAPI/Commands.cs:894
 #, csharp-format
 msgid "Authenticated as {0} successfully."
-msgstr "已成功认证为 {0}"
+msgstr "{0} 登录成功"
 
 #: ../../TShockAPI/Rest/RestManager.cs:811
 msgid "AutoSave has been disabled"
@@ -589,7 +707,7 @@ msgstr "自动存档目前已关闭"
 
 #: ../../TShockAPI/Rest/RestManager.cs:796
 msgid "Autosave is currently enabled"
-msgstr "自动存档目前已启用"
+msgstr "自动存档目前已开启"
 
 #: ../../TShockAPI/Commands.cs:2092
 msgid "Available REST Sub-Commands:"
@@ -610,27 +728,27 @@ msgstr "备份线程"
 
 #: ../../TShockAPI/Commands.cs:828
 msgid "Bad login attempt."
-msgstr "尝试登录失败."
+msgstr "尝试登录失败。"
 
 #: ../../TShockAPI/Commands.cs:1624
 #, csharp-format
 msgid "Ban {0} has been revoked by {1}."
-msgstr "BanID为{0}的标识符已被用户 {1} 标记为无效"
+msgstr "用户{1}解除了封禁{0}。"
 
 #: ../../TShockAPI/Commands.cs:1625
 #, csharp-format
 msgid "Ban {0} has now been marked as expired."
-msgstr "BanID为{0}的标识符已被标记为无效."
+msgstr "封禁{0}已解除。"
 
 #: ../../TShockAPI/Commands.cs:1481
 #, csharp-format
 msgid "Ban added. Ticket Number {0} was created for identifier {1}."
-msgstr "已添加BanID为{0}的标识符: {1}."
+msgstr "已添加BanID为{0}的标识符: {1}。"
 
 #: ../../TShockAPI/Rest/RestManager.cs:668
 #, csharp-format
 msgid "Ban added. Ticket number: {0}"
-msgstr "已添加封禁。工单号：{0}"
+msgstr "已添加Ban, BanID为: {0}"
 
 #: ../../TShockAPI/Rest/RestManager.cs:695
 msgid "Ban removed."
@@ -639,11 +757,21 @@ msgstr "已解除封禁。"
 #: ../../TShockAPI/Commands.cs:3824
 #, csharp-format
 msgid "Banned ${0}."
-msgstr "被封禁 ${0}."
+msgstr "被封禁 ${0}"
+
+#: ../../TShockAPI/Commands.cs:4020
+#, csharp-format
+msgid "Banned projectile {0}."
+msgstr "射弹已被封禁{0}。"
+
+#: ../../TShockAPI/Commands.cs:4196
+#, csharp-format
+msgid "Banned tile {0}."
+msgstr "图格已被封禁{0}。"
 
 #: ../../TShockAPI/Commands.cs:1508
 msgid "Banned."
-msgstr "你已被封禁."
+msgstr "您已被封禁。"
 
 #: ../../TShockAPI/Commands.cs:2738
 msgid "Betsy"
@@ -656,8 +784,8 @@ msgstr "血月已被设置为{0}"
 
 #: ../../TShockAPI/Rest/RestManager.cs:904
 #, csharp-format
-msgid "Bloodmoon state: {0}EnabledDisabled"
-msgstr "血月状态:{0}启用禁用"
+msgid "Bloodmoon state: {0}"
+msgstr "血夜状态: {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1447
 #, csharp-format
@@ -697,7 +825,7 @@ msgstr "Bouncer / OnChestOpen（开箱子防护）因区域检测阻止了{0}"
 #: ../../TShockAPI/Bouncer.cs:2699
 #, csharp-format
 msgid "Bouncer / OnFishOutNPC rejected for not finding active bobber projectile! - From {0}"
-msgstr "Bouncer / OnFishOutNPC（钓出NPC防护）因没有有效的浮饵阻止了{0}"
+msgstr "Bouncer / OnFishOutNPC（钓出NPC防护）因没有有效的鱼饵阻止了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:2693
 #, csharp-format
@@ -776,7 +904,7 @@ msgstr "Bouncer / OnGetSection 拒绝来自 {0} 的 GetSection 数据包"
 #: ../../TShockAPI/Bouncer.cs:2065
 #, csharp-format
 msgid "Bouncer / OnHealOtherPlayer 0.2 check from {0}"
-msgstr "保镖/健康其他玩家0.2检查从{0}"
+msgstr "Bouncer / OnHealOtherPlayer 0.2 检查从{0}"
 
 #: ../../TShockAPI/Bouncer.cs:2089
 #, csharp-format
@@ -830,7 +958,7 @@ msgstr "Bouncer / OnItemDrop 被拒绝来自 {0} 的范围检查"
 #: ../../TShockAPI/Bouncer.cs:1124
 #, csharp-format
 msgid "Bouncer / OnItemDrop rejected from sneaky from {0}"
-msgstr "炸弹/OnItemDrop 因 {0}的潜入而拒绝"
+msgstr "Bouncer / OnItemDrop 因 {0}的潜入而拒绝"
 
 #: ../../TShockAPI/Bouncer.cs:2667
 #, csharp-format
@@ -1070,7 +1198,7 @@ msgstr "Bouncer / OnPlaceChest 拒绝了来自 {0} 的范围检查"
 #: ../../TShockAPI/Bouncer.cs:1544
 #, csharp-format
 msgid "Bouncer / OnPlaceChest rejected from weird check from {0}"
-msgstr "Bouncer / OnPlaceChest 拒绝了来自 {0} 的奇怪的检查"
+msgstr "Bouncer / OnPlaceChest 拒绝了来自 {0} 的怪物的检查"
 
 #: ../../TShockAPI/Bouncer.cs:1555
 #, csharp-format
@@ -1110,7 +1238,7 @@ msgstr "Bouncer / OnPlaceObject 拒绝仅使用再生之斧放置树苗 {0}"
 #: ../../TShockAPI/Bouncer.cs:2230
 #, csharp-format
 msgid "Bouncer / OnPlaceObject rejected banned tiles from {0}"
-msgstr "Bouncer / OnPlaceObject 拒绝被禁止方块 {0}"
+msgstr "Bouncer / OnPlaceObject 禁止放置方块 {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2239
 #, csharp-format
@@ -1185,7 +1313,7 @@ msgstr "Bouncer / OnPlaceTileEntity 因被禁用而拒绝了{0}"
 #: ../../TShockAPI/Bouncer.cs:2377
 #, csharp-format
 msgid "Bouncer / OnPlaceTileEntity rejected permissions from {0}"
-msgstr "Bouncer / OnPlaceTileEntity 拒绝改许可 {0}"
+msgstr "Bouncer / OnPlaceTileEntity 拒绝了 {0} 的权限"
 
 #: ../../TShockAPI/Bouncer.cs:2384
 #, csharp-format
@@ -1443,7 +1571,7 @@ msgstr "Bouncer / OnTileEdit（物块防护）阻止了{0}的操作（物块被�
 #: ../../TShockAPI/Bouncer.cs:585
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from (tile placement valid) {0} {1} {2}"
-msgstr "Bouncer / OnTileEdit（物块防护）阻止了{0}的操作（放置位置）。{1}，{2} "
+msgstr "Bouncer / OnTileEdit（物块防护）阻止了{0}的操作（放置位置）。{1}，{2}"
 
 #: ../../TShockAPI/Bouncer.cs:831
 #, csharp-format
@@ -1468,22 +1596,22 @@ msgstr "Bouncer / OnTileEdit（物块防护）阻止了{0}的越界操作。{1}�
 #: ../../TShockAPI/Bouncer.cs:891
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from explosives/fuses from {0} {1} {2}"
-msgstr "Bouncer / OnTileEdit（物块防护）阻止了{0}的爆炸物操作。{1}，{2} "
+msgstr "Bouncer / OnTileEdit（物块防护）阻止了{0}的爆炸物操作。{1}，{2}"
 
 #: ../../TShockAPI/Bouncer.cs:861
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from ice/build from {0} {1} {2}"
-msgstr "Bouncer / OnTileEdit（物块防护）阻止了{0}的冰块或建筑操作。{1}，{2} "
+msgstr "Bouncer / OnTileEdit（物块防护）阻止了{0}的冰块或建筑操作。{1}，{2}"
 
 #: ../../TShockAPI/Bouncer.cs:806
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from place wire from {0} {1} {2}"
-msgstr "Bouncer / OnTileEdit（物块防护）阻止了{0}放置电线。{1}，{2} "
+msgstr "Bouncer / OnTileEdit（物块防护）阻止了{0}放置电线。{1}，{2}"
 
 #: ../../TShockAPI/Bouncer.cs:841
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from sts allow cut from {0} {1} {2}"
-msgstr "Bouncer / OnTileEdit（物块防护）阻止了{0}的操作（在检测允许劈砍的矩形物块操作时）。{1}，{2} "
+msgstr "Bouncer / OnTileEdit（物块防护）阻止了{0}的操作（在检测允许劈砍的矩形物块操作时）。{1}，{2}"
 
 #: ../../TShockAPI/Bouncer.cs:935
 msgid "Bouncer / OnTileEdit rejected from throttled from {0} {1} {2}"
@@ -1522,12 +1650,12 @@ msgstr "Bouncer / OnTileEdit（物块防护）因奇怪的迷惑操作阻止了{
 #: ../../TShockAPI/Bouncer.cs:820
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from wire cutter from {0} {1} {2}"
-msgstr "Bouncer / OnTileEdit（物块防护）阻止了{0}删除电线。{1} {2} "
+msgstr "Bouncer / OnTileEdit（物块防护）阻止了{0}删除电线。{1} {2}"
 
 #: ../../TShockAPI/Bouncer.cs:614
 #, csharp-format
 msgid "Bouncer / OnTileEdit super accepted from (ice block) {0} {1} {2}"
-msgstr "Bouncer / OnTileEdit（物块防护）允许了{0}的冰块操作。{1} {2} "
+msgstr "Bouncer / OnTileEdit（物块防护）允许了{0}的冰块操作。{1} {2}"
 
 #: ../../TShockAPI/Bouncer.cs:2029
 #, csharp-format
@@ -1599,6 +1727,24 @@ msgstr "无法加载模块{0}，因为它没有继承{1}"
 msgid "Certain projectiles have been ignored for cheat detection."
 msgstr "某些弹幕已经因防作弊而被忽略。"
 
+#: ../../TShockAPI/Commands.cs:4445
+#, csharp-format
+msgid "Changed the maximum spawns to {0}."
+msgstr "已将最大生成量更改为 {0}。"
+
+#: ../../TShockAPI/Commands.cs:4426
+msgid "Changed the maximum spawns to 5."
+msgstr "已将最大生成量改为5。"
+
+#: ../../TShockAPI/Commands.cs:4484
+#, csharp-format
+msgid "Changed the spawn rate to {0}."
+msgstr "已将生成率更改为 {0}。"
+
+#: ../../TShockAPI/Commands.cs:4466
+msgid "Changed the spawn rate to 600."
+msgstr "将最大生成率更改为600。"
+
 #: ../../TShockAPI/Commands.cs:368
 msgid "Changes the server password."
 msgstr "更改服务器密码。"
@@ -1631,7 +1777,7 @@ msgstr "检查TShock更新。"
 
 #: ../../TShockAPI/Commands.cs:2514
 msgid "Cleared all users from the angler quest completion list for today."
-msgstr ""
+msgstr "已清空今日渔夫任务完成列表中的所有用户"
 
 #: ../../TShockAPI/Commands.cs:537
 msgid "Clears item drops or projectiles."
@@ -1647,12 +1793,16 @@ msgstr "指令执行失败，请查看日志获取更多信息。"
 
 #: ../../TShockAPI/Commands.cs:3186
 msgid "Commands: add, del, hide, list, send, [warpname]."
-msgstr "命令: add, del, hide, list, send, [warpname]"
+msgstr "命令: add, del, hide, list, send, [传送点名]"
+
+#: ../../TShockAPI/Commands.cs:4378
+msgid "Configuration, permissions, and regions reload complete. Some changes may require a server restart."
+msgstr "配置、权限和区域重新加载完成。有些更改可能需要重新启动服务器。"
 
 #: ../../TShockAPI/Commands.cs:1769
 #, csharp-format
 msgid "Correct usage: {0}overridessc|{0}ossc <player name>"
-msgstr "正确用法: {0}overridessc(覆盖SSC存档)|{0}ossc <player name>"
+msgstr "正确用法: {0}overridessc(覆盖SSC存档)|{0}ossc <玩家名>"
 
 #: ../../TShockAPI/DB/BanManager.cs:82
 #: ../../TShockAPI/DB/ResearchDatastore.cs:54
@@ -1678,6 +1828,18 @@ msgstr "找不到玩家{0}"
 msgid "Could not find specified warp."
 msgstr "找不到指定warp点"
 
+#: ../../TShockAPI/Commands.cs:4706
+#: ../../TShockAPI/Commands.cs:4713
+#: ../../TShockAPI/Commands.cs:4732
+#: ../../TShockAPI/Commands.cs:4771
+#: ../../TShockAPI/Commands.cs:4806
+#: ../../TShockAPI/Commands.cs:4841
+#: ../../TShockAPI/Commands.cs:4876
+#: ../../TShockAPI/Commands.cs:4920
+#, csharp-format
+msgid "Could not find the region {0}."
+msgstr "无法找到领地{0}。"
+
 #: ../../TShockAPI/Commands.cs:1572
 msgid "Could not find the target specified. Check that you have the correct spelling."
 msgstr "找不到特定的目标，请检查您的拼写是否正确"
@@ -1693,7 +1855,17 @@ msgstr "CreativePowerHandler 收到了为未知创造力的权限检查请求。
 #: ../../TShockAPI/Handlers/NetModules/CreativeUnlocksHandler.cs:65
 #, csharp-format
 msgid "CreativeUnlocksHandler received non-vanilla unlock request. Random field value: {0} but should be 0 from {1}"
-msgstr "CreativeUnlocksHandler 收到了非原版解锁请求。随机字段值： {0} 但该值应为 0 到 {1}"
+msgstr "CreativeUnlocksHandler 收到了来自玩家{1}的异常的研究解锁请求：不明字段值为{0}但应为0。"
+
+#: ../../TShockAPI/Commands.cs:4417
+#, csharp-format
+msgid "Current maximum spawns: {0}."
+msgstr "当前最大生成量： {0}。"
+
+#: ../../TShockAPI/Commands.cs:4457
+#, csharp-format
+msgid "Current spawn rate: {0}."
+msgstr "当前生成率： {0}。"
 
 #: ../../TShockAPI/Bouncer.cs:2650
 #, csharp-format
@@ -1706,19 +1878,32 @@ msgstr "死亡原因过长。"
 
 #: ../../TShockAPI/Commands.cs:3425
 msgid "del <group> - Deletes a group."
-msgstr "del <group> - 删除一个组别"
+msgstr "del <组名> - 删除一个用户组"
 
 #: ../../TShockAPI/Commands.cs:3956
 msgid "del <item> - Deletes an item ban."
 msgstr "del <item> - 禁用指定物品"
 
+#: ../../TShockAPI/Commands.cs:4134
+msgid "del <projectile ID> - Deletes an projectile ban."
+msgstr "del <射弹ID> - 禁用指定射弹。"
+
+#: ../../TShockAPI/Commands.cs:4310
+msgid "del <tile ID> - Deletes a tile ban."
+msgstr "add <图格ID> - 禁用指定图格。"
+
+#: ../../TShockAPI/Commands.cs:4729
+#, csharp-format
+msgid "Deleted region \"{0}\"."
+msgstr "已删除领地'{0}'。"
+
 #: ../../TShockAPI/Commands.cs:3426
 msgid "delperm <group> <permissions...> - Removes permissions from a group."
-msgstr "delperm <group> <permissions...> -为一个组移除指定权限"
+msgstr "delperm <组> <权限...> - 移除用户组指定的权限（不会影响继承的权限）"
 
 #: ../../TShockAPI/Commands.cs:2094
 msgid "destroytokens - Destroys all current REST tokens."
-msgstr "destroytokens - 删除当前所有REST密钥"
+msgstr "destroytokens - 删除当前所有REST令牌"
 
 #: ../../TShockAPI/Bouncer.cs:462
 #: ../../TShockAPI/Bouncer.cs:470
@@ -1729,23 +1914,31 @@ msgstr "检测到 DOM 已设置为开启位置。"
 #: ../../TShockAPI/Bouncer.cs:525
 #, csharp-format
 msgid "Disabled. You need to {0}login to load your saved data."
-msgstr "你需要 {0}login 才能加载你的数据."
+msgstr "您已被禁止行动，因为您需要{0}登录以载入已保存的数据。"
 
 #: ../../TShockAPI/Bouncer.cs:521
 msgid "Disabled. You went too far with banned armor."
-msgstr "禁止的行为。您过分地使用了被封禁的盔甲。"
+msgstr "无法行动，因为你穿着被禁用的装备。"
 
 #: ../../TShockAPI/Bouncer.cs:517
 msgid "Disabled. You went too far with hacked item stacks."
-msgstr "禁止的行为，您的物品数量多的过分了。"
+msgstr "您已被限制行动，因为您的物品数量已超过堆叠上限。"
 
 #: ../../TShockAPI/Commands.cs:3957
 msgid "disallow <item> <group> - Disallows a group from using an item."
-msgstr "disallow <item> <group> - 禁止指定组使用被禁用的物品"
+msgstr "disallow <物品> <用户组> - 取消用户组使用特定物品的豁免权。"
+
+#: ../../TShockAPI/Commands.cs:4135
+msgid "disallow <projectile ID> <group> - Disallows a group from using a projectile."
+msgstr "disallow <射弹> <用户组> - 取消用户组使用特定射弹的豁免权。"
+
+#: ../../TShockAPI/Commands.cs:4311
+msgid "disallow <tile ID> <group> - Disallows a group from place a tile."
+msgstr "disallow <物块> <用户组> - 取消用户组使用特定物块的豁免权。"
 
 #: ../../TShockAPI/Commands.cs:2631
 msgid "Duke Fishron"
-msgstr "猪龙鱼公爵（肉后小怪）"
+msgstr "猪龙鱼公爵"
 
 #: ../../TShockAPI/Commands.cs:488
 msgid "Enables starting and stopping various world events."
@@ -1762,7 +1955,7 @@ msgstr "常绿尖叫怪"
 
 #: ../../TShockAPI/Commands.cs:1985
 msgid "Example: /sudo /ban add particles 2d Hacking."
-msgstr ""
+msgstr "例如: /sudo /ban add 迅猛龙 30d SB"
 
 #: ../../TShockAPI/Commands.cs:3189
 #, csharp-format
@@ -1796,7 +1989,7 @@ msgstr "删除用户组{0}失败。"
 
 #: ../../TShockAPI/Commands.cs:2507
 msgid "Failed to find any users by that name on the list."
-msgstr ""
+msgstr "指定玩家没有完成今日渔夫任务。"
 
 #: ../../TShockAPI/Commands.cs:1629
 #: ../../TShockAPI/Rest/RestManager.cs:698
@@ -1836,7 +2029,7 @@ msgstr "FetchHashedPasswordAndGroup SQL 返回了一个错误： {0}"
 
 #: ../../TShockAPI/Commands.cs:1927
 msgid "For example, 1d and 10h-30m+2m are both valid time strings, but 2 is not."
-msgstr "举个例子, 1d 和 10h-30m+2m 都是有效的时间, 但2不是"
+msgstr "举个例子, 1d 和 10h-30m+2m 都是有效的时间, 但2不是。"
 
 #: ../../TShockAPI/Commands.cs:514
 msgid "Forces all liquids to update immediately."
@@ -1845,12 +2038,12 @@ msgstr "立即强制更新所有液体。"
 #: ../../TShockAPI/GetDataHandlers.cs:4364
 #, csharp-format
 msgid "GetDataHandlers / HandleSyncLoadout rejected loadout index sync {0}"
-msgstr ""
+msgstr "GetDataHandlers / HandleSyncLoadout 阻止了{0}切换装备栏"
 
 #: ../../TShockAPI/GetDataHandlers.cs:4355
 #, csharp-format
 msgid "GetDataHandlers / HandleSyncLoadout rejected loadout index sync out of bounds {0}"
-msgstr ""
+msgstr "GetDataHandlers / HandleSyncLoadout 阻止了{0}切换越界的装备栏"
 
 #: ../../TShockAPI/DB/UserManager.cs:291
 #, csharp-format
@@ -1896,7 +2089,7 @@ msgstr "组 \"{0}\" 没有后缀"
 #: ../../TShockAPI/DB/GroupManager.cs:646
 #, csharp-format
 msgid "Group \"{0}\" is referencing parent group {1} which is already part of the parent chain. Parent reference removed."
-msgstr "组\"{0}\"正在引用父组{1}，但因为组{1}已经是组{0}的父组，故父组的引用已删除。"
+msgstr "用户组{1}为{0}的父组，但也同时是它的子组。已删除此父子关系。"
 
 #: ../../TShockAPI/DB/GroupManager.cs:578
 msgid "Group \"superadmin\" is defined in the database even though it's a reserved group name."
@@ -1948,7 +2141,7 @@ msgstr "用户组 {0} 已被成功删除。"
 #: ../../TShockAPI/DB/GroupManager.cs:463
 #, csharp-format
 msgid "Group {0} has been renamed to {1}."
-msgstr "用户组 {0} 已被命名成 {1}。"
+msgstr "用户组 {0} 已重命名成 {1}。"
 
 #: ../../TShockAPI/DB/GroupManager.cs:631
 #, csharp-format
@@ -1959,6 +2152,12 @@ msgstr "组 {0} 正在引用一个不存在的父组 {1}，父组的引用已被
 #, csharp-format
 msgid "Group {0} is referencing itself as parent group; parent reference was removed."
 msgstr "组{0}试图将自己作为父组。父组的引用已被删除。"
+
+#: ../../TShockAPI/Commands.cs:4845
+#: ../../TShockAPI/Commands.cs:4880
+#, csharp-format
+msgid "Group {0} not found."
+msgstr "组 {0} 没有找到。"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1187
 #, csharp-format
@@ -1976,7 +2175,7 @@ msgstr "在你的位置种下植物。"
 
 #: ../../TShockAPI/Commands.cs:2576
 msgid "Hardmode is disabled in the server configuration file."
-msgstr "已在服务器配置文件中禁用困难模式（肉后）"
+msgstr "已在服务器配置文件中禁用困难模式。"
 
 #: ../../TShockAPI/Commands.cs:2567
 msgid "Hardmode is now off."
@@ -1988,7 +2187,7 @@ msgstr "困难模式已开启。"
 
 #: ../../TShockAPI/Bouncer.cs:2066
 msgid "HealOtherPlayer cheat attempt!"
-msgstr "有人正在尝试作弊地治疗其他玩家！"
+msgstr "有人正在尝试作弊治疗其他玩家！"
 
 #: ../../TShockAPI/Bouncer.cs:2075
 #, csharp-format
@@ -1999,6 +2198,15 @@ msgstr "治疗其他玩家阈值超过 {0}。"
 msgid "Heals a player in HP and MP."
 msgstr "治愈玩家的血量和魔力。"
 
+#: ../../TShockAPI/Commands.cs:4641
+msgid "Hit a block to get the name of the region."
+msgstr "挖掘一个方块以获得该区域的名称"
+
+#: ../../TShockAPI/Commands.cs:4654
+#, csharp-format
+msgid "Hit a block to set point {0}."
+msgstr "挖掘一个方块来设置点 {0}。"
+
 #: ../../TShockAPI/Commands.cs:1226
 #, csharp-format
 msgid "ID: {0}"
@@ -2006,27 +2214,27 @@ msgstr "ID: {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1374
 msgid "If this player wasn't hacking, please report the damage threshold they were disabled for to TShock so we can improve this!"
-msgstr "如果这个玩家并没有作弊，那么请向TShock报告他们被禁用的伤害阈值，以便我们可以改进它！"
+msgstr "如果这个玩家并没有作弊，那么请向TShock报告他们被禁用的伤害阈值，以便我们改进它！"
 
 #: ../../TShockAPI/Bouncer.cs:2082
 msgid "If this player wasn't hacking, please report the HealOtherPlayer threshold they were disabled for to TShock so we can improve this!"
-msgstr "如果这个玩家没有作弊，请向TShock报告他们被禁用的治疗他人阈值，以便我们可以改进它。"
+msgstr "如果这个玩家没有作弊，请向TShock报告此处的治疗量上限以便更正。"
 
 #: ../../TShockAPI/Bouncer.cs:1278
 msgid "If this player wasn't hacking, please report the projectile update threshold they were disabled for to TShock so we can improve this!"
-msgstr "如果这个玩家没有作弊，请向TShock报告他们被禁用的弹幕阈值，以便我们可以改进它。"
+msgstr "如果这个玩家没有作弊，请向TShock报告此处的射弹更新上限以便更正。"
 
 #: ../../TShockAPI/Bouncer.cs:910
 msgid "If this player wasn't hacking, please report the tile kill threshold they were disabled for to TShock so we can improve this!"
-msgstr "如果这个玩家并没有作弊，那么请向TShock报告他们被禁用的击杀阈值，以便我们可以改进它！"
+msgstr "如果这个玩家并没有作弊，那么请向TShock报告他们被禁用的击杀阈值，以便我们改进它！"
 
 #: ../../TShockAPI/Bouncer.cs:1677
 msgid "If this player wasn't hacking, please report the tile liquid threshold they were disabled for to TShock so we can improve this!"
-msgstr "如果这个玩家并没有作弊，那么请向TShock报告他们被禁用的液体阈值，以便我们可以改进它！"
+msgstr "如果这个玩家并没有作弊，那么请向TShock报告他们被禁用的液体阈值，以便我们改进它！"
 
 #: ../../TShockAPI/Bouncer.cs:928
 msgid "If this player wasn't hacking, please report the tile place threshold they were disabled for to TShock so we can improve this!"
-msgstr "如果这个玩家并没有作弊，那么请向TShock报告他们被禁用的图格放置阈值，以便我们可以改进它！"
+msgstr "如果这个玩家并没有作弊，那么请向TShock报告他们被禁用的图格放置阈值，以便我们改进它！"
 
 #: ../../TShockAPI/Commands.cs:848
 msgid "If you forgot your password, contact the administrator for help."
@@ -2069,11 +2277,11 @@ msgstr "将封禁数据载入数据库失败。"
 
 #: ../../TShockAPI/Rest/Rest.cs:426
 msgid "Internal server error."
-msgstr "内部服务器错误。"
+msgstr "服务器内部错误。"
 
 #: ../../TShockAPI/DB/UserManager.cs:500
 msgid "Invalid BCrypt work factor in config file! Creating new hash using default work factor."
-msgstr "配置文件中无效的 BCrypt 工作因子！使用默认工作因子创建新的 hash 值。"
+msgstr "配置文件中无效的 BCrypt 工作因子！使用默认工作因子创建新的 哈希值。"
 
 #: ../../TShockAPI/Commands.cs:2591
 msgid "Invalid boss amount."
@@ -2112,6 +2320,10 @@ msgstr "无效的霜月波数。"
 #: ../../TShockAPI/Commands.cs:3748
 #: ../../TShockAPI/Commands.cs:3851
 #: ../../TShockAPI/Commands.cs:3922
+#: ../../TShockAPI/Commands.cs:4041
+#: ../../TShockAPI/Commands.cs:4099
+#: ../../TShockAPI/Commands.cs:4217
+#: ../../TShockAPI/Commands.cs:4275
 msgid "Invalid group."
 msgstr "无效组别"
 
@@ -2126,6 +2338,11 @@ msgstr "无效的入侵事件类型。有效的类型: {0}。"
 #: ../../TShockAPI/Commands.cs:3912
 msgid "Invalid item."
 msgstr "无效物品"
+
+#: ../../TShockAPI/Commands.cs:4438
+#, csharp-format
+msgid "Invalid maximum spawns.  Acceptable range is {0} to {1}."
+msgstr "无效的最大生成量。可接受的范围是 {0} 至 {1}。"
 
 #: ../../TShockAPI/Commands.cs:2843
 msgid "Invalid mob type!"
@@ -2163,6 +2380,16 @@ msgstr "无效密码"
 msgid "Invalid player."
 msgstr "无效的玩家名"
 
+#: ../../TShockAPI/Commands.cs:4023
+msgid "Invalid projectile ID!"
+msgstr "无效的射弹ID！"
+
+#: ../../TShockAPI/Commands.cs:4060
+#: ../../TShockAPI/Commands.cs:4081
+#: ../../TShockAPI/Commands.cs:4119
+msgid "Invalid projectile ID."
+msgstr "无效的射弹ID。"
+
 #: ../../TShockAPI/Commands.cs:2347
 msgid "Invalid pumpkin moon event wave."
 msgstr "无效的南瓜月波数"
@@ -2188,18 +2415,28 @@ msgstr "无效的子命令！输入{0}group 获得更多关于此命令的信息
 msgid "Invalid subcommand. Type {0}itemban help for more information on valid subcommands."
 msgstr "无效的子命令。输入{0}group 获得更多关于此命令的信息"
 
+#: ../../TShockAPI/Commands.cs:4170
+#, csharp-format
+msgid "Invalid subcommand. Type {0}projban help for more information on valid subcommands."
+msgstr "无效的子命令。输入{0}projban 获得更多关于此命令的信息。"
+
+#: ../../TShockAPI/Commands.cs:4346
+#, csharp-format
+msgid "Invalid subcommand. Type {0}tileban help for more information on valid subcommands."
+msgstr "无效的子命令。输入{0}tileban 获得更多关于此命令的信息。"
+
 #: ../../TShockAPI/Commands.cs:3624
 msgid "Invalid syntax for color, expected \"rrr,ggg,bbb\"."
 msgstr "颜色语法错误，正确语法\"rrr,ggg,bbb\"。"
 
 #: ../../TShockAPI/Commands.cs:1898
 msgid "Invalid syntax."
-msgstr "语法错误"
+msgstr "语法错误。"
 
 #: ../../TShockAPI/Commands.cs:2315
 #, csharp-format
 msgid "Invalid syntax. Proper syntax:  {0}worldevent invasion [invasion type] [invasion wave]."
-msgstr ""
+msgstr "格式错误! 正确格式:  {0}worldevent invasion [入侵类型] [入侵波数]。"
 
 #: ../../TShockAPI/Commands.cs:1261
 #: ../../TShockAPI/Commands.cs:1295
@@ -2210,12 +2447,12 @@ msgstr "格式错误。正确格式: {0}accountinfo <用户名>"
 #: ../../TShockAPI/Commands.cs:3352
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}group add <group name> [permissions]."
-msgstr "格式错误! 正确格式: {0}group add <组名> [权限]."
+msgstr "格式错误! 正确格式: {0}group add <组名> [权限]"
 
 #: ../../TShockAPI/Commands.cs:3381
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}group addperm <group name> <permissions...>."
-msgstr "格式错误! 正确格式: {0}group addperm <组名> <权限...>."
+msgstr "格式错误! 正确格式: {0}group addperm <组名> <权限...>。"
 
 #: ../../TShockAPI/Commands.cs:3589
 #, csharp-format
@@ -2225,163 +2462,276 @@ msgstr "格式错误! 正确格式: {0}group color <组名> [聊天颜色(000,00
 #: ../../TShockAPI/Commands.cs:3662
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}group del <group name>."
-msgstr "格式错误! 正确格式: {0}group del <组名>."
+msgstr "格式错误! 正确格式: {0}group del <组名>。"
 
 #: ../../TShockAPI/Commands.cs:3686
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}group delperm <group name> <permissions...>."
-msgstr "格式错误! 正确格式: {0}group delperm <组名> <权限...>."
+msgstr "格式错误! 正确格式: {0}group delperm <组名> <权限...>。"
 
 #: ../../TShockAPI/Commands.cs:3739
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}group listperm <group name> [page]."
-msgstr "格式错误! 正确格式: {0}group listperm <组名> [页码]."
+msgstr "格式错误! 正确格式: {0}group listperm <组名> [页码]。"
 
 #: ../../TShockAPI/Commands.cs:3449
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}group parent <group name> [new parent group name]."
-msgstr "格式错误! 正确格式: {0}group parent <组名> [新的父组名]."
+msgstr "格式错误! 正确格式: {0}group parent <组名> [新的父组名]。"
 
 #: ../../TShockAPI/Commands.cs:3544
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}group prefix <group name> [new prefix]."
-msgstr "格式错误! 正确格式: {0}group prefix <组名> [新前缀]."
+msgstr "格式错误! 正确格式: {0}group prefix <组名> [新前缀]。"
 
 #: ../../TShockAPI/Commands.cs:3639
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}group rename <group> <new name>."
-msgstr "格式错误! 正确格式: {0}group rename <组名> <新组名>."
+msgstr "格式错误! 正确格式: {0}group rename <组名> <新组名>。"
 
 #: ../../TShockAPI/Commands.cs:3499
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}group suffix <group name> [new suffix]."
-msgstr "格式错误! 正确格式: {0}group suffix <组名> [新后缀]."
+msgstr "格式错误! 正确格式: {0}group suffix <组名> [新后缀]。"
 
 #: ../../TShockAPI/Commands.cs:3783
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}itemban add <item name>."
-msgstr "格式错误! 正确格式: {0}itemban add <物品名>."
+msgstr "格式错误! 正确格式: {0}itemban add <物品名>。"
 
 #: ../../TShockAPI/Commands.cs:3834
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}itemban allow <item name> <group name>."
-msgstr "格式错误! 正确格式: {0}itemban allow <物品名> <组名>."
+msgstr "格式错误! 正确格式: {0}itemban allow <物品名> <组名>。"
 
 #: ../../TShockAPI/Commands.cs:3879
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}itemban del <item name>."
-msgstr "格式错误! 正确格式: {0}itemban del <物品名>"
+msgstr "格式错误! 正确格式: {0}itemban del <物品名>。"
 
 #: ../../TShockAPI/Commands.cs:3905
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}itemban disallow <item name> <group name>."
-msgstr "格式错误! 正确格式: {0}itemban disallow <物品名> <组名>."
+msgstr "格式错误! 正确格式: {0}itemban disallow <物品名> <组名>。"
 
 #: ../../TShockAPI/Commands.cs:1302
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}kick <player> [reason]."
-msgstr "格式错误!正确格式: {0}kick <玩家名> [理由]."
+msgstr "格式错误!正确格式: {0}kick <玩家名> [理由]。"
+
+#: ../../TShockAPI/Commands.cs:4013
+#, csharp-format
+msgid "Invalid syntax. Proper syntax: {0}projban add <proj id>"
+msgstr "无效的语法。正确的语法： {0}projban 添加 <射弹ID>"
+
+#: ../../TShockAPI/Commands.cs:4032
+#, csharp-format
+msgid "Invalid syntax. Proper syntax: {0}projban allow <id> <group>."
+msgstr "无效的语法。正确的语法： {0}projban allow <弹射物ID> <组名>"
+
+#: ../../TShockAPI/Commands.cs:4069
+#, csharp-format
+msgid "Invalid syntax. Proper syntax: {0}projban del <id>."
+msgstr "无效的语法。正确的语法： {0}projban del <弹射物ID>"
+
+#: ../../TShockAPI/Commands.cs:4090
+#, csharp-format
+msgid "Invalid syntax. Proper syntax: {0}projban disallow <id> <group name>."
+msgstr "无效的语法。正确的语法： {0}projban disallow <射弹> <用户组>"
+
+#: ../../TShockAPI/Commands.cs:4779
+#, csharp-format
+msgid "Invalid syntax. Proper syntax: {0}region allow <name> <region>."
+msgstr "无效的语法。正确的语法： {0}region allow <玩家名> <领地名>"
+
+#: ../../TShockAPI/Commands.cs:4849
+#, csharp-format
+msgid "Invalid syntax. Proper syntax: {0}region allowg <group> <region>."
+msgstr "无效的语法。正确的语法： {0}region allowg <组名> <领地名>"
+
+#: ../../TShockAPI/Commands.cs:4693
+#, csharp-format
+msgid "Invalid syntax. Proper syntax: {0}region define <name>."
+msgstr "格式错误! 正确格式: {0}region define <name>"
+
+#: ../../TShockAPI/Commands.cs:4735
+#, csharp-format
+msgid "Invalid syntax. Proper syntax: {0}region delete <name>."
+msgstr "格式错误! 正确格式: {0}region delete <name>"
+
+#: ../../TShockAPI/Commands.cs:4908
+#, csharp-format
+msgid "Invalid syntax. Proper syntax: {0}region info <region> [-d] [page]."
+msgstr "格式错误！正确格式: {0}region info <region> [-d] [第几页]"
+
+#: ../../TShockAPI/Commands.cs:4716
+#, csharp-format
+msgid "Invalid syntax. Proper syntax: {0}region protect <name> <true/false>."
+msgstr "格式错误！正确格式: {0}region protect <name> <true/false>."
+
+#: ../../TShockAPI/Commands.cs:4814
+#, csharp-format
+msgid "Invalid syntax. Proper syntax: {0}region remove <name> <region>."
+msgstr "格式错误。正确格式: {0}region remove <name> <region>."
+
+#: ../../TShockAPI/Commands.cs:4884
+#, csharp-format
+msgid "Invalid syntax. Proper syntax: {0}region removeg <group> <region>."
+msgstr "格式错误。正确格式: {0}region removeg <组名> <领地名>."
 
 #: ../../TShockAPI/Commands.cs:1028
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}register <password>."
-msgstr "格式错误! 正确格式: {0}register <密码>."
+msgstr "格式错误! 正确格式: {0}register <密码>。"
+
+#: ../../TShockAPI/Commands.cs:4385
+#, csharp-format
+msgid "Invalid syntax. Proper syntax: {0}serverpassword \"<new password>\"."
+msgstr "格式错误。正确格式：{0}serverpassword \"<新的服务器密码>\""
+
+#: ../../TShockAPI/Commands.cs:4566
+#, csharp-format
+msgid "Invalid syntax. Proper syntax: {0}slap <player> [damage]."
+msgstr "格式错误。正确格式：{0}slap <玩家名> [一巴掌的伤害值]"
 
 #: ../../TShockAPI/Commands.cs:2584
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}spawnboss <boss type> [amount]."
-msgstr "格式错误! 正确格式: {0}spawnboss <Boss类型> [召唤数量]"
+msgstr "格式错误! 正确格式: {0}spawnboss <Boss类型> [生成数量]。"
 
 #: ../../TShockAPI/Commands.cs:2822
 #: ../../TShockAPI/Commands.cs:2834
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}spawnmob <mob type> [amount]."
-msgstr "格式错误! 正确格式: {0}spawnmob <NPC类型> [生成数量]."
+msgstr "格式错误! 正确格式: {0}spawnmob <NPC类型> [生成数量]"
+
+#: ../../TShockAPI/Commands.cs:4189
+#, csharp-format
+msgid "Invalid syntax. Proper syntax: {0}tileban add <tile id>."
+msgstr "格式错误。正确格式：{0}tileban add <图格ID>"
+
+#: ../../TShockAPI/Commands.cs:4208
+#, csharp-format
+msgid "Invalid syntax. Proper syntax: {0}tileban allow <id> <group>."
+msgstr "格式错误。正确格式：{0}tileban allow <图格ID> <组名>"
+
+#: ../../TShockAPI/Commands.cs:4245
+#, csharp-format
+msgid "Invalid syntax. Proper syntax: {0}tileban del <id>."
+msgstr "格式错误。正确格式：{0}tileban del <图格ID>"
 
 #: ../../TShockAPI/Commands.cs:2914
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}tp <player> [player 2]."
-msgstr "格式错误! 正确格式: {0}tp <玩家> [玩家2]."
+msgstr "格式错误! 正确格式: {0}tp <玩家> [玩家2]"
 
 #: ../../TShockAPI/Commands.cs:2916
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}tp <player>."
-msgstr "格式错误! 正确格式: {0}tp <玩家>."
+msgstr "格式错误! 正确格式: {0}tp <玩家>"
 
 #: ../../TShockAPI/Commands.cs:3041
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}tphere <player>."
-msgstr "格式错误! 正确格式: {0}tphere <玩家名>."
+msgstr "格式错误! 正确格式: {0}tphere <玩家名>"
 
 #: ../../TShockAPI/Commands.cs:3039
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}tphere <player|*>."
-msgstr "格式错误! 正确格式: {0}tphere <玩家名|*>."
+msgstr "格式错误! 正确格式: {0}tphere <玩家名|*>"
 
 #: ../../TShockAPI/Commands.cs:3086
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}tpnpc <NPC>."
-msgstr "格式错误! 正确格式: {0}tpnpc <NPC名称>."
+msgstr "格式错误! 正确格式: {0}tpnpc <NPC名称>"
 
 #: ../../TShockAPI/Commands.cs:3150
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}tppos <tile x> <tile y>."
-msgstr "格式错误! 正确格式: {0}tppos <X坐标> <Y坐标>."
+msgstr "格式错误! 正确格式: {0}tppos <X坐标> <Y坐标>"
 
 #: ../../TShockAPI/Commands.cs:1240
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}userinfo <player>."
-msgstr "格式错误! 正确格式: {0}userinfo <玩家名>."
+msgstr "格式错误! 正确格式: {0}userinfo <玩家名>"
 
 #: ../../TShockAPI/Commands.cs:3185
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}warp [command] [arguments]."
-msgstr "格式错误! 正确格式: {0}warp [子命令] [参数]."
+msgstr "格式错误! 正确格式: {0}warp [子命令] [参数]"
 
 #: ../../TShockAPI/Commands.cs:3194
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}warp [name] or {0}warp list <page>."
-msgstr "格式错误! 正确格式: {0}warp [传送点名] 或 {0}warp list <页码>。"
+msgstr "格式错误! 正确格式: {0}warp [传送点名] 或 {0}warp list <页码>"
 
 #: ../../TShockAPI/Commands.cs:3237
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}warp add [name]."
-msgstr "格式错误! 正确格式: {0}warp add [传送点名]。"
+msgstr "格式错误! 正确格式: {0}warp add [传送点名]"
 
 #: ../../TShockAPI/Commands.cs:3254
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}warp del [name]."
-msgstr "格式错误! 正确格式: {0}warp del [传送点名]。"
+msgstr "格式错误! 正确格式: {0}warp del [传送点名]"
 
 #: ../../TShockAPI/Commands.cs:3277
 #: ../../TShockAPI/Commands.cs:3280
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}warp hide [name] <true/false>."
-msgstr "格式错误! 正确格式: {0}warp hide [传送点名] <启用/关闭>"
+msgstr "格式错误! 正确格式: {0}warp hide [传送点名] <true/false>."
 
 #: ../../TShockAPI/Commands.cs:3288
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}warp send [player] [warpname]."
-msgstr "格式错误! 正确格式: {0}warp send [角色名] [传送点名]。"
+msgstr "格式错误! 正确格式: {0}warp send [角色名] [传送点名]"
+
+#: ../../TShockAPI/Commands.cs:4608
+#, csharp-format
+msgid "Invalid syntax. Proper syntax: {0}wind <speed>."
+msgstr "格式错误。正确格式：{0}wind <风速>"
 
 #: ../../TShockAPI/Commands.cs:2129
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}worldevent <event type>."
-msgstr "格式错误! 正确格式: {0}worldevent <事件类型>。"
+msgstr "格式错误! 正确格式: {0}worldevent <事件类型>"
 
 #: ../../TShockAPI/Commands.cs:2531
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}worldmode <mode>."
 msgstr "格式错误! 正确格式: {0}worldmode <世界难度>。"
 
+#: ../../TShockAPI/Commands.cs:4719
+#, csharp-format
+msgid "Invalid syntax. Proper syntax: /region protect <name> <true/false>."
+msgstr "格式错误。正确格式：/region protect <领地名> <true(启用保护)/false(关闭保护)>"
+
+#: ../../TShockAPI/Commands.cs:4659
+msgid "Invalid syntax. Proper syntax: /region set <1/2>."
+msgstr "格式错误。正确格式：/region set <1/2>"
+
 #: ../../TShockAPI/Commands.cs:3134
 #: ../../TShockAPI/Commands.cs:3295
+#: ../../TShockAPI/Commands.cs:4572
+#: ../../TShockAPI/Commands.cs:4580
 msgid "Invalid target player."
-msgstr "目标玩家无效."
+msgstr "目标玩家无效。"
+
+#: ../../TShockAPI/Commands.cs:4199
+#: ../../TShockAPI/Commands.cs:4236
+#: ../../TShockAPI/Commands.cs:4257
+#: ../../TShockAPI/Commands.cs:4295
+msgid "Invalid tile ID."
+msgstr "无效的图格ID"
 
 #: ../../TShockAPI/Commands.cs:1926
 msgid "Invalid time string! Proper format: _d_h_m_s, with at least one time specifier."
 msgstr "时间无效! 正确格式: _d_h_m_s, 至少需要一个时间单位。"
+
+#: ../../TShockAPI/Commands.cs:4531
+#: ../../TShockAPI/Commands.cs:4540
+msgid "Invalid time string. Proper format: hh:mm, in 24-hour time."
+msgstr "无效的时间字符串。正确格式： hh:mm，24小时制时间。"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1326
 #, csharp-format
@@ -2397,6 +2747,10 @@ msgstr "用户命令语法错误。尝试 {0}user help。"
 #: ../../TShockAPI/Commands.cs:3225
 msgid "Invalid warp name. The names 'list', 'hide', 'del' and 'add' are reserved for commands."
 msgstr "传送点名无效。 'list', 'hide', 'del' 和 'add' 等已被保留。"
+
+#: ../../TShockAPI/Commands.cs:4615
+msgid "Invalid wind speed."
+msgstr "无效的风速。"
 
 #: ../../TShockAPI/Commands.cs:2542
 #, csharp-format
@@ -2457,15 +2811,27 @@ msgstr "LandGolfBallInCupHandler: 位置 X 和 Y 超越了世界边界! - 从 {0
 
 #: ../../TShockAPI/Commands.cs:2476
 msgid "Lanterns are now down."
-msgstr "元宵夜结束了。"
+msgstr "灯笼夜结束了。"
 
 #: ../../TShockAPI/Commands.cs:2472
 msgid "Lanterns are now up."
-msgstr "元宵夜开始了."
+msgstr "灯笼夜开始了。"
+
+#: ../../TShockAPI/Commands.cs:4406
+msgid "Liquids are already settling."
+msgstr "液体已经安置完毕"
 
 #: ../../TShockAPI/Commands.cs:3958
 msgid "list [page] - Lists all item bans."
 msgstr "list [页码] - 列出所有被禁用的物品."
+
+#: ../../TShockAPI/Commands.cs:4136
+msgid "list [page] - Lists all projectile bans."
+msgstr "list [页码] - 列出所有被禁用的射弹。"
+
+#: ../../TShockAPI/Commands.cs:4312
+msgid "list [page] - Lists all tile bans."
+msgstr "list [页码] - 列出所有被禁用的方块。"
 
 #: ../../TShockAPI/Commands.cs:3427
 msgid "list [page] - Lists groups."
@@ -2481,20 +2847,20 @@ msgstr "列出指令或显示指令的帮助信息。"
 
 #: ../../TShockAPI/Commands.cs:2093
 msgid "listusers - Lists all REST users and their current active tokens."
-msgstr "listusers - 列出所有临时REST用户和它们的令牌."
+msgstr "listusers - 列出所有临时REST用户和它们的令牌。"
 
 #: ../../TShockAPI/Commands.cs:3142
 #, csharp-format
 msgid "Location of {0} is ({1}, {2})."
-msgstr "当前 {0} 的坐标为({1}, {2})."
+msgstr "当前 {0} 的坐标为({1}, {2})。"
 
 #: ../../TShockAPI/Commands.cs:1741
 msgid "Log display disabled."
-msgstr "你现在不再收到服务器日志."
+msgstr "你现在不再收到服务器日志。"
 
 #: ../../TShockAPI/Commands.cs:1737
 msgid "Log display enabled."
-msgstr "你现在将会收到服务器日志."
+msgstr "你现在将会收到服务器日志。"
 
 #: ../../TShockAPI/Commands.cs:865
 msgid "Login attempt failed - see the message above."
@@ -2552,6 +2918,16 @@ msgstr "管理物块封禁。"
 #: ../../TShockAPI/Commands.cs:232
 msgid "Manages user accounts."
 msgstr "管理用户账号。"
+
+#: ../../TShockAPI/Commands.cs:4704
+#, csharp-format
+msgid "Marked region {0} as protected."
+msgstr "标记区域{0}为受保护区"
+
+#: ../../TShockAPI/Commands.cs:4711
+#, csharp-format
+msgid "Marked region {0} as unprotected."
+msgstr "区域{0}并没有被保护"
 
 #: ../../TShockAPI/Commands.cs:1213
 #, csharp-format
@@ -2614,11 +2990,11 @@ msgstr "NetModuleHandler 接收到在非旅行模式下解锁祭祀的尝试，�
 
 #: ../../TShockAPI/Commands.cs:1465
 msgid "Never."
-msgstr "永远不"
+msgstr "永久"
 
 #: ../../TShockAPI/Commands.cs:1685
 msgid "No bans found matching the provided ticket number."
-msgstr ""
+msgstr "BanID无效"
 
 #: ../../TShockAPI/Commands.cs:145
 msgid "No help available."
@@ -2630,7 +3006,7 @@ msgstr "未发现匹配的封禁项目！"
 
 #: ../../TShockAPI/Commands.cs:1820
 msgid "No player was found matching '{0}'."
-msgstr "没有找到名为 '{0} 的玩家。"
+msgstr "没有找到名为 '{0}' 的玩家。"
 
 #: ../../TShockAPI/Commands.cs:1777
 #, csharp-format
@@ -2652,11 +3028,11 @@ msgstr "未提供值"
 
 #: ../../TShockAPI/Rest/SecureRest.cs:194
 msgid "Not authorized. The provided token became invalid due to group changes, please create a new token."
-msgstr "未授权。因群组更改导致提供的令牌失效，请创建一个新的令牌。"
+msgstr "未授权：该授权令牌所对应的用户组已不存在，请创建一个新的令牌。"
 
 #: ../../TShockAPI/Rest/SecureRest.cs:186
 msgid "Not authorized. The specified API endpoint requires a token, but the provided token was not valid."
-msgstr "未授权。指定的 API 终结点需要令牌，但提供的令牌无效。"
+msgstr "未授权：指定的API端点需要授权令牌，但使用的令牌无效。"
 
 #: ../../TShockAPI/Rest/RestCommand.cs:95
 #: ../../TShockAPI/Rest/RestCommand.cs:101
@@ -2672,7 +3048,7 @@ msgstr "未授权。用户 \"{0}\" 没有权限使用指定的 API 终结点。"
 #: ../../TShockAPI/Commands.cs:982
 #, csharp-format
 msgid "Not logged in or Invalid syntax. Proper syntax: {0}password <oldpassword> <newpassword>."
-msgstr "未登录或语法错误。正确用法： {0}密码 <旧密码> <新密码>"
+msgstr "未登录或语法错误。正确用法： {0}password <旧密码> <新密码>"
 
 #: ../../TShockAPI/DB/UserManager.cs:468
 msgid "Not upgrading work factor because bcrypt hash in an invalid format."
@@ -2700,17 +3076,17 @@ msgstr "临时覆盖玩家的SSC存档。"
 
 #: ../../TShockAPI/Commands.cs:3429
 msgid "parent <group> <parent group> - Changes a group's parent group."
-msgstr "parent <组> <父组> - 更改父组。"
+msgstr "parent <组> <父组> - 更改一个组的父组"
 
 #: ../../TShockAPI/Commands.cs:3487
 #, csharp-format
 msgid "Parent of \"{0}\" is \"{1}\"."
-msgstr ""
+msgstr "用户组 “{0}” 的前缀是 “{1}”。"
 
 #: ../../TShockAPI/Commands.cs:3475
 #, csharp-format
 msgid "Parent of group \"{0}\" set to \"{1}\"."
-msgstr ""
+msgstr "组 \"{0}\" 的父组已设置为组 \"{1}\""
 
 #: ../../TShockAPI/DB/GroupManager.cs:356
 #, csharp-format
@@ -2745,12 +3121,12 @@ msgstr "密码长度必须大于或等于 {0} 个字符。"
 #: ../../TShockAPI/Commands.cs:988
 #, csharp-format
 msgid "PasswordUser returned an error: {0}."
-msgstr ""
+msgstr "更改用户密码时出现了一个错误：{0}。"
 
 #: ../../TShockAPI/Commands.cs:1229
 #, csharp-format
 msgid "Path: {0}"
-msgstr "路径: {0}"
+msgstr "Path: {0}"
 
 #: ../../TShockAPI/Commands.cs:2663
 msgid "Plantera"
@@ -2759,12 +3135,12 @@ msgstr "世纪之花"
 #: ../../TShockAPI/Commands.cs:1794
 #, csharp-format
 msgid "Player \"{0}\" has to perform a /login attempt first."
-msgstr "玩家 \"{0}\" 必须执行一次/login."
+msgstr "玩家 \"{0}\" 必须执行一次/login"
 
 #: ../../TShockAPI/Commands.cs:1799
 #, csharp-format
 msgid "Player \"{0}\" has to reconnect first, because they need to delete their trash."
-msgstr ""
+msgstr "玩家\"{0}\"需要重新连接，因为要删除他们的缓存"
 
 #: ../../TShockAPI/Commands.cs:1789
 #, csharp-format
@@ -2775,7 +3151,7 @@ msgstr "玩家 {0} 已经登录。"
 #: ../../TShockAPI/TSPlayer.cs:1778
 #, csharp-format
 msgid "Player {0} has been disabled for {1}."
-msgstr ""
+msgstr "玩家{0}因为{1}而被禁用"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1388
 #, csharp-format
@@ -2792,6 +3168,12 @@ msgstr "玩家{0}已被解除禁言"
 msgid "Player {0} matches {1} player"
 msgid_plural "Player {0} matches {1} players"
 msgstr[0] "{0}对应了{1}个玩家"
+
+#: ../../TShockAPI/Commands.cs:4775
+#: ../../TShockAPI/Commands.cs:4810
+#, csharp-format
+msgid "Player {0} not found."
+msgstr "并不存在“{0}”这个玩家"
 
 #: ../../TShockAPI/Bouncer.cs:1123
 #, csharp-format
@@ -2821,7 +3203,7 @@ msgstr "玩家没有权限创建射弹{0}。"
 
 #: ../../TShockAPI/Commands.cs:1315
 msgid "Player not found. Unable to kick the player."
-msgstr ""
+msgstr "未找到该玩家。无法踢出。"
 
 #: ../../TShockAPI/Commands.cs:942
 msgid "Please close NPC windows before logging out."
@@ -2834,11 +3216,11 @@ msgstr "请尝试其他用户名"
 #: ../../TShockAPI/DB/BanManager.cs:81
 #: ../../TShockAPI/DB/ResearchDatastore.cs:53
 msgid "Possible problem with your database - is Sqlite3.dll present?"
-msgstr "你的数据库可能存在的问题：Sqlite3.dll是否存在？"
+msgstr "您的数据库可能存在问题：Sqlite3.dll是否存在？"
 
 #: ../../TShockAPI/Commands.cs:3430
 msgid "prefix <group> <prefix> - Changes a group's prefix."
-msgstr ""
+msgstr "prefix <组> <前缀> - 改变一个组的前缀"
 
 #: ../../TShockAPI/Commands.cs:3577
 #, csharp-format
@@ -2859,6 +3241,12 @@ msgstr "阻止一名玩家发言"
 msgid "Proc count: {0}"
 msgstr "进程数量：{0}"
 
+#: ../../TShockAPI/Commands.cs:4048
+#: ../../TShockAPI/Commands.cs:4106
+#, csharp-format
+msgid "Projectile {0} is not banned."
+msgstr "射弹 {0} 未被禁止。"
+
 #: ../../TShockAPI/Bouncer.cs:1175
 #, csharp-format
 msgid "Projectile damage is higher than {0}."
@@ -2867,12 +3255,17 @@ msgstr "射弹伤害高于{0}。"
 #: ../../TShockAPI/Bouncer.cs:1269
 #, csharp-format
 msgid "Projectile update threshold exceeded {0}."
-msgstr "弹射物更新阈值超过 {0}。"
+msgstr "射弹更新阈值超过 {0}。"
+
+#: ../../TShockAPI/Commands.cs:4933
+#, csharp-format
+msgid "Protected: {0}."
+msgstr "{0}已受保护。"
 
 #: ../../TShockAPI/TSPlayer.cs:758
 #, csharp-format
 msgid "Rangecheck failed for {0} ({1}, {2}) (rg: {3}/{5}, {4}/{5})"
-msgstr ""
+msgstr "{0}的范围检查失败（{1}，{2}）（范围：{3}/{5}，{4}/{5}）"
 
 #: ../../TShockAPI/Bouncer.cs:2079
 msgid "Reached HealOtherPlayer threshold."
@@ -2905,6 +3298,20 @@ msgstr "原因：{0}。"
 msgid "Received type '{0}', however column '{1}' expects type '{2}'"
 msgstr "收到类型 '{0}'，但列'{1}的类型是 '{2}'"
 
+#: ../../TShockAPI/Commands.cs:4684
+#, csharp-format
+msgid "Region {0} already exists."
+msgstr "领地{0}已经存在"
+
+#: ../../TShockAPI/Commands.cs:4932
+#, csharp-format
+msgid "Region owner: {0}."
+msgstr "领地所有者： {0}。"
+
+#: ../../TShockAPI/Commands.cs:4689
+msgid "Region points need to be defined first. Use /region set 1 and /region set 2."
+msgstr "领地需要先确定左上角和右下角的方块。请使用 /region set 1 和 /region set 2 完成设置。"
+
 #: ../../TShockAPI/Commands.cs:258
 msgid "Registers you an account."
 msgstr "注册一个账号。"
@@ -2912,7 +3319,7 @@ msgstr "注册一个账号。"
 #: ../../TShockAPI/Commands.cs:1061
 #, csharp-format
 msgid "RegisterUser returned an error: {0}."
-msgstr ""
+msgstr "注册用户时出现了一个错误：{0}。"
 
 #: ../../TShockAPI/Bouncer.cs:2130
 msgid "Released critter was not from its item."
@@ -2925,26 +3332,31 @@ msgstr "重新加载服务器配置文件。"
 #: ../../TShockAPI/Commands.cs:2504
 #, csharp-format
 msgid "Removed {0} players from the angler quest completion list for today."
-msgstr ""
+msgstr "已从今日渔夫任务完成列表移除了 {0} 名玩家"
 
 #: ../../TShockAPI/Commands.cs:3477
 #, csharp-format
 msgid "Removed parent of group \"{0}\"."
-msgstr ""
+msgstr "已删除 “{0}” 的父组 。"
 
 #: ../../TShockAPI/Commands.cs:3567
 #, csharp-format
 msgid "Removed prefix of group \"{0}\"."
-msgstr ""
+msgstr "已删除组 “{0}” 的前缀 。"
 
 #: ../../TShockAPI/Commands.cs:3522
 #, csharp-format
 msgid "Removed suffix of group \"{0}\"."
-msgstr ""
+msgstr "已移除组\"{0}\"的后缀"
+
+#: ../../TShockAPI/Commands.cs:4803
+#, csharp-format
+msgid "Removed user {0} from {1}."
+msgstr "已从 {0} 中删除玩家 {1}。"
 
 #: ../../TShockAPI/Commands.cs:300
 msgid "Removes a player from the server."
-msgstr "将一名玩家从服务器中踢出。"
+msgstr "将一名玩家踢出服务器。"
 
 #: ../../TShockAPI/DB/UserManager.cs:112
 msgid "RemoveUser SQL returned an error"
@@ -2952,7 +3364,7 @@ msgstr "RemoveUser 方法在执行SQL语句时返回了一个错误"
 
 #: ../../TShockAPI/Commands.cs:3424
 msgid "rename <group> <new name> - Changes a group's name."
-msgstr ""
+msgstr "rename <组名> <新组名> - 重命名一个组"
 
 #: ../../TShockAPI/Commands.cs:397
 msgid "Renames an NPC."
@@ -3014,7 +3426,7 @@ msgstr "给玩家发送一条私聊消息"
 
 #: ../../TShockAPI/Commands.cs:599
 msgid "Sends all tiles from the server to the player to resync the client with the actual world state."
-msgstr "从服务器发送所有物块到玩家以重新同步客户端和实际世界状态。"
+msgstr "重新发送玩家附近的物块信息，使玩家与服务器同步当前的地图状态。"
 
 #: ../../TShockAPI/Commands.cs:557
 msgid "Sends an action message to everyone."
@@ -3031,6 +3443,11 @@ msgstr "将你传送到你的出生点。"
 #: ../../TShockAPI/BackupManager.cs:73
 msgid "Server map saving..."
 msgstr "正在保存服务器地图..."
+
+#: ../../TShockAPI/Commands.cs:4390
+#, csharp-format
+msgid "Server password has been changed to: {0}."
+msgstr "服务器语言已更改为: {0}。"
 
 #: ../../TShockAPI/Commands.cs:2023
 #: ../../TShockAPI/Commands.cs:2029
@@ -3052,11 +3469,16 @@ msgstr "服务器角色存档（ssc）已启用。您需要登录才能游玩。
 #: ../../TShockAPI/Commands.cs:1804
 #, csharp-format
 msgid "Server-side character data from \"{0}\" has been replaced by their current local data."
-msgstr ""
+msgstr "\"{0}\" 的SSC云存档已被成功替换为本地角色数据"
 
 #: ../../TShockAPI/Commands.cs:1764
 msgid "Server-side characters is disabled."
 msgstr "服务端存档已被禁用。"
+
+#: ../../TShockAPI/Commands.cs:4680
+#, csharp-format
+msgid "Set region {0}."
+msgstr "设置领地{0}."
 
 #: ../../TShockAPI/Commands.cs:510
 msgid "Sets the dungeon's position to your location."
@@ -3068,7 +3490,7 @@ msgstr "设置NPC的最大数量。"
 
 #: ../../TShockAPI/Commands.cs:415
 msgid "Sets the spawn rate of NPCs."
-msgstr "设置NPC的生成速率。"
+msgstr "设置NPC的生成率。"
 
 #: ../../TShockAPI/Commands.cs:518
 msgid "Sets the world time."
@@ -3077,6 +3499,10 @@ msgstr "设置世界时间。"
 #: ../../TShockAPI/Commands.cs:505
 msgid "Sets the world's spawn point to your location."
 msgstr "将世界的出生点设置为你的位置。"
+
+#: ../../TShockAPI/Commands.cs:4410
+msgid "Settling liquids."
+msgstr "清理液体。"
 
 #: ../../TShockAPI/DB/UserManager.cs:182
 msgid "SetUserGroup SQL returned an error"
@@ -3171,14 +3597,18 @@ msgstr "抱歉，{0}已被他人占用。"
 msgid "Sorry, an error occurred: {0}."
 msgstr "抱歉，一个错误发生了： {0}"
 
+#: ../../TShockAPI/Commands.cs:4361
+msgid "Spawn has now been set at your location."
+msgstr "世界的生成点已设置在你的位置。"
+
 #: ../../TShockAPI/Commands.cs:2857
 #, csharp-format
 msgid "Spawned {0} {1} time(s)."
-msgstr "召唤了 {0} {1} 次。"
+msgstr "生成了 {0} {1} 次。"
 
 #: ../../TShockAPI/Commands.cs:2874
 msgid "Spawned a Wall of Flesh."
-msgstr "召唤了血肉墙。"
+msgstr "生成了血肉墙。"
 
 #: ../../TShockAPI/Commands.cs:406
 msgid "Spawns a number of bosses around you."
@@ -3194,7 +3624,7 @@ msgstr "在一个玩家身上生成烟花。"
 
 #: ../../TShockAPI/Rest/Rest.cs:433
 msgid "Specified API endpoint doesn't exist. Refer to the documentation for a list of valid endpoints."
-msgstr "指定的 API endpoint 不存在。请参阅关于有效 endpoint 列表的文档。"
+msgstr "指定的API端点不存在。请参阅文档以获取有效的端点列表。"
 
 #: ../../TShockAPI/Bouncer.cs:1798
 msgid "Spreading honey without holding a honey bucket"
@@ -3206,7 +3636,7 @@ msgstr "在不手持岩浆桶的情况下撒岩浆"
 
 #: ../../TShockAPI/Bouncer.cs:1818
 msgid "Spreading shimmer without holding a shimmer bucket"
-msgstr ""
+msgstr "在没有手持微光桶的情况下放置微光液体"
 
 #: ../../TShockAPI/Bouncer.cs:1778
 msgid "Spreading water without holding a water bucket"
@@ -3215,66 +3645,66 @@ msgstr "在手上没有水桶的时候放置水"
 #: ../../TShockAPI/TSPlayer.cs:434
 #, csharp-format
 msgid "Stack cheat detected. Remove armor {0} ({1}) and then rejoin."
-msgstr ""
+msgstr "检测到物品堆叠作弊.请移除盔甲 {0}（{1}）,然后重新加入"
 
 #: ../../TShockAPI/TSPlayer.cs:577
 #, csharp-format
 msgid "Stack cheat detected. Remove Defender's Forge item {0} ({1}) and then rejoin."
-msgstr ""
+msgstr "检测到物品堆叠作弊.请移除护卫熔炉内物品 {0}（{1}）,然后重新加入."
 
 #: ../../TShockAPI/TSPlayer.cs:454
 #, csharp-format
 msgid "Stack cheat detected. Remove dye {0} ({1}) and then rejoin."
-msgstr ""
+msgstr "检测到物品堆叠作弊.请移除染料 {0}（{1}）,然后重新加入."
 
 #: ../../TShockAPI/TSPlayer.cs:414
 #: ../../TShockAPI/TSPlayer.cs:474
 #, csharp-format
 msgid "Stack cheat detected. Remove item {0} ({1}) and then rejoin."
-msgstr ""
+msgstr "检测到物品堆叠作弊。请移除物品 {0}（{1}）,然后重新加入。"
 
 #: ../../TShockAPI/TSPlayer.cs:494
 #, csharp-format
 msgid "Stack cheat detected. Remove item dye {0} ({1}) and then rejoin."
-msgstr ""
+msgstr "检测到物品堆叠作弊。请移除物品染料 {0}（{1}）,然后重新加入。"
 
 #: ../../TShockAPI/TSPlayer.cs:618
 #: ../../TShockAPI/TSPlayer.cs:638
 #, csharp-format
 msgid "Stack cheat detected. Remove Loadout 1 item {0} ({1}) and then rejoin."
-msgstr ""
+msgstr "检测到物品堆叠作弊。请移除装备栏1内物品 {0}（{1}）,然后重新加入。"
 
 #: ../../TShockAPI/TSPlayer.cs:658
 #: ../../TShockAPI/TSPlayer.cs:678
 #, csharp-format
 msgid "Stack cheat detected. Remove Loadout 2 item {0} ({1}) and then rejoin."
-msgstr ""
+msgstr "检测到物品堆叠作弊.请移除装备栏2内物品 {0}（{1}）,然后重新加入."
 
 #: ../../TShockAPI/TSPlayer.cs:698
 #: ../../TShockAPI/TSPlayer.cs:718
 #, csharp-format
 msgid "Stack cheat detected. Remove Loadout 3 item {0} ({1}) and then rejoin."
-msgstr ""
+msgstr "检测到物品堆叠作弊.请移除装备栏3内物品 {0}（{1}）,然后重新加入."
 
 #: ../../TShockAPI/TSPlayer.cs:515
 #, csharp-format
 msgid "Stack cheat detected. Remove piggy-bank item {0} ({1}) and then rejoin."
-msgstr ""
+msgstr "检测到物品堆叠作弊.请移除存钱罐内物品 {0}（{1}）,然后重新加入."
 
 #: ../../TShockAPI/TSPlayer.cs:536
 #, csharp-format
 msgid "Stack cheat detected. Remove safe item {0} ({1}) and then rejoin."
-msgstr ""
+msgstr "检测到物品堆叠作弊.请移除保险箱内物品 {0}（{1}）,然后重新加入."
 
 #: ../../TShockAPI/TSPlayer.cs:556
 #, csharp-format
 msgid "Stack cheat detected. Remove trash item {0} ({1}) and then rejoin."
-msgstr ""
+msgstr "检测到物品堆叠作弊.请移除垃圾桶内物品 {0}（{1}）,然后重新加入."
 
 #: ../../TShockAPI/TSPlayer.cs:598
 #, csharp-format
 msgid "Stack cheat detected. Remove Void Vault item {0} ({1}) and then rejoin."
-msgstr ""
+msgstr "检测到物品堆叠作弊。请移除虚空储物柜内物品 {0}（{1}）,然后重新加入。"
 
 #: ../../TShockAPI/Commands.cs:2262
 msgid "Started a blood moon event."
@@ -3290,11 +3720,11 @@ msgstr " 开启了日食。"
 
 #: ../../TShockAPI/Commands.cs:2293
 msgid "Stopped an eclipse."
-msgstr " 关闭了日食。"
+msgstr "关闭了日食。"
 
 #: ../../TShockAPI/Commands.cs:2266
 msgid "Stopped the current blood moon event."
-msgstr " 关闭了血月。"
+msgstr "关闭了血月。"
 
 #: ../../TShockAPI/Rest/SecureRest.cs:167
 msgid "Successful login"
@@ -3302,17 +3732,17 @@ msgstr "登录成功"
 
 #: ../../TShockAPI/Commands.cs:3431
 msgid "suffix <group> <suffix> - Changes a group's suffix."
-msgstr ""
+msgstr "suffix <组名> <后缀> - 修改一个组的聊天后缀."
 
 #: ../../TShockAPI/Commands.cs:3532
 #, csharp-format
 msgid "Suffix of \"{0}\" is \"{1}\"."
-msgstr ""
+msgstr "组\"{0}\"的聊天后缀 \"{1}\""
 
 #: ../../TShockAPI/Commands.cs:3520
 #, csharp-format
 msgid "Suffix of group \"{0}\" set to \"{1}\"."
-msgstr ""
+msgstr "组\"{0}\"的聊天后缀已被设为\"{1}\""
 
 #: ../../TShockAPI/Handlers/SyncTilePickingHandler.cs:23
 #, csharp-format
@@ -3327,7 +3757,7 @@ msgstr "已将{0}传送至{1}。"
 #: ../../TShockAPI/Commands.cs:3077
 #, csharp-format
 msgid "Teleported {0} to yourself."
-msgstr ""
+msgstr "已将 {0} 传送至你的位置."
 
 #: ../../TShockAPI/Commands.cs:2991
 #, csharp-format
@@ -3336,22 +3766,22 @@ msgstr "已将所有人传送至 {0}。"
 
 #: ../../TShockAPI/Commands.cs:3064
 msgid "Teleported everyone to yourself."
-msgstr ""
+msgstr "所有人已被传送至你的位置."
 
 #: ../../TShockAPI/Commands.cs:3166
 #, csharp-format
 msgid "Teleported to {0}, {1}."
-msgstr ""
+msgstr "已将你传送至坐标({0}, {1})"
 
 #: ../../TShockAPI/Commands.cs:2937
 #, csharp-format
 msgid "Teleported to {0}."
-msgstr ""
+msgstr "成功传送至 {0}."
 
 #: ../../TShockAPI/Commands.cs:3120
 #, csharp-format
 msgid "Teleported to the '{0}'."
-msgstr ""
+msgstr "成功传送至 '{0}' 附近"
 
 #: ../../TShockAPI/Commands.cs:2906
 msgid "Teleported to the map's spawn point."
@@ -3359,7 +3789,7 @@ msgstr "已传送至地图的出生点。"
 
 #: ../../TShockAPI/Commands.cs:2900
 msgid "Teleported to your spawn point (home)."
-msgstr "已传送至地图的出生点（家园）。"
+msgstr "已传送到你的出生点(家)。"
 
 #: ../../TShockAPI/Commands.cs:436
 msgid "Teleports a player to another player."
@@ -3389,6 +3819,10 @@ msgstr "暂时将您提升为超级管理员。"
 msgid "Temporarily sets another player's group."
 msgstr "暂时设置另外的组。"
 
+#: ../../TShockAPI/Commands.cs:4742
+msgid "Temporary region set points have been removed."
+msgstr "临时领地设置点已被删除。"
+
 #: ../../TShockAPI/Commands.cs:1181
 msgid "That group does not exist."
 msgstr "此用户组不存在。"
@@ -3405,27 +3839,36 @@ msgstr "封禁无效，因为没有确切的原因。"
 msgid "the Brain of Cthulhu"
 msgstr "克苏鲁之脑"
 
+#: ../../TShockAPI/Commands.cs:4505
+#, csharp-format
+msgid "The current time is {0}:{1:D2}."
+msgstr "当前时间是 {0}:{1:D2}。"
+
 #: ../../TShockAPI/DB/GroupManager.cs:218
 msgid "The default usergroup could not be found."
 msgstr "未找到默认用户组(default)。"
 
 #: ../../TShockAPI/DB/GroupManager.cs:217
 msgid "The default usergroup could not be found. This may indicate a typo in the configuration file, or that the group was renamed or deleted."
-msgstr "未找到默认用户组(default)。这可能是配置文件中出现了错别字，也可能是该用户组已被重命名或删除。"
+msgstr "未找到默认用户组（默认为default）。这可能是配置文件中出现了错别字，也可能是该用户组已被重命名或删除。"
 
 #: ../../TShockAPI/Commands.cs:3157
 msgid "The destination coordinates provided don't look like valid numbers."
-msgstr ""
+msgstr "提供的目的地坐标不是有效的数字."
 
 #: ../../TShockAPI/Commands.cs:3317
 #: ../../TShockAPI/Commands.cs:3332
 #, csharp-format
 msgid "The destination warp, {0}, was not found."
-msgstr ""
+msgstr "没有找到目标传送点 {0}"
 
 #: ../../TShockAPI/Commands.cs:2624
 msgid "the Destroyer"
 msgstr "毁灭者"
+
+#: ../../TShockAPI/Commands.cs:4369
+msgid "The dungeon's position has now been set at your location."
+msgstr "地狱的位置已经设置在你的位置。"
 
 #: ../../TShockAPI/Commands.cs:2638
 msgid "the Eater of Worlds"
@@ -3450,15 +3893,15 @@ msgstr "石巨人"
 #: ../../TShockAPI/DB/GroupManager.cs:595
 #, csharp-format
 msgid "The group {0} appeared more than once. Keeping current group settings."
-msgstr "组 {0} 出现了多次。保持当前组设置。"
+msgstr "用户组 {0} 出现了多次。保持当前用户组设置。"
 
 #: ../../TShockAPI/DB/GroupManager.cs:212
 msgid "The guest group could not be found."
-msgstr "未找到访客用户组。"
+msgstr "未找到访客(guest)用户组。"
 
 #: ../../TShockAPI/DB/GroupManager.cs:211
 msgid "The guest group could not be found. This may indicate a typo in the configuration file, or that the group was renamed or deleted."
-msgstr "未找到访客用户组。这可能是配置文件中出现了错别字，也可能是该用户组已被重命名或删除。"
+msgstr "未找到访客用户组（默认为guest）。这可能是配置文件中出现了错别字，也可能是该用户组已被重命名或删除。"
 
 #: ../../TShockAPI/Commands.cs:2771
 msgid "the Ice Queen"
@@ -3486,15 +3929,15 @@ msgstr "月亮领主"
 
 #: ../../TShockAPI/Commands.cs:3393
 msgid "The permissions have been added to all of the groups in the system."
-msgstr ""
+msgstr "已添加该权限到系统中的所有组"
 
 #: ../../TShockAPI/Commands.cs:3698
 msgid "The permissions have been removed from all of the groups in the system."
-msgstr ""
+msgstr "已移除系统中所有组的该权限"
 
 #: ../../TShockAPI/Commands.cs:1851
 msgid "The player's character data was successfully uploaded from their initial connection."
-msgstr ""
+msgstr "玩家来自最初连接的角色数据上传成功"
 
 #: ../../TShockAPI/Commands.cs:2755
 msgid "the Pumpking"
@@ -3512,17 +3955,21 @@ msgstr "史莱姆皇后"
 msgid "The REST authentication token."
 msgstr "REST 身份验证令牌。"
 
+#: ../../TShockAPI/Commands.cs:4478
+msgid "The spawn rate you provided is out-of-range or not a number."
+msgstr "你提供的生成率已超出范围或不是数字。"
+
 #: ../../TShockAPI/Rest/SecureRest.cs:90
 msgid "The specified token queued for destruction failed to be deleted."
 msgstr "指定销毁队列中的令牌未能被删除。"
 
 #: ../../TShockAPI/Commands.cs:1860
 msgid "The target player has not logged in yet."
-msgstr ""
+msgstr "目标玩家尚未登录"
 
 #: ../../TShockAPI/Commands.cs:1840
 msgid "The targeted user cannot have their data uploaded, because they are not a player."
-msgstr ""
+msgstr "不能上传目标用户的数据, 因为目标用户不是玩家."
 
 #: ../../TShockAPI/Commands.cs:2690
 msgid "the Twins"
@@ -3531,7 +3978,7 @@ msgstr "双子魔眼"
 #: ../../TShockAPI/Commands.cs:1127
 #, csharp-format
 msgid "The user {0} does not exist! Therefore, the account was not deleted."
-msgstr ""
+msgstr "没有找到名为 {0} 的用户! 所以该账号没有被删除"
 
 #: ../../TShockAPI/PaginationTools.cs:95
 msgid "The value has to be greater than or equal to zero."
@@ -3551,23 +3998,37 @@ msgstr "当前世界宝箱数量已达上限，无法放置更多宝箱。"
 
 #: ../../TShockAPI/Commands.cs:2076
 msgid "There are currently no active REST users."
-msgstr ""
+msgstr "当前没有任何有效的临时REST用户。"
 
 #: ../../TShockAPI/Commands.cs:3984
 msgid "There are currently no banned items."
-msgstr ""
+msgstr "服务器目前还没有被禁用的物品。"
+
+#: ../../TShockAPI/Commands.cs:4338
+msgid "There are currently no banned tiles."
+msgstr "服务器目前还没有被禁用的方块。"
+
+#: ../../TShockAPI/Commands.cs:4900
+msgid "There are currently no regions defined."
+msgstr "服务器没有设置任何领地。"
 
 #: ../../TShockAPI/Commands.cs:3213
 msgid "There are currently no warps defined."
-msgstr ""
+msgstr "服务器没有设置任何传送点。"
 
 #: ../../TShockAPI/Commands.cs:2696
 msgid "There is already a Wall of Flesh."
-msgstr "血肉墙已存在。"
+msgstr "血肉墙已生成。"
 
 #: ../../TShockAPI/Commands.cs:927
 msgid "There was an error processing your login or authentication related request."
 msgstr "处理你的登录或认证请求时出错"
+
+#: ../../TShockAPI/Commands.cs:4224
+#: ../../TShockAPI/Commands.cs:4282
+#, csharp-format
+msgid "Tile {0} is not banned."
+msgstr "方块{0}未被禁止"
 
 #: ../../TShockAPI/Bouncer.cs:901
 #, csharp-format
@@ -3601,7 +4062,7 @@ msgstr "启用或关闭出生点保护。"
 
 #: ../../TShockAPI/Commands.cs:492
 msgid "Toggles the world's hardmode status."
-msgstr "启用或关闭肉山后。"
+msgstr "启用或关闭困难模式。"
 
 #: ../../TShockAPI/Commands.cs:591
 msgid "Toggles to either ignore or recieve whispers from other players."
@@ -3627,12 +4088,12 @@ msgstr "处理器运行总时间：{0}"
 #: ../../TShockAPI/Commands.cs:1044
 #, csharp-format
 msgid "Type {0}login \"{1}\" {2} to log-in to your account."
-msgstr "输入 {0}login \"{1}\" {2} 登录."
+msgstr "输入 {0}login \"{1}\" {2} 登录"
 
 #: ../../TShockAPI/Commands.cs:1046
 #, csharp-format
 msgid "Type {0}login {1} to log-in to your account."
-msgstr "输入 {0}login {1} 登录."
+msgstr "输入 {0}login {1} 登录"
 
 #: ../../TShockAPI/Commands.cs:1041
 #, csharp-format
@@ -3641,17 +4102,27 @@ msgstr "输入{0}login 以你的UUID作为凭证登录."
 
 #: ../../TShockAPI/Commands.cs:2868
 msgid "Unable to spawn a Wall of Flesh based on its current state or your current location."
-msgstr "你当前的状态或位置无法召唤血肉墙。"
+msgstr "无法生成血肉墙，因为它已经存在或你不在地狱层。"
 
 #: ../../TShockAPI/DB/UserManager.cs:450
 #, csharp-format
 msgid "Unable to verify the password hash for user {0} ({1})"
-msgstr "无法验证用户{0}（{1}）的密码hash值"
+msgstr "无法验证用户{0}（{1}）的密码哈希值"
 
 #: ../../TShockAPI/Commands.cs:3895
 #, csharp-format
 msgid "Unbanned {0}."
-msgstr ""
+msgstr "物品 {0} 已被允许使用."
+
+#: ../../TShockAPI/Commands.cs:4077
+#, csharp-format
+msgid "Unbanned projectile {0}."
+msgstr "射弹已被解除封禁{0}。"
+
+#: ../../TShockAPI/Commands.cs:4253
+#, csharp-format
+msgid "Unbanned tile {0}."
+msgstr "图格已被解除封禁{0}。"
 
 #: ../../TShockAPI/Bouncer.cs:246
 msgid "Unrecognized player direction"
@@ -3659,20 +4130,20 @@ msgstr "无效的玩家方向"
 
 #: ../../TShockAPI/DB/UserManager.cs:197
 msgid "UpdateLogin SQL returned an error"
-msgstr "更新登录日志时, 数据库返回了一个错误."
+msgstr "更新登录日志时, 数据库返回了一个错误。"
 
 #: ../../TShockAPI/Commands.cs:316
 msgid "Upload the account information when you joined the server as your Server Side Character data."
-msgstr "当您加入服务器时上传您的账户信息作为服务器端玩家数据。"
+msgstr "上传并使用加入服务器时的本地存档来覆盖服务器端存档。"
 
 #: ../../TShockAPI/Commands.cs:1899
 #, csharp-format
 msgid "Usage: {0}tempgroup <username> <new group> [time]"
-msgstr ""
+msgstr "用法: {0}tempgroup <用户名> <新组> [有效时间]"
 
 #: ../../TShockAPI/Commands.cs:1984
 msgid "Usage: /sudo [command]."
-msgstr "用法：/sudo [指令]。"
+msgstr "用法：/sudo [指令]"
 
 #: ../../TShockAPI/Commands.cs:1835
 #: ../../TShockAPI/Commands.cs:1841
@@ -3682,15 +4153,15 @@ msgstr "用法：/uploadssc [玩家名]"
 #: ../../TShockAPI/Commands.cs:2424
 #, csharp-format
 msgid "Use \"{0}worldevent rain slime\" to start slime rain!"
-msgstr ""
+msgstr "使用 {0}worldevent rain slime 开始一场史莱姆雨!"
 
 #: ../../TShockAPI/TSPlayer.cs:1862
 msgid "Use \"my query\" for items with spaces."
-msgstr ""
+msgstr "用\"半角双引号\"包裹关键字来搜索名字带有空格的物品"
 
 #: ../../TShockAPI/TSPlayer.cs:1863
 msgid "Use tsi:[number] or tsn:[username] to distinguish between user IDs and usernames."
-msgstr ""
+msgstr "使用 tsi:序号 或者 tsn:名称 来区分含有数字的名称。"
 
 #: ../../TShockAPI/Commands.cs:227
 msgid "Used to authenticate as superadmin when first setting up TShock."
@@ -3699,7 +4170,7 @@ msgstr "首次设置 TShock时用作超级管理员身份验证。"
 #: ../../TShockAPI/Rest/RestManager.cs:1335
 #, csharp-format
 msgid "User {0} '{1}' doesn't exist"
-msgstr "用户{0}（{1}）不存在"
+msgstr "用户 {0} “{1}”不存在"
 
 #: ../../TShockAPI/Commands.cs:1105
 #, csharp-format
@@ -3770,7 +4241,7 @@ msgstr "有效的事件类型： {0}。"
 #: ../../TShockAPI/Commands.cs:2131
 #, csharp-format
 msgid "Valid invasion types if spawning an invasion: {0}."
-msgstr "当你召唤入侵时，有效的入侵类型：{0}。"
+msgstr "当你生成入侵时，有效的入侵类型：{0}。"
 
 #: ../../TShockAPI/Commands.cs:2316
 #, csharp-format
@@ -3784,15 +4255,15 @@ msgstr "有效的世界模式：{0}"
 
 #: ../../TShockAPI/Commands.cs:3233
 msgid "Warp {warpName} already exists."
-msgstr "传送点{warpName}已存在。"
+msgstr "传送点“{warpName}”已存在。"
 
 #: ../../TShockAPI/Commands.cs:3269
 msgid "Warp {warpName} is now private."
-msgstr "传送点{warpName}已隐藏。"
+msgstr "传送点“{warpName}”已隐藏。"
 
 #: ../../TShockAPI/Commands.cs:3271
 msgid "Warp {warpName} is now public."
-msgstr "传送点{warpName}已公开。"
+msgstr "传送点“{warpName}”已公开。"
 
 #: ../../TShockAPI/Commands.cs:3229
 #, csharp-format
@@ -3823,9 +4294,14 @@ msgstr "世界已备份。"
 msgid "World mode set to {0}."
 msgstr "世界模式设置为 {0}。"
 
+#: ../../TShockAPI/Commands.cs:4931
+#, csharp-format
+msgid "X: {0}; Y: {1}; W: {2}; H: {3}, Z: {4}"
+msgstr "X: {0}; Y: {1}; W: {2}; H: {3}, Z: {4}"
+
 #: ../../TShockAPI/Commands.cs:778
 msgid "You are already logged in, and cannot login again."
-msgstr "你已经登录了, 不能重复登录哦."
+msgstr "你已经登录了, 不能再次登录。"
 
 #: ../../TShockAPI/Commands.cs:2896
 msgid "You are dead. Dead players can't go home."
@@ -3851,15 +4327,15 @@ msgstr "你无法删除默认访客用户组。"
 
 #: ../../TShockAPI/Commands.cs:805
 msgid "You cannot login whilst crowd controlled."
-msgstr "你无法在被控制时登录."
+msgstr "你无法在被控制时登录。"
 
 #: ../../TShockAPI/Commands.cs:791
 msgid "You cannot login whilst dead."
-msgstr "你无法在死亡时登录."
+msgstr "你无法在死亡时登录。"
 
 #: ../../TShockAPI/Commands.cs:799
 msgid "You cannot login whilst using an item."
-msgstr "你不能在使用物品时登录."
+msgstr "使用物品时你无法登录。"
 
 #: ../../TShockAPI/Commands.cs:688
 msgid "You do not have access to this command."
@@ -3912,7 +4388,7 @@ msgstr "您没有权限修改受保护区域内的人体模型。"
 
 #: ../../TShockAPI/Handlers/RequestTileEntityInteractionHandler.cs:34
 msgid "You do not have permission to modify a TileEntity in a protected area!"
-msgstr "您没有权限修改受保护区域内的方块实体。"
+msgstr "您没有权限修改受保护区域内的物块实体。"
 
 #: ../../TShockAPI/Handlers/NetModules/CreativePowerHandler.cs:114
 msgid "You do not have permission to modify the NPC spawn rate of the server."
@@ -3936,7 +4412,7 @@ msgstr "你没有权限修改服务器的时间流速。"
 
 #: ../../TShockAPI/Handlers/NetModules/CreativePowerHandler.cs:106
 msgid "You do not have permission to modify the wind strength of the server."
-msgstr "你没有权限修改服务器的风力强度。"
+msgstr "你没有权限修改服务器的风速。"
 
 #: ../../TShockAPI/Handlers/NetModules/CreativePowerHandler.cs:112
 msgid "You do not have permission to modify the world difficulty of the server."
@@ -3989,7 +4465,7 @@ msgstr "你没有权限切换“上帝模式”。"
 
 #: ../../TShockAPI/Commands.cs:1830
 msgid "You do not have permission to upload another player's character join-state server-side-character data."
-msgstr ""
+msgstr "您没有权限上传其他玩家的SSC云存档。"
 
 #: ../../TShockAPI/Commands.cs:976
 msgid "You failed to change your password."
@@ -3997,7 +4473,7 @@ msgstr "更改密码失败。"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1387
 msgid "You have been remotely muted"
-msgstr "你已被禁言"
+msgstr "您已被禁言"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1392
 msgid "You have been remotely unmmuted"
@@ -4015,7 +4491,7 @@ msgstr "您已将 {0}的用户组改为 {1}"
 #: ../../TShockAPI/Commands.cs:1947
 #, csharp-format
 msgid "You have changed {0}'s group to {1} for {2}"
-msgstr ""
+msgstr "您已将 {0}的用户组从 {1}改为{2}"
 
 #: ../../TShockAPI/Commands.cs:965
 msgid "You have successfully changed your password."
@@ -4027,7 +4503,7 @@ msgstr "你必须登录才能修改受保护区域。"
 
 #: ../../TShockAPI/Commands.cs:2701
 msgid "You must spawn the Wall of Flesh in hell."
-msgstr "你必须在地狱召唤血肉墙。"
+msgstr "你必须在地狱生成血肉墙。"
 
 #: ../../TShockAPI/Commands.cs:696
 msgid "You must use this command in-game."
@@ -4040,7 +4516,7 @@ msgstr "请重新进入服务器以确保垃圾箱已清空！"
 #: ../../TShockAPI/Commands.cs:2810
 #, csharp-format
 msgid "You spawned {0} {1} time(s)."
-msgstr "你召唤了 {0} {1} 次。"
+msgstr "你生成了 {0} {1} 次。"
 
 #: ../../TShockAPI/Commands.cs:3312
 #, csharp-format
@@ -4057,7 +4533,7 @@ msgstr "你已被传送至 {0}。"
 
 #: ../../TShockAPI/Commands.cs:1970
 msgid "Your account has been elevated to superadmin for 10 minutes."
-msgstr ""
+msgstr "您的账户权限变更为超级管理员，有效期10分钟"
 
 #: ../../TShockAPI/Commands.cs:1037
 #, csharp-format
@@ -4080,16 +4556,16 @@ msgstr "你的数据库中有无效的用户ID（它们应该是整数）"
 #: ../../TShockAPI/Commands.cs:1949
 #, csharp-format
 msgid "Your group has been changed to {0} for {1}"
-msgstr ""
+msgstr "您的组别成功从{0}变到了{1}"
 
 #: ../../TShockAPI/Commands.cs:1943
 #, csharp-format
 msgid "Your group has temporarily been changed to {0}"
-msgstr ""
+msgstr "您的组别暂时更改至{0}"
 
 #: ../../TShockAPI/Commands.cs:1850
 msgid "Your local character data, from your initial connection, has been uploaded to the server."
-msgstr ""
+msgstr "您的本地角色数据已被上传至服务器"
 
 #: ../../TShockAPI/Commands.cs:1038
 #, csharp-format
@@ -4098,7 +4574,7 @@ msgstr "你的密码是{0}。"
 
 #: ../../TShockAPI/Commands.cs:1961
 msgid "Your previous permission set has been restored."
-msgstr ""
+msgstr "您之前的权限已被恢复"
 
 #: ../../TShockAPI/Commands.cs:1749
 msgid "Your server-side character data has been saved."
