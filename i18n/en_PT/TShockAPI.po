@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
-"POT-Creation-Date: 2022-10-23 05:28:17+0000\n"
-"PO-Revision-Date: 2022-10-23 05:37\n"
+"POT-Creation-Date: 2022-10-25 07:37:44+0000\n"
+"PO-Revision-Date: 2022-10-25 18:02\n"
 "Last-Translator: \n"
 "Language-Team: Pirate English\n"
 "MIME-Version: 1.0\n"
@@ -18,27 +18,23 @@ msgstr ""
 "Language: en_PT\n"
 
 #: ../../TShockAPI/DB/CharacterManager.cs:176
+#: ../../TShockAPI/DB/CharacterManager.cs:246
 #, csharp-format
 msgctxt "{0} is a player name"
 msgid "Skipping SSC save (due to tshock.ignore.ssc) for {0}"
 msgstr "Arr! Shiver me timbers! Skipping yer SSC save due to tshock.ignore.ssc for ye matey {0}"
 
-#: ../../TShockAPI/DB/CharacterManager.cs:246
-msgctxt "{0} is a player name"
-msgid "Skipping SSC save (due to tshock.ignore.ssc) for {player.Account.Name}"
-msgstr ""
-
 #: ../../TShockAPI/DB/BanManager.cs:213
 #, csharp-format
 msgctxt "{0} is ban number, {1} is ban reason, {2} is a timestamp"
 msgid "#{0} - You are banned: {1} ({2} remaining)"
-msgstr ""
+msgstr "#{0} - Yer ship be blocked: {1} ({2} be left)"
 
 #: ../../TShockAPI/DB/BanManager.cs:208
 #, csharp-format
 msgctxt "{0} is ban number, {1} is ban reason"
 msgid "#{0} - You are banned: {1}"
-msgstr ""
+msgstr "#{0} - Yer ship be blocked: {1}"
 
 #: ../../TShockAPI/Commands.cs:1253
 #, csharp-format
@@ -57,7 +53,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:2003
 msgid "(Server Broadcast) "
-msgstr ""
+msgstr "(Captain's Order)"
 
 #: ../../TShockAPI/Commands.cs:2071
 #, csharp-format
@@ -108,9 +104,34 @@ msgstr ""
 msgid "{0} changed account {1} to group {2}."
 msgstr ""
 
+#: ../../TShockAPI/Commands.cs:4449
+#, csharp-format
+msgid "{0} changed the maximum spawns to {1}."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4430
+#, csharp-format
+msgid "{0} changed the maximum spawns to 5."
+msgstr ""
+
 #: ../../TShockAPI/Commands.cs:1145
 #, csharp-format
 msgid "{0} changed the password for account {1}"
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4488
+#, csharp-format
+msgid "{0} changed the spawn rate to {1}."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4470
+#, csharp-format
+msgid "{0} changed the spawn rate to 600."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4622
+#, csharp-format
+msgid "{0} changed the wind speed to {1}."
 msgstr ""
 
 #: ../../TShockAPI/Commands.cs:2452
@@ -133,9 +154,29 @@ msgstr ""
 msgid "{0} failed to authenticate as user: {1}."
 msgstr ""
 
+#: ../../TShockAPI/Commands.cs:4230
+#, csharp-format
+msgid "{0} has been allowed to place tile {1}."
+msgstr ""
+
 #: ../../TShockAPI/Commands.cs:3864
 #, csharp-format
 msgid "{0} has been allowed to use {1}."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4054
+#, csharp-format
+msgid "{0} has been allowed to use projectile {1}."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4288
+#, csharp-format
+msgid "{0} has been disallowed from placing tile {1}."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4112
+#, csharp-format
+msgid "{0} has been disallowed from using projectile {1}."
 msgstr ""
 
 #: ../../TShockAPI/Commands.cs:3935
@@ -195,14 +236,34 @@ msgstr ""
 msgid "{0} has started a snow legion invasion."
 msgstr ""
 
+#: ../../TShockAPI/Commands.cs:4233
+#, csharp-format
+msgid "{0} is already allowed to place tile {1}."
+msgstr ""
+
 #: ../../TShockAPI/Commands.cs:3868
 #, csharp-format
 msgid "{0} is already allowed to use {1}."
 msgstr ""
 
+#: ../../TShockAPI/Commands.cs:4057
+#, csharp-format
+msgid "{0} is already allowed to use projectile {1}."
+msgstr ""
+
 #: ../../TShockAPI/Commands.cs:3939
 #, csharp-format
 msgid "{0} is already disallowed to use {1}."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4292
+#, csharp-format
+msgid "{0} is already prevented from placing tile {1}."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4116
+#, csharp-format
+msgid "{0} is already prevented from using projectile {1}."
 msgstr ""
 
 #: ../../TShockAPI/Commands.cs:3858
@@ -236,6 +297,37 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:1469
 #, csharp-format
 msgid "{0} remaining."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4557
+#, csharp-format
+msgid "{0} set the time to {1}:{2:D2}."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4525
+#, csharp-format
+msgid "{0} set the time to 00:00."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4513
+#, csharp-format
+msgid "{0} set the time to 04:30."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4521
+#, csharp-format
+msgid "{0} set the time to 12:00."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4517
+#, csharp-format
+msgid "{0} set the time to 19:30."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4599
+#: ../../TShockAPI/Commands.cs:4600
+#, csharp-format
+msgid "{0} slapped {1} for {2} damage."
 msgstr ""
 
 #: ../../TShockAPI/Commands.cs:2814
@@ -487,6 +579,14 @@ msgstr ""
 msgid "add <name> <permissions...> - Adds a new group."
 msgstr ""
 
+#: ../../TShockAPI/Commands.cs:4132
+msgid "add <projectile ID> - Adds a projectile ban."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4308
+msgid "add <tile ID> - Adds a tile ban."
+msgstr ""
+
 #: ../../TShockAPI/Commands.cs:1728
 #, csharp-format
 msgid "Added {0} to the whitelist."
@@ -495,6 +595,16 @@ msgstr ""
 #: ../../TShockAPI/Bouncer.cs:2011
 #, csharp-format
 msgid "Added buff to {0} NPC abnormally."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4838
+#, csharp-format
+msgid "Added group {0} to {1}."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4768
+#, csharp-format
+msgid "Added user {0} to {1}."
 msgstr ""
 
 #: ../../TShockAPI/Commands.cs:3422
@@ -523,6 +633,14 @@ msgstr ""
 msgid "allow <item> <group> - Allows a group to use an item."
 msgstr ""
 
+#: ../../TShockAPI/Commands.cs:4133
+msgid "allow <projectile ID> <group> - Allows a group to use a projectile."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4309
+msgid "allow <tile ID> <group> - Allows a group to place a tile."
+msgstr ""
+
 #: ../../TShockAPI/DB/GroupManager.cs:474
 #, csharp-format
 msgid "An exception has occurred during database rollback: {0}"
@@ -547,7 +665,7 @@ msgstr ""
 
 #: ../../TShockAPI/DB/BanManager.cs:636
 #, csharp-format
-msgid "An identifier for an IP Address in octet format. e.g., '{0}'.127.0.0.1"
+msgid "An identifier for an IP Address in octet format. e.g., '{0}'."
 msgstr ""
 
 #: ../../TShockAPI/Commands.cs:2035
@@ -642,6 +760,16 @@ msgstr ""
 msgid "Banned ${0}."
 msgstr ""
 
+#: ../../TShockAPI/Commands.cs:4020
+#, csharp-format
+msgid "Banned projectile {0}."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4196
+#, csharp-format
+msgid "Banned tile {0}."
+msgstr ""
+
 #: ../../TShockAPI/Commands.cs:1508
 msgid "Banned."
 msgstr ""
@@ -657,7 +785,7 @@ msgstr ""
 
 #: ../../TShockAPI/Rest/RestManager.cs:904
 #, csharp-format
-msgid "Bloodmoon state: {0}EnabledDisabled"
+msgid "Bloodmoon state: {0}"
 msgstr ""
 
 #: ../../TShockAPI/Bouncer.cs:1447
@@ -1600,6 +1728,24 @@ msgstr ""
 msgid "Certain projectiles have been ignored for cheat detection."
 msgstr ""
 
+#: ../../TShockAPI/Commands.cs:4445
+#, csharp-format
+msgid "Changed the maximum spawns to {0}."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4426
+msgid "Changed the maximum spawns to 5."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4484
+#, csharp-format
+msgid "Changed the spawn rate to {0}."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4466
+msgid "Changed the spawn rate to 600."
+msgstr ""
+
 #: ../../TShockAPI/Commands.cs:368
 msgid "Changes the server password."
 msgstr ""
@@ -1650,6 +1796,10 @@ msgstr ""
 msgid "Commands: add, del, hide, list, send, [warpname]."
 msgstr ""
 
+#: ../../TShockAPI/Commands.cs:4378
+msgid "Configuration, permissions, and regions reload complete. Some changes may require a server restart."
+msgstr ""
+
 #: ../../TShockAPI/Commands.cs:1769
 #, csharp-format
 msgid "Correct usage: {0}overridessc|{0}ossc <player name>"
@@ -1679,6 +1829,18 @@ msgstr ""
 msgid "Could not find specified warp."
 msgstr ""
 
+#: ../../TShockAPI/Commands.cs:4706
+#: ../../TShockAPI/Commands.cs:4713
+#: ../../TShockAPI/Commands.cs:4732
+#: ../../TShockAPI/Commands.cs:4771
+#: ../../TShockAPI/Commands.cs:4806
+#: ../../TShockAPI/Commands.cs:4841
+#: ../../TShockAPI/Commands.cs:4876
+#: ../../TShockAPI/Commands.cs:4920
+#, csharp-format
+msgid "Could not find the region {0}."
+msgstr ""
+
 #: ../../TShockAPI/Commands.cs:1572
 msgid "Could not find the target specified. Check that you have the correct spelling."
 msgstr ""
@@ -1696,6 +1858,16 @@ msgstr ""
 msgid "CreativeUnlocksHandler received non-vanilla unlock request. Random field value: {0} but should be 0 from {1}"
 msgstr ""
 
+#: ../../TShockAPI/Commands.cs:4417
+#, csharp-format
+msgid "Current maximum spawns: {0}."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4457
+#, csharp-format
+msgid "Current spawn rate: {0}."
+msgstr ""
+
 #: ../../TShockAPI/Bouncer.cs:2650
 #, csharp-format
 msgid "Death Exploit Attempt: Damage {0}"
@@ -1711,6 +1883,19 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:3956
 msgid "del <item> - Deletes an item ban."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4134
+msgid "del <projectile ID> - Deletes an projectile ban."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4310
+msgid "del <tile ID> - Deletes a tile ban."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4729
+#, csharp-format
+msgid "Deleted region \"{0}\"."
 msgstr ""
 
 #: ../../TShockAPI/Commands.cs:3426
@@ -1742,6 +1927,14 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:3957
 msgid "disallow <item> <group> - Disallows a group from using an item."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4135
+msgid "disallow <projectile ID> <group> - Disallows a group from using a projectile."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4311
+msgid "disallow <tile ID> <group> - Disallows a group from place a tile."
 msgstr ""
 
 #: ../../TShockAPI/Commands.cs:2631
@@ -1961,6 +2154,12 @@ msgstr ""
 msgid "Group {0} is referencing itself as parent group; parent reference was removed."
 msgstr ""
 
+#: ../../TShockAPI/Commands.cs:4845
+#: ../../TShockAPI/Commands.cs:4880
+#, csharp-format
+msgid "Group {0} not found."
+msgstr ""
+
 #: ../../TShockAPI/Rest/RestManager.cs:1187
 #, csharp-format
 msgid "Group {0} updated successfully"
@@ -1998,6 +2197,15 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:549
 msgid "Heals a player in HP and MP."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4641
+msgid "Hit a block to get the name of the region."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4654
+#, csharp-format
+msgid "Hit a block to set point {0}."
 msgstr ""
 
 #: ../../TShockAPI/Commands.cs:1226
@@ -2113,6 +2321,10 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:3748
 #: ../../TShockAPI/Commands.cs:3851
 #: ../../TShockAPI/Commands.cs:3922
+#: ../../TShockAPI/Commands.cs:4041
+#: ../../TShockAPI/Commands.cs:4099
+#: ../../TShockAPI/Commands.cs:4217
+#: ../../TShockAPI/Commands.cs:4275
 msgid "Invalid group."
 msgstr ""
 
@@ -2126,6 +2338,11 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:3886
 #: ../../TShockAPI/Commands.cs:3912
 msgid "Invalid item."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4438
+#, csharp-format
+msgid "Invalid maximum spawns.  Acceptable range is {0} to {1}."
 msgstr ""
 
 #: ../../TShockAPI/Commands.cs:2843
@@ -2164,6 +2381,16 @@ msgstr ""
 msgid "Invalid player."
 msgstr ""
 
+#: ../../TShockAPI/Commands.cs:4023
+msgid "Invalid projectile ID!"
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4060
+#: ../../TShockAPI/Commands.cs:4081
+#: ../../TShockAPI/Commands.cs:4119
+msgid "Invalid projectile ID."
+msgstr ""
+
 #: ../../TShockAPI/Commands.cs:2347
 msgid "Invalid pumpkin moon event wave."
 msgstr ""
@@ -2184,6 +2411,16 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:3992
 #, csharp-format
 msgid "Invalid subcommand. Type {0}itemban help for more information on valid subcommands."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4170
+#, csharp-format
+msgid "Invalid subcommand. Type {0}projban help for more information on valid subcommands."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4346
+#, csharp-format
+msgid "Invalid subcommand. Type {0}tileban help for more information on valid subcommands."
 msgstr ""
 
 #: ../../TShockAPI/Commands.cs:3624
@@ -2280,9 +2517,79 @@ msgstr ""
 msgid "Invalid syntax. Proper syntax: {0}kick <player> [reason]."
 msgstr ""
 
+#: ../../TShockAPI/Commands.cs:4013
+#, csharp-format
+msgid "Invalid syntax. Proper syntax: {0}projban add <proj id>"
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4032
+#, csharp-format
+msgid "Invalid syntax. Proper syntax: {0}projban allow <id> <group>."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4069
+#, csharp-format
+msgid "Invalid syntax. Proper syntax: {0}projban del <id>."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4090
+#, csharp-format
+msgid "Invalid syntax. Proper syntax: {0}projban disallow <id> <group name>."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4779
+#, csharp-format
+msgid "Invalid syntax. Proper syntax: {0}region allow <name> <region>."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4849
+#, csharp-format
+msgid "Invalid syntax. Proper syntax: {0}region allowg <group> <region>."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4693
+#, csharp-format
+msgid "Invalid syntax. Proper syntax: {0}region define <name>."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4735
+#, csharp-format
+msgid "Invalid syntax. Proper syntax: {0}region delete <name>."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4908
+#, csharp-format
+msgid "Invalid syntax. Proper syntax: {0}region info <region> [-d] [page]."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4716
+#, csharp-format
+msgid "Invalid syntax. Proper syntax: {0}region protect <name> <true/false>."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4814
+#, csharp-format
+msgid "Invalid syntax. Proper syntax: {0}region remove <name> <region>."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4884
+#, csharp-format
+msgid "Invalid syntax. Proper syntax: {0}region removeg <group> <region>."
+msgstr ""
+
 #: ../../TShockAPI/Commands.cs:1028
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}register <password>."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4385
+#, csharp-format
+msgid "Invalid syntax. Proper syntax: {0}serverpassword \"<new password>\"."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4566
+#, csharp-format
+msgid "Invalid syntax. Proper syntax: {0}slap <player> [damage]."
 msgstr ""
 
 #: ../../TShockAPI/Commands.cs:2584
@@ -2294,6 +2601,21 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:2834
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}spawnmob <mob type> [amount]."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4189
+#, csharp-format
+msgid "Invalid syntax. Proper syntax: {0}tileban add <tile id>."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4208
+#, csharp-format
+msgid "Invalid syntax. Proper syntax: {0}tileban allow <id> <group>."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4245
+#, csharp-format
+msgid "Invalid syntax. Proper syntax: {0}tileban del <id>."
 msgstr ""
 
 #: ../../TShockAPI/Commands.cs:2914
@@ -2362,6 +2684,11 @@ msgstr ""
 msgid "Invalid syntax. Proper syntax: {0}warp send [player] [warpname]."
 msgstr ""
 
+#: ../../TShockAPI/Commands.cs:4608
+#, csharp-format
+msgid "Invalid syntax. Proper syntax: {0}wind <speed>."
+msgstr ""
+
 #: ../../TShockAPI/Commands.cs:2129
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}worldevent <event type>."
@@ -2372,13 +2699,36 @@ msgstr ""
 msgid "Invalid syntax. Proper syntax: {0}worldmode <mode>."
 msgstr ""
 
+#: ../../TShockAPI/Commands.cs:4719
+#, csharp-format
+msgid "Invalid syntax. Proper syntax: /region protect <name> <true/false>."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4659
+msgid "Invalid syntax. Proper syntax: /region set <1/2>."
+msgstr ""
+
 #: ../../TShockAPI/Commands.cs:3134
 #: ../../TShockAPI/Commands.cs:3295
+#: ../../TShockAPI/Commands.cs:4572
+#: ../../TShockAPI/Commands.cs:4580
 msgid "Invalid target player."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4199
+#: ../../TShockAPI/Commands.cs:4236
+#: ../../TShockAPI/Commands.cs:4257
+#: ../../TShockAPI/Commands.cs:4295
+msgid "Invalid tile ID."
 msgstr ""
 
 #: ../../TShockAPI/Commands.cs:1926
 msgid "Invalid time string! Proper format: _d_h_m_s, with at least one time specifier."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4531
+#: ../../TShockAPI/Commands.cs:4540
+msgid "Invalid time string. Proper format: hh:mm, in 24-hour time."
 msgstr ""
 
 #: ../../TShockAPI/Rest/RestManager.cs:1326
@@ -2394,6 +2744,10 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:3225
 msgid "Invalid warp name. The names 'list', 'hide', 'del' and 'add' are reserved for commands."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4615
+msgid "Invalid wind speed."
 msgstr ""
 
 #: ../../TShockAPI/Commands.cs:2542
@@ -2461,8 +2815,20 @@ msgstr ""
 msgid "Lanterns are now up."
 msgstr ""
 
+#: ../../TShockAPI/Commands.cs:4406
+msgid "Liquids are already settling."
+msgstr ""
+
 #: ../../TShockAPI/Commands.cs:3958
 msgid "list [page] - Lists all item bans."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4136
+msgid "list [page] - Lists all projectile bans."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4312
+msgid "list [page] - Lists all tile bans."
 msgstr ""
 
 #: ../../TShockAPI/Commands.cs:3427
@@ -2549,6 +2915,16 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:232
 msgid "Manages user accounts."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4704
+#, csharp-format
+msgid "Marked region {0} as protected."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4711
+#, csharp-format
+msgid "Marked region {0} as unprotected."
 msgstr ""
 
 #: ../../TShockAPI/Commands.cs:1213
@@ -2792,6 +3168,12 @@ msgid_plural "Player {0} matches {1} players"
 msgstr[0] ""
 msgstr[1] ""
 
+#: ../../TShockAPI/Commands.cs:4775
+#: ../../TShockAPI/Commands.cs:4810
+#, csharp-format
+msgid "Player {0} not found."
+msgstr ""
+
 #: ../../TShockAPI/Bouncer.cs:1123
 #, csharp-format
 msgid "Player {0} tried to sneak {1} onto the server!"
@@ -2858,6 +3240,12 @@ msgstr ""
 msgid "Proc count: {0}"
 msgstr ""
 
+#: ../../TShockAPI/Commands.cs:4048
+#: ../../TShockAPI/Commands.cs:4106
+#, csharp-format
+msgid "Projectile {0} is not banned."
+msgstr ""
+
 #: ../../TShockAPI/Bouncer.cs:1175
 #, csharp-format
 msgid "Projectile damage is higher than {0}."
@@ -2866,6 +3254,11 @@ msgstr ""
 #: ../../TShockAPI/Bouncer.cs:1269
 #, csharp-format
 msgid "Projectile update threshold exceeded {0}."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4933
+#, csharp-format
+msgid "Protected: {0}."
 msgstr ""
 
 #: ../../TShockAPI/TSPlayer.cs:758
@@ -2904,6 +3297,20 @@ msgstr ""
 msgid "Received type '{0}', however column '{1}' expects type '{2}'"
 msgstr ""
 
+#: ../../TShockAPI/Commands.cs:4684
+#, csharp-format
+msgid "Region {0} already exists."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4932
+#, csharp-format
+msgid "Region owner: {0}."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4689
+msgid "Region points need to be defined first. Use /region set 1 and /region set 2."
+msgstr ""
+
 #: ../../TShockAPI/Commands.cs:258
 msgid "Registers you an account."
 msgstr ""
@@ -2939,6 +3346,11 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:3522
 #, csharp-format
 msgid "Removed suffix of group \"{0}\"."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4803
+#, csharp-format
+msgid "Removed user {0} from {1}."
 msgstr ""
 
 #: ../../TShockAPI/Commands.cs:300
@@ -3031,6 +3443,11 @@ msgstr ""
 msgid "Server map saving..."
 msgstr ""
 
+#: ../../TShockAPI/Commands.cs:4390
+#, csharp-format
+msgid "Server password has been changed to: {0}."
+msgstr ""
+
 #: ../../TShockAPI/Commands.cs:2023
 #: ../../TShockAPI/Commands.cs:2029
 msgid "Server shutting down: "
@@ -3057,6 +3474,11 @@ msgstr ""
 msgid "Server-side characters is disabled."
 msgstr ""
 
+#: ../../TShockAPI/Commands.cs:4680
+#, csharp-format
+msgid "Set region {0}."
+msgstr ""
+
 #: ../../TShockAPI/Commands.cs:510
 msgid "Sets the dungeon's position to your location."
 msgstr ""
@@ -3075,6 +3497,10 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:505
 msgid "Sets the world's spawn point to your location."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4410
+msgid "Settling liquids."
 msgstr ""
 
 #: ../../TShockAPI/DB/UserManager.cs:182
@@ -3168,6 +3594,10 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:1060
 #, csharp-format
 msgid "Sorry, an error occurred: {0}."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4361
+msgid "Spawn has now been set at your location."
 msgstr ""
 
 #: ../../TShockAPI/Commands.cs:2857
@@ -3388,6 +3818,10 @@ msgstr ""
 msgid "Temporarily sets another player's group."
 msgstr ""
 
+#: ../../TShockAPI/Commands.cs:4742
+msgid "Temporary region set points have been removed."
+msgstr ""
+
 #: ../../TShockAPI/Commands.cs:1181
 msgid "That group does not exist."
 msgstr ""
@@ -3402,6 +3836,11 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:2617
 msgid "the Brain of Cthulhu"
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4505
+#, csharp-format
+msgid "The current time is {0}:{1:D2}."
 msgstr ""
 
 #: ../../TShockAPI/DB/GroupManager.cs:218
@@ -3424,6 +3863,10 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:2624
 msgid "the Destroyer"
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4369
+msgid "The dungeon's position has now been set at your location."
 msgstr ""
 
 #: ../../TShockAPI/Commands.cs:2638
@@ -3511,6 +3954,10 @@ msgstr ""
 msgid "The REST authentication token."
 msgstr ""
 
+#: ../../TShockAPI/Commands.cs:4478
+msgid "The spawn rate you provided is out-of-range or not a number."
+msgstr ""
+
 #: ../../TShockAPI/Rest/SecureRest.cs:90
 msgid "The specified token queued for destruction failed to be deleted."
 msgstr ""
@@ -3556,6 +4003,14 @@ msgstr ""
 msgid "There are currently no banned items."
 msgstr ""
 
+#: ../../TShockAPI/Commands.cs:4338
+msgid "There are currently no banned tiles."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4900
+msgid "There are currently no regions defined."
+msgstr ""
+
 #: ../../TShockAPI/Commands.cs:3213
 msgid "There are currently no warps defined."
 msgstr ""
@@ -3566,6 +4021,12 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:927
 msgid "There was an error processing your login or authentication related request."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4224
+#: ../../TShockAPI/Commands.cs:4282
+#, csharp-format
+msgid "Tile {0} is not banned."
 msgstr ""
 
 #: ../../TShockAPI/Bouncer.cs:901
@@ -3650,6 +4111,16 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:3895
 #, csharp-format
 msgid "Unbanned {0}."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4077
+#, csharp-format
+msgid "Unbanned projectile {0}."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4253
+#, csharp-format
+msgid "Unbanned tile {0}."
 msgstr ""
 
 #: ../../TShockAPI/Bouncer.cs:246
@@ -3820,6 +4291,11 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:2557
 #, csharp-format
 msgid "World mode set to {0}."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:4931
+#, csharp-format
+msgid "X: {0}; Y: {1}; W: {2}; H: {3}, Z: {4}"
 msgstr ""
 
 #: ../../TShockAPI/Commands.cs:778

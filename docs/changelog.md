@@ -70,6 +70,7 @@ Use past tense when adding new entries; sign your name off when you add or chang
 * Fix players being kicked after using the Flamethrower to apply the `OnFire3` debuff for `1200` ticks. (@BashGuy10)
 * Fix being kicked for using the new sponge types on liquid. (@BashGuy10)
 * Fixed SSC not save `ateArtisanBread`, `usedAegisCrystal`, `usedAegisFruit`, `usedArcaneCrystal`, `usedGalaxyPearl`, `usedGummyWorm`, `usedAmbrosia`, `unlockedSuperCart`, `enabledSuperCart` flags, and Server will correct read them. (@hufang360)
+* Allow flask buffs to be applied on town npc due to the Flymeal. Add a permission could skip the buff detection. (@KawaiiYuyu)
 
 ## TShock 4.5.18
 * Fixed `TSPlayer.GiveItem` not working if the player is in lava. (@PotatoCider)

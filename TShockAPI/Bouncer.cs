@@ -452,7 +452,7 @@ namespace TShockAPI
 			byte plr = args.PlayerId;
 			ControlSet control = args.Control;
 			MiscDataSet1 miscData1 = args.MiscData1;
-			byte item = args.SelectedItem ;
+			byte item = args.SelectedItem;
 			var pos = args.Position;
 			var vel = args.Velocity;
 
@@ -699,11 +699,11 @@ namespace TShockAPI
 					// also add an exception for snake coils, they can be removed when the player places a new one or after x amount of time
 					// If the tile is part of the breakable when placing set, it might be getting broken by a placement.
 					else if (tile.type != TileID.ItemFrame && tile.type != TileID.MysticSnakeRope
-					                                       && !Main.tileAxe[tile.type] && !Main.tileHammer[tile.type] && tile.wall == 0 &&
-					                                       args.Player.TPlayer.mount.Type != MountID.Drill && selectedItem.pick == 0 &&
-					                                       selectedItem.type != ItemID.GravediggerShovel &&
-					                                       !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0
-					                                       && !TileID.Sets.BreakableWhenPlacing[tile.type])
+														   && !Main.tileAxe[tile.type] && !Main.tileHammer[tile.type] && tile.wall == 0 &&
+														   args.Player.TPlayer.mount.Type != MountID.Drill && selectedItem.pick == 0 &&
+														   selectedItem.type != ItemID.GravediggerShovel &&
+														   !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0
+														   && !TileID.Sets.BreakableWhenPlacing[tile.type])
 					{
 						TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected from (pick) {0} {1} {2}", args.Player.Name, action,
 							editData));
@@ -932,7 +932,7 @@ namespace TShockAPI
 
 				if (args.Player.IsBouncerThrottled())
 				{
-					TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected from throttled from {0} {1} {2}"), args.Player.Name, action, editData);
+					TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected from throttled from {0} {1} {2}", args.Player.Name, action, editData));
 					args.Player.SendTileSquareCentered(tileX, tileY, 4);
 					args.Handled = true;
 					return;
@@ -1665,7 +1665,7 @@ namespace TShockAPI
 			{
 				if (TShock.Config.Settings.KickOnTileLiquidThresholdBroken)
 				{
-					args.Player.Kick(string.Format("Reached TileLiquid threshold {0}.", TShock.Config.Settings.TileLiquidThreshold));
+					args.Player.Kick(GetString("Reached TileLiquid threshold {0}.", TShock.Config.Settings.TileLiquidThreshold));
 				}
 				else
 				{
@@ -1737,7 +1737,7 @@ namespace TShockAPI
 				{
 					bucket = 6;
 				}
-				else if (selectedItemType == ItemID.BottomlessHoneyBucket 
+				else if (selectedItemType == ItemID.BottomlessHoneyBucket
 					|| selectedItemType == ItemID.HoneyAbsorbantSponge)
 				{
 					bucket = 7;
@@ -1822,7 +1822,7 @@ namespace TShockAPI
 				}
 
 				if (!wasThereABombNearby && type == LiquidType.Shimmer &&
-				    TShock.ItemBans.DataModel.ItemIsBanned("Bottomless Shimmer Bucket", args.Player))
+					TShock.ItemBans.DataModel.ItemIsBanned("Bottomless Shimmer Bucket", args.Player))
 				{
 					TShock.Log.ConsoleDebug(GetString("Bouncer / OnLiquidSet rejected bucket check 7 from {0}", args.Player.Name));
 					args.Player.SendErrorMessage(GetString("You do not have permission to perform this action."));
@@ -1981,35 +1981,51 @@ namespace TShockAPI
 				return;
 			}
 
-			bool detectedNPCBuffTimeCheat = false;
-
-			if (NPCAddBuffTimeMax.ContainsKey(type))
+			if (!args.Player.HasPermission(Permissions.ignorenpcbuffdetection))
 			{
-				if (time > NPCAddBuffTimeMax[type])
+				bool detectedNPCBuffTimeCheat = false;
+
+				if (NPCAddBuffTimeMax.ContainsKey(type))
+				{
+					if (time > NPCAddBuffTimeMax[type])
+					{
+						detectedNPCBuffTimeCheat = true;
+					}
+
+					if (npc.townNPC)
+					{
+						if (type != BuffID.Poisoned
+						    && type != BuffID.OnFire
+						    && type != BuffID.Confused
+						    && type != BuffID.CursedInferno
+						    && type != BuffID.Ichor
+						    && type != BuffID.Venom
+						    && type != BuffID.Midas
+						    && type != BuffID.Wet
+						    && type != BuffID.Lovestruck
+						    && type != BuffID.Stinky
+						    && type != BuffID.Slimed
+						    && type != BuffID.DryadsWard
+						    && type != BuffID.GelBalloonBuff
+						    && type != BuffID.OnFire3
+						    && type != BuffID.Frostburn2
+						    && type != BuffID.Shimmer)
+						{
+							detectedNPCBuffTimeCheat = true;
+						}
+					}
+				}
+				else
 				{
 					detectedNPCBuffTimeCheat = true;
 				}
 
-				if (npc.townNPC && npc.netID != NPCID.Guide && npc.netID != NPCID.Clothier)
+				if (detectedNPCBuffTimeCheat)
 				{
-					if (type != BuffID.Lovestruck && type != BuffID.Stinky && type != BuffID.DryadsWard &&
-						type != BuffID.Wet && type != BuffID.Slimed && type != BuffID.GelBalloonBuff && type != BuffID.Frostburn2 &&
-						type != BuffID.Shimmer)
-					{
-						detectedNPCBuffTimeCheat = true;
-					}
+					TShock.Log.ConsoleDebug(GetString("Bouncer / OnNPCAddBuff rejected abnormal buff ({0}) added to {1} ({2}) from {3}.", type, npc.TypeName, npc.netID, args.Player.Name));
+					args.Player.Kick(GetString($"Added buff to {npc.TypeName} NPC abnormally."), true);
+					args.Handled = true;
 				}
-			}
-			else
-			{
-				detectedNPCBuffTimeCheat = true;
-			}
-
-			if (detectedNPCBuffTimeCheat)
-			{
-				TShock.Log.ConsoleDebug(GetString("Bouncer / OnNPCAddBuff rejected abnormal buff ({0}) added to {1} ({2}) from {3}.", type, npc.TypeName, npc.netID, args.Player.Name));
-				args.Player.Kick(GetString($"Added buff to {npc.TypeName} NPC abnormally."), true);
-				args.Handled = true;
 			}
 		}
 
@@ -2253,7 +2269,7 @@ namespace TShockAPI
 			if (args.Player.SelectedItem.type is ItemID.RubblemakerSmall or ItemID.RubblemakerMedium or ItemID.RubblemakerLarge)
 			{
 				if (type != TileID.LargePilesEcho && type != TileID.LargePiles2Echo && type != TileID.SmallPiles2x1Echo &&
-				    type != TileID.SmallPiles1x1Echo && type != TileID.PlantDetritus3x2Echo && type != TileID.PlantDetritus2x2Echo)
+					type != TileID.SmallPiles1x1Echo && type != TileID.PlantDetritus3x2Echo && type != TileID.PlantDetritus2x2Echo)
 				{
 					TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlaceObject rejected rubblemaker I can't believe it's not rubble! from {0}",
 						args.Player.Name));
@@ -2262,7 +2278,7 @@ namespace TShockAPI
 					return;
 				}
 			}
-			else if(args.Player.SelectedItem.type == ItemID.AcornAxe)
+			else if (args.Player.SelectedItem.type == ItemID.AcornAxe)
 			{
 				if (type != TileID.Saplings)
 				{
@@ -2441,7 +2457,7 @@ namespace TShockAPI
 			if (args.NewPosition.X > Main.maxTilesX || args.NewPosition.X < 0
 				|| args.NewPosition.Y > Main.maxTilesY || args.NewPosition.Y < 0)
 			{
-				TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerPortalTeleport rejected teleport out of bounds from {0}"), args.Player.Name);
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerPortalTeleport rejected teleport out of bounds from {0}", args.Player.Name));
 				args.Handled = true;
 				return;
 			}
@@ -2449,7 +2465,7 @@ namespace TShockAPI
 			//May as well reject teleport attempts if the player is being throttled
 			if (args.Player.IsBeingDisabled() || args.Player.IsBouncerThrottled())
 			{
-				TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerPortalTeleport rejected disabled/throttled from {0}"), args.Player.Name);
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerPortalTeleport rejected disabled/throttled from {0}", args.Player.Name));
 				args.Handled = true;
 				return;
 			}
@@ -2842,12 +2858,12 @@ namespace TShockAPI
 			{ BuffID.MaceWhipNPCDebuff, 240  },     // BuffID: 319
 			{ BuffID.GelBalloonBuff, 1800  },       // BuffID: 320
 			{ BuffID.OnFire3, 1200 },               // BuffID: 323
-			{ BuffID.Frostburn2, 900 },             // BuffID: 324
+			{ BuffID.Frostburn2, 1200 },            // BuffID: 324
 			{ BuffID.BoneWhipNPCDebuff, 240 },      // BuffID: 326
 			{ BuffID.TentacleSpike, 540 },          // BuffID: 337
 			{ BuffID.CoolWhipNPCDebuff, 240 },      // BuffID: 340
 			{ BuffID.BloodButcherer, 540 },         // BuffID: 344
-			{ BuffID.Shimmer, 100 },		// BuffID: 353
+			{ BuffID.Shimmer, 100 },		        // BuffID: 353
 		};
 
 		/// <summary>

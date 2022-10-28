@@ -155,6 +155,9 @@ namespace TShockAPI
 		[Description("Prevents your actions from being ignored if damage is too high.")]
 		public static readonly string ignoredamagecap = "tshock.ignore.damage";
 
+		[Description("Prevents your from being kicked by npc buff hack detection.")]
+		public static readonly string ignorenpcbuffdetection = "tshock.ignore.npcbuff";
+
 		[Description("Bypass server side character checks.")]
 		public static readonly string bypassssc = "tshock.ignore.ssc";
 
@@ -439,7 +442,7 @@ namespace TShockAPI
 
 		[Description("User can kill others.")]
 		public static readonly string kill = "tshock.kill";
-		
+
 		[Description("Player can respawn themselves.")]
 		public static readonly string respawn = "tshock.respawn";
 
