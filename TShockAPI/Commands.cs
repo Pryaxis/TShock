@@ -5341,7 +5341,10 @@ namespace TShockAPI
 				if (ply != null && ply.Active)
 				{
 					if (displayIdsRequested)
-						players.Add(GetString($"{ply.Name} (Index: {ply.Index}{(ply.Account != null ? ", Account ID: " + ply.Account.ID : "")})"));
+						if (ply.Account != null)
+							players.Add(GetString($"{ply.Name} (Index: {ply.Index}, Account ID: {ply.Account.ID})"));
+						else
+							players.Add(GetString($"{ply.Name} (Index: {ply.Index})"));
 					else
 						players.Add(ply.Name);
 				}
@@ -5352,7 +5355,7 @@ namespace TShockAPI
 				new PaginationTools.Settings
 				{
 					IncludeHeader = false,
-					FooterFormat = GetString($"Type {Specifier}who {(displayIdsRequested ? "-i" : string.Empty)}{Specifier} for more.")
+					FooterFormat = GetString($"Type {Specifier}who {(displayIdsRequested ? "-i" : string.Empty)} for more.")
 				}
 			);
 		}
