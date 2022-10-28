@@ -36,7 +36,7 @@ namespace TShockAPI
 
 		public override string ToString()
 		{
-			return string.Format("Message: {0}: {1}: {2}",
+			return GetString("Message: {0}: {1}: {2}",
 				caller, logLevel.ToString().ToUpper(), message);
 		}
 	}
@@ -314,7 +314,7 @@ namespace TShockAPI
 						{
 							caller = "TShock",
 							logLevel = TraceLevel.Error,
-							message = string.Format("SQL Log insert query failed: {0}", ex),
+							message = GetString("SQL Log insert query failed: {0}", ex),
 							timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)
 						});
 					}
@@ -343,7 +343,7 @@ namespace TShockAPI
 
 				foreach (var logInfo in _failures)
 				{
-					_backupLog.Write(string.Format("SQL log failed at: {0}. {1}", logInfo.timestamp, logInfo),
+					_backupLog.Write(GetString("SQL log failed at: {0}. {1}", logInfo.timestamp, logInfo),
 						TraceLevel.Error);
 				}
 				_failures.Clear();

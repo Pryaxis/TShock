@@ -981,7 +981,7 @@ namespace TShockAPI
 			get
 			{
 				return RealPlayer
-				       && (Netplay.Clients[Index] != null && Netplay.Clients[Index].IsActive && !Netplay.Clients[Index].PendingTermination);
+					   && (Netplay.Clients[Index] != null && Netplay.Clients[Index].IsActive && !Netplay.Clients[Index].PendingTermination);
 			}
 		}
 
@@ -1722,7 +1722,7 @@ namespace TShockAPI
 			Main.player[Index].team = team;
 			NetMessage.SendData((int)PacketTypes.PlayerTeam, -1, -1, NetworkText.Empty, Index);
 		}
-		
+
 		/// <summary>
 		/// Sets the player's pvp.
 		/// </summary>
@@ -1838,12 +1838,12 @@ namespace TShockAPI
 				TShock.Bans.InsertBan($"{Identifier.Account}{Account.Name}", reason, adminUserName, DateTime.UtcNow, DateTime.MaxValue);
 			}
 
-			Disconnect(string.Format("Banned: {0}", reason));
+			Disconnect(GetString("Banned: {0}", reason));
 
 			if (string.IsNullOrWhiteSpace(adminUserName))
-				TSPlayer.All.SendInfoMessage("{0} was banned for '{1}'.", Name, reason);
+				TSPlayer.All.SendInfoMessage(GetString("{0} was banned for '{1}'.", Name, reason));
 			else
-				TSPlayer.All.SendInfoMessage("{0} banned {1} for '{2}'.", adminUserName, Name, reason);
+				TSPlayer.All.SendInfoMessage(GetString("{0} banned {1} for '{2}'.", adminUserName, Name, reason));
 			return true;
 		}
 

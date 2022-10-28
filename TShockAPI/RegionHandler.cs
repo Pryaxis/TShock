@@ -151,12 +151,12 @@ namespace TShockAPI
 				if (output.Count == 0)
 				{
 					player.SendInfoMessage(includeUnprotected
-						? "There are no regions at this point."
-						: "There are no regions at this point, or they are not protected.");
+						? GetString("There are no regions at this point.")
+						: GetString("There are no regions at this point, or they are not protected."));
 				}
 				else
 				{
-					player.SendInfoMessage(includeUnprotected ? "Regions at this point: " : "Protected regions at this point: ");
+					player.SendInfoMessage(includeUnprotected ? GetString("Regions at this point: ") : GetString("Protected regions at this point: "));
 
 					foreach (string line in PaginationTools.BuildLinesFromTerms(output))
 					{
@@ -184,7 +184,7 @@ namespace TShockAPI
 				// Set temp point coordinates to current tile coordinates
 				player.TempPoints[player.AwaitingTempPoint - 1].X = e.X;
 				player.TempPoints[player.AwaitingTempPoint - 1].Y = e.Y;
-				player.SendInfoMessage($"Set temp point {player.AwaitingTempPoint}.");
+				player.SendInfoMessage(GetString($"Set temp point {player.AwaitingTempPoint}."));
 
 				// Reset the awaiting temp point
 				player.AwaitingTempPoint = 0;
