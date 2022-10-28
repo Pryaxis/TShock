@@ -3189,13 +3189,13 @@ namespace TShockAPI
 						args.Player.IsDisabledForBannedWearable = false;
 
 
-					args.Player.SendMessage(GetString("Authenticated as " + args.Player.Name + " successfully."), Color.LimeGreen);
-					TShock.Log.ConsoleInfo(args.Player.Name + " authenticated successfully as user " + args.Player.Name + ".");
+					args.Player.SendMessage(GetString($"Authenticated as {args.Player.Name} successfully."), Color.LimeGreen);
+					TShock.Log.ConsoleInfo($"{args.Player.Name} authenticated successfully as user {args.Player.Name}.");
 					TShock.UserAccounts.SetUserAccountUUID(account, args.Player.UUID);
 					Hooks.PlayerHooks.OnPlayerPostLogin(args.Player);
 					return true;
 				}
-				args.Player.Kick("Your password did not match this character's password.", true, true);
+				args.Player.Kick(GetString("Your password did not match this character's password."), true, true);
 				return true;
 			}
 
