@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-28 23:11:07+0000\n"
-"PO-Revision-Date: 2022-10-29 00:24\n"
+"PO-Revision-Date: 2022-10-29 13:01\n"
 "Last-Translator: \n"
 "Language-Team: Pirate English\n"
 "MIME-Version: 1.0\n"
@@ -38,68 +38,68 @@ msgstr "#{0} - Yer ship be blocked: {1}"
 
 #: ../../TShockAPI/Commands.cs:6487
 msgid "     'basic', 'sakura', 'willow', 'boreal', 'mahogany', 'ebonwood', 'shadewood', 'pearlwood'."
-msgstr ""
+msgstr "     'basic', 'sakura', 'willow', 'boreal', 'mahogany', 'ebonwood', 'shadewood', 'pearlwood'."
 
 #: ../../TShockAPI/Commands.cs:6493
 msgid "     'cactus', 'herb', 'mushroom'."
-msgstr ""
+msgstr "     'cactus', 'herb', 'mushroom'."
 
 #: ../../TShockAPI/Commands.cs:6489
 msgid "     'palm', 'corruptpalm', 'crimsonpalm', 'hallowpalm'."
-msgstr ""
+msgstr "     'palm', 'corruptpalm', 'crimsonpalm', 'hallowpalm'."
 
 #: ../../TShockAPI/Commands.cs:6491
 msgid "     'topaz', 'amethyst', 'sapphire', 'emerald', 'ruby', 'diamond', 'amber'."
-msgstr ""
+msgstr "     'topaz', 'amethyst', 'sapphire', 'emerald', 'ruby', 'diamond', 'amber'."
 
 #: ../../TShockAPI/Commands.cs:1437
 #, csharp-format
 msgid "   {0}{1} \"{2}\" (Find the IP associated with the offline target's account)"
-msgstr ""
+msgstr "   {0}{1} \"{2}\" (Find the IP associated with the offline target's account)"
 
 #: ../../TShockAPI/Commands.cs:1435
 #, csharp-format
 msgid "   {0}{1} \"{2}{3}\" {4} {5} (Permanently bans this account name)"
-msgstr ""
+msgstr "   {0}{1} \"{2}{3}\" {4} {5} (Permanently bans this account name)"
 
 #: ../../TShockAPI/Commands.cs:1440
 #, csharp-format
 msgid "   {0}{1} {2} (Find the player index for the target)"
-msgstr ""
+msgstr "   {0}{1} {2} (Find the player index for the target)"
 
 #: ../../TShockAPI/Commands.cs:1441
 #, csharp-format
 msgid "   {0}{1} {2}{3} {4} {5} (Permanently bans the online player by Account, UUID, and IP)"
-msgstr ""
+msgstr "   {0}{1} {2}{3} {4} {5} (Permanently bans the online player by Account, UUID, and IP)"
 
 #: ../../TShockAPI/Commands.cs:1438
 #, csharp-format
 msgid "   {0}{1} {2}{3} {4} {5} (Permanently bans this IP address)"
-msgstr ""
+msgstr "   {0}{1} {2}{3} {4} {5} (Permanently bans this IP address)"
 
 #: ../../TShockAPI/Commands.cs:1377
 #, csharp-format
 msgid "   Eg a value of {0} would represent 10 days, 30 minutes, 0 seconds."
-msgstr ""
+msgstr "   Eg a value of {0} would represent 10 days, 30 minutes, 0 seconds."
 
 #: ../../TShockAPI/Commands.cs:1381
 #, csharp-format
 msgid "   If no {0} are specified, the command uses {1} by default."
-msgstr ""
+msgstr "   If no {0} are specified, the command uses {1} by default."
 
 #: ../../TShockAPI/Commands.cs:1378
 msgid "   If no duration is provided, the ban will be permanent."
-msgstr ""
+msgstr "   If no duration is provided, the ban will be permanent."
 
 #: ../../TShockAPI/Commands.cs:1380
 #, csharp-format
 msgid "   Unless {0} is passed to the command, {1} is assumed to be a player or player index"
-msgstr ""
+msgstr "   Unless {0} is passed to the command, {1} is assumed to be a player or player index"
 
 #: ../../TShockAPI/Commands.cs:1253
 #, csharp-format
 msgid " -> Logged-in as: {0}; in group {1}."
-msgstr ""
+msgstr " -> Logged-in as: {0}; in group {1}."
 
 #: ../../TShockAPI/Commands.cs:1389
 #, csharp-format
