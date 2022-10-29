@@ -3,6 +3,11 @@ Enable server side characters, causing client data to be saved on the server ins
 * **Field type**: `Boolean`
 * **Default**: `False`
 
+## GiveItemsDirectly  
+If set to true, items given to players will be inserted directly into their inventory. Requires SSC. Otherwise, items given to players will spawn as dropped items.
+* **Field type**: `Boolean`
+* **Default**: `False`
+
 ## LogonDiscardThreshold  
 Time, in milliseconds, to disallow discarding items after logging in when ServerSideCharacters is ON.
 * **Field type**: `Int32`
