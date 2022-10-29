@@ -53,6 +53,15 @@ namespace TShockAPI
 		public int happyFunTorchTime;
 		public int unlockedBiomeTorches;
 		public int currentLoadoutIndex;
+		public int ateArtisanBread;
+		public int usedAegisCrystal;
+		public int usedAegisFruit;
+		public int usedArcaneCrystal;
+		public int usedGalaxyPearl;
+		public int usedGummyWorm;
+		public int usedAmbrosia;
+		public int unlockedSuperCart;
+		public int enabledSuperCart;
 
 		public PlayerData(TSPlayer player)
 		{
@@ -122,6 +131,15 @@ namespace TShockAPI
 			this.happyFunTorchTime = player.TPlayer.happyFunTorchTime ? 1 : 0;
 			this.unlockedBiomeTorches = player.TPlayer.unlockedBiomeTorches ? 1 : 0;
 			this.currentLoadoutIndex = player.TPlayer.CurrentLoadoutIndex;
+			this.ateArtisanBread = player.TPlayer.ateArtisanBread ? 1 : 0;
+			this.usedAegisCrystal = player.TPlayer.usedAegisCrystal ? 1 : 0;
+			this.usedAegisFruit = player.TPlayer.usedAegisFruit ? 1 : 0;
+			this.usedArcaneCrystal = player.TPlayer.usedArcaneCrystal ? 1 : 0;
+			this.usedGalaxyPearl = player.TPlayer.usedGalaxyPearl ? 1 : 0;
+			this.usedGummyWorm = player.TPlayer.usedGummyWorm ? 1 : 0;
+			this.usedAmbrosia = player.TPlayer.usedAmbrosia ? 1 : 0;
+			this.unlockedSuperCart = player.TPlayer.unlockedSuperCart ? 1 : 0;
+			this.enabledSuperCart = player.TPlayer.enabledSuperCart ? 1 : 0;
 
 			Item[] inventory = player.TPlayer.inventory;
 			Item[] armor = player.TPlayer.armor;
@@ -256,6 +274,15 @@ namespace TShockAPI
 			player.TPlayer.happyFunTorchTime = this.happyFunTorchTime == 1;
 			player.TPlayer.unlockedBiomeTorches = this.unlockedBiomeTorches == 1;
 			player.TPlayer.CurrentLoadoutIndex = this.currentLoadoutIndex;
+			player.TPlayer.ateArtisanBread = this.ateArtisanBread == 1;
+			player.TPlayer.usedAegisCrystal = this.usedAegisCrystal == 1;
+			player.TPlayer.usedAegisFruit = this.usedAegisFruit == 1;
+			player.TPlayer.usedArcaneCrystal = this.usedArcaneCrystal == 1;
+			player.TPlayer.usedGalaxyPearl = this.usedGalaxyPearl == 1;
+			player.TPlayer.usedGummyWorm = this.usedGummyWorm == 1;
+			player.TPlayer.usedAmbrosia = this.usedAmbrosia == 1;
+			player.TPlayer.unlockedSuperCart = this.unlockedSuperCart == 1;
+			player.TPlayer.enabledSuperCart = this.enabledSuperCart == 1;
 
 			if (extraSlot != null)
 				player.TPlayer.extraAccessory = extraSlot.Value == 1 ? true : false;
