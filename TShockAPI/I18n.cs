@@ -21,7 +21,10 @@ global using static TShockAPI.I18n;
 using System;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using GetText;
+using Terraria.Initializers;
+using Terraria.Localization;
 
 namespace TShockAPI
 {
@@ -29,8 +32,7 @@ namespace TShockAPI
 		static string TranslationsDirectory => Path.Combine(AppContext.BaseDirectory, "i18n");
 		static CultureInfo TranslationCultureInfo
 		{
-			get
-			{
+			get {
 				// cross-platform mapping of cultureinfos can be a bit screwy, so give our users
 				// the chance to explicitly spell out which translation they would like to use.
 				// this is an environment variable instead of a flag because this needs to be
@@ -39,6 +41,24 @@ namespace TShockAPI
 				{
 					return new CultureInfo(overrideLang);
 				}
+
+				static CultureInfo Redirect(CultureInfo cultureInfo)
+					=> cultureInfo.Name == "zh-Hans" ? new CultureInfo("zh-CN") : cultureInfo;
+
+				if (Terraria.Program.LaunchParameters.TryGetValue("-lang", out var langArg)
+				    && int.TryParse(langArg, out var langId)) {
+					if (GameCulture._legacyCultures.TryGetValue(langId, out var culture)) {
+						return Redirect(culture.CultureInfo);
+					}
+				}
+
+				if (Terraria.Program.LaunchParameters.TryGetValue("-language", out var languageArg)) {
+					var culture = GameCulture._legacyCultures.Values.SingleOrDefault(c => c.Name == languageArg);
+					if (culture != null) {
+						return Redirect(culture.CultureInfo);
+					}
+				}
+
 				return CultureInfo.CurrentUICulture;
 			}
 		}

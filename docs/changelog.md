@@ -73,6 +73,7 @@ Use past tense when adding new entries; sign your name off when you add or chang
 * Dockerize TShock (@PotatoCider)
 
 * Add ability for items given to players to be inserted directly into their inventory instead of spawned as an item drop (@pontaoski)
+* Added support of `-lang` and `-language` flags for our i18n system. (@KawaiiYuyu)
 
 ## TShock 4.5.18
 * Fixed `TSPlayer.GiveItem` not working if the player is in lava. (@PotatoCider)
