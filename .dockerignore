@@ -1,0 +1,15 @@
+# ignore every file
+*
+
+# except for the ones required for building
+!i18n/
+!prebuilts/
+!TerrariaServerAPI/
+!TShockAPI/
+!TShockLauncher/
+!TShockLauncher.Tests/
+!TShock.sln
+
+# but exclude build artifacts
+*/bin/
+*/obj/

@@ -1,6 +1,7 @@
 * [☕️⚡️ TShock documentation home](/)
 * [Changelog](/changelog.md)
 * [Command line parameters](/command-line-parameters.md)
+* [Docker Setup](/docker.md)
 
 * Subsystems
   * [Tile providers](/tile-providers.md)
