@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-28 23:11:07+0000\n"
-"PO-Revision-Date: 2022-10-29 13:01\n"
+"PO-Revision-Date: 2022-10-30 06:03\n"
 "Last-Translator: \n"
 "Language-Team: Pirate English\n"
 "MIME-Version: 1.0\n"
@@ -104,54 +104,54 @@ msgstr " -> Logged-in as: {0}; in group {1}."
 #: ../../TShockAPI/Commands.cs:1389
 #, csharp-format
 msgid "- {0} are provided when you add a ban, and can also be viewed with the {1} command."
-msgstr ""
+msgstr "- {0} are provided when you add a ban, and can also be viewed with the {1} command."
 
 #: ../../TShockAPI/Commands.cs:1405
 #, csharp-format
 msgid "- {0} are provided when you add a ban, and can be found with the {1} command."
-msgstr ""
+msgstr "- {0} are provided when you add a ban, and can be found with the {1} command."
 
 #: ../../TShockAPI/Commands.cs:1379
 #, csharp-format
 msgid "- {0}: -a (account name), -u (UUID), -n (character name), -ip (IP address), -e (exact, {1} will be treated as identifier)"
-msgstr ""
+msgstr "- {0}: -a (account name), -u (UUID), -n (character name), -ip (IP address), -e (exact, {1} will be treated as identifier)"
 
 #: ../../TShockAPI/Commands.cs:1376
 #, csharp-format
 msgid "- {0}: uses the format {1} to determine the length of the ban."
-msgstr ""
+msgstr "- {0}: uses the format {1} to determine the length of the ban."
 
 #: ../../TShockAPI/Commands.cs:1434
 msgid "- Ban an offline player by account name"
-msgstr ""
+msgstr "- Ban an offline player by account name"
 
 #: ../../TShockAPI/Commands.cs:1436
 msgid "- Ban an offline player by IP address"
-msgstr ""
+msgstr "- Ban an offline player by IP address"
 
 #: ../../TShockAPI/Commands.cs:1439
 msgid "- Ban an online player by index (Useful for hard to type names)"
-msgstr ""
+msgstr "- Ban an online player by index (Useful for hard to type names)"
 
 #: ../../TShockAPI/Commands.cs:6486
 msgid "- Default trees :"
-msgstr ""
+msgstr "- Default trees :"
 
 #: ../../TShockAPI/Commands.cs:6490
 msgid "- Gem trees :"
-msgstr ""
+msgstr "- Gem trees :"
 
 #: ../../TShockAPI/Commands.cs:1397
 msgid "- Lists active bans. Color trends towards green as the ban approaches expiration"
-msgstr ""
+msgstr "- Lists active bans. Color trends towards green as the ban approaches expiration"
 
 #: ../../TShockAPI/Commands.cs:6492
 msgid "- Misc :"
-msgstr ""
+msgstr "- Misc :"
 
 #: ../../TShockAPI/Commands.cs:6488
 msgid "- Palm trees :"
-msgstr ""
+msgstr "- Palm trees :"
 
 #: ../../TShockAPI/Commands.cs:6400
 #, csharp-format
