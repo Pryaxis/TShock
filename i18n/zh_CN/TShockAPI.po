@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-28 23:11:07+0000\n"
-"PO-Revision-Date: 2022-10-29 13:01\n"
+"PO-Revision-Date: 2022-10-30 18:18\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -2591,7 +2591,7 @@ msgstr "CreativePowerHandler 收到了为未知创造力的权限检查请求。
 #: ../../TShockAPI/Handlers/NetModules/CreativeUnlocksHandler.cs:65
 #, csharp-format
 msgid "CreativeUnlocksHandler received non-vanilla unlock request. Random field value: {0} but should be 0 from {1}"
-msgstr "CreativeUnlocksHandler 收到了来自玩家{1}的异常的研究解锁请求：不明字段值为{0}但应为0。"
+msgstr "CreativeUnlocksHandler 收到了来自玩家{1}的异常的研究解锁请求：不明字段值应为0但实际为{0}。"
 
 #: ../../TShockAPI/Commands.cs:6624
 msgid "Crimson Palm"
