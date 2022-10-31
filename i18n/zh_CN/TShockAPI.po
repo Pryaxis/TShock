@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-28 23:11:07+0000\n"
-"PO-Revision-Date: 2022-10-30 18:18\n"
+"PO-Revision-Date: 2022-10-31 06:33\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -3011,7 +3011,7 @@ msgstr "用户组 {0} 已重命名成 {1}。"
 #: ../../TShockAPI/DB/GroupManager.cs:631
 #, csharp-format
 msgid "Group {0} is referencing a non existent parent group {1}, parent reference was removed."
-msgstr "组 {0} 正在引用一个不存在的父组 {1}，父组的引用已被删除。"
+msgstr "用户组{0}的父组为{1}，但该用户组不存在。已删除此父子关系。"
 
 #: ../../TShockAPI/DB/GroupManager.cs:637
 #, csharp-format
@@ -5264,11 +5264,11 @@ msgstr "拜月教邪教徒"
 
 #: ../../TShockAPI/PaginationTools.cs:185
 msgid "The method referenced by LineFormatter has thrown an exception. See inner exception for details."
-msgstr "LineFormater引用的方法已经抛出异常。详情请查看内部异常。"
+msgstr "属性LineFormatter中的代码抛出了异常，查看异常以获取详情。"
 
 #: ../../TShockAPI/PaginationTools.cs:247
 msgid "The method represented by termFormatter has thrown an exception. See inner exception for details."
-msgstr "用 termFormater 代表的方法已经抛出异常。详情请查看内部异常。"
+msgstr "参数termFormater中的代码抛出了异常，查看异常以获取详情。"
 
 #: ../../TShockAPI/Commands.cs:2720
 msgid "the Moon Lord"
