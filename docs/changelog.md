@@ -71,10 +71,9 @@ Use past tense when adding new entries; sign your name off when you add or chang
 * Fix being kicked for using the new sponge types on liquid. (@BashGuy10)
 * Fixed SSC not save `ateArtisanBread`, `usedAegisCrystal`, `usedAegisFruit`, `usedArcaneCrystal`, `usedGalaxyPearl`, `usedGummyWorm`, `usedAmbrosia`, `unlockedSuperCart`, `enabledSuperCart` flags, and Server will correct read them. (@hufang360)
 * Allow flask buffs to be applied on town npc due to the Flymeal. Add a permission could skip the buff detection. (@KawaiiYuyu)
-* Dockerize TShock (@PotatoCider)
+* Dockerize TShock. (@PotatoCider)
 * Log the command itself without arguments if the command is not DoLog. (@sgkoishi, [#2779](https://github.com/Pryaxis/TShock/issues/2779))
-
-* Add ability for items given to players to be inserted directly into their inventory instead of spawned as an item drop (@pontaoski)
+* Add ability for items given to players to be inserted directly into their inventory instead of spawned as an item drop. (@pontaoski)
 * Added support of `-lang` and `-language` flags for our i18n system. (@KawaiiYuyu)
 
 ## TShock 4.5.18

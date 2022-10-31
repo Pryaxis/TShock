@@ -29,7 +29,6 @@ We owe a very special thanks to our `zh_CN` translators. From the start of the p
 
 For the most up-to-date list of translators, see the [top member report on Crowdin](https://crowdin.com/project/tshock/reports/top-members). You should adjust the date range to select from October 21, 2022 onward.
 
-
 ## Other language projects
 The following languages have had significant progress:
 * Russian (`ru_RU`)
@@ -49,4 +48,3 @@ The following are active projects without significant progress:
 If you'd like your language to be supported, please let us know in Discord.
 
 We are particularly interested in `zh_CN`, `ru_RU`, and `es_ES` because these are the most commonly used languages in conjunction with TShock.
-
