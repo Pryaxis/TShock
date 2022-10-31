@@ -8,24 +8,24 @@ The base for the i18n system was built by Janet Blackquill ([@pontaoski](https:/
 
 We owe a very special thanks to our `zh_CN` translators. From the start of the project, we wanted `zh_CN` to be one of our best supported languages. Thank you to the following contributors of translations:
 
-|Name|Translated (Words)|Target Words|
-|--------|--------|--------|
-|xml3344 has stopped making trouble (1212122222)|3176|5220|
-|Axeel (AxeelAnder)|2273|4155|
-|SGKoishi|2129|3391|
-|Leader-txt (Leader_txt)|1568|2677|
-|Cai233|1335|2208|
-|hufang 360 (hufang360)|892|1295|
-|StarCloud-cy|601|956|
-|JJJJGGGG12345|454|728|
-|Seele Vollerei (aaa1115910)|302|483|
-|问心\|MiaoVPS (WenXin_MiaoVPS)|256|376|
-|Jifeng|60|105|
-|xml3344|27|40|
-|kuaizhi|23|40|
-|Muteduanxing|13|30|
-|Xlink|8|8|
-|Smelody|6|7|
+|Name|Translated (Words)|
+|--------|--------|
+|xml3344 has stopped making trouble (1212122222)|3176|
+|Axeel (AxeelAnder)|2273|
+|SGKoishi|2129|
+|Leader-txt (Leader_txt)|1568|
+|Cai233|1335|
+|hufang 360 (hufang360)|892|
+|StarCloud-cy|601|
+|JJJJGGGG12345|454|
+|Seele Vollerei (aaa1115910)|302|
+|问心\|MiaoVPS (WenXin_MiaoVPS)|256|
+|Jifeng|60|
+|xml3344|27|
+|kuaizhi|23|
+|Muteduanxing|13|
+|Xlink|8|
+|Smelody|6|
 
 For the most up-to-date list of translators, see the [top member report on Crowdin](https://crowdin.com/project/tshock/reports/top-members). You should adjust the date range to select from October 21, 2022 onward.
 
