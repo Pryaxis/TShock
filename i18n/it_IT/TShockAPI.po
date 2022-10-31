@@ -4,37 +4,37 @@ msgstr ""
 "POT-Creation-Date: 2022-10-31 22:50:21+0000\n"
 "PO-Revision-Date: 2022-10-31 23:36\n"
 "Last-Translator: \n"
-"Language-Team: Japanese\n"
+"Language-Team: Italian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: GetText.NET Extractor\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: tshock\n"
 "X-Crowdin-Project-ID: 544368\n"
-"X-Crowdin-Language: ja\n"
+"X-Crowdin-Language: it\n"
 "X-Crowdin-File: /general-devel/i18n/template.pot\n"
 "X-Crowdin-File-ID: 6\n"
-"Language: ja_JP\n"
+"Language: it_IT\n"
 
 #: ../../TShockAPI/DB/CharacterManager.cs:194
 #: ../../TShockAPI/DB/CharacterManager.cs:264
 #, csharp-format
 msgctxt "{0} is a player name"
 msgid "Skipping SSC save (due to tshock.ignore.ssc) for {0}"
-msgstr "{0}のSSCセーブをスキップ中 (tshock.ignore.ssc による)"
+msgstr ""
 
 #: ../../TShockAPI/DB/BanManager.cs:213
 #, csharp-format
 msgctxt "{0} is ban number, {1} is ban reason, {2} is a timestamp"
 msgid "#{0} - You are banned: {1} ({2} remaining)"
-msgstr "#{0} - あなたがBANされた：{1} （残り時間：{2}）"
+msgstr ""
 
 #: ../../TShockAPI/DB/BanManager.cs:208
 #, csharp-format
 msgctxt "{0} is ban number, {1} is ban reason"
 msgid "#{0} - You are banned: {1}"
-msgstr "#{0} - あなたはBANされました: {1}"
+msgstr ""
 
 #: ../../TShockAPI/Commands.cs:6492
 msgid "     'basic', 'sakura', 'willow', 'boreal', 'mahogany', 'ebonwood', 'shadewood', 'pearlwood'."
@@ -151,7 +151,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:6493
 msgid "- Palm trees :"
-msgstr ""
+msgstr "Palme"
 
 #: ../../TShockAPI/Commands.cs:6405
 #, csharp-format
@@ -166,12 +166,12 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:6022
 #, csharp-format
 msgid "\"{0}\" is not a valid NPC."
-msgstr ""
+msgstr "\"{0}\" non è un NPC valido."
 
 #: ../../TShockAPI/PaginationTools.cs:283
 #, csharp-format
 msgid "\"{0}\" is not a valid page number."
-msgstr "「{0}」は無効な数値です。"
+msgstr ""
 
 #: ../../TShockAPI/Commands.cs:5822
 #, csharp-format
@@ -200,12 +200,12 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:972
 #, csharp-format
 msgid "{0} ({1}) changed the password for account {2}."
-msgstr "{0} ({1}) はアカウント {2} のパスワードを変更しました。"
+msgstr ""
 
 #: ../../TShockAPI/Commands.cs:982
 #, csharp-format
 msgid "{0} ({1}) failed to change the password for account {2}."
-msgstr "{0} ({1}) はアカウント {2} のパスワード変更に失敗しました。"
+msgstr ""
 
 #: ../../TShockAPI/TShock.cs:1641
 #, csharp-format
@@ -220,12 +220,12 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:775
 #, csharp-format
 msgid "{0} ({1}) had {2} or more invalid login attempts and was kicked automatically."
-msgstr "{0} ({1}) には {2} 以上の無効なログイン試行があり、自動的にキックされました。"
+msgstr ""
 
 #: ../../TShockAPI/TShock.cs:1645
 #, csharp-format
 msgid "{0} ({1}) has joined."
-msgstr ""
+msgstr "{0} ({1}) si è unito."
 
 #: ../../TShockAPI/Commands.cs:5350
 #, csharp-format
@@ -251,12 +251,12 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:1459
 #, csharp-format
 msgid "{0} {1}"
-msgstr ""
+msgstr "{0} {1}"
 
 #: ../../TShockAPI/Commands.cs:1463
 #, csharp-format
 msgid "{0} {1} ({2} ago)"
-msgstr ""
+msgstr "{0} {1} ({2} fa)"
 
 #: ../../TShockAPI/Commands.cs:1477
 #, csharp-format
@@ -321,7 +321,7 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:1102
 #, csharp-format
 msgid "{0} added account {1} to group {2}."
-msgstr ""
+msgstr "{0} ha aggiunto l'account {1} al gruppo {2}."
 
 #: ../../TShockAPI/GetDataHandlers.cs:3554
 #, csharp-format
@@ -331,28 +331,29 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:1060
 #, csharp-format
 msgid "{0} attempted to register for the account {1} but it was already taken."
-msgstr "{0} はアカウント {1} の登録を試みましたが、既に使用されています。"
+msgstr ""
 
 #: ../../TShockAPI/Commands.cs:901
 #, csharp-format
 msgid "{0} authenticated successfully as user: {1}."
-msgstr "{0} はユーザーとして正常に認証されました: {1}."
+msgstr ""
 
 #: ../../TShockAPI/TSPlayer.cs:1955
 #, csharp-format
 msgid "{0} banned {1} for '{2}'."
-msgstr ""
+msgstr "{0} ha bannato {1} per {2}"
 
 #: ../../TShockAPI/Commands.cs:6047
 #, csharp-format
 msgid "{0} butchered {1} NPC."
 msgid_plural "{0} butchered {1} NPCs."
 msgstr[0] ""
+msgstr[1] ""
 
 #: ../../TShockAPI/Commands.cs:2458
 #, csharp-format
 msgid "{0} caused it to rain slime."
-msgstr ""
+msgstr "{0} ha provocato una pioggia di slime."
 
 #: ../../TShockAPI/Commands.cs:2473
 #, csharp-format
@@ -362,55 +363,58 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:1176
 #, csharp-format
 msgid "{0} changed account {1} to group {2}."
-msgstr "{0} がアカウント {1} をグループ {2} に変更しました。"
+msgstr ""
 
 #: ../../TShockAPI/Commands.cs:4462
 #, csharp-format
 msgid "{0} changed the maximum spawns to {1}."
-msgstr ""
+msgstr "{0} ha cambiato il massimo numero di spawns a {1}."
 
 #: ../../TShockAPI/Commands.cs:4443
 #, csharp-format
 msgid "{0} changed the maximum spawns to 5."
-msgstr ""
+msgstr "{0} ha cambiato il massimo numero di spawns a 5."
 
 #: ../../TShockAPI/Commands.cs:1150
 #, csharp-format
 msgid "{0} changed the password for account {1}"
-msgstr "{0} がアカウント {1} のパスワードを変更しました"
+msgstr "{0} ha cambiato la password per l'account {1}"
 
 #: ../../TShockAPI/Commands.cs:4501
 #, csharp-format
 msgid "{0} changed the spawn rate to {1}."
-msgstr ""
+msgstr "{0} ha cambiato la velocità di spawn a {1}."
 
 #: ../../TShockAPI/Commands.cs:4483
 #, csharp-format
 msgid "{0} changed the spawn rate to 600."
-msgstr ""
+msgstr "{0} ha cambiato la velocità di spawn a 600."
 
 #: ../../TShockAPI/Commands.cs:4635
 #, csharp-format
 msgid "{0} changed the wind speed to {1}."
-msgstr ""
+msgstr "{0} ha cambiato la velocità del vento in {1}."
 
 #: ../../TShockAPI/Commands.cs:5849
 #, csharp-format
 msgid "{0} deleted {1} item within a radius of {2}."
 msgid_plural "{0} deleted {1} items within a radius of {2}."
 msgstr[0] ""
+msgstr[1] ""
 
 #: ../../TShockAPI/Commands.cs:5873
 #, csharp-format
 msgid "{0} deleted {1} NPC within a radius of {2}."
 msgid_plural "{0} deleted {1} NPCs within a radius of {2}."
 msgstr[0] ""
+msgstr[1] ""
 
 #: ../../TShockAPI/Commands.cs:5898
 #, csharp-format
 msgid "{0} deleted {1} projectile within a radius of {2}."
 msgid_plural "{0} deleted {1} projectiles within a radius of {2}."
 msgstr[0] ""
+msgstr[1] ""
 
 #: ../../TShockAPI/Commands.cs:1883
 #, csharp-format
@@ -420,27 +424,27 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:1903
 #, csharp-format
 msgid "{0} disabled xmas mode."
-msgstr ""
+msgstr "{0} ha disabilitato la modalità natalizia."
 
 #: ../../TShockAPI/Commands.cs:1881
 #, csharp-format
 msgid "{0} enabled halloween mode."
-msgstr ""
+msgstr "{0} ha abilitato la modalità halloween."
 
 #: ../../TShockAPI/Commands.cs:1901
 #, csharp-format
 msgid "{0} enabled xmas mode."
-msgstr ""
+msgstr "{0} ha abilitato la modalità natalizia."
 
 #: ../../TShockAPI/Commands.cs:2465
 #, csharp-format
 msgid "{0} ended the rain."
-msgstr ""
+msgstr "{0} ha fatto smettere di piovere."
 
 #: ../../TShockAPI/Commands.cs:2450
 #, csharp-format
 msgid "{0} ended the slime rain."
-msgstr ""
+msgstr "{0} ha fermato la pioggia di slime."
 
 #: ../../TShockAPI/Commands.cs:706
 #, csharp-format
@@ -461,7 +465,8 @@ msgstr ""
 #, csharp-format
 msgid "{0} gave you {1} {2}."
 msgid_plural "{0} gave you {1} {2}s."
-msgstr[0] ""
+msgstr[0] "{0} ti ha dato {1} {2}."
+msgstr[1] ""
 
 #: ../../TShockAPI/Commands.cs:4243
 #, csharp-format
@@ -501,7 +506,7 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:1182
 #, csharp-format
 msgid "{0} has changed your group to {1}."
-msgstr "{0} があなたのグループを {1} に変更しました。"
+msgstr ""
 
 #: ../../TShockAPI/Commands.cs:2945
 #: ../../TShockAPI/Commands.cs:3016
@@ -523,7 +528,7 @@ msgstr ""
 #: ../../TShockAPI/TShock.cs:1652
 #, csharp-format
 msgid "{0} has joined."
-msgstr ""
+msgstr "{0} si è unito."
 
 #: ../../TShockAPI/TShock.cs:1656
 #, csharp-format
@@ -575,6 +580,7 @@ msgstr ""
 msgid "{0} has spawned {1} {2} time."
 msgid_plural "{0} has spawned {1} {2} times."
 msgstr[0] ""
+msgstr[1] ""
 
 #: ../../TShockAPI/Commands.cs:2891
 #, csharp-format
@@ -697,7 +703,7 @@ msgstr ""
 #: ../../TShockAPI/Rest/RestManager.cs:1068
 #, csharp-format
 msgid "{0} just killed you!"
-msgstr "{0} があなたを殺した！"
+msgstr ""
 
 #: ../../TShockAPI/TSPlayer.cs:1926
 #, csharp-format
@@ -713,12 +719,13 @@ msgstr ""
 #, csharp-format
 msgid "{0} NPC has been killed."
 msgid_plural "{0} NPCs have been killed."
-msgstr[0] "{0} NPCが殺される。"
+msgstr[0] ""
+msgstr[1] ""
 
 #: ../../TShockAPI/Commands.cs:1054
 #, csharp-format
 msgid "{0} registered an account: \"{1}\"."
-msgstr "{0} がアカウントを登録しました: \"{1}\"."
+msgstr ""
 
 #: ../../TShockAPI/Commands.cs:1474
 #, csharp-format
@@ -766,6 +773,7 @@ msgstr ""
 msgid "{0} spawned {1} {2} time."
 msgid_plural "{0} spawned {1} {2} times."
 msgstr[0] ""
+msgstr[1] ""
 
 #: ../../TShockAPI/Commands.cs:2286
 #, csharp-format
@@ -914,7 +922,7 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:688
 #, csharp-format
 msgid "{0} tried to execute {1}{2}."
-msgstr "{0} は {1}{2} の実行を試みました。"
+msgstr ""
 
 #: ../../TShockAPI/Commands.cs:2251
 #, csharp-format
@@ -1294,11 +1302,11 @@ msgstr ""
 
 #: ../../TShockAPI/Rest/RestManager.cs:811
 msgid "AutoSave has been disabled"
-msgstr "自動保存は停止されています"
+msgstr ""
 
 #: ../../TShockAPI/Rest/RestManager.cs:807
 msgid "AutoSave has been enabled"
-msgstr "自動保存はすでにオンになっています"
+msgstr ""
 
 #: ../../TShockAPI/Rest/RestManager.cs:800
 msgid "Autosave is currently disabled"
@@ -1326,16 +1334,16 @@ msgstr ""
 
 #: ../../TShockAPI/BackupManager.cs:75
 msgid "Backing up world..."
-msgstr "世界をバックアップしている……"
+msgstr ""
 
 #: ../../TShockAPI/BackupManager.cs:87
 #: ../../TShockAPI/BackupManager.cs:89
 msgid "Backup failed!"
-msgstr "バックアップに失敗！"
+msgstr ""
 
 #: ../../TShockAPI/BackupManager.cs:51
 msgid "Backup Thread"
-msgstr "バックアップスレッド"
+msgstr ""
 
 #: ../../TShockAPI/Commands.cs:833
 msgid "Bad login attempt."
@@ -1395,7 +1403,7 @@ msgstr ""
 
 #: ../../TShockAPI/Rest/RestManager.cs:695
 msgid "Ban removed."
-msgstr "禁止を解く"
+msgstr ""
 
 #: ../../TShockAPI/Commands.cs:1438
 msgid "Ban Usage Examples"
@@ -1440,7 +1448,7 @@ msgstr ""
 #: ../../TShockAPI/Rest/RestManager.cs:889
 #, csharp-format
 msgid "Blood Moon has been set to {0}"
-msgstr "「Blood Moon」 が {0} に設定されました。"
+msgstr ""
 
 #: ../../TShockAPI/Rest/RestManager.cs:904
 #, csharp-format
@@ -2440,19 +2448,19 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:368
 msgid "Changes the server password."
-msgstr "サーバーのパスワードを変更する。"
+msgstr ""
 
 #: ../../TShockAPI/Commands.cs:522
 msgid "Changes the wind speed."
-msgstr "風速を変更する。"
+msgstr ""
 
 #: ../../TShockAPI/Commands.cs:467
 msgid "Changes the world mode."
-msgstr "世界のモードを変更する。"
+msgstr ""
 
 #: ../../TShockAPI/Commands.cs:252
 msgid "Changes your account's password."
-msgstr "アカウントのパスワードを変更する。"
+msgstr ""
 
 #: ../../TShockAPI/Commands.cs:3642
 #, csharp-format
@@ -2466,7 +2474,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:352
 msgid "Checks for TShock updates."
-msgstr "TShockのアップデートをチェックします。"
+msgstr ""
 
 #: ../../TShockAPI/Commands.cs:5182
 msgid "clear - Clears the temporary region points."
@@ -2482,7 +2490,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:537
 msgid "Clears item drops or projectiles."
-msgstr "ドロップや投射物をクリアします。"
+msgstr ""
 
 #: ../../TShockAPI/Commands.cs:3436
 msgid "color <group> <rrr,ggg,bbb> - Changes a group's chat color."
@@ -2495,7 +2503,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:162
 msgid "Command failed, check logs for more details."
-msgstr "コマンドが失敗しました。詳細はログで確認してください。"
+msgstr ""
 
 #: ../../TShockAPI/Commands.cs:5256
 msgid "Commands ({{0}}/{{1}}):"
@@ -2521,7 +2529,7 @@ msgstr ""
 #: ../../TShockAPI/DB/BanManager.cs:82
 #: ../../TShockAPI/DB/ResearchDatastore.cs:54
 msgid "Could not find a database library (probably Sqlite3.dll)"
-msgstr "データベースのライブラリが見つかりませんでした (おそらくSqlite3.dll)"
+msgstr ""
 
 #: ../../TShockAPI/Commands.cs:3264
 #, csharp-format
@@ -2588,7 +2596,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:595
 msgid "Creates a reference tables for Terraria data types and the TShock permission system in the server folder."
-msgstr "ゲームデータと権限システムの参考表をサーバーフォルダに作成します。"
+msgstr ""
 
 #: ../../TShockAPI/Commands.cs:5410
 msgid "Creates: <username> with the password <password> as part of the owner group."
@@ -2895,12 +2903,14 @@ msgstr ""
 msgid "Gave {0} {1} {2}."
 msgid_plural "Gave {0} {1} {2}s."
 msgstr[0] ""
+msgstr[1] ""
 
 #: ../../TShockAPI/Commands.cs:6136
 #, csharp-format
 msgid "Gave {0} {1}."
 msgid_plural "Gave {0} {1}s."
 msgstr[0] ""
+msgstr[1] ""
 
 #: ../../TShockAPI/GetDataHandlers.cs:4383
 #, csharp-format
@@ -4307,6 +4317,7 @@ msgstr ""
 msgid "Player {0} matches {1} player"
 msgid_plural "Player {0} matches {1} players"
 msgstr[0] ""
+msgstr[1] ""
 
 #: ../../TShockAPI/Commands.cs:4788
 #: ../../TShockAPI/Commands.cs:4823
@@ -4920,6 +4931,7 @@ msgstr ""
 msgid "Spawned {0} {1} time."
 msgid_plural "Spawned {0} {1} times."
 msgstr[0] ""
+msgstr[1] ""
 
 #: ../../TShockAPI/Commands.cs:2887
 msgid "Spawned a Wall of Flesh."
@@ -5999,6 +6011,7 @@ msgstr ""
 msgid "You butchered {0} NPC."
 msgid_plural "You butchered {0} NPCs."
 msgstr[0] ""
+msgstr[1] ""
 
 #: ../../TShockAPI/Commands.cs:694
 #, csharp-format
@@ -6087,18 +6100,21 @@ msgstr ""
 msgid "You deleted {0} item within a radius of {1}."
 msgid_plural "You deleted {0} items within a radius of {1}."
 msgstr[0] ""
+msgstr[1] ""
 
 #: ../../TShockAPI/Commands.cs:5871
 #, csharp-format
 msgid "You deleted {0} NPC within a radius of {1}."
 msgid_plural "You deleted {0} NPCs within a radius of {1}."
 msgstr[0] ""
+msgstr[1] ""
 
 #: ../../TShockAPI/Commands.cs:5896
 #, csharp-format
 msgid "You deleted {0} projectile within a radius of {1}."
 msgid_plural "You deleted {0} projectiles within a radius of {1}."
 msgstr[0] ""
+msgstr[1] ""
 
 #: ../../TShockAPI/Commands.cs:6312
 msgid "You didn't put a player name."
@@ -6453,6 +6469,7 @@ msgstr ""
 msgid "You spawned {0} {1} time."
 msgid_plural "You spawned {0} {1} times."
 msgstr[0] ""
+msgstr[1] ""
 
 #: ../../TShockAPI/Commands.cs:3325
 #, csharp-format
