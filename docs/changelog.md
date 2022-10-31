@@ -15,6 +15,9 @@ Use past tense when adding new entries; sign your name off when you add or chang
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change. -->
 
 ## Upcoming changes
+* Your changes could and should be here!
+
+## TShock 5.0.0
 * Reduced load/save console spam. (@SignatureBeef, @YehnBeep)
 * Replaced SQLite library with Microsoft.Data.Sqlite for arm64 support. (@SignatureBeef)
 * Initial support for MonoMod hooks on Raspberry Pi (arm64). (@kevzhao2)
@@ -66,15 +69,51 @@ Use past tense when adding new entries; sign your name off when you add or chang
 * Added GeoIP.dat back to the included list of files. (@SignatureBeef)
 * Allow loadouts to properly sync by allowing the `SyncLoadout` packet during early connection. (@drunderscore)
 * Introduced support for loadouts, and saving the current loadout index to SSC. Both `NetItem` and `PlayerData` were modified to support this. (@drunderscore)
-* Check loadout slots for hacked item stacks. (@drunderscore)
-* Fix players being kicked after using the Flamethrower to apply the `OnFire3` debuff for `1200` ticks. (@BashGuy10)
-* Fix being kicked for using the new sponge types on liquid. (@BashGuy10)
+* Introduced checking of loadout slots for hacked item stacks. (@drunderscore)
+* Fixed players being kicked after using the Flamethrower to apply the `OnFire3` debuff for `1200` ticks. (@BashGuy10)
+* Fixed being kicked for using the new sponge types on liquid. (@BashGuy10)
 * Fixed SSC not saving `ateArtisanBread`, `usedAegisCrystal`, `usedAegisFruit`, `usedArcaneCrystal`, `usedGalaxyPearl`, `usedGummyWorm`, `usedAmbrosia`, `unlockedSuperCart`, and `enabledSuperCart` data flags. (@hufang360)
-* Allow flask buffs to be applied on town npc due to the Flymeal. Add a permission could skip the buff detection. (@KawaiiYuyu)
-* Dockerize TShock. (@PotatoCider)
-* Log the command itself without arguments if the command is not DoLog. (@sgkoishi, [#2779](https://github.com/Pryaxis/TShock/issues/2779))
-* Add ability for items given to players to be inserted directly into their inventory instead of spawned as an item drop. (@pontaoski)
+* Allowed flask buffs to be applied on town npc due to the Flymeal. Add a permission could skip the buff detection. (@KawaiiYuyu)
+* Dockerized TShock. (@PotatoCider)
+* Changed the log system to log the command itself without arguments if the command is not `DoLog`. (@sgkoishi, [#2779](https://github.com/Pryaxis/TShock/issues/2779))
+* Added ability for items given to players to be inserted directly into their inventory instead of spawned as an item drop. (@pontaoski)
 * Added support of `-lang` and `-language` flags for our i18n system. (@KawaiiYuyu)
+* Added support for Terraria 1.4.4.7 (OTAPI 3.1.16). (@drunderscore)
+* Added support for various languages, most notably Chinese (99% complete), Russian (57% complete), Indonesian (53% complete), and Spanish (21% complete). Thank you to the lovely contributors who were responsible for this [on Crowdin](https://crowdin.com/project/tshock):
+  * RidnRaven (ridwankun2)
+  * okaythisisepic
+  * xml3344 has stopped making trouble (1212122222)
+  * Axeel (AxeelAnder)
+  * SGKoishi
+  * Leader-txt (Leader_txt)
+  * Esteban Delgado (Kojirremer)
+  * Cai233
+  * Anzhelika (AnzhelikaO)
+  * VariolaX
+  * hufang 360 (hufang360)
+  * AgaSpace (Zoom L1) (agaspacel1)
+  * Killia0 (Killia)
+  * EMRE ÇELİK (emre0447)
+  * Marcus Persson (squidistaken)
+  * StarCloud-cy
+  * HDSeventh (hdseventh)
+  * JJJJGGGG12345
+  * xml3344
+  * Seele Vollerei (aaa1115910)
+  * 问心|MiaoVPS (WenXin_MiaoVPS)
+  * avlensa
+  * Sykhasamann (Syks)
+  * AndPlay
+  * TruffleToad
+  * kuaizhi
+  * Simone Caporale (caporalesimone)
+  * josefcorosado
+  * kuukiman
+  * Kronex (Kronex6)
+  * Jifeng
+  * Janet Blackquill (pontaoski)
+  * Yuiinar (Yuiinars)
+  * Muteduanxing
 
 ## TShock 4.5.18
 * Fixed `TSPlayer.GiveItem` not working if the player is in lava. (@PotatoCider)
