@@ -275,6 +275,10 @@ namespace TShockAPI.Configuration
 		[Description("Determines the range in tiles that a bomb can affect tiles from detonation point.")]
 		public int BombExplosionRadius = 5;
 
+		/// <summary>If set to true, items given to players will be inserted directly into their inventory. Requires SSC. Otherwise, items given to players will spawn as dropped items.</summary>
+		[Description("If set to true, items given to players will be inserted directly into their inventory. Requires SSC. Otherwise, items given to players will spawn as dropped items. Experimental feature. May not work correctly or result in item loss.")]
+		public bool GiveItemsDirectly = false;
+
 		#endregion
 
 

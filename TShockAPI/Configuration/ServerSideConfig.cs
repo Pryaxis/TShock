@@ -72,10 +72,6 @@ namespace TShockAPI.Configuration
 		/// </summary>
 		[Description("Warns players and the console if a player has the tshock.ignore.ssc permission with data in the SSC table.")]
 		public bool WarnPlayersAboutBypassPermission = true;
-
-		/// <summary>If set to true, items given to players will be inserted directly into their inventory. Requires SSC. Otherwise, items given to players will spawn as dropped items.</summary>
-		[Description("If set to true, items given to players will be inserted directly into their inventory. Requires SSC. Otherwise, items given to players will spawn as dropped items.")]
-		public bool GiveItemsDirectly = false;
 	}
 
 	/// <summary>

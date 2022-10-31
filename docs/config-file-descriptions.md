@@ -259,6 +259,11 @@ Forces Christmas-only events to occur all year.
 * **Field type**: `Boolean`
 * **Default**: `False`
 
+## GiveItemsDirectly  
+If set to true, items given to players will be inserted directly into their inventory. Requires SSC. Otherwise, items given to players will spawn as dropped items. Experimental feature. May not work correctly or result in item loss.
+* **Field type**: `Boolean`
+* **Default**: `False`
+
 ## HardcoreBanReason  
 The reason given when banning hardcore players on death.
 * **Field type**: `String`

@@ -1509,7 +1509,7 @@ namespace TShockAPI
 		/// <param name="prefix">The item prefix.</param>
 		public virtual void GiveItem(int type, int stack, int prefix = 0)
 		{
-			if (TShock.ServerSideCharacterConfig.Settings.GiveItemsDirectly)
+			if (TShock.Config.Settings.GiveItemsDirectly)
 				GiveItemDirectly(type, stack, prefix);
 			else
 				GiveItemByDrop(type, stack, prefix);

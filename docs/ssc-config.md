@@ -3,11 +3,6 @@ Enable server side characters, causing client data to be saved on the server ins
 * **Field type**: `Boolean`
 * **Default**: `False`
 
-## GiveItemsDirectly  
-If set to true, items given to players will be inserted directly into their inventory. Requires SSC. Otherwise, items given to players will spawn as dropped items.
-* **Field type**: `Boolean`
-* **Default**: `False`
-
 ## LogonDiscardThreshold  
 Time, in milliseconds, to disallow discarding items after logging in when ServerSideCharacters is ON.
 * **Field type**: `Int32`
@@ -26,7 +21,7 @@ The starting default health for new players when SSC is enabled.
 ## StartingInventory  
 The starting default inventory for new players when SSC is enabled.
 * **Field type**: `List`1`
-* **Default**: `System.Collections.Generic.List\`1[TShockAPI.NetItem]`
+* **Default**: `System.Collections.Generic.List`1[TShockAPI.NetItem]`
 
 ## StartingMana  
 The starting default mana for new players when SSC is enabled.
