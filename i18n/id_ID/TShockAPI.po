@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-28 23:11:07+0000\n"
-"PO-Revision-Date: 2022-10-31 06:33\n"
+"PO-Revision-Date: 2022-10-31 18:36\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "MIME-Version: 1.0\n"
@@ -3232,45 +3232,45 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:2599
 msgid "Invalid boss amount."
-msgstr "Jumlah bos tidak valid."
+msgstr "Jumlah bos salah."
 
 #: ../../TShockAPI/Commands.cs:2812
 msgid "Invalid boss type!"
-msgstr "Tipe bos tidak valid."
+msgstr "Tipe bos salah."
 
 #: ../../TShockAPI/Commands.cs:6458
 msgid "Invalid buff ID!"
-msgstr "ID buff tidak valid!"
+msgstr "ID buff salah!"
 
 #: ../../TShockAPI/Commands.cs:652
 #: ../../TShockAPI/Commands.cs:680
 #, csharp-format
 msgid "Invalid command entered. Type {0}help for a list of valid commands."
-msgstr "Perintah yang dimasukkan tidak valid. ketik {0} untuk daftar bantuan valid."
+msgstr "Perintah yang dimasukkan salah. ketik {0} untuk daftar perintah yang benar."
 
 #: ../../TShockAPI/Commands.cs:5266
 msgid "Invalid command."
-msgstr "Perintah tidak valid."
+msgstr "Perintah salah."
 
 #: ../../TShockAPI/Commands.cs:3122
 msgid "Invalid destination NPC."
-msgstr "NPC yang ditujukan tidak valid."
+msgstr "NPC tujuan salah."
 
 #: ../../TShockAPI/Commands.cs:2932
 #: ../../TShockAPI/Commands.cs:2963
 #: ../../TShockAPI/Commands.cs:3002
 #: ../../TShockAPI/Commands.cs:3075
 msgid "Invalid destination player."
-msgstr "Pemain yang ditujukan tidak valid."
+msgstr "Pemain tujuan salah."
 
 #: ../../TShockAPI/Commands.cs:2231
 #, csharp-format
 msgid "Invalid event type. Valid event types: {0}."
-msgstr "Tipe pertujukan tidak valid. tipe pertujukan yang valid: {0}."
+msgstr "Tipe pertujukan salah. tipe-tipe pertujukan yang benar: {0}."
 
 #: ../../TShockAPI/Commands.cs:2373
 msgid "Invalid frost moon event wave."
-msgstr "Gelombang pada pertunjukan bulan pembekukan tidak valid."
+msgstr "Gelombang pada pertunjukan bulan pembekuan salah."
 
 #: ../../TShockAPI/Commands.cs:3756
 #: ../../TShockAPI/Commands.cs:3859
@@ -3280,59 +3280,59 @@ msgstr "Gelombang pada pertunjukan bulan pembekukan tidak valid."
 #: ../../TShockAPI/Commands.cs:4225
 #: ../../TShockAPI/Commands.cs:4283
 msgid "Invalid group."
-msgstr "Grup tidak valid."
+msgstr "Grup salah."
 
 #: ../../TShockAPI/Commands.cs:2392
 #, csharp-format
 msgid "Invalid invasion type. Valid invasion types: {0}."
-msgstr "Tipe penyerbuan tidak valid. Tipe penyerbuan yang valid: {0}."
+msgstr "Tipe penyerbuan salah. Tipe penyerbuan yang benar: {0}."
 
 #: ../../TShockAPI/Commands.cs:6074
 #: ../../TShockAPI/Commands.cs:6223
 #: ../../TShockAPI/Commands.cs:6286
 msgid "Invalid item type!"
-msgstr "Tipe item tidak valid!"
+msgstr "Tipe item salah!"
 
 #: ../../TShockAPI/Commands.cs:3798
 #: ../../TShockAPI/Commands.cs:3849
 #: ../../TShockAPI/Commands.cs:3894
 #: ../../TShockAPI/Commands.cs:3920
 msgid "Invalid item."
-msgstr "Item tidak valid."
+msgstr "Item salah."
 
 #: ../../TShockAPI/Commands.cs:4446
 #, csharp-format
 msgid "Invalid maximum spawns.  Acceptable range is {0} to {1}."
-msgstr "Maksimal pemanggilan tidak valid. Rentang yang dapat diterima ialah {0} sampai {1}."
+msgstr "Maksimal pemanggilan salah. Rentang yang dapat diterima ialah {0} sampai {1}."
 
 #: ../../TShockAPI/Commands.cs:2851
 #: ../../TShockAPI/Commands.cs:6157
 msgid "Invalid mob type!"
-msgstr "Tipe mob tidak valid!"
+msgstr "Tipe mob salah!"
 
 #: ../../TShockAPI/Commands.cs:2835
 #: ../../TShockAPI/Commands.cs:2891
 msgid "Invalid mob type."
-msgstr "Tipe mob tidak valid."
+msgstr "Tipe mob salah."
 
 #: ../../TShockAPI/Commands.cs:2560
 #, csharp-format
 msgid "Invalid mode world mode. Valid modes: {0}"
-msgstr "Mode mode dunia tidak valid, Mode yang valid: {0}"
+msgstr "Mode mode dunia salah, Mode yang benar: {0}"
 
 #: ../../TShockAPI/Commands.cs:1412
 msgid "Invalid page number. Page number must be numeric."
-msgstr "Angka halaman tidak valid. Angka halaman harus numerik."
+msgstr "Angka halaman salah. Angka halaman harus numerik."
 
 #: ../../TShockAPI/DB/GroupManager.cs:309
 #, csharp-format
 msgid "Invalid parent group {0} for group {1}"
-msgstr "Grup induk {0} untuk grup {1} tidak valid"
+msgstr "Grup induk {0} untuk grup {1} salah"
 
 #: ../../TShockAPI/DB/GroupManager.cs:347
 #, csharp-format
 msgid "Invalid parent group {0} for group {1}."
-msgstr "Grup induk {0} untuk grup {1} tidak valid."
+msgstr "Grup induk {0} untuk grup {1} salah."
 
 #: ../../TShockAPI/Commands.cs:919
 msgid "Invalid password."
@@ -3359,7 +3359,7 @@ msgstr "ID Proyektil salah."
 
 #: ../../TShockAPI/Commands.cs:2355
 msgid "Invalid pumpkin moon event wave."
-msgstr "Gelombang pada pertunjukan bulan labu tidak valid."
+msgstr "Gelombang pada pertunjukan bulan labu salah."
 
 #: ../../TShockAPI/Commands.cs:5118
 #, csharp-format
@@ -3377,22 +3377,22 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:3773
 #, csharp-format
 msgid "Invalid subcommand! Type {0}group help for more information on valid commands."
-msgstr "Sub-perintah salah! ketik {0}group untuk bantuan petunjuk pada perintah yang benar."
+msgstr "Sub-perintah salah! ketik {0}group untuk petunjuk bantuan pada perintah yang benar."
 
 #: ../../TShockAPI/Commands.cs:4000
 #, csharp-format
 msgid "Invalid subcommand. Type {0}itemban help for more information on valid subcommands."
-msgstr "Sub-perintah salah! ketik {0}itemban untuk bantuan petunjuk pada perintah yang benar."
+msgstr "Sub-perintah salah! ketik {0}itemban untuk petunjuk bantuan pada perintah yang benar."
 
 #: ../../TShockAPI/Commands.cs:4178
 #, csharp-format
 msgid "Invalid subcommand. Type {0}projban help for more information on valid subcommands."
-msgstr "Sub-perintah salah! ketik {0}projban untuk bantuan petunjuk pada perintah yang benar."
+msgstr "Sub-perintah salah! ketik {0}projban untuk petunjuk bantuan pada perintah yang benar."
 
 #: ../../TShockAPI/Commands.cs:4354
 #, csharp-format
 msgid "Invalid subcommand. Type {0}tileban help for more information on valid subcommands."
-msgstr "Sub-perintah salah! ketik {0}tileban untuk bantuan petunjuk pada perintah yang benar."
+msgstr "Sub-perintah salah! ketik {0}tileban untuk petunjuk bantuan pada perintah yang benar."
 
 #: ../../TShockAPI/Commands.cs:3632
 msgid "Invalid syntax for color, expected \"rrr,ggg,bbb\"."
@@ -3416,7 +3416,7 @@ msgstr "Sintaks salah. Sintak yang sesuai: {0}accountinfo <nama-pengguna>."
 #: ../../TShockAPI/Commands.cs:5745
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}aliases <command or alias>"
-msgstr "Sintaks salah. Sintaks yang sesuai: {0}aliases <perintah atau samaran>"
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}aliases <perintah atau nama lain>"
 
 #: ../../TShockAPI/Commands.cs:3360
 #, csharp-format
@@ -3436,7 +3436,7 @@ msgstr "Sintaks salah. Sintaks yang sesuai: {0}group color <nama grup> [warna ba
 #: ../../TShockAPI/Commands.cs:3670
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}group del <group name>."
-msgstr "Sintaks salah. Sintaks yang sesuai {0}group del <nama grup>."
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}group del <nama grup>."
 
 #: ../../TShockAPI/Commands.cs:3694
 #, csharp-format
@@ -3456,377 +3456,377 @@ msgstr "Sintaks salah. Sintaks yang sesuai: {0}group parent <nama grup> [nama in
 #: ../../TShockAPI/Commands.cs:3552
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}group prefix <group name> [new prefix]."
-msgstr "Sintaks salah. Sintaks yang benar: {0}group prefix <nama grup> [prefiks baru]."
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}group prefix <nama grup> [prefiks baru]."
 
 #: ../../TShockAPI/Commands.cs:3647
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}group rename <group> <new name>."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}group rename <nama grup> <nama baru>."
 
 #: ../../TShockAPI/Commands.cs:3507
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}group suffix <group name> [new suffix]."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}group suffix <nama grup> [sufiks baru]."
 
 #: ../../TShockAPI/Commands.cs:5232
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}help <command/page>"
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}help <perintah/halaman>"
 
 #: ../../TShockAPI/Commands.cs:6049
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}item <item name/id> [item amount] [prefix id/name]"
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}item <nama/id item> [jumlah item] [id/nama prefiks]"
 
 #: ../../TShockAPI/Commands.cs:3791
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}itemban add <item name>."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}itemban add <nama item>."
 
 #: ../../TShockAPI/Commands.cs:3842
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}itemban allow <item name> <group name>."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}itemban allow <nama item> <nama grup>."
 
 #: ../../TShockAPI/Commands.cs:3887
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}itemban del <item name>."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}itemban del <nama item>."
 
 #: ../../TShockAPI/Commands.cs:3913
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}itemban disallow <item name> <group name>."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}itemban disallow <nama item> <nama grup>."
 
 #: ../../TShockAPI/Commands.cs:1302
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}kick <player> [reason]."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}kick <pemain> [alasan]."
 
 #: ../../TShockAPI/Commands.cs:5415
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}me <text>"
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}me <teks>"
 
 #: ../../TShockAPI/Commands.cs:5428
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}p <team chat text>"
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}p <teks obrolan tim>"
 
 #: ../../TShockAPI/Commands.cs:4021
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}projban add <proj id>"
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}projban add <id proyektil>"
 
 #: ../../TShockAPI/Commands.cs:4040
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}projban allow <id> <group>."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}projban allow <id> <grup>"
 
 #: ../../TShockAPI/Commands.cs:4077
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}projban del <id>."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}projban del <id>."
 
 #: ../../TShockAPI/Commands.cs:4098
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}projban disallow <id> <group name>."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}projban disallow <id> <nama grup>."
 
 #: ../../TShockAPI/Commands.cs:4787
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}region allow <name> <region>."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}region allow <nama> <wilayah>"
 
 #: ../../TShockAPI/Commands.cs:4857
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}region allowg <group> <region>."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}region allowg <grup> <wilayah>."
 
 #: ../../TShockAPI/Commands.cs:4701
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}region define <name>."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}region define <nama>."
 
 #: ../../TShockAPI/Commands.cs:4743
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}region delete <name>."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}region delete <nama>."
 
 #: ../../TShockAPI/Commands.cs:4916
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}region info <region> [-d] [page]."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}region info <wilayah> [-d] [halaman]."
 
 #: ../../TShockAPI/Commands.cs:4724
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}region protect <name> <true/false>."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}region protect <nama> <true/false>."
 
 #: ../../TShockAPI/Commands.cs:4822
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}region remove <name> <region>."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}region remove <nama> <wilayah>."
 
 #: ../../TShockAPI/Commands.cs:4892
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}region removeg <group> <region>."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}region removeg <grup> <wilayah>."
 
 #: ../../TShockAPI/Commands.cs:5100
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}region rename <region> <new name>"
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}region rename <wilyah> <nama wilayah>."
 
 #: ../../TShockAPI/Commands.cs:5090
 #: ../../TShockAPI/Commands.cs:5093
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}region resize <region> <u/d/l/r> <amount>"
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}region resize <wilayah> <u/d/l/r> <jumlah>."
 
 #: ../../TShockAPI/Commands.cs:5150
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}region tp <region>."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}region tp <wilayah>."
 
 #: ../../TShockAPI/Commands.cs:5038
 #: ../../TShockAPI/Commands.cs:5041
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}region z <name> <#>"
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}region z <nama> <#>"
 
 #: ../../TShockAPI/Commands.cs:1028
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}register <password>."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}register <kata-sandi>."
 
 #: ../../TShockAPI/Commands.cs:6148
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}renameNPC <guide, nurse, etc.> <newname>"
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}renameNPC <guide, nurse, dll.> <nama baru>"
 
 #: ../../TShockAPI/Commands.cs:4393
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}serverpassword \"<new password>\"."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}serverpassword \"<kata sandi baru>\"."
 
 #: ../../TShockAPI/Commands.cs:4574
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}slap <player> [damage]."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}slap <pemain> [kerusakan]."
 
 #: ../../TShockAPI/Commands.cs:2592
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}spawnboss <boss type> [amount]."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}spawnboss <tipe bos> [jumlah]."
 
 #: ../../TShockAPI/Commands.cs:2830
 #: ../../TShockAPI/Commands.cs:2842
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}spawnmob <mob type> [amount]."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}spawnmob <tipe mob> [jumlah]."
 
 #: ../../TShockAPI/Commands.cs:4197
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}tileban add <tile id>."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}tileban add <id tile>."
 
 #: ../../TShockAPI/Commands.cs:4216
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}tileban allow <id> <group>."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}tileban allow <id> <grup>."
 
 #: ../../TShockAPI/Commands.cs:4253
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}tileban del <id>."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}tileban del <id>."
 
 #: ../../TShockAPI/Commands.cs:4274
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}tileban disallow <id> <group name>."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}tileban disallow <id> <nama grup>."
 
 #: ../../TShockAPI/Commands.cs:2922
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}tp <player> [player 2]."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}tp <pemain> [pemain 2]."
 
 #: ../../TShockAPI/Commands.cs:2924
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}tp <player>."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}tp <pemain>."
 
 #: ../../TShockAPI/Commands.cs:3049
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}tphere <player>."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}tphere <pemain>."
 
 #: ../../TShockAPI/Commands.cs:3047
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}tphere <player|*>."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}tphere <pemain|*>."
 
 #: ../../TShockAPI/Commands.cs:3094
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}tpnpc <NPC>."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}tpnpc <NPC>."
 
 #: ../../TShockAPI/Commands.cs:3158
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}tppos <tile x> <tile y>."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}tppos <tile x> <tile y>."
 
 #: ../../TShockAPI/Commands.cs:1240
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}userinfo <player>."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}userinfo <pemain>."
 
 #: ../../TShockAPI/Commands.cs:3193
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}warp [command] [arguments]."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}warp [perintah] [argumen-argumen]."
 
 #: ../../TShockAPI/Commands.cs:3202
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}warp [name] or {0}warp list <page>."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}warp [nama] atau {0}warp list <halaman>."
 
 #: ../../TShockAPI/Commands.cs:3245
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}warp add [name]."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}warp add [nama]."
 
 #: ../../TShockAPI/Commands.cs:3262
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}warp del [name]."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}warp del [nama]."
 
 #: ../../TShockAPI/Commands.cs:3285
 #: ../../TShockAPI/Commands.cs:3288
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}warp hide [name] <true/false>."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}warp hide [nama] <true/false>."
 
 #: ../../TShockAPI/Commands.cs:3296
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}warp send [player] [warpname]."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}warp send [pemain] [warp nama]."
 
 #: ../../TShockAPI/Commands.cs:4616
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}wind <speed>."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}wind <kecepatan>."
 
 #: ../../TShockAPI/Commands.cs:2137
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}worldevent <event type>."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}worldevent <tipe pertunjukan>."
 
 #: ../../TShockAPI/Commands.cs:2539
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}worldmode <mode>."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: {0}worldmode <mode>."
 
 #: ../../TShockAPI/Commands.cs:4727
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: /region protect <name> <true/false>."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: /region protect <nama> <true/false>."
 
 #: ../../TShockAPI/Commands.cs:4667
 msgid "Invalid syntax. Proper syntax: /region set <1/2>."
-msgstr ""
+msgstr "Sintaks salah. Sintaks yang sesuai: /region set <1/2>."
 
 #: ../../TShockAPI/Commands.cs:3142
 #: ../../TShockAPI/Commands.cs:3303
 #: ../../TShockAPI/Commands.cs:4580
 #: ../../TShockAPI/Commands.cs:4588
 msgid "Invalid target player."
-msgstr ""
+msgstr "Pemain target salah."
 
 #: ../../TShockAPI/Commands.cs:1618
 #: ../../TShockAPI/Commands.cs:1677
 #, csharp-format
 msgid "Invalid Ticket Number. Refer to {0} for details on how to use the {1} command"
-msgstr ""
+msgstr "Nomor Karcis salah. lihat {0} untuk cara penggunaan perintah {1} yang jelas"
 
 #: ../../TShockAPI/Commands.cs:4207
 #: ../../TShockAPI/Commands.cs:4244
 #: ../../TShockAPI/Commands.cs:4265
 #: ../../TShockAPI/Commands.cs:4303
 msgid "Invalid tile ID."
-msgstr ""
+msgstr "ID tile salah."
 
 #: ../../TShockAPI/Commands.cs:1934
 msgid "Invalid time string! Proper format: _d_h_m_s, with at least one time specifier."
-msgstr ""
+msgstr "Deretan waktu salah! bentuk yang sesuai: _d_h_m_s, setidaknya 1 penunjuk waktu."
 
 #: ../../TShockAPI/Commands.cs:4539
 #: ../../TShockAPI/Commands.cs:4548
 msgid "Invalid time string. Proper format: hh:mm, in 24-hour time."
-msgstr ""
+msgstr "Deretan waktu salah. bentuk yang sesuai: hh:mm dalam bentuk waktu 24 jam."
 
 #: ../../TShockAPI/Rest/RestManager.cs:1326
 #, csharp-format
 msgid "Invalid Type: '{0}'"
-msgstr ""
+msgstr "Tipe salah: '{0}'"
 
 #: ../../TShockAPI/Commands.cs:1070
 #: ../../TShockAPI/Commands.cs:1203
 #, csharp-format
 msgid "Invalid user syntax. Try {0}user help."
-msgstr ""
+msgstr "Sintaks pengguna salah. Coba {0}user help"
 
 #: ../../TShockAPI/Commands.cs:3233
 msgid "Invalid warp name. The names 'list', 'hide', 'del' and 'add' are reserved for commands."
-msgstr ""
+msgstr "Nama warp salah. nama-namanya 'list', 'hide', 'del' dan 'add' dicadangkan sebagai perintah-perintah."
 
 #: ../../TShockAPI/Commands.cs:4623
 msgid "Invalid wind speed."
-msgstr ""
+msgstr "Kecepatan angin salah."
 
 #: ../../TShockAPI/Commands.cs:2550
 #, csharp-format
 msgid "Invalid world mode. Valid world modes: {0}"
-msgstr ""
+msgstr "Mode dunia salah. Mode dunia yang benar: {0}"
 
 #: ../../TShockAPI/Commands.cs:1251
 #, csharp-format
 msgid "IP Address: {0}."
-msgstr ""
+msgstr "Alamat IP: {0}."
 
 #: ../../TShockAPI/Commands.cs:3972
 msgid "Item Ban Sub-Commands ({{0}}/{{1}}):"
-msgstr ""
+msgstr "Sub-Perintah Item Ban {{0}}/{{1}}:"
 
 #: ../../TShockAPI/Commands.cs:3990
 msgid "Item bans ({{0}}/{{1}}):"
-msgstr ""
+msgstr "Item yang diblokir ({{0}}/{{1}}):"
 
 #: ../../TShockAPI/TSPlayer.cs:1811
 #, csharp-format
 msgid "Kicked {0} for : '{1}'"
-msgstr ""
+msgstr "Dikeluarkan {0} karena : '{1}'"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1049
 msgid "Kicked via web"
-msgstr ""
+msgstr "Dikeluarkan melalui web"
 
 #: ../../TShockAPI/TSPlayer.cs:1810
 #, csharp-format
 msgid "Kicked: {0}"
-msgstr ""
+msgstr "Dikeluarkan: {0}"
 
 #: ../../TShockAPI/Commands.cs:5908
 msgid "Kill syntax and example"
-msgstr ""
+msgstr "Sintaks Bunuh dan contohnya"
 
 #: ../../TShockAPI/Commands.cs:553
 msgid "Kills another player."
-msgstr ""
+msgstr "Bunuh pemain lainnya."
 
 #: ../../TShockAPI/Commands.cs:393
 msgid "Kills hostile NPCs or NPCs of a certain type."
-msgstr ""
+msgstr "Membunuh NPC-NPC yang berseteru atau NPC-NPC dari tipe tertentu."
 
 #: ../../TShockAPI/Handlers/LandGolfBallInCupHandler.cs:114
 #, csharp-format
@@ -3855,146 +3855,146 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:2484
 msgid "Lanterns are now down."
-msgstr ""
+msgstr "Sekarang berturunnya Lentera-lentera."
 
 #: ../../TShockAPI/Commands.cs:2480
 msgid "Lanterns are now up."
-msgstr ""
+msgstr "Sekarang naiknya Lentera-lentera."
 
 #: ../../TShockAPI/Commands.cs:4414
 msgid "Liquids are already settling."
-msgstr ""
+msgstr "Cairan-cairan sudah mengendap."
 
 #: ../../TShockAPI/Commands.cs:5182
 msgid "list - Lists all regions."
-msgstr ""
+msgstr "list - daftar semua wilayah-wilayah."
 
 #: ../../TShockAPI/Commands.cs:3966
 msgid "list [page] - Lists all item bans."
-msgstr ""
+msgstr "list [halaman] - daftar semua item yang diblokir."
 
 #: ../../TShockAPI/Commands.cs:4144
 msgid "list [page] - Lists all projectile bans."
-msgstr ""
+msgstr "list [halaman] - daftar semua proyektil yang diblokir."
 
 #: ../../TShockAPI/Commands.cs:4320
 msgid "list [page] - Lists all tile bans."
-msgstr ""
+msgstr "list [halaman] - daftar semua tile yang diblokir."
 
 #: ../../TShockAPI/Commands.cs:3435
 msgid "list [page] - Lists groups."
-msgstr ""
+msgstr "list [halaman] - daftar semua grup."
 
 #: ../../TShockAPI/Commands.cs:5318
 msgid "List Online Players Syntax"
-msgstr ""
+msgstr "Daftar Sintaks Pemain-Pemain Daring"
 
 #: ../../TShockAPI/TShock.cs:813
 #, csharp-format
 msgid "Listening on IP {0}."
-msgstr ""
+msgstr "IP {0} didengarkan."
 
 #: ../../TShockAPI/TShock.cs:794
 #, csharp-format
 msgid "Listening on port {0}."
-msgstr ""
+msgstr "Port {0} didengarkan."
 
 #: ../../TShockAPI/Commands.cs:3436
 msgid "listperm <group> [page] - Lists a group's permissions."
-msgstr ""
+msgstr "listperm <grup> [halaman] - daftar perizinan sebuah grup."
 
 #: ../../TShockAPI/Commands.cs:613
 msgid "Lists commands or gives help on them."
-msgstr ""
+msgstr "Daftar-daftar Perintah atau memberikan bantuan pada mereka."
 
 #: ../../TShockAPI/Commands.cs:2101
 msgid "listusers - Lists all REST users and their current active tokens."
-msgstr ""
+msgstr "listusers - semua daftar-daftar para pengguna REST dan token-token milik mereka saat ini."
 
 #: ../../TShockAPI/TShock.cs:783
 #, csharp-format
 msgid "Loading dedicated config file: {0}"
-msgstr ""
+msgstr "Memuat berkas konfigurasi khusus: {0}"
 
 #: ../../TShockAPI/Commands.cs:3150
 #, csharp-format
 msgid "Location of {0} is ({1}, {2})."
-msgstr ""
+msgstr "Lokasi dari {0} yaitu ( {1},{2})."
 
 #: ../../TShockAPI/Commands.cs:1741
 msgid "Log display disabled."
-msgstr ""
+msgstr "Tampilan catatan yang dinonaktifkan."
 
 #: ../../TShockAPI/Commands.cs:1737
 msgid "Log display enabled."
-msgstr ""
+msgstr "Tampilan catatan yang diaktifkan."
 
 #: ../../TShockAPI/Commands.cs:865
 msgid "Login attempt failed - see the message above."
-msgstr ""
+msgstr "Gagal upaya masuk - lihat pesan di atas."
 
 #: ../../TShockAPI/Commands.cs:240
 msgid "Logs you into an account."
-msgstr ""
+msgstr "Catatan-catatan anda dalam akun."
 
 #: ../../TShockAPI/Commands.cs:246
 msgid "Logs you out of your current account."
-msgstr ""
+msgstr "Catatan-catatan anda diluar dari akun anda saat ini."
 
 #: ../../TShockAPI/Commands.cs:1218
 #, csharp-format
 msgid "Machine name: {0}"
-msgstr ""
+msgstr "Nama mesin: {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2451
 msgid "Malicious portal attempt."
-msgstr ""
+msgstr "Upaya pintu gerbang yang berbahaya."
 
 #: ../../TShockAPI/Commands.cs:280
 msgid "Manages groups."
-msgstr ""
+msgstr "Pengelolaan grup-grup."
 
 #: ../../TShockAPI/Commands.cs:284
 msgid "Manages item bans."
-msgstr ""
+msgstr "Pengelolaan item yang diblokir."
 
 #: ../../TShockAPI/Commands.cs:268
 msgid "Manages player bans."
-msgstr ""
+msgstr "Pengelolaan pemain yang diblokir."
 
 #: ../../TShockAPI/Commands.cs:288
 msgid "Manages projectile bans."
-msgstr ""
+msgstr "Pengelolaan proyektil yang diblokir."
 
 #: ../../TShockAPI/Commands.cs:296
 msgid "Manages regions."
-msgstr ""
+msgstr "Pengeloaan wilayah-wilayah."
 
 #: ../../TShockAPI/Commands.cs:570
 msgid "Manages the REST API."
-msgstr ""
+msgstr "Pengelolaan REST API."
 
 #: ../../TShockAPI/Commands.cs:376
 msgid "Manages the server whitelist."
-msgstr ""
+msgstr "Pengelolaan daftar putih peladen."
 
 #: ../../TShockAPI/Commands.cs:292
 msgid "Manages tile bans."
-msgstr ""
+msgstr "Pengelolaan tile yang diblokir."
 
 #: ../../TShockAPI/Commands.cs:232
 msgid "Manages user accounts."
-msgstr ""
+msgstr "Pengelolaan akun-akun pengguna."
 
 #: ../../TShockAPI/Commands.cs:4712
 #, csharp-format
 msgid "Marked region {0} as protected."
-msgstr ""
+msgstr "Wilayah telah ditandai {0} sebagai terlindung."
 
 #: ../../TShockAPI/Commands.cs:4719
 #, csharp-format
 msgid "Marked region {0} as unprotected."
-msgstr ""
+msgstr "Wilayah telah ditandai {0} sebagai tidak terlindung."
 
 #: ../../TShockAPI/Commands.cs:1213
 #, csharp-format
@@ -4004,33 +4004,33 @@ msgstr "Penggunaan memori: {0}"
 #: ../../TShockAPI/SqlLog.cs:39
 #, csharp-format
 msgid "Message: {0}: {1}: {2}"
-msgstr ""
+msgstr "Pesan: {0}: {1}: {2}"
 
 #: ../../TShockAPI/Rest/RestManager.cs:874
 msgid "Meteor has been spawned"
-msgstr ""
+msgstr "Meteor telah dipanggil."
 
 #: ../../TShockAPI/Commands.cs:1325
 msgid "Misbehaviour."
-msgstr ""
+msgstr "Berkelakuan buruk."
 
 #: ../../TShockAPI/Commands.cs:6205
 msgid "Missing item name/id."
-msgstr ""
+msgstr "Nama/id item tidak ada."
 
 #: ../../TShockAPI/Rest/RestManager.cs:1268
 #, csharp-format
 msgid "Missing or empty {0} parameter"
-msgstr ""
+msgstr "Parameter {0} tidak ada atau kosong"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1278
 #, csharp-format
 msgid "Missing or invalid {0} parameter"
-msgstr ""
+msgstr "Parameter {0} tidak ada atau salah"
 
 #: ../../TShockAPI/Commands.cs:6210
 msgid "Missing player name."
-msgstr ""
+msgstr "Nama pemain tidak ada."
 
 #: ../../TShockAPI/Commands.cs:1228
 #, csharp-format
@@ -4039,37 +4039,37 @@ msgstr "Mode: {0}"
 
 #: ../../TShockAPI/TSPlayer.cs:1857
 msgid "More than one match found -- unable to decide which is correct: "
-msgstr ""
+msgstr "Kecocokan ditemukan lebih dari satu - tidak dapat memutuskan mana yang benar: "
 
 #: ../../TShockAPI/Commands.cs:2758
 msgid "Mourning Wood"
-msgstr ""
+msgstr "Mourning Wood"
 
 #: ../../TShockAPI/Net/BaseMsg.cs:29
 msgid "Msg ID not implemented"
-msgstr ""
+msgstr "ID pesan tidak diterapkan"
 
 #: ../../TShockAPI/DB/UserManager.cs:294
 #, csharp-format
 msgid "Multiple user accounts found for {0} '{1}'"
-msgstr ""
+msgstr "Beberapa para pengguna akun ditemukan selama {0} '{1}'"
 
 #: ../../TShockAPI/Commands.cs:5452
 msgid "Mute Syntax"
-msgstr ""
+msgstr "Sintaks Pembisuan"
 
 #: ../../TShockAPI/Commands.cs:1284
 msgid "N/A"
-msgstr ""
+msgstr "Kosong"
 
 #: ../../TShockAPI/Commands.cs:5180
 msgid "name [-u][-z][-p] - Shows the name of the region at the given point."
-msgstr ""
+msgstr "nama [-u][-z][-p] - Menunjukkan nama dari wilayah pada titik tertentu."
 
 #: ../../TShockAPI/Commands.cs:1224
 #, csharp-format
 msgid "Name: {0}"
-msgstr ""
+msgstr "Nama: {0}"
 
 #: ../../TShockAPI/Handlers/NetModules/CreativeUnlocksHandler.cs:55
 #, csharp-format
@@ -4078,52 +4078,52 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:1465
 msgid "Never."
-msgstr ""
+msgstr "Tidak pernah."
 
 #: ../../TShockAPI/Commands.cs:6167
 msgid "New name is too large!"
-msgstr ""
+msgstr "Nama baru tersebut terlalu panjang!"
 
 #: ../../TShockAPI/TShock.cs:849
 #, csharp-format
 msgid "New worlds will be generated with the {0} world evil type!"
-msgstr ""
+msgstr "Dunia baru akan dibuat ulang dengan tipe seram {0}!"
 
 #: ../../TShockAPI/Commands.cs:1685
 msgid "No bans found matching the provided ticket number."
-msgstr ""
+msgstr "Dengan nomor karcis yang disedia tidak ditemukannya kecocokan pemblokiran."
 
 #: ../../TShockAPI/Commands.cs:5775
 #, csharp-format
 msgid "No command or command alias matching \"{0}\" found."
-msgstr ""
+msgstr "Bukan perintah atau alias perintah yang cocok dengan \"{0}\" ditemukan."
 
 #: ../../TShockAPI/Commands.cs:145
 msgid "No help available."
-msgstr ""
+msgstr "Bantuan tidak tersedia."
 
 #: ../../TShockAPI/Rest/RestManager.cs:721
 msgid "No matching bans found."
-msgstr ""
+msgstr "Tidak ditemukan pemblokiran."
 
 #: ../../TShockAPI/Commands.cs:1820
 #, csharp-format
 msgid "No player was found matching '{0}'."
-msgstr ""
+msgstr "Tidak ditemukan kecocokan pemain '{0}'."
 
 #: ../../TShockAPI/Commands.cs:1777
 #, csharp-format
 msgid "No players matched \"{0}\"."
-msgstr ""
+msgstr "Tidak ada pemain yang cocok dengan \"{0}\"."
 
 #: ../../TShockAPI/Commands.cs:6114
 #, csharp-format
 msgid "No prefix matched \"{0}\"."
-msgstr ""
+msgstr "Tidak ada prefiks yang cocok dengan {0}\"."
 
 #: ../../TShockAPI/Commands.cs:5483
 msgid "No reason specified."
-msgstr ""
+msgstr "Tidak ada alasan terperinci."
 
 #: ../../TShockAPI/Commands.cs:3465
 #: ../../TShockAPI/Commands.cs:3474
@@ -4132,11 +4132,11 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:3605
 #, csharp-format
 msgid "No such group \"{0}\"."
-msgstr ""
+msgstr "Tidak ada grup seperti \"{0}\"."
 
 #: ../../TShockAPI/DB/IQueryBuilder.cs:345
 msgid "No values supplied"
-msgstr ""
+msgstr "Tidak ada nilai yang diberikan"
 
 #: ../../TShockAPI/Rest/SecureRest.cs:194
 msgid "Not authorized. The provided token became invalid due to group changes, please create a new token."
@@ -4170,7 +4170,7 @@ msgstr ""
 #: ../../TShockAPI/Bouncer.cs:1369
 #, csharp-format
 msgid "NPC damage exceeded {0}."
-msgstr ""
+msgstr "Kerusakan NPC terlampaui {0}."
 
 #: ../../TShockAPI/DB/RegionManager.cs:102
 #, csharp-format
@@ -4180,7 +4180,7 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:5335
 #, csharp-format
 msgid "Online Players ({0}/{1})"
-msgstr "Pemain Online ({0}/{1})"
+msgstr "Pemain Daring ({0}/{1})"
 
 #: ../../TShockAPI/Commands.cs:1216
 #, csharp-format
@@ -4193,26 +4193,26 @@ msgstr ""
 
 #: ../../TShockAPI/PaginationTools.cs:105
 msgid "Page {{0}} of {{1}}"
-msgstr ""
+msgstr "Halaman {{0}} dari {{1}} halaman"
 
 #: ../../TShockAPI/Commands.cs:3437
 msgid "parent <group> <parent group> - Changes a group's parent group."
-msgstr ""
+msgstr "parent <grup> <induk grup> - Merubah grup induk suatu grup."
 
 #: ../../TShockAPI/Commands.cs:3495
 #, csharp-format
 msgid "Parent of \"{0}\" is \"{1}\"."
-msgstr ""
+msgstr "Induk dari \"{0}\" ialah \"{1}\"."
 
 #: ../../TShockAPI/Commands.cs:3483
 #, csharp-format
 msgid "Parent of group \"{0}\" set to \"{1}\"."
-msgstr ""
+msgstr "Grup induk \"{0}\" dijadikan ke \"{1}\"."
 
 #: ../../TShockAPI/DB/GroupManager.cs:356
 #, csharp-format
 msgid "Parenting group {0} to {1} would cause loops in the parent chain."
-msgstr ""
+msgstr "Grup perindukan {0} hingga {1} akan menyebabkan loop dalam rantai induk."
 
 #: ../../TShockAPI/Commands.cs:1154
 #, csharp-format
@@ -4222,13 +4222,13 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:1146
 #, csharp-format
 msgid "Password change succeeded for {0}."
-msgstr ""
+msgstr "Perubahan kata sandi berhasil untuk {0}."
 
 #: ../../TShockAPI/DB/UserManager.cs:492
 #: ../../TShockAPI/DB/UserManager.cs:513
 #, csharp-format
 msgid "Password must be at least {0} characters."
-msgstr ""
+msgstr "Kata sandi minimal {0} karakter."
 
 #: ../../TShockAPI/Commands.cs:971
 #: ../../TShockAPI/Commands.cs:1008
@@ -4237,7 +4237,7 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:1159
 #, csharp-format
 msgid "Password must be greater than or equal to {0} characters."
-msgstr ""
+msgstr "Kata sandi harus lebih besar dari atau sama dengan {0} karakter."
 
 #: ../../TShockAPI/Commands.cs:988
 #, csharp-format
@@ -4247,41 +4247,41 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:1229
 #, csharp-format
 msgid "Path: {0}"
-msgstr ""
+msgstr "Jalur: {0}"
 
 #: ../../TShockAPI/Commands.cs:6610
 msgid "Pearlwood Tree"
-msgstr ""
+msgstr "Pearlwood Tree"
 
 #: ../../TShockAPI/Commands.cs:3765
 #, csharp-format
 msgid "Permissions for {0} ({{0}}/{{1}}):"
-msgstr ""
+msgstr "Perizinan kepada {0} ({{0}}/{{1}}):"
 
 #: ../../TShockAPI/Commands.cs:2671
 msgid "Plantera"
-msgstr ""
+msgstr "Plantera"
 
 #: ../../TShockAPI/Commands.cs:1794
 #, csharp-format
 msgid "Player \"{0}\" has to perform a /login attempt first."
-msgstr ""
+msgstr "Pemain \"{0}\" harus melakukan upaya /login terlebih dahulu."
 
 #: ../../TShockAPI/Commands.cs:1799
 #, csharp-format
 msgid "Player \"{0}\" has to reconnect first, because they need to delete their trash."
-msgstr ""
+msgstr "Pemain \"{0}\" harus menghubungkan ulang terlebih dahulu, karena sampah mereka perlu dihapus."
 
 #: ../../TShockAPI/Commands.cs:1789
 #, csharp-format
 msgid "Player \"{0}\" is already logged in."
-msgstr ""
+msgstr "Pemain \"{0}\" sudah masuk."
 
 #: ../../TShockAPI/TSPlayer.cs:1774
 #: ../../TShockAPI/TSPlayer.cs:1778
 #, csharp-format
 msgid "Player {0} has been disabled for {1}."
-msgstr ""
+msgstr "Pemain {0} telah dinonaktifkan dalam {1}."
 
 #: ../../TShockAPI/Rest/RestManager.cs:1388
 #, csharp-format
@@ -4291,13 +4291,13 @@ msgstr "Pemain {0} telah dibisukan"
 #: ../../TShockAPI/Rest/RestManager.cs:1393
 #, csharp-format
 msgid "Player {0} has been unmuted"
-msgstr ""
+msgstr "Pemain {0} sudah tidak dibisukan."
 
 #: ../../TShockAPI/Rest/RestManager.cs:1301
 #, csharp-format
 msgid "Player {0} matches {1} player"
 msgid_plural "Player {0} matches {1} players"
-msgstr[0] ""
+msgstr[0] "Player {0} sejajar dengan {1} pemain."
 
 #: ../../TShockAPI/Commands.cs:4783
 #: ../../TShockAPI/Commands.cs:4818
@@ -4308,12 +4308,12 @@ msgstr "Pemain {0} tidak ditemukan."
 #: ../../TShockAPI/Bouncer.cs:1123
 #, csharp-format
 msgid "Player {0} tried to sneak {1} onto the server!"
-msgstr ""
+msgstr "Pemain {0} telah mencoba menyelinapkan {1} kedalam peladen!"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1069
 #, csharp-format
 msgid "Player {0} was killed"
-msgstr "Pemain {0} telah diterbunuh"
+msgstr "Pemain {0} telah terbunuh"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1299
 #, csharp-format
@@ -4324,121 +4324,121 @@ msgstr "Player {0} tidak ditemukan"
 #: ../../TShockAPI/Bouncer.cs:2591
 #, csharp-format
 msgid "Player damage exceeded {0}."
-msgstr ""
+msgstr "Melampaui kerusakan pemain {0}."
 
 #: ../../TShockAPI/Commands.cs:6280
 msgid "Player does not have free slots!"
-msgstr ""
+msgstr "Pemain tidak dapat mempunyai slot kosong!"
 
 #: ../../TShockAPI/Bouncer.cs:1165
 #, csharp-format
 msgid "Player does not have permission to create projectile {0}."
-msgstr ""
+msgstr "Pemain tidak mempunyai izin untuk membuat {0} proyektil."
 
 #: ../../TShockAPI/Commands.cs:1315
 msgid "Player not found. Unable to kick the player."
-msgstr ""
+msgstr "Pemain tidak ditemukan. tidak dapat mengeluarkan pemain tersebut."
 
 #: ../../TShockAPI/TShock.cs:1678
 #, csharp-format
 msgid "Please {0}register or {0}login to play!"
-msgstr "Silahkan {0}register atau {0}login untuk mulai bermain!"
+msgstr "Silahkan {0}register atau {0}login untuk dapat bermain!"
 
 #: ../../TShockAPI/Commands.cs:942
 msgid "Please close NPC windows before logging out."
-msgstr ""
+msgstr "Harap tutup jendela NPC sebelum keluar."
 
 #: ../../TShockAPI/Commands.cs:5752
 msgid "Please enter a proper command name or alias."
-msgstr ""
+msgstr "Harap masukkan nama atau jenis perintah yang tepat."
 
 #: ../../TShockAPI/Commands.cs:1054
 msgid "Please try a different username."
-msgstr ""
+msgstr "Harap mencoba dengan nama pengguna lain."
 
 #: ../../TShockAPI/Commands.cs:5406
 #, csharp-format
 msgid "Please use {0}login <username> <password> after this process."
-msgstr ""
+msgstr "Setelah proses ini harap gunakan {0}login <nama-pengguna> <kata-sandi>."
 
 #: ../../TShockAPI/Commands.cs:5403
 msgid "Please use the following to create a permanent account for you."
-msgstr ""
+msgstr "Harap ikuti petunjuk untuk membuat akun anda menjadi permanen."
 
 #: ../../TShockAPI/DB/BanManager.cs:81
 #: ../../TShockAPI/DB/ResearchDatastore.cs:53
 msgid "Possible problem with your database - is Sqlite3.dll present?"
-msgstr ""
+msgstr "Mungkin ada masalah dengan basis data anda - apakah ada Sqlite3.dll?"
 
 #: ../../TShockAPI/Commands.cs:3438
 msgid "prefix <group> <prefix> - Changes a group's prefix."
-msgstr ""
+msgstr "prefix <grup> <prefiks> - Merubah sebuah prefiks suatu grup."
 
 #: ../../TShockAPI/Commands.cs:3585
 #, csharp-format
 msgid "Prefix of \"{0}\" is \"{1}\"."
-msgstr ""
+msgstr "Prefiks dari \"{0}\" yakni \"{1}\"."
 
 #: ../../TShockAPI/Commands.cs:3573
 #, csharp-format
 msgid "Prefix of group \"{0}\" set to \"{1}\"."
-msgstr ""
+msgstr "Prefiks dari grup \"{0}\" diatur menjadi \"{1}\"."
 
 #: ../../TShockAPI/Commands.cs:304
 msgid "Prevents a player from talking."
-msgstr ""
+msgstr "Mencegah pemain berbicara."
 
 #: ../../TShockAPI/Commands.cs:1217
 #, csharp-format
 msgid "Proc count: {0}"
-msgstr ""
+msgstr "Terhitung proc: {0}"
 
 #: ../../TShockAPI/Commands.cs:4056
 #: ../../TShockAPI/Commands.cs:4114
 #, csharp-format
 msgid "Projectile {0} is not banned."
-msgstr ""
+msgstr "Proyektil {0} tidak diblokir."
 
 #: ../../TShockAPI/Commands.cs:4150
 msgid "Projectile Ban Sub-Commands ({{0}}/{{1}}):"
-msgstr ""
+msgstr "Sub-Perintah dari Projectile Ban ({{0}}/{{1}}):"
 
 #: ../../TShockAPI/Commands.cs:4168
 msgid "Projectile bans ({{0}}/{{1}}):"
-msgstr ""
+msgstr "Pemblokiran proyektil ({{0}}/{{1}}):"
 
 #: ../../TShockAPI/Bouncer.cs:1175
 #, csharp-format
 msgid "Projectile damage is higher than {0}."
-msgstr ""
+msgstr "Kerusakan proyektil lebih tinggi dari {0}."
 
 #: ../../TShockAPI/Bouncer.cs:1269
 #, csharp-format
 msgid "Projectile update threshold exceeded {0}."
-msgstr ""
+msgstr "Ambang batas pembaruan proyektil melebihi {0}."
 
 #: ../../TShockAPI/Commands.cs:5189
 msgid "protect <name> <true/false> - Sets whether the tiles inside the region are protected or not."
-msgstr ""
+msgstr "/protect <nama> <true/false> - mengatur apakah ubin-ubin tersebut di dalam wilayah yang dilindungi atau bukan."
 
 #: ../../TShockAPI/RegionHandler.cs:159
 msgid "Protected regions at this point: "
-msgstr ""
+msgstr "Wilayah yang dilindungi pada saat titik ini: "
 
 #: ../../TShockAPI/Commands.cs:4941
 #, csharp-format
 msgid "Protected: {0}."
-msgstr ""
+msgstr "Yang dilindungi: {0}."
 
 #: ../../TShockAPI/Commands.cs:1364
 #, csharp-format
 msgid "Quick usage: {0} {1} \"Griefing\""
-msgstr ""
+msgstr "Penggunaan cepat: {0} {1} \"Penghancuran\""
 
 #: ../../TShockAPI/TSPlayer.cs:758
 #, csharp-format
 msgid "Rangecheck failed for {0} ({1}, {2}) (rg: {3}/{5}, {4}/{5})"
-msgstr ""
+msgstr "Pengecekan jarak gagal selama {0} ({1}, {2}) (rg: {3}/{5}, {4}/{5})"
 
 #: ../../TShockAPI/Bouncer.cs:2095
 msgid "Reached HealOtherPlayer threshold."
@@ -4479,59 +4479,59 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:5126
 #, csharp-format
 msgid "Region \"{0}\" already exists."
-msgstr ""
+msgstr "Wilayah \"{0}\" sudah ada."
 
 #: ../../TShockAPI/Commands.cs:5158
 #, csharp-format
 msgid "Region \"{0}\" does not exist."
-msgstr ""
+msgstr "Wilayah \"{0}\" tidak ada."
 
 #: ../../TShockAPI/Commands.cs:4692
 #, csharp-format
 msgid "Region {0} already exists."
-msgstr ""
+msgstr "Wilayah {0} sudah ada."
 
 #: ../../TShockAPI/Commands.cs:4971
 msgid "Region is not shared with any groups."
-msgstr ""
+msgstr "Wilayah ini tidak dibagikan dengan grup manapun."
 
 #: ../../TShockAPI/Commands.cs:4960
 msgid "Region is not shared with any users."
-msgstr ""
+msgstr "Wilayah ini tidak dibagikan dengan penguna manapun."
 
 #: ../../TShockAPI/Commands.cs:4940
 #, csharp-format
 msgid "Region owner: {0}."
-msgstr ""
+msgstr "Pemilik Wilayah ini : {0}."
 
 #: ../../TShockAPI/Commands.cs:4697
 msgid "Region points need to be defined first. Use /region set 1 and /region set 2."
-msgstr ""
+msgstr "Titik-titik wilayah perlu ditentukan terlebih dahulu. gunakan /region set 1 dan /region set 2."
 
 #: ../../TShockAPI/Commands.cs:5132
 msgid "Region renamed successfully!"
-msgstr ""
+msgstr "Berhasil menamai ulang wilayah!"
 
 #: ../../TShockAPI/Commands.cs:5086
 msgid "Region Resized Successfully!"
-msgstr ""
+msgstr "Berhasil mengubah ukuran wilayah!"
 
 #: ../../TShockAPI/Commands.cs:5033
 #, csharp-format
 msgid "Region's z is now {0}"
-msgstr ""
+msgstr "Wilayah z kini {0}"
 
 #: ../../TShockAPI/Commands.cs:4906
 msgid "Regions ({{0}}/{{1}}):"
-msgstr ""
+msgstr "Wilayah ({{0}}/{{1}}):"
 
 #: ../../TShockAPI/RegionHandler.cs:159
 msgid "Regions at this point: "
-msgstr ""
+msgstr "Wilayah titik ini: "
 
 #: ../../TShockAPI/Commands.cs:258
 msgid "Registers you an account."
-msgstr ""
+msgstr "Mendaftarkan anda sebuah akun."
 
 #: ../../TShockAPI/Commands.cs:1061
 #, csharp-format
@@ -4544,49 +4544,49 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:364
 msgid "Reloads the server configuration file."
-msgstr ""
+msgstr "Memuat ulang berkas konfigurasi peladen."
 
 #: ../../TShockAPI/Commands.cs:5185
 msgid "remove <user> <region> - Removes a user from a region."
-msgstr ""
+msgstr "remove <pengguna> <wilayah> - Menghapus pengguna dari wilayah tersebut."
 
 #: ../../TShockAPI/Commands.cs:2512
 #, csharp-format
 msgid "Removed {0} players from the angler quest completion list for today."
-msgstr ""
+msgstr "Pengguna {0} telah dibersihan dari daftar penyelesaian pekerjaan angler untuk hari ini."
 
 #: ../../TShockAPI/Commands.cs:4881
 #, csharp-format
 msgid "Removed group {0} from {1}"
-msgstr ""
+msgstr "Grup {0} dihapus dari {1}"
 
 #: ../../TShockAPI/Commands.cs:3485
 #, csharp-format
 msgid "Removed parent of group \"{0}\"."
-msgstr ""
+msgstr "Induk dari grup \"{0}\" dicopot."
 
 #: ../../TShockAPI/Commands.cs:3575
 #, csharp-format
 msgid "Removed prefix of group \"{0}\"."
-msgstr ""
+msgstr "Prefiks dari grup \"{0}\" dicopot."
 
 #: ../../TShockAPI/Commands.cs:3530
 #, csharp-format
 msgid "Removed suffix of group \"{0}\"."
-msgstr ""
+msgstr "Sufiks dari grup \"{0}\" dicopot."
 
 #: ../../TShockAPI/Commands.cs:4811
 #, csharp-format
 msgid "Removed user {0} from {1}."
-msgstr ""
+msgstr "Pengguna {0} dihapus dari {1}."
 
 #: ../../TShockAPI/Commands.cs:5187
 msgid "removeg <group> <region> - Removes a user group from a region."
-msgstr ""
+msgstr "removeg <grup> <wilayah> - grup pengguna dihapus dari wilayah tersebut."
 
 #: ../../TShockAPI/Commands.cs:300
 msgid "Removes a player from the server."
-msgstr ""
+msgstr "Pemain dihapus dari dalam peladen."
 
 #: ../../TShockAPI/DB/UserManager.cs:112
 msgid "RemoveUser SQL returned an error"
@@ -4594,19 +4594,19 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:3432
 msgid "rename <group> <new name> - Changes a group's name."
-msgstr ""
+msgstr "rename <grup> <nama baru> - Mengganti sebuah nama grup."
 
 #: ../../TShockAPI/Commands.cs:5181
 msgid "rename <region> <new name> - Renames the given region."
-msgstr ""
+msgstr "rename <wilayah> <nama baru> - Mengganti nama grup yang diberikan."
 
 #: ../../TShockAPI/Commands.cs:397
 msgid "Renames an NPC."
-msgstr ""
+msgstr "Mengganti nama NPC."
 
 #: ../../TShockAPI/Commands.cs:566
 msgid "Replies to a PM sent to you."
-msgstr ""
+msgstr "Membalas PM yang dikirimkan kepada Anda."
 
 #: ../../TShockAPI/Rest/SecureRest.cs:93
 msgid "Requested token was successfully destroyed."
@@ -4619,20 +4619,20 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:419
 msgid "Resets the list of users who have completed an angler quest that day."
-msgstr ""
+msgstr "Pengguna-pengguna dari daftar ini yang telah selesai dari pekerjaan angler hari itu akan diatur ulang."
 
 #: ../../TShockAPI/SaveManager.cs:163
 #, csharp-format
 msgid "resetTime {0}, direct {1}"
-msgstr ""
+msgstr "resetTime {0}, berjalan {1}"
 
 #: ../../TShockAPI/Commands.cs:5183
 msgid "resize <region> <u/d/l/r> <amount> - Resizes a region."
-msgstr ""
+msgstr "resize <wilayah> <u/d/l/r> <banyaknya> - mengukur ulang sebuah wilayah."
 
 #: ../../TShockAPI/Commands.cs:603
 msgid "Respawn yourself or another player."
-msgstr ""
+msgstr "Hidupkan kembali diri anda atau pemain lain."
 
 #: ../../TShockAPI/Commands.cs:456
 msgid "Returns the user's or specified user's current position."
@@ -4640,11 +4640,11 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:6588
 msgid "Rich Mahogany"
-msgstr ""
+msgstr "Rich Mahogany"
 
 #: ../../TShockAPI/Commands.cs:5618
 msgid "Rocket Syntax"
-msgstr ""
+msgstr "Sintaks Roket"
 
 #: ../../TShockAPI/Commands.cs:342
 msgid "Rockets a player upwards. Requires SSC."
@@ -4652,44 +4652,44 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:6650
 msgid "Ruby Gemtree"
-msgstr ""
+msgstr "Ruby Gemtree"
 
 #: ../../TShockAPI/Commands.cs:6592
 msgid "Sakura Tree"
-msgstr ""
+msgstr "Sakura Tree"
 
 #: ../../TShockAPI/Commands.cs:2774
 msgid "Santa-NK1"
-msgstr ""
+msgstr "Santa-NK1"
 
 #: ../../TShockAPI/Commands.cs:6642
 msgid "Sapphire Gemtree"
-msgstr ""
+msgstr "Sapphire Gemtree"
 
 #: ../../TShockAPI/Commands.cs:312
 msgid "Saves all serverside characters."
-msgstr ""
+msgstr "Menyimpan semua karakter di sisi peladen."
 
 #: ../../TShockAPI/Commands.cs:500
 msgid "Saves the world file."
-msgstr ""
+msgstr "Menyimpan berkas dunia ini."
 
 #: ../../TShockAPI/SaveManager.cs:58
 msgid "Saving world..."
-msgstr ""
+msgstr "Sedang menyimpan dunia..."
 
 #: ../../TShockAPI/Commands.cs:1227
 #, csharp-format
 msgid "Seed: {0}"
-msgstr ""
+msgstr "Benih: {0}"
 
 #: ../../TShockAPI/Commands.cs:562
 msgid "Sends a message to everyone on your team."
-msgstr ""
+msgstr "Mengirim sebuah pesan untuk semua orang yang ada dalam tim anda."
 
 #: ../../TShockAPI/Commands.cs:586
 msgid "Sends a PM to a player."
-msgstr ""
+msgstr "Mengirim sebuah pesan ke seorang pemain."
 
 #: ../../TShockAPI/Commands.cs:599
 msgid "Sends all tiles from the server to the player to resync the client with the actual world state."
@@ -4697,93 +4697,93 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:557
 msgid "Sends an action message to everyone."
-msgstr ""
+msgstr "Mengirim sebuah pesan aksi ke semua orang."
 
 #: ../../TShockAPI/Commands.cs:431
 msgid "Sends you to the world's spawn point."
-msgstr ""
+msgstr "Mengirim anda ke titik dihidupkannya dunia ini."
 
 #: ../../TShockAPI/Commands.cs:426
 msgid "Sends you to your spawn point."
-msgstr ""
+msgstr "Mengirim anda ke titik dihidupkannya diri anda."
 
 #: ../../TShockAPI/BackupManager.cs:73
 msgid "Server map saving..."
-msgstr ""
+msgstr "Sedang menyimpan peta peladen..."
 
 #: ../../TShockAPI/Commands.cs:4398
 #, csharp-format
 msgid "Server password has been changed to: {0}."
-msgstr ""
+msgstr "Kata sandi peladen telah diubah menjadi: {0}."
 
 #: ../../TShockAPI/Commands.cs:2031
 #: ../../TShockAPI/Commands.cs:2037
 msgid "Server shutting down: "
-msgstr ""
+msgstr "Peladen sedang dalam dimatikan: "
 
 #: ../../TShockAPI/Commands.cs:2031
 msgid "Server shutting down!"
-msgstr ""
+msgstr "Peladen sedang dalam dimatikan!"
 
 #: ../../TShockAPI/Commands.cs:2037
 msgid "Server shutting down."
-msgstr ""
+msgstr "Peladen sedang dalam dimatikan."
 
 #: ../../TShockAPI/Commands.cs:950
 msgid "Server side characters are enabled. You need to be logged-in to play."
-msgstr ""
+msgstr "Karakter dalam peladen diaktifkan. anda harus masuk untuk bermain."
 
 #: ../../TShockAPI/TShock.cs:1673
 #, csharp-format
 msgid "Server side characters is enabled! Please {0}register or {0}login to play!"
-msgstr ""
+msgstr "Karakter dalam peladen diaktifkan! Harap {0}register atau {0}login untuk bermain!"
 
 #: ../../TShockAPI/Commands.cs:1804
 #, csharp-format
 msgid "Server-side character data from \"{0}\" has been replaced by their current local data."
-msgstr ""
+msgstr "Data karakter \"{0}\" dari sisi server telah digantikan oleh data lokal mereka saat ini."
 
 #: ../../TShockAPI/Commands.cs:1764
 msgid "Server-side characters is disabled."
-msgstr ""
+msgstr "Karakter dari sisi server dimatikan."
 
 #: ../../TShockAPI/Commands.cs:5176
 msgid "set <1/2> - Sets the temporary region points."
-msgstr ""
+msgstr "set <1/2> - Mengatur titik wilayah sementara."
 
 #: ../../TShockAPI/Commands.cs:4688
 #, csharp-format
 msgid "Set region {0}."
-msgstr ""
+msgstr "Atur wilayah {0}."
 
 #: ../../TShockAPI/RegionHandler.cs:187
 #, csharp-format
 msgid "Set temp point {0}."
-msgstr ""
+msgstr "Sementara titik diatur {0}."
 
 #: ../../TShockAPI/Commands.cs:510
 msgid "Sets the dungeon's position to your location."
-msgstr ""
+msgstr "Atur posisi dungeon ini ke lokasi anda."
 
 #: ../../TShockAPI/Commands.cs:401
 msgid "Sets the maximum number of NPCs."
-msgstr ""
+msgstr "Menetapkan jumlah maksimum NPC."
 
 #: ../../TShockAPI/Commands.cs:415
 msgid "Sets the spawn rate of NPCs."
-msgstr ""
+msgstr "Menetapkan tingkat NPC yang muncul."
 
 #: ../../TShockAPI/Commands.cs:518
 msgid "Sets the world time."
-msgstr ""
+msgstr "Menetapkan waktu dunia ini."
 
 #: ../../TShockAPI/Commands.cs:505
 msgid "Sets the world's spawn point to your location."
-msgstr ""
+msgstr "Menetapkan titik muncul dunia ini ke lokasi anda."
 
 #: ../../TShockAPI/Commands.cs:4418
 msgid "Settling liquids."
-msgstr ""
+msgstr "Cairan pengendapan."
 
 #: ../../TShockAPI/DB/UserManager.cs:182
 msgid "SetUserGroup SQL returned an error"
