@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-28 23:11:07+0000\n"
-"PO-Revision-Date: 2022-10-30 18:18\n"
+"PO-Revision-Date: 2022-10-31 06:33\n"
 "Last-Translator: \n"
 "Language-Team: Pirate English\n"
 "MIME-Version: 1.0\n"
@@ -156,32 +156,32 @@ msgstr "- Palm trees :"
 #: ../../TShockAPI/Commands.cs:6400
 #, csharp-format
 msgid "\"{0}\" is not a valid buff ID!"
-msgstr "\"{0}\" is not a valid buff ID!"
+msgstr ""
 
 #: ../../TShockAPI/Commands.cs:5897
 #, csharp-format
 msgid "\"{0}\" is not a valid clear option."
-msgstr "\"{0}\" is not a valid clear option."
+msgstr ""
 
 #: ../../TShockAPI/Commands.cs:6017
 #, csharp-format
 msgid "\"{0}\" is not a valid NPC."
-msgstr "\"{0}\" is not a valid NPC."
+msgstr ""
 
 #: ../../TShockAPI/PaginationTools.cs:283
 #, csharp-format
 msgid "\"{0}\" is not a valid page number."
-msgstr "\"{0}\" is not a valid page number."
+msgstr ""
 
 #: ../../TShockAPI/Commands.cs:5817
 #, csharp-format
 msgid "\"{0}\" is not a valid radius."
-msgstr "\"{0}\" is not a valid radius."
+msgstr ""
 
 #: ../../TShockAPI/Rest/SecureRest.cs:213
 #, csharp-format
 msgid "\"{0}\" requested REST endpoint: {1}"
-msgstr "\"{0}\" requested REST endpoint: {1}"
+msgstr ""
 
 #: ../../TShockAPI/Commands.cs:2011
 msgid "(Server Broadcast) "
@@ -190,32 +190,32 @@ msgstr "(Captain's Order)"
 #: ../../TShockAPI/Commands.cs:1452
 #, csharp-format
 msgid "{0} - Ticket Number: {1}"
-msgstr "{0} - Ticket Number: {1}"
+msgstr ""
 
 #: ../../TShockAPI/Commands.cs:2079
 #, csharp-format
 msgid "{0} ({1} tokens)"
-msgstr "{0} ({1} tokens)"
+msgstr ""
 
 #: ../../TShockAPI/Commands.cs:967
 #, csharp-format
 msgid "{0} ({1}) changed the password for account {2}."
-msgstr "{0} ({1}) changed the password for account {2}."
+msgstr ""
 
 #: ../../TShockAPI/Commands.cs:977
 #, csharp-format
 msgid "{0} ({1}) failed to change the password for account {2}."
-msgstr "{0} ({1}) failed to change the password for account {2}."
+msgstr ""
 
 #: ../../TShockAPI/TShock.cs:1641
 #, csharp-format
 msgid "{0} ({1}) from '{2}' group from '{3}' joined. ({4}/{5})"
-msgstr "{0} ({1}) from '{2}' group from '{3}' joined. ({4}/{5})"
+msgstr ""
 
 #: ../../TShockAPI/TShock.cs:1649
 #, csharp-format
 msgid "{0} ({1}) from '{2}' group joined. ({3}/{4})"
-msgstr "{0} ({1}) from '{2}' group joined. ({3}/{4})"
+msgstr ""
 
 #: ../../TShockAPI/Commands.cs:770
 #, csharp-format
