@@ -1556,8 +1556,8 @@ namespace TShockAPI
 				if (Depleted(item = GiveItemDirectly_FillEmptyInventorySlot(item, slot)))
 					return;
 
-			// oh no, i can't give... guess i gotta spill it on the floor
-			GiveItemByDrop(type, stack, prefix);
+			// oh no, i can't give the rest of the items... guess i gotta spill it on the floor
+			GiveItemByDrop(item.type, item.stack, item.prefix);
 		}
 
 		private void SendItemSlotPacketFor(int slot)
