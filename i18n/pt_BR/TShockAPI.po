@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-31 22:50:21+0000\n"
-"PO-Revision-Date: 2022-11-01 11:35\n"
+"PO-Revision-Date: 2022-11-02 00:02\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "MIME-Version: 1.0\n"
@@ -1218,11 +1218,11 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:6663
 msgid "Amber Gemtree"
-msgstr ""
+msgstr "Árvore de âmbar"
 
 #: ../../TShockAPI/Commands.cs:6643
 msgid "Amethyst Gemtree"
-msgstr ""
+msgstr "Árvore de ametista"
 
 #: ../../TShockAPI/TShock.cs:981
 msgid "An account has been detected in the user database, but setup-code.txt is still present."
@@ -1439,7 +1439,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:6585
 msgid "Basic Tree"
-msgstr ""
+msgstr "Árvora comum"
 
 #: ../../TShockAPI/Commands.cs:2751
 msgid "Betsy"
@@ -1457,7 +1457,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:6589
 msgid "Boreal Tree"
-msgstr ""
+msgstr "Árvore boreal"
 
 #: ../../TShockAPI/Bouncer.cs:1447
 #, csharp-format
@@ -2683,7 +2683,7 @@ msgstr "Detectado DOOM definido para ON posição."
 
 #: ../../TShockAPI/Commands.cs:6659
 msgid "Diamond Gemtree"
-msgstr "Árvore de joias de diamante"
+msgstr "Árvore de diamante"
 
 #: ../../TShockAPI/Commands.cs:1877
 msgid "Disabled halloween mode."
@@ -2724,11 +2724,11 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:6610
 msgid "Ebonwood Tree"
-msgstr "Árvore do ébano"
+msgstr "Árvore de madeira do ébano"
 
 #: ../../TShockAPI/Commands.cs:6651
 msgid "Emerald Gemtree"
-msgstr "Árvore de joia esmeralda"
+msgstr "Árvore de esmeralda"
 
 #: ../../TShockAPI/Commands.cs:1875
 msgid "Enabled halloween mode."
@@ -2949,7 +2949,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:6683
 msgid "Glowing Mushroom Tree"
-msgstr ""
+msgstr "Árvore de cogumelo brilhante"
 
 #: ../../TShockAPI/Handlers/LandGolfBallInCupHandler.cs:123
 #, csharp-format
@@ -3105,17 +3105,17 @@ msgstr "Erva"
 
 #: ../../TShockAPI/Commands.cs:4654
 msgid "Hit a block to get the name of the region."
-msgstr ""
+msgstr "Bata em um bloco para obter o nome da região."
 
 #: ../../TShockAPI/Commands.cs:4667
 #, csharp-format
 msgid "Hit a block to set point {0}."
-msgstr ""
+msgstr "Bata em um bloco para definir o ponto {0}."
 
 #: ../../TShockAPI/Commands.cs:1231
 #, csharp-format
 msgid "ID: {0}"
-msgstr ""
+msgstr "ID: {0}"
 
 #: ../../TShockAPI/Commands.cs:6306
 msgid "If no amount is specified, it will default to healing the target player by their max HP."
@@ -3123,7 +3123,7 @@ msgstr "Se nenhuma quantidade for especificada, o padrão será curar o jogador 
 
 #: ../../TShockAPI/Bouncer.cs:1374
 msgid "If this player wasn't hacking, please report the damage threshold they were disabled for to TShock so we can improve this!"
-msgstr ""
+msgstr "Se este jogador não estiver hackeando, por favor, reporte o limite de dano que foi desativado para TShock para que possamos melhorar isso!"
 
 #: ../../TShockAPI/Bouncer.cs:2098
 msgid "If this player wasn't hacking, please report the HealOtherPlayer threshold they were disabled for to TShock so we can improve this!"
@@ -3166,130 +3166,130 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:6367
 #, csharp-format
 msgid "If you put {0} as the duration, it will use the max possible time of 415 days."
-msgstr ""
+msgstr "Se você colocar {0} como duração, ele usará o máximo tempo possível de 415 dias."
 
 #: ../../TShockAPI/Commands.cs:5412
 #, csharp-format
 msgid "If you understand, please {0}login <username> <password> now, and then type {0}setup."
-msgstr ""
+msgstr "Se você entendeu, por favor digite {0}login <nome de usuário> <senha> e então digite {0}setup."
 
 #: ../../TShockAPI/Bouncer.cs:969
 msgid "If you're seeing this message and you know what that player did, please report it to TShock for further investigation."
-msgstr ""
+msgstr "Se você está vendo essa mensagem e sabe o que aquele jogador fez, por favor reporte-o ao TShock para uma investigação maior."
 
 #: ../../TShockAPI/Bouncer.cs:1324
 msgid "Ignoring shrapnel per config.."
-msgstr ""
+msgstr "Ignorando shrapnel por configuração.."
 
 #: ../../TShockAPI/Handlers/IllegalPerSe/EmojiPlayerMismatch.cs:19
 #, csharp-format
 msgid "IllegalPerSe: Emoji packet rejected for ID spoofing. Expected {0}, received {1} from {2}."
-msgstr ""
+msgstr "IlegalPerSe: Pacote de emoji rejeitado pela falsificação de ID. Esperado {0}, recebido {1} de {2}."
 
 #: ../../TShockAPI/Commands.cs:3185
 msgid "Incoming teleports are now allowed."
-msgstr ""
+msgstr "Teleportes de entrada agora estão ativados."
 
 #: ../../TShockAPI/Commands.cs:3187
 msgid "Incoming teleports are now disabled."
-msgstr ""
+msgstr "Teleportes de entrada agora estão desativados."
 
 #: ../../TShockAPI/Commands.cs:5399
 msgid "Incorrect setup code. This incident has been logged."
-msgstr ""
+msgstr "Código de configuração incorreto. Este incidente foi registrado."
 
 #: ../../TShockAPI/DB/TileManager.cs:223
 #: ../../TShockAPI/DB/ProjectileManager.cs:223
 #, csharp-format
 msgid "Infinite group parenting ({0})"
-msgstr ""
+msgstr "Grupo pai infinito ({0})"
 
 #: ../../TShockAPI/Commands.cs:5193
 msgid "info <region> [-d] - Displays several information about the given region."
-msgstr ""
+msgstr "info <region> [-d] - Exibe várias informações sobre determinada região."
 
 #: ../../TShockAPI/Commands.cs:4982
 #, csharp-format
 msgid "Information About Region \"{0}\" ({{0}}/{{1}}):"
-msgstr ""
+msgstr "Informação sobre a Região \"{0}\" ({{0}}/{{1}}):"
 
 #: ../../TShockAPI/Commands.cs:1228
 msgid "Information about the currently running world"
-msgstr ""
+msgstr "Informações sobre o mundo atualmente em execução"
 
 #: ../../TShockAPI/DB/BanManager.cs:314
 msgid "Inserting the ban into the database failed."
-msgstr ""
+msgstr "Falha ao inserir o banimento no banco de dados."
 
 #: ../../TShockAPI/Rest/Rest.cs:426
 msgid "Internal server error."
-msgstr ""
+msgstr "Erro interno do servidor."
 
 #: ../../TShockAPI/Commands.cs:1501
 #, csharp-format
 msgid "Invalid Ban Add syntax. Refer to {0} for details on how to use the {1} command"
-msgstr ""
+msgstr "Sintaxe inválida de adição de banidos. Consulte {0} para obter detalhes sobre como usar o comando {1}"
 
 #: ../../TShockAPI/Commands.cs:1617
 #, csharp-format
 msgid "Invalid Ban Del syntax. Refer to {0} for details on how to use the {1} command"
-msgstr ""
+msgstr "Sintaxe inválida de exclusão de banidos. Consulte {0} para obter detalhes sobre como usar o comando {1}"
 
 #: ../../TShockAPI/Commands.cs:1676
 #, csharp-format
 msgid "Invalid Ban Details syntax. Refer to {0} for details on how to use the {1} command"
-msgstr ""
+msgstr "Sintaxe inválida de detalhes de banidos. Consulte {0} para obter detalhes sobre como usar o comando {1}"
 
 #: ../../TShockAPI/Commands.cs:1654
 #, csharp-format
 msgid "Invalid Ban List syntax. Refer to {0} for details on how to use the {1} command"
-msgstr ""
+msgstr "Sintaxe inválida de lista de banidos. Consulte {0} para obter detalhes sobre como usar o comando {1}"
 
 #: ../../TShockAPI/DB/UserManager.cs:500
 msgid "Invalid BCrypt work factor in config file! Creating new hash using default work factor."
-msgstr ""
+msgstr "O nível de criptografia BCrypt é inválido no arquivo de configuração! Criando um novo hash usando o valor padrão."
 
 #: ../../TShockAPI/Commands.cs:2604
 msgid "Invalid boss amount."
-msgstr ""
+msgstr "Quantidade de chefes inválida."
 
 #: ../../TShockAPI/Commands.cs:2817
 msgid "Invalid boss type!"
-msgstr ""
+msgstr "Tipo de chefe Inválido."
 
 #: ../../TShockAPI/Commands.cs:6463
 msgid "Invalid buff ID!"
-msgstr ""
+msgstr "buff ID inválido!"
 
 #: ../../TShockAPI/Commands.cs:652
 #: ../../TShockAPI/Commands.cs:680
 #, csharp-format
 msgid "Invalid command entered. Type {0}help for a list of valid commands."
-msgstr ""
+msgstr "Comando inválido. Digite {0}help para uma lista de comandos válidos."
 
 #: ../../TShockAPI/Commands.cs:5271
 msgid "Invalid command."
-msgstr ""
+msgstr "Comando inválido."
 
 #: ../../TShockAPI/Commands.cs:3127
 msgid "Invalid destination NPC."
-msgstr ""
+msgstr "NPC de destino inválido."
 
 #: ../../TShockAPI/Commands.cs:2937
 #: ../../TShockAPI/Commands.cs:2968
 #: ../../TShockAPI/Commands.cs:3007
 #: ../../TShockAPI/Commands.cs:3080
 msgid "Invalid destination player."
-msgstr ""
+msgstr "Jogador de destino inválido."
 
 #: ../../TShockAPI/Commands.cs:2236
 #, csharp-format
 msgid "Invalid event type. Valid event types: {0}."
-msgstr ""
+msgstr "Evento inválido. Tipos de eventos válidos: {0}."
 
 #: ../../TShockAPI/Commands.cs:2378
 msgid "Invalid frost moon event wave."
-msgstr ""
+msgstr "Rodada do evento da lua gélida inválida."
 
 #: ../../TShockAPI/Commands.cs:3761
 #: ../../TShockAPI/Commands.cs:3864
@@ -3299,91 +3299,91 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:4230
 #: ../../TShockAPI/Commands.cs:4288
 msgid "Invalid group."
-msgstr ""
+msgstr "Grupo inválido."
 
 #: ../../TShockAPI/Commands.cs:2397
 #, csharp-format
 msgid "Invalid invasion type. Valid invasion types: {0}."
-msgstr ""
+msgstr "Invasão inválida. Tipos de invasões válidos: {0}."
 
 #: ../../TShockAPI/Commands.cs:6079
 #: ../../TShockAPI/Commands.cs:6228
 #: ../../TShockAPI/Commands.cs:6291
 msgid "Invalid item type!"
-msgstr ""
+msgstr "Tipo de item inválido!"
 
 #: ../../TShockAPI/Commands.cs:3803
 #: ../../TShockAPI/Commands.cs:3854
 #: ../../TShockAPI/Commands.cs:3899
 #: ../../TShockAPI/Commands.cs:3925
 msgid "Invalid item."
-msgstr ""
+msgstr "Item Invalido."
 
 #: ../../TShockAPI/Commands.cs:4451
 #, csharp-format
 msgid "Invalid maximum spawns.  Acceptable range is {0} to {1}."
-msgstr ""
+msgstr "Máximo de surgimento inválido. O intervalo aceitável é de {0} a {1}."
 
 #: ../../TShockAPI/Commands.cs:2856
 #: ../../TShockAPI/Commands.cs:6162
 msgid "Invalid mob type!"
-msgstr ""
+msgstr "Tipo de Mob Inválido."
 
 #: ../../TShockAPI/Commands.cs:2840
 #: ../../TShockAPI/Commands.cs:2896
 msgid "Invalid mob type."
-msgstr ""
+msgstr "Tipo de Mob Inválido."
 
 #: ../../TShockAPI/Commands.cs:2565
 #, csharp-format
 msgid "Invalid mode world mode. Valid modes: {0}"
-msgstr ""
+msgstr "Modo de modo mundo inválido. Modos válidos: {0}"
 
 #: ../../TShockAPI/Commands.cs:1417
 msgid "Invalid page number. Page number must be numeric."
-msgstr ""
+msgstr "Número de página inválido. O número da página deve ser numérico."
 
 #: ../../TShockAPI/DB/GroupManager.cs:309
 #, csharp-format
 msgid "Invalid parent group {0} for group {1}"
-msgstr ""
+msgstr "Grupo pai inválido {0} para o grupo {1}"
 
 #: ../../TShockAPI/DB/GroupManager.cs:347
 #, csharp-format
 msgid "Invalid parent group {0} for group {1}."
-msgstr ""
+msgstr "Grupo pai inválido {0} para o grupo {1}."
 
 #: ../../TShockAPI/Commands.cs:924
 msgid "Invalid password."
-msgstr ""
+msgstr "Senha inválida."
 
 #: ../../TShockAPI/Commands.cs:6259
 #: ../../TShockAPI/Commands.cs:6711
 msgid "Invalid player!"
-msgstr ""
+msgstr "Jogador inválido!"
 
 #: ../../TShockAPI/Commands.cs:1251
 msgid "Invalid player."
-msgstr ""
+msgstr "Jogador inválido."
 
 #: ../../TShockAPI/Commands.cs:4036
 msgid "Invalid projectile ID!"
-msgstr ""
+msgstr "ID do projétil inválido!"
 
 #: ../../TShockAPI/Commands.cs:4073
 #: ../../TShockAPI/Commands.cs:4094
 #: ../../TShockAPI/Commands.cs:4132
 msgid "Invalid projectile ID."
-msgstr ""
+msgstr "ID do projétil inválido."
 
 #: ../../TShockAPI/Commands.cs:2360
 msgid "Invalid pumpkin moon event wave."
-msgstr ""
+msgstr "Rodada do evento da lua de abóbora inválida."
 
 #: ../../TShockAPI/Commands.cs:5123
 #, csharp-format
 msgid "Invalid region \"{0}\"."
-msgstr ""
+msgstr "Região inválida \"{0}\"."
 
 #: ../../TShockAPI/Rest/Rest.cs:247
 #, csharp-format
@@ -3391,22 +3391,25 @@ msgid "Invalid REST configuration: \n"
 "You may already have a REST service bound to port {0}. \n"
 "Please adjust your configuration and restart the server. \n"
 "Press any key to exit."
-msgstr ""
+msgstr "Configuração REST inválida: \n"
+"Você pode já ter um serviço REST vinculado à porta {0}. \n"
+"Por favor ajuste sua configuração e reinicie o servidor. \n"
+"Pressione qualquer tecla para sair."
 
 #: ../../TShockAPI/Commands.cs:3778
 #, csharp-format
 msgid "Invalid subcommand! Type {0}group help for more information on valid commands."
-msgstr ""
+msgstr "Subcomando inválido! Digite {0}group help para obter mais informações sobre comandos válidos."
 
 #: ../../TShockAPI/Commands.cs:4005
 #, csharp-format
 msgid "Invalid subcommand. Type {0}itemban help for more information on valid subcommands."
-msgstr ""
+msgstr "Subcomando inválido. Digite {0}itemban help para obter mais informações sobre subcomandos válidos."
 
 #: ../../TShockAPI/Commands.cs:4183
 #, csharp-format
 msgid "Invalid subcommand. Type {0}projban help for more information on valid subcommands."
-msgstr ""
+msgstr "Subcomando inválido. Digite {0}projban help para obter mais informações sobre subcomandos válidos."
 
 #: ../../TShockAPI/Commands.cs:4359
 #, csharp-format
@@ -3419,7 +3422,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:1911
 msgid "Invalid syntax."
-msgstr ""
+msgstr "Sintaxe inválida."
 
 #: ../../TShockAPI/Commands.cs:2328
 #, csharp-format
@@ -3841,7 +3844,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:553
 msgid "Kills another player."
-msgstr ""
+msgstr "Mata outro jogador."
 
 #: ../../TShockAPI/Commands.cs:393
 msgid "Kills hostile NPCs or NPCs of a certain type."
@@ -3886,7 +3889,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:5187
 msgid "list - Lists all regions."
-msgstr ""
+msgstr "list - Lista de todas as regiões."
 
 #: ../../TShockAPI/Commands.cs:3971
 msgid "list [page] - Lists all item bans."
@@ -4270,7 +4273,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:6615
 msgid "Pearlwood Tree"
-msgstr ""
+msgstr "Árvore de madeira pérola"
 
 #: ../../TShockAPI/Commands.cs:3770
 #, csharp-format
@@ -4672,11 +4675,11 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:6655
 msgid "Ruby Gemtree"
-msgstr ""
+msgstr "Árvore de rubi"
 
 #: ../../TShockAPI/Commands.cs:6597
 msgid "Sakura Tree"
-msgstr ""
+msgstr "Árvore de cerejeira"
 
 #: ../../TShockAPI/Commands.cs:2779
 msgid "Santa-NK1"
@@ -4684,7 +4687,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:6647
 msgid "Sapphire Gemtree"
-msgstr ""
+msgstr "Árvore de safira"
 
 #: ../../TShockAPI/Commands.cs:312
 msgid "Saves all serverside characters."
@@ -4819,7 +4822,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:6605
 msgid "Shadewood Tree"
-msgstr ""
+msgstr "Árvore de madeira sombria"
 
 #: ../../TShockAPI/Commands.cs:5382
 msgid "Share your server, talk with admins, and chill on GitHub & Discord. -- https://tshock.co/"
@@ -5522,7 +5525,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:6639
 msgid "Topaz Gemtree"
-msgstr ""
+msgstr "Árvore de topázio"
 
 #: ../../TShockAPI/Commands.cs:1220
 #, csharp-format
@@ -5535,7 +5538,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:6504
 msgid "Trees types & misc available to use. ({{0}}/{{1}}):"
-msgstr ""
+msgstr "Tipos de árvores e outros disponíveis para uso. ({{0}}/{{1}}):"
 
 #: ../../TShockAPI/Commands.cs:6693
 #, csharp-format
@@ -5917,7 +5920,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:6601
 msgid "Willow Tree"
-msgstr ""
+msgstr "Árvore de salgueiro"
 
 #: ../../TShockAPI/BackupManager.cs:80
 #, csharp-format
@@ -6167,7 +6170,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:6515
 msgid "You do not have permission to grow this tree type"
-msgstr ""
+msgstr "Você não tem permissão para crescer este tipo de árvore"
 
 #: ../../TShockAPI/GetDataHandlers.cs:2960
 msgid "You do not have permission to hurt Town NPCs."
