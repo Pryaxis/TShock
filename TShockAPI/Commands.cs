@@ -649,7 +649,7 @@ namespace TShockAPI
 			string cmdName;
 			if (index == 0) // Space after the command specifier should not be supported
 			{
-				player.SendErrorMessage(GetString("Invalid command entered. Type {0}help for a list of valid commands.", Specifier));
+				player.SendErrorMessage(GetString("You entered a space after {0} instead of a command. Type {0}help for a list of valid commands.", Specifier));
 				return true;
 			}
 			else if (index < 0)

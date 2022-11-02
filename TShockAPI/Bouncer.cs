@@ -1995,21 +1995,21 @@ namespace TShockAPI
 					if (npc.townNPC)
 					{
 						if (type != BuffID.Poisoned
-						    && type != BuffID.OnFire
-						    && type != BuffID.Confused
-						    && type != BuffID.CursedInferno
-						    && type != BuffID.Ichor
-						    && type != BuffID.Venom
-						    && type != BuffID.Midas
-						    && type != BuffID.Wet
-						    && type != BuffID.Lovestruck
-						    && type != BuffID.Stinky
-						    && type != BuffID.Slimed
-						    && type != BuffID.DryadsWard
-						    && type != BuffID.GelBalloonBuff
-						    && type != BuffID.OnFire3
-						    && type != BuffID.Frostburn2
-						    && type != BuffID.Shimmer)
+							&& type != BuffID.OnFire
+							&& type != BuffID.Confused
+							&& type != BuffID.CursedInferno
+							&& type != BuffID.Ichor
+							&& type != BuffID.Venom
+							&& type != BuffID.Midas
+							&& type != BuffID.Wet
+							&& type != BuffID.Lovestruck
+							&& type != BuffID.Stinky
+							&& type != BuffID.Slimed
+							&& type != BuffID.DryadsWard
+							&& type != BuffID.GelBalloonBuff
+							&& type != BuffID.OnFire3
+							&& type != BuffID.Frostburn2
+							&& type != BuffID.Shimmer)
 						{
 							detectedNPCBuffTimeCheat = true;
 						}
@@ -2587,7 +2587,7 @@ namespace TShockAPI
 				}
 				else
 				{
-					TShock.Log.ConsoleDebug("Bouncer / OnPlayerDamage rejected damage threshold2 from {0} {1}/{2}", args.Player.Name, damage, TShock.Config.Settings.MaxDamage);
+					TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerDamage rejected damage threshold2 from {0} {1}/{2}", args.Player.Name, damage, TShock.Config.Settings.MaxDamage));
 					args.Player.Disable(GetString("Player damage exceeded {0}.", TShock.Config.Settings.MaxDamage), DisableFlags.WriteToLogAndConsole);
 				}
 				args.Player.SendData(PacketTypes.PlayerHp, "", id);
