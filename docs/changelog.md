@@ -16,6 +16,7 @@ Use past tense when adding new entries; sign your name off when you add or chang
 
 ## Upcoming changes
 * Fixed item giving potentially dropping too many items (@PotatoCider, @punchready)
+* Excluded GeoIP.dat from release bundle (@SignatureBeef)
 
 ## TShock 5.0.0
 * Reduced load/save console spam. (@SignatureBeef, @YehnBeep)
