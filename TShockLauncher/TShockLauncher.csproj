@@ -23,6 +23,7 @@
 		<None Include="..\prebuilts\GeoIP.dat">
 		  <Link>GeoIP.dat</Link>
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		  <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 		</None>
 	</ItemGroup>
 
