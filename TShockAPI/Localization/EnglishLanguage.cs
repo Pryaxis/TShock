@@ -60,7 +60,7 @@ namespace TShockAPI.Localization
 					NpcNames.Add(i, Lang.GetNPCNameValue(i));
 				}
 
-				for (var i = -17; i < Main.maxBuffTypes; i++)
+				for (var i = 0; i < Main.maxBuffTypes; i++)
 				{
 					Buffs.Add(i, Lang.GetBuffName(i));
 				}
