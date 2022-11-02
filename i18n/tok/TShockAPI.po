@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-31 22:50:21+0000\n"
-"PO-Revision-Date: 2022-10-31 23:36\n"
+"PO-Revision-Date: 2022-11-02 04:50\n"
 "Last-Translator: \n"
 "Language-Team: toki pona\n"
 "MIME-Version: 1.0\n"
@@ -22,241 +22,241 @@ msgstr ""
 #, csharp-format
 msgctxt "{0} is a player name"
 msgid "Skipping SSC save (due to tshock.ignore.ssc) for {0}"
-msgstr ""
+msgstr "mi weka e awen SSC (tan tshock.ignore.ssc) tawa jan {0}"
 
 #: ../../TShockAPI/DB/BanManager.cs:213
 #, csharp-format
 msgctxt "{0} is ban number, {1} is ban reason, {2} is a timestamp"
 msgid "#{0} - You are banned: {1} ({2} remaining)"
-msgstr ""
+msgstr "#{0} - kama sina li pake: {1} (tenpo {2} li awen)"
 
 #: ../../TShockAPI/DB/BanManager.cs:208
 #, csharp-format
 msgctxt "{0} is ban number, {1} is ban reason"
 msgid "#{0} - You are banned: {1}"
-msgstr ""
+msgstr "#{0} - kama sina li pake: {1}"
 
 #: ../../TShockAPI/Commands.cs:6492
 msgid "     'basic', 'sakura', 'willow', 'boreal', 'mahogany', 'ebonwood', 'shadewood', 'pearlwood'."
-msgstr ""
+msgstr "     'basic', 'sakura', 'willow', 'boreal', 'mahogany', 'ebonwood', 'shadewood', 'pearlwood'"
 
 #: ../../TShockAPI/Commands.cs:6498
 msgid "     'cactus', 'herb', 'mushroom'."
-msgstr ""
+msgstr "     'cactus', 'herb', 'mushroom'"
 
 #: ../../TShockAPI/Commands.cs:6494
 msgid "     'palm', 'corruptpalm', 'crimsonpalm', 'hallowpalm'."
-msgstr ""
+msgstr "     'palm', 'corruptpalm', 'crimsonpalm', 'hallowpalm'."
 
 #: ../../TShockAPI/Commands.cs:6496
 msgid "     'topaz', 'amethyst', 'sapphire', 'emerald', 'ruby', 'diamond', 'amber'."
-msgstr ""
+msgstr "     'topaz', 'amethyst', 'sapphire', 'emerald', 'ruby', 'diamond', 'amber'."
 
 #: ../../TShockAPI/Commands.cs:1442
 #, csharp-format
 msgid "   {0}{1} \"{2}\" (Find the IP associated with the offline target's account)"
-msgstr ""
+msgstr "   {0}{1} \"{2}\" - (alasa e nanpa IP pi jan weka ni)"
 
 #: ../../TShockAPI/Commands.cs:1440
 #, csharp-format
 msgid "   {0}{1} \"{2}{3}\" {4} {5} (Permanently bans this account name)"
-msgstr ""
+msgstr "   {0}{1} \"{2}{3}\" {4}{5} (weka awen e nimi ni)"
 
 #: ../../TShockAPI/Commands.cs:1445
 #, csharp-format
 msgid "   {0}{1} {2} (Find the player index for the target)"
-msgstr ""
+msgstr "   {0}{1} {2} (alasa e nanpa musi pi jan ni)"
 
 #: ../../TShockAPI/Commands.cs:1446
 #, csharp-format
 msgid "   {0}{1} {2}{3} {4} {5} (Permanently bans the online player by Account, UUID, and IP)"
-msgstr ""
+msgstr "   {0}{1} {2}{3} {4} {5} (weka awen e jan ni kepeken nasin ale)"
 
 #: ../../TShockAPI/Commands.cs:1443
 #, csharp-format
 msgid "   {0}{1} {2}{3} {4} {5} (Permanently bans this IP address)"
-msgstr ""
+msgstr "   {0}{1} \"{2}{3}\" {4}{5} (weka awen e nanpa IP ni)"
 
 #: ../../TShockAPI/Commands.cs:1382
 #, csharp-format
 msgid "   Eg a value of {0} would represent 10 days, 30 minutes, 0 seconds."
-msgstr ""
+msgstr "   sona: sitelen {0} li toki e suno 10 e sike lili 30 e sike lili lili 0"
 
 #: ../../TShockAPI/Commands.cs:1386
 #, csharp-format
 msgid "   If no {0} are specified, the command uses {1} by default."
-msgstr ""
+msgstr "   {0} ala li pana la ilo li kepeken {1}."
 
 #: ../../TShockAPI/Commands.cs:1383
 msgid "   If no duration is provided, the ban will be permanent."
-msgstr ""
+msgstr "   tenpo li pana ala la weka li awen."
 
 #: ../../TShockAPI/Commands.cs:1385
 #, csharp-format
 msgid "   Unless {0} is passed to the command, {1} is assumed to be a player or player index"
-msgstr ""
+msgstr "   {0} li pana ala la mi sona e {1} sama jan anu nanpa jan"
 
 #: ../../TShockAPI/Commands.cs:1258
 #, csharp-format
 msgid " -> Logged-in as: {0}; in group {1}."
-msgstr ""
+msgstr " -> li pana e sona lon sama: {0} lon kulupu {1}"
 
 #: ../../TShockAPI/Commands.cs:1394
 #, csharp-format
 msgid "- {0} are provided when you add a ban, and can also be viewed with the {1} command."
-msgstr ""
+msgstr "- sina weka e jan la {0} li pana li ken lukin kepeken ilo {1}."
 
 #: ../../TShockAPI/Commands.cs:1410
 #, csharp-format
 msgid "- {0} are provided when you add a ban, and can be found with the {1} command."
-msgstr ""
+msgstr "- sina weka e jan la {0} li pana li ken alasa kepeken ilo {1}."
 
 #: ../../TShockAPI/Commands.cs:1384
 #, csharp-format
 msgid "- {0}: -a (account name), -u (UUID), -n (character name), -ip (IP address), -e (exact, {1} will be treated as identifier)"
-msgstr ""
+msgstr "- {0}: -a (nimi sona), -u (nanpa UUID), -n (nimi jan), -ip (nanpa IP), -e (wawa, {1} li sama nanpa)"
 
 #: ../../TShockAPI/Commands.cs:1381
 #, csharp-format
 msgid "- {0}: uses the format {1} to determine the length of the ban."
-msgstr ""
+msgstr "- {0}: li kepeken {1} tawa sona pi tenpo weka"
 
 #: ../../TShockAPI/Commands.cs:1439
 msgid "- Ban an offline player by account name"
-msgstr ""
+msgstr "- o pake e kama pi jan weka kepeken nimi sona"
 
 #: ../../TShockAPI/Commands.cs:1441
 msgid "- Ban an offline player by IP address"
-msgstr ""
+msgstr "- o pake e kama pi jan weka kepeken nanpa IP"
 
 #: ../../TShockAPI/Commands.cs:1444
 msgid "- Ban an online player by index (Useful for hard to type names)"
-msgstr ""
+msgstr "- o weka awen e jan kepeken nanpa musi (ni li pona tawa nimi nasa)"
 
 #: ../../TShockAPI/Commands.cs:6491
 msgid "- Default trees :"
-msgstr ""
+msgstr "- kasi:"
 
 #: ../../TShockAPI/Commands.cs:6495
 msgid "- Gem trees :"
-msgstr ""
+msgstr "- kasi pi kiwen kule:"
 
 #: ../../TShockAPI/Commands.cs:1402
 msgid "- Lists active bans. Color trends towards green as the ban approaches expiration"
-msgstr ""
+msgstr "- li sitelen e pake kama. pake li kama weka la kule li kama kasi."
 
 #: ../../TShockAPI/Commands.cs:6497
 msgid "- Misc :"
-msgstr ""
+msgstr "- ante:"
 
 #: ../../TShockAPI/Commands.cs:6493
 msgid "- Palm trees :"
-msgstr ""
+msgstr "- kasi luka:"
 
 #: ../../TShockAPI/Commands.cs:6405
 #, csharp-format
 msgid "\"{0}\" is not a valid buff ID!"
-msgstr ""
+msgstr "\"{0}\" li nanpa wawa ala!"
 
 #: ../../TShockAPI/Commands.cs:5902
 #, csharp-format
 msgid "\"{0}\" is not a valid clear option."
-msgstr ""
+msgstr "mi sona ala e wile \"{0}\"."
 
 #: ../../TShockAPI/Commands.cs:6022
 #, csharp-format
 msgid "\"{0}\" is not a valid NPC."
-msgstr ""
+msgstr "mi sona ala e jan ilo \"{0}\"."
 
 #: ../../TShockAPI/PaginationTools.cs:283
 #, csharp-format
 msgid "\"{0}\" is not a valid page number."
-msgstr ""
+msgstr "\"{0}\" li nanpa ala."
 
 #: ../../TShockAPI/Commands.cs:5822
 #, csharp-format
 msgid "\"{0}\" is not a valid radius."
-msgstr ""
+msgstr "\"{0}\" li nanpa ala."
 
 #: ../../TShockAPI/Rest/SecureRest.cs:213
 #, csharp-format
 msgid "\"{0}\" requested REST endpoint: {1}"
-msgstr ""
+msgstr "\"{0}\" li wile e lipu REST: {1}"
 
 #: ../../TShockAPI/Commands.cs:2016
 msgid "(Server Broadcast) "
-msgstr ""
+msgstr "(toki wawa) "
 
 #: ../../TShockAPI/Commands.cs:1457
 #, csharp-format
 msgid "{0} - Ticket Number: {1}"
-msgstr ""
+msgstr "{0} - nanpa lipu: {1}"
 
 #: ../../TShockAPI/Commands.cs:2084
 #, csharp-format
 msgid "{0} ({1} tokens)"
-msgstr ""
+msgstr "{0} (nimi {1})"
 
 #: ../../TShockAPI/Commands.cs:972
 #, csharp-format
 msgid "{0} ({1}) changed the password for account {2}."
-msgstr ""
+msgstr "{0} ({1}) li ante e nimi len pi nimi {2}."
 
 #: ../../TShockAPI/Commands.cs:982
 #, csharp-format
 msgid "{0} ({1}) failed to change the password for account {2}."
-msgstr ""
+msgstr "{0} ({1}) li ken ala ante e nimi len pi nimi {2}."
 
 #: ../../TShockAPI/TShock.cs:1641
 #, csharp-format
 msgid "{0} ({1}) from '{2}' group from '{3}' joined. ({4}/{5})"
-msgstr ""
+msgstr "jan {0} ({1}) tan ma '{2}' tan kulupu '{3}' li kama. ({4}/{5})"
 
 #: ../../TShockAPI/TShock.cs:1649
 #, csharp-format
 msgid "{0} ({1}) from '{2}' group joined. ({3}/{4})"
-msgstr ""
+msgstr "jan {0} ({1}) tan kulupu '{2}' li kama. ({3}/{4})"
 
 #: ../../TShockAPI/Commands.cs:775
 #, csharp-format
 msgid "{0} ({1}) had {2} or more invalid login attempts and was kicked automatically."
-msgstr ""
+msgstr "tenpo nanpa {2} la jan {0} ({1}) li kepeken nimi len ike li kama weka."
 
 #: ../../TShockAPI/TShock.cs:1645
 #, csharp-format
 msgid "{0} ({1}) has joined."
-msgstr ""
+msgstr "jan {0} ({1}) li kama lon."
 
 #: ../../TShockAPI/Commands.cs:5350
 #, csharp-format
 msgid "{0} (Index: {1}, Account ID: {2})"
-msgstr ""
+msgstr "jan {0} (nanpa musi: {1}, nanpa nimi: {2})"
 
 #: ../../TShockAPI/Commands.cs:5352
 #, csharp-format
 msgid "{0} (Index: {1})"
-msgstr ""
+msgstr "jan {0} (nanpa musi: {1})"
 
 #: ../../TShockAPI/Commands.cs:1401
 #, csharp-format
 msgid "{0} [{1}]"
-msgstr ""
+msgstr "jan {0} [{1}]"
 
 #: ../../TShockAPI/Commands.cs:6007
 #, csharp-format
 msgid "{0} [{1}|{2}]"
-msgstr ""
+msgstr "{0} [{1}{2}]"
 
 #: ../../TShockAPI/Commands.cs:1458
 #: ../../TShockAPI/Commands.cs:1459
 #, csharp-format
 msgid "{0} {1}"
-msgstr ""
+msgstr "{0} {1}"
 
 #: ../../TShockAPI/Commands.cs:1463
 #, csharp-format
 msgid "{0} {1} ({2} ago)"
-msgstr ""
+msgstr "{0} {1} (tan tenpo weka {2})"
 
 #: ../../TShockAPI/Commands.cs:1477
 #, csharp-format
@@ -548,47 +548,47 @@ msgstr ""
 #: ../../TShockAPI/TShock.cs:1656
 #, csharp-format
 msgid "{0} has joined. IP: {1}"
-msgstr ""
+msgstr "{0} li kama li jo e nanpa IP {1}"
 
 #: ../../TShockAPI/Commands.cs:5651
 #, csharp-format
 msgid "{0} has launched {1} into space."
-msgstr ""
+msgstr "jan {0} li sewi wawa e jan {1}."
 
 #: ../../TShockAPI/Commands.cs:5649
 #, csharp-format
 msgid "{0} has launched herself into space."
-msgstr ""
+msgstr "jan {0} li sewi e ona."
 
 #: ../../TShockAPI/Commands.cs:5647
 #, csharp-format
 msgid "{0} has launched himself into space."
-msgstr ""
+msgstr "jan {0} li sewi e ona."
 
 #: ../../TShockAPI/Commands.cs:5496
 #, csharp-format
 msgid "{0} has muted {1} for {2}."
-msgstr ""
+msgstr "jan {0} li weka e ken toki pi jan {1} tan ni: {2}."
 
 #: ../../TShockAPI/Commands.cs:5995
 #, csharp-format
 msgid "{0} has respawned you."
-msgstr ""
+msgstr "jan {0} li sin e lon sina."
 
 #: ../../TShockAPI/GetDataHandlers.cs:3545
 #, csharp-format
 msgid "{0} has sent a request to the bunny delivery service!"
-msgstr ""
+msgstr "jan {0} li pana e wile tawa esun pi soweli kasi!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3551
 #, csharp-format
 msgid "{0} has sent a request to the cat delivery service!"
-msgstr ""
+msgstr "jan {0} li pana e wile tawa esun pi soweli mun!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3548
 #, csharp-format
 msgid "{0} has sent a request to the dog delivery service!"
-msgstr ""
+msgstr "jan {0} li pana e wile tawa esun pi soweli musi!"
 
 #: ../../TShockAPI/Commands.cs:2874
 #, csharp-format

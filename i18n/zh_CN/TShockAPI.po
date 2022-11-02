@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-31 22:50:21+0000\n"
-"PO-Revision-Date: 2022-10-31 23:36\n"
+"PO-Revision-Date: 2022-11-01 11:35\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -147,7 +147,7 @@ msgstr "- 列出目前生效的封禁。颜色随着剩余时间而改变，即�
 
 #: ../../TShockAPI/Commands.cs:6497
 msgid "- Misc :"
-msgstr "- Misc"
+msgstr "- 其他植物："
 
 #: ../../TShockAPI/Commands.cs:6493
 msgid "- Palm trees :"
@@ -215,7 +215,7 @@ msgstr "{0}已加入服务器（用户组：{2}，IP地址：{1}，地区：{3}�
 #: ../../TShockAPI/TShock.cs:1649
 #, csharp-format
 msgid "{0} ({1}) from '{2}' group joined. ({3}/{4})"
-msgstr "{0}({1})来自'{2}'用户组的加入。({3}/{4})"
+msgstr "{0}已加入服务器（用户组：{2}，IP地址：{1}）。服务器人数：{3}/{4}"
 
 #: ../../TShockAPI/Commands.cs:775
 #, csharp-format
@@ -445,7 +445,7 @@ msgstr "{0} 结束了这场史莱姆雨。"
 #: ../../TShockAPI/Commands.cs:706
 #, csharp-format
 msgid "{0} executed (args omitted): {1}{2}."
-msgstr ""
+msgstr "{0}执行了{1}{2}。因为该指令的特殊性，具体参数已隐藏。"
 
 #: ../../TShockAPI/Commands.cs:704
 #, csharp-format
@@ -909,7 +909,7 @@ msgstr "{0} 将你传送至 {1}。"
 #: ../../TShockAPI/Commands.cs:690
 #, csharp-format
 msgid "{0} tried to execute (args omitted) {1}{2}."
-msgstr ""
+msgstr "{0}试图执行{1}{2}。因为该指令的特殊性，具体参数已隐藏。"
 
 #: ../../TShockAPI/Commands.cs:688
 #, csharp-format
@@ -1253,7 +1253,7 @@ msgstr "已将更新检查加入到队列中，如果有更新，我们将很快
 
 #: ../../TShockAPI/Commands.cs:5595
 msgid "Annoy Syntax"
-msgstr "命令annoy的用法"
+msgstr "指令annoy的用法"
 
 #: ../../TShockAPI/Commands.cs:5612
 #, csharp-format
@@ -1797,7 +1797,7 @@ msgstr "Bouncer / OnNewProjectile（弹幕防护）因奇怪的检测阻止了{0
 #: ../../TShockAPI/Bouncer.cs:2025
 #, csharp-format
 msgid "Bouncer / OnNPCAddBuff rejected abnormal buff ({0}, last for {4}) added to {1} ({2}) from {3}."
-msgstr ""
+msgstr "Bouncer / OnNPCAddBuff（NPC Buff防护）阻止了{3}对NPC{1}（{2}）添加持续{4}秒的Buff：{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1979
 #, csharp-format
@@ -3786,7 +3786,7 @@ msgstr "无效类型：“{0}”"
 #: ../../TShockAPI/Commands.cs:1208
 #, csharp-format
 msgid "Invalid user syntax. Try {0}user help."
-msgstr "用户命令语法错误。尝试 {0}user help。"
+msgstr "指令user的用法错误，使用{0}user help查看帮助。"
 
 #: ../../TShockAPI/Commands.cs:3238
 msgid "Invalid warp name. The names 'list', 'hide', 'del' and 'add' are reserved for commands."
@@ -4108,7 +4108,7 @@ msgstr "没有找到对应回执号码的封禁。"
 #: ../../TShockAPI/Commands.cs:5780
 #, csharp-format
 msgid "No command or command alias matching \"{0}\" found."
-msgstr "没有找到命令或命令别名匹配 \"{0}\" 。"
+msgstr "没有找到{0}所对应的指令或别名 。"
 
 #: ../../TShockAPI/Commands.cs:145
 msgid "No help available."
@@ -4827,7 +4827,7 @@ msgstr "已分享给: "
 
 #: ../../TShockAPI/Commands.cs:609
 msgid "Shows a command's aliases."
-msgstr "显示一个命令的别名。"
+msgstr "显示指令的别名。"
 
 #: ../../TShockAPI/Commands.cs:332
 msgid "Shows information about a player."
