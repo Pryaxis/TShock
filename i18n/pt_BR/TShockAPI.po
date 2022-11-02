@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-31 22:50:21+0000\n"
-"PO-Revision-Date: 2022-11-02 00:02\n"
+"PO-Revision-Date: 2022-11-02 04:50\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "MIME-Version: 1.0\n"
@@ -38,19 +38,19 @@ msgstr "#{0} - Você está banido: {1}"
 
 #: ../../TShockAPI/Commands.cs:6492
 msgid "     'basic', 'sakura', 'willow', 'boreal', 'mahogany', 'ebonwood', 'shadewood', 'pearlwood'."
-msgstr ""
+msgstr "     'básico', 'cerejeira', 'salgueira', 'boreal', 'mogno', 'madeira ébano', 'madeira escura', 'madeira pérola'."
 
 #: ../../TShockAPI/Commands.cs:6498
 msgid "     'cactus', 'herb', 'mushroom'."
-msgstr ""
+msgstr "     'cacto', 'erva', 'cogumelo'."
 
 #: ../../TShockAPI/Commands.cs:6494
 msgid "     'palm', 'corruptpalm', 'crimsonpalm', 'hallowpalm'."
-msgstr ""
+msgstr "     'palmeira', 'palmeira corrompida', 'palmeira carmesim', 'palmeira consagrada'."
 
 #: ../../TShockAPI/Commands.cs:6496
 msgid "     'topaz', 'amethyst', 'sapphire', 'emerald', 'ruby', 'diamond', 'amber'."
-msgstr ""
+msgstr "     'topázio', 'ametista', 'safira', 'esmeralda', 'rubi', 'diamante', 'âmbar'."
 
 #: ../../TShockAPI/Commands.cs:1442
 #, csharp-format
@@ -983,47 +983,47 @@ msgstr "{0}{1} ajuda: "
 #: ../../TShockAPI/Utils.cs:1066
 #, csharp-format
 msgid "{0}{1}/{2} on {3} @ {4}:{5} (TShock for Terraria v{6})"
-msgstr ""
+msgstr "{0}{1}/{2} em {3} @ {4}:{5} (TShock para Terraria v{6})"
 
 #: ../../TShockAPI/Commands.cs:846
 #, csharp-format
 msgid "{0}login - Authenticates you using your UUID and character name."
-msgstr ""
+msgstr "{0}login - Autentifica você usando seu UUID e nome de personagem."
 
 #: ../../TShockAPI/Commands.cs:851
 #, csharp-format
 msgid "{0}login <password> - Authenticates you using your password and character name."
-msgstr ""
+msgstr "{0}login <senha> - Autentifica você usando sua senha e nome de personagem."
 
 #: ../../TShockAPI/Commands.cs:849
 #, csharp-format
 msgid "{0}login <username> <password> - Authenticates you using your username and password."
-msgstr ""
+msgstr "{0}login <usuário> <senha> - Autentifica você usando seu nome de usuário e senha."
 
 #: ../../TShockAPI/Commands.cs:5409
 #, csharp-format
 msgid "{0}user add <username> <password> owner"
-msgstr ""
+msgstr "{0}user add <usuário> <senha> dono"
 
 #: ../../TShockAPI/Commands.cs:1201
 #, csharp-format
 msgid "{0}user add username password group   -- Adds a specified user"
-msgstr ""
+msgstr "{0}user add usuário senha grupo   -- Adiciona um usuário específico"
 
 #: ../../TShockAPI/Commands.cs:1202
 #, csharp-format
 msgid "{0}user del username                  -- Removes a specified user"
-msgstr ""
+msgstr "{0}user del usuário                  -- Remove um usuário específico"
 
 #: ../../TShockAPI/Commands.cs:1204
 #, csharp-format
 msgid "{0}user group username newgroup       -- Changes a user's group"
-msgstr ""
+msgstr "{0}user group usuário novo-grupo       -- Altera o grupo de um usuário"
 
 #: ../../TShockAPI/Commands.cs:1203
 #, csharp-format
 msgid "{0}user password username newpassword -- Changes a user's password"
-msgstr ""
+msgstr "{0}user senha usuário nova-senha -- Altera a senha de um usuário"
 
 #: ../../TShockAPI/Commands.cs:5426
 #, csharp-format
@@ -1198,23 +1198,23 @@ msgstr "Memória alocada: {0}"
 
 #: ../../TShockAPI/Commands.cs:3968
 msgid "allow <item> <group> - Allows a group to use an item."
-msgstr ""
+msgstr "allow <item> <grupo> - Permite que um grupo use um item."
 
 #: ../../TShockAPI/Commands.cs:4146
 msgid "allow <projectile ID> <group> - Allows a group to use a projectile."
-msgstr ""
+msgstr "allow <ID do projétil> <grupo> - Permite que um grupo use um projétil."
 
 #: ../../TShockAPI/Commands.cs:4322
 msgid "allow <tile ID> <group> - Allows a group to place a tile."
-msgstr ""
+msgstr "allow <ID do bloco> <grupo> - Permite que um grupo coloque um bloco."
 
 #: ../../TShockAPI/Commands.cs:5189
 msgid "allow <user> <region> - Allows a user to a region."
-msgstr ""
+msgstr "allow <usuário> <região> - Permite o usuário a uma região."
 
 #: ../../TShockAPI/Commands.cs:5191
 msgid "allowg <group> <region> - Allows a user group to a region."
-msgstr ""
+msgstr "allowg <grupp> <região> - Permite um grupo de usuários a uma região."
 
 #: ../../TShockAPI/Commands.cs:6663
 msgid "Amber Gemtree"
@@ -1231,20 +1231,20 @@ msgstr "Uma conta foi detectada no banco de dados do usuário, mas setup-code.tx
 #: ../../TShockAPI/DB/GroupManager.cs:474
 #, csharp-format
 msgid "An exception has occurred during database rollback: {0}"
-msgstr ""
+msgstr "Ocorreu uma exceção durante a recuperação do banco de dados: {0}"
 
 #: ../../TShockAPI/DB/GroupManager.cs:467
 #, csharp-format
 msgid "An exception has occurred during database transaction: {0}"
-msgstr ""
+msgstr "Ocorreu uma exceção durante a transação do banco de dados: {0}"
 
 #: ../../TShockAPI/DB/BanManager.cs:644
 msgid "An identifier for a character name."
-msgstr ""
+msgstr "Um identificador para um nome de personagem."
 
 #: ../../TShockAPI/DB/BanManager.cs:648
 msgid "An identifier for a TShock User Account name."
-msgstr ""
+msgstr "Um identificador para um nome de usuário TShock"
 
 #: ../../TShockAPI/DB/BanManager.cs:640
 msgid "An identifier for a UUID."
@@ -1261,7 +1261,7 @@ msgstr "Uma verificação de atualização foi colocada na fila. Se uma atualiza
 
 #: ../../TShockAPI/Commands.cs:5595
 msgid "Annoy Syntax"
-msgstr ""
+msgstr "Sintaxe Inconveniente"
 
 #: ../../TShockAPI/Commands.cs:5612
 #, csharp-format
@@ -1343,7 +1343,7 @@ msgstr "Falha ao fazer a cópia de segurança!"
 
 #: ../../TShockAPI/BackupManager.cs:51
 msgid "Backup Thread"
-msgstr ""
+msgstr "Tópico de Recuperação"
 
 #: ../../TShockAPI/Commands.cs:833
 msgid "Bad login attempt."
@@ -1363,43 +1363,43 @@ msgstr "banir {0} <Ban ID>"
 #: ../../TShockAPI/Commands.cs:1365
 #, csharp-format
 msgid "ban {0} <Target> [Flags]"
-msgstr ""
+msgstr "ban {0} <Alvo> [Flags]"
 
 #: ../../TShockAPI/Commands.cs:1629
 #, csharp-format
 msgid "Ban {0} has been revoked by {1}."
-msgstr ""
+msgstr "Banimento {0} foi revogado por {1}."
 
 #: ../../TShockAPI/Commands.cs:1630
 #, csharp-format
 msgid "Ban {0} has now been marked as expired."
-msgstr ""
+msgstr "Banimento {0} acaba de ser marcado como expirado."
 
 #: ../../TShockAPI/Commands.cs:1379
 msgid "Ban Add Syntax"
-msgstr ""
+msgstr "Ban Add Sintaxe"
 
 #: ../../TShockAPI/Commands.cs:1486
 #, csharp-format
 msgid "Ban added. Ticket Number {0} was created for identifier {1}."
-msgstr ""
+msgstr "Banimento adicionado. Número de Bilhete {0} foi criado para o identificador {1}."
 
 #: ../../TShockAPI/Rest/RestManager.cs:668
 #, csharp-format
 msgid "Ban added. Ticket number: {0}"
-msgstr ""
+msgstr "Banimento adicionado. Número de Bilhete: {0}"
 
 #: ../../TShockAPI/Commands.cs:1392
 msgid "Ban Del Syntax"
-msgstr ""
+msgstr "Ban Del Sintaxe"
 
 #: ../../TShockAPI/Commands.cs:1408
 msgid "Ban Details Syntax"
-msgstr ""
+msgstr "Ban Details Sintaxe"
 
 #: ../../TShockAPI/Commands.cs:1400
 msgid "Ban List Syntax"
-msgstr ""
+msgstr "Ban List Sintaxe"
 
 #: ../../TShockAPI/Rest/RestManager.cs:695
 msgid "Ban removed."
@@ -1407,7 +1407,7 @@ msgstr "Banimento removido."
 
 #: ../../TShockAPI/Commands.cs:1438
 msgid "Ban Usage Examples"
-msgstr ""
+msgstr "Ban Usage Examples"
 
 #: ../../TShockAPI/Commands.cs:3837
 #, csharp-format
@@ -1417,12 +1417,12 @@ msgstr "{0} foi banido."
 #: ../../TShockAPI/Commands.cs:4033
 #, csharp-format
 msgid "Banned projectile {0}."
-msgstr ""
+msgstr "Projétil banido {0}."
 
 #: ../../TShockAPI/Commands.cs:4209
 #, csharp-format
 msgid "Banned tile {0}."
-msgstr ""
+msgstr "Bloco banido {0}."
 
 #: ../../TShockAPI/TSPlayer.cs:1950
 #, csharp-format
@@ -1435,7 +1435,7 @@ msgstr "Banido."
 
 #: ../../TShockAPI/Commands.cs:1666
 msgid "Bans ({{0}}/{{1}}):"
-msgstr ""
+msgstr "Banimentos ({{0}}/{{1}}):"
 
 #: ../../TShockAPI/Commands.cs:6585
 msgid "Basic Tree"
@@ -1443,17 +1443,17 @@ msgstr "Árvora comum"
 
 #: ../../TShockAPI/Commands.cs:2751
 msgid "Betsy"
-msgstr ""
+msgstr "Betsy"
 
 #: ../../TShockAPI/Rest/RestManager.cs:889
 #, csharp-format
 msgid "Blood Moon has been set to {0}"
-msgstr ""
+msgstr "A Lua Sangrenta foi definida para {0}"
 
 #: ../../TShockAPI/Rest/RestManager.cs:904
 #, csharp-format
 msgid "Bloodmoon state: {0}"
-msgstr ""
+msgstr "A Lua Sangrenta está: {0}"
 
 #: ../../TShockAPI/Commands.cs:6589
 msgid "Boreal Tree"
@@ -1462,116 +1462,116 @@ msgstr "Árvore boreal"
 #: ../../TShockAPI/Bouncer.cs:1447
 #, csharp-format
 msgid "Bouncer / OnChestItemChange rejected from chest mismatch from {0}"
-msgstr ""
+msgstr "Bouncer / OnChestItemChange rejeitado por incompatibilidade de baú de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1454
 #, csharp-format
 msgid "Bouncer / OnChestItemChange rejected from disable from {0}"
-msgstr ""
+msgstr "Bouncer / OnChestItemChange rejeitado por desativação de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1469
 #, csharp-format
 msgid "Bouncer / OnChestItemChange rejected from range check from {0}"
-msgstr ""
+msgstr "Bouncer / OnChestItemChange rejeitado por verificação de alcance de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1462
 #, csharp-format
 msgid "Bouncer / OnChestItemChange rejected from region protection? from {0}"
-msgstr ""
+msgstr "Bouncer / OnChestItemChange rejeitado por proteção de região? de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1482
 #, csharp-format
 msgid "Bouncer / OnChestOpen rejected from disabled from {0}"
-msgstr ""
+msgstr "Bouncer / OnChestOpen rejeitado por desativação de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1489
 #, csharp-format
 msgid "Bouncer / OnChestOpen rejected from range check from {0}"
-msgstr ""
+msgstr "Bouncer / OnChestOpen rejeitado por verificação de alcance de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1496
 #, csharp-format
 msgid "Bouncer / OnChestOpen rejected from region check from {0}"
-msgstr ""
+msgstr "Bouncer / OnChestOpen rejeitado por verificação de região de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2715
 #, csharp-format
 msgid "Bouncer / OnFishOutNPC rejected for not finding active bobber projectile! - From {0}"
-msgstr ""
+msgstr "Bouncer / OnFishOutNPC rejeitado por não encontrar projéteis de boia ativos! - De {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2709
 #, csharp-format
 msgid "Bouncer / OnFishOutNPC rejected for not using a fishing rod! - From {0}"
-msgstr ""
+msgstr "Bouncer / OnFishOutNPC rejeitado por não usar uma vara de pesca! - De {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2721
 #, csharp-format
 msgid "Bouncer / OnFishOutNPC rejected for the NPC not being on the fishable NPCs list! - From {0}"
-msgstr ""
+msgstr "Bouncer / OnFishOutNPC rejeitado pelo NPC não estar na lista de NPCs pescáveis! - De {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2733
 #, csharp-format
 msgid "Bouncer / OnFishOutNPC rejected range checks from {0}"
-msgstr ""
+msgstr "Bouncer / OnFishOutNPC rejeitado por verificação de alcance de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2727
 #, csharp-format
 msgid "Bouncer / OnFishOutNPC rejected summon boss permissions from {0}"
-msgstr ""
+msgstr "Bouncer / OnFishOutNPC rejeitou permissões de invocação de chefes de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2761
 #, csharp-format
 msgid "Bouncer / OnFoodPlatterTryPlacing rejected disabled from {0}"
-msgstr ""
+msgstr "Bouncer / OnFoodPlatterTryPlacing rejeitou a desativação de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2754
 #, csharp-format
 msgid "Bouncer / OnFoodPlatterTryPlacing rejected item not placed by hand from {0}"
-msgstr ""
+msgstr "Bouncer / OnFoodPlatterTryPlacing rejeitou item não colocado à mão de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2772
 #, csharp-format
 msgid "Bouncer / OnFoodPlatterTryPlacing rejected permissions from {0}"
-msgstr ""
+msgstr "Bouncer / OnFoodPlatterTryPlacing rejeitou permissões de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2783
 #, csharp-format
 msgid "Bouncer / OnFoodPlatterTryPlacing rejected range checks from {0}"
-msgstr ""
+msgstr "Bouncer / OnFoodPlatterTryPlacing rejeitou a verificação de alcance de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2747
 #, csharp-format
 msgid "Bouncer / OnFoodPlatterTryPlacing rejected tile placement valid from {0}"
-msgstr ""
+msgstr "Bouncer / OnFoodPlatterTryPlacing rejeitou posicionamento de bloco válido de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2488
 #, csharp-format
 msgid "Bouncer / OnGemLockToggle invalid placement/deadmod from {0}"
-msgstr ""
+msgstr "Bouncer / OnGemLockToggle posicionamento inválido/deadmod de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2481
 #, csharp-format
 msgid "Bouncer / OnGemLockToggle rejected boundaries check from {0}"
-msgstr ""
+msgstr "Bouncer / OnGemLockToggle rejeitou a verificação de limites de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2495
 #, csharp-format
 msgid "Bouncer / OnGemLockToggle rejected disabled from {0}"
-msgstr ""
+msgstr "Bouncer / OnGemLockToggle rejeitou a desativação de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2504
 #, csharp-format
 msgid "Bouncer / OnGemLockToggle rejected permissions check from {0}"
-msgstr ""
+msgstr "Bouncer / OnGemLockToggle rejeitou a verificação de permissões de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:435
 msgid "Bouncer / OnGetSection rejected empty player name."
-msgstr ""
+msgstr "Bouncer / OnGetSection rejeitou o nome de jogador vazio."
 
 #: ../../TShockAPI/Bouncer.cs:427
 #, csharp-format
 msgid "Bouncer / OnGetSection rejected GetSection packet from {0}"
-msgstr ""
+msgstr "Bouncer / OnGetSection rejeitou o pacote GetSection de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2081
 #, csharp-format
@@ -1595,37 +1595,37 @@ msgstr "Bouncer / OnHealOtherPlayer rejeitou verificações nulas"
 #: ../../TShockAPI/Bouncer.cs:1057
 #, csharp-format
 msgid "Bouncer / OnItemDrop rejected from attempt crash from {0}"
-msgstr ""
+msgstr "Bouncer / OnItemDrop rejeitado por tentativa de derrubada de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1133
 #, csharp-format
 msgid "Bouncer / OnItemDrop rejected from disabled from {0}"
-msgstr ""
+msgstr "Bouncer / OnItemDrop rejeitado por desativação de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1113
 #, csharp-format
 msgid "Bouncer / OnItemDrop rejected from drop item ban check / max stack check / min stack check from {0}"
-msgstr ""
+msgstr "Bouncer / OnItemDrop rejeitado por verificação de item banido derrubado / verificação de pilha máxima / verificação de pilha mínima de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1082
 #, csharp-format
 msgid "Bouncer / OnItemDrop rejected from dupe range check from {0}"
-msgstr ""
+msgstr "Bouncer / OnItemDrop rejeitado por verificação de alcance duplicado de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1103
 #, csharp-format
 msgid "Bouncer / OnItemDrop rejected from item drop/pickup check from {0}"
-msgstr ""
+msgstr "Bouncer / OnItemDrop rejeitado por verificação de derrubar item/pegar item de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1067
 #, csharp-format
 msgid "Bouncer / OnItemDrop rejected from prefix check from {0}"
-msgstr ""
+msgstr "Bouncer / OnItemDrop rejeitado por verificação de prefixo de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1093
 #, csharp-format
 msgid "Bouncer / OnItemDrop rejected from range check from {0}"
-msgstr ""
+msgstr "Bouncer / OnItemDrop rejeitado por verificação de alcance de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1124
 #, csharp-format
