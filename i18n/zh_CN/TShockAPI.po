@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-31 22:50:21+0000\n"
-"PO-Revision-Date: 2022-11-01 11:35\n"
+"PO-Revision-Date: 2022-11-03 16:58\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -3078,7 +3078,7 @@ msgstr "生命值和示例"
 
 #: ../../TShockAPI/Bouncer.cs:2082
 msgid "HealOtherPlayer cheat attempt!"
-msgstr "有人正在尝试作弊治疗其他玩家！"
+msgstr "通过作弊手段治疗友方"
 
 #: ../../TShockAPI/Bouncer.cs:2091
 #, csharp-format
@@ -4182,7 +4182,7 @@ msgstr "没有升级Work Factor，因为BCrypt的哈希值格式有误。"
 #: ../../TShockAPI/Bouncer.cs:1369
 #, csharp-format
 msgid "NPC damage exceeded {0}."
-msgstr "NPC 伤害超过 {0}。"
+msgstr "对NPC造成的伤害高于{0}"
 
 #: ../../TShockAPI/DB/RegionManager.cs:102
 #, csharp-format
@@ -4293,7 +4293,7 @@ msgstr "玩家 {0} 已经登录。"
 #: ../../TShockAPI/TSPlayer.cs:1887
 #, csharp-format
 msgid "Player {0} has been disabled for {1}."
-msgstr "玩家{0}因为{1}而被禁用"
+msgstr "玩家{0}因为{1}而被限制行动。"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1388
 #, csharp-format
@@ -4345,7 +4345,7 @@ msgstr "玩家没有空闲的背包空间！"
 #: ../../TShockAPI/Bouncer.cs:1165
 #, csharp-format
 msgid "Player does not have permission to create projectile {0}."
-msgstr "玩家没有权限创建射弹{0}。"
+msgstr "没有创建射弹{0}的权限"
 
 #: ../../TShockAPI/Commands.cs:1320
 msgid "Player not found. Unable to kick the player."
@@ -4422,7 +4422,7 @@ msgstr "封禁射弹 ({{0}}/{{1}}):"
 #: ../../TShockAPI/Bouncer.cs:1175
 #, csharp-format
 msgid "Projectile damage is higher than {0}."
-msgstr "射弹伤害高于{0}。"
+msgstr "射弹的伤害高于{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1269
 #, csharp-format
@@ -4454,29 +4454,29 @@ msgstr "{0}的范围检查失败（{1}，{2}）（范围：{3}/{5}，{4}/{5}）"
 
 #: ../../TShockAPI/Bouncer.cs:2095
 msgid "Reached HealOtherPlayer threshold."
-msgstr "达到了治愈其他玩家的临界值。"
+msgstr "友方治疗速度过快"
 
 #: ../../TShockAPI/Bouncer.cs:1273
 msgid "Reached projectile update threshold."
-msgstr "已达到弹幕更新阈值。"
+msgstr "射弹创建速度过快"
 
 #: ../../TShockAPI/Bouncer.cs:905
 msgid "Reached TileKill threshold."
-msgstr "已达到图格破坏阈值。"
+msgstr "物块破坏速度过快"
 
 #: ../../TShockAPI/Bouncer.cs:1668
 #, csharp-format
 msgid "Reached TileLiquid threshold {0}."
-msgstr "已到达液体阈值{0}。"
+msgstr "液体放置速度超过{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1672
 msgid "Reached TileLiquid threshold."
-msgstr "已到达液体阈值。"
+msgstr "液体放置速度过快"
 
 #: ../../TShockAPI/Bouncer.cs:923
 #: ../../TShockAPI/Bouncer.cs:2356
 msgid "Reached TilePlace threshold."
-msgstr "以达到图格防止阈值。"
+msgstr "物块破坏速度过快"
 
 #: ../../TShockAPI/Commands.cs:1491
 #, csharp-format
@@ -4946,19 +4946,19 @@ msgstr "指定的API端点不存在。请参阅文档以获取有效的端点列
 
 #: ../../TShockAPI/Bouncer.cs:1798
 msgid "Spreading honey without holding a honey bucket"
-msgstr "在不手持蜂蜜桶的情况下撒蜂蜜"
+msgstr "凭空放置蜂蜜"
 
 #: ../../TShockAPI/Bouncer.cs:1758
 msgid "Spreading lava without holding a lava bucket"
-msgstr "在不手持岩浆桶的情况下撒岩浆"
+msgstr "凭空放置岩浆"
 
 #: ../../TShockAPI/Bouncer.cs:1818
 msgid "Spreading shimmer without holding a shimmer bucket"
-msgstr "在没有手持微光桶的情况下放置微光液体"
+msgstr "凭空放置微光液体"
 
 #: ../../TShockAPI/Bouncer.cs:1778
 msgid "Spreading water without holding a water bucket"
-msgstr "在手上没有水桶的时候放置水"
+msgstr "凭空放置水"
 
 #: ../../TShockAPI/SqlLog.cs:346
 #, csharp-format
@@ -5830,19 +5830,19 @@ msgstr "用户名或密码错误，也可能是该用户没有足够的权限。
 
 #: ../../TShockAPI/Bouncer.cs:1829
 msgid "Using banned bottomless shimmer bucket without permissions"
-msgstr "没有权限使用被禁止的无底微光桶"
+msgstr "没有使用无底微光桶的权限"
 
 #: ../../TShockAPI/Bouncer.cs:1808
 msgid "Using banned honey bucket without permissions"
-msgstr "没有权限使用被禁止的蜂蜜桶"
+msgstr "没有使用蜂蜜桶的权限"
 
 #: ../../TShockAPI/Bouncer.cs:1768
 msgid "Using banned lava bucket without permissions"
-msgstr "没有权限使用被禁止的岩浆桶"
+msgstr "没有使用岩浆桶的权限"
 
 #: ../../TShockAPI/Bouncer.cs:1788
 msgid "Using banned water bucket without permissions"
-msgstr "没有权限使用被禁止的水桶"
+msgstr "没有使用水桶的权限"
 
 #: ../../TShockAPI/Commands.cs:920
 msgid "UUID does not match this character."
