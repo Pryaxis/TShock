@@ -15,14 +15,14 @@ Open ports can also be passed through using `-p <host_port>:<container_port>`.
 For Example:
 ```bash
 # Building the image
-docker build -t tshock:linux-x64 --build-arg TARGETPLATFORM=linux-x64 .
+docker build -t tshock:linux/amd64 --build-arg TARGETPLATFORM=linux/amd64 .
 
 # Running the image
 docker run -p 7777:7777 -p 7878:7878 \
            -v /home/cider/tshock/:/tshock \
            -v /home/cider/.local/share/Terraria/Worlds:/worlds \
            -v /home/cider/tshock/plugins:/plugins \
-           --rm -it tshock:linux-x64 \
+           --rm -it tshock:linux/amd64 \
            -world /worlds/backflip.wld -motd "OMFG DOCKER"
 ```
 
