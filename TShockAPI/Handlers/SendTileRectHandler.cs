@@ -207,6 +207,7 @@ namespace TShockAPI.Handlers
 								case TileID.Plants:
 								case TileID.MinecartTrack:
 								case TileID.ChristmasTree:
+								case TileID.ShimmerMonolith:
 									{
 										// Allowed changes
 									}
