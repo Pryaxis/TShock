@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-31 22:50:21+0000\n"
-"PO-Revision-Date: 2022-11-02 16:49\n"
+"PO-Revision-Date: 2022-11-05 18:13\n"
 "Last-Translator: \n"
 "Language-Team: toki pona\n"
 "MIME-Version: 1.0\n"
@@ -5396,7 +5396,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:2718
 msgid "the Wall of Flesh"
-msgstr ""
+msgstr "sinpin monsuta"
 
 #: ../../TShockAPI/Bouncer.cs:788
 msgid "The world's chest limit has been reached - unable to place more."
@@ -5453,7 +5453,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:2709
 msgid "There is already a Wall of Flesh."
-msgstr ""
+msgstr "sinpin monsuta li lon."
 
 #: ../../TShockAPI/Commands.cs:932
 msgid "There was an error processing your login or authentication related request."
