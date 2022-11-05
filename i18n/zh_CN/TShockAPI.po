@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-31 22:50:21+0000\n"
-"PO-Revision-Date: 2022-11-04 05:06\n"
+"PO-Revision-Date: 2022-11-05 18:13\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -3523,7 +3523,7 @@ msgstr "语法错误。正确的语法是:{0}me <text>"
 #: ../../TShockAPI/Commands.cs:5433
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}p <team chat text>"
-msgstr "语法错误。正确的语法是:{0}p <team chat text>"
+msgstr "语法错误。正确的语法是:{0}p <聊天内容>"
 
 #: ../../TShockAPI/Commands.cs:4026
 #, csharp-format
@@ -5977,7 +5977,7 @@ msgstr "你没有死亡！"
 
 #: ../../TShockAPI/Commands.cs:5450
 msgid "You are not in a party!"
-msgstr "你没有在派对中！"
+msgstr "你不在任何队伍当中，无法使用队内聊天。"
 
 #: ../../TShockAPI/Commands.cs:941
 msgid "You are not logged-in. Therefore, you cannot logout."
