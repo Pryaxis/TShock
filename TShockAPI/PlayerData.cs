@@ -287,11 +287,8 @@ namespace TShockAPI
 			player.TPlayer.usedAmbrosia = this.usedAmbrosia == 1;
 			player.TPlayer.unlockedSuperCart = this.unlockedSuperCart == 1;
 			player.TPlayer.enabledSuperCart = this.enabledSuperCart == 1;
-
-			if (this.numberOfDeathsPVE > 0)
-				player.TPlayer.numberOfDeathsPVE = this.numberOfDeathsPVE;
-			if (this.numberOfDeathsPVP > 0)
-				player.TPlayer.numberOfDeathsPVP = this.numberOfDeathsPVP;
+			player.TPlayer.numberOfDeathsPVE = this.numberOfDeathsPVE;
+			player.TPlayer.numberOfDeathsPVP = this.numberOfDeathsPVP;
 
 			if (extraSlot != null)
 				player.TPlayer.extraAccessory = extraSlot.Value == 1 ? true : false;
