@@ -1266,16 +1266,16 @@ namespace TShockAPI
 			{
 				if (TShock.Config.Settings.KickOnProjectileThresholdBroken)
 				{
-					args.Player.Kick(GetString("Projectile update threshold exceeded {0}.", TShock.Config.Settings.ProjectileThreshold));
+					args.Player.Kick(GetString("Projectile create threshold exceeded {0}.", TShock.Config.Settings.ProjectileThreshold));
 				}
 				else
 				{
-					args.Player.Disable(GetString("Reached projectile update threshold."), DisableFlags.WriteToLogAndConsole);
+					args.Player.Disable(GetString("Reached projectile create threshold."), DisableFlags.WriteToLogAndConsole);
 					args.Player.RemoveProjectile(ident, owner);
 				}
 
-				TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile rejected from projectile update threshold from {0} {1}/{2}", args.Player.Name, args.Player.ProjectileThreshold, TShock.Config.Settings.ProjectileThreshold));
-				TShock.Log.ConsoleDebug(GetString("If this player wasn't hacking, please report the projectile update threshold they were disabled for to TShock so we can improve this!"));
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile rejected from projectile create threshold from {0} {1}/{2}", args.Player.Name, args.Player.ProjectileThreshold, TShock.Config.Settings.ProjectileThreshold));
+				TShock.Log.ConsoleDebug(GetString("If this player wasn't hacking, please report the projectile create threshold they were disabled for to TShock so we can improve this!"));
 				args.Handled = true;
 				return;
 			}
