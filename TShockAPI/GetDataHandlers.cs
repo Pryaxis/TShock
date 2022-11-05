@@ -2959,7 +2959,7 @@ namespace TShockAPI
 			{
 				args.Player.SendErrorMessage(GetString("You do not have permission to hurt Town NPCs."));
 				args.Player.SendData(PacketTypes.NpcUpdate, "", id);
-				TShock.Log.ConsoleDebug($"GetDataHandlers / HandleNpcStrike rejected npc strike {args.Player.Name}");
+				TShock.Log.ConsoleDebug(GetString($"GetDataHandlers / HandleNpcStrike rejected npc strike {args.Player.Name}"));
 				return true;
 			}
 
@@ -2969,7 +2969,7 @@ namespace TShockAPI
 				{
 					args.Player.SendErrorMessage(GetString("You do not have permission to summon the Empress of Light."));
 					args.Player.SendData(PacketTypes.NpcUpdate, "", id);
-					TShock.Log.ConsoleDebug($"GetDataHandlers / HandleNpcStrike rejected EoL summon from {args.Player.Name}");
+					TShock.Log.ConsoleDebug(GetString($"GetDataHandlers / HandleNpcStrike rejected EoL summon from {args.Player.Name}"));
 					return true;
 				}
 				else if (!TShock.Config.Settings.AnonymousBossInvasions)
@@ -2986,7 +2986,7 @@ namespace TShockAPI
 				{
 					args.Player.SendErrorMessage(GetString("You do not have permission to summon the Lunatic Cultist!"));
 					args.Player.SendData(PacketTypes.NpcUpdate, "", id);
-					TShock.Log.ConsoleDebug($"GetDataHandlers / HandleNpcStrike rejected Cultist summon from {args.Player.Name}");
+					TShock.Log.ConsoleDebug(GetString($"GetDataHandlers / HandleNpcStrike rejected Cultist summon from {args.Player.Name}"));
 					return true;
 				}
 			}
@@ -3209,7 +3209,7 @@ namespace TShockAPI
 
 
 					args.Player.SendMessage(GetString($"Authenticated as {args.Player.Name} successfully."), Color.LimeGreen);
-					TShock.Log.ConsoleInfo($"{args.Player.Name} authenticated successfully as user {args.Player.Name}.");
+					TShock.Log.ConsoleInfo(GetString($"{args.Player.Name} authenticated successfully as user {args.Player.Name}."));
 					TShock.UserAccounts.SetUserAccountUUID(account, args.Player.UUID);
 					Hooks.PlayerHooks.OnPlayerPostLogin(args.Player);
 					return true;
@@ -3433,13 +3433,13 @@ namespace TShockAPI
 			{
 				if (!args.Player.HasPermission(Permissions.usesundial))
 				{
-					TShock.Log.ConsoleDebug($"GetDataHandlers / HandleSpecial rejected enchanted sundial permission {args.Player.Name}");
+					TShock.Log.ConsoleDebug(GetString($"GetDataHandlers / HandleSpecial rejected enchanted sundial permission {args.Player.Name}"));
 					args.Player.SendErrorMessage(GetString("You do not have permission to use the Enchanted Sundial."));
 					return true;
 				}
 				else if (TShock.Config.Settings.ForceTime != "normal")
 				{
-					TShock.Log.ConsoleDebug($"GetDataHandlers / HandleSpecial rejected enchanted sundial permission (ForceTime) {args.Player.Name}");
+					TShock.Log.ConsoleDebug(GetString($"GetDataHandlers / HandleSpecial rejected enchanted sundial permission (ForceTime) {args.Player.Name}"));
 					if (!args.Player.HasPermission(Permissions.cfgreload))
 					{
 						args.Player.SendErrorMessage(GetString("You cannot use the Enchanted Sundial because time is stopped."));
