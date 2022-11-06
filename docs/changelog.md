@@ -17,6 +17,10 @@ Use past tense when adding new entries; sign your name off when you add or chang
 ## Upcoming changes
 * Fixed item giving potentially dropping too many items (@PotatoCider, @punchready)
 * Excluded GeoIP.dat from release bundle (@SignatureBeef)
+* Allowed Torch God's Favor to place different types of torches and campfires (@sgkoishi, #2811)
+* Allowed Crystal Shard to grow (@sgkoishi, @cc004, SignatureBeef/Open-Terraria-API#96)
+* Allowed the use of Aether Monolith (@sgkoishi, #2801)
+* Added permission for summoning Mechdusa, Deerclops and slime pet (@sgkoishi, #2808)
 
 ## TShock 5.0.0
 * Reduced load/save console spam. (@SignatureBeef, @YehnBeep)
