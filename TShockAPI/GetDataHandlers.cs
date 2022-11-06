@@ -2914,17 +2914,33 @@ namespace TShockAPI
 			Vector2 vel = args.Data.ReadVector2();
 			byte owner = args.Data.ReadInt8();
 			short type = args.Data.ReadInt16();
-			NewProjectileData bits = new NewProjectileData((BitsByte)args.Data.ReadByte());
+			
+			BitsByte bitsByte = args.Data.ReadByte();
+		        BitsByte bitsByte2 = bitsByte[2] ? args.Data.ReadByte() : 0;
 			float[] ai = new float[Projectile.maxAI];
-			for (int i = 0; i < Projectile.maxAI; ++i)
-				ai[i] = !bits.AI[i] ? 0.0f : args.Data.ReadSingle();
-			ushort bannerId = bits.HasBannerIdToRespondTo ? args.Data.ReadUInt16() : (ushort)0;
-			short dmg = bits.HasDamage ? args.Data.ReadInt16() : (short)0;
-			float knockback = bits.HasKnockback ? args.Data.ReadSingle() : 0.0f;
-			short origDmg = bits.HasOriginalDamage ? args.Data.ReadInt16() : (short)0;
-			short projUUID = bits.HasUUUID ? args.Data.ReadInt16() : (short)-1;
-			if (projUUID >= 1000)
-				projUUID = -1;
+			for (int i = 0; i < Projectile.maxAI; ++i) ai[i] = 0f;
+			ai[0] = (bitsByte[0] ? args.Data.ReadSingle() : 0f);
+			ai[1] = (bitsByte[1] ? args.Data.ReadSingle() : 0f);
+			int bannerId = (int)(bitsByte[3] ? args.Data.ReadUInt16() : 0);
+			int dmg = (int)(bitsByte[4] ? args.Data.ReadInt16() : 0);
+			float knockback = bitsByte[5] ? args.Data.ReadSingle() : 0f;
+			int origDmg = (int)(bitsByte[6] ? args.Data.ReadInt16() : 0);
+			int projUUID = (int)(bitsByte[7] ? args.Data.ReadInt16() : -1);
+			if (projUUID >= 1000) projUUID = -1;
+			ai[3] = (bitsByte2[0] ? args.Data.ReadSingle() : 0f);
+			
+			//old
+			//NewProjectileData bits = new NewProjectileData((BitsByte)args.Data.ReadByte());
+			//float[] ai = new float[Projectile.maxAI];
+			//for (int i = 0; i < Projectile.maxAI; ++i)
+				//ai[i] = !bits.AI[i] ? 0.0f : args.Data.ReadSingle();
+			//ushort bannerId = bits.HasBannerIdToRespondTo ? args.Data.ReadUInt16() : (ushort)0;
+			//short dmg = bits.HasDamage ? args.Data.ReadInt16() : (short)0;
+			//float knockback = bits.HasKnockback ? args.Data.ReadSingle() : 0.0f;
+			//short origDmg = bits.HasOriginalDamage ? args.Data.ReadInt16() : (short)0;
+			//short projUUID = bits.HasUUUID ? args.Data.ReadInt16() : (short)-1;
+			//if (projUUID >= 1000)
+				//projUUID = -1;
 
 			var index = TShock.Utils.SearchProjectile(ident, owner);
 
