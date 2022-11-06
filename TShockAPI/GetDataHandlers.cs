@@ -2920,7 +2920,7 @@ namespace TShockAPI
 			byte owner = args.Data.ReadInt8();
 			short type = args.Data.ReadInt16();
 			
-			BitsByte bitsByte = args.Data.ReadByte();
+			BitsByte bitsByte = (BitsByte)args.Data.ReadByte();
 		        BitsByte bitsByte2 = (BitsByte)(bitsByte[2] ? args.Data.ReadByte() : 0);
 			float[] ai = new float[Projectile.maxAI];
 			for (int i = 0; i < Projectile.maxAI; ++i) ai[i] = 0f;
@@ -3926,7 +3926,7 @@ namespace TShockAPI
 			short type = args.Data.ReadInt16();
 			short style = args.Data.ReadInt16();
 			byte alternate = args.Data.ReadInt8();
-			sbyte random = args.Data.ReadSByte();
+			sbyte random = (sbyte)args.Data.ReadInt8();
 			bool direction = args.Data.ReadBoolean();
 
 			if (OnPlaceObject(args.Player, args.Data, x, y, type, style, alternate, direction))
@@ -4161,7 +4161,7 @@ namespace TShockAPI
 			var bits = (BitsByte)(args.Data.ReadByte());
 			var crit = bits[0];
 			var pvp = bits[1];
-                        var cooldownCounter = args.Data.ReadSByte();
+                        var cooldownCounter = (sbyte)args.Data.ReadInt8();
 			if (OnPlayerDamage(args.Player, args.Data, id, direction, dmg, pvp, crit, playerDeathReason))
 				return true;
 
