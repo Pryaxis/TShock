@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-31 22:50:21+0000\n"
-"PO-Revision-Date: 2022-11-05 18:13\n"
+"PO-Revision-Date: 2022-11-06 07:13\n"
 "Last-Translator: \n"
 "Language-Team: toki pona\n"
 "MIME-Version: 1.0\n"
@@ -705,7 +705,7 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:5986
 #, csharp-format
 msgid "{0} is not dead!"
-msgstr ""
+msgstr "{0} li moli ala a!"
 
 #: ../../TShockAPI/Commands.cs:6743
 #, csharp-format
