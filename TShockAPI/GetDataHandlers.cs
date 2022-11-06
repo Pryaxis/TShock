@@ -3612,6 +3612,7 @@ namespace TShockAPI
 			var x = args.Data.ReadInt16();
 			var y = args.Data.ReadInt16();
 			var t = args.Data.ReadInt8();
+			var ct = args.Data.ReadInt8();//PaintCoatTile
 
 			if (x < 0 || y < 0 || x >= Main.maxTilesX || y >= Main.maxTilesY || t > Main.numTileColors)
 			{
@@ -3659,6 +3660,7 @@ namespace TShockAPI
 			var x = args.Data.ReadInt16();
 			var y = args.Data.ReadInt16();
 			var t = args.Data.ReadInt8();
+			var cw = args.Data.ReadInt8();//PaintCoatWall
 
 			if (x < 0 || y < 0 || x >= Main.maxTilesX || y >= Main.maxTilesY || t > Main.numTileColors)
 			{
@@ -3924,6 +3926,7 @@ namespace TShockAPI
 			short type = args.Data.ReadInt16();
 			short style = args.Data.ReadInt16();
 			byte alternate = args.Data.ReadInt8();
+			sbyte random = args.Data.ReadSByte();
 			bool direction = args.Data.ReadBoolean();
 
 			if (OnPlaceObject(args.Player, args.Data, x, y, type, style, alternate, direction))
@@ -4064,7 +4067,7 @@ namespace TShockAPI
 
 		private static bool HandleNpcTeleportPortal(GetDataHandlerArgs args)
 		{
-			var npcIndex = args.Data.ReadByte();
+			var npcIndex = args.Data.ReadUInt16();
 			var portalColorIndex = args.Data.ReadInt16();
 			var newPosition = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
 			var velocity = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
@@ -4158,7 +4161,7 @@ namespace TShockAPI
 			var bits = (BitsByte)(args.Data.ReadByte());
 			var crit = bits[0];
 			var pvp = bits[1];
-
+                        var cooldownCounter = args.Data.ReadSByte();
 			if (OnPlayerDamage(args.Player, args.Data, id, direction, dmg, pvp, crit, playerDeathReason))
 				return true;
 
