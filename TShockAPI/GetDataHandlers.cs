@@ -1033,12 +1033,16 @@ namespace TShockAPI
 			/// 0 = Old One's Army, 1 = Granite, 2 = Marble, 3 = Hive, 4 = Gem Cave, 5 = Lihzhard Temple, 6 = Graveyard
 			/// </summary>
 			public BitsByte Zone4 { get; set; }
+			/// <summary>
+			/// ?
+			/// </summary>
+			public BitsByte Zone5 { get; set; }
 		}
 		/// <summary>
 		/// PlayerZone - When the player sends it's zone/biome information to the server
 		/// </summary>
 		public static HandlerList<PlayerZoneEventArgs> PlayerZone = new HandlerList<PlayerZoneEventArgs>();
-		private static bool OnPlayerZone(TSPlayer player, MemoryStream data, byte plr, BitsByte zone1, BitsByte zone2, BitsByte zone3, BitsByte zone4)
+		private static bool OnPlayerZone(TSPlayer player, MemoryStream data, byte plr, BitsByte zone1, BitsByte zone2, BitsByte zone3, BitsByte zone4, BitsByte zone5)
 		{
 			if (PlayerZone == null)
 				return false;
@@ -1051,7 +1055,8 @@ namespace TShockAPI
 				Zone1 = zone1,
 				Zone2 = zone2,
 				Zone3 = zone3,
-				Zone4 = zone4
+				Zone4 = zone4,
+				Zone5 = zone5
 			};
 			PlayerZone.Invoke(null, args);
 			return args.Handled;
@@ -3155,8 +3160,8 @@ namespace TShockAPI
 			BitsByte zone2 = args.Data.ReadInt8();
 			BitsByte zone3 = args.Data.ReadInt8();
 			BitsByte zone4 = args.Data.ReadInt8();
-
-			if (OnPlayerZone(args.Player, args.Data, plr, zone1, zone2, zone3, zone4))
+                        BitsByte zone5 = args.Data.ReadInt8();
+			if (OnPlayerZone(args.Player, args.Data, plr, zone1, zone2, zone3, zone4, zone5))
 				return true;
 
 			return false;
