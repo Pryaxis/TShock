@@ -2687,6 +2687,8 @@ namespace TShockAPI
 			short spawnx = args.Data.ReadInt16();
 			short spawny = args.Data.ReadInt16();
 			int respawnTimer = args.Data.ReadInt32();
+			int numberOfDeathsPVE = args.Data.ReadInt16(); 
+                        int numberOfDeathsPVP = args.Data.ReadInt16(); 
 			PlayerSpawnContext context = (PlayerSpawnContext)args.Data.ReadByte();
 
 			if (OnPlayerSpawn(args.Player, args.Data, player, spawnx, spawny, respawnTimer, context))
