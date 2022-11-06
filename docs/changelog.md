@@ -18,6 +18,7 @@ Use past tense when adding new entries; sign your name off when you add or chang
 * Fixed item giving potentially dropping too many items (@PotatoCider, @punchready)
 * Excluded GeoIP.dat from release bundle (@SignatureBeef)
 * Added `TownSlimeRed` to `FishableNpcIDs` list, allowing it to be fished up (@drunderscore)
+* Added permission for summoning Mechdusa, Deerclops and slime pet (@sgkoishi, #2808)
 
 ## TShock 5.0.0
 * Reduced load/save console spam. (@SignatureBeef, @YehnBeep)
