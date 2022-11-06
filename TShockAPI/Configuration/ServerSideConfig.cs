@@ -72,10 +72,6 @@ namespace TShockAPI.Configuration
 		/// </summary>
 		[Description("Warns players and the console if a player has the tshock.ignore.ssc permission with data in the SSC table.")]
 		public bool WarnPlayersAboutBypassPermission = true;
-
-		/// <summary>If set to true, items given to players will be inserted directly into their inventory. Requires SSC. Otherwise, items given to players will spawn as dropped items.</summary>
-		[Description("If set to true, items given to players will be inserted directly into their inventory. Requires SSC. Otherwise, items given to players will spawn as dropped items.")]
-		public bool GiveItemsDirectly = false;
 	}
 
 	/// <summary>
@@ -83,6 +79,22 @@ namespace TShockAPI.Configuration
 	/// </summary>
 	public class ServerSideConfig : ConfigFile<SscSettings>
 	{
+		/// <summary>
+		/// Upgrades the configuration file from the old format if required, then reads and returns the currently configured <see cref="SscSettings"/>
+		/// </summary>
+		/// <param name="json"></param>
+		/// <param name="incompleteSettings"></param>
+		/// <returns></returns>
+		public override SscSettings ConvertJson(string json, out bool incompleteSettings)
+		{
+			var settings = FileTools.LoadConfigAndCheckForChanges<SscSettings>(json, out incompleteSettings);
+
+			Settings = settings;
+			OnConfigRead?.Invoke(this);
+
+			return settings;
+		}
+
 		/// <summary>
 		/// Dumps all configuration options to a text file in Markdown format
 		/// </summary>

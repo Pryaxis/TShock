@@ -1511,7 +1511,7 @@ namespace TShockAPI
 		/// <param name="prefix">The item prefix.</param>
 		public virtual void GiveItem(int type, int stack, int prefix = 0)
 		{
-			if (TShock.ServerSideCharacterConfig.Settings.GiveItemsDirectly)
+			if (TShock.Config.Settings.GiveItemsDirectly)
 				GiveItemDirectly(type, stack, prefix);
 			else
 				GiveItemByDrop(type, stack, prefix);
@@ -1558,8 +1558,8 @@ namespace TShockAPI
 				if (Depleted(item = GiveItemDirectly_FillEmptyInventorySlot(item, slot)))
 					return;
 
-			// oh no, i can't give... guess i gotta spill it on the floor
-			GiveItemByDrop(type, stack, prefix);
+			// oh no, i can't give the rest of the items... guess i gotta spill it on the floor
+			GiveItemByDrop(item.type, item.stack, item.prefix);
 		}
 
 		private void SendItemSlotPacketFor(int slot)

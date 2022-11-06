@@ -705,7 +705,10 @@ namespace TShockAPI
 			{
 				if (!cmd.CanRun(player))
 				{
-					TShock.Utils.SendLogs(GetString("{0} tried to execute {1}{2}.", player.Name, Specifier, cmdText), Color.PaleVioletRed, player);
+					if (cmd.DoLog)
+						TShock.Utils.SendLogs(GetString("{0} tried to execute {1}{2}.", player.Name, Specifier, cmdText), Color.PaleVioletRed, player);
+					else
+						TShock.Utils.SendLogs(GetString("{0} tried to execute (args omitted) {1}{2}.", player.Name, Specifier, cmdName), Color.PaleVioletRed, player);
 					player.SendErrorMessage(GetString("You do not have access to this command."));
 					if (player.HasPermission(Permissions.su))
 					{
@@ -720,6 +723,8 @@ namespace TShockAPI
 				{
 					if (cmd.DoLog)
 						TShock.Utils.SendLogs(GetString("{0} executed: {1}{2}.", player.Name, silent ? SilentSpecifier : Specifier, cmdText), Color.PaleVioletRed, player);
+					else
+						TShock.Utils.SendLogs(GetString("{0} executed (args omitted): {1}{2}.", player.Name, silent ? SilentSpecifier : Specifier, cmdName), Color.PaleVioletRed, player);
 					cmd.Run(cmdText, silent, player, args);
 				}
 			}
