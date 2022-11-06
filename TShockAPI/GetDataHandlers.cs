@@ -2916,7 +2916,7 @@ namespace TShockAPI
 			short type = args.Data.ReadInt16();
 			
 			BitsByte bitsByte = args.Data.ReadByte();
-		        BitsByte bitsByte2 = (BitsByte)(bitsByte[2] ? data.ReadByte() : 0);
+		        BitsByte bitsByte2 = (BitsByte)(bitsByte[2] ? args.Data.ReadByte() : 0);
 			float[] ai = new float[Projectile.maxAI];
 			for (int i = 0; i < Projectile.maxAI; ++i) ai[i] = 0f;
 			ai[0] = bitsByte[0] ? args.Data.ReadSingle() : 0f;
