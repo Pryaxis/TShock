@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-31 22:50:21+0000\n"
-"PO-Revision-Date: 2022-11-02 04:50\n"
+"PO-Revision-Date: 2022-11-06 07:13\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "MIME-Version: 1.0\n"
@@ -1630,486 +1630,486 @@ msgstr "Bouncer / OnItemDrop rejeitado por verificação de alcance de {0}"
 #: ../../TShockAPI/Bouncer.cs:1124
 #, csharp-format
 msgid "Bouncer / OnItemDrop rejected from sneaky from {0}"
-msgstr ""
+msgstr "Bouncer / OnItemDrop rejeitado por furtividade de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2683
 #, csharp-format
 msgid "Bouncer / OnKillMe rejected bad length death text from {0}"
-msgstr ""
+msgstr "Bouncer / OnKillMe rejeitou o texto de morte de comprimento inválido de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2690
 #, csharp-format
 msgid "Bouncer / OnKillMe rejected custom death message from {0}"
-msgstr ""
+msgstr "Bouncer / OnKillMe rejeitou a mensagem de morte personalizada de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2664
 #, csharp-format
 msgid "Bouncer / OnKillMe rejected high damage from {0} {1}"
-msgstr ""
+msgstr "Bouncer / OnKillMe rejeitou o dano alto de {0} {1}"
 
 #: ../../TShockAPI/Bouncer.cs:2673
 #, csharp-format
 msgid "Bouncer / OnKillMe rejected index check from {0}"
-msgstr ""
+msgstr "Bouncer / OnKillMe rejeitou a verificação de índice de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1756
 #, csharp-format
 msgid "Bouncer / OnLiquidSet rejected bucket check 1 from {0}"
-msgstr ""
+msgstr "Bouncer / OnLiquidSet rejeitou a verificação de balde 1 de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1776
 #, csharp-format
 msgid "Bouncer / OnLiquidSet rejected bucket check 2 from {0}"
-msgstr ""
+msgstr "Bouncer / OnLiquidSet rejeitou a verificação de balde 2 de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1786
 #, csharp-format
 msgid "Bouncer / OnLiquidSet rejected bucket check 3 from {0}"
-msgstr ""
+msgstr "Bouncer / OnLiquidSet rejeitou a verificação de balde 3 de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1796
 #, csharp-format
 msgid "Bouncer / OnLiquidSet rejected bucket check 4 from {0}"
-msgstr ""
+msgstr "Bouncer / OnLiquidSet rejeitou a verificação de balde 4 de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1806
 #, csharp-format
 msgid "Bouncer / OnLiquidSet rejected bucket check 5 from {0}"
-msgstr ""
+msgstr "Bouncer / OnLiquidSet rejeitou a verificação de balde 5 de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1816
 #, csharp-format
 msgid "Bouncer / OnLiquidSet rejected bucket check 6 from {0}"
-msgstr ""
+msgstr "Bouncer / OnLiquidSet rejeitou a verificação de balde 6 de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1827
 #, csharp-format
 msgid "Bouncer / OnLiquidSet rejected bucket check 7 from {0}"
-msgstr ""
+msgstr "Bouncer / OnLiquidSet rejeitou a verificação de balde 7 de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1838
 #, csharp-format
 msgid "Bouncer / OnLiquidSet rejected build permission from {0}"
-msgstr ""
+msgstr "Bouncer / OnLiquidSet rejeitou a permissão de construção de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1658
 #, csharp-format
 msgid "Bouncer / OnLiquidSet rejected disabled from {0}"
-msgstr ""
+msgstr "Bouncer / OnLiquidSet rejected desativado de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1676
 #, csharp-format
 msgid "Bouncer / OnLiquidSet rejected from liquid threshold from {0} {1}/{2}"
-msgstr ""
+msgstr "Bouncer / OnLiquidSet rejeitado por limite de líquido de {0} {1}/{2}"
 
 #: ../../TShockAPI/Bouncer.cs:1651
 #, csharp-format
 msgid "Bouncer / OnLiquidSet rejected invalid check from {0}"
-msgstr ""
+msgstr "Bouncer / OnLiquidSet rejeitou a verificação inválida de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1766
 #, csharp-format
 msgid "Bouncer / OnLiquidSet rejected lava bucket from {0}"
-msgstr ""
+msgstr "Bouncer / OnLiquidSet rejeitou balde de lava de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1846
 #, csharp-format
 msgid "Bouncer / OnLiquidSet rejected range checks from {0}"
-msgstr ""
+msgstr "Bouncer / OnLiquidSet rejeitou a verificação de alcance de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1854
 #, csharp-format
 msgid "Bouncer / OnLiquidSet rejected throttle from {0}"
-msgstr ""
+msgstr "Bouncer / OnLiquidSet rejeitou o acelerador de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2553
 #, csharp-format
 msgid "Bouncer / OnMassWireOperation rejected build perms from {0}"
-msgstr ""
+msgstr "Bouncer / OnMassWireOperation rejeitou permissões de construção de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2546
 #, csharp-format
 msgid "Bouncer / OnMassWireOperation rejected disabled from {0}"
-msgstr ""
+msgstr "Bouncer / OnMassWireOperation rejected desativado de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2539
 #, csharp-format
 msgid "Bouncer / OnMassWireOperation rejected valid placement from {0}"
-msgstr ""
+msgstr "Bouncer / OnMassWireOperation rejeitou o posicionamento válido de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1257
 #, csharp-format
 msgid "Bouncer / OnNewProjectile please report to tshock about this! normally this is a reject from {0} {1}"
-msgstr ""
+msgstr "Bouncer / OnNewProjectile por favor relate ao tshock sobre isso! normalmente isto é uma rejeição de {0} {1}"
 
 #: ../../TShockAPI/Bouncer.cs:1213
 #, csharp-format
 msgid "Bouncer / OnNewProjectile please report to tshock about this! normally this is a reject from {0} {1} (golf)"
-msgstr ""
+msgstr "Bouncer / OnNewProjectile por favor relate ao tshock sobre isso! normalmente isto é uma rejeição de {0} {1} (golf)"
 
 #: ../../TShockAPI/Bouncer.cs:1157
 #, csharp-format
 msgid "Bouncer / OnNewProjectile rejected from above projectile limit from {0}"
-msgstr ""
+msgstr "Bouncer / OnNewProjectile rejeitado por acima do limite de projéteis de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1298
 #, csharp-format
 msgid "Bouncer / OnNewProjectile rejected from bouncer modified AI from {0}."
-msgstr ""
+msgstr "Bouncer / OnNewProjectile reitado por IA de bouncer modificada de {0}."
 
 #: ../../TShockAPI/Bouncer.cs:1314
 #, csharp-format
 msgid "Bouncer / OnNewProjectile rejected from bouncer modified Zenith projectile from {0}."
-msgstr ""
+msgstr "Bouncer / OnNewProjectile rejeitado por bouncer de projétil Zenith modificado de  {0}."
 
 #: ../../TShockAPI/Bouncer.cs:1285
 #, csharp-format
 msgid "Bouncer / OnNewProjectile rejected from bouncer throttle from {0}"
-msgstr ""
+msgstr "Bouncer / OnNewProjectile rejeitado por aceleração de bouncer de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1184
 #, csharp-format
 msgid "Bouncer / OnNewProjectile rejected from disabled from {0}"
-msgstr ""
+msgstr "Bouncer / OnNewProjectile rejeitado por desativado de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1221
 #, csharp-format
 msgid "Bouncer / OnNewProjectile rejected from hostile projectile from {0}"
-msgstr ""
+msgstr "Bouncer / OnNewProjectile rejeitado por projétil hostil de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1166
 #, csharp-format
 msgid "Bouncer / OnNewProjectile rejected from permission check from {0} {1}"
-msgstr ""
+msgstr "Bouncer / OnNewProjectile rejeitado por verificação de permissão de {0} {1}"
 
 #: ../../TShockAPI/Bouncer.cs:1176
 #, csharp-format
 msgid "Bouncer / OnNewProjectile rejected from projectile damage limit from {0} {1}/{2}"
-msgstr ""
+msgstr "Bouncer / OnNewProjectile rejeitado por limite de dano de projétil de {0} {1}/{2}"
 
 #: ../../TShockAPI/Bouncer.cs:1277
 #, csharp-format
 msgid "Bouncer / OnNewProjectile rejected from projectile update threshold from {0} {1}/{2}"
-msgstr ""
+msgstr "Bouncer / OnNewProjectile rejeitado por limite de atualização de projétil de {0} {1}/{2}"
 
 #: ../../TShockAPI/Bouncer.cs:1232
 #, csharp-format
 msgid "Bouncer / OnNewProjectile rejected from tombstones from {0}"
-msgstr ""
+msgstr "Bouncer / OnNewProjectile rejeitado por lápides de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1252
 #, csharp-format
 msgid "Bouncer / OnNewProjectile rejected from weird check from {0} {1}"
-msgstr ""
+msgstr "Bouncer / OnNewProjectile rejeitado por verificação estranha de {0} {1}"
 
 #: ../../TShockAPI/Bouncer.cs:2025
 #, csharp-format
 msgid "Bouncer / OnNPCAddBuff rejected abnormal buff ({0}, last for {4}) added to {1} ({2}) from {3}."
-msgstr ""
+msgstr "Bouncer / OnNPCAddBuff rejeitou buff anormalf ({0}, dura por {4}) adicionado a {1} ({2}) de {3}."
 
 #: ../../TShockAPI/Bouncer.cs:1979
 #, csharp-format
 msgid "Bouncer / OnNPCAddBuff rejected disabled from {0}"
-msgstr ""
+msgstr "Bouncer / OnNPCAddBuff rejected desativado de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1972
 #, csharp-format
 msgid "Bouncer / OnNPCAddBuff rejected null npc from {0}"
-msgstr ""
+msgstr "Bouncer / OnNPCAddBuff rejeitado npc nulo de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1963
 #, csharp-format
 msgid "Bouncer / OnNPCAddBuff rejected out of bounds NPC update from {0}"
-msgstr ""
+msgstr "Bouncer / OnNPCAddBuff rejeitou a atualização de NPC fora dos limites de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1398
 #, csharp-format
 msgid "Bouncer / OnNPCStrike rejected from bouncer throttle from {0}"
-msgstr ""
+msgstr "Bouncer / OnNPCStrike rejeitado por aeleração bouncer de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1373
 #, csharp-format
 msgid "Bouncer / OnNPCStrike rejected from damage threshold from {0} {1}/{2}"
-msgstr ""
+msgstr "Bouncer / OnNPCStrike rejeitado por limite de dano de {0} {1}/{2}"
 
 #: ../../TShockAPI/Bouncer.cs:1381
 #, csharp-format
 msgid "Bouncer / OnNPCStrike rejected from disabled from {0}"
-msgstr ""
+msgstr "Bouncer / OnNPCStrike rejeitado por desativado de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1390
 #, csharp-format
 msgid "Bouncer / OnNPCStrike rejected from range checks from {0}"
-msgstr ""
+msgstr "Bouncer / OnNPCStrike rejeitado por verificações de alcance de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1532
 #, csharp-format
 msgid "Bouncer / OnPlaceChest / rejected from invalid place style from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceChest / rejeitado por estilo de local inválido de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1524
 #, csharp-format
 msgid "Bouncer / OnPlaceChest rejected from disabled from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceChest rejeitado por desativado de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1517
 #, csharp-format
 msgid "Bouncer / OnPlaceChest rejected from invalid check from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceChest rejeitado por verificação inválida de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1565
 #, csharp-format
 msgid "Bouncer / OnPlaceChest rejected from invalid permission from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceChest rejeitado por permissão inválida de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1573
 #, csharp-format
 msgid "Bouncer / OnPlaceChest rejected from range check from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceChest rejeitado por verificação de alcance de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1544
 #, csharp-format
 msgid "Bouncer / OnPlaceChest rejected from weird check from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceChest rejeitado por verificação estranha de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1555
 #, csharp-format
 msgid "Bouncer / OnPlaceChest rejected from weird placement check from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceChest rejeitado por verificação de colocação estranha de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2420
 #, csharp-format
 msgid "Bouncer / OnPlaceItemFrame rejected disabled from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceItemFrame rejected desativado de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2428
 #, csharp-format
 msgid "Bouncer / OnPlaceItemFrame rejected permissions from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceItemFrame rejeitou permissões de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2436
 #, csharp-format
 msgid "Bouncer / OnPlaceItemFrame rejected range checks from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceItemFrame rejeitou verificações de alcance de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2413
 #, csharp-format
 msgid "Bouncer / OnPlaceItemFrame rejected tile placement valid from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceItemFrame rejeitou posicionamento de bloco válido de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2298
 #, csharp-format
 msgid "Bouncer / OnPlaceObject rejected awkward tile creation/selection from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceObject rejeitou criação/seleção de bloco estranha de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2285
 #, csharp-format
 msgid "Bouncer / OnPlaceObject rejected Axe of Regrowth only places saplings {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceObject rejeitou Cajado do Renascimento de apenas colocar mudas {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2246
 #, csharp-format
 msgid "Bouncer / OnPlaceObject rejected banned tiles from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceObject rejeitou blocos banidos de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2255
 #, csharp-format
 msgid "Bouncer / OnPlaceObject rejected dead people don't do things from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceObject rejeitou pessoas mortas não fazem coisas de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2263
 #, csharp-format
 msgid "Bouncer / OnPlaceObject rejected disabled from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceObject rejected desativado de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2237
 #, csharp-format
 msgid "Bouncer / OnPlaceObject rejected fake containers from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceObject rejeitou contêineres falsos de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2331
 #, csharp-format
 msgid "Bouncer / OnPlaceObject rejected mad loop from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceObject rejeitou um loop louco de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2316
 #, csharp-format
 msgid "Bouncer / OnPlaceObject rejected null tile data from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceObject rejeitou dados de bloco nulos de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2306
 #, csharp-format
 msgid "Bouncer / OnPlaceObject rejected object placement with invalid style from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceObject rejeitou posicionamento de objeto com estilo inválido de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2214
 #, csharp-format
 msgid "Bouncer / OnPlaceObject rejected out of bounds tile from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceObject rejeitou bloco fora dos limites de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2221
 #, csharp-format
 msgid "Bouncer / OnPlaceObject rejected out of bounds tile x from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceObject rejeitou bloco fora dos limites x de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2228
 #, csharp-format
 msgid "Bouncer / OnPlaceObject rejected out of bounds tile y from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceObject rejeitou bloco fora dos limites y de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2347
 #, csharp-format
 msgid "Bouncer / OnPlaceObject rejected range checks from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceObject rejeitou verificações de alcance de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2274
 #, csharp-format
 msgid "Bouncer / OnPlaceObject rejected rubblemaker I can't believe it's not rubble! from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceObject rejeitou criador de borracha eu não acredito que não é borracha! de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2355
 #, csharp-format
 msgid "Bouncer / OnPlaceObject rejected tile place threshold from {0} {1}/{2}"
-msgstr ""
+msgstr "Bouncer / OnPlaceObject rejeitou limite de posicionamento de bloco de {0} {1}/{2}"
 
 #: ../../TShockAPI/Bouncer.cs:2207
 #, csharp-format
 msgid "Bouncer / OnPlaceObject rejected valid placements from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceObject rejeitou posicionamentos válidos de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2386
 #, csharp-format
 msgid "Bouncer / OnPlaceTileEntity rejected disabled from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceTileEntity rejected desativado de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2393
 #, csharp-format
 msgid "Bouncer / OnPlaceTileEntity rejected permissions from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceTileEntity rejeitou permissões de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2400
 #, csharp-format
 msgid "Bouncer / OnPlaceTileEntity rejected range checks from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceTileEntity rejeitou verificações de alcance de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2379
 #, csharp-format
 msgid "Bouncer / OnPlaceTileEntity rejected tile placement valid from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlaceTileEntity rejeitou posicionamento de bloco válido de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1624
 #, csharp-format
 msgid "Bouncer / OnPlayerAnimation rejected from disabled from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerAnimation rejeitado por verificado de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1632
 #, csharp-format
 msgid "Bouncer / OnPlayerAnimation rejected from throttle from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerAnimation rejeitado por aceleração de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1929
 #, csharp-format
 msgid "Bouncer / OnPlayerBuff rejected applied to non-sender from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerBuff rejeitou aplicado para não-remetente de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1894
 #, csharp-format
 msgid "Bouncer / OnPlayerBuff rejected disabled from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerBuff rejected desativado de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1937
 #, csharp-format
 msgid "Bouncer / OnPlayerBuff rejected hostile/pvp from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerBuff rejeitou hostil/pvp de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1886
 #, csharp-format
 msgid "Bouncer / OnPlayerBuff rejected invalid buff type {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerBuff rejeitou tipo de buff inválido {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1921
 #, csharp-format
 msgid "Bouncer / OnPlayerBuff rejected non-whitelisted buff {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerBuff rejeitou buff não-listado {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1879
 #, csharp-format
 msgid "Bouncer / OnPlayerBuff rejected null check from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerBuff rejeitou verificação nula de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1872
 #, csharp-format
 msgid "Bouncer / OnPlayerBuff rejected player cap from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerBuff rejeitou limite de jogador de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1913
 #, csharp-format
 msgid "Bouncer / OnPlayerBuff rejected range check from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerBuff rejeitou verificação de alcance de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1902
 #, csharp-format
 msgid "Bouncer / OnPlayerBuff rejected throttled from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerBuff rejeitou aceleração de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1945
 #, csharp-format
 msgid "Bouncer / OnPlayerBuff rejected time too long from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerBuff rejeitou tempo muito longo de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2647
 #, csharp-format
 msgid "Bouncer / OnPlayerDamage rejected custom death message from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerDamage rejeitou mensagem de morte personalizada de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2583
 #, csharp-format
 msgid "Bouncer / OnPlayerDamage rejected damage threshold from {0} {1}/{2}"
-msgstr ""
+msgstr "Bouncer / OnPlayerDamage rejeitou limite de dano de {0} {1}/{2}"
 
 #: ../../TShockAPI/Bouncer.cs:2610
 #, csharp-format
 msgid "Bouncer / OnPlayerDamage rejected disabled from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerDamage rejected desativado de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2601
 #, csharp-format
 msgid "Bouncer / OnPlayerDamage rejected hostile from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerDamage rejeitou hostil de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2574
 msgid "Bouncer / OnPlayerDamage rejected null check"
-msgstr ""
+msgstr "Bouncer / OnPlayerDamage rejeitou verificação nula"
 
 #: ../../TShockAPI/Bouncer.cs:2619
 #, csharp-format
 msgid "Bouncer / OnPlayerDamage rejected range checks from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerDamage rejeitou verificações de alcance de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2628
 #, csharp-format
 msgid "Bouncer / OnPlayerDamage rejected throttled from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerDamage rejeitou aceleração de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2468
 #, csharp-format
 msgid "Bouncer / OnPlayerPortalTeleport rejected disabled/throttled from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerPortalTeleport rejeitou desativado/aceleração de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2460
 #, csharp-format
 msgid "Bouncer / OnPlayerPortalTeleport rejected teleport out of bounds from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerPortalTeleport rejeitou teleporte fora dos limites de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2449
 #, csharp-format
 msgid "Bouncer / OnPlayerPortalTeleport rejected untargetable teleport from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerPortalTeleport rejeitou teleporte inacessível de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:499
 #, csharp-format
 msgid "Bouncer / OnPlayerUpdate *would have rejected* from (last network position zero) {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerUpdate *teria sido rejeitado* de (ultima posição de rede zero) {0}"
 
 #: ../../TShockAPI/Bouncer.cs:477
 #, csharp-format
@@ -2129,228 +2129,228 @@ msgstr "Bouncer / OnPlayerUpdate force kicked (tentativa de definir a velocidade
 #: ../../TShockAPI/Bouncer.cs:543
 #, csharp-format
 msgid "Bouncer / OnPlayerUpdate rejected from (??) {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerUpdate rejeitado por (??) {0}"
 
 #: ../../TShockAPI/Bouncer.cs:547
 #, csharp-format
 msgid "Bouncer / OnPlayerUpdate rejected from (below ??) {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerUpdate rejeitado por (abaixo ??) {0}"
 
 #: ../../TShockAPI/Bouncer.cs:555
 #, csharp-format
 msgid "Bouncer / OnPlayerUpdate rejected from (corpses don't move) {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerUpdate rejeitado por (cadáveres não se movem) {0}"
 
 #: ../../TShockAPI/Bouncer.cs:492
 #, csharp-format
 msgid "Bouncer / OnPlayerUpdate rejected from (inventory length) {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerUpdate rejeitado por (comprimento do inventário) {0}"
 
 #: ../../TShockAPI/Bouncer.cs:485
 #, csharp-format
 msgid "Bouncer / OnPlayerUpdate rejected from (position check) {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerUpdate rejeitado por (verificação de posicionamento) {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1610
 #, csharp-format
 msgid "Bouncer / OnPlayerZone rejected from {0}"
-msgstr ""
+msgstr "Bouncer / OnPlayerZone rejeitado por {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1427
 #, csharp-format
 msgid "Bouncer / OnProjectileKill rejected from bouncer throttle from {0}"
-msgstr ""
+msgstr "Bouncer / OnProjectileKill rejeitado por aceleração de bouncer de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1419
 #, csharp-format
 msgid "Bouncer / OnProjectileKill rejected from disabled from {0}"
-msgstr ""
+msgstr "Bouncer / OnProjectileKill rejeitado por desativado de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1412
 #, csharp-format
 msgid "Bouncer / OnProjectileKill rejected from negative projectile index from {0}"
-msgstr ""
+msgstr "Bouncer / OnProjectileKill rejeitado por índice de projéteis negativo de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2138
 #, csharp-format
 msgid "Bouncer / OnReleaseNPC rejected npc release from {0}"
-msgstr ""
+msgstr "Bouncer / OnReleaseNPC rejeitou liberação de npc de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2130
 #, csharp-format
 msgid "Bouncer / OnReleaseNPC rejected out of bounds from {0}"
-msgstr ""
+msgstr "Bouncer / OnReleaseNPC rejeitou fora dos limites de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2189
 #, csharp-format
 msgid "Bouncer / OnReleaseNPC rejected throttle from {0}"
-msgstr ""
+msgstr "Bouncer / OnReleaseNPC rejeitou aceleração de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2145
 #, csharp-format
 msgid "Bouncer / OnReleaseNPC released different critter from {0}"
-msgstr ""
+msgstr "Bouncer / OnReleaseNPC liberou uma criatura diferente de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:684
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from (axe) {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit rejeitado por (eixo) {0} {1} {2}"
 
 #: ../../TShockAPI/Bouncer.cs:787
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from (chestcap) {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit rejeitado por (limite de baú) {0} {1} {2}"
 
 #: ../../TShockAPI/Bouncer.cs:692
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from (hammer) {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit rejeitado por (martelo) {0} {1} {2}"
 
 #: ../../TShockAPI/Bouncer.cs:720
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from (hammer2) {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit rejeitado por (martelo2) {0} {1} {2}"
 
 #: ../../TShockAPI/Bouncer.cs:739
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from (inconceivable rope coil) {0} {1} {2} selectedItem:{3} itemCreateTile:{4}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit rejeitado por (bobina de corda inconcebível) {0} {1} {2} selectedItem:{3} itemCreateTile:{4}"
 
 #: ../../TShockAPI/Bouncer.cs:750
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from (ms1) {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit rejeitado por (ms1) {0} {1} {2}"
 
 #: ../../TShockAPI/Bouncer.cs:621
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from (pdm) {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit rejeitado por (pdm) {0} {1} {2}"
 
 #: ../../TShockAPI/Bouncer.cs:708
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from (pick) {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit rejeitado por (picareta) {0} {1} {2}"
 
 #: ../../TShockAPI/Bouncer.cs:657
 #: ../../TShockAPI/Bouncer.cs:668
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from (placestyle) {0} {1} {2} placeStyle: {3} expectedStyle: {4}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit rejeitado por (placestyle) {0} {1} {2} placeStyle: {3} expectedStyle: {4}"
 
 #: ../../TShockAPI/Bouncer.cs:635
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from (tb) {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit rejeitado por (tb) {0} {1} {2}"
 
 #: ../../TShockAPI/Bouncer.cs:585
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from (tile placement valid) {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit rejeitado por (posicionamento de bloco válido) {0} {1} {2}"
 
 #: ../../TShockAPI/Bouncer.cs:831
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from actuator/presserator from {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit rejeitado por atuador/presserator {0} {1} {2}"
 
 #: ../../TShockAPI/Bouncer.cs:594
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from build from {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit rejeitado por construção de {0} {1} {2}"
 
 #: ../../TShockAPI/Bouncer.cs:852
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from disable from {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit rejeitado por desativado de {0} {1} {2}"
 
 #: ../../TShockAPI/Bouncer.cs:606
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from editData out of bounds {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit rejeitado por editData fora dos limites {0} {1} {2}"
 
 #: ../../TShockAPI/Bouncer.cs:891
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from explosives/fuses from {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit rejeitado por explosivos/fusíveis de {0} {1} {2}"
 
 #: ../../TShockAPI/Bouncer.cs:861
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from ice/build from {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit rejeitado por gelo/construção de {0} {1} {2}"
 
 #: ../../TShockAPI/Bouncer.cs:806
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from place wire from {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit rejeitado por lugar do fio de {0} {1} {2}"
 
 #: ../../TShockAPI/Bouncer.cs:841
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from sts allow cut from {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit rejeitado por permissão de corte sts de {0} {1} {2}"
 
 #: ../../TShockAPI/Bouncer.cs:935
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from throttled from {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit rejeitado por acelerador de {0} {1} {2}"
 
 #: ../../TShockAPI/Bouncer.cs:909
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from tile kill threshold from {0}, (value: {1})"
-msgstr ""
+msgstr "Bouncer / OnTileEdit rejeitado por limite de morte de bloco de {0}, (valor: {1})"
 
 #: ../../TShockAPI/Bouncer.cs:927
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from tile place threshold from {0}, (value: {1})"
-msgstr ""
+msgstr "Bouncer / OnTileEdit rejeitado por limite de posicionamento de bloco de {0}, (valor: {1})"
 
 #: ../../TShockAPI/Bouncer.cs:769
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from tile placement not matching selected item createTile {0} {1} {2} selectedItemID:{3} createTile:{4}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit rejeitado por posicionamento de bloco não correspondente ao item selecionado createTile {0} {1} {2} selectedItemID:{3} createTile:{4}"
 
 #: ../../TShockAPI/Bouncer.cs:759
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from using ice rod but not placing ice block {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit rejeitado por usar vara de gelo mas não colocar bloco de gelo {0} {1} {2}"
 
 #: ../../TShockAPI/Bouncer.cs:778
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from wall placement not matching selected item createWall {0} {1} {2} selectedItemID:{3} createWall:{4}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit rejeitado por posicionamento de parede não correspondente ao item selecionado createWall {0} {1} {2} selectedItemID:{3} createWall:{4}"
 
 #: ../../TShockAPI/Bouncer.cs:968
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from weird confusing flow control from {0}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit rejeitado por controle de fluxo estranho de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:820
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from wire cutter from {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit rejeitado por cortador de fio de {0} {1} {2}"
 
 #: ../../TShockAPI/Bouncer.cs:614
 #, csharp-format
 msgid "Bouncer / OnTileEdit super accepted from (ice block) {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit super aceito por (bloco de gelo) {0} {1} {2}"
 
 #: ../../TShockAPI/Bouncer.cs:2045
 #, csharp-format
 msgid "Bouncer / OnUpdateNPCHome rejected npc home build permission from {0}"
-msgstr ""
+msgstr "Bouncer / OnUpdateNPCHome rejeitou permissão de construção de casa para npc de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2055
 #, csharp-format
 msgid "Bouncer / OnUpdateNPCHome rejected range checks from {0}"
-msgstr ""
+msgstr "Bouncer / OnUpdateNPCHome rejeitou verificações de alcance de {0}"
 
 #: ../../TShockAPI/Handlers/SendTileRectHandler.cs:557
 #, csharp-format
 msgid "Bouncer / SendTileRect accepted clientside world edit from {0}"
-msgstr ""
+msgstr "Bouncer / SendTileRect aceitou edição de mundo clientside de {0}"
 
 #: ../../TShockAPI/Handlers/SendTileRectHandler.cs:413
 #, csharp-format
 msgid "Bouncer / SendTileRect processing a tile conversion update - [{0}] -> [{1}]"
-msgstr ""
+msgstr "Bouncer / SendTileRect processando uma atualização de conversão de bloco - [{0}] -> [{1}]"
 
 #: ../../TShockAPI/Handlers/SendTileRectHandler.cs:129
 #, csharp-format

@@ -17,6 +17,7 @@ Use past tense when adding new entries; sign your name off when you add or chang
 ## Upcoming changes
 * Fixed item giving potentially dropping too many items (@PotatoCider, @punchready)
 * Excluded GeoIP.dat from release bundle (@SignatureBeef)
+* Added `TownSlimeRed` to `FishableNpcIDs` list, allowing it to be fished up (@drunderscore)
 * Allowed Torch God's Favor to place different types of torches and campfires (@sgkoishi, #2811)
 * Allowed Crystal Shard to grow (@sgkoishi, @cc004, SignatureBeef/Open-Terraria-API#96)
 

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-31 22:50:21+0000\n"
-"PO-Revision-Date: 2022-11-02 04:50\n"
+"PO-Revision-Date: 2022-11-04 17:22\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "MIME-Version: 1.0\n"
@@ -22,13 +22,13 @@ msgstr ""
 #, csharp-format
 msgctxt "{0} is a player name"
 msgid "Skipping SSC save (due to tshock.ignore.ssc) for {0}"
-msgstr "Mengabaikan penyimpanan SSC untuk {0} (karena menggunakan tshock.ignore.ssc)"
+msgstr "Mengabaikan penyimpanan SSC untuk {0} (karena memiliki tshock.ignore.ssc)"
 
 #: ../../TShockAPI/DB/BanManager.cs:213
 #, csharp-format
 msgctxt "{0} is ban number, {1} is ban reason, {2} is a timestamp"
 msgid "#{0} - You are banned: {1} ({2} remaining)"
-msgstr "#{0} - Anda telah diblokir: {1}( dalam waktu {2})"
+msgstr "#{0} - Anda telah diblokir: {1}( tersisa {2})"
 
 #: ../../TShockAPI/DB/BanManager.cs:208
 #, csharp-format
@@ -55,12 +55,12 @@ msgstr "     'topaz', 'amethyst', 'sapphire', 'emerald', 'ruby', 'diamond', 'amb
 #: ../../TShockAPI/Commands.cs:1442
 #, csharp-format
 msgid "   {0}{1} \"{2}\" (Find the IP associated with the offline target's account)"
-msgstr "   {0}{1} \"{2}\" (Temukan IP terkait dengan target akun luring)"
+msgstr "   {0}{1} \"{2}\" (Temukan IP yang terkait dengan target akun offline)"
 
 #: ../../TShockAPI/Commands.cs:1440
 #, csharp-format
 msgid "   {0}{1} \"{2}{3}\" {4} {5} (Permanently bans this account name)"
-msgstr "   {0}{1} \"{2}{3}\" {4} {5} (Blokor secara permanen untuk nama akun ini)"
+msgstr "   {0}{1} \"{2}{3}\" {4} {5} (Blokir secara permanen untuk nama akun ini)"
 
 #: ../../TShockAPI/Commands.cs:1445
 #, csharp-format
@@ -70,7 +70,7 @@ msgstr "   {0}{1} {2} (target ini ditemukan berdasarkan indeks pemain)"
 #: ../../TShockAPI/Commands.cs:1446
 #, csharp-format
 msgid "   {0}{1} {2}{3} {4} {5} (Permanently bans the online player by Account, UUID, and IP)"
-msgstr "   {0}{1} {2}{3} {4} {5} (Blokir secara permanen si pemain daring dari Account, UUID, dan IP)"
+msgstr "   {0}{1} {2}{3} {4} {5} (Blokir secara permanen pemain online dengan Account, UUID, dan IP)"
 
 #: ../../TShockAPI/Commands.cs:1443
 #, csharp-format
@@ -85,16 +85,16 @@ msgstr "   Misalnya nilai {0} akan merepresentasikan 10 hari, 30 menit, 0 detik.
 #: ../../TShockAPI/Commands.cs:1386
 #, csharp-format
 msgid "   If no {0} are specified, the command uses {1} by default."
-msgstr "   Jika {0} tidak spesifik,maka menggunakan {1} untuk perintah bawaan."
+msgstr "   Jika {0} tidak ada ditentukan, perintah menggunakan {1} secara default."
 
 #: ../../TShockAPI/Commands.cs:1383
 msgid "   If no duration is provided, the ban will be permanent."
-msgstr "   Jika rentan waktu tidak ditentukan, maka akan diblokir permanen."
+msgstr "   Jika rentang waktu tidak ditentukan, maka akan diblokir permanen."
 
 #: ../../TShockAPI/Commands.cs:1385
 #, csharp-format
 msgid "   Unless {0} is passed to the command, {1} is assumed to be a player or player index"
-msgstr "   Kecuali jika {0} diteruskan perintahnya, {1} itu dianggap sebagai pemain atau indeks pemain"
+msgstr "   Kecuali jika {0} diteruskan ke perintahnya, {1} akan dianggap sebagai pemain atau indeks pemain"
 
 #: ../../TShockAPI/Commands.cs:1258
 #, csharp-format
@@ -119,19 +119,19 @@ msgstr "- {0}: -a (nama akun), -u (UUID), -n (nama karakter), -ip (alamat IP), -
 #: ../../TShockAPI/Commands.cs:1381
 #, csharp-format
 msgid "- {0}: uses the format {1} to determine the length of the ban."
-msgstr "- {0}: gunakan format {1} ini untuk menentukan lama pemblokiran."
+msgstr "- {0}: menggunakan format {1} ini untuk menentukan lama pemblokiran."
 
 #: ../../TShockAPI/Commands.cs:1439
 msgid "- Ban an offline player by account name"
-msgstr "- Blokir pemain luring dari nama akun"
+msgstr "- Blokir pemain online dari nama akun"
 
 #: ../../TShockAPI/Commands.cs:1441
 msgid "- Ban an offline player by IP address"
-msgstr "- Blokir pemain luring dari alamat IP"
+msgstr "- Blokir pemain online dari alamat IP"
 
 #: ../../TShockAPI/Commands.cs:1444
 msgid "- Ban an online player by index (Useful for hard to type names)"
-msgstr "Blokir pemain daring dari pengenal (Untuk nama yang susah diketik)"
+msgstr "Blokir pemain online dari indeks (Untuk nama yang susah diketik)"
 
 #: ../../TShockAPI/Commands.cs:6491
 msgid "- Default trees :"
@@ -185,12 +185,12 @@ msgstr "\"{0}\" telah meminta titik akhir REST: {1}"
 
 #: ../../TShockAPI/Commands.cs:2016
 msgid "(Server Broadcast) "
-msgstr "(Siaran Peladen) "
+msgstr "(Siaran Server) "
 
 #: ../../TShockAPI/Commands.cs:1457
 #, csharp-format
 msgid "{0} - Ticket Number: {1}"
-msgstr "{0} - Nomor karcis: {1}"
+msgstr "{0} - Nomor tiket: {1}"
 
 #: ../../TShockAPI/Commands.cs:2084
 #, csharp-format
@@ -508,7 +508,7 @@ msgstr "{0} telah mengubah grup anda ke {1}."
 #: ../../TShockAPI/Commands.cs:3022
 #, csharp-format
 msgid "{0} has disabled incoming teleports."
-msgstr "{0} telah menonaktifkan teleportasi masuk."
+msgstr "{0} telah menonaktifkan teleportasi yang akan datang."
 
 #: ../../TShockAPI/Commands.cs:2408
 #, csharp-format
@@ -553,28 +553,28 @@ msgstr "{0} telah dibisukan {1} kurun waktu {2}."
 #: ../../TShockAPI/Commands.cs:5995
 #, csharp-format
 msgid "{0} has respawned you."
-msgstr "{0} telah memanggil anda kembali."
+msgstr "{0} telah memunculkan anda kembali."
 
 #: ../../TShockAPI/GetDataHandlers.cs:3545
 #, csharp-format
 msgid "{0} has sent a request to the bunny delivery service!"
-msgstr "{0} telah mengirim sebuah permintaan untuk pelayanan pengiriman kelinci!"
+msgstr "{0} telah mengirim sebuah permintaan ke pelayanan pengiriman kelinci!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3551
 #, csharp-format
 msgid "{0} has sent a request to the cat delivery service!"
-msgstr "{0} telah mengirim sebuah permintaan untuk pelayanan pengiriman kucing!"
+msgstr "{0} telah mengirim sebuah permintaan ke pelayanan pengiriman kucing!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3548
 #, csharp-format
 msgid "{0} has sent a request to the dog delivery service!"
-msgstr "{0} telah mengirim sebuah permintaan untuk pelayanan pengiriman anjing!"
+msgstr "{0} telah mengirim sebuah permintaan ke pelayanan pengiriman anjing!"
 
 #: ../../TShockAPI/Commands.cs:2874
 #, csharp-format
 msgid "{0} has spawned {1} {2} time."
 msgid_plural "{0} has spawned {1} {2} times."
-msgstr[0] "{0} telah memanggil {1} {2} kali."
+msgstr[0] "{0} telah membangkitkan {1} {2} kali."
 
 #: ../../TShockAPI/Commands.cs:2891
 #, csharp-format
@@ -609,12 +609,12 @@ msgstr "{0} telah tidak dibisukan {1}."
 #: ../../TShockAPI/Commands.cs:6352
 #, csharp-format
 msgid "{0} healed {1} for {2} HP."
-msgstr "{0} telah menyembuhkan {1} untuk HP {2}."
+msgstr "{0} telah menyembuhkan {1} untuk {2} HP."
 
 #: ../../TShockAPI/Commands.cs:6350
 #, csharp-format
 msgid "{0} healed herself for {1} HP."
-msgstr "{0} telah menyembuhkan diri sendiri untuk HP {1}."
+msgstr "{0} telah menyembuhkan diri sendiri untuk {1} HP."
 
 #: ../../TShockAPI/Commands.cs:6348
 #, csharp-format
@@ -659,7 +659,7 @@ msgstr "{0} sudah dicegah dari penggunaan proyektil {1}."
 #: ../../TShockAPI/ItemBans.cs:234
 #, csharp-format
 msgid "{0} is banned! Remove it!"
-msgstr "{0} diblokir! copot itu!"
+msgstr "{0} diblokir! Buang itu!"
 
 #: ../../TShockAPI/Commands.cs:6744
 #, csharp-format
@@ -691,13 +691,13 @@ msgstr "{0} sekarang dalam mode dewa."
 #: ../../TShockAPI/Commands.cs:5582
 #, csharp-format
 msgid "{0} is offline and cannot receive your reply."
-msgstr "{0} telah luring dan tidak dapat menerima balasan anda."
+msgstr "{0} telah offline dan tidak dapat menerima balasan anda."
 
 #: ../../TShockAPI/Commands.cs:5945
 #: ../../TShockAPI/Rest/RestManager.cs:1068
 #, csharp-format
 msgid "{0} just killed you!"
-msgstr "anda baru saja dibunuh {0} !"
+msgstr "{0} telah membunuh anda!"
 
 #: ../../TShockAPI/TSPlayer.cs:1926
 #, csharp-format
@@ -713,7 +713,7 @@ msgstr "{0} telah meluncurkan kembang api kepada anda."
 #, csharp-format
 msgid "{0} NPC has been killed."
 msgid_plural "{0} NPCs have been killed."
-msgstr[0] "NPC {0} telah dibunuh."
+msgstr[0] "{0} NPC telah terbunuh."
 
 #: ../../TShockAPI/Commands.cs:1054
 #, csharp-format
@@ -733,33 +733,33 @@ msgstr "{0} telah diberi nama kembali {1}."
 #: ../../TShockAPI/Commands.cs:4570
 #, csharp-format
 msgid "{0} set the time to {1}:{2:D2}."
-msgstr "{0} mengatur waktu pada {1}:{2:D2}."
+msgstr "{0} mengatur waktu ke {1}:{2:D2}."
 
 #: ../../TShockAPI/Commands.cs:4538
 #, csharp-format
 msgid "{0} set the time to 00:00."
-msgstr "{0} mengatur waktu pada 00:00."
+msgstr "{0} mengatur waktu ke 00:00."
 
 #: ../../TShockAPI/Commands.cs:4526
 #, csharp-format
 msgid "{0} set the time to 04:30."
-msgstr "{0} mengatur waktu pada 04:30."
+msgstr "{0} mengatur waktu ke 04:30."
 
 #: ../../TShockAPI/Commands.cs:4534
 #, csharp-format
 msgid "{0} set the time to 12:00."
-msgstr "{0} mengatur waktu pada 12:00."
+msgstr "{0} mengatur waktu ke 12:00."
 
 #: ../../TShockAPI/Commands.cs:4530
 #, csharp-format
 msgid "{0} set the time to 19:30."
-msgstr "{0} mengatur waktu pada 19:30."
+msgstr "{0} mengatur waktu ke 19:30."
 
 #: ../../TShockAPI/Commands.cs:4612
 #: ../../TShockAPI/Commands.cs:4613
 #, csharp-format
 msgid "{0} slapped {1} for {2} damage."
-msgstr "{1} ditampar {0} dalam {2} kerusakan."
+msgstr "{1} menampar {0} untuk {2} kerusakan."
 
 #: ../../TShockAPI/Commands.cs:2827
 #, csharp-format
@@ -965,7 +965,7 @@ msgstr "Tanggal pendaftaran {0} ialah {1} {2} UTC{3}."
 #: ../../TShockAPI/Commands.cs:5774
 #, csharp-format
 msgid "{0}{1} defines no aliases."
-msgstr "{0}{1} dianggap bukan samaran ."
+msgstr "{0}{1} dianggap bukan samaran."
 
 #: ../../TShockAPI/Commands.cs:5280
 #, csharp-format
@@ -980,17 +980,17 @@ msgstr "{0}{1}/{2} pada {3} @ {4}:{5} (TShock untuk Terraria v{6})"
 #: ../../TShockAPI/Commands.cs:846
 #, csharp-format
 msgid "{0}login - Authenticates you using your UUID and character name."
-msgstr "{0}login - Anda autentikasi menggunakan UUID dan nama character anda"
+msgstr "{0}login - Autentikasi diri anda menggunakan UUID dan nama karakter anda"
 
 #: ../../TShockAPI/Commands.cs:851
 #, csharp-format
 msgid "{0}login <password> - Authenticates you using your password and character name."
-msgstr "{0}login <password> - Anda autentikasi menggunakan kata sandi dan nama karakter anda."
+msgstr "{0}login <password> - Autentikasi diri anda menggunakan kata sandi dan nama karakter anda."
 
 #: ../../TShockAPI/Commands.cs:849
 #, csharp-format
 msgid "{0}login <username> <password> - Authenticates you using your username and password."
-msgstr "{0}login <username> <password> - Anda autentikasi menggunakan nama pengguna dan sandi anda."
+msgstr "{0}login <username> <password> - Autentikasi diri anda menggunakan nama pengguna dan sandi anda."
 
 #: ../../TShockAPI/Commands.cs:5409
 #, csharp-format
@@ -1145,7 +1145,7 @@ msgstr "Ditambahkan {0} kedalam whitelist."
 #: ../../TShockAPI/Bouncer.cs:2026
 #, csharp-format
 msgid "Added buff to {0} NPC abnormally."
-msgstr "Telah menambahkan buff ke {0} tidak normal NPC."
+msgstr "Telah menambahkan buff tidak normal ke NPC {0}."
 
 #: ../../TShockAPI/Commands.cs:4851
 #, csharp-format
@@ -1164,7 +1164,7 @@ msgstr "addperm <grup> <perizinan...> - Tambahkan beberapa perizinan ke sebuah g
 #: ../../TShockAPI/DB/UserManager.cs:81
 #, csharp-format
 msgid "AddUser SQL returned an error ({0})"
-msgstr "AddUser SQL mengembalikan kekeliruan ({0})"
+msgstr "AddUser SQL mengembalikan kesalahan({0})"
 
 #: ../../TShockAPI/Commands.cs:5772
 #, csharp-format
@@ -1173,7 +1173,7 @@ msgstr "Nama lain dari {0}{1}: {0}{2}"
 
 #: ../../TShockAPI/Commands.cs:6009
 msgid "All alive NPCs (excluding town NPCs) on the server will be killed if you do not input a name or ID."
-msgstr "Semua NPC yang hidup (termasuk NPC Alun-alun) yang ada didalam peladen akan terbunuh jika kamu tidak memasukkan nama atau ID."
+msgstr "Semua NPC yang hidup (termasuk NPC kota) yang ada didalam server akan terbunuh jika kamu tidak memasukkan nama atau ID."
 
 #: ../../TShockAPI/Commands.cs:2622
 msgid "all bosses"
@@ -1374,12 +1374,12 @@ msgstr "Ban Add sintaks"
 #: ../../TShockAPI/Commands.cs:1486
 #, csharp-format
 msgid "Ban added. Ticket Number {0} was created for identifier {1}."
-msgstr "Pemblokiran telah ditambahkan. Nomor karcis {0} telah dibuat untuk pengidentifikasian {1}."
+msgstr "Pemblokiran telah ditambahkan. Nomor tiket {0} telah dibuat untuk pengidentifikasian {1}."
 
 #: ../../TShockAPI/Rest/RestManager.cs:668
 #, csharp-format
 msgid "Ban added. Ticket number: {0}"
-msgstr "Pemblokiran telah ditambahkan. Nomor karcis: {0}"
+msgstr "Pemblokiran telah ditambahkan. Nomor Tiket: {0}"
 
 #: ../../TShockAPI/Commands.cs:1392
 msgid "Ban Del Syntax"
@@ -1399,12 +1399,12 @@ msgstr "Pemblokiran telah dihilangkan."
 
 #: ../../TShockAPI/Commands.cs:1438
 msgid "Ban Usage Examples"
-msgstr "Contoh Pemblokiran Penggunaan"
+msgstr "Contoh Penggunaan Pemblokiran"
 
 #: ../../TShockAPI/Commands.cs:3837
 #, csharp-format
 msgid "Banned {0}."
-msgstr "Pemblokiran {0}."
+msgstr "{0} telah diblokir."
 
 #: ../../TShockAPI/Commands.cs:4033
 #, csharp-format

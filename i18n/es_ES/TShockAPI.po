@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-31 22:50:21+0000\n"
-"PO-Revision-Date: 2022-10-31 23:36\n"
+"PO-Revision-Date: 2022-11-03 16:58\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -38,63 +38,63 @@ msgstr "#{0} - Estás baneado: {1}"
 
 #: ../../TShockAPI/Commands.cs:6492
 msgid "     'basic', 'sakura', 'willow', 'boreal', 'mahogany', 'ebonwood', 'shadewood', 'pearlwood'."
-msgstr ""
+msgstr "     'básico', 'cerezo', 'sauce', 'boreal', 'caoba', 'madera de ébano', 'madera oscura', 'madera de perla'."
 
 #: ../../TShockAPI/Commands.cs:6498
 msgid "     'cactus', 'herb', 'mushroom'."
-msgstr ""
+msgstr "     'cactus', 'hierba', 'hongo'."
 
 #: ../../TShockAPI/Commands.cs:6494
 msgid "     'palm', 'corruptpalm', 'crimsonpalm', 'hallowpalm'."
-msgstr ""
+msgstr "     'palma', 'palma corrupta, 'palma carmesí', 'palma santa'."
 
 #: ../../TShockAPI/Commands.cs:6496
 msgid "     'topaz', 'amethyst', 'sapphire', 'emerald', 'ruby', 'diamond', 'amber'."
-msgstr ""
+msgstr "     'topacio', 'amatista', 'zafiro', 'esmeralda', 'rubí', 'diamante', 'ámbar'."
 
 #: ../../TShockAPI/Commands.cs:1442
 #, csharp-format
 msgid "   {0}{1} \"{2}\" (Find the IP associated with the offline target's account)"
-msgstr ""
+msgstr "   {0}{1} \"{2}\" (Encuentre la IP asociada con la cuenta del objetivo desconectado)"
 
 #: ../../TShockAPI/Commands.cs:1440
 #, csharp-format
 msgid "   {0}{1} \"{2}{3}\" {4} {5} (Permanently bans this account name)"
-msgstr ""
+msgstr "   {0}{1} \"{2}{3}\" {4} {5} (Prohíbe permanentemente este nombre de cuenta)"
 
 #: ../../TShockAPI/Commands.cs:1445
 #, csharp-format
 msgid "   {0}{1} {2} (Find the player index for the target)"
-msgstr ""
+msgstr "   {0}{1} {2} (Buscar el índice del jugador para el objetivo)"
 
 #: ../../TShockAPI/Commands.cs:1446
 #, csharp-format
 msgid "   {0}{1} {2}{3} {4} {5} (Permanently bans the online player by Account, UUID, and IP)"
-msgstr ""
+msgstr "   {0}{1} {2}{3} {4} {5} (Prohíbe permanentemente al jugador conectado por cuenta, UUID o IP)"
 
 #: ../../TShockAPI/Commands.cs:1443
 #, csharp-format
 msgid "   {0}{1} {2}{3} {4} {5} (Permanently bans this IP address)"
-msgstr ""
+msgstr "   {0}{1} {2}{3} {4} {5} (Prohíbe de forma permanente esta dirección IP)"
 
 #: ../../TShockAPI/Commands.cs:1382
 #, csharp-format
 msgid "   Eg a value of {0} would represent 10 days, 30 minutes, 0 seconds."
-msgstr ""
+msgstr "   Por ejemplo, un valor de {0} representaría 10 días, 30 minutos, 0 segundos."
 
 #: ../../TShockAPI/Commands.cs:1386
 #, csharp-format
 msgid "   If no {0} are specified, the command uses {1} by default."
-msgstr ""
+msgstr "   Si no se especifican {0}, el comando utiliza {1} por defecto."
 
 #: ../../TShockAPI/Commands.cs:1383
 msgid "   If no duration is provided, the ban will be permanent."
-msgstr ""
+msgstr "   Si no se indica la duración, la prohibición será permanente."
 
 #: ../../TShockAPI/Commands.cs:1385
 #, csharp-format
 msgid "   Unless {0} is passed to the command, {1} is assumed to be a player or player index"
-msgstr ""
+msgstr "   A menos que se pase {0} al comando, se asume que {1} es un jugador o índice de jugador"
 
 #: ../../TShockAPI/Commands.cs:1258
 #, csharp-format
@@ -104,69 +104,69 @@ msgstr "-> Sesión iniciada como: {0}; en grupo {1}."
 #: ../../TShockAPI/Commands.cs:1394
 #, csharp-format
 msgid "- {0} are provided when you add a ban, and can also be viewed with the {1} command."
-msgstr ""
+msgstr "- {0} se proporcionan cuando se añade una prohibición, y también se pueden ver con el comando {1}."
 
 #: ../../TShockAPI/Commands.cs:1410
 #, csharp-format
 msgid "- {0} are provided when you add a ban, and can be found with the {1} command."
-msgstr ""
+msgstr "- {0} se proporcionan cuando se añade una prohibición, y se pueden encontrar con el comando {1}."
 
 #: ../../TShockAPI/Commands.cs:1384
 #, csharp-format
 msgid "- {0}: -a (account name), -u (UUID), -n (character name), -ip (IP address), -e (exact, {1} will be treated as identifier)"
-msgstr ""
+msgstr "- {0}: -a (nombre de la cuenta), -u (UUID), -n (nombre del jugador), -ip (dirección IP), -e (exacto, {1} será tratado como identificador)"
 
 #: ../../TShockAPI/Commands.cs:1381
 #, csharp-format
 msgid "- {0}: uses the format {1} to determine the length of the ban."
-msgstr ""
+msgstr "- {0}: utiliza el formato {1} para determinar la longitud de la prohibición."
 
 #: ../../TShockAPI/Commands.cs:1439
 msgid "- Ban an offline player by account name"
-msgstr ""
+msgstr "- Prohibir a un jugador desconectado por su nombre de cuenta"
 
 #: ../../TShockAPI/Commands.cs:1441
 msgid "- Ban an offline player by IP address"
-msgstr ""
+msgstr "- Prohibir a un jugador desconectado por su dirección IP"
 
 #: ../../TShockAPI/Commands.cs:1444
 msgid "- Ban an online player by index (Useful for hard to type names)"
-msgstr ""
+msgstr "- Prohibir un jugador conectado por índice (útil para nombres difíciles de escribir)"
 
 #: ../../TShockAPI/Commands.cs:6491
 msgid "- Default trees :"
-msgstr ""
+msgstr "- Árboles por defecto :"
 
 #: ../../TShockAPI/Commands.cs:6495
 msgid "- Gem trees :"
-msgstr ""
+msgstr "- Árboles de gemas :"
 
 #: ../../TShockAPI/Commands.cs:1402
 msgid "- Lists active bans. Color trends towards green as the ban approaches expiration"
-msgstr ""
+msgstr "- Enumera las prohibiciones activas. El color tiende al verde a medida que la prohibición se aproxima a su vencimiento"
 
 #: ../../TShockAPI/Commands.cs:6497
 msgid "- Misc :"
-msgstr ""
+msgstr "- Varios :"
 
 #: ../../TShockAPI/Commands.cs:6493
 msgid "- Palm trees :"
-msgstr ""
+msgstr "- Palmeras :"
 
 #: ../../TShockAPI/Commands.cs:6405
 #, csharp-format
 msgid "\"{0}\" is not a valid buff ID!"
-msgstr ""
+msgstr "¡\"{0}\" no es un ID de buff válido!"
 
 #: ../../TShockAPI/Commands.cs:5902
 #, csharp-format
 msgid "\"{0}\" is not a valid clear option."
-msgstr ""
+msgstr "\"{0}\" no es una opción clara válida."
 
 #: ../../TShockAPI/Commands.cs:6022
 #, csharp-format
 msgid "\"{0}\" is not a valid NPC."
-msgstr ""
+msgstr "\"{0}\" no es un PNJ válido."
 
 #: ../../TShockAPI/PaginationTools.cs:283
 #, csharp-format
@@ -176,7 +176,7 @@ msgstr "\"{0}\" no es un número de página válido."
 #: ../../TShockAPI/Commands.cs:5822
 #, csharp-format
 msgid "\"{0}\" is not a valid radius."
-msgstr ""
+msgstr "\"{0}\" no es un valor válido."
 
 #: ../../TShockAPI/Rest/SecureRest.cs:213
 #, csharp-format
@@ -190,7 +190,7 @@ msgstr "(Mensaje del Servidor) "
 #: ../../TShockAPI/Commands.cs:1457
 #, csharp-format
 msgid "{0} - Ticket Number: {1}"
-msgstr ""
+msgstr "{0} - Número de Boleto: {1}"
 
 #: ../../TShockAPI/Commands.cs:2084
 #, csharp-format
@@ -210,12 +210,12 @@ msgstr "{0} ({1}) falló al cambiar la contraseña para la cuenta {2}."
 #: ../../TShockAPI/TShock.cs:1641
 #, csharp-format
 msgid "{0} ({1}) from '{2}' group from '{3}' joined. ({4}/{5})"
-msgstr ""
+msgstr "{0} ({1}) de '{2}' grupo de '{3}' unidos. ({4}/{5})"
 
 #: ../../TShockAPI/TShock.cs:1649
 #, csharp-format
 msgid "{0} ({1}) from '{2}' group joined. ({3}/{4})"
-msgstr ""
+msgstr "{0} ({1}) de '{2}' se unió al grupo ahora son: ({3}/{4})"
 
 #: ../../TShockAPI/Commands.cs:775
 #, csharp-format
@@ -225,58 +225,58 @@ msgstr "{0} ({1}) tuvo {2} o más intentos de inicio de sesión no válidos y fu
 #: ../../TShockAPI/TShock.cs:1645
 #, csharp-format
 msgid "{0} ({1}) has joined."
-msgstr ""
+msgstr "{0} ({1}) se ha unido."
 
 #: ../../TShockAPI/Commands.cs:5350
 #, csharp-format
 msgid "{0} (Index: {1}, Account ID: {2})"
-msgstr ""
+msgstr "{0} (Índice: {1}, ID de cuenta: {2})"
 
 #: ../../TShockAPI/Commands.cs:5352
 #, csharp-format
 msgid "{0} (Index: {1})"
-msgstr ""
+msgstr "{0} (Índice: {1})"
 
 #: ../../TShockAPI/Commands.cs:1401
 #, csharp-format
 msgid "{0} [{1}]"
-msgstr ""
+msgstr "{0} [{1}]"
 
 #: ../../TShockAPI/Commands.cs:6007
 #, csharp-format
 msgid "{0} [{1}|{2}]"
-msgstr ""
+msgstr "{0} [{1}|{2}]"
 
 #: ../../TShockAPI/Commands.cs:1458
 #: ../../TShockAPI/Commands.cs:1459
 #, csharp-format
 msgid "{0} {1}"
-msgstr ""
+msgstr "{0} {1}"
 
 #: ../../TShockAPI/Commands.cs:1463
 #, csharp-format
 msgid "{0} {1} ({2} ago)"
-msgstr ""
+msgstr "{0} {1} (hace {2})"
 
 #: ../../TShockAPI/Commands.cs:1477
 #, csharp-format
 msgid "{0} {1} ({2})"
-msgstr ""
+msgstr "{0} {1} ({2})"
 
 #: ../../TShockAPI/Commands.cs:5324
 #, csharp-format
 msgid "{0} {1} {2}"
-msgstr ""
+msgstr "{0} {1} {2}"
 
 #: ../../TShockAPI/Commands.cs:1460
 #, csharp-format
 msgid "{0} {1} on {2} ({3} ago)"
-msgstr ""
+msgstr "{0} {1} en {2} (hace {3})"
 
 #: ../../TShockAPI/Commands.cs:6364
 #, csharp-format
 msgid "{0} <\"{1}|{2}\"> [{3}]"
-msgstr ""
+msgstr "{0} <\"{1}|{2}\"> [{3}]"
 
 #: ../../TShockAPI/Commands.cs:1393
 #: ../../TShockAPI/Commands.cs:1409
@@ -284,39 +284,39 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:5914
 #, csharp-format
 msgid "{0} <{1}>"
-msgstr ""
+msgstr "{0} <{1}>"
 
 #: ../../TShockAPI/Commands.cs:5458
 #: ../../TShockAPI/Commands.cs:6304
 #, csharp-format
 msgid "{0} <{1}> [{2}]"
-msgstr ""
+msgstr "{0} <{1}> [{2}]"
 
 #: ../../TShockAPI/Commands.cs:1380
 #, csharp-format
 msgid "{0} <{1}> [{2}] [{3}] [{4}]"
-msgstr ""
+msgstr "{0} <{1}> [{2}] [{3}] [{4}]"
 
 #: ../../TShockAPI/Commands.cs:5680
 #, csharp-format
 msgid "{0} <{1}> [{2}|{3}|{4}|{5}]"
-msgstr ""
+msgstr "{0} <{1}> [{2}|{3}|{4}|{5}]"
 
 #: ../../TShockAPI/Commands.cs:5515
 #: ../../TShockAPI/Commands.cs:5596
 #, csharp-format
 msgid "{0} <{1}> <{2}>"
-msgstr ""
+msgstr "{0} <{1}> <{2}>"
 
 #: ../../TShockAPI/Commands.cs:6414
 #, csharp-format
 msgid "{0} <{1}> <{2}|{3}> [{4}]"
-msgstr ""
+msgstr "{0} <{1}> <{2}|{3}> [{4}]"
 
 #: ../../TShockAPI/Commands.cs:5811
 #, csharp-format
 msgid "{0} <{1}|{2}|{3}> [{4}]"
-msgstr ""
+msgstr "{0} <{1}|{2}|{3}> [{4}]"
 
 #: ../../TShockAPI/Commands.cs:1102
 #, csharp-format
@@ -917,7 +917,7 @@ msgstr "{0} te teletransportó hacia {1}."
 #: ../../TShockAPI/Commands.cs:690
 #, csharp-format
 msgid "{0} tried to execute (args omitted) {1}{2}."
-msgstr ""
+msgstr "{0} intentó ejecutar (argumentos omitidos) {1}{2}."
 
 #: ../../TShockAPI/Commands.cs:688
 #, csharp-format
@@ -937,7 +937,7 @@ msgstr "{0} te transportó hacia {1}."
 #: ../../TShockAPI/TSPlayer.cs:1953
 #, csharp-format
 msgid "{0} was banned for '{1}'."
-msgstr ""
+msgstr "{0} fue prohibido por '{1}'."
 
 #: ../../TShockAPI/TSPlayer.cs:1924
 #, csharp-format
@@ -973,17 +973,17 @@ msgstr "La fecha de registro de {0} es el {1} {2} UTC{3}."
 #: ../../TShockAPI/Commands.cs:5774
 #, csharp-format
 msgid "{0}{1} defines no aliases."
-msgstr ""
+msgstr "{0}{1} no define ningún alias."
 
 #: ../../TShockAPI/Commands.cs:5280
 #, csharp-format
 msgid "{0}{1} help: "
-msgstr ""
+msgstr "Ayuda de {0}{1} : "
 
 #: ../../TShockAPI/Utils.cs:1066
 #, csharp-format
 msgid "{0}{1}/{2} on {3} @ {4}:{5} (TShock for Terraria v{6})"
-msgstr ""
+msgstr "{0}{1}/{2} en {3} @ {4}:{5} (TShock para Terraria v{6})"
 
 #: ../../TShockAPI/Commands.cs:846
 #, csharp-format
@@ -1003,7 +1003,7 @@ msgstr "{0}login <nombreUsuario> <contraseña> - Inicias sesión usando tu nombr
 #: ../../TShockAPI/Commands.cs:5409
 #, csharp-format
 msgid "{0}user add <username> <password> owner"
-msgstr ""
+msgstr "{0}user add <usuario> <contraseña> owner"
 
 #: ../../TShockAPI/Commands.cs:1201
 #, csharp-format
@@ -1028,7 +1028,7 @@ msgstr "{0}user password username newpassword -- Cambia la contraseña de un usu
 #: ../../TShockAPI/Commands.cs:5426
 #, csharp-format
 msgid "*{0} {1}"
-msgstr ""
+msgstr "*{0} {1}"
 
 #: ../../TShockAPI/Commands.cs:1609
 #, csharp-format
@@ -1038,19 +1038,19 @@ msgstr "#{0} - Has sido baneado(a): {1}."
 #: ../../TShockAPI/Commands.cs:5442
 #, csharp-format
 msgid "<{0}> {1}"
-msgstr ""
+msgstr "<{0}> {1}"
 
 #: ../../TShockAPI/Commands.cs:5546
 #: ../../TShockAPI/Commands.cs:5577
 #, csharp-format
 msgid "<From {0}> {1}"
-msgstr ""
+msgstr "<De {0}> {1}"
 
 #: ../../TShockAPI/Commands.cs:5547
 #: ../../TShockAPI/Commands.cs:5578
 #, csharp-format
 msgid "<To {0}> {1}"
-msgstr ""
+msgstr "<A {0}> {1}"
 
 #: ../../TShockAPI/Commands.cs:2814
 msgid "a Deerclops"
@@ -1127,7 +1127,7 @@ msgstr "Cuenta eliminada con éxito."
 
 #: ../../TShockAPI/Commands.cs:2090
 msgid "Active REST Users ({{0}}/{{1}}):"
-msgstr ""
+msgstr "Usuarios REST activos ({{0}}/{{1}}):"
 
 #: ../../TShockAPI/Commands.cs:3967
 msgid "add <item> - Adds an item ban."
@@ -1177,11 +1177,11 @@ msgstr "SQL AddUser devolvió un error ({0})"
 #: ../../TShockAPI/Commands.cs:5772
 #, csharp-format
 msgid "Aliases of {0}{1}: {0}{2}"
-msgstr ""
+msgstr "Alias de {0}{1}: {0}{2}"
 
 #: ../../TShockAPI/Commands.cs:6009
 msgid "All alive NPCs (excluding town NPCs) on the server will be killed if you do not input a name or ID."
-msgstr ""
+msgstr "Todos los PNJs vivos (excluyendo los PNJs de la ciudad) en el servidor serán asesinados si no introduces un nombre o ID."
 
 #: ../../TShockAPI/Commands.cs:2622
 msgid "all bosses"
@@ -1210,23 +1210,23 @@ msgstr "allow <ID de bloque> <grupo> - Permite a un grupo colocar un bloque."
 
 #: ../../TShockAPI/Commands.cs:5189
 msgid "allow <user> <region> - Allows a user to a region."
-msgstr ""
+msgstr "allow <usuario> <región> - Permite a un usuario acceder a dicha región."
 
 #: ../../TShockAPI/Commands.cs:5191
 msgid "allowg <group> <region> - Allows a user group to a region."
-msgstr ""
+msgstr "allowg <grupo> <región> - Permite a un grupo acceder a dicha región."
 
 #: ../../TShockAPI/Commands.cs:6663
 msgid "Amber Gemtree"
-msgstr ""
+msgstr "Gema de Ámbar"
 
 #: ../../TShockAPI/Commands.cs:6643
 msgid "Amethyst Gemtree"
-msgstr ""
+msgstr "Gema de Amatista"
 
 #: ../../TShockAPI/TShock.cs:981
 msgid "An account has been detected in the user database, but setup-code.txt is still present."
-msgstr ""
+msgstr "Se ha detectado una cuenta en la base de datos de usuarios, pero setup-code.txt sigue presente."
 
 #: ../../TShockAPI/DB/GroupManager.cs:474
 #, csharp-format
@@ -1253,7 +1253,7 @@ msgstr "Un identificador para un UUID."
 #: ../../TShockAPI/DB/BanManager.cs:636
 #, csharp-format
 msgid "An identifier for an IP Address in octet format. e.g., '{0}'."
-msgstr ""
+msgstr "Un identificador para una dirección IP en formato de octeto. Por ejemplo, '{0}'."
 
 #: ../../TShockAPI/Commands.cs:2048
 msgid "An update check has been queued. If an update is available, you will be notified shortly."
@@ -1261,12 +1261,12 @@ msgstr "Se pidió comprobar si hay actualizaciones. De haber una se te notificar
 
 #: ../../TShockAPI/Commands.cs:5595
 msgid "Annoy Syntax"
-msgstr ""
+msgstr "Sintaxis molesta"
 
 #: ../../TShockAPI/Commands.cs:5612
 #, csharp-format
 msgid "Annoying {0} for {1} seconds."
-msgstr ""
+msgstr "Molesta a {0} durante {1} segundos."
 
 #: ../../TShockAPI/Commands.cs:338
 msgid "Annoys a player for an amount of time."
@@ -1279,11 +1279,11 @@ msgstr "Anónimo solicitó un punto final REST: {0}"
 
 #: ../../TShockAPI/Commands.cs:5220
 msgid "Anti-build is now off."
-msgstr ""
+msgstr "El Anti-construcción ya no está activo."
 
 #: ../../TShockAPI/Commands.cs:5220
 msgid "Anti-build is now on."
-msgstr ""
+msgstr "El Anti-construcción está activo."
 
 #: ../../TShockAPI/Commands.cs:3200
 msgid "Arguments: add [warp name], del [warp name], list [page]."
@@ -1318,15 +1318,15 @@ msgstr "El autoguardado está actualmente activo"
 
 #: ../../TShockAPI/Commands.cs:1364
 msgid "Available Ban commands:"
-msgstr ""
+msgstr "Comandos de prohibición disponibles:"
 
 #: ../../TShockAPI/Commands.cs:1428
 msgid "Available identifiers ({{0}}/{{1}}):"
-msgstr ""
+msgstr "Identificadores disponibles ({{0}}/{1}}):"
 
 #: ../../TShockAPI/Commands.cs:5204
 msgid "Available Region Sub-Commands ({{0}}/{{1}}):"
-msgstr ""
+msgstr "Subcomandos de región disponibles ({{0}}/{{1}}):"
 
 #: ../../TShockAPI/Commands.cs:2105
 msgid "Available REST Sub-Commands:"
@@ -1352,18 +1352,18 @@ msgstr "Intento de inicio de sesión inválido."
 #: ../../TShockAPI/Commands.cs:1367
 #, csharp-format
 msgid "ban {0}"
-msgstr ""
+msgstr "ban {0}"
 
 #: ../../TShockAPI/Commands.cs:1366
 #: ../../TShockAPI/Commands.cs:1368
 #, csharp-format
 msgid "ban {0} <Ban ID>"
-msgstr ""
+msgstr "ban {0} <ID de prohibido>"
 
 #: ../../TShockAPI/Commands.cs:1365
 #, csharp-format
 msgid "ban {0} <Target> [Flags]"
-msgstr ""
+msgstr "ban {0} <Objetivo> [Flags]"
 
 #: ../../TShockAPI/Commands.cs:1629
 #, csharp-format
@@ -1377,7 +1377,7 @@ msgstr "El ban {0} acaba de marcarse como expirado."
 
 #: ../../TShockAPI/Commands.cs:1379
 msgid "Ban Add Syntax"
-msgstr ""
+msgstr "Ban Add Syntax"
 
 #: ../../TShockAPI/Commands.cs:1486
 #, csharp-format
@@ -1391,15 +1391,15 @@ msgstr "Ban añadido. Número de ticket: {0}"
 
 #: ../../TShockAPI/Commands.cs:1392
 msgid "Ban Del Syntax"
-msgstr ""
+msgstr "Sintaxis Ban Del"
 
 #: ../../TShockAPI/Commands.cs:1408
 msgid "Ban Details Syntax"
-msgstr ""
+msgstr "Detalles de la prohibición Sintaxis"
 
 #: ../../TShockAPI/Commands.cs:1400
 msgid "Ban List Syntax"
-msgstr ""
+msgstr "Sintaxis de la lista de prohibiciones"
 
 #: ../../TShockAPI/Rest/RestManager.cs:695
 msgid "Ban removed."
@@ -1407,12 +1407,12 @@ msgstr "Ban revocado."
 
 #: ../../TShockAPI/Commands.cs:1438
 msgid "Ban Usage Examples"
-msgstr ""
+msgstr "Ejemplos de uso de prohibición"
 
 #: ../../TShockAPI/Commands.cs:3837
 #, csharp-format
 msgid "Banned {0}."
-msgstr ""
+msgstr "Prohibido {0}."
 
 #: ../../TShockAPI/Commands.cs:4033
 #, csharp-format
@@ -1427,7 +1427,7 @@ msgstr "Se ha prohibido el bloque {0}."
 #: ../../TShockAPI/TSPlayer.cs:1950
 #, csharp-format
 msgid "Banned: {0}"
-msgstr ""
+msgstr "Prohibido: {0}"
 
 #: ../../TShockAPI/Commands.cs:1513
 msgid "Banned."
@@ -1435,11 +1435,11 @@ msgstr "Baneado."
 
 #: ../../TShockAPI/Commands.cs:1666
 msgid "Bans ({{0}}/{{1}}):"
-msgstr ""
+msgstr "Prohibidos ({{0}}/{{1}}):"
 
 #: ../../TShockAPI/Commands.cs:6585
 msgid "Basic Tree"
-msgstr ""
+msgstr "Árbol básico"
 
 #: ../../TShockAPI/Commands.cs:2751
 msgid "Betsy"
@@ -1453,11 +1453,11 @@ msgstr "La Luna Sangrienta fue marcada como {0}"
 #: ../../TShockAPI/Rest/RestManager.cs:904
 #, csharp-format
 msgid "Bloodmoon state: {0}"
-msgstr ""
+msgstr "Estado de la luna de sangre: {0}"
 
 #: ../../TShockAPI/Commands.cs:6589
 msgid "Boreal Tree"
-msgstr ""
+msgstr "Árbol boreal"
 
 #: ../../TShockAPI/Bouncer.cs:1447
 #, csharp-format
@@ -1532,51 +1532,51 @@ msgstr "Bouncer / OnFoodPlatterTryPlacing rechazo objeto no puesto manualmente d
 #: ../../TShockAPI/Bouncer.cs:2772
 #, csharp-format
 msgid "Bouncer / OnFoodPlatterTryPlacing rejected permissions from {0}"
-msgstr ""
+msgstr "Bouncer / OnFoodPlatterTryPlacing rechazó los permisos de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2783
 #, csharp-format
 msgid "Bouncer / OnFoodPlatterTryPlacing rejected range checks from {0}"
-msgstr ""
+msgstr "Bouncer / OnFoodPlatterTryPlacing rechazó las comprobaciones de rango de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2747
 #, csharp-format
 msgid "Bouncer / OnFoodPlatterTryPlacing rejected tile placement valid from {0}"
-msgstr ""
+msgstr "Bouncer / OnFoodPlatterTryPlacing rechazó la colocación de baldosas válida desde {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2488
 #, csharp-format
 msgid "Bouncer / OnGemLockToggle invalid placement/deadmod from {0}"
-msgstr ""
+msgstr "Bouncer / OnGemLockToggle colocación inválida/deadmod de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2481
 #, csharp-format
 msgid "Bouncer / OnGemLockToggle rejected boundaries check from {0}"
-msgstr ""
+msgstr "Bouncer / OnGemLockToggle rechazó la comprobación de límites de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2495
 #, csharp-format
 msgid "Bouncer / OnGemLockToggle rejected disabled from {0}"
-msgstr ""
+msgstr "Bouncer / OnGemLockToggle rechazado deshabilitado desde {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2504
 #, csharp-format
 msgid "Bouncer / OnGemLockToggle rejected permissions check from {0}"
-msgstr ""
+msgstr "Bouncer / OnGemLockToggle rechazó la comprobación de permisos de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:435
 msgid "Bouncer / OnGetSection rejected empty player name."
-msgstr ""
+msgstr "Bouncer / OnGetSection rechazó un nombre de jugador vacío."
 
 #: ../../TShockAPI/Bouncer.cs:427
 #, csharp-format
 msgid "Bouncer / OnGetSection rejected GetSection packet from {0}"
-msgstr ""
+msgstr "Bouncer / OnGetSection rechazó el paquete GetSection de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2081
 #, csharp-format
 msgid "Bouncer / OnHealOtherPlayer 0.2 check from {0}"
-msgstr ""
+msgstr "Bouncer / OnHealOtherPlayer 0.2 comprobar desde {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2105
 #, csharp-format
