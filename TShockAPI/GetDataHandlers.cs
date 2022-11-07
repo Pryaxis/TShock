@@ -3687,7 +3687,7 @@ namespace TShockAPI
 				TShock.Log.ConsoleDebug("GetDataHandlers / HandlePaintWall rejected range check {0}", args.Player.Name);
 				return true;
 			}
-			if (OnPaintWall(args.Player, args.Data, x, y, t))
+			if (OnPaintWall(args.Player, args.Data, x, y, t, cw))
 			{
 				return true;
 			}
