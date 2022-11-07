@@ -25,6 +25,10 @@ Use past tense when adding new entries; sign your name off when you add or chang
 * Excluded GeoIP.dat from release bundle (@SignatureBeef)
 * Added `TownSlimeRed` to `FishableNpcIDs` list, allowing it to be fished up (@drunderscore)
 * Added permission for summoning Mechdusa, Deerclops and slime pet (@sgkoishi, #2808)
+* Only restrict CC'd players during login whilst SSC is enabled (@drunderscore)
+  * This change allows the config option `RequireLogin` to function usefully again when SSC is not enabled.
+* Properly remove all buffs in `PlayerData.RestoreCharacter` (@drunderscore)
+  * Before this change, it was theoretically possible to smuggle buffs onto servers with SSC enabled, by using buff indexes past `22`.
 
 ## TShock 5.0.0
 * Reduced load/save console spam. (@SignatureBeef, @YehnBeep)
