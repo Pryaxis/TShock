@@ -17,6 +17,7 @@ Use past tense when adding new entries; sign your name off when you add or chang
 ## Upcoming changes
 * Fixed item giving potentially dropping too many items (@PotatoCider, @punchready)
 * Excluded GeoIP.dat from release bundle (@SignatureBeef)
+* Updated the Utils.FindByIdOrName to follow same logic. Now fuzzy match fallback to `StartsWith` and then `Contains`. (@sgkoishi)
 
 ## TShock 5.0.0
 * Reduced load/save console spam. (@SignatureBeef, @YehnBeep)
