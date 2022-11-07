@@ -18,6 +18,15 @@ Use past tense when adding new entries; sign your name off when you add or chang
 * Fixed item giving potentially dropping too many items (@PotatoCider, @punchready)
 * Excluded GeoIP.dat from release bundle (@SignatureBeef)
 
+* Changed hook `GetDataHandlers.HandleProjectileNew` added `AI[2]` Fixed #2804
+* Changed hook `GetDataHandlers.OnPlayerZone` added `Zone5`
+* Changed hook `GetDataHandlers.OnPlayerSpawn` added `numberOfDeathsPVE` and `numberOfDeathsPVP`
+* Changed hook `GetDataHandlers.OnPaintTile` added `coatTile` for Paint Coat Tile
+* Changed hook `GetDataHandlers.OnPaintWall` added `coatWall` for Paint Coat Wall
+* Changed hook `GetDataHandlers.HandlePlaceObject`  added `random` but what is it used for?
+* Changed hook `GetDataHandlers.HandleNpcTeleportPortal` update `npcIndex` to `int`
+
+
 ## TShock 5.0.0
 * Reduced load/save console spam. (@SignatureBeef, @YehnBeep)
 * Replaced SQLite library with Microsoft.Data.Sqlite for arm64 support. (@SignatureBeef)
