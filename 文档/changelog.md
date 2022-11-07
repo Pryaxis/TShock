@@ -23,8 +23,8 @@ Use past tense when adding new entries; sign your name off when you add or chang
 * Changed hook `GetDataHandlers.OnPlayerSpawn` added `numberOfDeathsPVE` and `numberOfDeathsPVP`
 * Changed hook `GetDataHandlers.OnPaintTile` added `coatTile` for Paint Coat Tile
 * Changed hook `GetDataHandlers.OnPaintWall` added `coatWall` for Paint Coat Wall
-* Changed hook `GetDataHandlers.HandlePlaceObject`  added `random` but what is it used for?
-* Changed hook `GetDataHandlers.HandleNpcTeleportPortal` update `npcIndex` to `int`
+* Changed `GetDataHandlers.HandlePlaceObject`  added `random` but what is it used for?
+* Changed `GetDataHandlers.HandleNpcTeleportPortal` update `npcIndex` to `int`
 
 
 ## TShock 5.0.0
