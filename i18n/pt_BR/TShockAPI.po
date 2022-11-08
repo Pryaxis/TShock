@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-31 22:50:21+0000\n"
-"PO-Revision-Date: 2022-11-07 08:06\n"
+"PO-Revision-Date: 2022-11-08 18:12\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "MIME-Version: 1.0\n"
@@ -70,7 +70,7 @@ msgstr "   {0}{1} {2} (Encontra o índice do jogador que deseja banir)"
 #: ../../TShockAPI/Commands.cs:1446
 #, csharp-format
 msgid "   {0}{1} {2}{3} {4} {5} (Permanently bans the online player by Account, UUID, and IP)"
-msgstr "   {0}{1} {2}{3} {4} {5} (Permanentemente bane o jogador online por conta, UUID e IP)"
+msgstr "   {0}{1} {2}{3} {4} {5} (Bane permanentemente um jogador online por conta, UUID e IP)"
 
 #: ../../TShockAPI/Commands.cs:1443
 #, csharp-format
