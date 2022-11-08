@@ -25,7 +25,7 @@ Use past tense when adding new entries; sign your name off when you add or chang
 * Changed hook `GetDataHandlers.OnPaintWall` added `coatWall` for Paint Coat Wall
 * Changed `GetDataHandlers.HandlePlaceObject`  added `random` but what is it used for?
 * Changed `GetDataHandlers.HandleNpcTeleportPortal` update `npcIndex` to `int`
-
+* Changed `TSPlayer.Spawn` added `numberOfDeathsPVE` and `numberOfDeathsPVP`
 
 ## TShock 5.0.0
 * Reduced load/save console spam. (@SignatureBeef, @YehnBeep)
