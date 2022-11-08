@@ -528,6 +528,10 @@ namespace TShockAPI.Configuration
 		[Description("The type of database to use when storing data (either \"sqlite\" or \"mysql\").")]
 		public string StorageType = "sqlite";
 
+		public bool isStorageTypeSeperateFromTShockDBType = false;
+
+		public string TShockDBType = "sqlite";
+
 		/// <summary>The path of sqlite db.</summary>
 		[Description("The path of sqlite db.")]
 		public string SqliteDBPath = "tshock.sqlite";

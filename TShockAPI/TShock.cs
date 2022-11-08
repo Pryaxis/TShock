@@ -314,13 +314,13 @@ namespace TShockAPI
 			// Further exceptions are written to TShock's log from now on.
 			try
 			{
-				if (Config.Settings.StorageType.ToLower() == "sqlite")
+				if (Config.Settings.StorageType.ToLower() == "sqlite" && Config.Settings.TShockDBType != "mysql")
 				{
 					string sql = Path.Combine(SavePath, Config.Settings.SqliteDBPath);
 					Directory.CreateDirectory(Path.GetDirectoryName(sql));
 					DB = new Microsoft.Data.Sqlite.SqliteConnection(string.Format("Data Source={0}", sql));
 				}
-				else if (Config.Settings.StorageType.ToLower() == "mysql")
+				else if (Config.Settings.StorageType.ToLower() == "mysql" || (Config.Settings.isStorageTypeSeperateFromTShockDBType == true && Config.Settings.TShockDBType == "mysql"))
 				{
 					try
 					{

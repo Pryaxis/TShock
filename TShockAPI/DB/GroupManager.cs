@@ -313,7 +313,7 @@ namespace TShockAPI.DB
 				group.Parent = parent;
 			}
 
-			string query = (TShock.Config.Settings.StorageType.ToLower() == "sqlite")
+			string query = (TShock.Config.Settings.StorageType.ToLower() == "sqlite" && (TShock.Config.Settings.TShockDBType != "mysql" && TShock.Config.Settings.isStorageTypeSeperateFromTShockDBType == true))
 				? "INSERT OR IGNORE INTO GroupList (GroupName, Parent, Commands, ChatColor) VALUES (@0, @1, @2, @3);"
 				: "INSERT IGNORE INTO GroupList SET GroupName=@0, Parent=@1, Commands=@2, ChatColor=@3";
 			if (database.Query(query, name, parentname, permissions, chatcolor) == 1)
