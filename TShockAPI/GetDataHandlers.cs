@@ -4562,7 +4562,8 @@ namespace TShockAPI
 			NPCID.BloodEelBody,
 			NPCID.BloodEelTail,
 			NPCID.BloodNautilus,
-			NPCID.DukeFishron
+			NPCID.DukeFishron,
+			NPCID.TownSlimeRed
 		};
 
 		/// <summary>
