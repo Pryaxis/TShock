@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-31 22:50:21+0000\n"
-"PO-Revision-Date: 2022-11-08 18:12\n"
+"PO-Revision-Date: 2022-11-09 06:08\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "MIME-Version: 1.0\n"
@@ -55,12 +55,12 @@ msgstr "     'topázio', 'ametista', 'safira', 'esmeralda', 'rubi', 'diamante', 
 #: ../../TShockAPI/Commands.cs:1442
 #, csharp-format
 msgid "   {0}{1} \"{2}\" (Find the IP associated with the offline target's account)"
-msgstr "   {0}{1} \"{2}(Encontre o IP associado à conta offline de destino)"
+msgstr "   {0}{1} \"{2}(Encontre o IP associado a uma conta offline)"
 
 #: ../../TShockAPI/Commands.cs:1440
 #, csharp-format
 msgid "   {0}{1} \"{2}{3}\" {4} {5} (Permanently bans this account name)"
-msgstr "   {0}{1} \"{2}{3}\" {4} {5} (Permanentemente bane este nome de conta)"
+msgstr "   {0}{1} \"{2}{3}\" {4} {5} (Bane permanentemente pelo nome da conta)"
 
 #: ../../TShockAPI/Commands.cs:1445
 #, csharp-format
@@ -75,7 +75,7 @@ msgstr "   {0}{1} {2}{3} {4} {5} (Bane permanentemente um jogador online por con
 #: ../../TShockAPI/Commands.cs:1443
 #, csharp-format
 msgid "   {0}{1} {2}{3} {4} {5} (Permanently bans this IP address)"
-msgstr "   {0}{1} {2}{3} {4} {5} (Permanentemente bane este endereço IP)"
+msgstr "   {0}{1} {2}{3} {4} {5} (Bane permanentemente este endereço IP)"
 
 #: ../../TShockAPI/Commands.cs:1382
 #, csharp-format
@@ -123,15 +123,15 @@ msgstr "- {0}: usa o formato {1} para determinar o tempo do banimento."
 
 #: ../../TShockAPI/Commands.cs:1439
 msgid "- Ban an offline player by account name"
-msgstr "- Banir um jogador offline pelo nome da conta"
+msgstr "- Bane um jogador offline pelo nome da conta"
 
 #: ../../TShockAPI/Commands.cs:1441
 msgid "- Ban an offline player by IP address"
-msgstr "- Banir um jogador offline pelo endereço IP"
+msgstr "- Bane um jogador offline pelo endereço IP"
 
 #: ../../TShockAPI/Commands.cs:1444
 msgid "- Ban an online player by index (Useful for hard to type names)"
-msgstr "- Banir um jogador online por índice (Útil para nomes difíceis de digitar)"
+msgstr "- Bane um jogador online por índice (útil para nomes difíceis de digitar)"
 
 #: ../../TShockAPI/Commands.cs:6491
 msgid "- Default trees :"
