@@ -21,6 +21,10 @@ Use past tense when adding new entries; sign your name off when you add or chang
 * Bump to Terraria 1.4.4.8 via OTAPI 3.1.18. (@hakusaro, @SignatureBeef)
   * In this version of Terraria, `Main.maxBuffTypes` and other `maxWhateverTypes` fields have been removed. Their replacements are in `Terraria.ID.whateverID.Count`. TShock calls to these fields have been swapped in order to bring forward compatibility with Terraria 1.4.4.8.
 * In OTAPI 3.1.17, fixed [the crystal shard not growing](https://github.com/Pryaxis/TShock/issues/2796). (@sgkoishi)
+* Fixed item giving potentially dropping too many items (@PotatoCider, @punchready)
+* Excluded GeoIP.dat from release bundle (@SignatureBeef)
+* Added `TownSlimeRed` to `FishableNpcIDs` list, allowing it to be fished up (@drunderscore)
+* Added permission for summoning Mechdusa, Deerclops and slime pet (@sgkoishi, #2808)
 
 ## TShock 5.0.0
 * Reduced load/save console spam. (@SignatureBeef, @YehnBeep)

@@ -3499,8 +3499,7 @@ namespace TShockAPI
 		}
 
 		private static readonly int[] invasions = { -1, -2, -3, -4, -5, -6, -7, -8, -10, -11 };
-		private static readonly int[] pets = { -12, -13, -14 };
-		private static readonly int[] bosses = { 4, 13, 50, 125, 126, 134, 127, 128, 131, 129, 130, 222, 245, 266, 370, 657 };
+		private static readonly int[] pets = { -12, -13, -14, -15 };
 		private static bool HandleSpawnBoss(GetDataHandlerArgs args)
 		{
 			if (args.Player.IsBouncerThrottled())
@@ -3511,10 +3510,9 @@ namespace TShockAPI
 
 			var plr = args.Data.ReadInt16();
 			var thingType = args.Data.ReadInt16();
-			NPC npc = new NPC();
-			npc.SetDefaults(thingType);
 
-			if (bosses.Contains(thingType) && !args.Player.HasPermission(Permissions.summonboss))
+			var isKnownBoss = thingType > 0 && thingType < Main.maxNPCTypes && NPCID.Sets.MPAllowedEnemies[thingType];
+			if ((isKnownBoss || thingType == -16) && !args.Player.HasPermission(Permissions.summonboss))
 			{
 				TShock.Log.ConsoleDebug("GetDataHandlers / HandleSpawnBoss rejected boss {0} {1}", args.Player.Name, thingType);
 				args.Player.SendErrorMessage(GetString("You do not have permission to summon bosses."));
@@ -3541,6 +3539,18 @@ namespace TShockAPI
 			string thing;
 			switch (thingType)
 			{
+				case -18:
+					thing = GetString("{0} applied traveling merchant's satchel!", args.Player.Name);
+					break;
+				case -17:
+					thing = GetString("{0} applied advanced combat techniques volume 2!", args.Player.Name);
+					break;
+				case -16:
+					thing = GetString("{0} summoned a Mechdusa!", args.Player.Name);
+					break;
+				case -15:
+					thing = GetString("{0} has sent a request to the slime delivery service!", args.Player.Name);
+					break;
 				case -14:
 					thing = GetString("{0} has sent a request to the bunny delivery service!", args.Player.Name);
 					break;
@@ -3581,6 +3591,10 @@ namespace TShockAPI
 					thing = GetString("{0} summoned a Goblin Invasion!", args.Player.Name);
 					break;
 				default:
+					if (!isKnownBoss)
+						TShock.Log.ConsoleDebug("GetDataHandlers / HandleSpawnBoss unknown boss {0} summoned by {1}", thingType, args.Player.Name);
+					NPC npc = new NPC();
+					npc.SetDefaults(thingType);
 					thing = GetString("{0} summoned the {1}!", args.Player.Name, npc.FullName);
 					break;
 			}
