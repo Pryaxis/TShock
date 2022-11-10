@@ -59,7 +59,7 @@ namespace TShockAPI
 		/// <summary>VersionNum - The version number the TerrariaAPI will return back to the API. We just use the Assembly info.</summary>
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
 		/// <summary>VersionCodename - The version codename is displayed when the server starts. Inspired by software codenames conventions.</summary>
-		public static readonly string VersionCodename = "Alnilam";
+		public static readonly string VersionCodename = "ζ Ori";
 
 		/// <summary>SavePath - This is the path TShock saves its data in. This path is relative to the TerrariaServer.exe (not in ServerPlugins).</summary>
 		public static string SavePath = "tshock";
@@ -205,7 +205,7 @@ namespace TShockAPI
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
 			{
 				var osx = Path.Combine(Environment.CurrentDirectory, "runtimes", "osx-x64");
-				if(Directory.Exists(osx))
+				if (Directory.Exists(osx))
 					matches = Directory.GetFiles(osx, "*" + libraryName + "*", SearchOption.AllDirectories);
 			}
 			else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
@@ -247,7 +247,6 @@ namespace TShockAPI
 		public override void Initialize()
 		{
 			string logFilename;
-			string logPathSetupWarning;
 
 			OTAPI.Hooks.Netplay.CreateTcpListener += (sender, args) =>
 			{
@@ -294,10 +293,7 @@ namespace TShockAPI
 				}
 				catch (Exception ex)
 				{
-					logPathSetupWarning =
-						"Could not apply the given log path / log format, defaults will be used. Exception details:\n" + ex;
-
-					ServerApi.LogWriter.PluginWriteLine(this, logPathSetupWarning, TraceLevel.Error);
+					ServerApi.LogWriter.PluginWriteLine(this, GetString("Could not apply the given log path / log format, defaults will be used. Exception details:\n{0}", ex), TraceLevel.Error);
 
 					// Problem with the log path or format use the default
 					logFilename = Path.Combine(LogPathDefault, now.ToString(LogFormatDefault) + ".log");
@@ -353,8 +349,8 @@ namespace TShockAPI
 
 				if (File.Exists(Path.Combine(SavePath, "tshock.pid")))
 				{
-					Log.ConsoleInfo(
-						"TShock was improperly shut down. Please use the exit command in the future to prevent this.");
+					Log.ConsoleInfo(GetString(
+						"TShock was improperly shut down. Please use the exit command in the future to prevent this."));
 					File.Delete(Path.Combine(SavePath, "tshock.pid"));
 				}
 				File.WriteAllText(Path.Combine(SavePath, "tshock.pid"),
@@ -387,7 +383,7 @@ namespace TShockAPI
 				if (Config.Settings.EnableGeoIP && File.Exists(geoippath))
 					Geo = new GeoIPCountry(geoippath);
 
-				Log.ConsoleInfo("TShock {0} ({1}) now running.", Version, VersionCodename);
+				Log.ConsoleInfo(GetString("TShock {0} ({1}) now running.", Version, VersionCodename));
 
 				ServerApi.Hooks.GamePostInitialize.Register(this, OnPostInit);
 				ServerApi.Hooks.GameUpdate.Register(this, OnUpdate);
@@ -425,14 +421,20 @@ namespace TShockAPI
 				if (Config.Settings.RestApiEnabled)
 					RestApi.Start();
 
-				Log.ConsoleInfo("AutoSave " + (Config.Settings.AutoSave ? "Enabled" : "Disabled"));
-				Log.ConsoleInfo("Backups " + (Backups.Interval > 0 ? "Enabled" : "Disabled"));
+				if (Config.Settings.AutoSave)
+					Log.ConsoleInfo(GetString("AutoSave Enabled"));
+				else
+					Log.ConsoleInfo(GetString("AutoSave Disabled"));
+				if (Backups.Interval > 0)
+					Log.ConsoleInfo(GetString("Backups Enabled"));
+				else
+					Log.ConsoleInfo(GetString("Backups Disabled"));
 
 				Initialized?.Invoke();
 
-				Log.ConsoleInfo("Welcome to TShock for Terraria!");
-				Log.ConsoleInfo("TShock comes with no warranty & is free software.");
-				Log.ConsoleInfo("You can modify & distribute it under the terms of the GNU GPLv3.");
+				Log.ConsoleInfo(GetString("Welcome to TShock for Terraria!"));
+				Log.ConsoleInfo(GetString("TShock comes with no warranty & is free software."));
+				Log.ConsoleInfo(GetString("You can modify & distribute it under the terms of the GNU GPLv3."));
 
 			}
 			catch (Exception ex)
@@ -440,7 +442,7 @@ namespace TShockAPI
 				// handle if Log was not initialised
 				void SafeError(string message)
 				{
-					if(Log is not null) Log.ConsoleError(message);
+					if (Log is not null) Log.ConsoleError(message);
 					else Console.WriteLine(message);
 				};
 				SafeError(GetString("TShock encountered a problem from which it cannot recover. The following message may help diagnose the problem."));
@@ -581,7 +583,7 @@ namespace TShockAPI
 			{
 				if (player.IP == ip)
 				{
-					player.Kick("You logged in from the same IP.", true, true, null, true);
+					player.Kick(GetString("You logged in from the same IP."), true, true, null, true);
 					args.Handled = true;
 					return;
 				}
@@ -590,7 +592,7 @@ namespace TShockAPI
 					var ips = JsonConvert.DeserializeObject<List<string>>(player.Account.KnownIps);
 					if (ips.Contains(ip))
 					{
-						player.Kick("You logged in from another location.", true, true, null, true);
+						player.Kick(GetString("You logged in from another location."), true, true, null, true);
 						args.Handled = true;
 					}
 				}
@@ -717,10 +719,10 @@ namespace TShockAPI
 
 			tryingToShutdown = true;
 
-			Log.ConsoleInfo("Shutting down safely. To force shutdown, send SIGINT (CTRL + C) again.");
+			Log.ConsoleInfo(GetString("Shutting down safely. To force shutdown, send SIGINT (CTRL + C) again."));
 
 			// Perform a safe shutdown
-			TShock.Utils.StopServer(true, "Server console interrupted!");
+			TShock.Utils.StopServer(true, GetString("Server console interrupted!"));
 		}
 
 		/// <summary>HandleCommandLine - Handles the command line parameters passed to the server.</summary>
@@ -747,7 +749,7 @@ namespace TShockAPI
 						SavePath = path ?? "tshock";
 						if (path != null)
 						{
-							ServerApi.LogWriter.PluginWriteLine(this, "Config path has been set to " + path, TraceLevel.Info);
+							ServerApi.LogWriter.PluginWriteLine(this, GetString("Config path has been set to {0}", path), TraceLevel.Info);
 						}
 					})
 
@@ -757,7 +759,7 @@ namespace TShockAPI
 						if (path != null)
 						{
 							Main.WorldPath = path;
-							ServerApi.LogWriter.PluginWriteLine(this, "World path has been set to " + path, TraceLevel.Info);
+							ServerApi.LogWriter.PluginWriteLine(this, GetString("World path has been set to {0}", path), TraceLevel.Info);
 						}
 					})
 
@@ -767,7 +769,7 @@ namespace TShockAPI
 						if (path != null)
 						{
 							LogPath = path;
-							ServerApi.LogWriter.PluginWriteLine(this, "Log path has been set to " + path, TraceLevel.Info);
+							ServerApi.LogWriter.PluginWriteLine(this, GetString("Log path has been set to {0}", path), TraceLevel.Info);
 						}
 					})
 
@@ -877,13 +879,13 @@ namespace TShockAPI
 							Netplay.ListenPort = port;
 							Config.Settings.ServerPort = port;
 							OverridePort = true;
-							Log.ConsoleInfo("Port overridden by startup argument. Set to " + port);
+							Log.ConsoleInfo(GetString("Port overridden by startup argument. Set to {0}", port));
 						}
 					})
 				.AddFlags(restTokenSet, (token) =>
 					{
 						RESTStartupTokens.Add(token, new SecureRest.TokenData { Username = "null", UserGroupName = "superadmin" });
-						Console.WriteLine("Startup parameter overrode REST token.");
+						Console.WriteLine(GetString("Startup parameter overrode REST token."));
 					})
 				.AddFlags(restEnableSet, (e) =>
 					{
@@ -891,7 +893,7 @@ namespace TShockAPI
 						if (bool.TryParse(e, out enabled))
 						{
 							Config.Settings.RestApiEnabled = enabled;
-							Console.WriteLine("Startup parameter overrode REST enable.");
+							Console.WriteLine(GetString("Startup parameter overrode REST enable."));
 						}
 					})
 				.AddFlags(restPortSet, (p) =>
@@ -900,7 +902,7 @@ namespace TShockAPI
 					if (int.TryParse(p, out restPort))
 					{
 						Config.Settings.RestApiPort = restPort;
-						Console.WriteLine("Startup parameter overrode REST port.");
+						Console.WriteLine(GetString("Startup parameter overrode REST port."));
 					}
 				})
 				.AddFlags(playerSet, (p) =>
@@ -909,7 +911,7 @@ namespace TShockAPI
 						if (int.TryParse(p, out slots))
 						{
 							Config.Settings.MaxSlots = slots;
-							Console.WriteLine("Startup parameter overrode maximum player slot configuration value.");
+							Console.WriteLine(GetString("Startup parameter overrode maximum player slot configuration value."));
 						}
 					});
 
@@ -933,19 +935,19 @@ namespace TShockAPI
 				//CLI defined password overrides a config password
 				if (!string.IsNullOrEmpty(Config.Settings.ServerPassword))
 				{
-					Log.ConsoleError("!!! The server password in config.json was overridden by the interactive prompt and will be ignored.");
+					Log.ConsoleError(GetString("!!! The server password in config.json was overridden by the interactive prompt and will be ignored."));
 				}
 
 				if (!Config.Settings.DisableUUIDLogin)
 				{
-					Log.ConsoleError("!!! UUID login is enabled. If a user's UUID matches an account, the server password will be bypassed.");
-					Log.ConsoleError("!!! > Set DisableUUIDLogin to true in the config file and /reload if this is a problem.");
+					Log.ConsoleError(GetString("!!! UUID login is enabled. If a user's UUID matches an account, the server password will be bypassed."));
+					Log.ConsoleError(GetString("!!! > Set DisableUUIDLogin to true in the config file and /reload if this is a problem."));
 				}
 
 				if (!Config.Settings.DisableLoginBeforeJoin)
 				{
-					Log.ConsoleError("!!! Login before join is enabled. Existing accounts can login & the server password will be bypassed.");
-					Log.ConsoleError("!!! > Set DisableLoginBeforeJoin to true in the config file and /reload if this is a problem.");
+					Log.ConsoleError(GetString("!!! Login before join is enabled. Existing accounts can login & the server password will be bypassed."));
+					Log.ConsoleError(GetString("!!! > Set DisableLoginBeforeJoin to true in the config file and /reload if this is a problem."));
 				}
 
 				_cliPassword = Netplay.ServerPassword;
@@ -956,19 +958,19 @@ namespace TShockAPI
 			{
 				if (!string.IsNullOrEmpty(Config.Settings.ServerPassword))
 				{
-					Log.ConsoleInfo("A password for this server was set in config.json and is being used.");
+					Log.ConsoleInfo(GetString("A password for this server was set in config.json and is being used."));
 				}
 			}
 
 			if (!Config.Settings.DisableLoginBeforeJoin)
 			{
-				Log.ConsoleInfo("Login before join enabled. Users may be prompted for an account specific password instead of a server password on connect.");
+				Log.ConsoleInfo(GetString("Login before join enabled. Users may be prompted for an account specific password instead of a server password on connect."));
 			}
 
 			if (!Config.Settings.DisableUUIDLogin)
 			{
-				Log.ConsoleInfo("Login using UUID enabled. Users automatically login via UUID.");
-				Log.ConsoleInfo("A malicious server can easily steal a user's UUID. You may consider turning this option off if you run a public server.");
+				Log.ConsoleInfo(GetString("Login using UUID enabled. Users automatically login via UUID."));
+				Log.ConsoleInfo(GetString("A malicious server can easily steal a user's UUID. You may consider turning this option off if you run a public server."));
 			}
 
 			// Disable the auth system if "setup.lock" is present or a user account already exists
@@ -1090,7 +1092,7 @@ namespace TShockAPI
 					{
 						if (player.TileKillThreshold >= Config.Settings.TileKillThreshold)
 						{
-							player.Disable("Reached TileKill threshold.", flags);
+							player.Disable(GetString("Reached TileKill threshold."), flags);
 							TSPlayer.Server.RevertTiles(player.TilesDestroyed);
 							player.TilesDestroyed.Clear();
 						}
@@ -1107,7 +1109,7 @@ namespace TShockAPI
 					{
 						if (player.TilePlaceThreshold >= Config.Settings.TilePlaceThreshold)
 						{
-							player.Disable("Reached TilePlace threshold", flags);
+							player.Disable(GetString("Reached TilePlace threshold"), flags);
 							lock (player.TilesCreated)
 							{
 								TSPlayer.Server.RevertTiles(player.TilesCreated);
@@ -1151,7 +1153,7 @@ namespace TShockAPI
 
 					if (player.TileLiquidThreshold >= Config.Settings.TileLiquidThreshold)
 					{
-						player.Disable("Reached TileLiquid threshold", flags);
+						player.Disable(GetString("Reached TileLiquid threshold"), flags);
 					}
 					if (player.TileLiquidThreshold > 0)
 					{
@@ -1160,7 +1162,7 @@ namespace TShockAPI
 
 					if (player.ProjectileThreshold >= Config.Settings.ProjectileThreshold)
 					{
-						player.Disable("Reached projectile threshold", flags);
+						player.Disable(GetString("Reached projectile threshold"), flags);
 					}
 					if (player.ProjectileThreshold > 0)
 					{
@@ -1169,7 +1171,7 @@ namespace TShockAPI
 
 					if (player.PaintThreshold >= Config.Settings.TilePaintThreshold)
 					{
-						player.Disable("Reached paint threshold", flags);
+						player.Disable(GetString("Reached paint threshold"), flags);
 					}
 					if (player.PaintThreshold > 0)
 					{
@@ -1178,7 +1180,7 @@ namespace TShockAPI
 
 					if (player.HealOtherThreshold >= TShock.Config.Settings.HealOtherThreshold)
 					{
-						player.Disable("Reached HealOtherPlayer threshold", flags);
+						player.Disable(GetString("Reached HealOtherPlayer threshold"), flags);
 					}
 					if (player.HealOtherThreshold > 0)
 					{
@@ -1282,7 +1284,7 @@ namespace TShockAPI
 		{
 			if (ShuttingDown)
 			{
-				NetMessage.SendData((int)PacketTypes.Disconnect, args.Who, -1, NetworkText.FromLiteral("Server is shutting down..."));
+				NetMessage.SendData((int)PacketTypes.Disconnect, args.Who, -1, NetworkText.FromLiteral(GetString("Server is shutting down...")));
 				args.Handled = true;
 				return;
 			}
@@ -1311,7 +1313,7 @@ namespace TShockAPI
 				{
 					if (Config.Settings.KickProxyUsers)
 					{
-						player.Kick("Connecting via a proxy is not allowed.", true, true, null, false);
+						player.Kick(GetString("Connecting via a proxy is not allowed."), true, true, null, false);
 						args.Handled = true;
 						return;
 					}
@@ -1333,7 +1335,7 @@ namespace TShockAPI
 
 			if (Config.Settings.KickEmptyUUID && String.IsNullOrWhiteSpace(player.UUID))
 			{
-				player.Kick("Your client sent a blank UUID. Configure it to send one or use a different client.", true, true, null, false);
+				player.Kick(GetString("Your client sent a blank UUID. Configure it to send one or use a different client."), true, true, null, false);
 				args.Handled = true;
 				return;
 			}
@@ -1379,8 +1381,8 @@ namespace TShockAPI
 			if (tsplr.ReceivedInfo)
 			{
 				if (!tsplr.SilentKickInProgress && tsplr.State >= 3)
-					Utils.Broadcast(tsplr.Name + " has left.", Color.Yellow);
-				Log.Info("{0} disconnected.", tsplr.Name);
+					Utils.Broadcast(GetString("{0} has left.", tsplr.Name), Color.Yellow);
+				Log.Info(GetString("{0} disconnected."), tsplr.Name);
 
 				if (tsplr.IsLoggedIn && !tsplr.IsDisabledPendingTrashRemoval && Main.ServerSideCharacter && (!tsplr.Dead || tsplr.TPlayer.difficulty != 2))
 				{
@@ -1430,7 +1432,7 @@ namespace TShockAPI
 
 			if (args.Text.Length > 500)
 			{
-				tsplr.Kick("Crash attempt via long chat packet.", true);
+				tsplr.Kick(GetString("Crash attempt via long chat packet."), true);
 				args.Handled = true;
 				return;
 			}
@@ -1466,12 +1468,12 @@ namespace TShockAPI
 					{
 						// This is required in case anyone makes HandleCommand return false again
 						tsplr.SendErrorMessage(GetString("Unable to parse command. Please contact an administrator for assistance."));
-						Log.ConsoleError("Unable to parse command '{0}' from player {1}.", text, tsplr.Name);
+						Log.ConsoleError(GetString("Unable to parse command '{0}' from player {1}."), text, tsplr.Name);
 					}
 				}
 				catch (Exception ex)
 				{
-					Log.ConsoleError("An exception occurred executing a command.");
+					Log.ConsoleError(GetString("An exception occurred executing a command."));
 					Log.Error(ex.ToString());
 				}
 			}
@@ -1569,7 +1571,10 @@ namespace TShockAPI
 			if (args.Command == "autosave")
 			{
 				Main.autoSave = Config.Settings.AutoSave = !Config.Settings.AutoSave;
-				Log.ConsoleInfo("AutoSave " + (Config.Settings.AutoSave ? "Enabled" : "Disabled"));
+				if (Config.Settings.AutoSave)
+					Log.ConsoleInfo(GetString("AutoSave Enabled"));
+				else
+					Log.ConsoleInfo(GetString("AutoSave Disabled"));
 			}
 			else if (args.Command.StartsWith(Commands.Specifier) || args.Command.StartsWith(Commands.SilentSpecifier))
 			{

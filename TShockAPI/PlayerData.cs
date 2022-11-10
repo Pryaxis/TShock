@@ -679,7 +679,7 @@ namespace TShockAPI
 			NetMessage.SendData(42, player.Index, -1, NetworkText.Empty, player.Index, 0f, 0f, 0f, 0);
 			NetMessage.SendData(16, player.Index, -1, NetworkText.Empty, player.Index, 0f, 0f, 0f, 0);
 
-			for (int k = 0; k < 22; k++)
+			for (int k = 0; k < Player.maxBuffs; k++)
 			{
 				player.TPlayer.buffType[k] = 0;
 			}

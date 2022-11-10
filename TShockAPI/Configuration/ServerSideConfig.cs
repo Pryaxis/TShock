@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -117,10 +117,10 @@ namespace TShockAPI.Configuration
 
 				var def = field.GetValue(defaults);
 
-				sb.AppendLine("## {0}  ".SFormat(name));
-				sb.AppendLine("{0}".SFormat(desc));
-				sb.AppendLine("* **Field type**: `{0}`".SFormat(type));
-				sb.AppendLine("* **Default**: `{0}`".SFormat(def));
+				sb.AppendLine($"## {name}  ");
+				sb.AppendLine($"{desc}");
+				sb.AppendLine(GetString("* **Field type**: `{0}`", type));
+				sb.AppendLine(GetString("* **Default**: `{0}`", def));
 				sb.AppendLine();
 			}
 

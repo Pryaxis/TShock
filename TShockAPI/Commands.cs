@@ -670,7 +670,7 @@ namespace TShockAPI
 			string cmdName;
 			if (index == 0) // Space after the command specifier should not be supported
 			{
-				player.SendErrorMessage(GetString("Invalid command entered. Type {0}help for a list of valid commands.", Specifier));
+				player.SendErrorMessage(GetString("You entered a space after {0} instead of a command. Type {0}help for a list of valid commands.", Specifier));
 				return true;
 			}
 			else if (index < 0)
@@ -808,6 +808,10 @@ namespace TShockAPI
 			// We need to emulate the checks done in Player.TrySwitchingLoadout, because otherwise the server is not allowed to sync the
 			// loadout index to the player, causing catastrophic desync.
 			// The player must not be dead, using an item, or CC'd to switch loadouts.
+
+			// Note that we only check for CC'd players when SSC is enabled, as that is only where it can cause issues,
+			// and the RequireLogin config option (without SSC) will disable player's until they login, creating a vicious cycle.
+
 			// FIXME: There is always the chance that in-between the time we check these requirements on the server, and the loadout sync
 			//		  packet reaches the client, that the client state has changed, causing the loadout sync to be rejected, even though
 			//		  we expected it to succeed.
@@ -826,7 +830,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (args.TPlayer.CCed)
+			if (args.TPlayer.CCed && Main.ServerSideCharacter)
 			{
 				args.Player.SendErrorMessage(GetString("You cannot login whilst crowd controlled."));
 				return;
@@ -2883,7 +2887,7 @@ namespace TShockAPI
 			else
 			{
 				var npc = npcs[0];
-				if (npc.type >= 1 && npc.type < Main.maxNPCTypes && npc.type != 113)
+				if (npc.type >= 1 && npc.type < Terraria.ID.NPCID.Count && npc.type != 113)
 				{
 					TSPlayer.Server.SpawnNPC(npc.netID, npc.FullName, amount, args.Player.TileX, args.Player.TileY, 50, 20);
 					if (args.Silent)
@@ -4048,7 +4052,7 @@ namespace TShockAPI
 							return;
 						}
 						short id;
-						if (Int16.TryParse(args.Parameters[1], out id) && id > 0 && id < Main.maxProjectileTypes)
+						if (Int16.TryParse(args.Parameters[1], out id) && id > 0 && id < Terraria.ID.ProjectileID.Count)
 						{
 							TShock.ProjectileBans.AddNewBan(id);
 							args.Player.SendSuccessMessage(GetString("Banned projectile {0}.", id));
@@ -4068,7 +4072,7 @@ namespace TShockAPI
 						}
 
 						short id;
-						if (Int16.TryParse(args.Parameters[1], out id) && id > 0 && id < Main.maxProjectileTypes)
+						if (Int16.TryParse(args.Parameters[1], out id) && id > 0 && id < Terraria.ID.ProjectileID.Count)
 						{
 							if (!TShock.Groups.GroupExists(args.Parameters[2]))
 							{
@@ -4105,7 +4109,7 @@ namespace TShockAPI
 						}
 
 						short id;
-						if (Int16.TryParse(args.Parameters[1], out id) && id > 0 && id < Main.maxProjectileTypes)
+						if (Int16.TryParse(args.Parameters[1], out id) && id > 0 && id < Terraria.ID.ProjectileID.Count)
 						{
 							TShock.ProjectileBans.RemoveBan(id);
 							args.Player.SendSuccessMessage(GetString("Unbanned projectile {0}.", id));
@@ -4126,7 +4130,7 @@ namespace TShockAPI
 						}
 
 						short id;
-						if (Int16.TryParse(args.Parameters[1], out id) && id > 0 && id < Main.maxProjectileTypes)
+						if (Int16.TryParse(args.Parameters[1], out id) && id > 0 && id < Terraria.ID.ProjectileID.Count)
 						{
 							if (!TShock.Groups.GroupExists(args.Parameters[2]))
 							{
@@ -4224,7 +4228,7 @@ namespace TShockAPI
 							return;
 						}
 						short id;
-						if (Int16.TryParse(args.Parameters[1], out id) && id >= 0 && id < Main.maxTileSets)
+						if (Int16.TryParse(args.Parameters[1], out id) && id >= 0 && id < Terraria.ID.TileID.Count)
 						{
 							TShock.TileBans.AddNewBan(id);
 							args.Player.SendSuccessMessage(GetString("Banned tile {0}.", id));
@@ -4244,7 +4248,7 @@ namespace TShockAPI
 						}
 
 						short id;
-						if (Int16.TryParse(args.Parameters[1], out id) && id >= 0 && id < Main.maxTileSets)
+						if (Int16.TryParse(args.Parameters[1], out id) && id >= 0 && id < Terraria.ID.TileID.Count)
 						{
 							if (!TShock.Groups.GroupExists(args.Parameters[2]))
 							{
@@ -4281,7 +4285,7 @@ namespace TShockAPI
 						}
 
 						short id;
-						if (Int16.TryParse(args.Parameters[1], out id) && id >= 0 && id < Main.maxTileSets)
+						if (Int16.TryParse(args.Parameters[1], out id) && id >= 0 && id < Terraria.ID.TileID.Count)
 						{
 							TShock.TileBans.RemoveBan(id);
 							args.Player.SendSuccessMessage(GetString("Unbanned tile {0}.", id));
@@ -4302,7 +4306,7 @@ namespace TShockAPI
 						}
 
 						short id;
-						if (Int16.TryParse(args.Parameters[1], out id) && id >= 0 && id < Main.maxTileSets)
+						if (Int16.TryParse(args.Parameters[1], out id) && id >= 0 && id < Terraria.ID.TileID.Count)
 						{
 							if (!TShock.Groups.GroupExists(args.Parameters[2]))
 							{
@@ -6109,7 +6113,7 @@ namespace TShockAPI
 			{
 				item = matchedItems[0];
 			}
-			if (item.type < 1 && item.type >= Main.maxItemTypes)
+			if (item.type < 1 && item.type >= Terraria.ID.ItemID.Count)
 			{
 				args.Player.SendErrorMessage(GetString("The item type {0} is invalid.", itemNameOrId));
 				return;
@@ -6272,7 +6276,7 @@ namespace TShockAPI
 						prefix = prefixIds[0];
 				}
 
-				if (item.type >= 1 && item.type < Main.maxItemTypes)
+				if (item.type >= 1 && item.type < Terraria.ID.ItemID.Count)
 				{
 					var players = TSPlayer.FindByNameOrID(plStr);
 					if (players.Count == 0)
@@ -6414,7 +6418,7 @@ namespace TShockAPI
 			if (args.Parameters.Count == 2)
 				int.TryParse(args.Parameters[1], out time);
 
-			if (id > 0 && id < Main.maxBuffTypes)
+			if (id > 0 && id < Terraria.ID.BuffID.Count)
 			{
 				// Max possible buff duration as of Terraria 1.4.2.3 is 35791393 seconds (415 days).
 				if (time < 0 || time > timeLimit)
@@ -6470,13 +6474,16 @@ namespace TShockAPI
 				}
 				if (args.Parameters.Count == 3)
 					int.TryParse(args.Parameters[2], out time);
-				if (id > 0 && id < Main.maxBuffTypes)
+				if (id > 0 && id < Terraria.ID.BuffID.Count)
 				{
 					var target = foundplr[0];
 					if (time < 0 || time > timeLimit)
 						time = timeLimit;
 					target.SetBuff(id, time * 60);
-					user.SendSuccessMessage(GetString($"You have buffed {(target == user ? GetString("yourself") : target.Name)} with {TShock.Utils.GetBuffName(id)} ({TShock.Utils.GetBuffDescription(id)}) for {time} seconds!"));
+					if (target == user)
+						user.SendSuccessMessage(GetString($"You buffed yourself with {TShock.Utils.GetBuffName(id)} ({TShock.Utils.GetBuffDescription(id)}) for {time} seconds."));
+					else
+						target.SendSuccessMessage(GetString($"You have buffed {user.Name} with {TShock.Utils.GetBuffName(id)} ({TShock.Utils.GetBuffDescription(id)}) for {time} seconds!"));
 					if (!args.Silent && target != user)
 						target.SendSuccessMessage(GetString($"{user.Name} has buffed you with {TShock.Utils.GetBuffName(id)} ({TShock.Utils.GetBuffDescription(id)}) for {time} seconds!"));
 				}

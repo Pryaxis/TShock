@@ -3,6 +3,69 @@
 This is the rolling changelog for TShock for Terraria. Changes listed under "upcoming changes" are only available in experimental builds.
 
 <!-- ## How to add a changelog entry
+ATTENTION MORTALS
+PLEASE READ ALL OF THE INSTRUCTIONS HERE
+IT IS SUPER ANNOYING TO HAVE TO FIX THE CHANGELOG EVERY SINGLE TIME BECAUSE NOBODY READS THESE
+ATTENTION MORTALS
+PLEASE READ ALL OF THE INSTRUCTIONS HERE
+IT IS SUPER ANNOYING TO HAVE TO FIX THE CHANGELOG EVERY SINGLE TIME BECAUSE NOBODY READS THESE
+ATTENTION MORTALS
+PLEASE READ ALL OF THE INSTRUCTIONS HERE
+IT IS SUPER ANNOYING TO HAVE TO FIX THE CHANGELOG EVERY SINGLE TIME BECAUSE NOBODY READS THESE
+ATTENTION MORTALS
+PLEASE READ ALL OF THE INSTRUCTIONS HERE
+IT IS SUPER ANNOYING TO HAVE TO FIX THE CHANGELOG EVERY SINGLE TIME BECAUSE NOBODY READS THESE
+ATTENTION MORTALS
+PLEASE READ ALL OF THE INSTRUCTIONS HERE
+IT IS SUPER ANNOYING TO HAVE TO FIX THE CHANGELOG EVERY SINGLE TIME BECAUSE NOBODY READS THESE
+ATTENTION MORTALS
+PLEASE READ ALL OF THE INSTRUCTIONS HERE
+IT IS SUPER ANNOYING TO HAVE TO FIX THE CHANGELOG EVERY SINGLE TIME BECAUSE NOBODY READS THESE
+ATTENTION MORTALS
+PLEASE READ ALL OF THE INSTRUCTIONS HERE
+IT IS SUPER ANNOYING TO HAVE TO FIX THE CHANGELOG EVERY SINGLE TIME BECAUSE NOBODY READS THESE
+ATTENTION MORTALS
+PLEASE READ ALL OF THE INSTRUCTIONS HERE
+IT IS SUPER ANNOYING TO HAVE TO FIX THE CHANGELOG EVERY SINGLE TIME BECAUSE NOBODY READS THESE
+ATTENTION MORTALS
+PLEASE READ ALL OF THE INSTRUCTIONS HERE
+IT IS SUPER ANNOYING TO HAVE TO FIX THE CHANGELOG EVERY SINGLE TIME BECAUSE NOBODY READS THESE
+ATTENTION MORTALS
+PLEASE READ ALL OF THE INSTRUCTIONS HERE
+IT IS SUPER ANNOYING TO HAVE TO FIX THE CHANGELOG EVERY SINGLE TIME BECAUSE NOBODY READS THESE
+ATTENTION MORTALS
+PLEASE READ ALL OF THE INSTRUCTIONS HERE
+IT IS SUPER ANNOYING TO HAVE TO FIX THE CHANGELOG EVERY SINGLE TIME BECAUSE NOBODY READS THESE
+ATTENTION MORTALS
+PLEASE READ ALL OF THE INSTRUCTIONS HERE
+IT IS SUPER ANNOYING TO HAVE TO FIX THE CHANGELOG EVERY SINGLE TIME BECAUSE NOBODY READS THESE
+ATTENTION MORTALS
+PLEASE READ ALL OF THE INSTRUCTIONS HERE
+IT IS SUPER ANNOYING TO HAVE TO FIX THE CHANGELOG EVERY SINGLE TIME BECAUSE NOBODY READS THESE
+ATTENTION MORTALS
+PLEASE READ ALL OF THE INSTRUCTIONS HERE
+IT IS SUPER ANNOYING TO HAVE TO FIX THE CHANGELOG EVERY SINGLE TIME BECAUSE NOBODY READS THESE
+ATTENTION MORTALS
+PLEASE READ ALL OF THE INSTRUCTIONS HERE
+IT IS SUPER ANNOYING TO HAVE TO FIX THE CHANGELOG EVERY SINGLE TIME BECAUSE NOBODY READS THESE
+ATTENTION MORTALS
+PLEASE READ ALL OF THE INSTRUCTIONS HERE
+IT IS SUPER ANNOYING TO HAVE TO FIX THE CHANGELOG EVERY SINGLE TIME BECAUSE NOBODY READS THESE
+ATTENTION MORTALS
+PLEASE READ ALL OF THE INSTRUCTIONS HERE
+IT IS SUPER ANNOYING TO HAVE TO FIX THE CHANGELOG EVERY SINGLE TIME BECAUSE NOBODY READS THESE
+ATTENTION MORTALS
+PLEASE READ ALL OF THE INSTRUCTIONS HERE
+IT IS SUPER ANNOYING TO HAVE TO FIX THE CHANGELOG EVERY SINGLE TIME BECAUSE NOBODY READS THESE
+ATTENTION MORTALS
+PLEASE READ ALL OF THE INSTRUCTIONS HERE
+IT IS SUPER ANNOYING TO HAVE TO FIX THE CHANGELOG EVERY SINGLE TIME BECAUSE NOBODY READS THESE
+ATTENTION MORTALS
+PLEASE READ ALL OF THE INSTRUCTIONS HERE
+IT IS SUPER ANNOYING TO HAVE TO FIX THE CHANGELOG EVERY SINGLE TIME BECAUSE NOBODY READS THESE
+ATTENTION MORTALS
+PLEASE READ ALL OF THE INSTRUCTIONS HERE
+IT IS SUPER ANNOYING TO HAVE TO FIX THE CHANGELOG EVERY SINGLE TIME BECAUSE NOBODY READS THESE
 Use past tense when adding new entries; sign your name off when you add or change something. This should primarily be things like user changes, not necessarily codebase changes unless it's really relevant or large.
 
 * Put your entry in terms of what you changed in the past mood. For example: "Changed the world by adding new grommets."
@@ -15,9 +78,52 @@ Use past tense when adding new entries; sign your name off when you add or chang
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change. -->
 
 ## Upcoming changes
-* Fixed item giving potentially dropping too many items (@PotatoCider, @punchready)
-* Excluded GeoIP.dat from release bundle (@SignatureBeef)
-* Added `TownSlimeRed` to `FishableNpcIDs` list, allowing it to be fished up (@drunderscore)
+* Your changes could be here!
+
+## TShock 5.1.0
+* Fixed item giving potentially dropping too many items. (@PotatoCider, @punchready)
+* Excluded GeoIP.dat from release bundle. (@SignatureBeef)
+* Added `TownSlimeRed` to `FishableNpcIDs` list, allowing it to be fished up. (@drunderscore)
+* Bump to Terraria 1.4.4.8 via OTAPI 3.1.18. (@hakusaro, @SignatureBeef)
+  * In this version of Terraria, `Main.maxBuffTypes` and other `maxWhateverTypes` fields have been removed. Their replacements are in `Terraria.ID.whateverID.Count`. TShock calls to these fields have been swapped in order to bring forward compatibility with Terraria 1.4.4.8.
+* In OTAPI 3.1.17, allowed Crystal Shard to grow. (@sgkoishi, @cc004, SignatureBeef/Open-Terraria-API#96)
+* Added permission for summoning Mechdusa, Deerclops and slime pet. (@sgkoishi, #2808)
+* Changed login to only restrict CC'd players during login whilst SSC is enabled. (@drunderscore)
+  * This change allows the config option `RequireLogin` to function usefully again when SSC is not enabled.
+* Changed `PlayerData.RestoreCharacter` to remove all buffs. (@drunderscore)
+  * Before this change, it was theoretically possible to smuggle buffs onto servers with SSC enabled, by using buff indexes past `22`.
+* Allowed Torch God's Favor to place different types of torches and campfires. (@sgkoishi, #2811)
+* Updated translations! Currently, the major projects are at the following completion rates:
+  * Chinese (93%)
+  * Portuguese, Brazilian (89%)
+  * Indonesian (89%)
+  * Russian (56%)
+  * Spanish (24%)
+  * toki pona (10%)
+  * Turkish (8%)
+  * For complete credits, see the table below.
+
+### Translation credits
+The following translators contributed changes from November 1, 2022 to November 9, 2022 (from TShock 5.0.0 to 5.1.0).
+
+|Contributor | Language | Translated words|
+|-----|-----|-----|
+|Shiva Goddess (ShivaGoddess) | Portuguese, Brazilian | 6979|
+|Ricko (Rickojp) | Portuguese, Brazilian | 3154|
+|RidnRaven (ridwankun2) | Indonesian | 2329|
+|Janet Blackquill (pontaoski) | toki pona | 1216|
+|SGKoishi | Chinese Simplified | 640|
+|Cristofer GamerTVH (cristoferherame) | Spanish | 622|
+|HDSeventh (hdseventh) | Indonesian | 315|
+|EMRE ÇELİK (emre0447) | Turkish | 312|
+|PHPoenX | Russian | 297|
+|./lemon.sh (lemon-sh) | Polish | 206|
+|Сергей Червяков (chsergeyg) | Russian | 182|
+|okaythisisepic | Russian | 80|
+|KomashiOFC | Portuguese, Brazilian | 76|
+|Runesicle | toki pona | 22|
+|Marotheit | Pirate English | 7|
+|ATFGK | Chinese Simplified | 4|
 
 ## TShock 5.0.0
 * Reduced load/save console spam. (@SignatureBeef, @YehnBeep)
