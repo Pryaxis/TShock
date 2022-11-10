@@ -78,6 +78,9 @@ Use past tense when adding new entries; sign your name off when you add or chang
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change. -->
 
 ## Upcoming changes
+* Your changes could be here!
+
+## TShock 5.1.0
 * Fixed item giving potentially dropping too many items. (@PotatoCider, @punchready)
 * Excluded GeoIP.dat from release bundle. (@SignatureBeef)
 * Added `TownSlimeRed` to `FishableNpcIDs` list, allowing it to be fished up. (@drunderscore)
@@ -90,7 +93,37 @@ Use past tense when adding new entries; sign your name off when you add or chang
 * Changed `PlayerData.RestoreCharacter` to remove all buffs. (@drunderscore)
   * Before this change, it was theoretically possible to smuggle buffs onto servers with SSC enabled, by using buff indexes past `22`.
 * Allowed Torch God's Favor to place different types of torches and campfires. (@sgkoishi, #2811)
+* Updated translations! Currently, the major projects are at the following completion rates:
+  * Chinese (93%)
+  * Portuguese, Brazilian (89%)
+  * Indonesian (89%)
+  * Russian (56%)
+  * Spanish (24%)
+  * toki pona (10%)
+  * Turkish (8%)
+  * For complete credits, see the table below.
 
+### Translation credits
+The following translators contributed changes from November 1, 2022 to November 9, 2022 (from TShock 5.0.0 to 5.1.0).
+
+|Contributor | Language | Translated words|
+|-----|-----|-----|
+|Shiva Goddess (ShivaGoddess) | Portuguese, Brazilian | 6979|
+|Ricko (Rickojp) | Portuguese, Brazilian | 3154|
+|RidnRaven (ridwankun2) | Indonesian | 2329|
+|Janet Blackquill (pontaoski) | toki pona | 1216|
+|SGKoishi | Chinese Simplified | 640|
+|Cristofer GamerTVH (cristoferherame) | Spanish | 622|
+|HDSeventh (hdseventh) | Indonesian | 315|
+|EMRE ÇELİK (emre0447) | Turkish | 312|
+|PHPoenX | Russian | 297|
+|./lemon.sh (lemon-sh) | Polish | 206|
+|Сергей Червяков (chsergeyg) | Russian | 182|
+|okaythisisepic | Russian | 80|
+|KomashiOFC | Portuguese, Brazilian | 76|
+|Runesicle | toki pona | 22|
+|Marotheit | Pirate English | 7|
+|ATFGK | Chinese Simplified | 4|
 
 ## TShock 5.0.0
 * Reduced load/save console spam. (@SignatureBeef, @YehnBeep)
