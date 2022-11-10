@@ -80,7 +80,7 @@ Use past tense when adding new entries; sign your name off when you add or chang
 ## Upcoming changes
 * Your changes could be here!
 
-## TShock 5.1.0
+## TShock 5.1.1
 * Fixed item giving potentially dropping too many items. (@PotatoCider, @punchready)
 * Excluded GeoIP.dat from release bundle. (@SignatureBeef)
 * Added `TownSlimeRed` to `FishableNpcIDs` list, allowing it to be fished up. (@drunderscore)
@@ -124,6 +124,10 @@ The following translators contributed changes from November 1, 2022 to November 
 |Runesicle | toki pona | 22|
 |Marotheit | Pirate English | 7|
 |ATFGK | Chinese Simplified | 4|
+
+## TShock 5.1.0
+
+This release was scrubbed. All changes have been re-allocated to the 5.1.1 release. We consider a verison "final" after the tick and do not apply more changes. Thus, we were unable to simply release 5.0.0 as-is, as a late-breaking bug was discovered and fixed after the tick.
 
 ## TShock 5.0.0
 * Reduced load/save console spam. (@SignatureBeef, @YehnBeep)
