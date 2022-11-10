@@ -1382,7 +1382,7 @@ namespace TShockAPI
 			{
 				if (!tsplr.SilentKickInProgress && tsplr.State >= 3)
 					Utils.Broadcast(GetString("{0} has left.", tsplr.Name), Color.Yellow);
-				Log.Info(GetString("{0} disconnected."), tsplr.Name);
+				Log.Info(GetString("{0} disconnected.", tsplr.Name));
 
 				if (tsplr.IsLoggedIn && !tsplr.IsDisabledPendingTrashRemoval && Main.ServerSideCharacter && (!tsplr.Dead || tsplr.TPlayer.difficulty != 2))
 				{
