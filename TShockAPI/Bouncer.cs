@@ -255,7 +255,7 @@ namespace TShockAPI
 
 			#region PlayerAddBuff Whitelist
 
-			PlayerAddBuffWhitelist = new BuffLimit[Main.maxBuffTypes];
+			PlayerAddBuffWhitelist = new BuffLimit[Terraria.ID.BuffID.Count];
 			PlayerAddBuffWhitelist[BuffID.Poisoned] = new BuffLimit
 			{
 				MaxTicks = 60 * 60
@@ -600,8 +600,8 @@ namespace TShockAPI
 				}
 
 				if (editData < 0 ||
-					((action == EditAction.PlaceTile || action == EditAction.ReplaceTile) && editData >= Main.maxTileSets) ||
-					((action == EditAction.PlaceWall || action == EditAction.ReplaceWall) && editData >= Main.maxWallTypes))
+					((action == EditAction.PlaceTile || action == EditAction.ReplaceTile) && editData >= Terraria.ID.TileID.Count) ||
+					((action == EditAction.PlaceWall || action == EditAction.ReplaceWall) && editData >= Terraria.ID.WallID.Count))
 				{
 					TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected from editData out of bounds {0} {1} {2}", args.Player.Name, action, editData));
 					args.Player.SendTileSquareCentered(tileX, tileY, 4);
@@ -1050,7 +1050,7 @@ namespace TShockAPI
 			short type = args.Type;
 
 			// player is attempting to crash clients
-			if (type < -48 || type >= Main.maxItemTypes)
+			if (type < -48 || type >= Terraria.ID.ItemID.Count)
 			{
 				// Causes item duplications. Will be re added later if necessary
 				//args.Player.SendData(PacketTypes.ItemDrop, "", id);
@@ -1881,7 +1881,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (type >= Main.maxBuffTypes)
+			if (type >= Terraria.ID.BuffID.Count)
 			{
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerBuff rejected invalid buff type {0}", args.Player.Name));
 				args.Player.SendData(PacketTypes.PlayerBuff, "", id);
@@ -2209,7 +2209,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (type < 0 || type >= Main.maxTileSets)
+			if (type < 0 || type >= Terraria.ID.TileID.Count)
 			{
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlaceObject rejected out of bounds tile from {0}", args.Player.Name));
 				args.Handled = true;

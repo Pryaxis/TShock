@@ -251,7 +251,7 @@ namespace TShockAPI
 			int type = -1;
 			if (Int32.TryParse(text, out type))
 			{
-				if (type >= Main.maxItemTypes)
+				if (type >= Terraria.ID.ItemID.Count)
 					return new List<Item>();
 				return new List<Item> {GetItemById(type)};
 			}
@@ -285,7 +285,7 @@ namespace TShockAPI
 			string nameLower = name.ToLowerInvariant();
 			var checkEnglish = Language.ActiveCulture != GameCulture.FromCultureName(GameCulture.CultureName.English);
 
-			for (int i = 1; i < Main.maxItemTypes; i++)
+			for (int i = 1; i < Terraria.ID.ItemID.Count; i++)
 			{
 				item.netDefaults(i);
 				if (!String.IsNullOrWhiteSpace(item.Name))
@@ -343,7 +343,7 @@ namespace TShockAPI
 			int type = -1;
 			if (int.TryParse(idOrName, out type))
 			{
-				if (type >= Main.maxNPCTypes)
+				if (type >= Terraria.ID.NPCID.Count)
 					return new List<NPC>();
 				return new List<NPC> { GetNPCById(type) };
 			}
@@ -372,7 +372,7 @@ namespace TShockAPI
 			var found = new List<NPC>();
 			NPC npc = new NPC();
 			string nameLower = name.ToLowerInvariant();
-			for (int i = -17; i < Main.maxNPCTypes; i++)
+			for (int i = -17; i < Terraria.ID.NPCID.Count; i++)
 			{
 				string englishName = EnglishLanguage.GetNpcNameById(i).ToLowerInvariant();
 
@@ -394,7 +394,7 @@ namespace TShockAPI
 		/// <returns>name</returns>
 		public string GetBuffName(int id)
 		{
-			return (id > 0 && id < Main.maxBuffTypes) ? Lang.GetBuffName(id) : null;
+			return (id > 0 && id < Terraria.ID.BuffID.Count) ? Lang.GetBuffName(id) : null;
 		}
 
 		/// <summary>
@@ -404,7 +404,7 @@ namespace TShockAPI
 		/// <returns>description</returns>
 		public string GetBuffDescription(int id)
 		{
-			return (id > 0 && id < Main.maxBuffTypes) ? Lang.GetBuffDescription(id) : null;
+			return (id > 0 && id < Terraria.ID.BuffID.Count) ? Lang.GetBuffDescription(id) : null;
 		}
 
 		/// <summary>
@@ -416,14 +416,14 @@ namespace TShockAPI
 		{
 			string nameLower = name.ToLower();
 			string buffname;
-			for (int i = 1; i < Main.maxBuffTypes; i++)
+			for (int i = 1; i < Terraria.ID.BuffID.Count; i++)
 			{
 				buffname = Lang.GetBuffName(i);
 				if (!String.IsNullOrWhiteSpace(buffname) && buffname.ToLower() == nameLower)
 					return new List<int> {i};
 			}
 			var found = new List<int>();
-			for (int i = 1; i < Main.maxBuffTypes; i++)
+			for (int i = 1; i < Terraria.ID.BuffID.Count; i++)
 			{
 				buffname = Lang.GetBuffName(i);
 				if (!String.IsNullOrWhiteSpace(buffname) && buffname.ToLower().StartsWith(nameLower))
@@ -1096,7 +1096,7 @@ namespace TShockAPI
 		internal void ComputeMaxStyles()
 		{
 			var item = new Item();
-			for (int i = 0; i < Main.maxItemTypes; i++)
+			for (int i = 0; i < Terraria.ID.ItemID.Count; i++)
 			{
 				item.netDefaults(i);
 				if (item.placeStyle >= 0)
