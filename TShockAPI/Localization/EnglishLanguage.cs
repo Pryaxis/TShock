@@ -60,7 +60,7 @@ namespace TShockAPI.Localization
 					NpcNames.Add(i, Lang.GetNPCNameValue(i));
 				}
 
-				for (var i = 0; i < Main.maxBuffTypes; i++)
+				for (var i = 0; i < Terraria.ID.BuffID.Count; i++)
 				{
 					Buffs.Add(i, Lang.GetBuffName(i));
 				}
