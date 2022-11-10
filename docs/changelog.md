@@ -83,17 +83,14 @@ Use past tense when adding new entries; sign your name off when you add or chang
 * Added `TownSlimeRed` to `FishableNpcIDs` list, allowing it to be fished up. (@drunderscore)
 * Bump to Terraria 1.4.4.8 via OTAPI 3.1.18. (@hakusaro, @SignatureBeef)
   * In this version of Terraria, `Main.maxBuffTypes` and other `maxWhateverTypes` fields have been removed. Their replacements are in `Terraria.ID.whateverID.Count`. TShock calls to these fields have been swapped in order to bring forward compatibility with Terraria 1.4.4.8.
-* In OTAPI 3.1.17, fixed [the crystal shard not growing](https://github.com/Pryaxis/TShock/issues/2796). (@sgkoishi)
+* In OTAPI 3.1.17, allowed Crystal Shard to grow. (@sgkoishi, @cc004, SignatureBeef/Open-Terraria-API#96)
 * Added permission for summoning Mechdusa, Deerclops and slime pet. (@sgkoishi, #2808)
 * Changed login to only restrict CC'd players during login whilst SSC is enabled. (@drunderscore)
   * This change allows the config option `RequireLogin` to function usefully again when SSC is not enabled.
 * Changed `PlayerData.RestoreCharacter` to remove all buffs. (@drunderscore)
   * Before this change, it was theoretically possible to smuggle buffs onto servers with SSC enabled, by using buff indexes past `22`.
-* Fixed item giving potentially dropping too many items (@PotatoCider, @punchready)
-* Excluded GeoIP.dat from release bundle (@SignatureBeef)
-* Added `TownSlimeRed` to `FishableNpcIDs` list, allowing it to be fished up (@drunderscore)
-* Allowed Torch God's Favor to place different types of torches and campfires (@sgkoishi, #2811)
-* Allowed Crystal Shard to grow (@sgkoishi, @cc004, SignatureBeef/Open-Terraria-API#96)
+* Allowed Torch God's Favor to place different types of torches and campfires. (@sgkoishi, #2811)
+
 
 ## TShock 5.0.0
 * Reduced load/save console spam. (@SignatureBeef, @YehnBeep)
