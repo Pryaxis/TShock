@@ -2716,7 +2716,7 @@ namespace TShockAPI
 			short numberOfDeathsPVP = args.Data.ReadInt16(); 
 			PlayerSpawnContext context = (PlayerSpawnContext)args.Data.ReadByte();
 
-			if (OnPlayerSpawn(args.Player, args.Data, player, spawnx, spawny, respawn, numberOfDeathsPVE, numberOfDeathsPVP, context))
+			if (OnPlayerSpawn(args.Player, args.Data, player, spawnx, spawny, respawnTimer, numberOfDeathsPVE, numberOfDeathsPVP, context))
 				return true;
 
 			if ((Main.ServerSideCharacter) && (spawnx == -1 && spawny == -1)) //this means they want to spawn to vanilla spawn
@@ -3182,7 +3182,7 @@ namespace TShockAPI
 			BitsByte zone4 = args.Data.ReadInt8();
 			BitsByte zone5 = args.Data.ReadInt8();
 
-			if (OnPlayerZone(args.Player, args.Data, plr, zone1, zone2, zone3, zone4))
+			if (OnPlayerZone(args.Player, args.Data, plr, zone1, zone2, zone3, zone4, zone5))
 				return true;
 
 			return false;
