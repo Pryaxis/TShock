@@ -2303,10 +2303,15 @@ namespace TShockAPI
 
 				if (args.Player.SelectedItem.placeStyle != style)
 				{
-					TShock.Log.ConsoleError(GetString("Bouncer / OnPlaceObject rejected object placement with invalid style from {0}", args.Player.Name));
-					args.Player.SendTileSquareCentered(x, y, 4);
-					args.Handled = true;
-					return;
+					var validTorch = args.Player.SelectedItem.createTile == TileID.Torches && args.Player.TPlayer.BiomeTorchPlaceStyle(args.Player.SelectedItem.placeStyle) == style;
+					var validCampfire = args.Player.SelectedItem.createTile == TileID.Campfire && args.Player.TPlayer.BiomeCampfirePlaceStyle(args.Player.SelectedItem.placeStyle) == style;
+					if (!args.Player.TPlayer.unlockedBiomeTorches || (!validTorch && !validCampfire))
+					{
+						TShock.Log.ConsoleError(GetString("Bouncer / OnPlaceObject rejected object placement with invalid style {1} (expected {2}) from {0}", args.Player.Name, style, args.Player.SelectedItem.placeStyle));
+						args.Player.SendTileSquareCentered(x, y, 4);
+						args.Handled = true;
+						return;
+					}
 				}
 			}
 
