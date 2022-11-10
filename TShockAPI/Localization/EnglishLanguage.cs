@@ -50,12 +50,12 @@ namespace TShockAPI.Localization
 					LanguageManager.Instance.SetLanguage(GameCulture.FromCultureName(GameCulture.CultureName.English));
 				}
 
-				for (var i = -48; i < Main.maxItemTypes; i++)
+				for (var i = -48; i < Terraria.ID.ItemID.Count; i++)
 				{
 					ItemNames.Add(i, Lang.GetItemNameValue(i));
 				}
 
-				for (var i = -17; i < Main.maxNPCTypes; i++)
+				for (var i = -17; i < Terraria.ID.NPCID.Count; i++)
 				{
 					NpcNames.Add(i, Lang.GetNPCNameValue(i));
 				}

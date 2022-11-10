@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-31 22:50:21+0000\n"
-"PO-Revision-Date: 2022-11-01 11:35\n"
+"PO-Revision-Date: 2022-11-10 01:22\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -1568,21 +1568,21 @@ msgstr "Bouncer / OnGetSection 拒绝来自 {0} 的 GetSection 数据包"
 #: ../../TShockAPI/Bouncer.cs:2081
 #, csharp-format
 msgid "Bouncer / OnHealOtherPlayer 0.2 check from {0}"
-msgstr "Bouncer / OnHealOtherPlayer 0.2 检查从{0}"
+msgstr "Bouncer / OnHealOtherPlayer（治疗友方防护）因比例数值检查而阻止了{0}治疗友方。"
 
 #: ../../TShockAPI/Bouncer.cs:2105
 #, csharp-format
 msgid "Bouncer / OnHealOtherPlayer rejected disabled/throttled from {0}"
-msgstr "Bouncer / OnHealOtherPlayer 拒绝了来自 {0} 的禁用/调整"
+msgstr "Bouncer / OnHealOtherPlayer（治疗友方防护） 因被限制行动而阻止了{0}治疗友方。"
 
 #: ../../TShockAPI/Bouncer.cs:2097
 #, csharp-format
 msgid "Bouncer / OnHealOtherPlayer rejected heal other threshold from {0} {1}/{2}"
-msgstr "Bouncer / OnHealOtherPlayer 因治疗量超过上限而拒绝了 {0} {1}/{2}"
+msgstr "Bouncer / OnHealOtherPlayer（治疗友方防护） 因治疗速度{1}超过上限{2}而阻止了{0}治疗友方。"
 
 #: ../../TShockAPI/Bouncer.cs:2071
 msgid "Bouncer / OnHealOtherPlayer rejected null checks"
-msgstr "Bouncer / OnHealOtherPlayer 拒绝了无效检查"
+msgstr "Bouncer / OnHealOtherPlayer（治疗友方防护）因目标玩家不存在而阻止了治疗。"
 
 #: ../../TShockAPI/Bouncer.cs:1057
 #, csharp-format
@@ -1782,7 +1782,7 @@ msgstr "Bouncer / OnNewProjectile（弹幕防护）因超过弹幕伤害上限�
 #: ../../TShockAPI/Bouncer.cs:1277
 #, csharp-format
 msgid "Bouncer / OnNewProjectile rejected from projectile update threshold from {0} {1}/{2}"
-msgstr "Bouncer / OnNewProjectile（弹幕防护）因超过弹幕更新上限（{1}/{2}）阻止了{0}"
+msgstr "Bouncer / OnNewProjectile（弹幕防护）因射弹创建速度{1}超过上限{2}而阻止了{0}创建射弹。"
 
 #: ../../TShockAPI/Bouncer.cs:1232
 #, csharp-format
@@ -1962,7 +1962,7 @@ msgstr "Bouncer / OnPlaceObject 拒绝使用堆石器—此位置已存在碎石
 #: ../../TShockAPI/Bouncer.cs:2355
 #, csharp-format
 msgid "Bouncer / OnPlaceObject rejected tile place threshold from {0} {1}/{2}"
-msgstr "Bouncer / OnPlaceObject 拒绝超阈值放置方块 {0} {1}/{2}"
+msgstr "Bouncer / OnPlaceObject（大型物体放置防护）因物块放置速度{1}超过上限{2}而阻止了{0}放置大型物体。"
 
 #: ../../TShockAPI/Bouncer.cs:2207
 #, csharp-format
@@ -2181,7 +2181,7 @@ msgstr "Bouncer / OnReleaseNPC 因限流而拒绝了{0}"
 #: ../../TShockAPI/Bouncer.cs:2145
 #, csharp-format
 msgid "Bouncer / OnReleaseNPC released different critter from {0}"
-msgstr "Bouncer / OnReleaseNPC 从{0}生成了不同的生物"
+msgstr "Bouncer / OnReleaseNPC（小动物防护） 因物品和释放的小动物不匹配而阻止了{0}释放小动物。"
 
 #: ../../TShockAPI/Bouncer.cs:684
 #, csharp-format
@@ -2287,12 +2287,12 @@ msgstr "Bouncer / OnTileEdit（物块防护）因限流阻止了{0}的操作。{
 #: ../../TShockAPI/Bouncer.cs:909
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from tile kill threshold from {0}, (value: {1})"
-msgstr "Bouncer / OnTileEdit（物块防护）因超过物块破坏上限阻止了{0}。（值：{1}）"
+msgstr "Bouncer / OnTileEdit（物块防护）因物块破坏速度{1}超过上限而阻止了{0}破坏物块。"
 
 #: ../../TShockAPI/Bouncer.cs:927
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from tile place threshold from {0}, (value: {1})"
-msgstr "Bouncer / OnTileEdit（物块防护）因超过物块放置上限阻止了{0}。（值：{1}）"
+msgstr "Bouncer / OnTileEdit（物块防护）因物块放置速度{1}超过上限而阻止了{0}放置物块。"
 
 #: ../../TShockAPI/Bouncer.cs:769
 #, csharp-format
@@ -2671,7 +2671,7 @@ msgstr "destroytokens - 删除当前所有REST令牌"
 #: ../../TShockAPI/Bouncer.cs:470
 #: ../../TShockAPI/Bouncer.cs:478
 msgid "Detected DOOM set to ON position."
-msgstr "检测到 DOM 已设置为开启位置。"
+msgstr "毁灭战士已启动"
 
 #: ../../TShockAPI/Commands.cs:6659
 msgid "Diamond Gemtree"
@@ -3078,12 +3078,12 @@ msgstr "生命值和示例"
 
 #: ../../TShockAPI/Bouncer.cs:2082
 msgid "HealOtherPlayer cheat attempt!"
-msgstr "有人正在尝试作弊治疗其他玩家！"
+msgstr "通过作弊手段治疗友方"
 
 #: ../../TShockAPI/Bouncer.cs:2091
 #, csharp-format
 msgid "HealOtherPlayer threshold exceeded {0}."
-msgstr "治疗其他玩家阈值超过 {0}。"
+msgstr "治疗友方速度超过{0}"
 
 #: ../../TShockAPI/Commands.cs:549
 msgid "Heals a player in HP and MP."
@@ -3117,11 +3117,11 @@ msgstr "如果这个玩家没有作弊，请向TShock报告此处的伤害上限
 
 #: ../../TShockAPI/Bouncer.cs:2098
 msgid "If this player wasn't hacking, please report the HealOtherPlayer threshold they were disabled for to TShock so we can improve this!"
-msgstr "如果这个玩家没有作弊，请向TShock报告此处的治疗量上限以便更正。"
+msgstr "如果这个玩家没有作弊，请向TShock报告此处的治疗友方速度以便更正。"
 
 #: ../../TShockAPI/Bouncer.cs:1278
 msgid "If this player wasn't hacking, please report the projectile update threshold they were disabled for to TShock so we can improve this!"
-msgstr "如果这个玩家没有作弊，请向TShock报告此处的射弹更新上限以便更正。"
+msgstr "如果这个玩家没有作弊，请向TShock报告此处的射弹创建速度上限以便更正。"
 
 #: ../../TShockAPI/Bouncer.cs:910
 msgid "If this player wasn't hacking, please report the tile kill threshold they were disabled for to TShock so we can improve this!"
@@ -3523,7 +3523,7 @@ msgstr "语法错误。正确的语法是:{0}me <text>"
 #: ../../TShockAPI/Commands.cs:5433
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}p <team chat text>"
-msgstr "语法错误。正确的语法是:{0}p <team chat text>"
+msgstr "语法错误。正确的语法是:{0}p <聊天内容>"
 
 #: ../../TShockAPI/Commands.cs:4026
 #, csharp-format
@@ -3960,7 +3960,7 @@ msgstr "机器名称：{0}"
 
 #: ../../TShockAPI/Bouncer.cs:2451
 msgid "Malicious portal attempt."
-msgstr "尝试放置非法的传送门。"
+msgstr "试图伪造传送其他玩家"
 
 #: ../../TShockAPI/Commands.cs:280
 msgid "Manages groups."
@@ -4182,7 +4182,7 @@ msgstr "没有升级Work Factor，因为BCrypt的哈希值格式有误。"
 #: ../../TShockAPI/Bouncer.cs:1369
 #, csharp-format
 msgid "NPC damage exceeded {0}."
-msgstr "NPC 伤害超过 {0}。"
+msgstr "对NPC造成的伤害高于{0}"
 
 #: ../../TShockAPI/DB/RegionManager.cs:102
 #, csharp-format
@@ -4293,7 +4293,7 @@ msgstr "玩家 {0} 已经登录。"
 #: ../../TShockAPI/TSPlayer.cs:1887
 #, csharp-format
 msgid "Player {0} has been disabled for {1}."
-msgstr "玩家{0}因为{1}而被禁用"
+msgstr "玩家{0}因为{1}而被限制行动。"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1388
 #, csharp-format
@@ -4336,7 +4336,7 @@ msgstr "未找到玩家{0}"
 #: ../../TShockAPI/Bouncer.cs:2591
 #, csharp-format
 msgid "Player damage exceeded {0}."
-msgstr "玩家伤害超过了{0}。"
+msgstr "对玩家造成的伤害高于{0}"
 
 #: ../../TShockAPI/Commands.cs:6285
 msgid "Player does not have free slots!"
@@ -4345,7 +4345,7 @@ msgstr "玩家没有空闲的背包空间！"
 #: ../../TShockAPI/Bouncer.cs:1165
 #, csharp-format
 msgid "Player does not have permission to create projectile {0}."
-msgstr "玩家没有权限创建射弹{0}。"
+msgstr "没有创建射弹{0}的权限"
 
 #: ../../TShockAPI/Commands.cs:1320
 msgid "Player not found. Unable to kick the player."
@@ -4422,12 +4422,12 @@ msgstr "封禁射弹 ({{0}}/{{1}}):"
 #: ../../TShockAPI/Bouncer.cs:1175
 #, csharp-format
 msgid "Projectile damage is higher than {0}."
-msgstr "射弹伤害高于{0}。"
+msgstr "射弹的伤害高于{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1269
 #, csharp-format
 msgid "Projectile update threshold exceeded {0}."
-msgstr "射弹更新阈值超过 {0}。"
+msgstr "射弹创建速度超过每秒{0}个"
 
 #: ../../TShockAPI/Commands.cs:5194
 msgid "protect <name> <true/false> - Sets whether the tiles inside the region are protected or not."
@@ -4454,29 +4454,29 @@ msgstr "{0}的范围检查失败（{1}，{2}）（范围：{3}/{5}，{4}/{5}）"
 
 #: ../../TShockAPI/Bouncer.cs:2095
 msgid "Reached HealOtherPlayer threshold."
-msgstr "达到了治愈其他玩家的临界值。"
+msgstr "治疗友方速度过快"
 
 #: ../../TShockAPI/Bouncer.cs:1273
 msgid "Reached projectile update threshold."
-msgstr "已达到弹幕更新阈值。"
+msgstr "射弹创建速度过快"
 
 #: ../../TShockAPI/Bouncer.cs:905
 msgid "Reached TileKill threshold."
-msgstr "已达到图格破坏阈值。"
+msgstr "物块破坏速度过快"
 
 #: ../../TShockAPI/Bouncer.cs:1668
 #, csharp-format
 msgid "Reached TileLiquid threshold {0}."
-msgstr "已到达液体阈值{0}。"
+msgstr "液体放置速度超过{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1672
 msgid "Reached TileLiquid threshold."
-msgstr "已到达液体阈值。"
+msgstr "液体放置速度过快"
 
 #: ../../TShockAPI/Bouncer.cs:923
 #: ../../TShockAPI/Bouncer.cs:2356
 msgid "Reached TilePlace threshold."
-msgstr "以达到图格防止阈值。"
+msgstr "物块破坏速度过快"
 
 #: ../../TShockAPI/Commands.cs:1491
 #, csharp-format
@@ -4946,19 +4946,19 @@ msgstr "指定的API端点不存在。请参阅文档以获取有效的端点列
 
 #: ../../TShockAPI/Bouncer.cs:1798
 msgid "Spreading honey without holding a honey bucket"
-msgstr "在不手持蜂蜜桶的情况下撒蜂蜜"
+msgstr "凭空放置蜂蜜"
 
 #: ../../TShockAPI/Bouncer.cs:1758
 msgid "Spreading lava without holding a lava bucket"
-msgstr "在不手持岩浆桶的情况下撒岩浆"
+msgstr "凭空放置岩浆"
 
 #: ../../TShockAPI/Bouncer.cs:1818
 msgid "Spreading shimmer without holding a shimmer bucket"
-msgstr "在没有手持微光桶的情况下放置微光液体"
+msgstr "凭空放置微光液体"
 
 #: ../../TShockAPI/Bouncer.cs:1778
 msgid "Spreading water without holding a water bucket"
-msgstr "在手上没有水桶的时候放置水"
+msgstr "凭空放置水"
 
 #: ../../TShockAPI/SqlLog.cs:346
 #, csharp-format
@@ -5437,12 +5437,12 @@ msgstr "封禁物块 ({{0}}/{{1}}):"
 #: ../../TShockAPI/Bouncer.cs:901
 #, csharp-format
 msgid "Tile kill threshold exceeded {0}."
-msgstr "破坏图格速度超出最大值{0}。"
+msgstr "物块破坏速度超过每秒{0}个"
 
 #: ../../TShockAPI/Bouncer.cs:919
 #, csharp-format
 msgid "Tile place threshold exceeded {0}."
-msgstr "放置图格速度超出最大值{0}。"
+msgstr "物块放置速度超过每秒{0}个"
 
 #: ../../TShockAPI/Commands.cs:6416
 #, csharp-format
@@ -5830,19 +5830,19 @@ msgstr "用户名或密码错误，也可能是该用户没有足够的权限。
 
 #: ../../TShockAPI/Bouncer.cs:1829
 msgid "Using banned bottomless shimmer bucket without permissions"
-msgstr "没有权限使用被禁止的无底微光桶"
+msgstr "没有使用无底微光桶的权限"
 
 #: ../../TShockAPI/Bouncer.cs:1808
 msgid "Using banned honey bucket without permissions"
-msgstr "没有权限使用被禁止的蜂蜜桶"
+msgstr "没有使用蜂蜜桶的权限"
 
 #: ../../TShockAPI/Bouncer.cs:1768
 msgid "Using banned lava bucket without permissions"
-msgstr "没有权限使用被禁止的岩浆桶"
+msgstr "没有使用岩浆桶的权限"
 
 #: ../../TShockAPI/Bouncer.cs:1788
 msgid "Using banned water bucket without permissions"
-msgstr "没有权限使用被禁止的水桶"
+msgstr "没有使用水桶的权限"
 
 #: ../../TShockAPI/Commands.cs:920
 msgid "UUID does not match this character."
@@ -5977,7 +5977,7 @@ msgstr "你没有死亡！"
 
 #: ../../TShockAPI/Commands.cs:5450
 msgid "You are not in a party!"
-msgstr "你没有在派对中！"
+msgstr "你不在任何队伍当中，无法使用队内聊天。"
 
 #: ../../TShockAPI/Commands.cs:941
 msgid "You are not logged-in. Therefore, you cannot logout."
@@ -6062,7 +6062,7 @@ msgstr "复活只能对真实的玩家使用。"
 
 #: ../../TShockAPI/Commands.cs:810
 msgid "You cannot login whilst crowd controlled."
-msgstr "你无法在被控制时登录。"
+msgstr "在无法行动时不能登录。"
 
 #: ../../TShockAPI/Commands.cs:796
 msgid "You cannot login whilst dead."
@@ -6498,7 +6498,7 @@ msgstr "你的用户组无法被加载，请联系服务器管理员处理此错
 
 #: ../../TShockAPI/Bouncer.cs:436
 msgid "Your client sent a blank character name."
-msgstr "你的客户端发送了一个空白的角色名称。"
+msgstr "玩家名为空"
 
 #: ../../TShockAPI/DB/RegionManager.cs:107
 msgid "Your database contains invalid UserIDs (they should be integers)."

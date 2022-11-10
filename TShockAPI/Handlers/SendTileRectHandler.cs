@@ -207,6 +207,7 @@ namespace TShockAPI.Handlers
 								case TileID.Plants:
 								case TileID.MinecartTrack:
 								case TileID.ChristmasTree:
+								case TileID.ShimmerMonolith:
 									{
 										// Allowed changes
 									}
@@ -425,7 +426,7 @@ namespace TShockAPI.Handlers
 				WallID.Sets.Conversion.NewWall4[tile.wall] && WallID.Sets.Conversion.NewWall4[newTile.Wall]
 			)
 			{
-				TShock.Log.ConsoleDebug($"Bouncer / SendTileRect processing a wall conversion update - [{tile.wall}] -> [{newTile.Wall}]");
+				TShock.Log.ConsoleDebug(GetString($"Bouncer / SendTileRect processing a wall conversion update - [{tile.wall}] -> [{newTile.Wall}]"));
 				UpdateServerTileState(tile, newTile, TileDataType.Wall);
 			}
 		}

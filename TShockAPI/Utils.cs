@@ -251,7 +251,7 @@ namespace TShockAPI
 			int type = -1;
 			if (Int32.TryParse(text, out type))
 			{
-				if (type >= Main.maxItemTypes)
+				if (type >= Terraria.ID.ItemID.Count)
 					return new List<Item>();
 				return new List<Item> { GetItemById(type) };
 			}
@@ -282,7 +282,7 @@ namespace TShockAPI
 		{
 			var startswith = new List<int>();
 			var contains = new List<int>();
-			for (int i = 1; i < Main.maxItemTypes; i++)
+			for (int i = 1; i < ItemID.Count; i++)
 			{
 				var currentName = Lang.GetItemNameValue(i);
 				if (!string.IsNullOrEmpty(currentName))
@@ -341,7 +341,7 @@ namespace TShockAPI
 			int type = -1;
 			if (int.TryParse(idOrName, out type))
 			{
-				if (type >= Main.maxNPCTypes)
+				if (type >= Terraria.ID.NPCID.Count)
 					return new List<NPC>();
 				return new List<NPC> { GetNPCById(type) };
 			}
@@ -369,7 +369,7 @@ namespace TShockAPI
 		{
 			var startswith = new List<int>();
 			var contains = new List<int>();
-			for (int i = -17; i < Main.maxNPCTypes; i++)
+			for (int i = -17; i < NPCID.Count; i++)
 			{
 				var currentName = Lang.GetNPCNameValue(i);
 				if (!string.IsNullOrEmpty(currentName))
@@ -405,7 +405,7 @@ namespace TShockAPI
 		/// <returns>name</returns>
 		public string GetBuffName(int id)
 		{
-			return (id > 0 && id < Main.maxBuffTypes) ? Lang.GetBuffName(id) : null;
+			return (id > 0 && id < Terraria.ID.BuffID.Count) ? Lang.GetBuffName(id) : null;
 		}
 
 		/// <summary>
@@ -415,7 +415,7 @@ namespace TShockAPI
 		/// <returns>description</returns>
 		public string GetBuffDescription(int id)
 		{
-			return (id > 0 && id < Main.maxBuffTypes) ? Lang.GetBuffDescription(id) : null;
+			return (id > 0 && id < Terraria.ID.BuffID.Count) ? Lang.GetBuffDescription(id) : null;
 		}
 
 		/// <summary>
@@ -427,7 +427,7 @@ namespace TShockAPI
 		{
 			var startswith = new List<int>();
 			var contains = new List<int>();
-			for (int i = 1; i < Main.maxBuffTypes; i++)
+			for (int i = 1; i < BuffID.Count; i++)
 			{
 				var currentName = Lang.GetBuffName(i);
 				if (!string.IsNullOrWhiteSpace(currentName))
@@ -1134,7 +1134,7 @@ namespace TShockAPI
 		internal void ComputeMaxStyles()
 		{
 			var item = new Item();
-			for (int i = 0; i < Main.maxItemTypes; i++)
+			for (int i = 0; i < Terraria.ID.ItemID.Count; i++)
 			{
 				item.netDefaults(i);
 				if (item.placeStyle >= 0)

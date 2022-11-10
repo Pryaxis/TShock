@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-31 22:50:21+0000\n"
-"PO-Revision-Date: 2022-11-02 04:50\n"
+"PO-Revision-Date: 2022-11-06 07:13\n"
 "Last-Translator: \n"
 "Language-Team: toki pona\n"
 "MIME-Version: 1.0\n"
@@ -261,22 +261,22 @@ msgstr "{0} {1} (tan tenpo weka {2})"
 #: ../../TShockAPI/Commands.cs:1477
 #, csharp-format
 msgid "{0} {1} ({2})"
-msgstr ""
+msgstr "{0} {1} ({2})"
 
 #: ../../TShockAPI/Commands.cs:5324
 #, csharp-format
 msgid "{0} {1} {2}"
-msgstr ""
+msgstr "{0} {1} {2}"
 
 #: ../../TShockAPI/Commands.cs:1460
 #, csharp-format
 msgid "{0} {1} on {2} ({3} ago)"
-msgstr ""
+msgstr "{0} {1} lon {2} (weka tenpo {3})"
 
 #: ../../TShockAPI/Commands.cs:6364
 #, csharp-format
 msgid "{0} <\"{1}|{2}\"> [{3}]"
-msgstr ""
+msgstr "{0} <\"{1}|{2}\"> [{3}]"
 
 #: ../../TShockAPI/Commands.cs:1393
 #: ../../TShockAPI/Commands.cs:1409
@@ -284,184 +284,184 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:5914
 #, csharp-format
 msgid "{0} <{1}>"
-msgstr ""
+msgstr "{0} <{1}>"
 
 #: ../../TShockAPI/Commands.cs:5458
 #: ../../TShockAPI/Commands.cs:6304
 #, csharp-format
 msgid "{0} <{1}> [{2}]"
-msgstr ""
+msgstr "{0} <{1}> [{2}]"
 
 #: ../../TShockAPI/Commands.cs:1380
 #, csharp-format
 msgid "{0} <{1}> [{2}] [{3}] [{4}]"
-msgstr ""
+msgstr "{0} <{1}> [{2}] [{3}] [{4}]"
 
 #: ../../TShockAPI/Commands.cs:5680
 #, csharp-format
 msgid "{0} <{1}> [{2}|{3}|{4}|{5}]"
-msgstr ""
+msgstr "{0} <{1}> [{2}|{3}|{4}|{5}]"
 
 #: ../../TShockAPI/Commands.cs:5515
 #: ../../TShockAPI/Commands.cs:5596
 #, csharp-format
 msgid "{0} <{1}> <{2}>"
-msgstr ""
+msgstr "{0} <{1}> <{2}>"
 
 #: ../../TShockAPI/Commands.cs:6414
 #, csharp-format
 msgid "{0} <{1}> <{2}|{3}> [{4}]"
-msgstr ""
+msgstr "{0} <{1}> <{2}|{3}> [{4}]"
 
 #: ../../TShockAPI/Commands.cs:5811
 #, csharp-format
 msgid "{0} <{1}|{2}|{3}> [{4}]"
-msgstr ""
+msgstr "{0} <{1}|{2}|{3}> [{4}]"
 
 #: ../../TShockAPI/Commands.cs:1102
 #, csharp-format
 msgid "{0} added account {1} to group {2}."
-msgstr ""
+msgstr "{0} li kama e jan {1} tawa kulupu {2}."
 
 #: ../../TShockAPI/GetDataHandlers.cs:3554
 #, csharp-format
 msgid "{0} applied advanced combat techniques!"
-msgstr ""
+msgstr "{0} li kepeken e sona wawa utala!"
 
 #: ../../TShockAPI/Commands.cs:1060
 #, csharp-format
 msgid "{0} attempted to register for the account {1} but it was already taken."
-msgstr ""
+msgstr "jan {0} li wile kama jo e nimi {1}. taso jan ante li jo e nimi {1}."
 
 #: ../../TShockAPI/Commands.cs:901
 #, csharp-format
 msgid "{0} authenticated successfully as user: {1}."
-msgstr ""
+msgstr "jan {0} li ken kama sijelo {1}."
 
 #: ../../TShockAPI/TSPlayer.cs:1955
 #, csharp-format
 msgid "{0} banned {1} for '{2}'."
-msgstr ""
+msgstr "jan {0} li weka e {1} tan ni: {2}."
 
 #: ../../TShockAPI/Commands.cs:6047
 #, csharp-format
 msgid "{0} butchered {1} NPC."
 msgid_plural "{0} butchered {1} NPCs."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
-msgstr[4] ""
+msgstr[0] "jan {0} li moli e ijo wan."
+msgstr[1] "jan {0} li moli e ijo tu."
+msgstr[2] "jan {0} li moli e ijo pi luka {1}."
+msgstr[3] "jan {0} li moli e ijo pi mute {1}."
+msgstr[4] "jan {0} li moli e ijo {1}."
 
 #: ../../TShockAPI/Commands.cs:2458
 #, csharp-format
 msgid "{0} caused it to rain slime."
-msgstr ""
+msgstr "jan {0} li open e telo sewi ko."
 
 #: ../../TShockAPI/Commands.cs:2473
 #, csharp-format
 msgid "{0} caused it to rain."
-msgstr ""
+msgstr "jan {0} li open e telo sewi."
 
 #: ../../TShockAPI/Commands.cs:1176
 #, csharp-format
 msgid "{0} changed account {1} to group {2}."
-msgstr ""
+msgstr "jan {0} li ante e sijelo {1} tawa kulupu {2}."
 
 #: ../../TShockAPI/Commands.cs:4462
 #, csharp-format
 msgid "{0} changed the maximum spawns to {1}."
-msgstr ""
+msgstr "jan {0} li ante e nanpa sewi monsuta tawa {1}."
 
 #: ../../TShockAPI/Commands.cs:4443
 #, csharp-format
 msgid "{0} changed the maximum spawns to 5."
-msgstr ""
+msgstr "jan {0} li ante e nanpa sewi monsuta tawa 5."
 
 #: ../../TShockAPI/Commands.cs:1150
 #, csharp-format
 msgid "{0} changed the password for account {1}"
-msgstr ""
+msgstr "jan {0} li ante e nimi len tawa sijelo {1}"
 
 #: ../../TShockAPI/Commands.cs:4501
 #, csharp-format
 msgid "{0} changed the spawn rate to {1}."
-msgstr ""
+msgstr "jan {0} li ante e wawa pi kama monsuta tawa {1}."
 
 #: ../../TShockAPI/Commands.cs:4483
 #, csharp-format
 msgid "{0} changed the spawn rate to 600."
-msgstr ""
+msgstr "jan {0} li ante e wawa pi kama monsuta tawa 600."
 
 #: ../../TShockAPI/Commands.cs:4635
 #, csharp-format
 msgid "{0} changed the wind speed to {1}."
-msgstr ""
+msgstr "jan {0} li ante e wawa kon tawa {1}."
 
 #: ../../TShockAPI/Commands.cs:5849
 #, csharp-format
 msgid "{0} deleted {1} item within a radius of {2}."
 msgid_plural "{0} deleted {1} items within a radius of {2}."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
-msgstr[4] ""
+msgstr[0] "jan {0} li weka e ijo wan lon sike pi suli {2}."
+msgstr[1] "jan {0} li weka e ijo tu lon sike pi suli {2}."
+msgstr[2] "jan {0} li weka e ijo pi luka {1} lon sike pi suli {2}."
+msgstr[3] "jan {0} li weka e ijo pi mute {1} lon sike pi suli {2}."
+msgstr[4] "jan {0} li weka e ijo pi luka {1} lon sike pi suli {2}."
 
 #: ../../TShockAPI/Commands.cs:5873
 #, csharp-format
 msgid "{0} deleted {1} NPC within a radius of {2}."
 msgid_plural "{0} deleted {1} NPCs within a radius of {2}."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
-msgstr[4] ""
+msgstr[0] "jan {0} li weka e ijo tawa wan lon sike pi suli {2}."
+msgstr[1] "jan {0} li weka e ijo tawa tu lon sike pi suli {2}."
+msgstr[2] "jan {0} li weka e ijo tawa pi luka {1} lon sike pi suli {2}."
+msgstr[3] "jan {0} li weka e ijo tawa pi mute {1} lon sike pi suli {2}."
+msgstr[4] "jan {0} li weka e ijo tawa pi mute {1} lon sike pi suli {2}."
 
 #: ../../TShockAPI/Commands.cs:5898
 #, csharp-format
 msgid "{0} deleted {1} projectile within a radius of {2}."
 msgid_plural "{0} deleted {1} projectiles within a radius of {2}."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
-msgstr[4] ""
+msgstr[0] "jan {0} li weka e ijo utala wan lon sike pi suli {2}."
+msgstr[1] "jan {0} li weka e ijo utala tu lon sike pi suli {2}."
+msgstr[2] "jan {0} li weka e ijo utala pi luka {1} lon sike pi suli {2}."
+msgstr[3] "jan {0} li weka e ijo utala pi mute {1} lon sike pi suli {2}."
+msgstr[4] "jan {0} li weka e ijo utala pi mute {1} lon sike pi suli {2}."
 
 #: ../../TShockAPI/Commands.cs:1883
 #, csharp-format
 msgid "{0} disabled halloween mode."
-msgstr ""
+msgstr "jan {0} li weka e musi Alowin."
 
 #: ../../TShockAPI/Commands.cs:1903
 #, csharp-format
 msgid "{0} disabled xmas mode."
-msgstr ""
+msgstr "jan {0} li weka e musi pi suno Jesuwa."
 
 #: ../../TShockAPI/Commands.cs:1881
 #, csharp-format
 msgid "{0} enabled halloween mode."
-msgstr ""
+msgstr "jan {0} li kama e musi Alowin."
 
 #: ../../TShockAPI/Commands.cs:1901
 #, csharp-format
 msgid "{0} enabled xmas mode."
-msgstr ""
+msgstr "jan {0} li kama e musi pi suno Jesuwa."
 
 #: ../../TShockAPI/Commands.cs:2465
 #, csharp-format
 msgid "{0} ended the rain."
-msgstr ""
+msgstr "jan {0} li weka e telo sewi."
 
 #: ../../TShockAPI/Commands.cs:2450
 #, csharp-format
 msgid "{0} ended the slime rain."
-msgstr ""
+msgstr "jan {0} li weka e telo sewi ko."
 
 #: ../../TShockAPI/Commands.cs:706
 #, csharp-format
 msgid "{0} executed (args omitted): {1}{2}."
-msgstr ""
+msgstr "jan {0} li kepeken (toki li weka): {1}{2}"
 
 #: ../../TShockAPI/Commands.cs:704
 #, csharp-format
@@ -471,79 +471,79 @@ msgstr "jan {0} li kepeken {1}{2}."
 #: ../../TShockAPI/Commands.cs:926
 #, csharp-format
 msgid "{0} failed to authenticate as user: {1}."
-msgstr ""
+msgstr "jan {0} li ken ala kama tawa sijelo {1}."
 
 #: ../../TShockAPI/Commands.cs:6275
 #, csharp-format
 msgid "{0} gave you {1} {2}."
 msgid_plural "{0} gave you {1} {2}s."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
-msgstr[4] ""
+msgstr[0] "jan {0} li pana e {2} wan tawa sina."
+msgstr[1] "jan {0} li pana e {2} tu tawa sina."
+msgstr[2] "jan {0} li pana e {2} pi luka {1} tawa sina."
+msgstr[3] "jan {0} li pana e {2} pi mute {1} tawa sina."
+msgstr[4] "jan {0} li pana e {2} pi mute {1} tawa sina."
 
 #: ../../TShockAPI/Commands.cs:4243
 #, csharp-format
 msgid "{0} has been allowed to place tile {1}."
-msgstr ""
+msgstr "jan {0} li ken pana e leko {1}."
 
 #: ../../TShockAPI/Commands.cs:3877
 #, csharp-format
 msgid "{0} has been allowed to use {1}."
-msgstr ""
+msgstr "jan {0} li ken kepeken {1}."
 
 #: ../../TShockAPI/Commands.cs:4067
 #, csharp-format
 msgid "{0} has been allowed to use projectile {1}."
-msgstr ""
+msgstr "jan {0} li ken kepeken utala tawa {1}."
 
 #: ../../TShockAPI/Commands.cs:4301
 #, csharp-format
 msgid "{0} has been disallowed from placing tile {1}."
-msgstr ""
+msgstr "jan {0} li ken ala pana e leko {1}."
 
 #: ../../TShockAPI/Commands.cs:4125
 #, csharp-format
 msgid "{0} has been disallowed from using projectile {1}."
-msgstr ""
+msgstr "jan {0} li ken ala kepeken utala tawa {1}."
 
 #: ../../TShockAPI/Commands.cs:3948
 #, csharp-format
 msgid "{0} has been disallowed to use {1}."
-msgstr ""
+msgstr "jan {0} li ken ala kepeken {1}."
 
 #: ../../TShockAPI/Commands.cs:6460
 #, csharp-format
 msgid "{0} has buffed you with {1} ({2}) for {3} seconds!"
-msgstr ""
+msgstr "jan {0} li wawa e sina kepeken {1} ({2}) tawa tenpo lili {3}!"
 
 #: ../../TShockAPI/Commands.cs:1182
 #, csharp-format
 msgid "{0} has changed your group to {1}."
-msgstr ""
+msgstr "jan {0} li ante e kulupu sina tawa kulupu {1}."
 
 #: ../../TShockAPI/Commands.cs:2945
 #: ../../TShockAPI/Commands.cs:3016
 #: ../../TShockAPI/Commands.cs:3022
 #, csharp-format
 msgid "{0} has disabled incoming teleports."
-msgstr ""
+msgstr "jan {0} li weka e tawa wawa kama."
 
 #: ../../TShockAPI/Commands.cs:2408
 #, csharp-format
 msgid "{0} has ended the current invasion event."
-msgstr ""
+msgstr "jan {0} li weka e utala suli lon."
 
 #: ../../TShockAPI/Commands.cs:2404
 #, csharp-format
 msgid "{0} has ended the Old One's Army event."
-msgstr ""
+msgstr "jan {0} li weka e utala suli pi ijo majuna."
 
 #: ../../TShockAPI/TShock.cs:1652
 #, csharp-format
 msgid "{0} has joined."
-msgstr ""
+msgstr "jan {0} li kama lon."
 
 #: ../../TShockAPI/TShock.cs:1656
 #, csharp-format
@@ -705,7 +705,7 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:5986
 #, csharp-format
 msgid "{0} is not dead!"
-msgstr ""
+msgstr "{0} li moli ala a!"
 
 #: ../../TShockAPI/Commands.cs:6743
 #, csharp-format
@@ -863,85 +863,85 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:1128
 #, csharp-format
 msgid "{0} successfully deleted account: {1}."
-msgstr ""
+msgstr "jan {0} li weka e sijelo {1}."
 
 #: ../../TShockAPI/GetDataHandlers.cs:3557
 #, csharp-format
 msgid "{0} summoned a Blood Moon!"
-msgstr ""
+msgstr "jan {0} li kama e mun loje!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3569
 #, csharp-format
 msgid "{0} summoned a frost moon!"
-msgstr ""
+msgstr "jan {0} li kama e mun lete!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3581
 #, csharp-format
 msgid "{0} summoned a Goblin Invasion!"
-msgstr ""
+msgstr "jan {0} li kama e utala suli pi jan mani!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3563
 #, csharp-format
 msgid "{0} summoned a Martian invasion!"
-msgstr ""
+msgstr "jan {0} li kama e utala suli pi jan tan ma ante!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3560
 #, csharp-format
 msgid "{0} summoned a Moon Lord!"
-msgstr ""
+msgstr "jan {0} li kama e lawa mun!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3572
 #, csharp-format
 msgid "{0} summoned a pumpkin moon!"
-msgstr ""
+msgstr "jan {0} li kama e mun pi kasi loje!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3566
 #, csharp-format
 msgid "{0} summoned an eclipse!"
-msgstr ""
+msgstr "jan {0} li kama e suno pake!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3584
 #, csharp-format
 msgid "{0} summoned the {1}!"
-msgstr ""
+msgstr "jan {0} li kama e {1}!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:2977
 #: ../../TShockAPI/GetDataHandlers.cs:2980
 #, csharp-format
 msgid "{0} summoned the Empress of Light!"
-msgstr ""
+msgstr "jan {0} li kama e sewi suno!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3575
 #, csharp-format
 msgid "{0} summoned the Pirates!"
-msgstr ""
+msgstr "jan {0} li kama e jan jasima telo!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3578
 #, csharp-format
 msgid "{0} summoned the Snow Legion!"
-msgstr ""
+msgstr "jan {0} li kama e utala suli lete!"
 
 #: ../../TShockAPI/Commands.cs:3000
 #: ../../TShockAPI/Commands.cs:3040
 #, csharp-format
 msgid "{0} teleported {1} to you."
-msgstr ""
+msgstr "jan {0} li tawa e jan {1} tawa sina."
 
 #: ../../TShockAPI/Commands.cs:2952
 #, csharp-format
 msgid "{0} teleported to you."
-msgstr ""
+msgstr "jan {0} li tawa sina."
 
 #: ../../TShockAPI/Commands.cs:2993
 #: ../../TShockAPI/Commands.cs:3033
 #, csharp-format
 msgid "{0} teleported you to {1}."
-msgstr ""
+msgstr "jan {0} li tawa e sina tawa jan {1}."
 
 #: ../../TShockAPI/Commands.cs:690
 #, csharp-format
 msgid "{0} tried to execute (args omitted) {1}{2}."
-msgstr ""
+msgstr "jan {0} li wile kepeken (toki li weka): {1}{2}"
 
 #: ../../TShockAPI/Commands.cs:688
 #, csharp-format
@@ -951,167 +951,167 @@ msgstr "jan {0} li wile kepeken {1}{2}. taso ona li ken ala."
 #: ../../TShockAPI/Commands.cs:2251
 #, csharp-format
 msgid "{0} triggered a meteor."
-msgstr ""
+msgstr "jan {0} li kama e kiwen mun anpa."
 
 #: ../../TShockAPI/Commands.cs:3324
 #, csharp-format
 msgid "{0} warped you to {1}."
-msgstr ""
+msgstr "jan {0} li tawa e sina tawa ma {1}."
 
 #: ../../TShockAPI/TSPlayer.cs:1953
 #, csharp-format
 msgid "{0} was banned for '{1}'."
-msgstr ""
+msgstr "jan {0} li weka awen tan ni: {1}."
 
 #: ../../TShockAPI/TSPlayer.cs:1924
 #, csharp-format
 msgid "{0} was kicked for '{1}'"
-msgstr ""
+msgstr "jan {0} li weka tan ni: {1}."
 
 #: ../../TShockAPI/Commands.cs:2998
 #: ../../TShockAPI/Commands.cs:3038
 #, csharp-format
 msgid "{0} was teleported to you."
-msgstr ""
+msgstr "jan {0} li tawa sina."
 
 #: ../../TShockAPI/Commands.cs:1292
 #, csharp-format
 msgid "{0}'s group is {1}."
-msgstr ""
+msgstr "kulupu pi jan {0} li {1}."
 
 #: ../../TShockAPI/Commands.cs:1293
 #, csharp-format
 msgid "{0}'s last known IP is {1}."
-msgstr ""
+msgstr "nanpa IP sona pi jan {0} li {1}."
 
 #: ../../TShockAPI/Commands.cs:1282
 #, csharp-format
 msgid "{0}'s last login occurred {1} {2} UTC{3}."
-msgstr ""
+msgstr "kama sijelo pi jan {0} li lon tenpo {1} {2} UTC{3}"
 
 #: ../../TShockAPI/Commands.cs:1294
 #, csharp-format
 msgid "{0}'s register date is {1} {2} UTC{3}."
-msgstr ""
+msgstr "kama lon pi sijelo sin pi jan {0} li lon tenpo {1} {2} UTC{3}"
 
 #: ../../TShockAPI/Commands.cs:5774
 #, csharp-format
 msgid "{0}{1} defines no aliases."
-msgstr ""
+msgstr "{0}{1} li jo ala e nimi ante."
 
 #: ../../TShockAPI/Commands.cs:5280
 #, csharp-format
 msgid "{0}{1} help: "
-msgstr ""
+msgstr "{0}{1} sona: "
 
 #: ../../TShockAPI/Utils.cs:1066
 #, csharp-format
 msgid "{0}{1}/{2} on {3} @ {4}:{5} (TShock for Terraria v{6})"
-msgstr ""
+msgstr "ma {3} lon tomo {0} (jan {1}/{2}) @ {4}:{5} (ilo TShock pi musi Terraria nanpa {6})"
 
 #: ../../TShockAPI/Commands.cs:846
 #, csharp-format
 msgid "{0}login - Authenticates you using your UUID and character name."
-msgstr ""
+msgstr "{0}login - kama e sijelo sina kepeken nanpa sina en nimi pi musi sina."
 
 #: ../../TShockAPI/Commands.cs:851
 #, csharp-format
 msgid "{0}login <password> - Authenticates you using your password and character name."
-msgstr ""
+msgstr "{0}login <nimi len> - kama e sijelo sina kepeken nimi len en nimi pi musi sina."
 
 #: ../../TShockAPI/Commands.cs:849
 #, csharp-format
 msgid "{0}login <username> <password> - Authenticates you using your username and password."
-msgstr ""
+msgstr "{0}login <nimi sijelo> <nimi len> - kama e sijelo sina kepeken nimi len en nimi sijelo."
 
 #: ../../TShockAPI/Commands.cs:5409
 #, csharp-format
 msgid "{0}user add <username> <password> owner"
-msgstr ""
+msgstr "{0}user add <nimi> <nimi len> owner"
 
 #: ../../TShockAPI/Commands.cs:1201
 #, csharp-format
 msgid "{0}user add username password group   -- Adds a specified user"
-msgstr ""
+msgstr "{0}user add nimi nimilen kulupu  -- o lon e sijelo sin"
 
 #: ../../TShockAPI/Commands.cs:1202
 #, csharp-format
 msgid "{0}user del username                  -- Removes a specified user"
-msgstr ""
+msgstr "{0}user del nimi                  -- weka e sijelo"
 
 #: ../../TShockAPI/Commands.cs:1204
 #, csharp-format
 msgid "{0}user group username newgroup       -- Changes a user's group"
-msgstr ""
+msgstr "{0}user group nimi kulupu       -- ante e kulupu sijelo"
 
 #: ../../TShockAPI/Commands.cs:1203
 #, csharp-format
 msgid "{0}user password username newpassword -- Changes a user's password"
-msgstr ""
+msgstr "{0}user password nimi nimilen -- ante e nimi len sijelo"
 
 #: ../../TShockAPI/Commands.cs:5426
 #, csharp-format
 msgid "*{0} {1}"
-msgstr ""
+msgstr "* jan {0} {1}"
 
 #: ../../TShockAPI/Commands.cs:1609
 #, csharp-format
 msgid "#{0} - You have been banned: {1}."
-msgstr ""
+msgstr "#{0} - weka sina li pake tan ni: {1}."
 
 #: ../../TShockAPI/Commands.cs:5442
 #, csharp-format
 msgid "<{0}> {1}"
-msgstr ""
+msgstr "<{0}> {1}"
 
 #: ../../TShockAPI/Commands.cs:5546
 #: ../../TShockAPI/Commands.cs:5577
 #, csharp-format
 msgid "<From {0}> {1}"
-msgstr ""
+msgstr "<tan {0}> {1}"
 
 #: ../../TShockAPI/Commands.cs:5547
 #: ../../TShockAPI/Commands.cs:5578
 #, csharp-format
 msgid "<To {0}> {1}"
-msgstr ""
+msgstr "<tawa {0}> {1}"
 
 #: ../../TShockAPI/Commands.cs:2814
 msgid "a Deerclops"
-msgstr ""
+msgstr "monsuta Deerclops"
 
 #: ../../TShockAPI/Commands.cs:3380
 msgid "A group with the same name already exists."
-msgstr ""
+msgstr "kulupu pi nimi ni li awen lon."
 
 #: ../../TShockAPI/DB/RegionManager.cs:108
 msgid "A lot of things will fail because of this. You must manually delete and re-create the allowed field."
-msgstr ""
+msgstr "ijo mute li pakala tan ni. sina o weka o lon sin e sona ni."
 
 #: ../../TShockAPI/Commands.cs:2789
 msgid "a Martian Saucer"
-msgstr ""
+msgstr "monsuta sewi pi ma ante"
 
 #: ../../TShockAPI/Commands.cs:2247
 msgid "A meteor has been triggered."
-msgstr ""
+msgstr "kiwen sewi li kama."
 
 #: ../../TShockAPI/Commands.cs:2799
 msgid "a Nebula Pillar"
-msgstr ""
+msgstr "sinpin Nepula"
 
 #: ../../TShockAPI/Commands.cs:1312
 msgid "A player name must be provided to kick a player. Please provide one."
-msgstr ""
+msgstr "nimi sijelo li wile tawa weka jan. o pana e nimi."
 
 #: ../../TShockAPI/Rest/SecureRest.cs:120
 #, csharp-format
 msgid "A REST login from {0} was blocked as it currently has {1} rate-limit tokens and is at the RESTMaximumRequestsPerInterval threshold."
-msgstr ""
+msgstr "kama sijelo REST tan {0} li pake tan ni: ona li jo e ken {1} li lon nanpa RESTMaximumRequestsPerInterval."
 
 #: ../../TShockAPI/Commands.cs:2794
 msgid "a Solar Pillar"
-msgstr ""
+msgstr "sinpin Sola"
 
 #: ../../TShockAPI/Commands.cs:2809
 msgid "a Stardust Pillar"
@@ -5396,7 +5396,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:2718
 msgid "the Wall of Flesh"
-msgstr ""
+msgstr "sinpin monsuta"
 
 #: ../../TShockAPI/Bouncer.cs:788
 msgid "The world's chest limit has been reached - unable to place more."
@@ -5453,7 +5453,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:2709
 msgid "There is already a Wall of Flesh."
-msgstr ""
+msgstr "sinpin monsuta li lon."
 
 #: ../../TShockAPI/Commands.cs:932
 msgid "There was an error processing your login or authentication related request."
