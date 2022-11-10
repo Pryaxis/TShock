@@ -1266,16 +1266,16 @@ namespace TShockAPI
 			{
 				if (TShock.Config.Settings.KickOnProjectileThresholdBroken)
 				{
-					args.Player.Kick(GetString("Projectile update threshold exceeded {0}.", TShock.Config.Settings.ProjectileThreshold));
+					args.Player.Kick(GetString("Projectile create threshold exceeded {0}.", TShock.Config.Settings.ProjectileThreshold));
 				}
 				else
 				{
-					args.Player.Disable(GetString("Reached projectile update threshold."), DisableFlags.WriteToLogAndConsole);
+					args.Player.Disable(GetString("Reached projectile create threshold."), DisableFlags.WriteToLogAndConsole);
 					args.Player.RemoveProjectile(ident, owner);
 				}
 
-				TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile rejected from projectile update threshold from {0} {1}/{2}", args.Player.Name, args.Player.ProjectileThreshold, TShock.Config.Settings.ProjectileThreshold));
-				TShock.Log.ConsoleDebug(GetString("If this player wasn't hacking, please report the projectile update threshold they were disabled for to TShock so we can improve this!"));
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile rejected from projectile create threshold from {0} {1}/{2}", args.Player.Name, args.Player.ProjectileThreshold, TShock.Config.Settings.ProjectileThreshold));
+				TShock.Log.ConsoleDebug(GetString("If this player wasn't hacking, please report the projectile create threshold they were disabled for to TShock so we can improve this!"));
 				args.Handled = true;
 				return;
 			}
@@ -1995,21 +1995,21 @@ namespace TShockAPI
 					if (npc.townNPC)
 					{
 						if (type != BuffID.Poisoned
-						    && type != BuffID.OnFire
-						    && type != BuffID.Confused
-						    && type != BuffID.CursedInferno
-						    && type != BuffID.Ichor
-						    && type != BuffID.Venom
-						    && type != BuffID.Midas
-						    && type != BuffID.Wet
-						    && type != BuffID.Lovestruck
-						    && type != BuffID.Stinky
-						    && type != BuffID.Slimed
-						    && type != BuffID.DryadsWard
-						    && type != BuffID.GelBalloonBuff
-						    && type != BuffID.OnFire3
-						    && type != BuffID.Frostburn2
-						    && type != BuffID.Shimmer)
+							&& type != BuffID.OnFire
+							&& type != BuffID.Confused
+							&& type != BuffID.CursedInferno
+							&& type != BuffID.Ichor
+							&& type != BuffID.Venom
+							&& type != BuffID.Midas
+							&& type != BuffID.Wet
+							&& type != BuffID.Lovestruck
+							&& type != BuffID.Stinky
+							&& type != BuffID.Slimed
+							&& type != BuffID.DryadsWard
+							&& type != BuffID.GelBalloonBuff
+							&& type != BuffID.OnFire3
+							&& type != BuffID.Frostburn2
+							&& type != BuffID.Shimmer)
 						{
 							detectedNPCBuffTimeCheat = true;
 						}
@@ -2587,7 +2587,7 @@ namespace TShockAPI
 				}
 				else
 				{
-					TShock.Log.ConsoleDebug("Bouncer / OnPlayerDamage rejected damage threshold2 from {0} {1}/{2}", args.Player.Name, damage, TShock.Config.Settings.MaxDamage);
+					TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerDamage rejected damage threshold2 from {0} {1}/{2}", args.Player.Name, damage, TShock.Config.Settings.MaxDamage));
 					args.Player.Disable(GetString("Player damage exceeded {0}.", TShock.Config.Settings.MaxDamage), DisableFlags.WriteToLogAndConsole);
 				}
 				args.Player.SendData(PacketTypes.PlayerHp, "", id);

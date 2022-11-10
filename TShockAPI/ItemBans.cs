@@ -91,7 +91,7 @@ namespace TShockAPI
 				if (DataModel.ItemIsBanned(EnglishLanguage.GetItemNameById(player.TPlayer.inventory[player.TPlayer.selectedItem].netID), player))
 				{
 					string itemName = player.TPlayer.inventory[player.TPlayer.selectedItem].Name;
-					player.Disable($"holding banned item: {itemName}", disableFlags);
+					player.Disable(GetString($"holding banned item: {itemName}"), disableFlags);
 					SendCorrectiveMessage(player, itemName);
 				}
 
@@ -160,7 +160,7 @@ namespace TShockAPI
 			if (DataModel.ItemIsBanned(EnglishLanguage.GetItemNameById(player.TPlayer.inventory[args.SelectedItem].netID), args.Player))
 			{
 				player.TPlayer.controlUseItem = false;
-				player.Disable($"holding banned item: {itemName}", disableFlags);
+				player.Disable(GetString($"holding banned item: {itemName}"), disableFlags);
 
 				SendCorrectiveMessage(player, itemName);
 
