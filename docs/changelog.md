@@ -80,6 +80,16 @@ Use past tense when adding new entries; sign your name off when you add or chang
 ## Upcoming changes
 * Your changes could be here!
 
+* Changed hook `GetDataHandlers.HandleProjectileNew` added `AI[2]` Fixed #2804
+* Changed hook `GetDataHandlers.OnPlayerZone` added `Zone5`
+* Changed hook `GetDataHandlers.OnPlayerSpawn` added `numberOfDeathsPVE` and `numberOfDeathsPVP`
+* Changed hook `GetDataHandlers.OnPaintTile` added `coatTile` for Paint Coat Tile
+* Changed hook `GetDataHandlers.OnPaintWall` added `coatWall` for Paint Coat Wall
+* Changed `GetDataHandlers.HandlePlaceObject`  added `random` but what is it used for?
+* Changed `GetDataHandlers.HandleNpcTeleportPortal` update `npcIndex` to `int`
+* Changed `TSPlayer.Spawn` added `numberOfDeathsPVE` and `numberOfDeathsPVP`
+
+
 ## TShock 5.1.1
 * Fixed item giving potentially dropping too many items. (@PotatoCider, @punchready)
 * Excluded GeoIP.dat from release bundle. (@SignatureBeef)
