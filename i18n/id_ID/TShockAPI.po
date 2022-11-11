@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-11-10 08:27:04+0000\n"
-"PO-Revision-Date: 2022-11-10 13:50\n"
+"PO-Revision-Date: 2022-11-11 13:58\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "MIME-Version: 1.0\n"
@@ -155,11 +155,11 @@ msgstr "- Pohon Palm :"
 
 #: ../../TShockAPI/TShock.cs:950
 msgid "!!! > Set DisableLoginBeforeJoin to true in the config file and /reload if this is a problem."
-msgstr ""
+msgstr "!!! > Atur DisableLoginBeforeJoin menjadi true didalam berkas config dan /reload jika ini sebuah masalah."
 
 #: ../../TShockAPI/TShock.cs:944
 msgid "!!! > Set DisableUUIDLogin to true in the config file and /reload if this is a problem."
-msgstr ""
+msgstr "!!! > Atur DisableUUIDLogin menjadi true didalam berkas config, selanjutnya /reload jika ini sebuah masalah."
 
 #: ../../TShockAPI/TShock.cs:949
 msgid "!!! Login before join is enabled. Existing accounts can login & the server password will be bypassed."
@@ -209,7 +209,7 @@ msgstr "(Siaran Server) "
 
 #: ../../TShockAPI/Configuration/TShockConfig.cs:492
 msgid "(Super Admin) "
-msgstr ""
+msgstr "(Super Admin) "
 
 #: ../../TShockAPI/Commands.cs:1461
 #, csharp-format
@@ -465,7 +465,7 @@ msgstr "{0} telah menonaktifkan mode natal."
 #: ../../TShockAPI/TShock.cs:1385
 #, csharp-format
 msgid "{0} disconnected."
-msgstr ""
+msgstr "{0} terputus."
 
 #: ../../TShockAPI/Commands.cs:1885
 #, csharp-format
@@ -593,7 +593,7 @@ msgstr "{0} telah melempar dirinya sendiri keluar angkasa."
 #: ../../TShockAPI/TShock.cs:1384
 #, csharp-format
 msgid "{0} has left."
-msgstr ""
+msgstr "{0} telah keluar."
 
 #: ../../TShockAPI/Commands.cs:5500
 #, csharp-format
