@@ -416,6 +416,18 @@ namespace TShockAPI
 				CanBeAddedWithoutHostile = false,
 				CanOnlyBeAppliedToSender = false
 			};
+			PlayerAddBuffWhitelist[BuffID.ShadowCandle] = new BuffLimit
+			{
+				MaxTicks = 2,
+				CanBeAddedWithoutHostile = true,
+				CanOnlyBeAppliedToSender = true
+			};
+			PlayerAddBuffWhitelist[BuffID.BrainOfConfusionBuff] = new BuffLimit
+			{
+				MaxTicks = 240,
+				CanBeAddedWithoutHostile = true,
+				CanOnlyBeAppliedToSender = true
+			};
 
 			#endregion Whitelist
 		}
