@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-11-10 08:27:04+0000\n"
-"PO-Revision-Date: 2022-11-10 13:49\n"
+"PO-Revision-Date: 2022-11-11 01:47\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -1010,7 +1010,7 @@ msgstr "{0} 被传送至你的位置。"
 #: ../../TShockAPI/Commands.cs:1296
 #, csharp-format
 msgid "{0}'s group is {1}."
-msgstr "{0}的组为 {1}"
+msgstr "{0}的用户组为{1}。"
 
 #: ../../TShockAPI/Commands.cs:1297
 #, csharp-format
@@ -1182,7 +1182,7 @@ msgstr "必须需要角色名才可踢出玩家，请您在指令后写上"
 
 #: ../../TShockAPI/GetDataHandlers.cs:2451
 msgid "A plugin on this server stopped your login."
-msgstr "服务器中的一个插件制止了你的登录。"
+msgstr "服务器中的一个插件阻止了你的登录。"
 
 #: ../../TShockAPI/Rest/SecureRest.cs:120
 #, csharp-format
@@ -1271,7 +1271,7 @@ msgstr "已将玩家{0}添加至{1}。"
 
 #: ../../TShockAPI/Commands.cs:3439
 msgid "addperm <group> <permissions...> - Adds permissions to a group."
-msgstr "addperm <组名> <权限...> - 为一个组添加指定权限."
+msgstr "addperm <组名> <权限...> - 为一个组添加指定权限。"
 
 #: ../../TShockAPI/DB/UserManager.cs:81
 #, csharp-format
@@ -1302,7 +1302,7 @@ msgstr "已分配内存: {0}"
 
 #: ../../TShockAPI/Commands.cs:3972
 msgid "allow <item> <group> - Allows a group to use an item."
-msgstr "allow <物品> <组名> - 允许指定组使用被禁用的物品."
+msgstr "allow <物品> <组名> - 允许指定组使用被禁用的物品"
 
 #: ../../TShockAPI/Commands.cs:4150
 msgid "allow <projectile ID> <group> - Allows a group to use a projectile."
@@ -1746,7 +1746,7 @@ msgstr "Bouncer / OnItemDrop 拒绝了来自 {0} 的掉落物品检查/最大堆
 #: ../../TShockAPI/Bouncer.cs:1082
 #, csharp-format
 msgid "Bouncer / OnItemDrop rejected from dupe range check from {0}"
-msgstr "Bouncer / OnItemDrop 拒绝了来自 {0} 的重复范围检查"
+msgstr "Bouncer / OnItemDrop（物品掉落防护）因检查防止重复物品时超出范围而阻止了{0}掉落物品。"
 
 #: ../../TShockAPI/Bouncer.cs:1103
 #, csharp-format
@@ -1761,7 +1761,7 @@ msgstr "Bouncer / OnItemDrop 被拒绝来自 {0} 的前缀检查"
 #: ../../TShockAPI/Bouncer.cs:1093
 #, csharp-format
 msgid "Bouncer / OnItemDrop rejected from range check from {0}"
-msgstr "Bouncer / OnItemDrop 被拒绝来自 {0} 的范围检查"
+msgstr "Bouncer / OnItemDrop（物品掉落防护）因超出范围而阻止了{0}掉落物品。"
 
 #: ../../TShockAPI/Bouncer.cs:1124
 #, csharp-format
@@ -1941,7 +1941,7 @@ msgstr "Bouncer / OnNewProjectile（弹幕防护）因奇怪的检测阻止了{0
 #: ../../TShockAPI/Bouncer.cs:2025
 #, csharp-format
 msgid "Bouncer / OnNPCAddBuff rejected abnormal buff ({0}, last for {4}) added to {1} ({2}) from {3}."
-msgstr "Bouncer / OnNPCAddBuff（NPC Buff防护）阻止了{3}对NPC{1}（{2}）添加持续{4}秒的Buff：{0}"
+msgstr "Bouncer / OnNPCAddBuff（NPC Buff防护）因种类{0}或时长{4}异常而阻止了{3}对NPC{1}（{2}）附加状态。"
 
 #: ../../TShockAPI/Bouncer.cs:1979
 #, csharp-format
@@ -2001,7 +2001,7 @@ msgstr "Bouncer / OnplaceChest 拒绝了来自 {0} 的无效权限"
 #: ../../TShockAPI/Bouncer.cs:1573
 #, csharp-format
 msgid "Bouncer / OnPlaceChest rejected from range check from {0}"
-msgstr "Bouncer / OnPlaceChest 拒绝了来自 {0} 的范围检查"
+msgstr "Bouncer / OnPlaceChest（宝箱放置防护）因超出范围而阻止了{0}使用宝箱。"
 
 #: ../../TShockAPI/Bouncer.cs:1544
 #, csharp-format
@@ -2026,7 +2026,7 @@ msgstr "Bouncer / OnplaceItemFrame 拒绝了来自 {0} 的权限"
 #: ../../TShockAPI/Bouncer.cs:2441
 #, csharp-format
 msgid "Bouncer / OnPlaceItemFrame rejected range checks from {0}"
-msgstr "Bouncer / OnplaceItemFrame 拒绝了来自 {0} 的范围检查"
+msgstr "Bouncer / OnPlaceItemFrame（武器架防护）因超出范围而阻止了{0}使用武器架。"
 
 #: ../../TShockAPI/Bouncer.cs:2418
 #, csharp-format
@@ -2758,7 +2758,7 @@ msgstr "无法将{0}重命名！"
 
 #: ../../TShockAPI/TShock.cs:1435
 msgid "Crash attempt via long chat packet."
-msgstr "试图通过超长聊天文本攻击服务器"
+msgstr "试图通过超长聊天文本进行恶意攻击"
 
 #: ../../TShockAPI/Commands.cs:595
 msgid "Creates a reference tables for Terraria data types and the TShock permission system in the server folder."
@@ -3136,17 +3136,17 @@ msgstr "GetDataHandlers / KillPortal 拒绝所有者不匹配的检查 {0}"
 #: ../../TShockAPI/GetDataHandlers.cs:2989
 #, csharp-format
 msgid "GetDataHandlers / HandleNpcStrike rejected Cultist summon from {0}"
-msgstr ""
+msgstr "GetDataHandlers / HandleNpcStrike（NPC伤害检测）因没有召唤拜月教徒的权限而阻止了{0}伤害教徒。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:2972
 #, csharp-format
 msgid "GetDataHandlers / HandleNpcStrike rejected EoL summon from {0}"
-msgstr ""
+msgstr "GetDataHandlers / HandleNpcStrike（NPC伤害检测）因没有召唤光之女皇的权限而阻止了{0}伤害蝴蝶。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:2962
 #, csharp-format
 msgid "GetDataHandlers / HandleNpcStrike rejected npc strike {0}"
-msgstr "GetDataHandlers / HandleNpcStrike 拒绝了 NPC 的攻击 {0}"
+msgstr "GetDataHandlers / HandleNpcStrike（NPC伤害检测）因保护城镇NPC而阻止了{0}造成的伤害。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3250
 #, csharp-format
@@ -3181,212 +3181,212 @@ msgstr "GetDataHandlers / HandleOldOnesArmy 拒绝了节流 {0}"
 #: ../../TShockAPI/GetDataHandlers.cs:3622
 #, csharp-format
 msgid "GetDataHandlers / HandlePaintTile rejected range check {0}"
-msgstr "GetDataHandlers / HandlePaintTile 拒绝了范围检查 {0}"
+msgstr "GetDataHandlers / HandlePaintTile（物块涂料检测）因超出范围而阻止了{0}涂物块。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3640
 #, csharp-format
 msgid "GetDataHandlers / HandlePaintTile rejected select consistency {0}"
-msgstr "GetDataHandlers / HandlePaintTile 拒绝了选择一致性 {0}"
+msgstr "GetDataHandlers / HandlePaintTile（物块涂料检测）因工具不匹配而阻止了{0}涂物块。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3649
 #, csharp-format
 msgid "GetDataHandlers / HandlePaintTile rejected throttle/permission/range check {0}"
-msgstr "GetDataHandlers / HandlePaintTile 拒绝了 节流/权限/范围检查 {0}"
+msgstr "GetDataHandlers / HandlePaintTile（物块涂料检测）因限流、权限或超出范围而阻止了{0}涂物块。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3669
 #, csharp-format
 msgid "GetDataHandlers / HandlePaintWall rejected range check {0}"
-msgstr ""
+msgstr "GetDataHandlers / HandlePaintWall（墙壁涂料检测）因超出范围而阻止了{0}涂墙。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3687
 #, csharp-format
 msgid "GetDataHandlers / HandlePaintWall rejected selector consistency {0}"
-msgstr ""
+msgstr "GetDataHandlers / HandlePaintWall（墙壁涂料检测）因工具不匹配而阻止了{0}涂墙。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3696
 #, csharp-format
 msgid "GetDataHandlers / HandlePaintWall rejected throttle/permission/range {0}"
-msgstr ""
+msgstr "GetDataHandlers / HandlePaintWall（墙壁涂料检测）因限流、权限或超出范围而阻止了{0}涂墙。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3411
 #, csharp-format
 msgid "GetDataHandlers / HandlePlayerBuffList handled event and sent data {0}"
-msgstr ""
+msgstr "GetDataHandlers / HandlePlayerBuffList（玩家Buff列表检测）正在处理{0}的状态。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3396
 #, csharp-format
 msgid "GetDataHandlers / HandlePlayerBuffList zeroed player buff due to below state 2 {0} {1}"
-msgstr ""
+msgstr "GetDataHandlers / HandlePlayerBuffList（玩家Buff列表检测）因玩家未完整进入服务器而清除了{0}的{1}状态。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:2777
 #, csharp-format
 msgid "GetDataHandlers / HandlePlayerHp rejected over max hp {0}"
-msgstr ""
+msgstr "GetDataHandlers / HandlePlayerMana（玩家生命检测）因生命超出上限而阻止{0}同步生命值。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:2522
 msgid "GetDataHandlers / HandlePlayerInfo rejected hardcore required"
-msgstr ""
+msgstr "GetDataHandlers / HandlePlayerInfo（玩家信息检测）因限制仅硬核而阻止了玩家进入服务器。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:2516
 msgid "GetDataHandlers / HandlePlayerInfo rejected mediumcore required"
-msgstr ""
+msgstr "GetDataHandlers / HandlePlayerInfo（玩家信息检测）因限制仅中核或以上而阻止了玩家进入服务器。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:2457
 msgid "GetDataHandlers / HandlePlayerInfo rejected name length 0"
-msgstr ""
+msgstr "GetDataHandlers / HandlePlayerInfo（玩家信息检测）因玩家名为空而阻止了玩家进入服务器。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:2450
 #, csharp-format
 msgid "GetDataHandlers / HandlePlayerInfo rejected plugin phase {0}"
-msgstr ""
+msgstr "GetDataHandlers / HandlePlayerInfo（玩家信息检测）因插件限制而阻止了{0}进入服务器。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:2510
 msgid "GetDataHandlers / HandlePlayerInfo rejected softcore required"
-msgstr ""
+msgstr "GetDataHandlers / HandlePlayerInfo（玩家信息检测）因限制仅软核而阻止了玩家进入服务器。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:4210
 #: ../../TShockAPI/GetDataHandlers.cs:4216
 #, csharp-format
 msgid "GetDataHandlers / HandlePlayerKillMeV2 kicked with difficulty {0} {1}"
-msgstr ""
+msgstr "GetDataHandlers / HandlePlayerKillMeV2（玩家死亡检测）因中核或硬核模式死亡而踢出了{0}（难度{1}）。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:4225
 #, csharp-format
 msgid "GetDataHandlers / HandlePlayerKillMeV2 ssc delete {0} {1}"
-msgstr ""
+msgstr "GetDataHandlers / HandlePlayerKillMeV2（玩家死亡检测）因硬核模式死亡而删除了{0}的存档。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3289
 #, csharp-format
 msgid "GetDataHandlers / HandlePlayerMana rejected max mana {0} {1}/{2}"
-msgstr ""
+msgstr "GetDataHandlers / HandlePlayerMana（玩家魔力检测）因魔力{1}超出上限{2}而阻止{0}同步魔力值。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:2554
 msgid "GetDataHandlers / HandlePlayerSlot rejected ignore ssc packets"
-msgstr ""
+msgstr "GetDataHandlers / HandlePlayerSlot（玩家物品检测）因忽略服务器端存档而阻止了数据更新。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3316
 #, csharp-format
 msgid "GetDataHandlers / HandlePlayerTeam rejected team fastswitch {0}"
-msgstr ""
+msgstr "GetDataHandlers / HandlePlayerTeam（切换队伍检测）因切换速度过快而阻止了{0}切换队伍。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:2757
 #, csharp-format
 msgid "GetDataHandlers / HandlePlayerUpdate home position delta {0}"
-msgstr ""
+msgstr "GetDataHandlers / HandlePlayerUpdate（玩家更新检测）正在处理{0}的回城数据。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3144
 msgid "GetDataHandlers / HandlePlayerZone rejected null check"
-msgstr ""
+msgstr "GetDataHandlers / HandlePlayerZone（玩家区域环境检测）因玩家或数据不存在而阻止了数据更新。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3025
 #, csharp-format
 msgid "GetDataHandlers / HandleProjectileKill permitted skeletron prime exemption {0}"
-msgstr ""
+msgstr "GetDataHandlers / HandleProjectileKill（射弹破坏检测）因机械骷髅王例外情况而允许了{0}的行为。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3029
 #, csharp-format
 msgid "GetDataHandlers / HandleProjectileKill rejected banned projectile {0}"
-msgstr ""
+msgstr "GetDataHandlers / HandleProjectileKill（射弹破坏检测）因对应射弹被封禁而阻止了{0}的行为。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3014
 #, csharp-format
 msgid "GetDataHandlers / HandleProjectileKill rejected tombstone {0}"
-msgstr ""
+msgstr "GetDataHandlers / HandleProjectileKill（射弹破坏检测）因屏蔽墓碑而阻止了{0}的墓碑射弹。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3354
 #, csharp-format
 msgid "GetDataHandlers / HandleSign rejected sign on build permission {0}"
-msgstr ""
+msgstr "GetDataHandlers / HandleSign（标牌检测）因没有建筑的权限而阻止了{0}操作标牌。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3361
 #, csharp-format
 msgid "GetDataHandlers / HandleSign rejected sign range check {0}"
-msgstr ""
+msgstr "GetDataHandlers / HandleSign（标牌检测）因超出范围而阻止了{0}操作标牌。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3334
 #, csharp-format
 msgid "GetDataHandlers / HandleSignRead rejected out of bounds {0}"
-msgstr ""
+msgstr "GetDataHandlers / HandleSignRead（标牌内容获取检测）因目标范围超出地图而阻止了{0}读取标牌。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:2700
 #, csharp-format
 msgid "GetDataHandlers / HandleSpawn force teleport 'vanilla spawn' {0}"
-msgstr ""
+msgstr "GetDataHandlers / HandleSpawn（回城检测）正在将{0}传送回城（常规复活点）。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:2711
 #, csharp-format
 msgid "GetDataHandlers / HandleSpawn force teleport phase 1 {0}"
-msgstr ""
+msgstr "GetDataHandlers / HandleSpawn（回城检测）正在将{0}传送回城（方案1）。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:2720
 #, csharp-format
 msgid "GetDataHandlers / HandleSpawn force teleport phase 2 {0}"
-msgstr ""
+msgstr "GetDataHandlers / HandleSpawn（回城检测）正在将{0}传送回城（方案2）。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:2682
 #, csharp-format
 msgid "GetDataHandlers / HandleSpawn rejected dead player spawn request {0}"
-msgstr ""
+msgstr "GetDataHandlers / HandleSpawn（回城检测）因玩家已死亡而阻止了{0}回城。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3517
 #, csharp-format
 msgid "GetDataHandlers / HandleSpawnBoss rejected boss {0} {1}"
-msgstr ""
+msgstr "GetDataHandlers / HandleSpawnBoss（召唤Boss与宠物检测）因没有召唤Boss的权限而阻止了{0}召唤{1}。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3507
 #, csharp-format
 msgid "GetDataHandlers / HandleSpawnBoss rejected bouner throttled {0}"
-msgstr ""
+msgstr "GetDataHandlers / HandleSpawnBoss（召唤Boss与宠物检测）因限流而阻止了{0}的行为。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3524
 #, csharp-format
 msgid "GetDataHandlers / HandleSpawnBoss rejected invasion {0} {1}"
-msgstr ""
+msgstr "GetDataHandlers / HandleSpawnBoss（召唤Boss与宠物检测）因没有召唤入侵的权限而阻止了{0}召唤{1}。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3531
 #, csharp-format
 msgid "GetDataHandlers / HandleSpawnBoss rejected pet {0} {1}"
-msgstr ""
+msgstr "GetDataHandlers / HandleSpawnBoss（召唤Boss与宠物检测）因没有召唤宠物的权限而阻止了{0}召唤{1}。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3442
 #, csharp-format
 msgid "GetDataHandlers / HandleSpecial rejected enchanted sundial permission (ForceTime) {0}"
-msgstr ""
+msgstr "GetDataHandlers / HandleSpecial（特殊数据检测）因时间被锁定而阻止了{0}使用附魔日晷。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3436
 #, csharp-format
 msgid "GetDataHandlers / HandleSpecial rejected enchanted sundial permission {0}"
-msgstr ""
+msgstr "GetDataHandlers / HandleSpecial（特殊数据检测）因没有使用附魔日晷的权限而阻止了{0}的行为。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3426
 #, csharp-format
 msgid "GetDataHandlers / HandleSpecial rejected type 1 for {0}"
-msgstr ""
+msgstr "GetDataHandlers / HandleSpecial（特殊数据检测）因禁止地牢守卫而阻止了{0}的行为。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:4005
 #, csharp-format
 msgid "GetDataHandlers / HandleSyncExtraValue rejected expert/master mode check {0}"
-msgstr ""
+msgstr "GetDataHandlers / HandleSyncExtraValue（NPC附加信息检测）因地图难度错误而阻止了{0}发送更新数据。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3999
 #, csharp-format
 msgid "GetDataHandlers / HandleSyncExtraValue rejected extents check {0}"
-msgstr ""
+msgstr "GetDataHandlers / HandleSyncExtraValue（NPC附加信息检测）因目标NPC位置异常而阻止了{0}发送更新数据。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:4011
 #, csharp-format
 msgid "GetDataHandlers / HandleSyncExtraValue rejected npc id out of bounds check - NPC ID: {0}"
-msgstr ""
+msgstr "GetDataHandlers / HandleSyncExtraValue（NPC附加信息检测）因目标NPC {0}不存在（越界）而阻止了更新。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:4018
 #, csharp-format
 msgid "GetDataHandlers / HandleSyncExtraValue rejected npc is null - NPC ID: {0}"
-msgstr ""
+msgstr "GetDataHandlers / HandleSyncExtraValue（NPC附加信息检测）因目标NPC {0}不存在而阻止了更新。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:4025
 #, csharp-format
 msgid "GetDataHandlers / HandleSyncExtraValue rejected range check {0},{1} vs {2},{3} which is {4}"
-msgstr ""
+msgstr "GetDataHandlers / HandleSyncExtraValue（NPC附加信息检测）因{0},{1}到{2},{3}的距离{4}过远而阻止了数据同步。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:4397
 #, csharp-format
@@ -3401,22 +3401,22 @@ msgstr "GetDataHandlers / HandleSyncLoadout 阻止了{0}切换越界的装备栏
 #: ../../TShockAPI/GetDataHandlers.cs:3753
 #, csharp-format
 msgid "GetDataHandlers / HandleTeleport rejected npc teleport {0} {1}"
-msgstr ""
+msgstr "GetDataHandlers / HandleTeleport（传送检测）因目标NPC不存在而阻止了{0}传送（种类{1}）。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3762
 #, csharp-format
 msgid "GetDataHandlers / HandleTeleport rejected p2p extents {0} {1}"
-msgstr ""
+msgstr "GetDataHandlers / HandleTeleport（传送检测）因目标玩家不存在而阻止了{0}传送（种类{1}）。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3768
 #, csharp-format
 msgid "GetDataHandlers / HandleTeleport rejected p2p wormhole permission {0} {1}"
-msgstr ""
+msgstr "GetDataHandlers / HandleTeleport（传送检测）因没有使用虫洞药水的权限而阻止了{0}传送（种类{1}）。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3744
 #, csharp-format
 msgid "GetDataHandlers / HandleTeleport rejected rod type {0} {1}"
-msgstr ""
+msgstr "GetDataHandlers / HandleTeleport（传送检测）因没有使用传送法杖的权限而阻止了{0}传送（种类{1}）。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3842
 #: ../../TShockAPI/GetDataHandlers.cs:3858
@@ -3424,27 +3424,27 @@ msgstr ""
 #: ../../TShockAPI/GetDataHandlers.cs:3901
 #, csharp-format
 msgid "GetDataHandlers / HandleTeleportationPotion rejected not holding the correct item {0} {1}"
-msgstr ""
+msgstr "GetDataHandlers / HandleTeleportationPotion（传送检测）因持有物品与传送种类不对应而阻止了{0}传送（种类{1}）。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3832
 #, csharp-format
 msgid "GetDataHandlers / HandleTeleportationPotion rejected permissions {0} {1}"
-msgstr ""
+msgstr "GetDataHandlers / HandleTeleportationPotion（传送检测）因没有对应权限而阻止了{0}传送（种类{1}）。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:4126
 #, csharp-format
 msgid "GetDataHandlers / HandleToggleParty rejected no party {0}"
-msgstr ""
+msgstr "GetDataHandlers / HandleToggleParty（派对开关检测）因没有开关派对的权限而阻止了{0}切换开关派对。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3059
 #, csharp-format
 msgid "GetDataHandlers / HandleTogglePvp rejected fastswitch {0}"
-msgstr ""
+msgstr "GetDataHandlers / HandleTogglePvp（PVP开关检测）因切换速度过快而阻止了{0}改变PVP状态。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3052
 #, csharp-format
 msgid "GetDataHandlers / HandleTogglePvp rejected index mismatch {0}"
-msgstr ""
+msgstr "GetDataHandlers / HandleTogglePvp（PVP开关检测）因检测到伪造玩家序号而阻止了{0}改变PVP状态。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:2735
 msgid "GetDataHandlers / OnPlayerUpdate rejected from null player."
@@ -3610,7 +3610,7 @@ msgstr "神圣棕榈木"
 #: ../../TShockAPI/GetDataHandlers.cs:4372
 #, csharp-format
 msgid "HandleSyncCavernMonsterType: Player is trying to modify NPC cavernMonsterType; this is a crafted packet! - From {0}"
-msgstr ""
+msgstr "GetDataHandlers / HandleSyncCavernMonsterType（怪物生成列表防护）因检测到伪造怪物刷新列表而阻止了{0}发送数据。"
 
 #: ../../TShockAPI/Commands.cs:2593
 msgid "Hardmode is disabled in the server configuration file."
@@ -4685,7 +4685,7 @@ msgstr "地图生成时的邪恶类型已设为{0}。"
 
 #: ../../TShockAPI/Permissions.cs:547
 msgid "No associated commands."
-msgstr "没有相关的命令。"
+msgstr "没有相关的指令。"
 
 #: ../../TShockAPI/Commands.cs:1694
 msgid "No bans found matching the provided ticket number."
