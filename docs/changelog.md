@@ -79,7 +79,6 @@ Use past tense when adding new entries; sign your name off when you add or chang
 
 ## Upcoming changes
 * Your changes could be here!
-
 * Changed hook `GetDataHandlers.HandleProjectileNew` added `AI[2]` Fixed #2804
 * Changed hook `GetDataHandlers.OnPlayerZone` added `Zone5`
 * Changed hook `GetDataHandlers.OnPlayerSpawn` added `numberOfDeathsPVE` and `numberOfDeathsPVP`
@@ -88,6 +87,10 @@ Use past tense when adding new entries; sign your name off when you add or chang
 * Changed `GetDataHandlers.HandlePlaceObject`  added `random` but what is it used for?
 * Changed `GetDataHandlers.HandleNpcTeleportPortal` update `npcIndex` to `int`
 * Changed `TSPlayer.Spawn` added `numberOfDeathsPVE` and `numberOfDeathsPVP`
+
+
+## TShock 5.1.2
+* Added support for Terraria 1.4.4.8.1 via OTAPI 3.1.19. (@SignatureBeef)
 
 
 ## TShock 5.1.1
