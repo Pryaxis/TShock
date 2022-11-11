@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-11-10 08:27:04+0000\n"
-"PO-Revision-Date: 2022-11-10 13:50\n"
+"PO-Revision-Date: 2022-11-11 13:58\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "MIME-Version: 1.0\n"
@@ -155,23 +155,23 @@ msgstr "- Palmeiras :"
 
 #: ../../TShockAPI/TShock.cs:950
 msgid "!!! > Set DisableLoginBeforeJoin to true in the config file and /reload if this is a problem."
-msgstr ""
+msgstr "!!! > Defina DisableLoginBeforeJoin como true (verdadeiro) no arquivo de configuração e use /reload se isso for um problema"
 
 #: ../../TShockAPI/TShock.cs:944
 msgid "!!! > Set DisableUUIDLogin to true in the config file and /reload if this is a problem."
-msgstr ""
+msgstr "!!! > Defina DisableUUIDLogin como true (verdadeiro) no arquivo de configuração e /reload se isso for um problema."
 
 #: ../../TShockAPI/TShock.cs:949
 msgid "!!! Login before join is enabled. Existing accounts can login & the server password will be bypassed."
-msgstr ""
+msgstr "!!! Login depois de entrar está ativado. As contas existentes podem entrar e a senha do servidor será ignorada."
 
 #: ../../TShockAPI/TShock.cs:938
 msgid "!!! The server password in config.json was overridden by the interactive prompt and will be ignored."
-msgstr ""
+msgstr "!!! A senha do servidor no config.json foi sobrescrita pelo prompt interativo e será ignorada."
 
 #: ../../TShockAPI/TShock.cs:943
 msgid "!!! UUID login is enabled. If a user's UUID matches an account, the server password will be bypassed."
-msgstr ""
+msgstr "!!! O login UUID está ativado. Se a UUID de um utilizador corresponder a uma conta, a palavra-passe do servidor será ignorada."
 
 #: ../../TShockAPI/Commands.cs:6409
 #, csharp-format
@@ -209,7 +209,7 @@ msgstr "(Anúncio Global) "
 
 #: ../../TShockAPI/Configuration/TShockConfig.cs:492
 msgid "(Super Admin) "
-msgstr ""
+msgstr "(Super Administrador) "
 
 #: ../../TShockAPI/Commands.cs:1461
 #, csharp-format
@@ -350,7 +350,7 @@ msgstr "{0} adicionou conta {1} ao grupo {2}."
 #: ../../TShockAPI/GetDataHandlers.cs:3546
 #, csharp-format
 msgid "{0} applied advanced combat techniques volume 2!"
-msgstr ""
+msgstr "{0} ativou técnicas avançadas de combate volume 2!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3564
 #, csharp-format
@@ -360,7 +360,7 @@ msgstr "{0} aplicou técnicas avançadas de combate!"
 #: ../../TShockAPI/GetDataHandlers.cs:3543
 #, csharp-format
 msgid "{0} applied traveling merchant's satchel!"
-msgstr ""
+msgstr "{0} aplicou mochila de mercador ambulante!"
 
 #: ../../TShockAPI/Commands.cs:1064
 #, csharp-format
@@ -371,7 +371,7 @@ msgstr "{0} tentou registrar uma conta {1} mas esse nome já foi utilizado."
 #: ../../TShockAPI/GetDataHandlers.cs:3212
 #, csharp-format
 msgid "{0} authenticated successfully as user {1}."
-msgstr ""
+msgstr "{0} autenticou {1} com sucesso."
 
 #: ../../TShockAPI/Commands.cs:905
 #, csharp-format
@@ -469,7 +469,7 @@ msgstr "{0} desativou o evento de natal"
 #: ../../TShockAPI/TShock.cs:1385
 #, csharp-format
 msgid "{0} disconnected."
-msgstr ""
+msgstr "{0} desconectado."
 
 #: ../../TShockAPI/Commands.cs:1885
 #, csharp-format
@@ -598,7 +598,7 @@ msgstr "{0} lançou ele mesmo para o espaço."
 #: ../../TShockAPI/TShock.cs:1384
 #, csharp-format
 msgid "{0} has left."
-msgstr ""
+msgstr "{0} saiu."
 
 #: ../../TShockAPI/Commands.cs:5500
 #, csharp-format
@@ -628,7 +628,7 @@ msgstr "{0} enviou um pedido para o serviço de entrega de cães!"
 #: ../../TShockAPI/GetDataHandlers.cs:3552
 #, csharp-format
 msgid "{0} has sent a request to the slime delivery service!"
-msgstr ""
+msgstr "{0} enviou um pedido para o serviço de entrega de slime."
 
 #: ../../TShockAPI/Commands.cs:2878
 #, csharp-format
@@ -645,7 +645,7 @@ msgstr "{0} invocou o Parede de Carne."
 #: ../../TShockAPI/GetDataHandlers.cs:2620
 #, csharp-format
 msgid "{0} has SSC data in the database, but has the tshock.ignore.ssc permission. This means their SSC data is being ignored."
-msgstr ""
+msgstr "{0} tem dados do SSC na banco de dados, mas tem a permissão tshock.ignore.ssc. Isto significa que os seus dados SSC estão sendo ignorados."
 
 #: ../../TShockAPI/Commands.cs:2342
 #, csharp-format
@@ -924,7 +924,7 @@ msgstr "{0} invocou uma invasão marciana!"
 #: ../../TShockAPI/GetDataHandlers.cs:3549
 #, csharp-format
 msgid "{0} summoned a Mechdusa!"
-msgstr ""
+msgstr "{0} invocou um Mechdusa!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3570
 #, csharp-format
@@ -1093,24 +1093,24 @@ msgstr "{0}user senha usuário nova-senha -- Altera a senha de um usuário"
 #: ../../TShockAPI/Permissions.cs:547
 #, csharp-format
 msgid "* **Commands**: `{0}`"
-msgstr ""
+msgstr "* **Comandos**: `{0}`"
 
 #: ../../TShockAPI/Configuration/TShockConfig.cs:641
 #: ../../TShockAPI/Configuration/ServerSideConfig.cs:123
 #, csharp-format
 msgid "* **Default**: `{0}`"
-msgstr ""
+msgstr "* **Padrão**: `{0}`"
 
 #: ../../TShockAPI/Configuration/TShockConfig.cs:640
 #: ../../TShockAPI/Configuration/ServerSideConfig.cs:122
 #, csharp-format
 msgid "* **Field type**: `{0}`"
-msgstr ""
+msgstr "* **Tipo de campo**: `{0}`"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1220
 #, csharp-format
 msgid "* **Permissions**: `{0}`"
-msgstr ""
+msgstr "* **Permissões**: `{0}`"
 
 #: ../../TShockAPI/Commands.cs:5430
 #, csharp-format
@@ -1120,15 +1120,15 @@ msgstr "*{0} {1}"
 #: ../../TShockAPI/Rest/RestManager.cs:1253
 #, csharp-format
 msgid "**Example Usage**: `{0}?{1}`"
-msgstr ""
+msgstr "**Exemplo de uso**: `{0}?{1}`"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1243
 msgid "**Nouns**:"
-msgstr ""
+msgstr "**Substantivos**:"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1230
 msgid "**Verbs**:"
-msgstr ""
+msgstr "**Verbos**:"
 
 #: ../../TShockAPI/Commands.cs:1613
 #, csharp-format
@@ -1166,7 +1166,7 @@ msgstr "Muitas coisas irão falhar por causa disso. Você deve apagar e recriar 
 
 #: ../../TShockAPI/TShock.cs:973
 msgid "A malicious server can easily steal a user's UUID. You may consider turning this option off if you run a public server."
-msgstr ""
+msgstr "Um servidor malicioso pode facilmente roubar a UUID de um utilizador. Considere desligar esta opção se executar em um servidor público."
 
 #: ../../TShockAPI/Commands.cs:2793
 msgid "a Martian Saucer"
@@ -1182,7 +1182,7 @@ msgstr "um Pilar de Nebula"
 
 #: ../../TShockAPI/TShock.cs:961
 msgid "A password for this server was set in config.json and is being used."
-msgstr ""
+msgstr "Uma senha para este servidor foi definida em config.json e está sendo utilizada."
 
 #: ../../TShockAPI/Commands.cs:1316
 msgid "A player name must be provided to kick a player. Please provide one."
