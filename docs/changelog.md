@@ -78,7 +78,9 @@ Use past tense when adding new entries; sign your name off when you add or chang
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change. -->
 
 ## Upcoming changes
-* Your changes could be here!
+* Added `ShadowCandle` and `BrainOfConfusionBuff` (BoC dodge buff) to the `PlayerAddBuffWhitelist` (@drunderscore)
+* Improved rejection message and code duplication in `OnPlayerBuff` (@drunderscore)
+  * This will make it so Bouncer rejections regarding `PlayerAddBuff` will now always include the sender index, buff type, receiver index, and time in ticks, allowing much faster triage of buff whitelist issues.
 
 ## TShock 5.1.2
 * Added support for Terraria 1.4.4.8.1 via OTAPI 3.1.19. (@SignatureBeef)
