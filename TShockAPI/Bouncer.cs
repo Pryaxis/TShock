@@ -255,7 +255,7 @@ namespace TShockAPI
 
 			#region PlayerAddBuff Whitelist
 
-			PlayerAddBuffWhitelist = new BuffLimit[Main.maxBuffTypes];
+			PlayerAddBuffWhitelist = new BuffLimit[Terraria.ID.BuffID.Count];
 			PlayerAddBuffWhitelist[BuffID.Poisoned] = new BuffLimit
 			{
 				MaxTicks = 60 * 60
@@ -600,8 +600,8 @@ namespace TShockAPI
 				}
 
 				if (editData < 0 ||
-					((action == EditAction.PlaceTile || action == EditAction.ReplaceTile) && editData >= Main.maxTileSets) ||
-					((action == EditAction.PlaceWall || action == EditAction.ReplaceWall) && editData >= Main.maxWallTypes))
+					((action == EditAction.PlaceTile || action == EditAction.ReplaceTile) && editData >= Terraria.ID.TileID.Count) ||
+					((action == EditAction.PlaceWall || action == EditAction.ReplaceWall) && editData >= Terraria.ID.WallID.Count))
 				{
 					TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected from editData out of bounds {0} {1} {2}", args.Player.Name, action, editData));
 					args.Player.SendTileSquareCentered(tileX, tileY, 4);
@@ -1050,7 +1050,7 @@ namespace TShockAPI
 			short type = args.Type;
 
 			// player is attempting to crash clients
-			if (type < -48 || type >= Main.maxItemTypes)
+			if (type < -48 || type >= Terraria.ID.ItemID.Count)
 			{
 				// Causes item duplications. Will be re added later if necessary
 				//args.Player.SendData(PacketTypes.ItemDrop, "", id);
@@ -1266,16 +1266,16 @@ namespace TShockAPI
 			{
 				if (TShock.Config.Settings.KickOnProjectileThresholdBroken)
 				{
-					args.Player.Kick(GetString("Projectile update threshold exceeded {0}.", TShock.Config.Settings.ProjectileThreshold));
+					args.Player.Kick(GetString("Projectile create threshold exceeded {0}.", TShock.Config.Settings.ProjectileThreshold));
 				}
 				else
 				{
-					args.Player.Disable(GetString("Reached projectile update threshold."), DisableFlags.WriteToLogAndConsole);
+					args.Player.Disable(GetString("Reached projectile create threshold."), DisableFlags.WriteToLogAndConsole);
 					args.Player.RemoveProjectile(ident, owner);
 				}
 
-				TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile rejected from projectile update threshold from {0} {1}/{2}", args.Player.Name, args.Player.ProjectileThreshold, TShock.Config.Settings.ProjectileThreshold));
-				TShock.Log.ConsoleDebug(GetString("If this player wasn't hacking, please report the projectile update threshold they were disabled for to TShock so we can improve this!"));
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile rejected from projectile create threshold from {0} {1}/{2}", args.Player.Name, args.Player.ProjectileThreshold, TShock.Config.Settings.ProjectileThreshold));
+				TShock.Log.ConsoleDebug(GetString("If this player wasn't hacking, please report the projectile create threshold they were disabled for to TShock so we can improve this!"));
 				args.Handled = true;
 				return;
 			}
@@ -1881,7 +1881,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (type >= Main.maxBuffTypes)
+			if (type >= Terraria.ID.BuffID.Count)
 			{
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerBuff rejected invalid buff type {0}", args.Player.Name));
 				args.Player.SendData(PacketTypes.PlayerBuff, "", id);
@@ -1995,21 +1995,21 @@ namespace TShockAPI
 					if (npc.townNPC)
 					{
 						if (type != BuffID.Poisoned
-						    && type != BuffID.OnFire
-						    && type != BuffID.Confused
-						    && type != BuffID.CursedInferno
-						    && type != BuffID.Ichor
-						    && type != BuffID.Venom
-						    && type != BuffID.Midas
-						    && type != BuffID.Wet
-						    && type != BuffID.Lovestruck
-						    && type != BuffID.Stinky
-						    && type != BuffID.Slimed
-						    && type != BuffID.DryadsWard
-						    && type != BuffID.GelBalloonBuff
-						    && type != BuffID.OnFire3
-						    && type != BuffID.Frostburn2
-						    && type != BuffID.Shimmer)
+							&& type != BuffID.OnFire
+							&& type != BuffID.Confused
+							&& type != BuffID.CursedInferno
+							&& type != BuffID.Ichor
+							&& type != BuffID.Venom
+							&& type != BuffID.Midas
+							&& type != BuffID.Wet
+							&& type != BuffID.Lovestruck
+							&& type != BuffID.Stinky
+							&& type != BuffID.Slimed
+							&& type != BuffID.DryadsWard
+							&& type != BuffID.GelBalloonBuff
+							&& type != BuffID.OnFire3
+							&& type != BuffID.Frostburn2
+							&& type != BuffID.Shimmer)
 						{
 							detectedNPCBuffTimeCheat = true;
 						}
@@ -2209,7 +2209,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (type < 0 || type >= Main.maxTileSets)
+			if (type < 0 || type >= Terraria.ID.TileID.Count)
 			{
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlaceObject rejected out of bounds tile from {0}", args.Player.Name));
 				args.Handled = true;
@@ -2303,10 +2303,15 @@ namespace TShockAPI
 
 				if (args.Player.SelectedItem.placeStyle != style)
 				{
-					TShock.Log.ConsoleError(GetString("Bouncer / OnPlaceObject rejected object placement with invalid style from {0}", args.Player.Name));
-					args.Player.SendTileSquareCentered(x, y, 4);
-					args.Handled = true;
-					return;
+					var validTorch = args.Player.SelectedItem.createTile == TileID.Torches && args.Player.TPlayer.BiomeTorchPlaceStyle(args.Player.SelectedItem.placeStyle) == style;
+					var validCampfire = args.Player.SelectedItem.createTile == TileID.Campfire && args.Player.TPlayer.BiomeCampfirePlaceStyle(args.Player.SelectedItem.placeStyle) == style;
+					if (!args.Player.TPlayer.unlockedBiomeTorches || (!validTorch && !validCampfire))
+					{
+						TShock.Log.ConsoleError(GetString("Bouncer / OnPlaceObject rejected object placement with invalid style {1} (expected {2}) from {0}", args.Player.Name, style, args.Player.SelectedItem.placeStyle));
+						args.Player.SendTileSquareCentered(x, y, 4);
+						args.Handled = true;
+						return;
+					}
 				}
 			}
 
@@ -2587,7 +2592,7 @@ namespace TShockAPI
 				}
 				else
 				{
-					TShock.Log.ConsoleDebug("Bouncer / OnPlayerDamage rejected damage threshold2 from {0} {1}/{2}", args.Player.Name, damage, TShock.Config.Settings.MaxDamage);
+					TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerDamage rejected damage threshold2 from {0} {1}/{2}", args.Player.Name, damage, TShock.Config.Settings.MaxDamage));
 					args.Player.Disable(GetString("Player damage exceeded {0}.", TShock.Config.Settings.MaxDamage), DisableFlags.WriteToLogAndConsole);
 				}
 				args.Player.SendData(PacketTypes.PlayerHp, "", id);

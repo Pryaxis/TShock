@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-10-31 22:50:21+0000\n"
-"PO-Revision-Date: 2022-11-05 18:13\n"
+"PO-Revision-Date: 2022-11-10 01:22\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -6062,7 +6062,7 @@ msgstr "复活只能对真实的玩家使用。"
 
 #: ../../TShockAPI/Commands.cs:810
 msgid "You cannot login whilst crowd controlled."
-msgstr "你无法在被控制时登录。"
+msgstr "在无法行动时不能登录。"
 
 #: ../../TShockAPI/Commands.cs:796
 msgid "You cannot login whilst dead."
