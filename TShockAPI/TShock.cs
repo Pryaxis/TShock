@@ -384,7 +384,7 @@ namespace TShockAPI
 					Geo = new GeoIPCountry(geoippath);
 
 				// check if a custom tile provider is to be used
-				switch(Config.Settings.WorldTileProvider)
+				switch(Config.Settings.WorldTileProvider?.ToLower())
 				{
 					case "heaptile":
 						Log.ConsoleInfo(GetString($"Using {nameof(HeapTile)} for tile implementation"), TraceLevel.Info);
