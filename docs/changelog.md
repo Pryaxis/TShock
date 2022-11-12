@@ -79,7 +79,7 @@ Use past tense when adding new entries; sign your name off when you add or chang
 
 ## Upcoming changes
 * Your changes could be here!
-* Added new PvPMode `pvpwithnoteam` in `Config.json`.(@CelestialAnarchy, #2617)
+* An additional option `pvpwithnoteam` is added at `PvPMode` to enable PVP with no team.(@CelestialAnarchy, #2617)
 
 ## TShock 5.1.2
 * Added support for Terraria 1.4.4.8.1 via OTAPI 3.1.19. (@SignatureBeef)
