@@ -3310,7 +3310,8 @@ namespace TShockAPI
 			if (id != args.Player.Index)
 				return true;
 
-			if ((DateTime.UtcNow - args.Player.LastPvPTeamChange).TotalSeconds < 5)
+			string pvpMode = TShock.Config.Settings.PvPMode.ToLowerInvariant();
+			if (pvpMode == "pvpwithnoteam" || (DateTime.UtcNow - args.Player.LastPvPTeamChange).TotalSeconds < 5)
 			{
 				args.Player.SendData(PacketTypes.PlayerTeam, "", id);
 				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandlePlayerTeam rejected team fastswitch {0}", args.Player.Name));
