@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-11-10 08:27:04+0000\n"
-"PO-Revision-Date: 2022-11-11 13:58\n"
+"PO-Revision-Date: 2022-11-12 02:02\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "MIME-Version: 1.0\n"
@@ -1190,7 +1190,7 @@ msgstr "É necessário informar o nome do jogador que deseja expulsar. Por favor
 
 #: ../../TShockAPI/GetDataHandlers.cs:2451
 msgid "A plugin on this server stopped your login."
-msgstr ""
+msgstr "Um plugin neste servidor impediu seu login."
 
 #: ../../TShockAPI/Rest/SecureRest.cs:120
 #, csharp-format
@@ -1352,7 +1352,7 @@ msgstr "Ocorreu uma exceção durante a transação do banco de dados: {0}"
 
 #: ../../TShockAPI/TShock.cs:1476
 msgid "An exception occurred executing a command."
-msgstr ""
+msgstr "Ocorreu uma exceção ao executar um comando."
 
 #: ../../TShockAPI/DB/BanManager.cs:644
 msgid "An identifier for a character name."
@@ -1419,12 +1419,12 @@ msgstr "Autenticado como {0} com sucesso."
 #: ../../TShockAPI/TShock.cs:427
 #: ../../TShockAPI/TShock.cs:1577
 msgid "AutoSave Disabled"
-msgstr ""
+msgstr "AutoSave Desativado"
 
 #: ../../TShockAPI/TShock.cs:425
 #: ../../TShockAPI/TShock.cs:1575
 msgid "AutoSave Enabled"
-msgstr ""
+msgstr "AutoSave Ativado"
 
 #: ../../TShockAPI/Rest/RestManager.cs:811
 msgid "AutoSave has been disabled"
@@ -1473,11 +1473,11 @@ msgstr "Tópico de Recuperação"
 
 #: ../../TShockAPI/TShock.cs:431
 msgid "Backups Disabled"
-msgstr ""
+msgstr "Backups Desativados"
 
 #: ../../TShockAPI/TShock.cs:429
 msgid "Backups Enabled"
-msgstr ""
+msgstr "Backups Ativados"
 
 #: ../../TShockAPI/Commands.cs:837
 msgid "Bad login attempt."
