@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-11-10 08:27:04+0000\n"
-"PO-Revision-Date: 2022-11-12 02:02\n"
+"PO-Revision-Date: 2022-11-12 22:21\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "MIME-Version: 1.0\n"
@@ -1596,12 +1596,12 @@ msgstr "Árvore boreal"
 #: ../../TShockAPI/GetDataHandlers.cs:3264
 #, csharp-format
 msgid "Bouncer / HandleNpcTalk rejected from bouncer out of bounds from {0}"
-msgstr ""
+msgstr "Bouncer / HandleNpcTalk rejeitado por bouncer fora dos limites de {0}"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3257
 #, csharp-format
 msgid "Bouncer / HandleNpcTalk rejected from bouncer throttle from {0}"
-msgstr ""
+msgstr "Bouncer / HandleNpcTalk rejeitado por aceleração bouncer de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1447
 #, csharp-format
@@ -1929,7 +1929,7 @@ msgstr "Bouncer / OnNewProjectile rejeitado por verificação de permissão de {
 #: ../../TShockAPI/Bouncer.cs:1277
 #, csharp-format
 msgid "Bouncer / OnNewProjectile rejected from projectile create threshold from {0} {1}/{2}"
-msgstr ""
+msgstr "Bouncer / OnNewProjectile rejeitado por limite de criação de projétil de {0} {1}/{2}"
 
 #: ../../TShockAPI/Bouncer.cs:1176
 #, csharp-format
