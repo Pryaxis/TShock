@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-11-10 08:27:04+0000\n"
-"PO-Revision-Date: 2022-11-10 13:49\n"
+"PO-Revision-Date: 2022-11-15 07:20\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -38,29 +38,29 @@ msgstr "#{0} - Yasaklandın: {1}"
 
 #: ../../TShockAPI/Commands.cs:6499
 msgid "     'basic', 'sakura', 'willow', 'boreal', 'mahogany', 'ebonwood', 'shadewood', 'pearlwood'."
-msgstr ""
+msgstr "     'temel', 'kiraz', 'söğüt', 'boreal', 'maun', 'abanozodunu', 'gölgeodunu', 'inciodunu'."
 
 #: ../../TShockAPI/Commands.cs:6505
 msgid "     'cactus', 'herb', 'mushroom'."
-msgstr ""
+msgstr "     'kaktüs', 'ot', 'mantar'."
 
 #: ../../TShockAPI/Commands.cs:6501
 msgid "     'palm', 'corruptpalm', 'crimsonpalm', 'hallowpalm'."
-msgstr ""
+msgstr "     'palmiye', 'bozukpalmiye', 'kızılpalmiye', 'kutsalpalmiye'."
 
 #: ../../TShockAPI/Commands.cs:6503
 msgid "     'topaz', 'amethyst', 'sapphire', 'emerald', 'ruby', 'diamond', 'amber'."
-msgstr ""
+msgstr "     'topaz', 'ametist', 'safir', 'zümrüt', 'yakut', 'elmas', 'kehribar'."
 
 #: ../../TShockAPI/Commands.cs:1446
 #, csharp-format
 msgid "   {0}{1} \"{2}\" (Find the IP associated with the offline target's account)"
-msgstr ""
+msgstr "   {0}{1} \"{2}\" (Hedeflediğiniz çevrimdışı hesabın IP'sini bulmanıza yarar.)"
 
 #: ../../TShockAPI/Commands.cs:1444
 #, csharp-format
 msgid "   {0}{1} \"{2}{3}\" {4} {5} (Permanently bans this account name)"
-msgstr ""
+msgstr "   {0}{1} \"{2}{3}\" {4} {5} (Bu hesap adını kalıcı olarak banlar)"
 
 #: ../../TShockAPI/Commands.cs:1449
 #, csharp-format
@@ -70,12 +70,12 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:1450
 #, csharp-format
 msgid "   {0}{1} {2}{3} {4} {5} (Permanently bans the online player by Account, UUID, and IP)"
-msgstr ""
+msgstr "   {0}{1} {2}{3} {4} {5} (Çevrimiçi bir oyuncunun hesap, UUID ve IP'sini kalıcı şekilde banlar)"
 
 #: ../../TShockAPI/Commands.cs:1447
 #, csharp-format
 msgid "   {0}{1} {2}{3} {4} {5} (Permanently bans this IP address)"
-msgstr ""
+msgstr "   {0}{1} {2}{3} {4} {5} (Belirttiğiniz IP adresini kalıcı şekilde banlar)"
 
 #: ../../TShockAPI/Commands.cs:1386
 #, csharp-format
