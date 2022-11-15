@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-11-10 08:27:04+0000\n"
-"PO-Revision-Date: 2022-11-15 07:20\n"
+"PO-Revision-Date: 2022-11-15 19:27\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -65,7 +65,7 @@ msgstr "   {0}{1} \"{2}{3}\" {4} {5} (Bu hesap adını kalıcı olarak banlar)"
 #: ../../TShockAPI/Commands.cs:1449
 #, csharp-format
 msgid "   {0}{1} {2} (Find the player index for the target)"
-msgstr ""
+msgstr "   {0}{1} {2} (Hedefin sırasını bulmaya yarar)"
 
 #: ../../TShockAPI/Commands.cs:1450
 #, csharp-format
@@ -80,7 +80,7 @@ msgstr "   {0}{1} {2}{3} {4} {5} (Belirttiğiniz IP adresini kalıcı şekilde b
 #: ../../TShockAPI/Commands.cs:1386
 #, csharp-format
 msgid "   Eg a value of {0} would represent 10 days, 30 minutes, 0 seconds."
-msgstr ""
+msgstr "   Örn. {0} değeri, 10 gün, 30 dakika ve 0 saniyeyi temsil eder."
 
 #: ../../TShockAPI/Commands.cs:1390
 #, csharp-format
@@ -114,79 +114,79 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:1388
 #, csharp-format
 msgid "- {0}: -a (account name), -u (UUID), -n (character name), -ip (IP address), -e (exact, {1} will be treated as identifier)"
-msgstr ""
+msgstr "- {0}: -a (hesap adı), -u (UUID, kullanıcı ID numarası), -n (karakter adı), -ip (IP adresi), -e (apaynısı, {1} bunlar tanımlayıcı olarak kullanılır)"
 
 #: ../../TShockAPI/Commands.cs:1385
 #, csharp-format
 msgid "- {0}: uses the format {1} to determine the length of the ban."
-msgstr ""
+msgstr "- {0}: {1} formatını bir banın uzunluğunu belirlemek için kullanır."
 
 #: ../../TShockAPI/Commands.cs:1443
 msgid "- Ban an offline player by account name"
-msgstr ""
+msgstr "- Çevrimdışı bir oyuncuyu hesap adıyla banla"
 
 #: ../../TShockAPI/Commands.cs:1445
 msgid "- Ban an offline player by IP address"
-msgstr ""
+msgstr "- Çevrimdışı bir oyuncuyu IP adresiyle banla"
 
 #: ../../TShockAPI/Commands.cs:1448
 msgid "- Ban an online player by index (Useful for hard to type names)"
-msgstr ""
+msgstr "- Çevrimiçi bir oyuncuyu sıra numarasıyla banla (Yazması zor isimler için işe yarar)"
 
 #: ../../TShockAPI/Commands.cs:6498
 msgid "- Default trees :"
-msgstr ""
+msgstr "- Varsayılan ağaçlar :"
 
 #: ../../TShockAPI/Commands.cs:6502
 msgid "- Gem trees :"
-msgstr ""
+msgstr "- Mücevher ağaçları :"
 
 #: ../../TShockAPI/Commands.cs:1406
 msgid "- Lists active bans. Color trends towards green as the ban approaches expiration"
-msgstr ""
+msgstr "- Aktif banları listeler. Banın süresinin dolması yaklaştıkça renk yeşile yakınlaşır."
 
 #: ../../TShockAPI/Commands.cs:6504
 msgid "- Misc :"
-msgstr ""
+msgstr "- Diğer :"
 
 #: ../../TShockAPI/Commands.cs:6500
 msgid "- Palm trees :"
-msgstr ""
+msgstr "- Palmiye ağaçları :"
 
 #: ../../TShockAPI/TShock.cs:950
 msgid "!!! > Set DisableLoginBeforeJoin to true in the config file and /reload if this is a problem."
-msgstr ""
+msgstr "!!! > Eğer bu bir sıkıntı oluşturursa config dosyasında Set DisableLoginBeforeJoin kısmını true olarak ayarlayıp /reload komutunu kullanınız."
 
 #: ../../TShockAPI/TShock.cs:944
 msgid "!!! > Set DisableUUIDLogin to true in the config file and /reload if this is a problem."
-msgstr ""
+msgstr "!!! > Eğer bu bir sıkıntı oluşturursa config dosyasında DisableUUIDLogin 'i true yapıp /reload komutunu kullanınız."
 
 #: ../../TShockAPI/TShock.cs:949
 msgid "!!! Login before join is enabled. Existing accounts can login & the server password will be bypassed."
-msgstr ""
+msgstr "!!! Join etkinleştirilmeden giriş yapıldı. Varolan hesaplar giriş yapabilir ve sunucu şifresi atlanacaktır."
 
 #: ../../TShockAPI/TShock.cs:938
 msgid "!!! The server password in config.json was overridden by the interactive prompt and will be ignored."
-msgstr ""
+msgstr "!!! config.json'daki sunucu parolası etkileşimli komut istemi tarafından geçersiz kılındı ve yok sayılacak."
 
 #: ../../TShockAPI/TShock.cs:943
 msgid "!!! UUID login is enabled. If a user's UUID matches an account, the server password will be bypassed."
-msgstr ""
+msgstr "!!! UUID girişi aktifleştirildi. Eğer bir kullanıcının UUID'si bir hesapla eşleşirse, sunucu şifresi atlanacaktır."
 
 #: ../../TShockAPI/Commands.cs:6409
 #, csharp-format
 msgid "\"{0}\" is not a valid buff ID!"
-msgstr ""
+msgstr "\"{0}\" geçerli bir buff ID'si değildir!"
 
 #: ../../TShockAPI/Commands.cs:5906
 #, csharp-format
 msgid "\"{0}\" is not a valid clear option."
-msgstr ""
+msgstr "\"{0}\" geçerli bir temizleme seçeneği değildir."
 
 #: ../../TShockAPI/Commands.cs:6026
 #, csharp-format
 msgid "\"{0}\" is not a valid NPC."
-msgstr ""
+msgstr "\"{0}\" geçerli bir NPC değildir."
 
 #: ../../TShockAPI/PaginationTools.cs:283
 #, csharp-format
@@ -196,7 +196,7 @@ msgstr "\"{0}\" geçerli bir sayfa numarası değil."
 #: ../../TShockAPI/Commands.cs:5826
 #, csharp-format
 msgid "\"{0}\" is not a valid radius."
-msgstr ""
+msgstr "\"{0}\" geçerli bir alan değildir."
 
 #: ../../TShockAPI/Rest/SecureRest.cs:213
 #, csharp-format
@@ -209,12 +209,12 @@ msgstr "(Sunucu Duyurusu) "
 
 #: ../../TShockAPI/Configuration/TShockConfig.cs:492
 msgid "(Super Admin) "
-msgstr ""
+msgstr "(Süper Admin) "
 
 #: ../../TShockAPI/Commands.cs:1461
 #, csharp-format
 msgid "{0} - Ticket Number: {1}"
-msgstr ""
+msgstr "{0} - Bilet Numarası: {1}"
 
 #: ../../TShockAPI/Commands.cs:2088
 #, csharp-format
@@ -254,7 +254,7 @@ msgstr "{0} ({1}) katıldı."
 #: ../../TShockAPI/Commands.cs:5354
 #, csharp-format
 msgid "{0} (Index: {1}, Account ID: {2})"
-msgstr ""
+msgstr "{0} (Sıra: {1}, Hesap ID'si: {2})"
 
 #: ../../TShockAPI/Commands.cs:5356
 #, csharp-format
@@ -350,17 +350,17 @@ msgstr "{0} {1} hesabını {2} grubuna ekledi."
 #: ../../TShockAPI/GetDataHandlers.cs:3546
 #, csharp-format
 msgid "{0} applied advanced combat techniques volume 2!"
-msgstr ""
+msgstr "{0} , Gelişmiş Savaş Teknikleri Sayı 2 Kitabını kullandı!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3564
 #, csharp-format
 msgid "{0} applied advanced combat techniques!"
-msgstr ""
+msgstr "{0} , Gelişmiş Savaş Teknikleri Kitabını kullandı!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3543
 #, csharp-format
 msgid "{0} applied traveling merchant's satchel!"
-msgstr ""
+msgstr "{0} , Gezgin Tüccar'ın çantasını kullandı!"
 
 #: ../../TShockAPI/Commands.cs:1064
 #, csharp-format
@@ -371,7 +371,7 @@ msgstr "{0} {1} hesabına kayıt olmaya çalıştı fakat bu hesap zaten alınm�
 #: ../../TShockAPI/GetDataHandlers.cs:3212
 #, csharp-format
 msgid "{0} authenticated successfully as user {1}."
-msgstr ""
+msgstr "{0} , kullanıcı {1} olarak başarıyla doğrulandı."
 
 #: ../../TShockAPI/Commands.cs:905
 #, csharp-format
@@ -381,14 +381,14 @@ msgstr "{0} başarıyla şu kullanıcıya giriş yaptı: {1}."
 #: ../../TShockAPI/TSPlayer.cs:1955
 #, csharp-format
 msgid "{0} banned {1} for '{2}'."
-msgstr ""
+msgstr "{0} , {1} 'i '{2}' sebebinden dolayı banladı."
 
 #: ../../TShockAPI/Commands.cs:6051
 #, csharp-format
 msgid "{0} butchered {1} NPC."
 msgid_plural "{0} butchered {1} NPCs."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "{0}, {1} NPC katletti."
+msgstr[1] "{0}, {1} NPC katletti."
 
 #: ../../TShockAPI/Commands.cs:2462
 #, csharp-format
@@ -403,7 +403,7 @@ msgstr "{0} yağmur başlattı."
 #: ../../TShockAPI/Commands.cs:1180
 #, csharp-format
 msgid "{0} changed account {1} to group {2}."
-msgstr ""
+msgstr "{0}, {1} adlı hesabı {2} grubuna atadı."
 
 #: ../../TShockAPI/Commands.cs:4466
 #, csharp-format
@@ -439,47 +439,47 @@ msgstr "{0} rüzgar hızını {1} ile değiştirdi."
 #, csharp-format
 msgid "{0} deleted {1} item within a radius of {2}."
 msgid_plural "{0} deleted {1} items within a radius of {2}."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "{0}, {2} büyüklüğünde bir çevereden {1} item yok etti."
+msgstr[1] "{0}, {2} büyüklüğünde bir çevereden {1} item yok etti."
 
 #: ../../TShockAPI/Commands.cs:5877
 #, csharp-format
 msgid "{0} deleted {1} NPC within a radius of {2}."
 msgid_plural "{0} deleted {1} NPCs within a radius of {2}."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "{0}, {2} büyüklüğündeki bir çevreden {1} NPC sildi."
+msgstr[1] "{0}, {2} büyüklüğündeki bir çevreden {1} NPC sildi."
 
 #: ../../TShockAPI/Commands.cs:5902
 #, csharp-format
 msgid "{0} deleted {1} projectile within a radius of {2}."
 msgid_plural "{0} deleted {1} projectiles within a radius of {2}."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "{0}, {2} büyüklüğündeki bir çevreden {1} mermi sildi."
+msgstr[1] "{0}, {2} büyüklüğündeki bir çevreden {1} mermi sildi."
 
 #: ../../TShockAPI/Commands.cs:1887
 #, csharp-format
 msgid "{0} disabled halloween mode."
-msgstr ""
+msgstr "{0} cadılar bayramı modunu kapattı."
 
 #: ../../TShockAPI/Commands.cs:1907
 #, csharp-format
 msgid "{0} disabled xmas mode."
-msgstr ""
+msgstr "{0} noel modunu kapattı."
 
 #: ../../TShockAPI/TShock.cs:1385
 #, csharp-format
 msgid "{0} disconnected."
-msgstr ""
+msgstr "{0} çıktı."
 
 #: ../../TShockAPI/Commands.cs:1885
 #, csharp-format
 msgid "{0} enabled halloween mode."
-msgstr ""
+msgstr "{0} cadılar bayramı modunu açtı."
 
 #: ../../TShockAPI/Commands.cs:1905
 #, csharp-format
 msgid "{0} enabled xmas mode."
-msgstr ""
+msgstr "{0} noel modunu açtı."
 
 #: ../../TShockAPI/Commands.cs:2469
 #, csharp-format
@@ -960,7 +960,7 @@ msgstr ""
 #: ../../TShockAPI/GetDataHandlers.cs:3588
 #, csharp-format
 msgid "{0} summoned the Snow Legion!"
-msgstr ""
+msgstr "{0} Kar Lejyonu'nu çağırdı!"
 
 #: ../../TShockAPI/Commands.cs:3004
 #: ../../TShockAPI/Commands.cs:3044
@@ -1048,7 +1048,7 @@ msgstr ""
 #: ../../TShockAPI/Utils.cs:1066
 #, csharp-format
 msgid "{0}{1}/{2} on {3} @ {4}:{5} (TShock for Terraria v{6})"
-msgstr ""
+msgstr "{0}{1}/{2} {3} dünyasında @ {4}:{5} (Terraria için TShock v{6})"
 
 #: ../../TShockAPI/Commands.cs:850
 #, csharp-format
