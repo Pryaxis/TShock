@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-11-10 08:27:04+0000\n"
-"PO-Revision-Date: 2022-11-10 13:49\n"
+"PO-Revision-Date: 2022-11-16 12:19\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -155,11 +155,11 @@ msgstr "- Palmeras :"
 
 #: ../../TShockAPI/TShock.cs:950
 msgid "!!! > Set DisableLoginBeforeJoin to true in the config file and /reload if this is a problem."
-msgstr ""
+msgstr "!!! > En el archivo config marca DisableLoginBeforeJoin como true y usa /reload si esto es un problema."
 
 #: ../../TShockAPI/TShock.cs:944
 msgid "!!! > Set DisableUUIDLogin to true in the config file and /reload if this is a problem."
-msgstr ""
+msgstr "!!! > En el archivo config marca DisableUUIDLogin como true y usa /reload si esto es un problema."
 
 #: ../../TShockAPI/TShock.cs:949
 msgid "!!! Login before join is enabled. Existing accounts can login & the server password will be bypassed."
