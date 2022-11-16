@@ -79,14 +79,17 @@ Use past tense when adding new entries; sign your name off when you add or chang
 
 ## Upcoming changes
 * Your changes could be here!
-* Changed hook by adding `GetDataHandlers.HandleProjectileNew` `AI[2]`.(@ATFGK, #2804)
-* Changed hook by adding `GetDataHandlers.OnPlayerZone` `Zone5`.
-* Changed hook by adding `GetDataHandlers.OnPaintTile` `coatTile`.
-* Changed hook by adding `GetDataHandlers.OnPaintWall` `coatWall`.
-* Changed hook by adding `GetDataHandlers.OnPlayerDamage` `CooldownCounter`.
-* Changed hook by adding `GetDataHandlers.OnPlaceObject` `Random`.
-* Changed `GetDataHandlers.HandleNpcTeleportPortal` update `npcIndex` to `ushort`.
-* Changed `TSPlayer.Spawn` added `numberOfDeathsPVE` and `numberOfDeathsPVP`.
+* Fixed wrong MaxProjDamage trigger.(@ATFGK, #2804)
+* Fixed incorrect Spawn information.(@ATFGK, #2804)
+* New argument `AI[2]` added to hook `GetDataHandlers.HandleProjectileNew`.(@ATFGK)
+* New argument `Zone5` added to hook `GetDataHandlers.OnPlayerZone`.(@ATFGK)
+* New argument `coatTile` added to hook `GetDataHandlers.OnPaintTile`.(@ATFGK)
+* New argument `coatWall` added to hook `GetDataHandlers.OnPaintWall`.(@ATFGK)
+* New argument `CooldownCounter` added to hook `GetDataHandlers.OnPlayerDamage`.(@ATFGK)
+* New argument `Random` added to hook `GetDataHandlers.OnPlaceObject`.(@ATFGK)
+* New argument `numberOfDeathsPVE` and `numberOfDeathsPVP` added to hook `GetDataHandlers.OnPlayerSpawn`.(@ATFGK)
+* New argument `numberOfDeathsPVE` and `numberOfDeathsPVP` added to `TSPlayer.Spawn`.(@ATFGK)
+* Update argument `npcIndex` in `GetDataHandlers.HandleNpcTeleportPortal` to `ushort`.(@ATFGK)
 
 ## TShock 5.1.2
 * Added support for Terraria 1.4.4.8.1 via OTAPI 3.1.19. (@SignatureBeef)
