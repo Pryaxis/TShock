@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-11-10 08:27:04+0000\n"
-"PO-Revision-Date: 2022-11-16 12:19\n"
+"PO-Revision-Date: 2022-11-17 00:16\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -163,15 +163,15 @@ msgstr "!!! > En el archivo config marca DisableUUIDLogin como true y usa /reloa
 
 #: ../../TShockAPI/TShock.cs:949
 msgid "!!! Login before join is enabled. Existing accounts can login & the server password will be bypassed."
-msgstr ""
+msgstr "!!! Activado inicio de sesión antes de entrar. Las cuentas ya existentes pueden iniciar sesión omitiendo la contraseña del servidor."
 
 #: ../../TShockAPI/TShock.cs:938
 msgid "!!! The server password in config.json was overridden by the interactive prompt and will be ignored."
-msgstr ""
+msgstr "!!! La contraseña del servidor en config.json fue anulada por el diálogo interactivo, y será ignorada."
 
 #: ../../TShockAPI/TShock.cs:943
 msgid "!!! UUID login is enabled. If a user's UUID matches an account, the server password will be bypassed."
-msgstr ""
+msgstr "!!! El inicio de sesión UUID está habilitado. Si el UUID de un usuario coincide con una cuenta, la contraseña del servidor será omitida."
 
 #: ../../TShockAPI/Commands.cs:6409
 #, csharp-format
@@ -209,7 +209,7 @@ msgstr "(Mensaje del Servidor) "
 
 #: ../../TShockAPI/Configuration/TShockConfig.cs:492
 msgid "(Super Admin) "
-msgstr ""
+msgstr "(Super Admin) "
 
 #: ../../TShockAPI/Commands.cs:1461
 #, csharp-format
@@ -350,17 +350,17 @@ msgstr "{0} añadió la cuenta {1} al grupo {2}."
 #: ../../TShockAPI/GetDataHandlers.cs:3546
 #, csharp-format
 msgid "{0} applied advanced combat techniques volume 2!"
-msgstr ""
+msgstr "{0} aplicó el volumen 2 de técnicas avanzadas de combate!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3564
 #, csharp-format
 msgid "{0} applied advanced combat techniques!"
-msgstr ""
+msgstr "¡{0} aplicó técnicas avanzadas de combate!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3543
 #, csharp-format
 msgid "{0} applied traveling merchant's satchel!"
-msgstr ""
+msgstr "¡{0} ha aplicado satchel de mercader ambulante!"
 
 #: ../../TShockAPI/Commands.cs:1064
 #, csharp-format
@@ -371,7 +371,7 @@ msgstr "{0} intentó registrar la cuenta {1} pero ya está en uso."
 #: ../../TShockAPI/GetDataHandlers.cs:3212
 #, csharp-format
 msgid "{0} authenticated successfully as user {1}."
-msgstr ""
+msgstr "{0} se ha autenticado correctamente como usuario {1}."
 
 #: ../../TShockAPI/Commands.cs:905
 #, csharp-format
@@ -381,14 +381,14 @@ msgstr "{0} se ha autenticado correctamente como el usuario: {1}."
 #: ../../TShockAPI/TSPlayer.cs:1955
 #, csharp-format
 msgid "{0} banned {1} for '{2}'."
-msgstr ""
+msgstr "{0} baneó a {1} por '{2}'."
 
 #: ../../TShockAPI/Commands.cs:6051
 #, csharp-format
 msgid "{0} butchered {1} NPC."
 msgid_plural "{0} butchered {1} NPCs."
 msgstr[0] ""
-msgstr[1] ""
+msgstr[1] "{0} mató {1} NPC."
 
 #: ../../TShockAPI/Commands.cs:2462
 #, csharp-format
@@ -439,7 +439,7 @@ msgstr "{0} cambió la velocidad del viento a {1}."
 #, csharp-format
 msgid "{0} deleted {1} item within a radius of {2}."
 msgid_plural "{0} deleted {1} items within a radius of {2}."
-msgstr[0] ""
+msgstr[0] "{0} eliminó {1} objeto en un radio de {2}."
 msgstr[1] ""
 
 #: ../../TShockAPI/Commands.cs:5877
@@ -447,39 +447,39 @@ msgstr[1] ""
 msgid "{0} deleted {1} NPC within a radius of {2}."
 msgid_plural "{0} deleted {1} NPCs within a radius of {2}."
 msgstr[0] ""
-msgstr[1] ""
+msgstr[1] "{0} eliminó {1} NPC en un radio de {2}."
 
 #: ../../TShockAPI/Commands.cs:5902
 #, csharp-format
 msgid "{0} deleted {1} projectile within a radius of {2}."
 msgid_plural "{0} deleted {1} projectiles within a radius of {2}."
 msgstr[0] ""
-msgstr[1] ""
+msgstr[1] "{0} eliminó {1} proyectiles en un radio de {2}."
 
 #: ../../TShockAPI/Commands.cs:1887
 #, csharp-format
 msgid "{0} disabled halloween mode."
-msgstr ""
+msgstr "{0} ha desactivado el modo halloween."
 
 #: ../../TShockAPI/Commands.cs:1907
 #, csharp-format
 msgid "{0} disabled xmas mode."
-msgstr ""
+msgstr "{0} ha desactivado el modo navidad."
 
 #: ../../TShockAPI/TShock.cs:1385
 #, csharp-format
 msgid "{0} disconnected."
-msgstr ""
+msgstr "{0} se desconectó."
 
 #: ../../TShockAPI/Commands.cs:1885
 #, csharp-format
 msgid "{0} enabled halloween mode."
-msgstr ""
+msgstr "{0} ha activado el modo halloween."
 
 #: ../../TShockAPI/Commands.cs:1905
 #, csharp-format
 msgid "{0} enabled xmas mode."
-msgstr ""
+msgstr "{0} ha activado el modo navidad."
 
 #: ../../TShockAPI/Commands.cs:2469
 #, csharp-format
@@ -494,7 +494,7 @@ msgstr "{0} detuvo la lluvia de slimes."
 #: ../../TShockAPI/Commands.cs:706
 #, csharp-format
 msgid "{0} executed (args omitted): {1}{2}."
-msgstr ""
+msgstr "{0} ejecutó (argumentos omitidos): {1}{2}."
 
 #: ../../TShockAPI/Commands.cs:704
 #, csharp-format
@@ -511,7 +511,7 @@ msgstr "{0} falló en identificarse como el usuario: {1}."
 msgid "{0} gave you {1} {2}."
 msgid_plural "{0} gave you {1} {2}s."
 msgstr[0] ""
-msgstr[1] ""
+msgstr[1] "{0} te dio {1} {2}s."
 
 #: ../../TShockAPI/Commands.cs:4247
 #, csharp-format
@@ -546,7 +546,7 @@ msgstr "A {0} se le ha prohibido usar {1}."
 #: ../../TShockAPI/Commands.cs:6467
 #, csharp-format
 msgid "{0} has buffed you with {1} ({2}) for {3} seconds!"
-msgstr ""
+msgstr "¡{0} te ha potenciado con {1} ({2}) por {3} segundos!"
 
 #: ../../TShockAPI/Commands.cs:1186
 #, csharp-format
@@ -573,69 +573,69 @@ msgstr "{0} ha finalizado la invasión del Ejército del Antiguo."
 #: ../../TShockAPI/TShock.cs:1657
 #, csharp-format
 msgid "{0} has joined."
-msgstr ""
+msgstr "{0} se ha unido."
 
 #: ../../TShockAPI/TShock.cs:1661
 #, csharp-format
 msgid "{0} has joined. IP: {1}"
-msgstr ""
+msgstr "{0} se ha unido. IP: {1}"
 
 #: ../../TShockAPI/Commands.cs:5655
 #, csharp-format
 msgid "{0} has launched {1} into space."
-msgstr ""
+msgstr "{0} ha lanzado a {1} al espacio."
 
 #: ../../TShockAPI/Commands.cs:5653
 #, csharp-format
 msgid "{0} has launched herself into space."
-msgstr ""
+msgstr "{0} se lanzó ella misma al espacio."
 
 #: ../../TShockAPI/Commands.cs:5651
 #, csharp-format
 msgid "{0} has launched himself into space."
-msgstr ""
+msgstr "{0} se lanzó el mismo al espacio."
 
 #: ../../TShockAPI/TShock.cs:1384
 #, csharp-format
 msgid "{0} has left."
-msgstr ""
+msgstr "{0} ha salido."
 
 #: ../../TShockAPI/Commands.cs:5500
 #, csharp-format
 msgid "{0} has muted {1} for {2}."
-msgstr ""
+msgstr "{0} ha silenciado a {1} por {2}."
 
 #: ../../TShockAPI/Commands.cs:5999
 #, csharp-format
 msgid "{0} has respawned you."
-msgstr ""
+msgstr "{0} te ha reaparecido."
 
 #: ../../TShockAPI/GetDataHandlers.cs:3555
 #, csharp-format
 msgid "{0} has sent a request to the bunny delivery service!"
-msgstr ""
+msgstr "¡{0} ha enviado una solicitud al servicio de entrega de conejos!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3561
 #, csharp-format
 msgid "{0} has sent a request to the cat delivery service!"
-msgstr ""
+msgstr "¡{0} ha enviado una solicitud al servicio de entrega de gatos!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3558
 #, csharp-format
 msgid "{0} has sent a request to the dog delivery service!"
-msgstr ""
+msgstr "¡{0} ha enviado una solicitud al servicio de entrega de perros!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3552
 #, csharp-format
 msgid "{0} has sent a request to the slime delivery service!"
-msgstr ""
+msgstr "¡{0} ha enviado una solicitud al servicio de entrega de slimes!"
 
 #: ../../TShockAPI/Commands.cs:2878
 #, csharp-format
 msgid "{0} has spawned {1} {2} time."
 msgid_plural "{0} has spawned {1} {2} times."
 msgstr[0] ""
-msgstr[1] ""
+msgstr[1] "{0} ha invocado a {1} {2} veces."
 
 #: ../../TShockAPI/Commands.cs:2895
 #, csharp-format
