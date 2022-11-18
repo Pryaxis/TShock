@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-11-10 08:27:04+0000\n"
-"PO-Revision-Date: 2022-11-17 00:16\n"
+"PO-Revision-Date: 2022-11-18 00:32\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -645,7 +645,7 @@ msgstr "{0} ha invocado un Muro Carnoso."
 #: ../../TShockAPI/GetDataHandlers.cs:2620
 #, csharp-format
 msgid "{0} has SSC data in the database, but has the tshock.ignore.ssc permission. This means their SSC data is being ignored."
-msgstr ""
+msgstr "{0} tiene datos SSC en la base de datos, pero posee el permiso tshock.ignore.ssc. Esto significa que sus datos SSC están siendo ignorados."
 
 #: ../../TShockAPI/Commands.cs:2342
 #, csharp-format
@@ -670,22 +670,22 @@ msgstr "{0} inició la invasión de la legión de escarcha."
 #: ../../TShockAPI/Commands.cs:5488
 #, csharp-format
 msgid "{0} has unmuted {1}."
-msgstr ""
+msgstr "{0} ha dessilenciado a {1}."
 
 #: ../../TShockAPI/Commands.cs:6356
 #, csharp-format
 msgid "{0} healed {1} for {2} HP."
-msgstr ""
+msgstr "{0} ha curado a {1} por {2} HP."
 
 #: ../../TShockAPI/Commands.cs:6354
 #, csharp-format
 msgid "{0} healed herself for {1} HP."
-msgstr ""
+msgstr "{0} se curó a sí misma por {1} HP."
 
 #: ../../TShockAPI/Commands.cs:6352
 #, csharp-format
 msgid "{0} healed himself for {1} HP."
-msgstr ""
+msgstr "{0} se curó a sí mismo por {1} HP."
 
 #: ../../TShockAPI/Commands.cs:4250
 #, csharp-format
@@ -705,7 +705,7 @@ msgstr "{0} ya tiene permiso de usar el proyectil {1}."
 #: ../../TShockAPI/Commands.cs:5940
 #, csharp-format
 msgid "{0} is already dead!"
-msgstr ""
+msgstr "¡{0} ya está muerto!"
 
 #: ../../TShockAPI/Commands.cs:3956
 #, csharp-format
@@ -725,18 +725,18 @@ msgstr "A {0} ya se le ha prohibido usar el proyectil {1}."
 #: ../../TShockAPI/ItemBans.cs:234
 #, csharp-format
 msgid "{0} is banned! Remove it!"
-msgstr ""
+msgstr "¡{0} es un objeto prohibido! ¡Desequípalo!"
 
 #: ../../TShockAPI/Commands.cs:6751
 #, csharp-format
 msgid "{0} is no longer in god mode."
-msgstr ""
+msgstr "{0} ya no está en modo dios."
 
 #: ../../TShockAPI/Commands.cs:5546
 #: ../../TShockAPI/Commands.cs:5577
 #, csharp-format
 msgid "{0} is not accepting whispers."
-msgstr ""
+msgstr "{0} no está aceptando susurros."
 
 #: ../../TShockAPI/Commands.cs:3875
 #: ../../TShockAPI/Commands.cs:3946
@@ -747,17 +747,17 @@ msgstr "{0} no está baneado(a)."
 #: ../../TShockAPI/Commands.cs:5990
 #, csharp-format
 msgid "{0} is not dead!"
-msgstr ""
+msgstr "¡{0} no esta muerto!"
 
 #: ../../TShockAPI/Commands.cs:6750
 #, csharp-format
 msgid "{0} is now in god mode."
-msgstr ""
+msgstr "{0} está ahora en modo dios."
 
 #: ../../TShockAPI/Commands.cs:5586
 #, csharp-format
 msgid "{0} is offline and cannot receive your reply."
-msgstr ""
+msgstr "{0} está desconectado y no puede recibir tu respuesta."
 
 #: ../../TShockAPI/Commands.cs:5949
 #: ../../TShockAPI/Rest/RestManager.cs:1068
@@ -773,7 +773,7 @@ msgstr "{0} expulsó a {1} por '{2}'"
 #: ../../TShockAPI/Commands.cs:5746
 #, csharp-format
 msgid "{0} launched fireworks on you."
-msgstr ""
+msgstr "{0} lanzó fuegos artificiales sobre ti."
 
 #: ../../TShockAPI/Rest/RestManager.cs:847
 #, csharp-format
@@ -795,7 +795,7 @@ msgstr "{0} restante(s)."
 #: ../../TShockAPI/Commands.cs:6196
 #, csharp-format
 msgid "{0} renamed the {1}."
-msgstr ""
+msgstr "{0} renombró a {1}."
 
 #: ../../TShockAPI/Commands.cs:4574
 #, csharp-format
@@ -833,7 +833,7 @@ msgstr "{0} abofeteó por {2} de daño a {1}."
 msgid "{0} spawned {1} {2} time."
 msgid_plural "{0} spawned {1} {2} times."
 msgstr[0] ""
-msgstr[1] ""
+msgstr[1] "{0} invocó a {1} {2} veces."
 
 #: ../../TShockAPI/Commands.cs:2290
 #, csharp-format
@@ -869,7 +869,7 @@ msgstr "¡{0} inició la luna helada en la ronda {1}!"
 #: ../../TShockAPI/GetDataHandlers.cs:4152
 #, csharp-format
 msgid "{0} started the Old One's Army event!"
-msgstr ""
+msgstr "¡{0} inició el evento del Ejército del Antiguo!"
 
 #: ../../TShockAPI/Commands.cs:2373
 #, csharp-format
@@ -904,42 +904,42 @@ msgstr "{0} eliminó exitosamente la cuenta: {1}."
 #: ../../TShockAPI/GetDataHandlers.cs:3567
 #, csharp-format
 msgid "{0} summoned a Blood Moon!"
-msgstr ""
+msgstr "¡{0} invocó una Luna de Sangre!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3579
 #, csharp-format
 msgid "{0} summoned a frost moon!"
-msgstr ""
+msgstr "¡{0} invocó una Luna Helada!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3591
 #, csharp-format
 msgid "{0} summoned a Goblin Invasion!"
-msgstr ""
+msgstr "¡{0} ha invocado una Invasión de Duendes!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3573
 #, csharp-format
 msgid "{0} summoned a Martian invasion!"
-msgstr ""
+msgstr "¡{0} invocó una invasión Marciana!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3549
 #, csharp-format
 msgid "{0} summoned a Mechdusa!"
-msgstr ""
+msgstr "¡{0} ha invocado a Mechdusa!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3570
 #, csharp-format
 msgid "{0} summoned a Moon Lord!"
-msgstr ""
+msgstr "¡{0} ha invocado al Señor de la Luna!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3582
 #, csharp-format
 msgid "{0} summoned a pumpkin moon!"
-msgstr ""
+msgstr "¡{0} invocó una Luna Calabaza!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3576
 #, csharp-format
 msgid "{0} summoned an eclipse!"
-msgstr ""
+msgstr "¡{0} invocó un eclipse!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3598
 #, csharp-format
