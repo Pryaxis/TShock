@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-11-10 08:27:04+0000\n"
-"PO-Revision-Date: 2022-11-15 19:27\n"
+"PO-Revision-Date: 2022-11-18 20:46\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -104,12 +104,12 @@ msgstr " -> {0} adına {1} grubuna giriş yapıldı."
 #: ../../TShockAPI/Commands.cs:1398
 #, csharp-format
 msgid "- {0} are provided when you add a ban, and can also be viewed with the {1} command."
-msgstr ""
+msgstr "- {0} (bilet numaras) bir ban eklediğinizde verilecektir ve ayrıca {1} komutu ile de görülebilir."
 
 #: ../../TShockAPI/Commands.cs:1414
 #, csharp-format
 msgid "- {0} are provided when you add a ban, and can be found with the {1} command."
-msgstr ""
+msgstr "- {0} bir ban eklediğinizde verilecektir ve ayrıca {1} komutu ile de görülebilir."
 
 #: ../../TShockAPI/Commands.cs:1388
 #, csharp-format
@@ -295,7 +295,7 @@ msgstr "{0} {1} {2}"
 #: ../../TShockAPI/Commands.cs:1464
 #, csharp-format
 msgid "{0} {1} on {2} ({3} ago)"
-msgstr ""
+msgstr "{1} , {0} tarafından {2} 'de banlandı. ({3} önce)"
 
 #: ../../TShockAPI/Commands.cs:6368
 #, csharp-format
@@ -511,7 +511,7 @@ msgstr "{0} şu kullanıcıya girişi başarısız oldu: {1}."
 msgid "{0} gave you {1} {2}."
 msgid_plural "{0} gave you {1} {2}s."
 msgstr[0] ""
-msgstr[1] ""
+msgstr[1] "{0} sana {1} {2} verdi."
 
 #: ../../TShockAPI/Commands.cs:4247
 #, csharp-format
@@ -546,7 +546,7 @@ msgstr "{0} {1} kullanabilmesi için izin verilmedi."
 #: ../../TShockAPI/Commands.cs:6467
 #, csharp-format
 msgid "{0} has buffed you with {1} ({2}) for {3} seconds!"
-msgstr ""
+msgstr "{0} seni {3} saniyeliğine {1} ile ({2}) buffladı!"
 
 #: ../../TShockAPI/Commands.cs:1186
 #, csharp-format
@@ -563,12 +563,12 @@ msgstr "{0} gelen ışınlanmaları devre dışı bıraktı."
 #: ../../TShockAPI/Commands.cs:2412
 #, csharp-format
 msgid "{0} has ended the current invasion event."
-msgstr ""
+msgstr "{0} geçerli istilayı bitirdi."
 
 #: ../../TShockAPI/Commands.cs:2408
 #, csharp-format
 msgid "{0} has ended the Old One's Army event."
-msgstr ""
+msgstr "{0} Eski Varlığın Ordusu etkinliğini bitirdi."
 
 #: ../../TShockAPI/TShock.cs:1657
 #, csharp-format
@@ -583,27 +583,27 @@ msgstr "{0} katıldı. IP: {1}"
 #: ../../TShockAPI/Commands.cs:5655
 #, csharp-format
 msgid "{0} has launched {1} into space."
-msgstr ""
+msgstr "{0}, {1}'i uzaya uçurdu."
 
 #: ../../TShockAPI/Commands.cs:5653
 #, csharp-format
 msgid "{0} has launched herself into space."
-msgstr ""
+msgstr "{0} kendini uzaya uçurdu."
 
 #: ../../TShockAPI/Commands.cs:5651
 #, csharp-format
 msgid "{0} has launched himself into space."
-msgstr ""
+msgstr "{0} kendini uzaya uçurdu."
 
 #: ../../TShockAPI/TShock.cs:1384
 #, csharp-format
 msgid "{0} has left."
-msgstr ""
+msgstr "{0} ayrıldı."
 
 #: ../../TShockAPI/Commands.cs:5500
 #, csharp-format
 msgid "{0} has muted {1} for {2}."
-msgstr ""
+msgstr "{0} {1}'i {2} sebebiyle susturdu."
 
 #: ../../TShockAPI/Commands.cs:5999
 #, csharp-format
@@ -613,29 +613,29 @@ msgstr "{0} seni yeniden canlandırdı."
 #: ../../TShockAPI/GetDataHandlers.cs:3555
 #, csharp-format
 msgid "{0} has sent a request to the bunny delivery service!"
-msgstr ""
+msgstr "{0} tavşan teslimat servisine bir sipariş verdi!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3561
 #, csharp-format
 msgid "{0} has sent a request to the cat delivery service!"
-msgstr ""
+msgstr "{0} kedi teslimat servisine bir sipariş verdi!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3558
 #, csharp-format
 msgid "{0} has sent a request to the dog delivery service!"
-msgstr ""
+msgstr "{0} köpek teslimat servisine bir sipariş verdi!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3552
 #, csharp-format
 msgid "{0} has sent a request to the slime delivery service!"
-msgstr ""
+msgstr "{0} slime teslimat servisine bir sipariş verdi!"
 
 #: ../../TShockAPI/Commands.cs:2878
 #, csharp-format
 msgid "{0} has spawned {1} {2} time."
 msgid_plural "{0} has spawned {1} {2} times."
 msgstr[0] ""
-msgstr[1] ""
+msgstr[1] "{0} {2} kere {1} spawnladı."
 
 #: ../../TShockAPI/Commands.cs:2895
 #, csharp-format
