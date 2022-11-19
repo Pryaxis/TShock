@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-11-10 08:27:04+0000\n"
-"PO-Revision-Date: 2022-11-18 20:46\n"
+"PO-Revision-Date: 2022-11-19 09:11\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -635,7 +635,7 @@ msgstr "{0} slime teslimat servisine bir sipariş verdi!"
 msgid "{0} has spawned {1} {2} time."
 msgid_plural "{0} has spawned {1} {2} times."
 msgstr[0] ""
-msgstr[1] "{0} {2} kere {1} spawnladı."
+msgstr[1] "{0} {2} kere {1} çağırdı."
 
 #: ../../TShockAPI/Commands.cs:2895
 #, csharp-format
@@ -645,7 +645,7 @@ msgstr "{0} Wall of Flesh çağırdı."
 #: ../../TShockAPI/GetDataHandlers.cs:2620
 #, csharp-format
 msgid "{0} has SSC data in the database, but has the tshock.ignore.ssc permission. This means their SSC data is being ignored."
-msgstr ""
+msgstr "{0} 'ın veritabanında SSC bilgisi bulunmakta fakat tshock.ignore.ssc yetkisine sahip. Yani, SSC bilgisi bu yetkiden dolayı kullanılmamakta."
 
 #: ../../TShockAPI/Commands.cs:2342
 #, csharp-format
@@ -670,37 +670,37 @@ msgstr "{0} kış istilasını başlattı."
 #: ../../TShockAPI/Commands.cs:5488
 #, csharp-format
 msgid "{0} has unmuted {1}."
-msgstr ""
+msgstr "{0}, {1} 'i susturmayı bıraktı."
 
 #: ../../TShockAPI/Commands.cs:6356
 #, csharp-format
 msgid "{0} healed {1} for {2} HP."
-msgstr ""
+msgstr "{0} {1}'i {2} HP iyileştirdi."
 
 #: ../../TShockAPI/Commands.cs:6354
 #, csharp-format
 msgid "{0} healed herself for {1} HP."
-msgstr ""
+msgstr "{0} kendini {1} HP iyileştirdi."
 
 #: ../../TShockAPI/Commands.cs:6352
 #, csharp-format
 msgid "{0} healed himself for {1} HP."
-msgstr ""
+msgstr "{0} kendini {1} HP iyileştirdi."
 
 #: ../../TShockAPI/Commands.cs:4250
 #, csharp-format
 msgid "{0} is already allowed to place tile {1}."
-msgstr ""
+msgstr "{0} zaten {1} yerleştirme yetkisine sahip."
 
 #: ../../TShockAPI/Commands.cs:3885
 #, csharp-format
 msgid "{0} is already allowed to use {1}."
-msgstr ""
+msgstr "{0} zaten {1} kullanma yetkisine sahip."
 
 #: ../../TShockAPI/Commands.cs:4074
 #, csharp-format
 msgid "{0} is already allowed to use projectile {1}."
-msgstr ""
+msgstr "{0} zaten {1} mermisini kullanma yetkisine sahip."
 
 #: ../../TShockAPI/Commands.cs:5940
 #, csharp-format
@@ -710,17 +710,17 @@ msgstr "{0} zaten ölü!"
 #: ../../TShockAPI/Commands.cs:3956
 #, csharp-format
 msgid "{0} is already disallowed to use {1}."
-msgstr ""
+msgstr "{0} zaten {1} kullanma yetkisine sahip değil."
 
 #: ../../TShockAPI/Commands.cs:4309
 #, csharp-format
 msgid "{0} is already prevented from placing tile {1}."
-msgstr ""
+msgstr "{0} zaten {1} yerleştirme yetkisine sahip değil."
 
 #: ../../TShockAPI/Commands.cs:4133
 #, csharp-format
 msgid "{0} is already prevented from using projectile {1}."
-msgstr ""
+msgstr "{0} zaten {1} mermisini kullanma yetkisine sahip değil."
 
 #: ../../TShockAPI/ItemBans.cs:234
 #, csharp-format
@@ -773,7 +773,7 @@ msgstr "{0} {1} adlı kullanıcıyı '{2}' sebebiyle attı"
 #: ../../TShockAPI/Commands.cs:5746
 #, csharp-format
 msgid "{0} launched fireworks on you."
-msgstr ""
+msgstr "{0} senin üstünde havai fişek patlattı."
 
 #: ../../TShockAPI/Rest/RestManager.cs:847
 #, csharp-format
@@ -785,7 +785,7 @@ msgstr[1] "{killcount} NPC öldürüldü."
 #: ../../TShockAPI/Commands.cs:1058
 #, csharp-format
 msgid "{0} registered an account: \"{1}\"."
-msgstr ""
+msgstr "{0} \"{1}\" hesabını kaydetti."
 
 #: ../../TShockAPI/Commands.cs:1478
 #, csharp-format
@@ -795,7 +795,7 @@ msgstr "{0} kaldı."
 #: ../../TShockAPI/Commands.cs:6196
 #, csharp-format
 msgid "{0} renamed the {1}."
-msgstr ""
+msgstr "{0} {1} 'in adını değiştirdi."
 
 #: ../../TShockAPI/Commands.cs:4574
 #, csharp-format
@@ -833,7 +833,7 @@ msgstr "{0} {1} adlı oyuncuyu {2} hasarla tokatladı."
 msgid "{0} spawned {1} {2} time."
 msgid_plural "{0} spawned {1} {2} times."
 msgstr[0] ""
-msgstr[1] ""
+msgstr[1] "{0} {2} kere {1} çağırdı."
 
 #: ../../TShockAPI/Commands.cs:2290
 #, csharp-format
@@ -848,7 +848,7 @@ msgstr "{0} tam ay başlattı."
 #: ../../TShockAPI/Commands.cs:2500
 #, csharp-format
 msgid "{0} started a lantern night."
-msgstr ""
+msgstr "{0} bir fener gecesi başlattı."
 
 #: ../../TShockAPI/Commands.cs:2427
 #, csharp-format
@@ -863,38 +863,38 @@ msgstr "{0} tutulma başlattı."
 #: ../../TShockAPI/Commands.cs:2391
 #, csharp-format
 msgid "{0} started the frost moon at wave {1}!"
-msgstr ""
+msgstr "{0} {1}. dalgadan buz ayını başlattı!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:4150
 #: ../../TShockAPI/GetDataHandlers.cs:4152
 #, csharp-format
 msgid "{0} started the Old One's Army event!"
-msgstr ""
+msgstr "{0} Eski Varlığın Ordusu etkinliğini başlattı!"
 
 #: ../../TShockAPI/Commands.cs:2373
 #, csharp-format
 msgid "{0} started the pumpkin moon at wave {1}!"
-msgstr ""
+msgstr "{0} {1}. dalgadan balkabağı ayını başlattı!"
 
 #: ../../TShockAPI/Commands.cs:2321
 #, csharp-format
 msgid "{0} stopped an eclipse."
-msgstr ""
+msgstr "{0} bir tutulmayı durdurdu."
 
 #: ../../TShockAPI/Commands.cs:2294
 #, csharp-format
 msgid "{0} stopped the current blood moon."
-msgstr ""
+msgstr "{0} şu anki kan ayını durdurdu."
 
 #: ../../TShockAPI/Commands.cs:2422
 #, csharp-format
 msgid "{0} stopped the current sandstorm event."
-msgstr ""
+msgstr "{0} şu anki kum fırtınası etkinliğini durdurdu."
 
 #: ../../TShockAPI/Commands.cs:2504
 #, csharp-format
 msgid "{0} stopped the lantern night."
-msgstr ""
+msgstr "{0} fener gecesi etkinliğini durdurdu."
 
 #: ../../TShockAPI/Commands.cs:1132
 #, csharp-format
@@ -904,42 +904,42 @@ msgstr "{0} başarıyla hesabı sildi: {1}."
 #: ../../TShockAPI/GetDataHandlers.cs:3567
 #, csharp-format
 msgid "{0} summoned a Blood Moon!"
-msgstr ""
+msgstr "{0} bir Kan Ayı başlattı!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3579
 #, csharp-format
 msgid "{0} summoned a frost moon!"
-msgstr ""
+msgstr "{0} bir Buz Ayı başlattı!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3591
 #, csharp-format
 msgid "{0} summoned a Goblin Invasion!"
-msgstr ""
+msgstr "{0} bir Goblin İstilası başlattı!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3573
 #, csharp-format
 msgid "{0} summoned a Martian invasion!"
-msgstr ""
+msgstr "{0} bir Marslı İstilası başlattı!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3549
 #, csharp-format
 msgid "{0} summoned a Mechdusa!"
-msgstr ""
+msgstr "{0} bir Mechdusa çağırdı!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3570
 #, csharp-format
 msgid "{0} summoned a Moon Lord!"
-msgstr ""
+msgstr "{0} Ay'ın Efendisi'ni çağırdı!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3582
 #, csharp-format
 msgid "{0} summoned a pumpkin moon!"
-msgstr ""
+msgstr "{0} bir Balkabağı Ayı çağırdı!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3576
 #, csharp-format
 msgid "{0} summoned an eclipse!"
-msgstr ""
+msgstr "{0} bir tutulma çağırdı!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3598
 #, csharp-format
@@ -950,12 +950,12 @@ msgstr "{0} {1} çağırdı!"
 #: ../../TShockAPI/GetDataHandlers.cs:2980
 #, csharp-format
 msgid "{0} summoned the Empress of Light!"
-msgstr ""
+msgstr "{0} Işıkların İmparatoriçesi'ni çağırdı!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3585
 #, csharp-format
 msgid "{0} summoned the Pirates!"
-msgstr ""
+msgstr "{0} Korsanları çağırdı!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3588
 #, csharp-format
@@ -1297,7 +1297,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:2626
 msgid "all bosses"
-msgstr ""
+msgstr "tüm bosslar"
 
 #: ../../TShockAPI/Commands.cs:2104
 msgid "All REST tokens have been destroyed."
@@ -1314,31 +1314,31 @@ msgstr "allow <item> <group> - Gruba eşya kullanma izni verir."
 
 #: ../../TShockAPI/Commands.cs:4150
 msgid "allow <projectile ID> <group> - Allows a group to use a projectile."
-msgstr ""
+msgstr "allow <projectile ID> <group> - bir gruba ID'si verilen mermiyi kullanma izni sağlar."
 
 #: ../../TShockAPI/Commands.cs:4326
 msgid "allow <tile ID> <group> - Allows a group to place a tile."
-msgstr ""
+msgstr "allow <tile ID> <group> - bir gruba ID'si verilen karoyu yerleştirme izni sağlar."
 
 #: ../../TShockAPI/Commands.cs:5193
 msgid "allow <user> <region> - Allows a user to a region."
-msgstr ""
+msgstr "allow <user> <region> - Bir kullanıcıya bir bölge izni verir."
 
 #: ../../TShockAPI/Commands.cs:5195
 msgid "allowg <group> <region> - Allows a user group to a region."
-msgstr ""
+msgstr "allowg <group> <region> - Bir kullanıcı grubuna bölge izni verir."
 
 #: ../../TShockAPI/Commands.cs:6670
 msgid "Amber Gemtree"
-msgstr ""
+msgstr "Kehribar Taşağacı"
 
 #: ../../TShockAPI/Commands.cs:6650
 msgid "Amethyst Gemtree"
-msgstr ""
+msgstr "Ametist Taşağacı"
 
 #: ../../TShockAPI/TShock.cs:983
 msgid "An account has been detected in the user database, but setup-code.txt is still present."
-msgstr ""
+msgstr "Veritabanında bir hesap bulundu, fakat setup-code.txt de hala mevcut."
 
 #: ../../TShockAPI/DB/GroupManager.cs:474
 #, csharp-format
@@ -1352,7 +1352,7 @@ msgstr "Veritabanı etkileşiminde bir hata oluştu: {0}"
 
 #: ../../TShockAPI/TShock.cs:1476
 msgid "An exception occurred executing a command."
-msgstr ""
+msgstr "Bir komutu uygularken hata oluştu."
 
 #: ../../TShockAPI/DB/BanManager.cs:644
 msgid "An identifier for a character name."
@@ -1369,20 +1369,20 @@ msgstr "UUID için belirteç."
 #: ../../TShockAPI/DB/BanManager.cs:636
 #, csharp-format
 msgid "An identifier for an IP Address in octet format. e.g., '{0}'."
-msgstr ""
+msgstr "Bir IP adresi için oktet formatında tanımlayıcı, örn., '{0}'."
 
 #: ../../TShockAPI/Commands.cs:2052
 msgid "An update check has been queued. If an update is available, you will be notified shortly."
-msgstr ""
+msgstr "Güncelleme kontrolü sıraya alındı. Eğer bir güncelleme varsa kısa bir süre içerisinde haberdar olacaksınız."
 
 #: ../../TShockAPI/Commands.cs:5599
 msgid "Annoy Syntax"
-msgstr ""
+msgstr "Rahatsız Et Söz Dizimi"
 
 #: ../../TShockAPI/Commands.cs:5616
 #, csharp-format
 msgid "Annoying {0} for {1} seconds."
-msgstr ""
+msgstr "{0}, {1} saniye rahatsız ediliyor."
 
 #: ../../TShockAPI/Commands.cs:338
 msgid "Annoys a player for an amount of time."
@@ -1395,19 +1395,19 @@ msgstr "REST çıkışı istendi: {0}"
 
 #: ../../TShockAPI/Commands.cs:5224
 msgid "Anti-build is now off."
-msgstr ""
+msgstr "Anti-build artık kapalı."
 
 #: ../../TShockAPI/Commands.cs:5224
 msgid "Anti-build is now on."
-msgstr ""
+msgstr "Anti-build artık açık."
 
 #: ../../TShockAPI/Commands.cs:3204
 msgid "Arguments: add [warp name], del [warp name], list [page]."
-msgstr ""
+msgstr "Komutlar: add [warp name], del [warp name], list [page]."
 
 #: ../../TShockAPI/Commands.cs:3205
 msgid "Arguments: send [player] [warp name], hide [warp name] [Enable(true/false)]."
-msgstr ""
+msgstr "Komutlar: send [player] [warp name], hide [warp name] [Enable(true/false)]."
 
 #: ../../TShockAPI/GetDataHandlers.cs:2636
 #: ../../TShockAPI/GetDataHandlers.cs:3211
@@ -1419,12 +1419,12 @@ msgstr "{0} adına giriş yapıldı."
 #: ../../TShockAPI/TShock.cs:427
 #: ../../TShockAPI/TShock.cs:1577
 msgid "AutoSave Disabled"
-msgstr ""
+msgstr "OtoKayıt Kapalı"
 
 #: ../../TShockAPI/TShock.cs:425
 #: ../../TShockAPI/TShock.cs:1575
 msgid "AutoSave Enabled"
-msgstr ""
+msgstr "OtoKayıt Açık"
 
 #: ../../TShockAPI/Rest/RestManager.cs:811
 msgid "AutoSave has been disabled"
@@ -1448,11 +1448,11 @@ msgstr "Var olan Yasaklama komutları:"
 
 #: ../../TShockAPI/Commands.cs:1432
 msgid "Available identifiers ({{0}}/{{1}}):"
-msgstr ""
+msgstr "Mevcut tanımlayıcılar ({{0}}/{{1}}):"
 
 #: ../../TShockAPI/Commands.cs:5208
 msgid "Available Region Sub-Commands ({{0}}/{{1}}):"
-msgstr ""
+msgstr "Mevcut Bölge Alt-Komutları ({{0}}/{{1}}):"
 
 #: ../../TShockAPI/Commands.cs:2109
 msgid "Available REST Sub-Commands:"
@@ -1473,11 +1473,11 @@ msgstr "Yedekleme İşlemi"
 
 #: ../../TShockAPI/TShock.cs:431
 msgid "Backups Disabled"
-msgstr ""
+msgstr "Yedekleme Kapalı"
 
 #: ../../TShockAPI/TShock.cs:429
 msgid "Backups Enabled"
-msgstr ""
+msgstr "Yedekleme Açık"
 
 #: ../../TShockAPI/Commands.cs:837
 msgid "Bad login attempt."
@@ -1492,7 +1492,7 @@ msgstr "ban {0}"
 #: ../../TShockAPI/Commands.cs:1372
 #, csharp-format
 msgid "ban {0} <Ban ID>"
-msgstr ""
+msgstr "ban {0} <Ban ID>"
 
 #: ../../TShockAPI/Commands.cs:1369
 #, csharp-format
@@ -1511,29 +1511,29 @@ msgstr "{0} yasağı artık süresi geçmiş olarak işaretlendi."
 
 #: ../../TShockAPI/Commands.cs:1383
 msgid "Ban Add Syntax"
-msgstr ""
+msgstr "Ban Ekle Söz Dizimi"
 
 #: ../../TShockAPI/Commands.cs:1490
 #, csharp-format
 msgid "Ban added. Ticket Number {0} was created for identifier {1}."
-msgstr ""
+msgstr "Ban eklendi. {1} tanımlayıcısı için {0} numaralı bilet oluşturuldu."
 
 #: ../../TShockAPI/Rest/RestManager.cs:668
 #, csharp-format
 msgid "Ban added. Ticket number: {0}"
-msgstr ""
+msgstr "Ban eklendi. Bilet numarası: {0}"
 
 #: ../../TShockAPI/Commands.cs:1396
 msgid "Ban Del Syntax"
-msgstr ""
+msgstr "Ban Sil Söz Dizimi"
 
 #: ../../TShockAPI/Commands.cs:1412
 msgid "Ban Details Syntax"
-msgstr ""
+msgstr "Ban Detayları Söz Dizimi"
 
 #: ../../TShockAPI/Commands.cs:1404
 msgid "Ban List Syntax"
-msgstr ""
+msgstr "Ban Listesi Söz Dizimi"
 
 #: ../../TShockAPI/Rest/RestManager.cs:695
 msgid "Ban removed."
@@ -1541,12 +1541,12 @@ msgstr "Yasak kaldırıldı."
 
 #: ../../TShockAPI/Commands.cs:1442
 msgid "Ban Usage Examples"
-msgstr ""
+msgstr "Ban Kullanımı Örnekleri"
 
 #: ../../TShockAPI/Commands.cs:3841
 #, csharp-format
 msgid "Banned {0}."
-msgstr ""
+msgstr "{0} banlandı."
 
 #: ../../TShockAPI/Commands.cs:4037
 #, csharp-format
@@ -1561,7 +1561,7 @@ msgstr "{0} karosu yasaklandı."
 #: ../../TShockAPI/TSPlayer.cs:1950
 #, csharp-format
 msgid "Banned: {0}"
-msgstr ""
+msgstr "Banlananlar: {0}."
 
 #: ../../TShockAPI/Commands.cs:1517
 msgid "Banned."
@@ -1569,11 +1569,11 @@ msgstr "Yasaklandı."
 
 #: ../../TShockAPI/Commands.cs:1670
 msgid "Bans ({{0}}/{{1}}):"
-msgstr ""
+msgstr "Banlar ({{0}}/{{1}}):"
 
 #: ../../TShockAPI/Commands.cs:6592
 msgid "Basic Tree"
-msgstr ""
+msgstr "Temel Ağaç"
 
 #: ../../TShockAPI/Commands.cs:2755
 msgid "Betsy"
@@ -1582,7 +1582,7 @@ msgstr "Betsy"
 #: ../../TShockAPI/Rest/RestManager.cs:889
 #, csharp-format
 msgid "Blood Moon has been set to {0}"
-msgstr ""
+msgstr "Kanlı Ay {0} 'a ayarlandı."
 
 #: ../../TShockAPI/Rest/RestManager.cs:904
 #, csharp-format
@@ -1591,7 +1591,7 @@ msgstr "Kanlı ay durumu: {0}"
 
 #: ../../TShockAPI/Commands.cs:6596
 msgid "Boreal Tree"
-msgstr ""
+msgstr "Boreal Ağacı"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3264
 #, csharp-format
