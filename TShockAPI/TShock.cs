@@ -1379,7 +1379,7 @@ namespace TShockAPI
 			if (tsplr.ReceivedInfo)
 			{
 				if (!tsplr.SilentKickInProgress && tsplr.State >= 3)
-					Utils.Broadcast(tsplr.Name + " has left.", Color.Yellow);
+					Utils.Broadcast(tsplr.Name + " [c/ff6464:h][c/ff6b65:a][c/ff7266:s] [c/ff8069:l][c/ff876a:e][c/ff8e6c:f][c/ff956d:t][c/ff9d6f:!]", Color.IndianRed);
 				Log.Info("{0} disconnected.", tsplr.Name);
 
 				if (tsplr.IsLoggedIn && !tsplr.IsDisabledPendingTrashRemoval && Main.ServerSideCharacter && (!tsplr.Dead || tsplr.TPlayer.difficulty != 2))
@@ -1642,14 +1642,14 @@ namespace TShockAPI
 									   player.Group.Name, player.Country, TShock.Utils.GetActivePlayerCount(),
 									   TShock.Config.Settings.MaxSlots));
 				if (!player.SilentJoinInProgress)
-					Utils.Broadcast(GetString("{0} ({1}) has joined.", player.Name, player.Country), Color.Yellow);
+					Utils.Broadcast(GetString("{0} ({1}) [c/8080ff:h][c/8073ff:a][c/8066ff:s] [c/804cff:j][c/8040ff:o][c/8033ff:i][c/8026ff:n][c/8019ff:e][c/800cff:d][c/8000ff:!]", player.Name, player.Country), Color.LightGreen);
 			}
 			else
 			{
 				Log.Info(GetString("{0} ({1}) from '{2}' group joined. ({3}/{4})", player.Name, player.IP,
 									   player.Group.Name, TShock.Utils.GetActivePlayerCount(), TShock.Config.Settings.MaxSlots));
 				if (!player.SilentJoinInProgress)
-					Utils.Broadcast(GetString("{0} has joined.", player.Name), Color.Yellow);
+					Utils.Broadcast(GetString("{0} [c/8080ff:h][c/8073ff:a][c/8066ff:s] [c/804cff:j][c/8040ff:o][c/8033ff:i][c/8026ff:n][c/8019ff:e][c/800cff:d][c/8000ff:!]", player.Name), Color.LightGreen);
 			}
 
 			if (Config.Settings.DisplayIPToAdmins)
