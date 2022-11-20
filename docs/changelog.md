@@ -78,7 +78,7 @@ Use past tense when adding new entries; sign your name off when you add or chang
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change. -->
 
 ## Upcoming changes
-* Your changes could be here!
+* Allowed Digging Molecart and bomb fish to break tiles and place tracks (@sgkoishi)
 
 ## TShock 5.1.2
 * Added support for Terraria 1.4.4.8.1 via OTAPI 3.1.19. (@SignatureBeef)
