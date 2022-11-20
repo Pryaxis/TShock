@@ -11,13 +11,26 @@ Console.WriteLine($"TShock Installer {typeof(Program).GetType().Assembly.GetName
 
 Console.WriteLine("Determining dotnet runtime url...");
 
+var arch = RuntimeInformation.ProcessArchitecture switch
+{
+	Architecture.X64 => "x64",
+	Architecture.Arm64 => "arm64",
+	_ => null
+};
+
+if (arch is null)
+{
+	Console.WriteLine($"{RuntimeInformation.ProcessArchitecture} is not yet supported via this installer.");
+	return;
+}
+
 string? url = null;
 if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-	url = "https://dotnetcli.azureedge.net/dotnet/Runtime/6.0.11/dotnet-runtime-6.0.11-osx-x64.tar.gz";
+	url = $"https://dotnetcli.azureedge.net/dotnet/Runtime/6.0.11/dotnet-runtime-6.0.11-osx-{arch}.tar.gz";
 else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-	url = "https://dotnetcli.azureedge.net/dotnet/Runtime/6.0.11/dotnet-runtime-6.0.11-win-x64.zip";
+	url = $"https://dotnetcli.azureedge.net/dotnet/Runtime/6.0.11/dotnet-runtime-6.0.11-win-{arch}.zip";
 else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-	url = "https://dotnetcli.azureedge.net/dotnet/Runtime/6.0.11/dotnet-runtime-6.0.11-linux-x64.tar.gz";
+	url = $"https://dotnetcli.azureedge.net/dotnet/Runtime/6.0.11/dotnet-runtime-6.0.11-linux-{arch}.tar.gz";
 
 if(url is null)
 {
