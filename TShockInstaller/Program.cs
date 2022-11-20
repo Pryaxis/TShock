@@ -36,7 +36,7 @@ if(url is null)
 {
 	Console.WriteLine("Unable to determine .net runtime to install. " +
 		"Refer to https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-install-script " +
-		"and install using --install-dir dotnet, so that the dotnet folder is beside TShock.Server.dll");
+		"and install using --install-dir dotnet, so that the dotnet folder is beside TShock.Server[.exe]");
 	return;
 }
 
