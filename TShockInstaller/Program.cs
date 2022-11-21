@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using ICSharpCode.SharpZipLib.GZip;
 using ICSharpCode.SharpZipLib.Tar;
 
-Console.WriteLine($"TShock Installer {typeof(Program).GetType().Assembly.GetName().Version}.");
+Console.WriteLine($"TShock Installer {typeof(Program).Assembly.GetName().Version}.");
 
 // reference: https://github.com/dotnet/install-scripts/blob/main/src/dotnet-install.sh
 // ./dotnet-install.sh -verbose -version 6.0.11 --runtime dotnet
