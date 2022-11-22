@@ -95,7 +95,14 @@ Console.WriteLine($"To be able to run {tshock_path} yourself set the environment
 Environment.SetEnvironmentVariable("DOTNET_ROOT", dotnet_root);
 
 Console.WriteLine($"Extracted, launching: {tshock_path}");
+
 var proc = new Process();
+
+Console.CancelKeyPress += (sender, e) =>
+{
+	e.Cancel = !proc.HasExited;
+};
+
 proc.StartInfo = new()
 {
 	 FileName = tshock_path,
