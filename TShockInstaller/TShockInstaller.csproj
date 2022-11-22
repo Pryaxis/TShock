@@ -8,6 +8,7 @@
     <Version>5.0.0</Version>
     <PublishTrimmed>true</PublishTrimmed>
     <AssemblyName>TShock.Installer</AssemblyName>
+    <DebugType>embedded</DebugType>
   </PropertyGroup>
 
   <ItemGroup>
