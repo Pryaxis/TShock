@@ -62,6 +62,7 @@ postbuild.bat
 ##################
 *.dotCover
 _ReSharper.*
+.idea
 
 # GTFO NuGet stuff #
 ####################
