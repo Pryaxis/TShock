@@ -5,7 +5,6 @@ using Microsoft.Extensions.Configuration;
 using TShockAPI.DB;
 using TShockAPI.Models;
 using TShockAPI.Settings;
-using Region = TShockAPI.DB.Region;
 
 namespace TShockAPI.Configurators;
 

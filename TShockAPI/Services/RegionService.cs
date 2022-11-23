@@ -15,24 +15,47 @@ public sealed class RegionService : DatabaseService<Region>
 	/// </summary>
 	/// <param name="contextFactory">Factory for creating database contexts</param>
 	public RegionService(IDbContextFactory<EntityContext<Region>> contextFactory)
-		: base(contextFactory)
+		: base(contextFactory) { }
+
+	/// <summary>
+	/// Creates a region, optionally allowing context re-use.
+	/// </summary>
+	/// <param name="region">The region to create</param>
+	/// <param name="context">Optional context, to perform multiple actions as a single unit of work</param>
+	public void CreateRegion(Region region, EntityContext<Region>? context = null)
 	{
+		ContextSafeFunc(ctx => ctx.Add(region), context);
 	}
 
 	/// <summary>
-	/// Retrieves a region by its ID, optionally allowing context re-use.
+	/// Retrieves a region by its name and world ID, optionally allowing context re-use.
 	/// </summary>
-	/// <param name="id">ID of the region to find</param>
-	/// <param name="context">Optional context, to perform multiple actions in a single unit of work</param>
-	/// <returns>A <see cref="Region"/> if one was found with a matching ID</returns>
-	public Region? GetRegion(int id, EntityContext<Region>? context = null)
+	/// <param name="name">Name of the region to find</param>
+	/// <param name="worldId">ID of the world the region is present in</param>
+	/// <param name="context">Optional context, to perform multiple actions as a single unit of work</param>
+	/// <returns>A <see cref="Region"/> if one was found matching the given name and world ID</returns>
+	public Region? GetRegion(string name, int worldId, EntityContext<Region>? context = null)
 	{
-		if (context == null)
-		{
-			using EntityContext<Region> singleUseContext = GetContext(saveOnDispose: true);
-			return singleUseContext.Find<Region>(id);
-		}
+		return ContextSafeFunc(ctx => ctx.Find<Region>(name, worldId), context);
+	}
 
-		return context.Find<Region>(id);
+	/// <summary>
+	/// Updates a region, optionally allowing context re-use.
+	/// </summary>
+	/// <param name="region">The region to update</param>
+	/// <param name="context">Optional context, to perform multiple actions as a single unit of work</param>
+	public void UpdateRegion(Region region, EntityContext<Region>? context = null)
+	{
+		ContextSafeFunc(ctx => ctx.Update(region), context);
+	}
+
+	/// <summary>
+	/// Deletes a region, optionally allowing context re-use.
+	/// </summary>
+	/// <param name="region">The region to delete</param>
+	/// <param name="context">Optional context, to perform multiple actions as a single unit of work</param>
+	public void DeleteRegion(Region region, EntityContext<Region>? context = null)
+	{
+		ContextSafeFunc(ctx => ctx.Remove(region), context);
 	}
 }

@@ -10,9 +10,13 @@ namespace TShockAPI.Models;
 public class Region
 {
 	/// <summary>
-	/// Database ID of the region.
+	/// User-provided Name of the region.
 	/// </summary>
-	public int Id { get; set; }
+	public string Name { get; set; } = null!;
+	/// <summary>
+	/// The ID of the world that the region exists in.
+	/// </summary>
+	public int WorldId { get; set; }
 	/// <summary>
 	/// Whether or not the region should be protected against unauthorised changes.
 	/// </summary>
@@ -48,5 +52,5 @@ public class Region
 	/// <summary>
 	/// The user account that owns the region.
 	/// </summary>
-	public UserAccount Owner { get; set; }
+	public UserAccount Owner { get; set; } = null!;
 }
