@@ -1,4 +1,4 @@
-using TerrariaApi.Server;
+using TerrariaApi.Server.Services;
 
 /// <summary>
 /// Service providing ban-related functionality

@@ -2,7 +2,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TerrariaApi.Configurator;
 using Microsoft.Extensions.Configuration;
-using TShockAPI.Configuration;
+using TShockAPI.DB;
+using TShockAPI.Models;
+using TShockAPI.Settings;
+using Region = TShockAPI.DB.Region;
 
 namespace TShockAPI.Configurators;
 
@@ -26,5 +29,9 @@ public sealed class TShockServiceConfigurator : ServiceConfigurator
 		services.Configure<AntiCheatSettings>(configuration.GetSection(nameof(AntiCheatSettings)));
 
 
+		// TODO: configure connection options and pass in here
+		services.AddDbContextFactory<EntityContext<Region>>();
+		services.AddDbContextFactory<EntityContext<UserGroup>>();
+		services.AddDbContextFactory<EntityContext<UserAccount>>();
 	}
 }

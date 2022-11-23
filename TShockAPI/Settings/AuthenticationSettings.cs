@@ -1,4 +1,4 @@
-namespace TShockAPI.Configuration;
+namespace TShockAPI.Settings;
 
 /// <summary>
 /// Settings specific to TShock user account authentication.

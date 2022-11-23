@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 using Terraria;
 using Terraria.IO;
 
-using TerrariaApi.Server;
+using TerrariaApi.Server.Services;
 
-using TShockAPI.Configuration;
+using TShockAPI.Settings;
 
 namespace TShockAPI.Services;
 
@@ -20,10 +20,10 @@ namespace TShockAPI.Services;
 /// </summary>
 public sealed class WorldSaveService : PluginService
 {
-	private IOptionsMonitor<SaveSettings> _saveSettings;
-	private CancellationToken _cancellationToken;
-	private ILogger<WorldSaveService> _logger;
-	private EventWaitHandle _waitHandle;
+	private readonly IOptionsMonitor<SaveSettings> _saveSettings;
+	private readonly CancellationToken _cancellationToken;
+	private readonly ILogger<WorldSaveService> _logger;
+	private readonly EventWaitHandle _waitHandle;
 
 	/// <summary>
 	/// Constructs a new world save service
@@ -67,15 +67,15 @@ public sealed class WorldSaveService : PluginService
 					WorldFile.SaveWorld(useCloudSaving: false, resetTime: resetTime);
 
 					TSPlayer.All.SendInfoMessage(settings.SaveMessage);
-					_logger.LogInformation("World saved at {worldPath}.", Main.worldPathName);
+					_logger.LogInformation("World saved at {WorldPath}", Main.worldPathName);
 				}
 				catch (Exception ex)
 				{
-					_logger.LogError(ex, "World save failed.");
+					_logger.LogError(ex, "World save failed");
 				}
 
 				_waitHandle.Set(); // Set the wait handle so the next queued save can proceed
 			}
-		});
+		}, _cancellationToken);
 	}
 }

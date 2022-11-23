@@ -1,4 +1,4 @@
-namespace TShockAPI.Configuration;
+namespace TShockAPI.Settings;
 
 /// <summary>
 /// Settings specific to the tile and world protection systems in TShock.

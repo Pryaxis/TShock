@@ -1,4 +1,4 @@
-namespace TShockAPI.Configuration;
+namespace TShockAPI.Settings;
 
 /// <summary>
 /// Settings specific to the setup of the server, such as password and port.

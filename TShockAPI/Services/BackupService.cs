@@ -5,8 +5,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 using Terraria;
-using TerrariaApi.Server;
-using TShockAPI.Configuration;
+using TerrariaApi.Server.Services;
+using TShockAPI.Settings;
 
 using Timer = System.Threading.Timer;
 
@@ -17,11 +17,11 @@ namespace TShockAPI.Services;
 /// </summary>
 public sealed class BackupService : PluginService
 {
-	private IOptionsMonitor<SaveSettings> _saveSettingsMonitor;
-	private WorldSaveService _saveService;
-	private ILogger<BackupService> _logger;
-	private Timer _backupTimer;
-	private Timer _deleteTimer;
+	private readonly IOptionsMonitor<SaveSettings> _saveSettingsMonitor;
+	private readonly WorldSaveService _saveService;
+	private readonly ILogger<BackupService> _logger;
+	private readonly Timer _backupTimer;
+	private readonly Timer _deleteTimer;
 
 	/// <summary>
 	/// Constructs a new BackupService with its required dependencies.
@@ -53,32 +53,33 @@ public sealed class BackupService : PluginService
 		_deleteTimer.Change(1000 * 60, 1000 * 60); // Delete timer will poll every minute
 	}
 
-	void DoBackup(object? state)
+	private void DoBackup(object? state)
 	{
 		try
 		{
 			// Load the current settings snapshot
 			SaveSettings settings = _saveSettingsMonitor.CurrentValue;
 
-			string worldname = Main.worldPathName;
-			string name = Path.GetFileName(worldname);
+			string worldName = Main.worldPathName;
+			string name = Path.GetFileName(worldName);
 
 			string backupRoot = Path.Combine(AppContext.BaseDirectory, settings.BackupRoot);
-			Main.ActiveWorldFileData._path = Path.Combine(backupRoot, string.Format("{0}.{1:yyyy-MM-ddTHH.mm.ssZ}.bak", name, DateTime.UtcNow));
+			Main.ActiveWorldFileData._path =
+				Path.Combine(backupRoot, $"{name}.{DateTime.UtcNow:yyyy-MM-ddTHH.mm.ssZ}.bak");
 
-			string? worldpath = Path.GetDirectoryName(Main.worldPathName);
-			if (worldpath != null && !Directory.Exists(worldpath))
+			string? worldPath = Path.GetDirectoryName(Main.worldPathName);
+			if (worldPath != null && !Directory.Exists(worldPath))
 			{
-				Directory.CreateDirectory(worldpath);
+				Directory.CreateDirectory(worldPath);
 			}
 
 			TSPlayer.All.SendInfoMessage(settings.SaveMessage);
 			_logger.LogDebug("Backing up world...");
 			_saveService.SaveWorld();
-			_logger.LogDebug("World backed up.");
-			_logger.LogInformation("World backed up ({worldName}).", Main.worldPathName);
+			_logger.LogDebug("World backed up");
+			_logger.LogInformation("World backed up ({WorldName})", Main.worldPathName);
 
-			Main.ActiveWorldFileData._path = worldname;
+			Main.ActiveWorldFileData._path = worldName;
 
 			// restart the timer
 			_backupTimer.Change(settings.BackupInterval * 60 * 1000, Timeout.Infinite);

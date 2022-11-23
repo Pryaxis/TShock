@@ -29,11 +29,13 @@
     <Authors>Pryaxis &amp; TShock Contributors</Authors>
     <Description>TShock is a toolbox for Terraria servers and communities.</Description>
     <PackageId>TShock</PackageId> <!-- package name for nuget, instead of TShockAPI -->
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="GetText.NET" Version="1.7.14" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.0" />
     <PackageReference Include="MySql.Data" Version="8.0.31" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="6.0.10" />
     <PackageReference Include="NLog.Extensions.Logging" Version="5.0.4" />
