@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using ICSharpCode.SharpZipLib.GZip;
 using ICSharpCode.SharpZipLib.Tar;
 
+Console.ForegroundColor = ConsoleColor.White;
 Console.WriteLine($"TShock Installer {typeof(Program).Assembly.GetName().Version}.");
 
 // reference: https://github.com/dotnet/install-scripts/blob/main/src/dotnet-install.sh
@@ -65,23 +66,37 @@ var tshock_path = "TShock.Server" + (is_targz ? "" : ".exe");
 
 if (!File.Exists(dotnet_path))
 {
-	Console.WriteLine("Extracting to ./dotnet/");
-	if (is_targz)
+	try
 	{
-		using var srm_dotnet_file = File.OpenRead(filename);
-		using var srm_gzip = new GZipInputStream(srm_dotnet_file);
+		Console.WriteLine("Extracting to ./dotnet/");
+		if (is_targz)
+		{
+			using var srm_dotnet_file = File.OpenRead(filename);
+			using var srm_gzip = new GZipInputStream(srm_dotnet_file);
 
-		using var tar_archive = TarArchive.CreateInputTarArchive(srm_gzip, System.Text.Encoding.UTF8);
-		tar_archive.ExtractContents("dotnet");
+			using var tar_archive = TarArchive.CreateInputTarArchive(srm_gzip, System.Text.Encoding.UTF8);
+			tar_archive.ExtractContents("dotnet");
 
-		[DllImport("libc", SetLastError = true)]
-		static extern int chmod(string pathname, int mode);
+			[DllImport("libc", SetLastError = true)]
+			static extern int chmod(string pathname, int mode);
 
-		chmod(dotnet_path, 755);
+			chmod(dotnet_path, 755);
+		}
+		else
+		{
+			ZipFile.ExtractToDirectory(filename, "dotnet");
+		}
 	}
-	else
+	catch (Exception ex)
 	{
-		ZipFile.ExtractToDirectory(filename, "dotnet");
+		Console.ForegroundColor = ConsoleColor.Red;
+		Console.Error.WriteLine($"Failed to extract {filename}. The archive will be removed. Restart the installer to begin the download again.");
+		Console.Error.WriteLine(ex);
+
+		if (File.Exists(filename))
+			File.Delete(filename);
+
+		return;
 	}
 }
 else
