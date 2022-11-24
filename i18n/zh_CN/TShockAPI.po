@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-11-10 08:27:04+0000\n"
-"PO-Revision-Date: 2022-11-17 12:25\n"
+"PO-Revision-Date: 2022-11-24 21:53\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -2446,7 +2446,7 @@ msgstr "Bouncer / OnTileEdit（物块防护）因物块放置速度{1}超过上�
 #: ../../TShockAPI/Bouncer.cs:769
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from tile placement not matching selected item createTile {0} {1} {2} selectedItemID:{3} createTile:{4}"
-msgstr "Bouncer / OnTileEdit（物块防护）因放置的物块与所持物品不匹配阻止了{0}。{1}，{2}，所持物品：{3}，创建的物块：{4}"
+msgstr "Bouncer / OnTileEdit（图格防护）因放置（{1}）的物块{2}与所持物品{3}的物块{4}不匹配阻止了{0}放置物块。"
 
 #: ../../TShockAPI/Bouncer.cs:759
 #, csharp-format
@@ -2456,7 +2456,7 @@ msgstr "Bouncer / OnTileEdit（物块防护）因使用了冰块法杖放置的�
 #: ../../TShockAPI/Bouncer.cs:778
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from wall placement not matching selected item createWall {0} {1} {2} selectedItemID:{3} createWall:{4}"
-msgstr "Bouncer / OnTileEdit（物块防护）因放置的墙壁与所持物品不匹配阻止了{0}。{1}，{2}，所持物品：{3}，创建的墙壁：{4}"
+msgstr "Bouncer / OnTileEdit（图格防护）因放置（{1}）的墙壁{2}与所持物品{3}的墙壁{4}不匹配阻止了{0}放置墙壁。"
 
 #: ../../TShockAPI/Bouncer.cs:968
 #, csharp-format
@@ -2486,17 +2486,17 @@ msgstr "Bouncer / OnUpdateNPCHome 因范围检查而拒绝了{0}"
 #: ../../TShockAPI/Handlers/SendTileRectHandler.cs:558
 #, csharp-format
 msgid "Bouncer / SendTileRect accepted clientside world edit from {0}"
-msgstr "Bouncer / SendTileRect（矩形物块操作防护）接受了{0}的客户端图格修改请求"
+msgstr "Bouncer / SendTileRect（矩形图格操作防护）接受了{0}的客户端图格修改请求"
 
 #: ../../TShockAPI/Handlers/SendTileRectHandler.cs:414
 #, csharp-format
 msgid "Bouncer / SendTileRect processing a tile conversion update - [{0}] -> [{1}]"
-msgstr "Bouncer / SendTileRect（矩形物块操作防护）正在处理物块转化（从{0}转化为{1}）"
+msgstr "Bouncer / SendTileRect（矩形图格操作防护）正在处理物块转化（从{0}转化为{1}）"
 
 #: ../../TShockAPI/Handlers/SendTileRectHandler.cs:429
 #, csharp-format
 msgid "Bouncer / SendTileRect processing a wall conversion update - [{0}] -> [{1}]"
-msgstr "Bouncer / SendTileRect（矩形物块操作防护）正在处理墙壁转化（从{0}转化为{1}）"
+msgstr "Bouncer / SendTileRect（矩形图格操作防护）正在处理墙壁转化（从{0}转化为{1}）"
 
 #: ../../TShockAPI/Handlers/SendTileRectHandler.cs:129
 #, csharp-format
@@ -2529,7 +2529,7 @@ msgstr "Bouncer / SendTileRect 因限流而拒绝了{0}"
 
 #: ../../TShockAPI/Handlers/SendTileRectHandler.cs:610
 msgid "Bouncer / SendTileRectHandler - rejected tile object because object dimensions fall outside the tile rect (excessive size)"
-msgstr "Bouncer / SendTileRechtHandler - 拒绝图格对象，因为对象尺寸不在图格矩形之内(过大)"
+msgstr "Bouncer / SendTileRectHandler（矩形图格操作防护）因操作对象过大超出了矩形范围而阻止了图格操作。"
 
 #: ../../TShockAPI/Utils.cs:136
 #, csharp-format
