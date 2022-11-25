@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-11-10 08:27:04+0000\n"
-"PO-Revision-Date: 2022-11-24 21:53\n"
+"PO-Revision-Date: 2022-11-25 10:14\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -2355,7 +2355,7 @@ msgstr "Bouncer / OnTileEdit（物块防护）阻止了{0}的操作（锤子2）
 #: ../../TShockAPI/Bouncer.cs:739
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from (inconceivable rope coil) {0} {1} {2} selectedItem:{3} itemCreateTile:{4}"
-msgstr "Bouncer / OnTileEdit（物块防护）阻止了{0}的操作（不合理的绳索）。{1} {2}，选中物品：{3} 物品创建物块类型：{4}"
+msgstr "Bouncer / OnTileEdit（物块防护）因放置（{1}）的绳索{2}不合理（与射弹和所持物品{3}的物块{4}不匹配）阻止了{0}放置绳索。"
 
 #: ../../TShockAPI/Bouncer.cs:750
 #, csharp-format
@@ -3166,7 +3166,7 @@ msgstr "GetDataHandlers / HandleNpcTeleportPortal 拒绝空检查 {0}"
 #: ../../TShockAPI/GetDataHandlers.cs:3920
 #, csharp-format
 msgid "GetDataHandlers / HandleNumberOfAnglerQuestsCompleted surprise packet! Someone tell the TShock team! {0}"
-msgstr "GetDataHandlers / HandleNumberOfAnglerQuestsCompleted 意外的数据包! 请告知TShock团队! {0}"
+msgstr "GetDataHandlers / HandleNumberOfAnglerQuestsCompleted（渔夫任务进度检测）收到了来自{0}的不明数据包，请向TShock报告。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:4144
 #, csharp-format
