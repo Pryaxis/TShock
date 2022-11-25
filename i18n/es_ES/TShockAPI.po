@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-11-10 08:27:04+0000\n"
-"PO-Revision-Date: 2022-11-25 10:14\n"
+"PO-Revision-Date: 2022-11-25 23:53\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -7049,7 +7049,7 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:652
 #, csharp-format
 msgid "You entered a space after {0} instead of a command. Type {0}help for a list of valid commands."
-msgstr ""
+msgstr "Has introducido un espacio después de {0} en lugar de un comando. Escribe {0}help para ver la lista de comandos."
 
 #: ../../TShockAPI/Commands.cs:985
 msgid "You failed to change your password."
