@@ -91,6 +91,9 @@ Use past tense when adding new entries; sign your name off when you add or chang
 * New argument `numberOfDeathsPVE` and `numberOfDeathsPVP` have been added to `TSPlayer.Spawn`.(@ATFGK)
 * An argument `npcIndex` in `GetDataHandlers.HandleNpcTeleportPortal` has been updated to `ushort`.(@ATFGK)
 
+## TShock 5.1.3
+* Added support for Terraria 1.4.4.9 via OTAPI 3.1.20. (@SignatureBeef)
+
 ## TShock 5.1.2
 * Added support for Terraria 1.4.4.8.1 via OTAPI 3.1.19. (@SignatureBeef)
 
