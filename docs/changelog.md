@@ -78,6 +78,7 @@ Use past tense when adding new entries; sign your name off when you add or chang
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change. -->
 
 ## Upcoming changes
+
 * Your changes could be here!
 * Fixed wrong MaxProjDamage trigger.(@ATFGK, #2804)
 * Fixed incorrect Spawn information.(@ATFGK, #2804)
@@ -90,6 +91,8 @@ Use past tense when adding new entries; sign your name off when you add or chang
 * New argument `numberOfDeathsPVE` and `numberOfDeathsPVP` have been added to hook `GetDataHandlers.OnPlayerSpawn`.(@ATFGK)
 * New argument `numberOfDeathsPVE` and `numberOfDeathsPVP` have been added to `TSPlayer.Spawn`.(@ATFGK)
 * An argument `npcIndex` in `GetDataHandlers.HandleNpcTeleportPortal` has been updated to `ushort`.(@ATFGK)
+* Fixed Super Sponge unable to absorb shimmer. (@sgkoishi, #2833)
+
 
 ## TShock 5.1.3
 * Added support for Terraria 1.4.4.9 via OTAPI 3.1.20. (@SignatureBeef)
