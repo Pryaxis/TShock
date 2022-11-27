@@ -81,7 +81,7 @@ namespace TShockAPI
 		private static readonly Utils instance = new Utils();
 
 		/// <summary>Utils - Creates a utilities object.</summary>
-		private Utils() {}
+		private Utils() { }
 
 		/// <summary>Instance - An instance of the utils class.</summary>
 		/// <value>value - the Utils instance</value>
@@ -210,8 +210,8 @@ namespace TShockAPI
 					tileY = startTileY;
 					break;
 				}
-				tileX = startTileX + r.Next(tileXRange*-1, tileXRange);
-				tileY = startTileY + r.Next(tileYRange*-1, tileYRange);
+				tileX = startTileX + r.Next(tileXRange * -1, tileXRange);
+				tileY = startTileY + r.Next(tileYRange * -1, tileYRange);
 				j++;
 			} while (TilePlacementValid(tileX, tileY) && TileSolid(tileX, tileY));
 		}
@@ -253,7 +253,7 @@ namespace TShockAPI
 			{
 				if (type >= Terraria.ID.ItemID.Count)
 					return new List<Item>();
-				return new List<Item> {GetItemById(type)};
+				return new List<Item> { GetItemById(type) };
 			}
 			Item item = GetItemFromTag(text);
 			if (item != null)
@@ -280,37 +280,35 @@ namespace TShockAPI
 		/// <returns>List of Items</returns>
 		public List<Item> GetItemByName(string name)
 		{
-			var found = new List<Item>();
-			Item item = new Item();
-			string nameLower = name.ToLowerInvariant();
-			var checkEnglish = Language.ActiveCulture != GameCulture.FromCultureName(GameCulture.CultureName.English);
-
-			for (int i = 1; i < Terraria.ID.ItemID.Count; i++)
+			var startswith = new List<int>();
+			var contains = new List<int>();
+			for (int i = 1; i < ItemID.Count; i++)
 			{
-				item.netDefaults(i);
-				if (!String.IsNullOrWhiteSpace(item.Name))
+				var currentName = Lang.GetItemNameValue(i);
+				if (!string.IsNullOrEmpty(currentName))
 				{
-					if (item.Name.ToLowerInvariant() == nameLower)
-						return new List<Item> { item };
-					if (item.Name.ToLowerInvariant().StartsWith(nameLower))
-						found.Add(item.Clone());
+					if (currentName.Equals(name, StringComparison.InvariantCultureIgnoreCase))
+						return new List<Item> { GetItemById(i) };
+					if (currentName.StartsWith(name, StringComparison.InvariantCultureIgnoreCase))
+						startswith.Add(i);
+					else if (currentName.Contains(name, StringComparison.InvariantCultureIgnoreCase))
+						contains.Add(i);
 				}
-
-				if (!checkEnglish)
+				currentName = EnglishLanguage.GetItemNameById(i);
+				if (!string.IsNullOrEmpty(currentName))
 				{
-					continue;
-				}
-
-				string englishName = EnglishLanguage.GetItemNameById(i).ToLowerInvariant();
-				if (!String.IsNullOrEmpty(englishName))
-				{
-					if (englishName == nameLower)
-						return new List<Item> { item };
-					if (englishName.StartsWith(nameLower))
-						found.Add(item.Clone());
+					if (currentName.Equals(name, StringComparison.InvariantCultureIgnoreCase))
+						return new List<Item> { GetItemById(i) };
+					if (currentName.StartsWith(name, StringComparison.InvariantCultureIgnoreCase))
+						startswith.Add(i);
+					else if (currentName.Contains(name, StringComparison.InvariantCultureIgnoreCase))
+						contains.Add(i);
 				}
 			}
-			return found;
+
+			if (startswith.Count != 1)
+				startswith.AddRange(contains);
+			return startswith.Select(GetItemById).ToList();
 		}
 
 		/// <summary>
@@ -369,22 +367,35 @@ namespace TShockAPI
 		/// <returns>List of matching NPCs</returns>
 		public List<NPC> GetNPCByName(string name)
 		{
-			var found = new List<NPC>();
-			NPC npc = new NPC();
-			string nameLower = name.ToLowerInvariant();
-			for (int i = -17; i < Terraria.ID.NPCID.Count; i++)
+			var startswith = new List<int>();
+			var contains = new List<int>();
+			for (int i = -17; i < NPCID.Count; i++)
 			{
-				string englishName = EnglishLanguage.GetNpcNameById(i).ToLowerInvariant();
-
-				npc.SetDefaults(i);
-				if (npc.FullName.ToLowerInvariant() == nameLower || npc.TypeName.ToLowerInvariant() == nameLower
-					|| nameLower == englishName)
-					return new List<NPC> { npc };
-				if (npc.FullName.ToLowerInvariant().StartsWith(nameLower) || npc.TypeName.ToLowerInvariant().StartsWith(nameLower)
-					|| englishName?.StartsWith(nameLower) == true)
-					found.Add((NPC)npc.Clone());
+				var currentName = Lang.GetNPCNameValue(i);
+				if (!string.IsNullOrEmpty(currentName))
+				{
+					if (currentName.Equals(name, StringComparison.InvariantCultureIgnoreCase))
+						return new List<NPC> { GetNPCById(i) };
+					if (currentName.StartsWith(name, StringComparison.InvariantCultureIgnoreCase))
+						startswith.Add(i);
+					else if (currentName.Contains(name, StringComparison.InvariantCultureIgnoreCase))
+						contains.Add(i);
+				}
+				currentName = EnglishLanguage.GetNpcNameById(i);
+				if (!string.IsNullOrEmpty(currentName))
+				{
+					if (currentName.Equals(name, StringComparison.InvariantCultureIgnoreCase))
+						return new List<NPC> { GetNPCById(i) };
+					if (currentName.StartsWith(name, StringComparison.InvariantCultureIgnoreCase))
+						startswith.Add(i);
+					else if (currentName.Contains(name, StringComparison.InvariantCultureIgnoreCase))
+						contains.Add(i);
+				}
 			}
-			return found;
+
+			if (startswith.Count != 1)
+				startswith.AddRange(contains);
+			return startswith.Select(GetNPCById).ToList();
 		}
 
 		/// <summary>
@@ -414,22 +425,35 @@ namespace TShockAPI
 		/// <returns>Matching list of buff ids</returns>
 		public List<int> GetBuffByName(string name)
 		{
-			string nameLower = name.ToLower();
-			string buffname;
-			for (int i = 1; i < Terraria.ID.BuffID.Count; i++)
+			var startswith = new List<int>();
+			var contains = new List<int>();
+			for (int i = 1; i < BuffID.Count; i++)
 			{
-				buffname = Lang.GetBuffName(i);
-				if (!String.IsNullOrWhiteSpace(buffname) && buffname.ToLower() == nameLower)
-					return new List<int> {i};
+				var currentName = Lang.GetBuffName(i);
+				if (!string.IsNullOrWhiteSpace(currentName))
+				{
+					if (currentName.Equals(name, StringComparison.InvariantCultureIgnoreCase))
+						return new List<int> { i };
+					if (currentName.StartsWith(name, StringComparison.InvariantCultureIgnoreCase))
+						startswith.Add(i);
+					else if (currentName.Contains(name, StringComparison.InvariantCultureIgnoreCase))
+						contains.Add(i);
+				}
+				currentName = EnglishLanguage.GetBuffNameById(i);
+				if (!string.IsNullOrWhiteSpace(currentName))
+				{
+					if (currentName.Equals(name, StringComparison.InvariantCultureIgnoreCase))
+						return new List<int> { i };
+					if (currentName.StartsWith(name, StringComparison.InvariantCultureIgnoreCase))
+						startswith.Add(i);
+					else if (currentName.Contains(name, StringComparison.InvariantCultureIgnoreCase))
+						contains.Add(i);
+				}
 			}
-			var found = new List<int>();
-			for (int i = 1; i < Terraria.ID.BuffID.Count; i++)
-			{
-				buffname = Lang.GetBuffName(i);
-				if (!String.IsNullOrWhiteSpace(buffname) && buffname.ToLower().StartsWith(nameLower))
-					found.Add(i);
-			}
-			return found;
+
+			if (startswith.Count != 1)
+				startswith.AddRange(contains);
+			return startswith;
 		}
 
 		/// <summary>
@@ -449,24 +473,38 @@ namespace TShockAPI
 		/// <returns>List of prefix IDs</returns>
 		public List<int> GetPrefixByName(string name)
 		{
-			Item item = new Item();
-			item.SetDefaults(0);
-			string lowerName = name.ToLowerInvariant();
-			var found = new List<int>();
+			var startswith = new List<int>();
+			var contains = new List<int>();
 			for (int i = FirstItemPrefix; i <= LastItemPrefix; i++)
 			{
-				item.prefix = (byte)i;
-				string prefixName = item.AffixName().Trim().ToLowerInvariant();
-				string englishName = EnglishLanguage.GetPrefixById(i).ToLowerInvariant();
-				if (prefixName == lowerName || englishName == lowerName)
-					return new List<int>() { i };
-				else if (prefixName.StartsWith(lowerName) || englishName?.StartsWith(lowerName) == true) // Partial match
-					found.Add(i);
+				var currentName = Lang.prefix[i].ToString();
+				if (!string.IsNullOrWhiteSpace(currentName))
+				{
+					if (currentName.Equals(name, StringComparison.InvariantCultureIgnoreCase))
+						return new List<int> { i };
+					if (currentName.StartsWith(name, StringComparison.InvariantCultureIgnoreCase))
+						startswith.Add(i);
+					else if (currentName.Contains(name, StringComparison.InvariantCultureIgnoreCase))
+						contains.Add(i);
+				}
+				currentName = EnglishLanguage.GetPrefixById(i);
+				if (!string.IsNullOrWhiteSpace(currentName))
+				{
+					if (currentName.Equals(name, StringComparison.InvariantCultureIgnoreCase))
+						return new List<int> { i };
+					if (currentName.StartsWith(name, StringComparison.InvariantCultureIgnoreCase))
+						startswith.Add(i);
+					else if (currentName.Contains(name, StringComparison.InvariantCultureIgnoreCase))
+						contains.Add(i);
+				}
 			}
-			return found;
+
+			if (startswith.Count != 1)
+				startswith.AddRange(contains);
+			return startswith;
 		}
 
-				/// <summary>
+		/// <summary>
 		/// Gets a prefix by ID or name
 		/// </summary>
 		/// <param name="idOrName">ID or name</param>
@@ -476,7 +514,7 @@ namespace TShockAPI
 			int type = -1;
 			if (int.TryParse(idOrName, out type) && type >= FirstItemPrefix && type <= LastItemPrefix)
 			{
-				return new List<int> {type};
+				return new List<int> { type };
 			}
 			return GetPrefixByName(idOrName);
 		}
@@ -961,7 +999,7 @@ namespace TShockAPI
 
 		internal void PrepareLangForDump()
 		{
-			for(int i = 0; i < Main.recipe.Length; i++)
+			for (int i = 0; i < Main.recipe.Length; i++)
 				Main.recipe[i] = new Recipe();
 		}
 
@@ -993,12 +1031,12 @@ namespace TShockAPI
 			foreach (var field in typeof(Permissions).GetFields().OrderBy(f => f.Name))
 			{
 				output.Append("|[[");
-				output.Append((string) field.GetValue(null));
+				output.Append((string)field.GetValue(null));
 				output.Append("]]|");
 
 				foreach (Group g in TShock.Groups.groups)
 				{
-					if (g.HasPermission((string) field.GetValue(null)))
+					if (g.HasPermission((string)field.GetValue(null)))
 					{
 						output.Append("✔|");
 					}
