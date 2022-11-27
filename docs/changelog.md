@@ -196,6 +196,7 @@ This release was scrubbed. All changes have been re-allocated to the 5.1.1 relea
 * Changed the log system to log the command itself without arguments if the command is not `DoLog`. (@sgkoishi, [#2779](https://github.com/Pryaxis/TShock/issues/2779))
 * Added ability for items given to players to be inserted directly into their inventory instead of spawned as an item drop. (@pontaoski)
 * Added support of `-lang` and `-language` flags for our i18n system. (@KawaiiYuyu)
+* Fixed Server not tracks deaths, Now players can be viewed with the `/death`, `/pvpdeath`, `/alldeath` and `/allpvpdeath` commands. (@hufang360)
 * Added support for Terraria 1.4.4.7 (OTAPI 3.1.16). (@drunderscore)
 * Added support for various languages, most notably Chinese (99% complete), Russian (57% complete), Indonesian (53% complete), and Spanish (21% complete). Thank you to the lovely contributors who were responsible for this [on Crowdin](https://crowdin.com/project/tshock):
   * RidnRaven (ridwankun2)
