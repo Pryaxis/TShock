@@ -33,8 +33,8 @@ namespace TShockAPI.Net
 		public short TileX { get; set; }
 		public short TileY { get; set; }
 		public int RespawnTimer { get; set; }
-		public short NumberOfDeathsPVE { get; set; }
-		public short NumberOfDeathsPVP { get; set; }
+		public short numberOfDeathsPVE { get; set; }
+		public short numberOfDeathsPVP { get; set; }
 		public PlayerSpawnContext PlayerSpawnContext { get; set; }
 
 		public override void Pack(Stream stream)
@@ -43,8 +43,8 @@ namespace TShockAPI.Net
 			stream.WriteInt16(TileX);
 			stream.WriteInt16(TileY);
 			stream.WriteInt32(RespawnTimer);
-			stream.WriteInt16(NumberOfDeathsPVE);
-			stream.WriteInt16(NumberOfDeathsPVP);
+			stream.WriteInt16(numberOfDeathsPVE);
+			stream.WriteInt16(numberOfDeathsPVP);
 			stream.WriteByte((byte) PlayerSpawnContext);
 		}
 	}
