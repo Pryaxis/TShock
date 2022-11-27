@@ -78,7 +78,7 @@ Use past tense when adding new entries; sign your name off when you add or chang
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change. -->
 
 ## Upcoming changes
-* Your changes could be here!
+* Updated the Utils.FindByIdOrName to follow same logic. Now fuzzy match fallback to `StartsWith` and then `Contains`. (@sgkoishi)
 
 ## TShock 5.1.3
 * Added support for Terraria 1.4.4.9 via OTAPI 3.1.20. (@SignatureBeef)
