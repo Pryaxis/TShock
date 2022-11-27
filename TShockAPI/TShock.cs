@@ -1663,7 +1663,7 @@ namespace TShockAPI
 			player.SendFileTextAsMessage(FileTools.MotdPath);
 
 			string pvpMode = Config.Settings.PvPMode.ToLowerInvariant();
-			if (pvpMode == "always")
+			if (pvpMode == "always" || pvpMode == "pvpwithnoteam")
 			{
 				player.TPlayer.hostile = true;
 				player.SendData(PacketTypes.TogglePvp, "", player.Index);

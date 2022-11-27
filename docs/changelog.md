@@ -80,6 +80,9 @@ Use past tense when adding new entries; sign your name off when you add or chang
 ## Upcoming changes
 
 * Your changes could be here!
+
+
+* An additional option `pvpwithnoteam` is added at `PvPMode` to enable PVP with no team.(@CelestialAnarchy, #2617, @ATFGK)
 * Fixed wrong MaxProjDamage trigger.(@ATFGK, #2804)
 * Fixed incorrect Spawn information.(@ATFGK, #2804)
 * New argument `AI[2]` has been added to hook `GetDataHandlers.HandleProjectileNew`.(@ATFGK)
