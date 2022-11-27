@@ -856,6 +856,14 @@ namespace TShockAPI
 			/// </summary>
 			public int RespawnTimer { get; set; }
 			/// <summary>
+			/// Player's number of deaths from PVE.
+			/// </summary>
+			public int NumberOfDeathsPVE { get; set; }
+			/// <summary>
+			/// Player's number of deaths from PVP.
+			/// </summary>
+			public int NumberOfDeathsPVP { get; set; }
+			/// <summary>
 			/// Context of where the player is spawning from.
 			/// </summary>
 			public PlayerSpawnContext SpawnContext { get; set; }
@@ -864,7 +872,7 @@ namespace TShockAPI
 		/// PlayerSpawn - When a player spawns
 		/// </summary>
 		public static HandlerList<SpawnEventArgs> PlayerSpawn = new HandlerList<SpawnEventArgs>();
-		private static bool OnPlayerSpawn(TSPlayer player, MemoryStream data, byte pid, int spawnX, int spawnY, int respawnTimer, PlayerSpawnContext spawnContext)
+		private static bool OnPlayerSpawn(TSPlayer player, MemoryStream data, byte pid, int spawnX, int spawnY, int respawnTimer, int numberOfDeathsPVE, int numberOfDeathsPVP, PlayerSpawnContext spawnContext)
 		{
 			if (PlayerSpawn == null)
 				return false;
@@ -877,6 +885,8 @@ namespace TShockAPI
 				SpawnX = spawnX,
 				SpawnY = spawnY,
 				RespawnTimer = respawnTimer,
+				NumberOfDeathsPVE = numberOfDeathsPVE,
+				NumberOfDeathsPVP = numberOfDeathsPVP,
 				SpawnContext = spawnContext
 			};
 			PlayerSpawn.Invoke(null, args);
@@ -1033,12 +1043,16 @@ namespace TShockAPI
 			/// 0 = Old One's Army, 1 = Granite, 2 = Marble, 3 = Hive, 4 = Gem Cave, 5 = Lihzhard Temple, 6 = Graveyard
 			/// </summary>
 			public BitsByte Zone4 { get; set; }
+			/// <summary>
+			/// 0 = The Aether
+			/// </summary>
+			public BitsByte Zone5 { get; set; }
 		}
 		/// <summary>
 		/// PlayerZone - When the player sends it's zone/biome information to the server
 		/// </summary>
 		public static HandlerList<PlayerZoneEventArgs> PlayerZone = new HandlerList<PlayerZoneEventArgs>();
-		private static bool OnPlayerZone(TSPlayer player, MemoryStream data, byte plr, BitsByte zone1, BitsByte zone2, BitsByte zone3, BitsByte zone4)
+		private static bool OnPlayerZone(TSPlayer player, MemoryStream data, byte plr, BitsByte zone1, BitsByte zone2, BitsByte zone3, BitsByte zone4, BitsByte zone5)
 		{
 			if (PlayerZone == null)
 				return false;
@@ -1051,7 +1065,8 @@ namespace TShockAPI
 				Zone1 = zone1,
 				Zone2 = zone2,
 				Zone3 = zone3,
-				Zone4 = zone4
+				Zone4 = zone4,
+				Zone5 = zone5
 			};
 			PlayerZone.Invoke(null, args);
 			return args.Handled;
@@ -1519,12 +1534,16 @@ namespace TShockAPI
 			/// Type
 			/// </summary>
 			public byte type { get; set; }
+			/// <summary>
+			/// Paint Coat Tile
+			/// </summary>
+			public byte coatTile { get; set; }
 		}
 		/// <summary>
 		/// NPCStrike - Called when an NPC is attacked
 		/// </summary>
 		public static HandlerList<PaintTileEventArgs> PaintTile = new HandlerList<PaintTileEventArgs>();
-		private static bool OnPaintTile(TSPlayer player, MemoryStream data, Int32 x, Int32 y, byte t)
+		private static bool OnPaintTile(TSPlayer player, MemoryStream data, Int32 x, Int32 y, byte t, byte ct)
 		{
 			if (PaintTile == null)
 				return false;
@@ -1535,7 +1554,8 @@ namespace TShockAPI
 				Data = data,
 				X = x,
 				Y = y,
-				type = t
+				type = t,
+				coatTile = ct
 			};
 			PaintTile.Invoke(null, args);
 			return args.Handled;
@@ -1558,12 +1578,16 @@ namespace TShockAPI
 			/// Type
 			/// </summary>
 			public byte type { get; set; }
+			/// <summary>
+			/// Paint Coat Wall
+			/// </summary>
+			public byte coatWall { get; set; }
 		}
 		/// <summary>
 		/// Called When a wall is painted
 		/// </summary>
 		public static HandlerList<PaintWallEventArgs> PaintWall = new HandlerList<PaintWallEventArgs>();
-		private static bool OnPaintWall(TSPlayer player, MemoryStream data, Int32 x, Int32 y, byte t)
+		private static bool OnPaintWall(TSPlayer player, MemoryStream data, Int32 x, Int32 y, byte t, byte cw)
 		{
 			if (PaintWall == null)
 				return false;
@@ -1574,7 +1598,8 @@ namespace TShockAPI
 				Data = data,
 				X = x,
 				Y = y,
-				type = t
+				type = t,
+				coatWall = cw
 			};
 			PaintWall.Invoke(null, args);
 			return args.Handled;
@@ -1734,12 +1759,15 @@ namespace TShockAPI
 			/// <summary>Alternate variation of the object placed.</summary>
 			public byte Alternate { get; set; }
 
+			/// <summary>Related to Rubblemaker.</summary>
+			public sbyte Random { get; set; }
+
 			/// <summary>The direction the object was placed.</summary>
 			public bool Direction { get; set; }
 		}
 		/// <summary>Fired when an object is placed in the world.</summary>
 		public static HandlerList<PlaceObjectEventArgs> PlaceObject = new HandlerList<PlaceObjectEventArgs>();
-		private static bool OnPlaceObject(TSPlayer player, MemoryStream data, short x, short y, short type, short style, byte alternate, bool direction)
+		private static bool OnPlaceObject(TSPlayer player, MemoryStream data, short x, short y, short type, short style, byte alternate, sbyte random, bool direction)
 		{
 			if (PlaceObject == null)
 				return false;
@@ -1753,6 +1781,7 @@ namespace TShockAPI
 				Type = type,
 				Style = style,
 				Alternate = alternate,
+				Random = random,
 				Direction = direction
 			};
 
@@ -1980,6 +2009,10 @@ namespace TShockAPI
 			/// Is the damage critical?
 			/// </summary>
 			public bool Critical { get; set; }
+			/// <summary>
+			/// Cooldown Counter
+			/// </summary>
+			public sbyte CooldownCounter { get; set; }
 			/// <summary>The reason the player took damage and/or died.</summary>
 			public PlayerDeathReason PlayerDeathReason { get; set; }
 		}
@@ -1987,7 +2020,7 @@ namespace TShockAPI
 		/// PlayerDamage - Called when a player is damaged
 		/// </summary>
 		public static HandlerList<PlayerDamageEventArgs> PlayerDamage = new HandlerList<PlayerDamageEventArgs>();
-		private static bool OnPlayerDamage(TSPlayer player, MemoryStream data, byte id, byte dir, short dmg, bool pvp, bool crit, PlayerDeathReason playerDeathReason)
+		private static bool OnPlayerDamage(TSPlayer player, MemoryStream data, byte id, byte dir, short dmg, bool pvp, bool crit, sbyte cooldownCounter, PlayerDeathReason playerDeathReason)
 		{
 			if (PlayerDamage == null)
 				return false;
@@ -2001,6 +2034,7 @@ namespace TShockAPI
 				Damage = dmg,
 				PVP = pvp,
 				Critical = crit,
+				CooldownCounter = cooldownCounter,
 				PlayerDeathReason = playerDeathReason,
 			};
 			PlayerDamage.Invoke(null, args);
@@ -2687,9 +2721,10 @@ namespace TShockAPI
 			short spawnx = args.Data.ReadInt16();
 			short spawny = args.Data.ReadInt16();
 			int respawnTimer = args.Data.ReadInt32();
+			short numberOfDeathsPVE = args.Data.ReadInt16();
+			short numberOfDeathsPVP = args.Data.ReadInt16();
 			PlayerSpawnContext context = (PlayerSpawnContext)args.Data.ReadByte();
-
-			if (OnPlayerSpawn(args.Player, args.Data, player, spawnx, spawny, respawnTimer, context))
+			if (OnPlayerSpawn(args.Player, args.Data, player, spawnx, spawny, respawnTimer, numberOfDeathsPVE, numberOfDeathsPVP, context))
 				return true;
 
 			if ((Main.ServerSideCharacter) && (spawnx == -1 && spawny == -1)) //this means they want to spawn to vanilla spawn
@@ -2725,6 +2760,17 @@ namespace TShockAPI
 				args.Player.Dead = true;
 			else
 				args.Player.Dead = false;
+
+			// When the player spawn into world, the numberOfDeathsPVE and numberOfDeathsPVP is not correct on the SSC Server.
+			// Send the data agrain fixed them.
+			if (context == PlayerSpawnContext.SpawningIntoWorld && args.Player.IsLoggedIn )
+			{
+				if(numberOfDeathsPVE != args.TPlayer.numberOfDeathsPVE || numberOfDeathsPVP != args.TPlayer.numberOfDeathsPVP)
+				{
+					args.Player.Spawn(PlayerSpawnContext.SpawningIntoWorld);
+					return true;
+				}
+			}
 			return false;
 		}
 
@@ -2912,17 +2958,19 @@ namespace TShockAPI
 			Vector2 vel = args.Data.ReadVector2();
 			byte owner = args.Data.ReadInt8();
 			short type = args.Data.ReadInt16();
-			NewProjectileData bits = new NewProjectileData((BitsByte)args.Data.ReadByte());
+			BitsByte bitsByte = (BitsByte)args.Data.ReadByte();
+			BitsByte bitsByte2 = (BitsByte)(bitsByte[2] ? args.Data.ReadByte() : 0);
 			float[] ai = new float[Projectile.maxAI];
-			for (int i = 0; i < Projectile.maxAI; ++i)
-				ai[i] = !bits.AI[i] ? 0.0f : args.Data.ReadSingle();
-			ushort bannerId = bits.HasBannerIdToRespondTo ? args.Data.ReadUInt16() : (ushort)0;
-			short dmg = bits.HasDamage ? args.Data.ReadInt16() : (short)0;
-			float knockback = bits.HasKnockback ? args.Data.ReadSingle() : 0.0f;
-			short origDmg = bits.HasOriginalDamage ? args.Data.ReadInt16() : (short)0;
-			short projUUID = bits.HasUUUID ? args.Data.ReadInt16() : (short)-1;
-			if (projUUID >= 1000)
-				projUUID = -1;
+			for (int i = 0; i < Projectile.maxAI; ++i) ai[i] = 0f;
+			ai[0] = bitsByte[0] ? args.Data.ReadSingle() : 0f;
+			ai[1] = bitsByte[1] ? args.Data.ReadSingle() : 0f;
+			ushort bannerId = (ushort)(bitsByte[3] ? args.Data.ReadUInt16() : 0);
+			short dmg = (short)(bitsByte[4] ? args.Data.ReadInt16() : 0);
+			float knockback = bitsByte[5] ? args.Data.ReadSingle() : 0f;
+			short origDmg = (short)(bitsByte[6] ? args.Data.ReadInt16() : 0);
+			short projUUID = (short)(bitsByte[7] ? args.Data.ReadInt16() : -1);
+			if (projUUID >= 1000) projUUID = -1;
+			ai[2] = (bitsByte2[0] ? args.Data.ReadSingle() : 0f);
 
 			var index = TShock.Utils.SearchProjectile(ident, owner);
 
@@ -3054,7 +3102,7 @@ namespace TShockAPI
 			}
 
 			string pvpMode = TShock.Config.Settings.PvPMode.ToLowerInvariant();
-			if (pvpMode == "disabled" || pvpMode == "always" || (DateTime.UtcNow - args.Player.LastPvPTeamChange).TotalSeconds < 5)
+			if (pvpMode == "disabled" || pvpMode == "always" || pvpMode == "pvpwithnoteam" || (DateTime.UtcNow - args.Player.LastPvPTeamChange).TotalSeconds < 5)
 			{
 				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleTogglePvp rejected fastswitch {0}", args.Player.Name));
 				args.Player.SendData(PacketTypes.TogglePvp, "", id);
@@ -3150,8 +3198,9 @@ namespace TShockAPI
 			BitsByte zone2 = args.Data.ReadInt8();
 			BitsByte zone3 = args.Data.ReadInt8();
 			BitsByte zone4 = args.Data.ReadInt8();
+			BitsByte zone5 = args.Data.ReadInt8();
 
-			if (OnPlayerZone(args.Player, args.Data, plr, zone1, zone2, zone3, zone4))
+			if (OnPlayerZone(args.Player, args.Data, plr, zone1, zone2, zone3, zone4, zone5))
 				return true;
 
 			return false;
@@ -3310,7 +3359,8 @@ namespace TShockAPI
 			if (id != args.Player.Index)
 				return true;
 
-			if ((DateTime.UtcNow - args.Player.LastPvPTeamChange).TotalSeconds < 5)
+			string pvpMode = TShock.Config.Settings.PvPMode.ToLowerInvariant();
+			if (pvpMode == "pvpwithnoteam" || (DateTime.UtcNow - args.Player.LastPvPTeamChange).TotalSeconds < 5)
 			{
 				args.Player.SendData(PacketTypes.PlayerTeam, "", id);
 				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandlePlayerTeam rejected team fastswitch {0}", args.Player.Name));
@@ -3616,13 +3666,14 @@ namespace TShockAPI
 			var x = args.Data.ReadInt16();
 			var y = args.Data.ReadInt16();
 			var t = args.Data.ReadInt8();
+			var ct = args.Data.ReadInt8();//PaintCoatTile
 
 			if (x < 0 || y < 0 || x >= Main.maxTilesX || y >= Main.maxTilesY || t > Main.numTileColors)
 			{
 				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandlePaintTile rejected range check {0}", args.Player.Name));
 				return true;
 			}
-			if (OnPaintTile(args.Player, args.Data, x, y, t))
+			if (OnPaintTile(args.Player, args.Data, x, y, t, ct))
 			{
 				return true;
 			}
@@ -3663,13 +3714,14 @@ namespace TShockAPI
 			var x = args.Data.ReadInt16();
 			var y = args.Data.ReadInt16();
 			var t = args.Data.ReadInt8();
+			var cw = args.Data.ReadInt8();//PaintCoatWall
 
 			if (x < 0 || y < 0 || x >= Main.maxTilesX || y >= Main.maxTilesY || t > Main.numTileColors)
 			{
 				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandlePaintWall rejected range check {0}", args.Player.Name));
 				return true;
 			}
-			if (OnPaintWall(args.Player, args.Data, x, y, t))
+			if (OnPaintWall(args.Player, args.Data, x, y, t, cw))
 			{
 				return true;
 			}
@@ -3928,9 +3980,10 @@ namespace TShockAPI
 			short type = args.Data.ReadInt16();
 			short style = args.Data.ReadInt16();
 			byte alternate = args.Data.ReadInt8();
+			sbyte random = (sbyte)args.Data.ReadInt8();
 			bool direction = args.Data.ReadBoolean();
 
-			if (OnPlaceObject(args.Player, args.Data, x, y, type, style, alternate, direction))
+			if (OnPlaceObject(args.Player, args.Data, x, y, type, style, alternate, random, direction))
 				return true;
 
 			return false;
@@ -4068,7 +4121,7 @@ namespace TShockAPI
 
 		private static bool HandleNpcTeleportPortal(GetDataHandlerArgs args)
 		{
-			var npcIndex = args.Data.ReadByte();
+			var npcIndex = args.Data.ReadUInt16();
 			var portalColorIndex = args.Data.ReadInt16();
 			var newPosition = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
 			var velocity = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
@@ -4162,8 +4215,9 @@ namespace TShockAPI
 			var bits = (BitsByte)(args.Data.ReadByte());
 			var crit = bits[0];
 			var pvp = bits[1];
+			var cooldownCounter = (sbyte)args.Data.ReadInt8();
 
-			if (OnPlayerDamage(args.Player, args.Data, id, direction, dmg, pvp, crit, playerDeathReason))
+			if (OnPlayerDamage(args.Player, args.Data, id, direction, dmg, pvp, crit, cooldownCounter, playerDeathReason))
 				return true;
 
 			return false;

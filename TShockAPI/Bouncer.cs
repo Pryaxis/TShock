@@ -416,6 +416,18 @@ namespace TShockAPI
 				CanBeAddedWithoutHostile = false,
 				CanOnlyBeAppliedToSender = false
 			};
+			PlayerAddBuffWhitelist[BuffID.ShadowCandle] = new BuffLimit
+			{
+				MaxTicks = 2,
+				CanBeAddedWithoutHostile = true,
+				CanOnlyBeAppliedToSender = true
+			};
+			PlayerAddBuffWhitelist[BuffID.BrainOfConfusionBuff] = new BuffLimit
+			{
+				MaxTicks = 240,
+				CanBeAddedWithoutHostile = true,
+				CanOnlyBeAppliedToSender = true
+			};
 
 			#endregion Whitelist
 		}
@@ -1704,132 +1716,72 @@ namespace TShockAPI
 
 			// Liquid anti-cheat
 			// Arguably the banned buckets bit should be in the item bans system
-			if (amount != 0)
+			if (amount != 0 && !wasThereABombNearby)
 			{
-				int bucket = -1;
-				int selectedItemType = args.Player.TPlayer.inventory[args.Player.TPlayer.selectedItem].type;
-				if (selectedItemType == ItemID.EmptyBucket)
+				var selectedItemType = args.Player.TPlayer.inventory[args.Player.TPlayer.selectedItem].type;
+				void Reject(string reason)
 				{
-					bucket = 0;
-				}
-				else if (selectedItemType == ItemID.WaterBucket)
-				{
-					bucket = 1;
-				}
-				else if (selectedItemType == ItemID.LavaBucket)
-				{
-					bucket = 2;
-				}
-				else if (selectedItemType == ItemID.HoneyBucket)
-				{
-					bucket = 3;
-				}
-				else if (selectedItemType == ItemID.BottomlessBucket ||
-					selectedItemType == ItemID.SuperAbsorbantSponge)
-				{
-					bucket = 4;
-				}
-				else if (selectedItemType == ItemID.LavaAbsorbantSponge)
-				{
-					bucket = 5;
-				}
-				else if (selectedItemType == ItemID.BottomlessLavaBucket)
-				{
-					bucket = 6;
-				}
-				else if (selectedItemType == ItemID.BottomlessHoneyBucket
-					|| selectedItemType == ItemID.HoneyAbsorbantSponge)
-				{
-					bucket = 7;
-				}
-				else if (selectedItemType == ItemID.BottomlessShimmerBucket)
-				{
-					bucket = 8;
-				}
-				else if (selectedItemType == ItemID.UltraAbsorbantSponge)
-				{
-					bucket = 9;
-				}
-
-				if (!wasThereABombNearby && type == LiquidType.Lava && !(bucket == 2 || bucket == 0 || bucket == 5 || bucket == 6 || bucket == 9))
-				{
-					TShock.Log.ConsoleDebug(GetString("Bouncer / OnLiquidSet rejected bucket check 1 from {0}", args.Player.Name));
+					TShock.Log.ConsoleDebug(GetString("Bouncer / OnLiquidSet rejected liquid type {0} from {1} holding {2}", type, args.Player.Name, selectedItemType));
 					args.Player.SendErrorMessage(GetString("You do not have permission to perform this action."));
-					args.Player.Disable(GetString("Spreading lava without holding a lava bucket"), DisableFlags.WriteToLogAndConsole);
+					args.Player.Disable(reason, DisableFlags.WriteToLogAndConsole);
 					args.Player.SendTileSquareCentered(tileX, tileY, 1);
 					args.Handled = true;
+				}
+
+				if (TShock.ItemBans.DataModel.ItemIsBanned(EnglishLanguage.GetItemNameById(selectedItemType), args.Player))
+				{
+					Reject(GetString("Using banned {0} to manipulate liquid", Lang.GetItemNameValue(selectedItemType)));
 					return;
 				}
 
-				if (!wasThereABombNearby && type == LiquidType.Lava && TShock.ItemBans.DataModel.ItemIsBanned("Lava Bucket", args.Player))
+				switch (selectedItemType)
 				{
-					TShock.Log.ConsoleDebug(GetString("Bouncer / OnLiquidSet rejected lava bucket from {0}", args.Player.Name));
-					args.Player.SendErrorMessage(GetString("You do not have permission to perform this action."));
-					args.Player.Disable(GetString("Using banned lava bucket without permissions"), DisableFlags.WriteToLogAndConsole);
-					args.Player.SendTileSquareCentered(tileX, tileY, 1);
-					args.Handled = true;
-					return;
-				}
-
-				if (!wasThereABombNearby && type == LiquidType.Water && !(bucket == 1 || bucket == 0 || bucket == 4 || bucket == 9))
-				{
-					TShock.Log.ConsoleDebug(GetString("Bouncer / OnLiquidSet rejected bucket check 2 from {0}", args.Player.Name));
-					args.Player.SendErrorMessage(GetString("You do not have permission to perform this action."));
-					args.Player.Disable(GetString("Spreading water without holding a water bucket"), DisableFlags.WriteToLogAndConsole);
-					args.Player.SendTileSquareCentered(tileX, tileY, 1);
-					args.Handled = true;
-					return;
-				}
-
-				if (!wasThereABombNearby && type == LiquidType.Water && TShock.ItemBans.DataModel.ItemIsBanned("Water Bucket", args.Player))
-				{
-					TShock.Log.ConsoleDebug(GetString("Bouncer / OnLiquidSet rejected bucket check 3 from {0}", args.Player.Name));
-					args.Player.SendErrorMessage(GetString("You do not have permission to perform this action."));
-					args.Player.Disable(GetString("Using banned water bucket without permissions"), DisableFlags.WriteToLogAndConsole);
-					args.Player.SendTileSquareCentered(tileX, tileY, 1);
-					args.Handled = true;
-					return;
-				}
-
-				if (!wasThereABombNearby && type == LiquidType.Honey && !(bucket == 3 || bucket == 0 || bucket == 7 || bucket == 9))
-				{
-					TShock.Log.ConsoleDebug(GetString("Bouncer / OnLiquidSet rejected bucket check 4 from {0}", args.Player.Name));
-					args.Player.SendErrorMessage(GetString("You do not have permission to perform this action."));
-					args.Player.Disable(GetString("Spreading honey without holding a honey bucket"), DisableFlags.WriteToLogAndConsole);
-					args.Player.SendTileSquareCentered(tileX, tileY, 1);
-					args.Handled = true;
-					return;
-				}
-
-				if (!wasThereABombNearby && type == LiquidType.Honey && TShock.ItemBans.DataModel.ItemIsBanned("Honey Bucket", args.Player))
-				{
-					TShock.Log.ConsoleDebug(GetString("Bouncer / OnLiquidSet rejected bucket check 5 from {0}", args.Player.Name));
-					args.Player.SendErrorMessage(GetString("You do not have permission to perform this action."));
-					args.Player.Disable(GetString("Using banned honey bucket without permissions"), DisableFlags.WriteToLogAndConsole);
-					args.Player.SendTileSquareCentered(tileX, tileY, 1);
-					args.Handled = true;
-					return;
-				}
-
-				if (!wasThereABombNearby && type == LiquidType.Shimmer && !(bucket == 8 || bucket == 9))
-				{
-					TShock.Log.ConsoleDebug(GetString("Bouncer / OnLiquidSet rejected bucket check 6 from {0}", args.Player.Name));
-					args.Player.SendErrorMessage(GetString("You do not have permission to perform this action."));
-					args.Player.Disable(GetString("Spreading shimmer without holding a shimmer bucket"), DisableFlags.WriteToLogAndConsole);
-					args.Player.SendTileSquareCentered(tileX, tileY, 1);
-					args.Handled = true;
-					return;
-				}
-
-				if (!wasThereABombNearby && type == LiquidType.Shimmer &&
-					TShock.ItemBans.DataModel.ItemIsBanned("Bottomless Shimmer Bucket", args.Player))
-				{
-					TShock.Log.ConsoleDebug(GetString("Bouncer / OnLiquidSet rejected bucket check 7 from {0}", args.Player.Name));
-					args.Player.SendErrorMessage(GetString("You do not have permission to perform this action."));
-					args.Player.Disable(GetString("Using banned bottomless shimmer bucket without permissions"), DisableFlags.WriteToLogAndConsole);
-					args.Player.SendTileSquareCentered(tileX, tileY, 1);
-					args.Handled = true;
-					return;
+					case ItemID.WaterBucket:
+					case ItemID.BottomlessBucket:
+						if (type != LiquidType.Water)
+						{
+							Reject(GetString("Using {0} on non-water", Lang.GetItemNameValue(selectedItemType)));
+							return;
+						}
+						break;
+					case ItemID.HoneyBucket:
+					case ItemID.HoneyAbsorbantSponge:
+					case ItemID.BottomlessHoneyBucket:
+						if (type != LiquidType.Honey)
+						{
+							Reject(GetString("Using {0} on non-honey", Lang.GetItemNameValue(selectedItemType)));
+							return;
+						}
+						break;
+					case ItemID.LavaAbsorbantSponge:
+					case ItemID.BottomlessLavaBucket:
+					case ItemID.LavaBucket:
+						if (type != LiquidType.Lava)
+						{
+							Reject(GetString("Using {0} on non-lava", Lang.GetItemNameValue(selectedItemType)));
+							return;
+						}
+						break;
+					case ItemID.BottomlessShimmerBucket:
+						if (type != LiquidType.Shimmer)
+						{
+							Reject(GetString("Using {0} on non-shimmer", Lang.GetItemNameValue(selectedItemType)));
+							return;
+						}
+						break;
+					case ItemID.SuperAbsorbantSponge:
+						if (type != LiquidType.Water && type != LiquidType.Shimmer)
+						{
+							Reject(GetString("Using {0} on non-water or shimmer", Lang.GetItemNameValue(selectedItemType)));
+							return;
+						}
+						break;
+					case ItemID.EmptyBucket:
+					case ItemID.UltraAbsorbantSponge:
+						break;
+					default:
+						Reject(GetString("Using {0} to manipulate unknown liquid {1}", Lang.GetItemNameValue(selectedItemType), type));
+						return;
 				}
 			}
 
@@ -1867,41 +1819,43 @@ namespace TShockAPI
 			int type = args.Type;
 			int time = args.Time;
 
+			void Reject(string reason, bool shouldResync = true)
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerBuff rejected {0} ({1}) applying buff {2} to {3} for {4} ticks: {5}",
+					args.Player.Name, args.Player.Index, type, id, time, reason));
+				args.Handled = true;
+
+				if (shouldResync)
+					args.Player.SendData(PacketTypes.PlayerBuff, number: id);
+			}
+
 			if (id >= Main.maxPlayers)
 			{
-				TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerBuff rejected player cap from {0}", args.Player.Name));
-				args.Handled = true;
+				Reject(GetString("Target ID is over player capacity"), false);
 				return;
 			}
 
 			if (TShock.Players[id] == null)
 			{
-				TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerBuff rejected null check from {0}", args.Player.Name));
-				args.Handled = true;
+				Reject(GetString("Target is null"), false);
 				return;
 			}
 
 			if (type >= Terraria.ID.BuffID.Count)
 			{
-				TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerBuff rejected invalid buff type {0}", args.Player.Name));
-				args.Player.SendData(PacketTypes.PlayerBuff, "", id);
-				args.Handled = true;
+				Reject(GetString("Invalid buff type"), false);
 				return;
 			}
 
 			if (args.Player.IsBeingDisabled())
 			{
-				TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerBuff rejected disabled from {0}", args.Player.Name));
-				args.Player.SendData(PacketTypes.PlayerBuff, "", id);
-				args.Handled = true;
+				Reject(GetString("Sender is being disabled"));
 				return;
 			}
 
 			if (args.Player.IsBouncerThrottled())
 			{
-				TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerBuff rejected throttled from {0}", args.Player.Name));
-				args.Player.SendData(PacketTypes.PlayerBuff, "", id);
-				args.Handled = true;
+				Reject(GetString("Sender is being throttled"));
 				return;
 			}
 
@@ -1910,41 +1864,31 @@ namespace TShockAPI
 
 			if (!args.Player.IsInRange(targetPlayer.TileX, targetPlayer.TileY, 50))
 			{
-				TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerBuff rejected range check from {0}", args.Player.Name));
-				args.Player.SendData(PacketTypes.PlayerBuff, "", id);
-				args.Handled = true;
+				Reject(GetString("Sender is not in range of target"));
 				return;
 			}
 
 			if (buffLimit == null)
 			{
-				TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerBuff rejected non-whitelisted buff {0}", args.Player.Name));
-				args.Player.SendData(PacketTypes.PlayerBuff, "", id);
-				args.Handled = true;
+				Reject(GetString("Buff is not whitelisted"));
 				return;
 			}
 
 			if (buffLimit.CanOnlyBeAppliedToSender && id != args.Player.Index)
 			{
-				TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerBuff rejected applied to non-sender from {0}", args.Player.Name));
-				args.Player.SendData(PacketTypes.PlayerBuff, "", id);
-				args.Handled = true;
+				Reject(GetString("Buff cannot be applied to non-senders"));
 				return;
 			}
 
 			if (!buffLimit.CanBeAddedWithoutHostile && !targetPlayer.TPlayer.hostile)
 			{
-				TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerBuff rejected hostile/pvp from {0}", args.Player.Name));
-				args.Player.SendData(PacketTypes.PlayerBuff, "", id);
-				args.Handled = true;
+				Reject(GetString("Buff cannot be applied without PvP"));
 				return;
 			}
 
 			if (time <= 0 || time > buffLimit.MaxTicks)
 			{
-				TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerBuff rejected time too long from {0}", args.Player.Name));
-				args.Player.SendData(PacketTypes.PlayerBuff, "", id);
-				args.Handled = true;
+				Reject(GetString("Buff cannot be applied for that long"));
 				return;
 			}
 		}

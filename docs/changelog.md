@@ -77,8 +77,28 @@ Use past tense when adding new entries; sign your name off when you add or chang
   * Do not forget to sign every line you change with your name. (@hakusaro)
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change. -->
 
+
 ## Upcoming changes
+
 * Allowed Digging Molecart and bomb fish to break tiles and place tracks (@sgkoishi)
+* Added `ShadowCandle` and `BrainOfConfusionBuff` (BoC dodge buff) to the `PlayerAddBuffWhitelist` (@drunderscore)
+* Improved rejection message and code duplication in `OnPlayerBuff` (@drunderscore)
+* This will make it so Bouncer rejections regarding `PlayerAddBuff` will now always include the sender index, buff type, receiver index, and time in ticks, allowing much faster triage of buff whitelist issues.
+
+* An additional option `pvpwithnoteam` is added at `PvPMode` to enable PVP with no team.(@CelestialAnarchy, #2617, @ATFGK)
+* Fixed wrong MaxProjDamage trigger.(@ATFGK, #2804)
+* Fixed incorrect Spawn information.(@ATFGK, #2804)
+* New argument `AI[2]` has been added to hook `GetDataHandlers.HandleProjectileNew`.(@ATFGK)
+* New argument `Zone5` has been added to hook `GetDataHandlers.OnPlayerZone`.(@ATFGK)
+* New argument `coatTile` has been added to hook `GetDataHandlers.OnPaintTile`.(@ATFGK)
+* New argument `coatWall` has been added to hook `GetDataHandlers.OnPaintWall`.(@ATFGK)
+* New argument `CooldownCounter` has been added to hook `GetDataHandlers.OnPlayerDamage`.(@ATFGK)
+* New argument `Random` has been added to hook `GetDataHandlers.OnPlaceObject`.(@ATFGK)
+* New argument `numberOfDeathsPVE` and `numberOfDeathsPVP` have been added to hook `GetDataHandlers.OnPlayerSpawn`.(@ATFGK)
+* New argument `numberOfDeathsPVE` and `numberOfDeathsPVP` have been added to `TSPlayer.Spawn`.(@ATFGK)
+* An argument `npcIndex` in `GetDataHandlers.HandleNpcTeleportPortal` has been updated to `ushort`.(@ATFGK)
+* Fixed Super Sponge unable to absorb shimmer. (@sgkoishi, #2833)
+
 
 ## TShock 5.1.3
 * Added support for Terraria 1.4.4.9 via OTAPI 3.1.20. (@SignatureBeef)
@@ -196,6 +216,7 @@ This release was scrubbed. All changes have been re-allocated to the 5.1.1 relea
 * Changed the log system to log the command itself without arguments if the command is not `DoLog`. (@sgkoishi, [#2779](https://github.com/Pryaxis/TShock/issues/2779))
 * Added ability for items given to players to be inserted directly into their inventory instead of spawned as an item drop. (@pontaoski)
 * Added support of `-lang` and `-language` flags for our i18n system. (@KawaiiYuyu)
+* Fixed Server not tracks deaths, Now players can be viewed with the `/death`, `/pvpdeath`, `/alldeath` and `/allpvpdeath` commands. (@hufang360)
 * Added support for Terraria 1.4.4.7 (OTAPI 3.1.16). (@drunderscore)
 * Added support for various languages, most notably Chinese (99% complete), Russian (57% complete), Indonesian (53% complete), and Spanish (21% complete). Thank you to the lovely contributors who were responsible for this [on Crowdin](https://crowdin.com/project/tshock):
   * RidnRaven (ridwankun2)
