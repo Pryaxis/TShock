@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-11-10 08:27:04+0000\n"
-"PO-Revision-Date: 2022-11-27 01:52\n"
+"PO-Revision-Date: 2022-11-27 13:54\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -4650,7 +4650,7 @@ msgstr "为 {0} '{1}' 找到多个用户帐户"
 
 #: ../../TShockAPI/Commands.cs:5461
 msgid "Mute Syntax"
-msgstr "禁烟的语法"
+msgstr "禁言的语法"
 
 #: ../../TShockAPI/Commands.cs:1293
 msgid "N/A"
