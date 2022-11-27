@@ -80,6 +80,10 @@ Use past tense when adding new entries; sign your name off when you add or chang
 ## Upcoming changes
 * Your changes could be here!
 * Added `WorldTileProvider` to the tshock config with values `default`, `constileation` or `heaptile`. This allows tile providers to be changed in environments where CLI args cannot be altered. See the documentation website for more info about these providers. (@SignatureBeef)
+* Updated the Utils.FindByIdOrName to follow same logic. Now fuzzy match fallback to `StartsWith` and then `Contains`. (@sgkoishi)
+
+## TShock 5.1.3
+* Added support for Terraria 1.4.4.9 via OTAPI 3.1.20. (@SignatureBeef)
 
 ## TShock 5.1.2
 * Added support for Terraria 1.4.4.8.1 via OTAPI 3.1.19. (@SignatureBeef)
