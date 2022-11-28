@@ -1718,55 +1718,9 @@ namespace TShockAPI
 			// Arguably the banned buckets bit should be in the item bans system
 			if (amount != 0)
 			{
-				int bucket = -1;
 				int selectedItemType = args.Player.TPlayer.inventory[args.Player.TPlayer.selectedItem].type;
-				if (selectedItemType == ItemID.EmptyBucket)
-				{
-					bucket = 0;
-				}
-				else if (selectedItemType == ItemID.WaterBucket)
-				{
-					bucket = 1;
-				}
-				else if (selectedItemType == ItemID.LavaBucket)
-				{
-					bucket = 2;
-				}
-				else if (selectedItemType == ItemID.HoneyBucket)
-				{
-					bucket = 3;
-				}
-				else if (selectedItemType == ItemID.BottomlessBucket)
-				{
-					bucket = 4;
-				}
-				else if (selectedItemType == ItemID.LavaAbsorbantSponge)
-				{
-					bucket = 5;
-				}
-				else if (selectedItemType == ItemID.BottomlessLavaBucket)
-				{
-					bucket = 6;
-				}
-				else if (selectedItemType == ItemID.BottomlessHoneyBucket
-					|| selectedItemType == ItemID.HoneyAbsorbantSponge)
-				{
-					bucket = 7;
-				}
-				else if (selectedItemType == ItemID.BottomlessShimmerBucket)
-				{
-					bucket = 8;
-				}
-				else if (selectedItemType == ItemID.UltraAbsorbantSponge)
-				{
-					bucket = 9;
-				}
-				else if (selectedItemType == ItemID.SuperAbsorbantSponge)
-				{
-					bucket = 10;
-				}
 
-				if (!wasThereABombNearby && type == LiquidType.Lava && !(bucket == 2 || bucket == 0 || bucket == 5 || bucket == 6 || bucket == 9))
+				if (!wasThereABombNearby && type == LiquidType.Lava && !(selectedItemType == ItemID.LavaBucket || selectedItemType == ItemID.EmptyBucket || selectedItemType == ItemID.LavaAbsorbantSponge || selectedItemType == ItemID.BottomlessLavaBucket || selectedItemType == ItemID.UltraAbsorbantSponge))
 				{
 					TShock.Log.ConsoleDebug(GetString("Bouncer / OnLiquidSet rejected bucket check 1 from {0}", args.Player.Name));
 					args.Player.SendErrorMessage(GetString("You do not have permission to perform this action."));
@@ -1786,7 +1740,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (!wasThereABombNearby && type == LiquidType.Water && !(bucket == 1 || bucket == 0 || bucket == 4 || bucket == 9 || bucket == 10))
+				if (!wasThereABombNearby && type == LiquidType.Water && !(selectedItemType == ItemID.WaterBucket || selectedItemType == ItemID.EmptyBucket || selectedItemType == ItemID.BottomlessBucket || selectedItemType == ItemID.UltraAbsorbantSponge || selectedItemType == ItemID.SuperAbsorbantSponge))
 				{
 					TShock.Log.ConsoleDebug(GetString("Bouncer / OnLiquidSet rejected bucket check 2 from {0}", args.Player.Name));
 					args.Player.SendErrorMessage(GetString("You do not have permission to perform this action."));
@@ -1806,7 +1760,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (!wasThereABombNearby && type == LiquidType.Honey && !(bucket == 3 || bucket == 0 || bucket == 7 || bucket == 9))
+				if (!wasThereABombNearby && type == LiquidType.Honey && !(selectedItemType == ItemID.HoneyBucket || selectedItemType == ItemID.EmptyBucket || selectedItemType == ItemID.BottomlessHoneyBucket || selectedItemType == ItemID.HoneyAbsorbantSponge || selectedItemType == ItemID.UltraAbsorbantSponge))
 				{
 					TShock.Log.ConsoleDebug(GetString("Bouncer / OnLiquidSet rejected bucket check 4 from {0}", args.Player.Name));
 					args.Player.SendErrorMessage(GetString("You do not have permission to perform this action."));
@@ -1826,7 +1780,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (!wasThereABombNearby && type == LiquidType.Shimmer && !(bucket == 8 || bucket == 9 || bucket == 10))
+				if (!wasThereABombNearby && type == LiquidType.Shimmer && !(selectedItemType == ItemID.BottomlessShimmerBucket || selectedItemType == ItemID.UltraAbsorbantSponge || selectedItemType == ItemID.SuperAbsorbantSponge))
 				{
 					TShock.Log.ConsoleDebug(GetString("Bouncer / OnLiquidSet rejected bucket check 6 from {0}", args.Player.Name));
 					args.Player.SendErrorMessage(GetString("You do not have permission to perform this action."));
