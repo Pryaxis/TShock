@@ -1770,28 +1770,54 @@ namespace TShockAPI
 						return;
 				}
 
-				if (type == LiquidType.Lava && !(selectedItemType == ItemID.LavaBucket || selectedItemType == ItemID.EmptyBucket || selectedItemType == ItemID.LavaAbsorbantSponge || selectedItemType == ItemID.BottomlessLavaBucket || selectedItemType == ItemID.UltraAbsorbantSponge))
+				switch (selectedItemType)
 				{
-					Reject(GetString("Spreading lava without holding a lava bucket"));
-					return;
-				}
-
-				if (type == LiquidType.Water && !(selectedItemType == ItemID.WaterBucket || selectedItemType == ItemID.EmptyBucket || selectedItemType == ItemID.BottomlessBucket || selectedItemType == ItemID.UltraAbsorbantSponge || selectedItemType == ItemID.SuperAbsorbantSponge))
-				{
-					Reject(GetString("Spreading water without holding a water bucket"));
-					return;
-				}
-
-				if (type == LiquidType.Honey && !(selectedItemType == ItemID.HoneyBucket || selectedItemType == ItemID.EmptyBucket || selectedItemType == ItemID.BottomlessHoneyBucket || selectedItemType == ItemID.HoneyAbsorbantSponge || selectedItemType == ItemID.UltraAbsorbantSponge))
-				{
-					Reject(GetString("Spreading honey without holding a honey bucket"));
-					return;
-				}
-
-				if (type == LiquidType.Shimmer && !(selectedItemType == ItemID.BottomlessShimmerBucket || selectedItemType == ItemID.UltraAbsorbantSponge || selectedItemType == ItemID.SuperAbsorbantSponge))
-				{
-					Reject(GetString("Spreading shimmer without holding a shimmer bucket"));
-					return;
+					case ItemID.WaterBucket:
+					case ItemID.BottomlessBucket:
+						if (type != LiquidType.Water)
+						{
+							Reject(GetString("Using {0} on non-water", Lang.GetItemNameValue(selectedItemType)));
+							return;
+						}
+						break;
+					case ItemID.HoneyBucket:
+					case ItemID.HoneyAbsorbantSponge:
+					case ItemID.BottomlessHoneyBucket:
+						if (type != LiquidType.Honey)
+						{
+							Reject(GetString("Using {0} on non-honey", Lang.GetItemNameValue(selectedItemType)));
+							return;
+						}
+						break;
+					case ItemID.LavaAbsorbantSponge:
+					case ItemID.BottomlessLavaBucket:
+					case ItemID.LavaBucket:
+						if (type != LiquidType.Lava)
+						{
+							Reject(GetString("Using {0} on non-lava", Lang.GetItemNameValue(selectedItemType)));
+							return;
+						}
+						break;
+					case ItemID.BottomlessShimmerBucket:
+						if (type != LiquidType.Shimmer)
+						{
+							Reject(GetString("Using {0} on non-shimmer", Lang.GetItemNameValue(selectedItemType)));
+							return;
+						}
+						break;
+					case ItemID.SuperAbsorbantSponge:
+						if (type != LiquidType.Water && type != LiquidType.Shimmer)
+						{
+							Reject(GetString("Using {0} on non-water or shimmer", Lang.GetItemNameValue(selectedItemType)));
+							return;
+						}
+						break;
+					case ItemID.EmptyBucket:
+					case ItemID.UltraAbsorbantSponge:
+						break;
+					default:
+						Reject(GetString("Using {0} to manipulate unknown liquid {1}", Lang.GetItemNameValue(selectedItemType), type));
+						return;
 				}
 			}
 
