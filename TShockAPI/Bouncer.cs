@@ -1716,7 +1716,7 @@ namespace TShockAPI
 
 			// Liquid anti-cheat
 			// Arguably the banned buckets bit should be in the item bans system
-			if (amount != 0)
+			if (amount != 0 && !wasThereABombNearby)
 			{
 				int selectedItemType = args.Player.TPlayer.inventory[args.Player.TPlayer.selectedItem].type;
 
@@ -1729,49 +1729,49 @@ namespace TShockAPI
 					args.Handled = true;
 				}
 
-				if (!wasThereABombNearby && type == LiquidType.Lava && !(selectedItemType == ItemID.LavaBucket || selectedItemType == ItemID.EmptyBucket || selectedItemType == ItemID.LavaAbsorbantSponge || selectedItemType == ItemID.BottomlessLavaBucket || selectedItemType == ItemID.UltraAbsorbantSponge))
+				if (type == LiquidType.Lava && !(selectedItemType == ItemID.LavaBucket || selectedItemType == ItemID.EmptyBucket || selectedItemType == ItemID.LavaAbsorbantSponge || selectedItemType == ItemID.BottomlessLavaBucket || selectedItemType == ItemID.UltraAbsorbantSponge))
 				{
 					Reject(GetString("Spreading lava without holding a lava bucket"));
 					return;
 				}
 
-				if (!wasThereABombNearby && type == LiquidType.Lava && TShock.ItemBans.DataModel.ItemIsBanned("Lava Bucket", args.Player))
+				if (type == LiquidType.Lava && TShock.ItemBans.DataModel.ItemIsBanned("Lava Bucket", args.Player))
 				{
 					Reject(GetString("Using banned lava bucket without permissions"));
 					return;
 				}
 
-				if (!wasThereABombNearby && type == LiquidType.Water && !(selectedItemType == ItemID.WaterBucket || selectedItemType == ItemID.EmptyBucket || selectedItemType == ItemID.BottomlessBucket || selectedItemType == ItemID.UltraAbsorbantSponge || selectedItemType == ItemID.SuperAbsorbantSponge))
+				if (type == LiquidType.Water && !(selectedItemType == ItemID.WaterBucket || selectedItemType == ItemID.EmptyBucket || selectedItemType == ItemID.BottomlessBucket || selectedItemType == ItemID.UltraAbsorbantSponge || selectedItemType == ItemID.SuperAbsorbantSponge))
 				{
 					Reject(GetString("Spreading water without holding a water bucket"));
 					return;
 				}
 
-				if (!wasThereABombNearby && type == LiquidType.Water && TShock.ItemBans.DataModel.ItemIsBanned("Water Bucket", args.Player))
+				if (type == LiquidType.Water && TShock.ItemBans.DataModel.ItemIsBanned("Water Bucket", args.Player))
 				{
 					Reject(GetString("Using banned water bucket without permissions"));
 					return;
 				}
 
-				if (!wasThereABombNearby && type == LiquidType.Honey && !(selectedItemType == ItemID.HoneyBucket || selectedItemType == ItemID.EmptyBucket || selectedItemType == ItemID.BottomlessHoneyBucket || selectedItemType == ItemID.HoneyAbsorbantSponge || selectedItemType == ItemID.UltraAbsorbantSponge))
+				if (type == LiquidType.Honey && !(selectedItemType == ItemID.HoneyBucket || selectedItemType == ItemID.EmptyBucket || selectedItemType == ItemID.BottomlessHoneyBucket || selectedItemType == ItemID.HoneyAbsorbantSponge || selectedItemType == ItemID.UltraAbsorbantSponge))
 				{
 					Reject(GetString("Spreading honey without holding a honey bucket"));
 					return;
 				}
 
-				if (!wasThereABombNearby && type == LiquidType.Honey && TShock.ItemBans.DataModel.ItemIsBanned("Honey Bucket", args.Player))
+				if (type == LiquidType.Honey && TShock.ItemBans.DataModel.ItemIsBanned("Honey Bucket", args.Player))
 				{
 					Reject(GetString("Using banned honey bucket without permissions"));
 					return;
 				}
 
-				if (!wasThereABombNearby && type == LiquidType.Shimmer && !(selectedItemType == ItemID.BottomlessShimmerBucket || selectedItemType == ItemID.UltraAbsorbantSponge || selectedItemType == ItemID.SuperAbsorbantSponge))
+				if (type == LiquidType.Shimmer && !(selectedItemType == ItemID.BottomlessShimmerBucket || selectedItemType == ItemID.UltraAbsorbantSponge || selectedItemType == ItemID.SuperAbsorbantSponge))
 				{
 					Reject(GetString("Spreading shimmer without holding a shimmer bucket"));
 					return;
 				}
 
-				if (!wasThereABombNearby && type == LiquidType.Shimmer &&
+				if (type == LiquidType.Shimmer &&
 					TShock.ItemBans.DataModel.ItemIsBanned("Bottomless Shimmer Bucket", args.Player))
 				{
 					Reject(GetString("Using banned bottomless shimmer bucket without permissions"));
