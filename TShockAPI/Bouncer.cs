@@ -416,6 +416,18 @@ namespace TShockAPI
 				CanBeAddedWithoutHostile = false,
 				CanOnlyBeAppliedToSender = false
 			};
+			PlayerAddBuffWhitelist[BuffID.ShadowCandle] = new BuffLimit
+			{
+				MaxTicks = 2,
+				CanBeAddedWithoutHostile = true,
+				CanOnlyBeAppliedToSender = true
+			};
+			PlayerAddBuffWhitelist[BuffID.BrainOfConfusionBuff] = new BuffLimit
+			{
+				MaxTicks = 240,
+				CanBeAddedWithoutHostile = true,
+				CanOnlyBeAppliedToSender = true
+			};
 
 			#endregion Whitelist
 		}
@@ -674,12 +686,10 @@ namespace TShockAPI
 					}
 				}
 
-				if (action == EditAction.KillTile && !Main.tileCut[tile.type] && !breakableTiles.Contains(tile.type))
+				if (action == EditAction.KillTile && !Main.tileCut[tile.type] && !breakableTiles.Contains(tile.type) && args.Player.RecentFuse == 0)
 				{
-					// TPlayer.mount.Type 8 => Drill Containment Unit.
-
 					// If the tile is an axe tile and they aren't selecting an axe, they're hacking.
-					if (Main.tileAxe[tile.type] && ((args.Player.TPlayer.mount.Type != 8 && selectedItem.axe == 0) && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0))
+					if (Main.tileAxe[tile.type] && ((args.Player.TPlayer.mount.Type != MountID.Drill && selectedItem.axe == 0) && !ItemID.Sets.Explosives[selectedItem.netID]))
 					{
 						TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected from (axe) {0} {1} {2}", args.Player.Name, action, editData));
 						args.Player.SendTileSquareCentered(tileX, tileY, 4);
@@ -687,7 +697,7 @@ namespace TShockAPI
 						return;
 					}
 					// If the tile is a hammer tile and they aren't selecting a hammer, they're hacking.
-					else if (Main.tileHammer[tile.type] && ((args.Player.TPlayer.mount.Type != 8 && selectedItem.hammer == 0) && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0))
+					else if (Main.tileHammer[tile.type] && ((args.Player.TPlayer.mount.Type != MountID.Drill && selectedItem.hammer == 0) && !ItemID.Sets.Explosives[selectedItem.netID]))
 					{
 						TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected from (hammer) {0} {1} {2}", args.Player.Name, action, editData));
 						args.Player.SendTileSquareCentered(tileX, tileY, 4);
@@ -699,11 +709,12 @@ namespace TShockAPI
 					// also add an exception for snake coils, they can be removed when the player places a new one or after x amount of time
 					// If the tile is part of the breakable when placing set, it might be getting broken by a placement.
 					else if (tile.type != TileID.ItemFrame && tile.type != TileID.MysticSnakeRope
-														   && !Main.tileAxe[tile.type] && !Main.tileHammer[tile.type] && tile.wall == 0 &&
-														   args.Player.TPlayer.mount.Type != MountID.Drill && selectedItem.pick == 0 &&
-														   selectedItem.type != ItemID.GravediggerShovel &&
-														   !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0
-														   && !TileID.Sets.BreakableWhenPlacing[tile.type])
+														   && !ItemID.Sets.Explosives[selectedItem.netID]
+														   && !TileID.Sets.BreakableWhenPlacing[tile.type]
+														   && !Main.tileAxe[tile.type] && !Main.tileHammer[tile.type] && tile.wall == 0
+														   && selectedItem.pick == 0 && selectedItem.type != ItemID.GravediggerShovel
+														   && args.Player.TPlayer.mount.Type != MountID.Drill
+														   && args.Player.TPlayer.mount.Type != MountID.DiggingMoleMinecart)
 					{
 						TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected from (pick) {0} {1} {2}", args.Player.Name, action,
 							editData));
@@ -764,7 +775,7 @@ namespace TShockAPI
 					if ((action == EditAction.PlaceTile || action == EditAction.ReplaceTile) && editData != selectedItem.createTile)
 					{
 						/// These would get caught up in the below check because Terraria does not set their createTile field.
-						if (selectedItem.netID != ItemID.IceRod && selectedItem.netID != ItemID.DirtBomb && selectedItem.netID != ItemID.StickyBomb)
+						if (selectedItem.netID != ItemID.IceRod && selectedItem.netID != ItemID.DirtBomb && selectedItem.netID != ItemID.StickyBomb && (args.Player.TPlayer.mount.Type != MountID.DiggingMoleMinecart || editData != TileID.MinecartTrack))
 						{
 							TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected from tile placement not matching selected item createTile {0} {1} {2} selectedItemID:{3} createTile:{4}", args.Player.Name, action, editData, selectedItem.netID, selectedItem.createTile));
 							args.Player.SendTileSquareCentered(tileX, tileY, 4);
@@ -1333,6 +1344,7 @@ namespace TShockAPI
 				|| type == ProjectileID.Dynamite
 				|| type == ProjectileID.StickyBomb
 				|| type == ProjectileID.StickyDynamite
+				|| type == ProjectileID.BombFish
 				|| type == ProjectileID.ScarabBomb
 				|| type == ProjectileID.DirtBomb))
 			{
@@ -1867,41 +1879,57 @@ namespace TShockAPI
 			int type = args.Type;
 			int time = args.Time;
 
+			void Reject(bool shouldResync = true)
+			{
+				args.Handled = true;
+
+				if (shouldResync)
+					args.Player.SendData(PacketTypes.PlayerBuff, number: id);
+			}
+
 			if (id >= Main.maxPlayers)
 			{
-				TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerBuff rejected player cap from {0}", args.Player.Name));
-				args.Handled = true;
+				TShock.Log.ConsoleDebug(GetString(
+					"Bouncer / OnPlayerBuff rejected {0} ({1}) applying buff {2} to {3} for {4} ticks: target ID out of bounds",
+					args.Player.Name, args.Player.Index, type, id, time));
+				Reject(false);
 				return;
 			}
 
 			if (TShock.Players[id] == null)
 			{
-				TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerBuff rejected null check from {0}", args.Player.Name));
-				args.Handled = true;
+				TShock.Log.ConsoleDebug(GetString(
+					"Bouncer / OnPlayerBuff rejected {0} ({1}) applying buff {2} to {3} for {4} ticks: target is null", args.Player.Name,
+					args.Player.Index, type, id, time));
+				Reject(false);
 				return;
 			}
 
 			if (type >= Terraria.ID.BuffID.Count)
 			{
-				TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerBuff rejected invalid buff type {0}", args.Player.Name));
-				args.Player.SendData(PacketTypes.PlayerBuff, "", id);
-				args.Handled = true;
+				TShock.Log.ConsoleDebug(GetString(
+					"Bouncer / OnPlayerBuff rejected {0} ({1}) applying buff {2} to {3} for {4} ticks: invalid buff type", args.Player.Name,
+					args.Player.Index, type, id, time));
+				Reject(false);
 				return;
 			}
 
 			if (args.Player.IsBeingDisabled())
 			{
-				TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerBuff rejected disabled from {0}", args.Player.Name));
-				args.Player.SendData(PacketTypes.PlayerBuff, "", id);
-				args.Handled = true;
+				TShock.Log.ConsoleDebug(GetString(
+					"Bouncer / OnPlayerBuff rejected {0} ({1}) applying buff {2} to {3} for {4} ticks: sender is being disabled",
+					args.Player.Name, args.Player.Index, type, id, time));
+				Reject();
 				return;
 			}
 
 			if (args.Player.IsBouncerThrottled())
 			{
-				TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerBuff rejected throttled from {0}", args.Player.Name));
-				args.Player.SendData(PacketTypes.PlayerBuff, "", id);
-				args.Handled = true;
+				TShock.Log.ConsoleDebug(GetString(
+					"Bouncer / OnPlayerBuff rejected {0} ({1}) applying buff {2} to {3} for {4} ticks: sender is being throttled",
+					args.Player.Name, args.Player.Index, type, id, time));
+				Reject();
+
 				return;
 			}
 
@@ -1910,41 +1938,46 @@ namespace TShockAPI
 
 			if (!args.Player.IsInRange(targetPlayer.TileX, targetPlayer.TileY, 50))
 			{
-				TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerBuff rejected range check from {0}", args.Player.Name));
-				args.Player.SendData(PacketTypes.PlayerBuff, "", id);
-				args.Handled = true;
+				TShock.Log.ConsoleDebug(GetString(
+					"Bouncer / OnPlayerBuff rejected {0} ({1}) applying buff {2} to {3} for {4} ticks: sender is not in range of target",
+					args.Player.Name, args.Player.Index, type, id, time));
+				Reject();
 				return;
 			}
 
 			if (buffLimit == null)
 			{
-				TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerBuff rejected non-whitelisted buff {0}", args.Player.Name));
-				args.Player.SendData(PacketTypes.PlayerBuff, "", id);
-				args.Handled = true;
+				TShock.Log.ConsoleDebug(GetString(
+					"Bouncer / OnPlayerBuff rejected {0} ({1}) applying buff {2} to {3} for {4} ticks: buff is not whitelisted",
+					args.Player.Name, args.Player.Index, type, id, time));
+				Reject();
 				return;
 			}
 
 			if (buffLimit.CanOnlyBeAppliedToSender && id != args.Player.Index)
 			{
-				TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerBuff rejected applied to non-sender from {0}", args.Player.Name));
-				args.Player.SendData(PacketTypes.PlayerBuff, "", id);
-				args.Handled = true;
+				TShock.Log.ConsoleDebug(GetString(
+					"Bouncer / OnPlayerBuff rejected {0} ({1}) applying buff {2} to {3} for {4} ticks: buff cannot be applied to non-senders",
+					args.Player.Name, args.Player.Index, type, id, time));
+				Reject();
 				return;
 			}
 
 			if (!buffLimit.CanBeAddedWithoutHostile && !targetPlayer.TPlayer.hostile)
 			{
-				TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerBuff rejected hostile/pvp from {0}", args.Player.Name));
-				args.Player.SendData(PacketTypes.PlayerBuff, "", id);
-				args.Handled = true;
+				TShock.Log.ConsoleDebug(GetString(
+					"Bouncer / OnPlayerBuff rejected {0} ({1}) applying buff {2} to {3} for {4} ticks: buff cannot be applied without pvp",
+					args.Player.Name, args.Player.Index, type, id, time));
+				Reject();
 				return;
 			}
 
 			if (time <= 0 || time > buffLimit.MaxTicks)
 			{
-				TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerBuff rejected time too long from {0}", args.Player.Name));
-				args.Player.SendData(PacketTypes.PlayerBuff, "", id);
-				args.Handled = true;
+				TShock.Log.ConsoleDebug(GetString(
+					"Bouncer / OnPlayerBuff rejected {0} ({1}) applying buff {2} to {3} for {4} ticks: buff cannot be applied for that long",
+					args.Player.Name, args.Player.Index, type, id, time));
+				Reject();
 				return;
 			}
 		}
