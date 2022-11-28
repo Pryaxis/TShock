@@ -1720,84 +1720,61 @@ namespace TShockAPI
 			{
 				int selectedItemType = args.Player.TPlayer.inventory[args.Player.TPlayer.selectedItem].type;
 
-				if (!wasThereABombNearby && type == LiquidType.Lava && !(selectedItemType == ItemID.LavaBucket || selectedItemType == ItemID.EmptyBucket || selectedItemType == ItemID.LavaAbsorbantSponge || selectedItemType == ItemID.BottomlessLavaBucket || selectedItemType == ItemID.UltraAbsorbantSponge))
+				void Reject(string reason)
 				{
-					TShock.Log.ConsoleDebug(GetString("Bouncer / OnLiquidSet rejected bucket check 1 from {0}", args.Player.Name));
+					TShock.Log.ConsoleDebug(GetString("Bouncer / OnLiquidSet rejected liquid type {0} from {1} holding {2}", type, args.Player.Name, selectedItemType));
 					args.Player.SendErrorMessage(GetString("You do not have permission to perform this action."));
-					args.Player.Disable(GetString("Spreading lava without holding a lava bucket"), DisableFlags.WriteToLogAndConsole);
+					args.Player.Disable(reason, DisableFlags.WriteToLogAndConsole);
 					args.Player.SendTileSquareCentered(tileX, tileY, 1);
 					args.Handled = true;
+				}
+
+				if (!wasThereABombNearby && type == LiquidType.Lava && !(selectedItemType == ItemID.LavaBucket || selectedItemType == ItemID.EmptyBucket || selectedItemType == ItemID.LavaAbsorbantSponge || selectedItemType == ItemID.BottomlessLavaBucket || selectedItemType == ItemID.UltraAbsorbantSponge))
+				{
+					Reject(GetString("Spreading lava without holding a lava bucket"));
 					return;
 				}
 
 				if (!wasThereABombNearby && type == LiquidType.Lava && TShock.ItemBans.DataModel.ItemIsBanned("Lava Bucket", args.Player))
 				{
-					TShock.Log.ConsoleDebug(GetString("Bouncer / OnLiquidSet rejected lava bucket from {0}", args.Player.Name));
-					args.Player.SendErrorMessage(GetString("You do not have permission to perform this action."));
-					args.Player.Disable(GetString("Using banned lava bucket without permissions"), DisableFlags.WriteToLogAndConsole);
-					args.Player.SendTileSquareCentered(tileX, tileY, 1);
-					args.Handled = true;
+					Reject(GetString("Using banned lava bucket without permissions"));
 					return;
 				}
 
 				if (!wasThereABombNearby && type == LiquidType.Water && !(selectedItemType == ItemID.WaterBucket || selectedItemType == ItemID.EmptyBucket || selectedItemType == ItemID.BottomlessBucket || selectedItemType == ItemID.UltraAbsorbantSponge || selectedItemType == ItemID.SuperAbsorbantSponge))
 				{
-					TShock.Log.ConsoleDebug(GetString("Bouncer / OnLiquidSet rejected bucket check 2 from {0}", args.Player.Name));
-					args.Player.SendErrorMessage(GetString("You do not have permission to perform this action."));
-					args.Player.Disable(GetString("Spreading water without holding a water bucket"), DisableFlags.WriteToLogAndConsole);
-					args.Player.SendTileSquareCentered(tileX, tileY, 1);
-					args.Handled = true;
+					Reject(GetString("Spreading water without holding a water bucket"));
 					return;
 				}
 
 				if (!wasThereABombNearby && type == LiquidType.Water && TShock.ItemBans.DataModel.ItemIsBanned("Water Bucket", args.Player))
 				{
-					TShock.Log.ConsoleDebug(GetString("Bouncer / OnLiquidSet rejected bucket check 3 from {0}", args.Player.Name));
-					args.Player.SendErrorMessage(GetString("You do not have permission to perform this action."));
-					args.Player.Disable(GetString("Using banned water bucket without permissions"), DisableFlags.WriteToLogAndConsole);
-					args.Player.SendTileSquareCentered(tileX, tileY, 1);
-					args.Handled = true;
+					Reject(GetString("Using banned water bucket without permissions"));
 					return;
 				}
 
 				if (!wasThereABombNearby && type == LiquidType.Honey && !(selectedItemType == ItemID.HoneyBucket || selectedItemType == ItemID.EmptyBucket || selectedItemType == ItemID.BottomlessHoneyBucket || selectedItemType == ItemID.HoneyAbsorbantSponge || selectedItemType == ItemID.UltraAbsorbantSponge))
 				{
-					TShock.Log.ConsoleDebug(GetString("Bouncer / OnLiquidSet rejected bucket check 4 from {0}", args.Player.Name));
-					args.Player.SendErrorMessage(GetString("You do not have permission to perform this action."));
-					args.Player.Disable(GetString("Spreading honey without holding a honey bucket"), DisableFlags.WriteToLogAndConsole);
-					args.Player.SendTileSquareCentered(tileX, tileY, 1);
-					args.Handled = true;
+					Reject(GetString("Spreading honey without holding a honey bucket"));
 					return;
 				}
 
 				if (!wasThereABombNearby && type == LiquidType.Honey && TShock.ItemBans.DataModel.ItemIsBanned("Honey Bucket", args.Player))
 				{
-					TShock.Log.ConsoleDebug(GetString("Bouncer / OnLiquidSet rejected bucket check 5 from {0}", args.Player.Name));
-					args.Player.SendErrorMessage(GetString("You do not have permission to perform this action."));
-					args.Player.Disable(GetString("Using banned honey bucket without permissions"), DisableFlags.WriteToLogAndConsole);
-					args.Player.SendTileSquareCentered(tileX, tileY, 1);
-					args.Handled = true;
+					Reject(GetString("Using banned honey bucket without permissions"));
 					return;
 				}
 
 				if (!wasThereABombNearby && type == LiquidType.Shimmer && !(selectedItemType == ItemID.BottomlessShimmerBucket || selectedItemType == ItemID.UltraAbsorbantSponge || selectedItemType == ItemID.SuperAbsorbantSponge))
 				{
-					TShock.Log.ConsoleDebug(GetString("Bouncer / OnLiquidSet rejected bucket check 6 from {0}", args.Player.Name));
-					args.Player.SendErrorMessage(GetString("You do not have permission to perform this action."));
-					args.Player.Disable(GetString("Spreading shimmer without holding a shimmer bucket"), DisableFlags.WriteToLogAndConsole);
-					args.Player.SendTileSquareCentered(tileX, tileY, 1);
-					args.Handled = true;
+					Reject(GetString("Spreading shimmer without holding a shimmer bucket"));
 					return;
 				}
 
 				if (!wasThereABombNearby && type == LiquidType.Shimmer &&
 					TShock.ItemBans.DataModel.ItemIsBanned("Bottomless Shimmer Bucket", args.Player))
 				{
-					TShock.Log.ConsoleDebug(GetString("Bouncer / OnLiquidSet rejected bucket check 7 from {0}", args.Player.Name));
-					args.Player.SendErrorMessage(GetString("You do not have permission to perform this action."));
-					args.Player.Disable(GetString("Using banned bottomless shimmer bucket without permissions"), DisableFlags.WriteToLogAndConsole);
-					args.Player.SendTileSquareCentered(tileX, tileY, 1);
-					args.Handled = true;
+					Reject(GetString("Using banned bottomless shimmer bucket without permissions"));
 					return;
 				}
 			}
