@@ -290,9 +290,15 @@ namespace TShockAPI
 					if (currentName.Equals(name, StringComparison.InvariantCultureIgnoreCase))
 						return new List<Item> { GetItemById(i) };
 					if (currentName.StartsWith(name, StringComparison.InvariantCultureIgnoreCase))
+					{
 						startswith.Add(i);
-					else if (currentName.Contains(name, StringComparison.InvariantCultureIgnoreCase))
+						continue;
+					}
+					if (currentName.Contains(name, StringComparison.InvariantCultureIgnoreCase))
+					{
 						contains.Add(i);
+						continue;
+					}
 				}
 				currentName = EnglishLanguage.GetItemNameById(i);
 				if (!string.IsNullOrEmpty(currentName))
@@ -300,9 +306,15 @@ namespace TShockAPI
 					if (currentName.Equals(name, StringComparison.InvariantCultureIgnoreCase))
 						return new List<Item> { GetItemById(i) };
 					if (currentName.StartsWith(name, StringComparison.InvariantCultureIgnoreCase))
+					{
 						startswith.Add(i);
-					else if (currentName.Contains(name, StringComparison.InvariantCultureIgnoreCase))
+						continue;
+					}
+					if (currentName.Contains(name, StringComparison.InvariantCultureIgnoreCase))
+					{
 						contains.Add(i);
+						continue;
+					}
 				}
 			}
 
@@ -377,9 +389,15 @@ namespace TShockAPI
 					if (currentName.Equals(name, StringComparison.InvariantCultureIgnoreCase))
 						return new List<NPC> { GetNPCById(i) };
 					if (currentName.StartsWith(name, StringComparison.InvariantCultureIgnoreCase))
+					{
 						startswith.Add(i);
-					else if (currentName.Contains(name, StringComparison.InvariantCultureIgnoreCase))
+						continue;
+					}
+					if (currentName.Contains(name, StringComparison.InvariantCultureIgnoreCase))
+					{
 						contains.Add(i);
+						continue;
+					}
 				}
 				currentName = EnglishLanguage.GetNpcNameById(i);
 				if (!string.IsNullOrEmpty(currentName))
@@ -387,9 +405,15 @@ namespace TShockAPI
 					if (currentName.Equals(name, StringComparison.InvariantCultureIgnoreCase))
 						return new List<NPC> { GetNPCById(i) };
 					if (currentName.StartsWith(name, StringComparison.InvariantCultureIgnoreCase))
+					{
 						startswith.Add(i);
-					else if (currentName.Contains(name, StringComparison.InvariantCultureIgnoreCase))
+						continue;
+					}
+					if (currentName.Contains(name, StringComparison.InvariantCultureIgnoreCase))
+					{
 						contains.Add(i);
+						continue;
+					}
 				}
 			}
 
@@ -435,9 +459,15 @@ namespace TShockAPI
 					if (currentName.Equals(name, StringComparison.InvariantCultureIgnoreCase))
 						return new List<int> { i };
 					if (currentName.StartsWith(name, StringComparison.InvariantCultureIgnoreCase))
+					{
 						startswith.Add(i);
-					else if (currentName.Contains(name, StringComparison.InvariantCultureIgnoreCase))
+						continue;
+					}
+					if (currentName.Contains(name, StringComparison.InvariantCultureIgnoreCase))
+					{
 						contains.Add(i);
+						continue;
+					}
 				}
 				currentName = EnglishLanguage.GetBuffNameById(i);
 				if (!string.IsNullOrWhiteSpace(currentName))
@@ -445,9 +475,15 @@ namespace TShockAPI
 					if (currentName.Equals(name, StringComparison.InvariantCultureIgnoreCase))
 						return new List<int> { i };
 					if (currentName.StartsWith(name, StringComparison.InvariantCultureIgnoreCase))
+					{
 						startswith.Add(i);
-					else if (currentName.Contains(name, StringComparison.InvariantCultureIgnoreCase))
+						continue;
+					}
+					if (currentName.Contains(name, StringComparison.InvariantCultureIgnoreCase))
+					{
 						contains.Add(i);
+						continue;
+					}
 				}
 			}
 
@@ -483,9 +519,15 @@ namespace TShockAPI
 					if (currentName.Equals(name, StringComparison.InvariantCultureIgnoreCase))
 						return new List<int> { i };
 					if (currentName.StartsWith(name, StringComparison.InvariantCultureIgnoreCase))
+					{
 						startswith.Add(i);
-					else if (currentName.Contains(name, StringComparison.InvariantCultureIgnoreCase))
+						continue;
+					}
+					if (currentName.Contains(name, StringComparison.InvariantCultureIgnoreCase))
+					{
 						contains.Add(i);
+						continue;
+					}
 				}
 				currentName = EnglishLanguage.GetPrefixById(i);
 				if (!string.IsNullOrWhiteSpace(currentName))
@@ -493,9 +535,15 @@ namespace TShockAPI
 					if (currentName.Equals(name, StringComparison.InvariantCultureIgnoreCase))
 						return new List<int> { i };
 					if (currentName.StartsWith(name, StringComparison.InvariantCultureIgnoreCase))
+					{
 						startswith.Add(i);
-					else if (currentName.Contains(name, StringComparison.InvariantCultureIgnoreCase))
+						continue;
+					}
+					if (currentName.Contains(name, StringComparison.InvariantCultureIgnoreCase))
+					{
 						contains.Add(i);
+						continue;
+					}
 				}
 			}
 
