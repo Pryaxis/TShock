@@ -383,6 +383,19 @@ namespace TShockAPI
 				if (Config.Settings.EnableGeoIP && File.Exists(geoippath))
 					Geo = new GeoIPCountry(geoippath);
 
+				// check if a custom tile provider is to be used
+				switch(Config.Settings.WorldTileProvider?.ToLower())
+				{
+					case "heaptile":
+						Log.ConsoleInfo(GetString($"Using {nameof(HeapTile)} for tile implementation"), TraceLevel.Info);
+						Main.tile = new TileProvider();
+						break;
+					case "constileation":
+						Log.ConsoleInfo(GetString($"Using {nameof(ConstileationProvider)} for tile implementation"), TraceLevel.Info);
+						Main.tile = new ConstileationProvider();
+						break;
+				}
+
 				Log.ConsoleInfo(GetString("TShock {0} ({1}) now running.", Version, VersionCodename));
 
 				ServerApi.Hooks.GamePostInitialize.Register(this, OnPostInit);
