@@ -1729,15 +1729,50 @@ namespace TShockAPI
 					args.Handled = true;
 				}
 
-				if (type == LiquidType.Lava && !(selectedItemType == ItemID.LavaBucket || selectedItemType == ItemID.EmptyBucket || selectedItemType == ItemID.LavaAbsorbantSponge || selectedItemType == ItemID.BottomlessLavaBucket || selectedItemType == ItemID.UltraAbsorbantSponge))
+				if (TShock.ItemBans.DataModel.ItemIsBanned(EnglishLanguage.GetItemNameById(selectedItemType), args.Player))
 				{
-					Reject(GetString("Spreading lava without holding a lava bucket"));
+					Reject(GetString("Using banned {0} to manipulate liquid", Lang.GetItemNameValue(selectedItemType)));
 					return;
 				}
 
-				if (type == LiquidType.Lava && TShock.ItemBans.DataModel.ItemIsBanned("Lava Bucket", args.Player))
+				switch (type)
 				{
-					Reject(GetString("Using banned lava bucket without permissions"));
+					case LiquidType.Water:
+						if (TShock.ItemBans.DataModel.ItemIsBanned(EnglishLanguage.GetItemNameById(ItemID.WaterBucket), args.Player))
+						{
+							Reject(GetString("Using banned water bucket without permissions"));
+							return;
+						}
+						break;
+					case LiquidType.Lava:
+						if (TShock.ItemBans.DataModel.ItemIsBanned(EnglishLanguage.GetItemNameById(ItemID.LavaBucket), args.Player))
+						{
+							Reject(GetString("Using banned lava bucket without permissions"));
+							return;
+						}
+						break;
+					case LiquidType.Honey:
+						if (TShock.ItemBans.DataModel.ItemIsBanned(EnglishLanguage.GetItemNameById(ItemID.HoneyBucket), args.Player))
+						{
+							Reject(GetString("Using banned honey bucket without permissions"));
+							return;
+						}
+						break;
+					case LiquidType.Shimmer:
+						if (TShock.ItemBans.DataModel.ItemIsBanned(EnglishLanguage.GetItemNameById(ItemID.BottomlessShimmerBucket), args.Player))
+						{
+							Reject(GetString("Using banned shimmering water bucket without permissions"));
+							return;
+						}
+						break;
+					default:
+						Reject(GetString("Manipulating unknown liquid type"));
+						return;
+				}
+
+				if (type == LiquidType.Lava && !(selectedItemType == ItemID.LavaBucket || selectedItemType == ItemID.EmptyBucket || selectedItemType == ItemID.LavaAbsorbantSponge || selectedItemType == ItemID.BottomlessLavaBucket || selectedItemType == ItemID.UltraAbsorbantSponge))
+				{
+					Reject(GetString("Spreading lava without holding a lava bucket"));
 					return;
 				}
 
@@ -1747,34 +1782,15 @@ namespace TShockAPI
 					return;
 				}
 
-				if (type == LiquidType.Water && TShock.ItemBans.DataModel.ItemIsBanned("Water Bucket", args.Player))
-				{
-					Reject(GetString("Using banned water bucket without permissions"));
-					return;
-				}
-
 				if (type == LiquidType.Honey && !(selectedItemType == ItemID.HoneyBucket || selectedItemType == ItemID.EmptyBucket || selectedItemType == ItemID.BottomlessHoneyBucket || selectedItemType == ItemID.HoneyAbsorbantSponge || selectedItemType == ItemID.UltraAbsorbantSponge))
 				{
 					Reject(GetString("Spreading honey without holding a honey bucket"));
 					return;
 				}
 
-				if (type == LiquidType.Honey && TShock.ItemBans.DataModel.ItemIsBanned("Honey Bucket", args.Player))
-				{
-					Reject(GetString("Using banned honey bucket without permissions"));
-					return;
-				}
-
 				if (type == LiquidType.Shimmer && !(selectedItemType == ItemID.BottomlessShimmerBucket || selectedItemType == ItemID.UltraAbsorbantSponge || selectedItemType == ItemID.SuperAbsorbantSponge))
 				{
 					Reject(GetString("Spreading shimmer without holding a shimmer bucket"));
-					return;
-				}
-
-				if (type == LiquidType.Shimmer &&
-					TShock.ItemBans.DataModel.ItemIsBanned("Bottomless Shimmer Bucket", args.Player))
-				{
-					Reject(GetString("Using banned bottomless shimmer bucket without permissions"));
 					return;
 				}
 			}
