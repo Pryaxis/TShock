@@ -55,6 +55,10 @@ namespace TShockAPI.Configuration
 		[Description("Allows stacks in chests to go beyond the stack limit during world loading.")]
 		public bool IgnoreChestStacksOnLoad = false;
 
+		/// <summary>Allows changing of the default world tile provider.</summary>
+		[Description("Allows changing of the default world tile provider.")]
+		public string WorldTileProvider = "default";
+
 		#endregion
 
 
