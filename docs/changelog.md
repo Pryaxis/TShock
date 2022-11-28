@@ -78,6 +78,8 @@ Use past tense when adding new entries; sign your name off when you add or chang
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change. -->
 
 ## Upcoming changes
+* Your changes could be here!
+* Added `WorldTileProvider` to the tshock config with values `default`, `constileation` or `heaptile`. This allows tile providers to be changed in environments where CLI args cannot be altered. See the documentation website for more info about these providers. (@SignatureBeef)
 * Updated the Utils.FindByIdOrName to follow same logic. Now fuzzy match fallback to `StartsWith` and then `Contains`. (@sgkoishi)
 * Added `ShadowCandle` and `BrainOfConfusionBuff` (BoC dodge buff) to the `PlayerAddBuffWhitelist` (@drunderscore)
 * Improved rejection message and code duplication in `OnPlayerBuff` (@drunderscore)
