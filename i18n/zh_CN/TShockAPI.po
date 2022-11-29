@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-11-28 07:52:13+0000\n"
-"PO-Revision-Date: 2022-11-28 14:30\n"
+"PO-Revision-Date: 2022-11-29 05:03\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -4265,7 +4265,7 @@ msgstr "格式错误! 正确格式: {0}userinfo <玩家名>"
 #: ../../TShockAPI/Commands.cs:3202
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}warp [command] [arguments]."
-msgstr "格式错误! 正确格式: {0}warp [子命令] [参数]"
+msgstr "指令waro的用法错误，应为{0}warp [子命令] [参数]"
 
 #: ../../TShockAPI/Commands.cs:3211
 #, csharp-format
