@@ -1407,7 +1407,7 @@ namespace TShockAPI
 					TileY = (short)tiley,
 					RespawnTimer = respawnTimer ?? TShock.Players[Index].RespawnTimer * 60,
 					NumberOfDeathsPVE = numberOfDeathsPVE ?? (short)TPlayer.numberOfDeathsPVE,
-					umberOfDeathsPVP = numberOfDeathsPVP ?? (short)TPlayer.numberOfDeathsPVP,
+					NumberOfDeathsPVP = numberOfDeathsPVP ?? (short)TPlayer.numberOfDeathsPVP,
 					PlayerSpawnContext = context,
 				};
 				msg.PackFull(ms);
