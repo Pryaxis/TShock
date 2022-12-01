@@ -78,19 +78,18 @@ Use past tense when adding new entries; sign your name off when you add or chang
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change. -->
 
 ## Upcoming changes
-
-
-* Fixed wrong MaxProjDamage trigger.(@ATFGK, #2804)
-* Fixed incorrect Spawn information.(@ATFGK, #2804)
-* New argument `AI[2]` was added to hook `GetDataHandlers.HandleProjectileNew`.(@ATFGK)
-* New argument `Zone5` was added to hook `GetDataHandlers.OnPlayerZone`.(@ATFGK)
-* New argument `coatTile` was added to hook `GetDataHandlers.OnPaintTile`.(@ATFGK)
-* New argument `coatWall` was added to hook `GetDataHandlers.OnPaintWall`.(@ATFGK)
-* New argument `CooldownCounter` was added to hook `GetDataHandlers.OnPlayerDamage`.(@ATFGK)
-* New argument `Random` was added to hook `GetDataHandlers.OnPlaceObject`.(@ATFGK)
-* New argument `numberOfDeathsPVE` and `numberOfDeathsPVP` were added to hook `GetDataHandlers.OnPlayerSpawn`.(@ATFGK)
-* New argument `numberOfDeathsPVE` and `numberOfDeathsPVP` were added to `TSPlayer.Spawn`.(@ATFGK)
-* An argument `npcIndex` in `GetDataHandlers.HandleNpcTeleportPortal` was updated to `ushort`.(@ATFGK)
+* Corrected and updated deserialization of the following packets (@ATFGK):
+  * `ProjectileNew`: Read the third `AI` value.
+    * Before this change, it was previously possible for the projectile damage limit to falsely trigger, such as when using the Terra Balde and Fire Gauntlet together.
+  * `PlayerSpawn`: Read the `NumberOfDeathsPVE` and `NumberOfDeathsPVP` values.
+    * Before this change, the `PlayerSpawnContext` was always read incorrectly, due to the values above being placed in the middle of the existing structure.
+  * `NpcTeleportPortal`: Read the NPC index as a `ushort` instead of a `byte`.
+  * `PlaceObject`: Read the `Random` value.
+    * Before this change, the `Direction` was always read incorrectly, due to the value above being placed in the middle of the existing structure.
+  * `Zones`: Read the `zone5` value.
+  * `PaintTile` and `PaintWall`: Read the `coatTile` and `coatWall` values.
+  * `PlayerHurtV2`: Read the `cooldownCounter` value.
+* Updated `SpawnMsg` to include the `NumberOfDeathsPVE` and `NumberOfDeathsPVP`, and allow them to be optionally used in `TSPlayer.Spawn`. (@ATFGK)
 * Added `WorldTileProvider` to the tshock config with values `default`, `constileation` or `heaptile`. This allows tile providers to be changed in environments where CLI args cannot be altered. See the documentation website for more info about these providers. (@SignatureBeef)
 * Updated the Utils.FindByIdOrName to follow same logic. Now fuzzy match fallback to `StartsWith` and then `Contains`. (@sgkoishi)
 * Added `ShadowCandle` and `BrainOfConfusionBuff` (BoC dodge buff) to the `PlayerAddBuffWhitelist` (@drunderscore)
