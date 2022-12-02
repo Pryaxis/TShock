@@ -84,6 +84,8 @@ Use past tense when adding new entries; sign your name off when you add or chang
 * Improved rejection message and code duplication in `OnPlayerBuff` (@drunderscore)
   * This will make it so Bouncer rejections regarding `PlayerAddBuff` will now always include the sender index, buff type, receiver index, and time in ticks, allowing much faster triage of buff whitelist issues.
 * Allowed Digging Molecart and bomb fish to break tiles and place tracks (@sgkoishi)
+* Increased whitelisted duration of the Mighty Wind (`WindPushed`) buff (from sandstorms). (@drunderscore)
+* Whitelisted the Hellfire (`OnFire3`) buff. (@drunderscore)
 
 ## TShock 5.1.3
 * Added support for Terraria 1.4.4.9 via OTAPI 3.1.20. (@SignatureBeef)
