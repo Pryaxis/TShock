@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-11-28 07:52:13+0000\n"
-"PO-Revision-Date: 2022-11-28 13:03\n"
+"PO-Revision-Date: 2022-12-02 15:58\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "MIME-Version: 1.0\n"
@@ -38,19 +38,19 @@ msgstr "#{0} - Você está banido: {1}"
 
 #: ../../TShockAPI/Commands.cs:6499
 msgid "     'basic', 'sakura', 'willow', 'boreal', 'mahogany', 'ebonwood', 'shadewood', 'pearlwood'."
-msgstr "     'básico', 'cerejeira', 'salgueira', 'boreal', 'mogno', 'madeira ébano', 'madeira escura', 'madeira pérola'."
+msgstr "     'basic', 'sakura', 'willow', 'boreal', 'mahogany', 'ebonwood', 'shadewood', 'pearlwood'."
 
 #: ../../TShockAPI/Commands.cs:6505
 msgid "     'cactus', 'herb', 'mushroom'."
-msgstr "     'cacto', 'erva', 'cogumelo'."
+msgstr "     'cactus', 'herb', 'mushroom'."
 
 #: ../../TShockAPI/Commands.cs:6501
 msgid "     'palm', 'corruptpalm', 'crimsonpalm', 'hallowpalm'."
-msgstr "     'palmeira', 'palmeira corrompida', 'palmeira carmesim', 'palmeira consagrada'."
+msgstr "     'palm', 'corruptpalm', 'crimsonpalm', 'hallowpalm'."
 
 #: ../../TShockAPI/Commands.cs:6503
 msgid "     'topaz', 'amethyst', 'sapphire', 'emerald', 'ruby', 'diamond', 'amber'."
-msgstr "     'topázio', 'ametista', 'safira', 'esmeralda', 'rubi', 'diamante', 'âmbar'."
+msgstr "     'topaz', 'amethyst', 'sapphire', 'emerald', 'ruby', 'diamond', 'amber'."
 
 #: ../../TShockAPI/Commands.cs:1446
 #, csharp-format
@@ -5399,7 +5399,7 @@ msgstr "Os personagens server side estão habilitados. Você precisa estar logad
 #: ../../TShockAPI/TShock.cs:1691
 #, csharp-format
 msgid "Server side characters is enabled! Please {0}register or {0}login to play!"
-msgstr "Os personagens server side estão habilitados! Por favor {0}registre-se ou {0}entre para jogar!"
+msgstr "Os personagens server-side estão habilitados! Por favor {0}register ou {0}login para jogar!"
 
 #: ../../TShockAPI/Commands.cs:1813
 #, csharp-format
