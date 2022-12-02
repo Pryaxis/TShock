@@ -400,7 +400,7 @@ namespace TShockAPI
 			};
 			PlayerAddBuffWhitelist[BuffID.OnFire3] = new BuffLimit
 			{
-				MaxTicks = 60 * 5,
+				MaxTicks = 60 * 6,
 				CanBeAddedWithoutHostile = false,
 				CanOnlyBeAppliedToSender = false
 			};
