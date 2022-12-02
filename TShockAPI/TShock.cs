@@ -45,6 +45,10 @@ using TShockAPI.Localization;
 using TShockAPI.Configuration;
 using Terraria.GameContent.Creative;
 using System.Runtime.InteropServices;
+using MonoMod.Cil;
+using Terraria.Achievements;
+using Terraria.Initializers;
+using Terraria.UI.Chat;
 using TShockAPI.Modules;
 
 namespace TShockAPI
@@ -429,6 +433,33 @@ namespace TShockAPI
 
 				EnglishLanguage.Initialize();
 
+				// The AchievementTagHandler expects Main.Achievements to be non-null, which is not normally the case on dedicated servers.
+				// When trying to parse an achievement chat tag, it will instead throw.
+				// The tag is parsed when calling ChatManager.ParseMessage, which is used in TShock when writing chat messages to the
+				// console. Our OnChat handler uses Utils.Broadcast, which will send the message to all connected clients, write the message
+				// to the console and the log. Due to the order of execution, the message ends up being sent to all connected clients, but
+				// throws whilst trying to write to the console, and never gets written to the log.
+				// To solve the issue, we make achievements available on the server, allowing the tag handler to work as expected, and
+				// even allowing the localization of achievement names to appear in the console.
+
+				if (Game != null)
+				{
+					// Initialize the AchievementManager, which is normally only done on clients.
+					Game._achievements = new AchievementManager();
+
+					IL.Terraria.Initializers.AchievementInitializer.Load += OnAchievementInitializerLoad;
+
+					// Actually call AchievementInitializer.Load, which is also normally only done on clients.
+					AchievementInitializer.Load();
+				}
+				else
+				{
+					// If we don't have a Game instance, then we'll just remove the achievement tag handler entirely. This will cause the
+					// raw tag to just be used instead (and not be localized), but still avoid all the issues outlined above.
+					ChatManager._handlers.Remove("a", out _);
+					ChatManager._handlers.Remove("achievement", out _);
+				}
+
 				ModuleManager.Initialise(new object[] { this });
 
 				if (Config.Settings.RestApiEnabled)
@@ -465,6 +496,13 @@ namespace TShockAPI
 			}
 		}
 
+		private static void OnAchievementInitializerLoad(ILContext il)
+		{
+			// Modify AchievementInitializer.Load to remove the Main.netMode == 2 check (occupies the first 4 IL instructions)
+			for (var i = 0; i < 4; i++)
+				il.Body.Instructions.RemoveAt(0);
+		}
+
 		protected void CrashReporter_HeapshotRequesting(object sender, EventArgs e)
 		{
 			foreach (TSPlayer player in TShock.Players)
@@ -485,6 +523,8 @@ namespace TShockAPI
 					Geo.Dispose();
 				}
 				SaveManager.Instance.Dispose();
+
+				IL.Terraria.Initializers.AchievementInitializer.Load -= OnAchievementInitializerLoad;
 
 				ModuleManager.Dispose();
 
