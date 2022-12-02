@@ -103,6 +103,9 @@ Use past tense when adding new entries; sign your name off when you add or chang
 * Allowed the Hellfire (`OnFire3`) buff. (@drunderscore)
 
 
+* Allowed Digging Molecart and bomb fish to break tiles and place tracks (@sgkoishi)
+* Initialized achievements and the `AchievementManager` on the server. This ensures that players cannot cause exceptions to be thrown, chat messages are always logged, and allows achievement names to be localized in the console. Also added a test case for this. (@drunderscore)
+* Allowed multiple test cases to be in TShock's test suite. (@drunderscore)
 
 ## TShock 5.1.3
 * Added support for Terraria 1.4.4.9 via OTAPI 3.1.20. (@SignatureBeef)
