@@ -428,6 +428,12 @@ namespace TShockAPI
 				CanBeAddedWithoutHostile = true,
 				CanOnlyBeAppliedToSender = true
 			};
+			PlayerAddBuffWhitelist[BuffID.WindPushed] = new BuffLimit
+			{
+				MaxTicks = 2,
+				CanBeAddedWithoutHostile = true,
+				CanOnlyBeAppliedToSender = true
+			};
 
 			#endregion Whitelist
 		}
