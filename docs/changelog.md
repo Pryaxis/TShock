@@ -86,6 +86,8 @@ Use past tense when adding new entries; sign your name off when you add or chang
 * Allowed Digging Molecart and bomb fish to break tiles and place tracks (@sgkoishi)
 * Add built-in package management capabilities for plugins
 * Fixed Super Sponge unable to absorb shimmer. (@sgkoishi, #2833)
+* Increased whitelisted duration of the Mighty Wind (`WindPushed`) buff (from sandstorms). (@drunderscore)
+* Whitelisted the Hellfire (`OnFire3`) buff. (@drunderscore)
 
 ## TShock 5.1.3
 * Added support for Terraria 1.4.4.9 via OTAPI 3.1.20. (@SignatureBeef)

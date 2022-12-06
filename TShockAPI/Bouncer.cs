@@ -400,7 +400,7 @@ namespace TShockAPI
 			};
 			PlayerAddBuffWhitelist[BuffID.OnFire3] = new BuffLimit
 			{
-				MaxTicks = 60 * 5,
+				MaxTicks = 60 * 6,
 				CanBeAddedWithoutHostile = false,
 				CanOnlyBeAppliedToSender = false
 			};
@@ -425,6 +425,12 @@ namespace TShockAPI
 			PlayerAddBuffWhitelist[BuffID.BrainOfConfusionBuff] = new BuffLimit
 			{
 				MaxTicks = 240,
+				CanBeAddedWithoutHostile = true,
+				CanOnlyBeAppliedToSender = true
+			};
+			PlayerAddBuffWhitelist[BuffID.WindPushed] = new BuffLimit
+			{
+				MaxTicks = 2,
 				CanBeAddedWithoutHostile = true,
 				CanOnlyBeAppliedToSender = true
 			};
