@@ -78,6 +78,7 @@ Use past tense when adding new entries; sign your name off when you add or chang
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change. -->
 
 ## Upcoming changes
+* An additional option `pvpwithnoteam` is added at `PvPMode` to enable PVP with no team.(@CelestialAnarchy, #2617, @ATFGK)
 * Corrected and updated deserialization of the following packets (@ATFGK):
   * `ProjectileNew`: Read the third `AI` value.
     * Before this change, it was previously possible for the projectile damage limit to falsely trigger, such as when using the Terra Balde and Fire Gauntlet together.
@@ -100,6 +101,7 @@ Use past tense when adding new entries; sign your name off when you add or chang
 * Fixed Super Sponge unable to absorb shimmer. (@sgkoishi, #2833)
 * Increased whitelisted duration of the Mighty Wind (`WindPushed`) buff (from sandstorms). (@drunderscore)
 * Allowed the Hellfire (`OnFire3`) buff. (@drunderscore)
+
 
 
 ## TShock 5.1.3

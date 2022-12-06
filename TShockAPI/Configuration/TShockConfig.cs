@@ -113,8 +113,8 @@ namespace TShockAPI.Configuration
 		[Description("Enables never ending invasion events. You still need to start the event, such as with the /invade command.")]
 		public bool InfiniteInvasion;
 
-		/// <summary>Sets the PvP mode. Valid types are: "normal", "always", "disabled".</summary>
-		[Description("Sets the PvP mode. Valid types are: \"normal\", \"always\" and \"disabled\".")]
+		/// <summary>Sets the PvP mode. Valid types are: "normal", "always", "pvpwithnoteam", "disabled".</summary>
+		[Description("Sets the PvP mode. Valid types are: \"normal\", \"always\", \"pvpwithnoteam\" and \"disabled\".")]
 		public string PvPMode = "normal";
 
 		/// <summary>Prevents tiles from being placed within SpawnProtectionRadius of the default spawn.</summary>
