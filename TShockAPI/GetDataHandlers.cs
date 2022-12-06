@@ -856,6 +856,14 @@ namespace TShockAPI
 			/// </summary>
 			public int RespawnTimer { get; set; }
 			/// <summary>
+			/// Player's deaths from PVE.
+			/// </summary>
+			public int NumberOfDeathsPVE { get; set; }
+			/// <summary>
+			/// Player's deaths from PVP.
+			/// </summary>
+			public int NumberOfDeathsPVP { get; set; }
+			/// <summary>
 			/// Context of where the player is spawning from.
 			/// </summary>
 			public PlayerSpawnContext SpawnContext { get; set; }
@@ -864,7 +872,7 @@ namespace TShockAPI
 		/// PlayerSpawn - When a player spawns
 		/// </summary>
 		public static HandlerList<SpawnEventArgs> PlayerSpawn = new HandlerList<SpawnEventArgs>();
-		private static bool OnPlayerSpawn(TSPlayer player, MemoryStream data, byte pid, int spawnX, int spawnY, int respawnTimer, PlayerSpawnContext spawnContext)
+		private static bool OnPlayerSpawn(TSPlayer player, MemoryStream data, byte pid, int spawnX, int spawnY, int respawnTimer, int numberOfDeathsPVE, int numberOfDeathsPVP, PlayerSpawnContext spawnContext)
 		{
 			if (PlayerSpawn == null)
 				return false;
@@ -877,6 +885,8 @@ namespace TShockAPI
 				SpawnX = spawnX,
 				SpawnY = spawnY,
 				RespawnTimer = respawnTimer,
+				NumberOfDeathsPVE = numberOfDeathsPVE,
+				NumberOfDeathsPVP = numberOfDeathsPVP,
 				SpawnContext = spawnContext
 			};
 			PlayerSpawn.Invoke(null, args);
@@ -2687,9 +2697,10 @@ namespace TShockAPI
 			short spawnx = args.Data.ReadInt16();
 			short spawny = args.Data.ReadInt16();
 			int respawnTimer = args.Data.ReadInt32();
+			short numberOfDeathsPVE = args.Data.ReadInt16();
+			short numberOfDeathsPVP = args.Data.ReadInt16();
 			PlayerSpawnContext context = (PlayerSpawnContext)args.Data.ReadByte();
-
-			if (OnPlayerSpawn(args.Player, args.Data, player, spawnx, spawny, respawnTimer, context))
+			if (OnPlayerSpawn(args.Player, args.Data, player, spawnx, spawny, respawnTimer, numberOfDeathsPVE, numberOfDeathsPVP, context))
 				return true;
 
 			if ((Main.ServerSideCharacter) && (spawnx == -1 && spawny == -1)) //this means they want to spawn to vanilla spawn
@@ -2725,6 +2736,17 @@ namespace TShockAPI
 				args.Player.Dead = true;
 			else
 				args.Player.Dead = false;
+
+			// When the player spawn into world, the numberOfDeathsPVE and numberOfDeathsPVP is not correct on the SSC Server.
+			// Send the data agrain fixed them.
+			if (context == PlayerSpawnContext.SpawningIntoWorld && args.Player.IsLoggedIn )
+			{
+				if(numberOfDeathsPVE != args.TPlayer.numberOfDeathsPVE || numberOfDeathsPVP != args.TPlayer.numberOfDeathsPVP)
+				{
+					args.Player.Spawn(PlayerSpawnContext.SpawningIntoWorld);
+					return true;
+				}
+			}
 			return false;
 		}
 

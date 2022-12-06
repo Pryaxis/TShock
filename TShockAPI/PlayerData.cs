@@ -62,6 +62,8 @@ namespace TShockAPI
 		public int usedAmbrosia;
 		public int unlockedSuperCart;
 		public int enabledSuperCart;
+		public int numberOfDeathsPVE;
+		public int numberOfDeathsPVP;
 
 		public PlayerData(TSPlayer player)
 		{
@@ -140,6 +142,8 @@ namespace TShockAPI
 			this.usedAmbrosia = player.TPlayer.usedAmbrosia ? 1 : 0;
 			this.unlockedSuperCart = player.TPlayer.unlockedSuperCart ? 1 : 0;
 			this.enabledSuperCart = player.TPlayer.enabledSuperCart ? 1 : 0;
+			this.numberOfDeathsPVE = player.TPlayer.numberOfDeathsPVE;
+			this.numberOfDeathsPVP = player.TPlayer.numberOfDeathsPVP;
 
 			Item[] inventory = player.TPlayer.inventory;
 			Item[] armor = player.TPlayer.armor;
@@ -283,6 +287,8 @@ namespace TShockAPI
 			player.TPlayer.usedAmbrosia = this.usedAmbrosia == 1;
 			player.TPlayer.unlockedSuperCart = this.unlockedSuperCart == 1;
 			player.TPlayer.enabledSuperCart = this.enabledSuperCart == 1;
+			player.TPlayer.numberOfDeathsPVE = this.numberOfDeathsPVE;
+			player.TPlayer.numberOfDeathsPVP = this.numberOfDeathsPVP;
 
 			if (extraSlot != null)
 				player.TPlayer.extraAccessory = extraSlot.Value == 1 ? true : false;

@@ -604,6 +604,27 @@ namespace TShockAPI
 			});
 			#endregion
 
+			#region Death Commands
+			add(new Command(Death, "death")
+			{
+				AllowServer = false,
+				HelpText = GetString("Shows your deaths from PVE.")
+			});
+			add(new Command(PVPDeath, "pvpdeath")
+			{
+				AllowServer = false,
+				HelpText = GetString("Shows your deaths from PVP.")
+			});
+			add(new Command(AllDeath, "alldeath")
+			{
+				HelpText = GetString("Shows the currently connected players' deaths from PVE.")
+			});
+			add(new Command(AllPVPDeath, "allpvpdeath")
+			{
+				HelpText = GetString("Shows the currently connected players' deaths from PVP.")
+			});
+			#endregion
+
 			add(new Command(Aliases, "aliases")
 			{
 				HelpText = GetString("Shows a command's aliases.")
@@ -6756,6 +6777,58 @@ namespace TShockAPI
 				playerToGod.SendSuccessMessage(playerToGod.GodMode
 					? GetString("You are now in god mode.", playerToGod.Name)
 					: GetString("You are no longer in god mode.", playerToGod.Name));
+			}
+		}
+
+		private static void Death(CommandArgs args)
+		{
+			string tag = args.TPlayer.numberOfDeathsPVE == 1 ? "LegacyMultiplayer.25" : "LegacyMultiplayer.23";
+			NetworkText text = NetworkText.FromKey(tag, args.Player.Name, args.Player.TPlayer.numberOfDeathsPVE);
+			args.Player.SendMessage(text.ToString(), Color.Red);
+		}
+
+		private static void PVPDeath(CommandArgs args)
+		{
+			string tag = args.TPlayer.numberOfDeathsPVP == 1 ? "LegacyMultiplayer.26" : "LegacyMultiplayer.24";
+			NetworkText text = NetworkText.FromKey(tag, args.Player.Name, args.Player.TPlayer.numberOfDeathsPVP);
+			args.Player.SendMessage(text.ToString(), Color.Red);
+		}
+
+		private static void AllDeath(CommandArgs args)
+		{
+			string tag = "";
+			foreach (TSPlayer ply in TShock.Players)
+			{
+				if (ply != null && ply.Active)
+				{
+					tag = ply.TPlayer.numberOfDeathsPVE == 1 ? "LegacyMultiplayer.25" : "LegacyMultiplayer.23";
+					NetworkText text = NetworkText.FromKey(tag, ply.Name, ply.TPlayer.numberOfDeathsPVE);
+					args.Player.SendMessage(text.ToString(), Color.Red);
+				}
+			}
+
+			if (string.IsNullOrEmpty(tag))
+			{
+				args.Player.SendInfoMessage(GetString("There are currently no players online."));
+			}
+		}
+
+		private static void AllPVPDeath(CommandArgs args)
+		{
+			string tag = "";
+			foreach (TSPlayer ply in TShock.Players)
+			{
+				if (ply != null && ply.Active)
+				{
+					tag = ply.TPlayer.numberOfDeathsPVP == 1 ? "LegacyMultiplayer.26" : "LegacyMultiplayer.24";
+					NetworkText text = NetworkText.FromKey(tag, ply.Name, ply.TPlayer.numberOfDeathsPVP);
+					args.Player.SendMessage(text.ToString(), Color.Red);
+				}
+			}
+
+			if (string.IsNullOrEmpty(tag))
+			{
+				args.Player.SendInfoMessage(GetString("There are currently no players online."));
 			}
 		}
 
