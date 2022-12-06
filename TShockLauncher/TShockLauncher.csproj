@@ -14,6 +14,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\TerrariaServerAPI\TerrariaServerAPI\TerrariaServerAPI.csproj" ExcludeFromSingleFile="true" />
 		<ProjectReference Include="..\TShockAPI\TShockAPI.csproj" ExcludeFromSingleFile="true" ReferenceOutputAssembly="false" /> <!-- allow api to rebuilt with this project, so ServerPlugins are refreshed -->
+		<ProjectReference Include="..\TShockPluginManager\TShockPluginManager.csproj"/>
 		<Reference Include="HttpServer" ExcludeFromSingleFile="true">
 			<HintPath>..\prebuilts\HttpServer.dll</HintPath>
 		</Reference>

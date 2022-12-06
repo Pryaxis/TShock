@@ -1,0 +1,13 @@
+Description:
+  Manage plugins and their requirements
+
+Usage:
+  TShock.Server [command] [options]
+
+Options:
+  --version       Show version information
+  -?, -h, --help  Show help and usage information
+
+Commands:
+  sync  Install the plugins as specified in the plugins.json
+
