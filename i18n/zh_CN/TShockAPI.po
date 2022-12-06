@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-12-06 05:43:49+0000\n"
-"PO-Revision-Date: 2022-12-06 05:52\n"
+"PO-Revision-Date: 2022-12-06 17:49\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -1141,12 +1141,12 @@ msgstr "<{0}的私聊消息> {1}"
 #: ../../TShockPluginManager/NugetCLI.cs:187
 #, csharp-format
 msgid "<green>{0} <black>from <blue>{1} <black>[{2}]"
-msgstr ""
+msgstr "<green>{0}<black>（来源：<blue>{1} <black>[{2}]）"
 
 #: ../../TShockPluginManager/NugetCLI.cs:178
 #, csharp-format
 msgid "<green>{0}<black> from <blue>{1} <black>[{2}]"
-msgstr ""
+msgstr "<green>{0}<black>（来源：<blue>{1} <black>[{2}]）"
 
 #: ../../TShockAPI/Commands.cs:5551
 #: ../../TShockAPI/Commands.cs:5582
@@ -1158,13 +1158,13 @@ msgstr "<私聊{0}的消息> {1}"
 #, csharp-format
 msgid "=== Dependency ==="
 msgid_plural "=== Dependencies ==="
-msgstr[0] ""
+msgstr[0] "=== 依赖项 ==="
 
 #: ../../TShockPluginManager/NugetCLI.cs:133
 #, csharp-format
 msgid "=== Requested Plugin ==="
 msgid_plural "=== Requested Plugins ==="
-msgstr[0] ""
+msgstr[0] "=== 要安装的插件 ==="
 
 #: ../../TShockAPI/Commands.cs:2818
 msgid "a Deerclops"
@@ -1315,7 +1315,7 @@ msgstr "所有boss"
 
 #: ../../TShockPluginManager/NugetCLI.cs:169
 msgid "All done! :)"
-msgstr ""
+msgstr "下载完毕！"
 
 #: ../../TShockAPI/Commands.cs:2104
 msgid "All REST tokens have been destroyed."
@@ -1837,7 +1837,7 @@ msgstr "Bouncer / OnLiquidSet（液体防护）因无效检查阻止了{0}"
 #: ../../TShockAPI/Bouncer.cs:1731
 #, csharp-format
 msgid "Bouncer / OnLiquidSet rejected liquid type {0} from {1} holding {2}"
-msgstr ""
+msgstr "Bouncer / OnLiquidSet（液体防护）因反作弊系统而阻止了{1}在持有{2}时放置液体{0}。"
 
 #: ../../TShockAPI/Bouncer.cs:1840
 #, csharp-format
@@ -2661,7 +2661,7 @@ msgstr "配置、权限和区域重新加载完成。有些更改可能需要重
 
 #: ../../TShockPluginManager/NugetCLI.cs:100
 msgid "Connect to the internet to figure out what to download?"
-msgstr ""
+msgstr "是否检查所需的依赖？（选择否将会退出）"
 
 #: ../../TShockAPI/TShock.cs:1329
 msgid "Connecting via a proxy is not allowed."
@@ -2891,7 +2891,7 @@ msgstr "disallow <物块> <用户组> - 取消用户组使用特定物块的豁�
 #: ../../TShockPluginManager/NugetCLI.cs:140
 #: ../../TShockPluginManager/NugetCLI.cs:161
 msgid "Download and install the given packages?"
-msgstr ""
+msgstr "是否下载并安装以上项目？"
 
 #: ../../TShockAPI/Commands.cs:2648
 msgid "Duke Fishron"
@@ -3727,11 +3727,11 @@ msgstr "如果你已经理解了并完成前一步骤，请使用{0}login <用�
 
 #: ../../TShockPluginManager/NugetCLI.cs:142
 msgid "If you want to know which plugins need which dependencies, press E."
-msgstr ""
+msgstr "如果你想查看各个插件的依赖关系，请按E"
 
 #: ../../TShockPluginManager/NugetCLI.cs:162
 msgid "If you'd like to see which plugins need which dependencies again, press E."
-msgstr ""
+msgstr "如果你想查看各个插件的依赖关系，请按E"
 
 #: ../../TShockAPI/Bouncer.cs:986
 msgid "If you're seeing this message and you know what that player did, please report it to TShock for further investigation."
@@ -3787,7 +3787,7 @@ msgstr "将封禁数据载入数据库失败。"
 
 #: ../../TShockPluginManager/NugetCLI.cs:39
 msgid "Install the plugins as specified in the plugins.json"
-msgstr ""
+msgstr "根据插件列表packages.json文件中的内容安装插件。"
 
 #: ../../TShockAPI/Rest/Rest.cs:426
 msgid "Internal server error."
@@ -4554,7 +4554,7 @@ msgstr "机器名称：{0}"
 
 #: ../../TShockPluginManager/NugetCLI.cs:141
 msgid "Make sure that you trust the plugins you're installing."
-msgstr ""
+msgstr "请注意，插件可以做很多事情（包括恶意行为），建议只安装你信任的插件。"
 
 #: ../../TShockAPI/Bouncer.cs:2471
 msgid "Malicious portal attempt."
@@ -4562,7 +4562,7 @@ msgstr "试图伪造传送其他玩家"
 
 #: ../../TShockPluginManager/NugetCLI.cs:35
 msgid "Manage plugins and their requirements"
-msgstr ""
+msgstr "管理插件及依赖项"
 
 #: ../../TShockAPI/Commands.cs:280
 msgid "Manages groups."
@@ -4602,7 +4602,7 @@ msgstr "管理用户账号。"
 
 #: ../../TShockAPI/Bouncer.cs:1775
 msgid "Manipulating unknown liquid type"
-msgstr ""
+msgstr "液体种类不明"
 
 #: ../../TShockAPI/Commands.cs:4721
 #, csharp-format
@@ -4804,7 +4804,7 @@ msgstr "对NPC造成的伤害高于{0}"
 
 #: ../../TShockPluginManager/NugetCLI.cs:103
 msgid "One moment..."
-msgstr ""
+msgstr "请稍候..."
 
 #: ../../TShockAPI/DB/RegionManager.cs:102
 #, csharp-format
@@ -5128,7 +5128,7 @@ msgstr "物块破坏速度过快"
 
 #: ../../TShockPluginManager/NugetCLI.cs:128
 msgid "Read the message below to find out more."
-msgstr ""
+msgstr "以下为不兼容的具体信息："
 
 #: ../../TShockAPI/Commands.cs:1495
 #, csharp-format
@@ -6027,7 +6027,7 @@ msgstr "该值因大于零。"
 
 #: ../../TShockPluginManager/NugetCLI.cs:127
 msgid "The versions of plugins you requested aren't compatible with eachother."
-msgstr ""
+msgstr "你所选择的插件版本不兼容。"
 
 #: ../../TShockAPI/Commands.cs:2722
 msgid "the Wall of Flesh"
@@ -6096,17 +6096,17 @@ msgstr "处理你的登录或认证请求时出错"
 
 #: ../../TShockPluginManager/NugetCLI.cs:121
 msgid "There was an issue figuring out what to download."
-msgstr ""
+msgstr "在获取项目列表时发生错误，无法进行下一步下载。"
 
 #: ../../TShockPluginManager/NugetCLI.cs:90
 msgid "There was an issue reading the packages.json."
-msgstr ""
+msgstr "读取插件列表packages.json文件时发生错误。"
 
 #: ../../TShockPluginManager/NugetCLI.cs:99
 #, csharp-format
 msgid "This is the plugin you requested to install."
 msgid_plural "These are the plugins you requested to install"
-msgstr[0] ""
+msgstr[0] "以上为即将安装的插件。"
 
 #: ../../TShockAPI/TShock.cs:1013
 #: ../../TShockAPI/TShock.cs:1023
@@ -6559,37 +6559,37 @@ msgstr "图格内部实现：{0}"
 #: ../../TShockAPI/Bouncer.cs:1794
 #, csharp-format
 msgid "Using {0} on non-honey"
-msgstr ""
+msgstr "{0}只能用于蜂蜜。"
 
 #: ../../TShockAPI/Bouncer.cs:1803
 #, csharp-format
 msgid "Using {0} on non-lava"
-msgstr ""
+msgstr "{0}只能用于岩浆。"
 
 #: ../../TShockAPI/Bouncer.cs:1810
 #, csharp-format
 msgid "Using {0} on non-shimmer"
-msgstr ""
+msgstr "{0}只能用于微光。"
 
 #: ../../TShockAPI/Bouncer.cs:1785
 #, csharp-format
 msgid "Using {0} on non-water"
-msgstr ""
+msgstr "{0}只能用于水。"
 
 #: ../../TShockAPI/Bouncer.cs:1817
 #, csharp-format
 msgid "Using {0} on non-water or shimmer"
-msgstr ""
+msgstr "{0}只能用于水或微光。"
 
 #: ../../TShockAPI/Bouncer.cs:1825
 #, csharp-format
 msgid "Using {0} to manipulate unknown liquid {1}"
-msgstr ""
+msgstr "无法使用{0}来更改不明液体{1}。"
 
 #: ../../TShockAPI/Bouncer.cs:1740
 #, csharp-format
 msgid "Using banned {0} to manipulate liquid"
-msgstr ""
+msgstr "没有使用{0}的权限，无法更改地图上的液体。"
 
 #: ../../TShockAPI/Bouncer.cs:1763
 msgid "Using banned honey bucket without permissions"
@@ -6601,7 +6601,7 @@ msgstr "没有使用岩浆桶的权限"
 
 #: ../../TShockAPI/Bouncer.cs:1770
 msgid "Using banned shimmering water bucket without permissions"
-msgstr ""
+msgstr "没有使用微光桶的权限"
 
 #: ../../TShockAPI/Bouncer.cs:1749
 msgid "Using banned water bucket without permissions"
@@ -6679,7 +6679,7 @@ msgstr "黄柳树"
 
 #: ../../TShockPluginManager/NugetCLI.cs:85
 msgid "Without a list of plugins to install, no plugins can be installed."
-msgstr ""
+msgstr "因此，没有同步安装任何插件。"
 
 #: ../../TShockAPI/BackupManager.cs:80
 #, csharp-format
@@ -7299,7 +7299,7 @@ msgstr "你没有在这里修改图格的权限，无法种树。"
 
 #: ../../TShockPluginManager/NugetCLI.cs:84
 msgid "You're trying to sync, but you don't have a packages.json file."
-msgstr ""
+msgstr "使用sync进行同步插件，但没有找到插件列表packages.json文件。"
 
 #: ../../TShockAPI/Commands.cs:1987
 msgid "Your account has been elevated to superadmin for 10 minutes."
