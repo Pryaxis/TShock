@@ -390,8 +390,18 @@ namespace TShockAPI.Handlers
 			}
 		}
 
-		private static List<bool[]> _convertibleTiles = typeof(TileID.Sets.Conversion).GetFields().Select(f => (bool[])f.GetValue(null)).ToList();
-		private static List<bool[]> _convertibleWalls = typeof(WallID.Sets.Conversion).GetFields().Select(f => (bool[])f.GetValue(null)).ToList();
+		// Moss and MossBrick are not used in conversion
+		private static List<bool[]> _convertibleTiles = typeof(TileID.Sets.Conversion)
+			.GetFields()
+			.ExceptBy(new[] { nameof(TileID.Sets.Conversion.Moss), nameof(TileID.Sets.Conversion.MossBrick) }, f => f.Name)
+			.Select(f => (bool[])f.GetValue(null))
+			.ToList();
+		// PureSand is only used in WorldGen.SpreadDesertWalls, which is server side
+		private static List<bool[]> _convertibleWalls = typeof(WallID.Sets.Conversion)
+			.GetFields()
+			.ExceptBy(new[] { nameof(WallID.Sets.Conversion.PureSand) }, f => f.Name)
+			.Select(f => (bool[])f.GetValue(null))
+			.ToList();
 
 		/// <summary>
 		/// Updates a single tile on the server if it is a valid conversion from one tile or wall type to another (eg stone -> corrupt stone)
@@ -400,14 +410,33 @@ namespace TShockAPI.Handlers
 		/// <param name="newTile">The NetTile containing new tile properties</param>
 		internal void ProcessConversionSpreads(ITile tile, NetTile newTile)
 		{
-			// Update if the existing tile or wall is convertible and the new tile or wall is a valid conversion
-			foreach (var tileType in _convertibleTiles)
+			var allowTile = false;
+			if (Main.tileMoss[tile.type] && TileID.Sets.Conversion.Stone[newTile.Type])
 			{
-				if (tileType[tile.type] && tileType[newTile.Type])
+				allowTile = true;
+			}
+			else if ((Main.tileMoss[tile.type] || TileID.Sets.Conversion.Stone[tile.type] || TileID.Sets.Conversion.Ice[tile.type] || TileID.Sets.Conversion.Sandstone[tile.type]) &&
+				(newTile.Type == TileID.Sandstone || newTile.Type == TileID.IceBlock))
+			{
+				// ProjectileID.SandSpray and ProjectileID.SnowSpray
+				allowTile = true;
+			}
+			else
+			{
+				foreach (var tileType in _convertibleTiles)
 				{
-					TShock.Log.ConsoleDebug(GetString($"Bouncer / SendTileRect processing a tile conversion update - [{tile.type}] -> [{newTile.Type}]"));
-					UpdateServerTileState(tile, newTile, TileDataType.Tile);
+					if (tileType[tile.type] && tileType[newTile.Type])
+					{
+						allowTile = true;
+						break;
+					}
 				}
+			}
+
+			if (allowTile)
+			{
+				TShock.Log.ConsoleDebug(GetString($"Bouncer / SendTileRect processing a tile conversion update - [{tile.type}] -> [{newTile.Type}]"));
+				UpdateServerTileState(tile, newTile, TileDataType.Tile);
 			}
 
 			foreach (var wallType in _convertibleWalls)
@@ -416,6 +445,7 @@ namespace TShockAPI.Handlers
 				{
 					TShock.Log.ConsoleDebug(GetString($"Bouncer / SendTileRect processing a wall conversion update - [{tile.wall}] -> [{newTile.Wall}]"));
 					UpdateServerTileState(tile, newTile, TileDataType.Wall);
+					break;
 				}
 			}
 		}
