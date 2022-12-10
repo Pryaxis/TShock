@@ -22,11 +22,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *	- to copy/move around TShockAPI.dll (the TShock plugin to TSAPI)
  *	- to publish TShock releases.
  *	- move dependencies to a ./bin folder
- * 
+ *
  * The assembly name of this launcher (TShock.exe) was decided on by a community poll.
  */
 
 using System.Reflection;
+using TShockPluginManager;
+
+if (args.Length > 0 && args[0].ToLower() == "plugins")
+{
+	var items = args.ToList();
+	items.RemoveAt(0);
+	await NugetCLI.Main(items);
+	return;
+}
+else
+{
+	Start();
+}
 
 Dictionary<string, Assembly> _cache = new Dictionary<string, Assembly>();
 

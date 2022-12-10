@@ -36,6 +36,11 @@ jobs:
       - name: Install msgfmt
         run: sudo apt-get install -y gettext
 
+      - name: Produce installer
+        run: |
+            cd TShockInstaller
+            dotnet publish -r ${{ matrix.arch }} -f net6.0 -c Release -p:PublishSingleFile=true --self-contained true
+
       - name: Produce build
         run: |
             cd TShockLauncher
@@ -45,6 +50,10 @@ jobs:
         if: ${{ matrix.arch != 'win-x64' }}
         run: |
             chmod +x TShockLauncher/bin/Release/net6.0/${{ matrix.arch }}/publish/TShock.Server
+
+      - name: Copy installer
+        run: |
+            cp TShockInstaller/bin/Release/net6.0/${{ matrix.arch }}/publish/* TShockLauncher/bin/Release/net6.0/${{ matrix.arch }}/publish/
 
       # preserve file perms: https://github.com/actions/upload-artifact#maintaining-file-permissions-and-case-sensitive-files
       - name: Tarball artifact (non-Windows)
