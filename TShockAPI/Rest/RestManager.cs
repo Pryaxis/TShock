@@ -1217,34 +1217,40 @@ namespace TShockAPI
 					var permission = method.GetCustomAttributes(false).Where(o => o is Permission);
 					if (permission.Count() > 0)
 					{
-						sb.AppendLine("* **Permissions**: `{0}`".SFormat(String.Join(", ", permission.Select(p => ((Permission)p).Name))));
+						sb.AppendLine(GetString("* **Permissions**: `{0}`", String.Join(", ", permission.Select(p => ((Permission)p).Name))));
 					}
 					else
 					{
-						sb.AppendLine("No special permissions are required for this route.");
+						sb.AppendLine(GetString("No special permissions are required for this route."));
 					}
 					sb.AppendLine();
 					var verbs = method.GetCustomAttributes(false).Where(o => o is Verb);
 					if (verbs.Count() > 0)
 					{
-						sb.AppendLine("**Verbs**:");
+						sb.AppendLine(GetString("**Verbs**:"));
 						foreach (Verb verb in verbs)
 						{
-							sb.AppendLine("* `{0}` ({1}) `[{2}]` - {3}".SFormat(verb.Name, verb.Required ? "Required" : "Optional", verb.ArgumentType.Name, verb.Description));
+							if (verb.Required)
+								sb.AppendLine(GetString("* `{0}` (Required) `{1}` - {2}".SFormat(verb.Name, verb.ArgumentType.Name, verb.Description)));
+							else
+								sb.AppendLine(GetString("* `{0}` (Optional) `{1}` - {2}".SFormat(verb.Name, verb.ArgumentType.Name, verb.Description)));
 						}
 					}
 					sb.AppendLine();
 					var nouns = method.GetCustomAttributes(false).Where(o => o is Noun);
 					if (nouns.Count() > 0)
 					{
-						sb.AppendLine("**Nouns**:");
+						sb.AppendLine(GetString("**Nouns**:"));
 						foreach (Noun noun in nouns)
 						{
-							sb.AppendLine("* `{0}` ({1}) `[{2}]` - {3}".SFormat(noun.Name, noun.Required ? "Required" : "Optional", noun.ArgumentType.Name, noun.Description));
+							if (noun.Required)
+								sb.AppendLine(GetString("* `{0}` (Required) `{1}` - {2}".SFormat(noun.Name, noun.ArgumentType.Name, noun.Description)));
+							else
+								sb.AppendLine(GetString("* `{0}` (Optional) `{1}` - {2}".SFormat(noun.Name, noun.ArgumentType.Name, noun.Description)));
 						}
 					}
 					sb.AppendLine();
-					sb.AppendLine("**Example Usage**: `{0}?{1}`".SFormat(routeattr.Route,
+					sb.AppendLine(GetString("**Example Usage**: `{0}?{1}`", routeattr.Route,
 						string.Join("&", nouns.Select(n => String.Format("{0}={0}", ((Noun)n).Name)))));
 					sb.AppendLine();
 				}

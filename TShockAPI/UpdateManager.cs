@@ -80,11 +80,11 @@ namespace TShockAPI
 				string msg = ex.BuildExceptionString();
 				//Give the console a brief
 				Console.ForegroundColor = ConsoleColor.Yellow;
-				Console.WriteLine($"UpdateManager warning: {msg}");
+				Console.WriteLine(GetString($"UpdateManager warning: {msg}"));
 				Console.ForegroundColor = ConsoleColor.Gray;
 				//And log the full exception
-				TShock.Log.Warn($"UpdateManager warning: {ex.ToString()}");
-				TShock.Log.ConsoleError("Retrying in 5 minutes.");
+				TShock.Log.Warn(GetString($"UpdateManager warning: {ex.ToString()}"));
+				TShock.Log.ConsoleError(GetString("Retrying in 5 minutes."));
 				CheckXMinutes = 5;
 			}
 		}
@@ -117,8 +117,7 @@ namespace TShockAPI
 				{
 					reason = "none";
 				}
-				throw new WebException("Update server did not respond with an OK. "
-					+ $"Server message: [error {resp.StatusCode}] {reason}");
+				throw new WebException(GetString($"Update server did not respond with an OK. Server message: [error {resp.StatusCode}] {reason}"));
 			}
 
 			string json = await resp.Content.ReadAsStringAsync();

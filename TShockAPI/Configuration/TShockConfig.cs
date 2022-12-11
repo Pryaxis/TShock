@@ -314,7 +314,7 @@ namespace TShockAPI.Configuration
 
 		/// <summary>The reason given if banning a mediumcore player on death.</summary>
 		[Description("The reason given if banning a mediumcore player on death.")]
-		public string MediumcoreBanReason = "Death results in a ban";
+		public string MediumcoreBanReason = GetString("Death results in a ban");
 
 		/// <summary>Disbales IP bans by default, if no arguments are passed to the ban command.</summary>
 		[Description("Disbales IP bans by default, if no arguments are passed to the ban command.")]
@@ -326,15 +326,15 @@ namespace TShockAPI.Configuration
 
 		/// <summary>The reason given when kicking players for not being on the whitelist.</summary>
 		[Description("The reason given when kicking players for not being on the whitelist.")]
-		public string WhitelistKickReason = "You are not on the whitelist.";
+		public string WhitelistKickReason = GetString("You are not on the whitelist.");
 
 		/// <summary>The reason given when kicking players that attempt to join while the server is full.</summary>
 		[Description("The reason given when kicking players that attempt to join while the server is full.")]
-		public string ServerFullReason = "Server is full";
+		public string ServerFullReason = GetString("Server is full");
 
 		/// <summary>The reason given when kicking players that attempt to join while the server is full with no reserved slots available.</summary>
 		[Description("The reason given when kicking players that attempt to join while the server is full with no reserved slots available.")]
-		public string ServerFullNoReservedReason = "Server is full. No reserved slots open.";
+		public string ServerFullNoReservedReason = GetString("Server is full. No reserved slots open.");
 
 		/// <summary>Whether or not to kick hardcore players on death.</summary>
 		[Description("Whether or not to kick hardcore players on death.")]
@@ -342,7 +342,7 @@ namespace TShockAPI.Configuration
 
 		/// <summary>The reason given when kicking hardcore players on death.</summary>
 		[Description("The reason given when kicking hardcore players on death.")]
-		public string HardcoreKickReason = "Death results in a kick";
+		public string HardcoreKickReason = GetString("Death results in a kick");
 
 		/// <summary>Whether or not to ban hardcore players on death.</summary>
 		[Description("Whether or not to ban hardcore players on death.")]
@@ -350,7 +350,7 @@ namespace TShockAPI.Configuration
 
 		/// <summary>The reason given when banning hardcore players on death.</summary>
 		[Description("The reason given when banning hardcore players on death.")]
-		public string HardcoreBanReason = "Death results in a ban";
+		public string HardcoreBanReason = GetString("Death results in a ban");
 
 		/// <summary>If GeoIP is enabled, this will kick users identified as being under a proxy.</summary>
 		[Description("If GeoIP is enabled, this will kick users identified as being under a proxy.")]
@@ -489,7 +489,7 @@ namespace TShockAPI.Configuration
 
 		/// <summary>The superadmin chat prefix.</summary>
 		[Description("The superadmin chat prefix.")]
-		public string SuperAdminChatPrefix = "(Super Admin) ";
+		public string SuperAdminChatPrefix = GetString("(Super Admin) ");
 
 		/// <summary>The superadmin chat suffix.</summary>
 		[Description("The superadmin chat suffix.")]
@@ -639,10 +639,10 @@ namespace TShockAPI.Configuration
 
 				var def = field.GetValue(defaults);
 
-				sb.AppendLine("## {0}  ".SFormat(name));
-				sb.AppendLine("{0}".SFormat(desc));
-				sb.AppendLine("* **Field type**: `{0}`".SFormat(type));
-				sb.AppendLine("* **Default**: `{0}`".SFormat(def));
+				sb.AppendLine($"## {name}  ");
+				sb.AppendLine($"{desc}");
+				sb.AppendLine(GetString("* **Field type**: `{0}`", type));
+				sb.AppendLine(GetString("* **Default**: `{0}`", def));
 				sb.AppendLine();
 			}
 
