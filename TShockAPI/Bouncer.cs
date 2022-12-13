@@ -1878,7 +1878,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (TShock.Players[id] == null)
+			if (TShock.Players[id] == null || !TShock.Players[id].Active)
 			{
 				TShock.Log.ConsoleDebug(GetString(
 					"Bouncer / OnPlayerBuff rejected {0} ({1}) applying buff {2} to {3} for {4} ticks: target is null", args.Player.Name,
@@ -2081,7 +2081,7 @@ namespace TShockAPI
 			short amount = args.Amount;
 			byte plr = args.TargetPlayerIndex;
 
-			if (amount <= 0 || Main.player[plr] == null || !Main.player[plr].active)
+			if (amount <= 0 || TShock.Players[plr] == null || !TShock.Players[plr].Active)
 			{
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnHealOtherPlayer rejected null checks"));
 				args.Handled = true;
@@ -2589,7 +2589,7 @@ namespace TShockAPI
 			byte direction = args.Direction;
 			PlayerDeathReason reason = args.PlayerDeathReason;
 
-			if (id >= Main.maxPlayers || TShock.Players[id] == null)
+			if (id >= Main.maxPlayers || TShock.Players[id] == null || !TShock.Players[id].Active)
 			{
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerDamage rejected null check"));
 				args.Handled = true;
