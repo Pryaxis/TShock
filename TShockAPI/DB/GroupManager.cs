@@ -57,7 +57,7 @@ namespace TShockAPI.DB
 			if (creator.EnsureTableStructure(table))
 			{
 				// Add default groups if they don't exist
-				AddDefaultGroup("guest", "",
+				AddDefaultGroup(TShock.Config.Settings.DefaultGuestGroupName, "",
 					string.Join(",",
 						Permissions.canbuild,
 						Permissions.canregister,
@@ -68,7 +68,7 @@ namespace TShockAPI.DB
 						Permissions.synclocalarea,
 						Permissions.sendemoji));
 
-				AddDefaultGroup("default", "guest",
+				AddDefaultGroup(TShock.Config.Settings.DefaultRegistrationGroupName, TShock.Config.Settings.DefaultGuestGroupName,
 					string.Join(",",
 						Permissions.warp,
 						Permissions.canchangepassword,
@@ -82,7 +82,7 @@ namespace TShockAPI.DB
 						Permissions.magicconch,
 						Permissions.demonconch));
 
-				AddDefaultGroup("vip", "default",
+				AddDefaultGroup("vip", TShock.Config.Settings.DefaultRegistrationGroupName,
 					string.Join(",",
 						Permissions.reservedslot,
 						Permissions.renamenpc,
