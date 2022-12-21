@@ -29,12 +29,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System.Reflection;
 using TShockPluginManager;
 
+// On occasion, users have been seen extracting TShock into their client installation directory -- this is of course incorrect, and is known
+// to cause issues. Let's attempt to catch this before anything happens (specifically, before Terraria assemblies are resolved) and prevent
+// TShock from launching.
+if (File.Exists("TerrariaServer.exe"))
+{
+	Console.ForegroundColor = ConsoleColor.Red;
+	Console.Error.WriteLine("A \"TerrariaServer.exe\" file has been found in the current working directory.");
+	Console.Error.WriteLine(
+		"This indicates either installation into a Terraria client directory, or installation into a legacy (TShock 4 or older) TShock directory.");
+	Console.Error.WriteLine(
+		"TShock is never to be installed inside a Terraria client directory. You should instead extract your TShock installation into it's own directory.");
+	Console.Error.WriteLine(
+		"If you are updating a legacy TShock installation, please follow the following documentation to update: https://ikebukuro.tshock.co/#/?id=upgrading-from-tshock-4");
+	Console.Error.WriteLine("The launcher will now exit.");
+	Console.ResetColor();
+	return 1;
+}
+
 if (args.Length > 0 && args[0].ToLower() == "plugins")
 {
 	var items = args.ToList();
 	items.RemoveAt(0);
 	await NugetCLI.Main(items);
-	return;
+	return 0;
 }
 
 
@@ -42,7 +60,7 @@ Dictionary<string, Assembly> _cache = new Dictionary<string, Assembly>();
 
 System.Runtime.Loader.AssemblyLoadContext.Default.Resolving += Default_Resolving;
 
-Start();
+return Start();
 
 /// <summary>
 /// Resolves a module from the ./bin folder, either with a .dll by preference or .exe
@@ -70,7 +88,8 @@ Assembly? Default_Resolving(System.Runtime.Loader.AssemblyLoadContext arg1, Asse
 /// Initiates the TSAPI server.
 /// </summary>
 /// <remarks>This method exists so that the resolver can attach before TSAPI needs its dependencies.</remarks>
-void Start()
+int Start()
 {
 	TerrariaApi.Server.Program.Main(args);
+	return 0;
 }
