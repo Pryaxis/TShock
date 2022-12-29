@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-12-06 05:43:49+0000\n"
-"PO-Revision-Date: 2022-12-06 05:52\n"
+"PO-Revision-Date: 2022-12-29 13:03\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "MIME-Version: 1.0\n"
@@ -1149,7 +1149,7 @@ msgstr "De {0} a {1}"
 #: ../../TShockPluginManager/NugetCLI.cs:187
 #, csharp-format
 msgid "<green>{0} <black>from <blue>{1} <black>[{2}]"
-msgstr ""
+msgstr "<verde>{0} <preto>de <azul>{1} <preto>[{2}]"
 
 #: ../../TShockPluginManager/NugetCLI.cs:178
 #, csharp-format
@@ -1166,15 +1166,15 @@ msgstr "<Para {0}> {1}"
 #, csharp-format
 msgid "=== Dependency ==="
 msgid_plural "=== Dependencies ==="
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "=== Dependência ==="
+msgstr[1] "=== Dependências ==="
 
 #: ../../TShockPluginManager/NugetCLI.cs:133
 #, csharp-format
 msgid "=== Requested Plugin ==="
 msgid_plural "=== Requested Plugins ==="
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "=== Plugin exigido ==="
+msgstr[1] "=== Plugins exigidos ==="
 
 #: ../../TShockAPI/Commands.cs:2818
 msgid "a Deerclops"
