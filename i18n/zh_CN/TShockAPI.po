@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-12-06 05:43:49+0000\n"
-"PO-Revision-Date: 2023-01-01 10:02\n"
+"PO-Revision-Date: 2023-01-01 22:24\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -381,7 +381,7 @@ msgstr "{0}已成功登录账号{1}。"
 #: ../../TShockAPI/TSPlayer.cs:1955
 #, csharp-format
 msgid "{0} banned {1} for '{2}'."
-msgstr "{0} 以'{2}'为理由封禁了{1}"
+msgstr "{0} 以'{2}'为理由封禁了'{1}'"
 
 #: ../../TShockAPI/Commands.cs:6051
 #, csharp-format
@@ -553,7 +553,7 @@ msgstr "{0}已将你所属的用户组更改为{1}。"
 #: ../../TShockAPI/Commands.cs:3026
 #, csharp-format
 msgid "{0} has disabled incoming teleports."
-msgstr "{0} 禁止玩家对其使用传送"
+msgstr "{0} 禁止玩家对其使用传送。"
 
 #: ../../TShockAPI/Commands.cs:2412
 #, csharp-format
@@ -608,22 +608,22 @@ msgstr "{0} 已将你复活。"
 #: ../../TShockAPI/GetDataHandlers.cs:3555
 #, csharp-format
 msgid "{0} has sent a request to the bunny delivery service!"
-msgstr "{0}联系了兔兔运送服务站。"
+msgstr "{0}已向兔子递送服务发送请求！"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3561
 #, csharp-format
 msgid "{0} has sent a request to the cat delivery service!"
-msgstr "{0}联系了猫咪运送服务站。"
+msgstr "{0}已向猫咪递送服务发送请求！"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3558
 #, csharp-format
 msgid "{0} has sent a request to the dog delivery service!"
-msgstr "{0}联系了狗狗运送服务站。"
+msgstr "{0}已向狗狗递送服务发送请求！"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3552
 #, csharp-format
 msgid "{0} has sent a request to the slime delivery service!"
-msgstr "{0}联系了史莱姆运送服务站。"
+msgstr "{0}已向史莱姆递送服务发送请求！"
 
 #: ../../TShockAPI/Commands.cs:2878
 #, csharp-format
@@ -684,7 +684,7 @@ msgstr "{0}为他自己恢复了{1}血量。"
 #: ../../TShockAPI/Commands.cs:4250
 #, csharp-format
 msgid "{0} is already allowed to place tile {1}."
-msgstr "{0} 已被允许放置方块 {1}。"
+msgstr "{0} 已被允许放置图格 {1}。"
 
 #: ../../TShockAPI/Commands.cs:3885
 #, csharp-format
@@ -719,12 +719,12 @@ msgstr "{0} 已被禁止使用射弹 {1}。"
 #: ../../TShockAPI/ItemBans.cs:234
 #, csharp-format
 msgid "{0} is banned! Remove it!"
-msgstr "{0} 已被封禁！请删除它！"
+msgstr "{0} 已被禁用！请移除它！"
 
 #: ../../TShockAPI/Commands.cs:6751
 #, csharp-format
 msgid "{0} is no longer in god mode."
-msgstr "已关闭{0}的无敌模式。"
+msgstr "已关闭{0}的上帝模式。"
 
 #: ../../TShockAPI/Commands.cs:5546
 #: ../../TShockAPI/Commands.cs:5577
@@ -1253,7 +1253,7 @@ msgstr "成功移除账号。"
 
 #: ../../TShockAPI/Commands.cs:2094
 msgid "Active REST Users ({{0}}/{{1}}):"
-msgstr "活跃REST用户({{0}}/{{1}}):"
+msgstr "有效的临时REST用户({{0}}/{{1}}):"
 
 #: ../../TShockAPI/Commands.cs:3971
 msgid "add <item> - Adds an item ban."
@@ -1307,7 +1307,7 @@ msgstr "{0}{1}的别名:{0}{2}"
 
 #: ../../TShockAPI/Commands.cs:6013
 msgid "All alive NPCs (excluding town NPCs) on the server will be killed if you do not input a name or ID."
-msgstr "输入名称或序号可以消灭特定NPC，否则将默认消灭所有非城镇NPC。"
+msgstr "输入NPC名称或ID可以杀死特定NPC，否则将默认杀死所有非城镇NPC。"
 
 #: ../../TShockAPI/Commands.cs:2626
 msgid "all bosses"
@@ -1315,7 +1315,7 @@ msgstr "所有boss"
 
 #: ../../TShockPluginManager/NugetCLI.cs:169
 msgid "All done! :)"
-msgstr "下载完毕！"
+msgstr "下载完毕！: )"
 
 #: ../../TShockAPI/Commands.cs:2104
 msgid "All REST tokens have been destroyed."
@@ -1446,7 +1446,7 @@ msgstr "自动存档已开启。"
 
 #: ../../TShockAPI/Rest/RestManager.cs:811
 msgid "AutoSave has been disabled"
-msgstr "自动存档已关闭"
+msgstr "自动保存已关闭"
 
 #: ../../TShockAPI/Rest/RestManager.cs:807
 msgid "AutoSave has been enabled"
@@ -1474,7 +1474,7 @@ msgstr "可用的区域子命令 ({{0}}/{{1}}):"
 
 #: ../../TShockAPI/Commands.cs:2109
 msgid "Available REST Sub-Commands:"
-msgstr "Rest命令使用帮助:"
+msgstr "REST命令使用帮助:"
 
 #: ../../TShockAPI/BackupManager.cs:75
 msgid "Backing up world..."
