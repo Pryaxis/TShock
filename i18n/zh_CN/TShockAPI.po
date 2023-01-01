@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-12-06 05:43:49+0000\n"
-"PO-Revision-Date: 2022-12-06 17:49\n"
+"PO-Revision-Date: 2023-01-01 10:02\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -99,7 +99,7 @@ msgstr "   {1}会被作为玩家名称或序号进行识别，除非添加了参
 #: ../../TShockAPI/Commands.cs:1262
 #, csharp-format
 msgid " -> Logged-in as: {0}; in group {1}."
-msgstr " -> 登录为用户 {0} , 在组 {1} 中。"
+msgstr " ->登录为用户 {0} , 在组 {1} 中。"
 
 #: ../../TShockAPI/Commands.cs:1398
 #, csharp-format
@@ -127,7 +127,7 @@ msgstr "- 根据用户名封禁一个不在线的玩家"
 
 #: ../../TShockAPI/Commands.cs:1445
 msgid "- Ban an offline player by IP address"
-msgstr "- 封禁离线玩家的IP地址"
+msgstr "- 通过IP地址封禁离线的玩家"
 
 #: ../../TShockAPI/Commands.cs:1448
 msgid "- Ban an online player by index (Useful for hard to type names)"
@@ -176,7 +176,7 @@ msgstr "!!! DisableUUIDLogin（禁止UUID自动登录）已关闭，因此UUID�
 #: ../../TShockAPI/Commands.cs:6409
 #, csharp-format
 msgid "\"{0}\" is not a valid buff ID!"
-msgstr "\"{0}\"不是一个有效的状态ID！"
+msgstr "\"{0}\"不是一个有效的增益ID！"
 
 #: ../../TShockAPI/Commands.cs:5906
 #, csharp-format
@@ -345,7 +345,7 @@ msgstr "{0} <{1}|{2}|{3}> [{4}]"
 #: ../../TShockAPI/Commands.cs:1106
 #, csharp-format
 msgid "{0} added account {1} to group {2}."
-msgstr "{0} 将账号 {1} 添加至组 {2}！"
+msgstr "{0} 将账号 {1} 添加至组 {2}!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3546
 #, csharp-format
@@ -365,7 +365,7 @@ msgstr "{0}使用了游商背包（[i:5343]）。"
 #: ../../TShockAPI/Commands.cs:1064
 #, csharp-format
 msgid "{0} attempted to register for the account {1} but it was already taken."
-msgstr "{0}尝试注册账号“{1}” ，但它已被注册。"
+msgstr "{0}试图注册账号“{1}” ，但它已被占用。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:2637
 #: ../../TShockAPI/GetDataHandlers.cs:3212
