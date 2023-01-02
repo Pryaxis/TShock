@@ -106,6 +106,7 @@ Use past tense when adding new entries; sign your name off when you add or chang
 * Allowed multiple test cases to be in TShock's test suite. (@drunderscore)
 * Fixed unable to use Purification/Evil Powder in jungle. (@sgkoishi)
 * Set the `GetDataHandledEventArgs.Player` property for the `SyncTilePicking` data handler. (@drunderscore)
+* Removed unnecessary range check that artifically shortened quick stack reach. (@boddyn, #2885, @bcat)
 
 ## TShock 5.1.3
 * Added support for Terraria 1.4.4.9 via OTAPI 3.1.20. (@SignatureBeef)
