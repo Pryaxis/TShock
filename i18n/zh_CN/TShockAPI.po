@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-12-06 05:43:49+0000\n"
-"PO-Revision-Date: 2023-01-01 22:24\n"
+"PO-Revision-Date: 2023-01-02 10:38\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -608,17 +608,17 @@ msgstr "{0} 已将你复活。"
 #: ../../TShockAPI/GetDataHandlers.cs:3555
 #, csharp-format
 msgid "{0} has sent a request to the bunny delivery service!"
-msgstr "{0}已向兔子递送服务发送请求！"
+msgstr "{0}从递送站申领了新的兔兔！"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3561
 #, csharp-format
 msgid "{0} has sent a request to the cat delivery service!"
-msgstr "{0}已向猫咪递送服务发送请求！"
+msgstr "{0}从递送站申领了新的猫猫！"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3558
 #, csharp-format
 msgid "{0} has sent a request to the dog delivery service!"
-msgstr "{0}已向狗狗递送服务发送请求！"
+msgstr "{0}从递送站申领了新的狗狗！"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3552
 #, csharp-format
@@ -1328,15 +1328,15 @@ msgstr "已分配内存: {0}"
 
 #: ../../TShockAPI/Commands.cs:3972
 msgid "allow <item> <group> - Allows a group to use an item."
-msgstr "allow <物品> <组名> - 允许指定组使用被禁用的物品"
+msgstr "allow <物品> <用户组> - 给予用户组使用特定物品的豁免权。"
 
 #: ../../TShockAPI/Commands.cs:4150
 msgid "allow <projectile ID> <group> - Allows a group to use a projectile."
-msgstr "allow <射弹> <用户组> - 给与用户组使用特定射弹的豁免权。"
+msgstr "allow <射弹> <用户组> - 给予用户组使用特定射弹的豁免权。"
 
 #: ../../TShockAPI/Commands.cs:4326
 msgid "allow <tile ID> <group> - Allows a group to place a tile."
-msgstr "allow <物块> <用户组> - 给与用户组使用特定物块的豁免权。"
+msgstr "allow <物块> <用户组> - 给予用户组使用特定物块的豁免权。"
 
 #: ../../TShockAPI/Commands.cs:5193
 msgid "allow <user> <region> - Allows a user to a region."
