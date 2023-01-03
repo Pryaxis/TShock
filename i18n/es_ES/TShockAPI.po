@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-12-06 05:43:49+0000\n"
-"PO-Revision-Date: 2022-12-06 05:52\n"
+"PO-Revision-Date: 2023-01-03 19:27\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -60,17 +60,17 @@ msgstr "   {0}{1} \"{2}\" (Encuentre la IP asociada con la cuenta del objetivo d
 #: ../../TShockAPI/Commands.cs:1444
 #, csharp-format
 msgid "   {0}{1} \"{2}{3}\" {4} {5} (Permanently bans this account name)"
-msgstr "   {0}{1} \"{2}{3}\" {4} {5} (Prohíbe permanentemente este nombre de cuenta)"
+msgstr "   {0}{1} \"{2}{3}\" {4} {5} (Banea permanentemente este nombre de cuenta)"
 
 #: ../../TShockAPI/Commands.cs:1449
 #, csharp-format
 msgid "   {0}{1} {2} (Find the player index for the target)"
-msgstr "   {0}{1} {2} (Buscar el índice del jugador para el objetivo)"
+msgstr "   {0}{1} {2} (Buscar el índice de jugador para el objetivo)"
 
 #: ../../TShockAPI/Commands.cs:1450
 #, csharp-format
 msgid "   {0}{1} {2}{3} {4} {5} (Permanently bans the online player by Account, UUID, and IP)"
-msgstr "   {0}{1} {2}{3} {4} {5} (Banea permanentemente al jugador conectado por cuenta, UUID o IP)"
+msgstr "   {0}{1} {2}{3} {4} {5} (Banea permanentemente al jugador conectado por cuenta, UUID, e IP)"
 
 #: ../../TShockAPI/Commands.cs:1447
 #, csharp-format
@@ -99,7 +99,7 @@ msgstr "   A menos que se pase {0} al comando, se asume que {1} es un jugador o 
 #: ../../TShockAPI/Commands.cs:1262
 #, csharp-format
 msgid " -> Logged-in as: {0}; in group {1}."
-msgstr "-> Sesión iniciada como: {0}; en grupo {1}."
+msgstr " -> Sesión iniciada como: {0}; en grupo {1}."
 
 #: ../../TShockAPI/Commands.cs:1398
 #, csharp-format
