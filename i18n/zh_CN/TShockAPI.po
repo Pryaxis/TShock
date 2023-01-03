@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-12-06 05:43:49+0000\n"
-"PO-Revision-Date: 2023-01-02 10:38\n"
+"PO-Revision-Date: 2023-01-03 07:30\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -176,7 +176,7 @@ msgstr "!!! DisableUUIDLogin（禁止UUID自动登录）已关闭，因此UUID�
 #: ../../TShockAPI/Commands.cs:6409
 #, csharp-format
 msgid "\"{0}\" is not a valid buff ID!"
-msgstr "\"{0}\"不是一个有效的增益ID！"
+msgstr "\"{0}\"不是一个有效的状态ID！"
 
 #: ../../TShockAPI/Commands.cs:5906
 #, csharp-format
@@ -1997,7 +1997,7 @@ msgstr "Bouncer / OnPlaceChest（宝箱放置防护）因超出范围而阻止�
 #: ../../TShockAPI/Bouncer.cs:1562
 #, csharp-format
 msgid "Bouncer / OnPlaceChest rejected from weird check from {0}"
-msgstr "Bouncer / OnPlaceChest 拒绝了来自 {0} 的怪物的检查"
+msgstr "Bouncer / OnPlaceChest 拒绝了来自 {0} 的奇怪的检查"
 
 #: ../../TShockAPI/Bouncer.cs:1573
 #, csharp-format
