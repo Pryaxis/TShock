@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-12-06 05:43:49+0000\n"
-"PO-Revision-Date: 2023-01-03 07:30\n"
+"PO-Revision-Date: 2023-01-04 07:35\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -1374,20 +1374,20 @@ msgstr "执行指令时发生了异常。"
 
 #: ../../TShockAPI/DB/BanManager.cs:644
 msgid "An identifier for a character name."
-msgstr "角色名字的标识。"
+msgstr "可以匹配游戏内的角色名。"
 
 #: ../../TShockAPI/DB/BanManager.cs:648
 msgid "An identifier for a TShock User Account name."
-msgstr "一个TShock用户名的标识符。"
+msgstr "可以匹配TShock用户名。"
 
 #: ../../TShockAPI/DB/BanManager.cs:640
 msgid "An identifier for a UUID."
-msgstr "UUID的标识。"
+msgstr "可以匹配UUID。"
 
 #: ../../TShockAPI/DB/BanManager.cs:636
 #, csharp-format
 msgid "An identifier for an IP Address in octet format. e.g., '{0}'."
-msgstr "用句点分隔的十进制格式的IP地址，例如{0}。"
+msgstr "可以匹配IP地址，格式为用句点分隔的十进制，例如{0}。"
 
 #: ../../TShockAPI/Commands.cs:2052
 msgid "An update check has been queued. If an update is available, you will be notified shortly."
@@ -1466,7 +1466,7 @@ msgstr "可用Ban指令:"
 
 #: ../../TShockAPI/Commands.cs:1432
 msgid "Available identifiers ({{0}}/{{1}}):"
-msgstr "可用的标识符 ({{0}}/{{1}}):"
+msgstr "可选的匹配代码 ({{0}}/{{1}}):"
 
 #: ../../TShockAPI/Commands.cs:5208
 msgid "Available Region Sub-Commands ({{0}}/{{1}}):"
@@ -1684,7 +1684,7 @@ msgstr "Bouncer / OnFishOutNPC（钓出NPC防护）因没有召唤Boss的权限�
 #: ../../TShockAPI/Bouncer.cs:2781
 #, csharp-format
 msgid "Bouncer / OnFoodPlatterTryPlacing rejected disabled from {0}"
-msgstr "Bouncer / OnFoodPlatterTryPlacing（放置食物防护）因玩家被拘束阻止了{0}"
+msgstr "Bouncer / OnFoodPlatterTryPlacing（放置食物防护）因玩家被限制行动而阻止了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:2774
 #, csharp-format
@@ -2998,7 +2998,7 @@ msgstr "检测到恶意攻击"
 #: ../../TShockAPI/Commands.cs:1494
 #, csharp-format
 msgid "Failed to add ban for identifier: {0}."
-msgstr "无法给{0}添加封禁标识符"
+msgstr "无法添加封禁（匹配代码{0}）。"
 
 #: ../../TShockAPI/Rest/RestManager.cs:671
 #, csharp-format
@@ -3515,7 +3515,7 @@ msgstr "用户组{1}为{0}的父组，但也同时是它的子组。已删除此
 
 #: ../../TShockAPI/DB/GroupManager.cs:578
 msgid "Group \"superadmin\" is defined in the database even though it's a reserved group name."
-msgstr "组 ”superadmin”(超级管理员)已存在于数据库中，即使这是一个保留的组名。"
+msgstr "数据库中存在superadmin组，但它已被预留，不应存在于数据库中。"
 
 #: ../../TShockAPI/DB/GroupManager.cs:708
 #, csharp-format
@@ -3573,7 +3573,7 @@ msgstr "用户组{0}的父组为{1}，但该用户组不存在。已删除此父
 #: ../../TShockAPI/DB/GroupManager.cs:637
 #, csharp-format
 msgid "Group {0} is referencing itself as parent group; parent reference was removed."
-msgstr "组{0}试图将自己作为父组。父组的引用已被删除。"
+msgstr "用户组{0}的父组为它自己。已删除此父子关系。"
 
 #: ../../TShockAPI/Commands.cs:4862
 #: ../../TShockAPI/Commands.cs:4897
@@ -5849,7 +5849,7 @@ msgstr "此用户组不存在。"
 
 #: ../../TShockAPI/DB/BanManager.cs:258
 msgid "The ban is invalid because a current ban for this identifier already exists."
-msgstr "禁令无效，因为当前禁止此标识符的禁令已经存在。"
+msgstr "目前已经封禁了符合这个匹配代码的玩家，无法再次封禁。"
 
 #: ../../TShockAPI/DB/BanManager.cs:295
 msgid "The ban was not valid for an unknown reason."
@@ -5986,7 +5986,7 @@ msgstr "史莱姆皇后"
 
 #: ../../TShockAPI/Rest/RestManager.cs:158
 msgid "The REST authentication token."
-msgstr "REST 身份验证令牌。"
+msgstr "REST 授权令牌"
 
 #: ../../TShockAPI/UpdateManager.cs:150
 msgid "The server is out of date. Latest version: "
@@ -6047,7 +6047,7 @@ msgstr "当前没有任何有效的临时REST用户。"
 
 #: ../../TShockAPI/Commands.cs:1434
 msgid "There are currently no available identifiers."
-msgstr "目前没有可用的匹配代码。"
+msgstr "目前没有可选的匹配代码。"
 
 #: ../../TShockAPI/Commands.cs:4001
 msgid "There are currently no banned items."
