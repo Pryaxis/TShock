@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-12-06 05:43:49+0000\n"
-"PO-Revision-Date: 2023-01-05 19:48\n"
+"PO-Revision-Date: 2023-01-07 02:00\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -4050,7 +4050,7 @@ msgstr "Sintaxis inválida. Sintaxis correcta: {0}group delperm <nombre del grup
 #: ../../TShockAPI/Commands.cs:3756
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}group listperm <group name> [page]."
-msgstr ""
+msgstr "Sintaxis inválida. Sintaxis correcta: {0}group listperm <nombre del grupo> [página]."
 
 #: ../../TShockAPI/Commands.cs:3466
 #, csharp-format
@@ -4060,47 +4060,47 @@ msgstr "Sintaxis inválida. Sintaxis correcta: {0}group parent <nombre de grupo>
 #: ../../TShockAPI/Commands.cs:3561
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}group prefix <group name> [new prefix]."
-msgstr ""
+msgstr "Sintaxis inválida. Sintaxis correcta: {0}group prefix <nombre de grupo> [prefijo nuevo]."
 
 #: ../../TShockAPI/Commands.cs:3656
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}group rename <group> <new name>."
-msgstr ""
+msgstr "Sintaxis inválida. Sintaxis correcta: {0}group rename <grupo> <nombre nuevo>."
 
 #: ../../TShockAPI/Commands.cs:3516
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}group suffix <group name> [new suffix]."
-msgstr ""
+msgstr "Sintaxis inválida. Sintaxis correcta: {0}group suffix <nombre de grupo> [sufijo nuevo]."
 
 #: ../../TShockAPI/Commands.cs:5241
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}help <command/page>"
-msgstr ""
+msgstr "Sintaxis inválida. Sintaxis correcta: {0}help <comando/página>"
 
 #: ../../TShockAPI/Commands.cs:6058
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}item <item name/id> [item amount] [prefix id/name]"
-msgstr ""
+msgstr "Sintaxis inválida. Sintaxis correcta: {0}item <nombre/id de objeto> [cantidad del objeto] [id/nombre del prefijo]"
 
 #: ../../TShockAPI/Commands.cs:3800
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}itemban add <item name>."
-msgstr ""
+msgstr "Sintaxis inválida. Sintaxis correcta: {0}itemban add <nombre de objeto>."
 
 #: ../../TShockAPI/Commands.cs:3851
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}itemban allow <item name> <group name>."
-msgstr ""
+msgstr "Sintaxis inválida. Sintaxis correcta: {0}itemban allow <nombre de objeto> <nombre de grupo>."
 
 #: ../../TShockAPI/Commands.cs:3896
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}itemban del <item name>."
-msgstr ""
+msgstr "Sintaxis inválida. Sintaxis correcta: {0}itemban del <nombre de objeto>."
 
 #: ../../TShockAPI/Commands.cs:3922
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}itemban disallow <item name> <group name>."
-msgstr ""
+msgstr "Sintaxis inválida. Sintaxis correcta: {0}itemban disallow <nombre de objeto> <nombre de grupo>."
 
 #: ../../TShockAPI/Commands.cs:1311
 #, csharp-format
