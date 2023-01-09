@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-12-06 05:43:49+0000\n"
-"PO-Revision-Date: 2023-01-09 05:57\n"
+"PO-Revision-Date: 2023-01-09 18:08\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -1219,7 +1219,7 @@ msgstr "Un plugin en el servidor detuvo tu inicio de sesión."
 #: ../../TShockAPI/Rest/SecureRest.cs:120
 #, csharp-format
 msgid "A REST login from {0} was blocked as it currently has {1} rate-limit tokens and is at the RESTMaximumRequestsPerInterval threshold."
-msgstr "Se bloqueó un inicio de sesión REST de {0} dado que ya tiene {1} tókens restringidos por frecuencia, alcanzando el límite de RESTMaximumRequestsPerInterval."
+msgstr "Se bloqueó un inicio de sesión REST de {0} dado que ya tiene {1} tókens restringidos por frecuencia, alcanzando el umbral de RESTMaximumRequestsPerInterval."
 
 #: ../../TShockAPI/Commands.cs:2798
 msgid "a Solar Pillar"
@@ -1724,7 +1724,7 @@ msgstr "Bouncer / OnGemLockToggle colocación inválida/deadmod de {0}"
 #: ../../TShockAPI/Bouncer.cs:2501
 #, csharp-format
 msgid "Bouncer / OnGemLockToggle rejected boundaries check from {0}"
-msgstr "Bouncer / OnGemLockToggle rechazó la comprobación de límites de {0}"
+msgstr "Bouncer / OnGemLockToggle rechazada la comprobación de umbral de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2515
 #, csharp-format
@@ -1758,7 +1758,7 @@ msgstr "Bouncer / OnHealOtherPlayer rechazó el estado deshabilitado/limitado de
 #: ../../TShockAPI/Bouncer.cs:2112
 #, csharp-format
 msgid "Bouncer / OnHealOtherPlayer rejected heal other threshold from {0} {1}/{2}"
-msgstr "Bouncer / OnHealOtherPlayer rechazó el límite de sanar a otro desde {0} {1}/{2}"
+msgstr "Bouncer / OnHealOtherPlayer rechazó el umbral de sanar a otro desde {0} {1}/{2}"
 
 #: ../../TShockAPI/Bouncer.cs:2086
 msgid "Bouncer / OnHealOtherPlayer rejected null checks"
@@ -3646,7 +3646,7 @@ msgstr "¡Intento de trampa con HealOtherPlayer!"
 #: ../../TShockAPI/Bouncer.cs:2106
 #, csharp-format
 msgid "HealOtherPlayer threshold exceeded {0}."
-msgstr "Límite de HealOtherPlayer excedido en {0}."
+msgstr "Umbral de HealOtherPlayer excedió {0}."
 
 #: ../../TShockAPI/Commands.cs:549
 msgid "Heals a player in HP and MP."
@@ -3682,27 +3682,27 @@ msgstr "Si no se especifica una cantidad el jugador curará toda su vida."
 
 #: ../../TShockAPI/Bouncer.cs:1392
 msgid "If this player wasn't hacking, please report the damage threshold they were disabled for to TShock so we can improve this!"
-msgstr "Si este jugador no estaba haciendo trampa, ¡favor reportar a TShock el límite de daño por el que fue deshabilitado para mejorar el sistema!"
+msgstr "Si este jugador no estaba haciendo trampa, ¡favor reportar a TShock el umbral de daño por el que fue deshabilitado para mejorar el sistema!"
 
 #: ../../TShockAPI/Bouncer.cs:2113
 msgid "If this player wasn't hacking, please report the HealOtherPlayer threshold they were disabled for to TShock so we can improve this!"
-msgstr "Si este jugador no estaba haciendo trampa, ¡favor reportar a TShock el límite de HealOtherPlayer por el que fue deshabilitado para mejorar el sistema!"
+msgstr "Si este jugador no estaba haciendo trampa, ¡favor reportar a TShock el umbral de HealOtherPlayer por el que fue deshabilitado para mejorar el sistema!"
 
 #: ../../TShockAPI/Bouncer.cs:1295
 msgid "If this player wasn't hacking, please report the projectile create threshold they were disabled for to TShock so we can improve this!"
-msgstr "Si este jugador no estaba haciendo trampa, ¡favor reportar a TShock el límite de proyectiles creados por el que fue deshabilitado para mejorar el sistema!"
+msgstr "Si este jugador no estaba haciendo trampa, ¡favor reportar a TShock el umbral de proyectiles creados por el que fue deshabilitado para mejorar el sistema!"
 
 #: ../../TShockAPI/Bouncer.cs:927
 msgid "If this player wasn't hacking, please report the tile kill threshold they were disabled for to TShock so we can improve this!"
-msgstr "Si este jugador no estaba haciendo trampa, ¡favor reportar a TShock el límite de destrucción de bloques por el que fue deshabilitado para mejorar el sistema!"
+msgstr "Si este jugador no estaba haciendo trampa, ¡favor reportar a TShock el umbral de destrucción de bloques por el que fue deshabilitado para mejorar el sistema!"
 
 #: ../../TShockAPI/Bouncer.cs:1695
 msgid "If this player wasn't hacking, please report the tile liquid threshold they were disabled for to TShock so we can improve this!"
-msgstr "Si este jugador no estaba haciendo trampa, ¡favor reportar a TShock el límite de bloques líquidos por el que fue deshabilitado para mejorar el sistema!"
+msgstr "Si este jugador no estaba haciendo trampa, ¡favor reportar a TShock el umbral de bloques líquidos por el que fue deshabilitado para mejorar el sistema!"
 
 #: ../../TShockAPI/Bouncer.cs:945
 msgid "If this player wasn't hacking, please report the tile place threshold they were disabled for to TShock so we can improve this!"
-msgstr "Si este jugador no estaba haciendo trampa, ¡favor reportar a TShock el límite de colocación de bloques por el que fue deshabilitado para mejorar el sistema!"
+msgstr "Si este jugador no estaba haciendo trampa, ¡favor reportar a TShock el umbral de colocación de bloques por el que fue deshabilitado para mejorar el sistema!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3026
 msgid "If this was not skeletron prime related, please report to TShock what happened."
@@ -5061,7 +5061,7 @@ msgstr "Prohibiciones de Proyectil ({{0}}/{{1}}):"
 #: ../../TShockAPI/Bouncer.cs:1286
 #, csharp-format
 msgid "Projectile create threshold exceeded {0}."
-msgstr "El límite de creación de proyectiles excedió {0}."
+msgstr "El umbral de creación de proyectiles excedió {0}."
 
 #: ../../TShockAPI/Bouncer.cs:1192
 #, csharp-format
@@ -5109,34 +5109,34 @@ msgstr "Se alcanzó el umbral de creación de proyectiles."
 
 #: ../../TShockAPI/TShock.cs:1178
 msgid "Reached projectile threshold"
-msgstr ""
+msgstr "Se alcanzó el umbral de proyectiles"
 
 #: ../../TShockAPI/Bouncer.cs:922
 #: ../../TShockAPI/TShock.cs:1108
 msgid "Reached TileKill threshold."
-msgstr ""
+msgstr "Se alcanzó el umbral de TileKill."
 
 #: ../../TShockAPI/TShock.cs:1169
 msgid "Reached TileLiquid threshold"
-msgstr ""
+msgstr "Se alcanzó el umbral de TileLiquid"
 
 #: ../../TShockAPI/Bouncer.cs:1686
 #, csharp-format
 msgid "Reached TileLiquid threshold {0}."
-msgstr "Se alcanzó el límite de líquidos {0}."
+msgstr "Se alcanzó el umbral de líquidos {0}."
 
 #: ../../TShockAPI/Bouncer.cs:1690
 msgid "Reached TileLiquid threshold."
-msgstr "Se alcanzó el límite de líquidos."
+msgstr "Se alcanzó el umbral de líquidos."
 
 #: ../../TShockAPI/TShock.cs:1125
 msgid "Reached TilePlace threshold"
-msgstr "Se alcanzó el límite de bloques puestos"
+msgstr "Se alcanzó el umbral de bloques puestos"
 
 #: ../../TShockAPI/Bouncer.cs:940
 #: ../../TShockAPI/Bouncer.cs:2376
 msgid "Reached TilePlace threshold."
-msgstr "Se alcanzó el límite de bloques puestos."
+msgstr "Se alcanzó el umbral de bloques puestos."
 
 #: ../../TShockPluginManager/NugetCLI.cs:128
 msgid "Read the message below to find out more."
@@ -5195,7 +5195,7 @@ msgstr "¡La región se ha redimensionado correctamente!"
 #: ../../TShockAPI/Commands.cs:5042
 #, csharp-format
 msgid "Region's z is now {0}"
-msgstr ""
+msgstr "El índice z de la región ahora es {0}"
 
 #: ../../TShockAPI/Commands.cs:4915
 msgid "Regions ({{0}}/{{1}}):"
@@ -5229,12 +5229,12 @@ msgstr "Eliminar <user> <region> - Elimina un Usuario de una región"
 #: ../../TShockAPI/Commands.cs:2521
 #, csharp-format
 msgid "Removed {0} players from the angler quest completion list for today."
-msgstr ""
+msgstr "Eliminados {0} jugadores del listado de misiones completadas hoy del pescador."
 
 #: ../../TShockAPI/Commands.cs:4890
 #, csharp-format
 msgid "Removed group {0} from {1}"
-msgstr ""
+msgstr "El grupo {0} fue removido de {1}"
 
 #: ../../TShockAPI/Commands.cs:3494
 #, csharp-format
@@ -5244,37 +5244,37 @@ msgstr "Se eliminó el padre del grupo \"{0}\"."
 #: ../../TShockAPI/Commands.cs:3584
 #, csharp-format
 msgid "Removed prefix of group \"{0}\"."
-msgstr ""
+msgstr "Se quitó el prefijo del grupo \"{0}\"."
 
 #: ../../TShockAPI/Commands.cs:3539
 #, csharp-format
 msgid "Removed suffix of group \"{0}\"."
-msgstr ""
+msgstr "Se quitó el sufijo del grupo \"{0}\"."
 
 #: ../../TShockAPI/Commands.cs:4820
 #, csharp-format
 msgid "Removed user {0} from {1}."
-msgstr ""
+msgstr "Se quitó el usuario {0} de {1}."
 
 #: ../../TShockAPI/Commands.cs:5196
 msgid "removeg <group> <region> - Removes a user group from a region."
-msgstr ""
+msgstr "removeg <grupo> <región> - Quita a un grupo de usuarios de la región."
 
 #: ../../TShockAPI/Commands.cs:300
 msgid "Removes a player from the server."
-msgstr ""
+msgstr "Elimina a un jugador del servidor."
 
 #: ../../TShockAPI/DB/UserManager.cs:112
 msgid "RemoveUser SQL returned an error"
-msgstr ""
+msgstr "SQL RemoveUser devolvió un error"
 
 #: ../../TShockAPI/Commands.cs:3441
 msgid "rename <group> <new name> - Changes a group's name."
-msgstr ""
+msgstr "rename <grupo> <nombre nuevo> - Cambia el nombre de un grupo."
 
 #: ../../TShockAPI/Commands.cs:5190
 msgid "rename <region> <new name> - Renames the given region."
-msgstr ""
+msgstr "rename <región> <nombre nuevo> - Renombra la región dada."
 
 #: ../../TShockAPI/Commands.cs:397
 msgid "Renames an NPC."
@@ -5282,11 +5282,11 @@ msgstr "Cambia el nombre de un PNJ"
 
 #: ../../TShockAPI/Commands.cs:566
 msgid "Replies to a PM sent to you."
-msgstr ""
+msgstr "Contestas al mensaje privado que te fue enviado."
 
 #: ../../TShockAPI/Rest/SecureRest.cs:93
 msgid "Requested token was successfully destroyed."
-msgstr ""
+msgstr "El tóken solicitado fue destruido exitosamente."
 
 #: ../../TShockAPI/Handlers/RequestTileEntityInteractionHandler.cs:35
 #, csharp-format
@@ -5295,20 +5295,20 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:419
 msgid "Resets the list of users who have completed an angler quest that day."
-msgstr ""
+msgstr "Reinicia la lista de usuarios que han completado durante el día una misión del pescador."
 
 #: ../../TShockAPI/SaveManager.cs:163
 #, csharp-format
 msgid "resetTime {0}, direct {1}"
-msgstr ""
+msgstr "resetTime {0}, direct {1}"
 
 #: ../../TShockAPI/Commands.cs:5192
 msgid "resize <region> <u/d/l/r> <amount> - Resizes a region."
-msgstr ""
+msgstr "resize <región> <u/d/l/r> <cantidad> - Redimensiona una región."
 
 #: ../../TShockAPI/Commands.cs:603
 msgid "Respawn yourself or another player."
-msgstr ""
+msgstr "Te hace reaparecer a ti u otro jugador."
 
 #: ../../TShockAPI/UpdateManager.cs:87
 msgid "Retrying in 5 minutes."
@@ -5316,7 +5316,7 @@ msgstr "Reintentando en 5 minutos."
 
 #: ../../TShockAPI/Commands.cs:456
 msgid "Returns the user's or specified user's current position."
-msgstr ""
+msgstr "Muestra la posición actual ya sea del usuario o de otro jugador."
 
 #: ../../TShockAPI/Commands.cs:6600
 msgid "Rich Mahogany"
@@ -5753,7 +5753,7 @@ msgstr "Inicio de sesión exitoso"
 
 #: ../../TShockAPI/Commands.cs:3448
 msgid "suffix <group> <suffix> - Changes a group's suffix."
-msgstr ""
+msgstr "suffix <grupo> <sufijo> - Cambia el sufijo de un grupo."
 
 #: ../../TShockAPI/Commands.cs:3549
 #, csharp-format
@@ -5772,7 +5772,7 @@ msgstr "¡Sincronizado!"
 #: ../../TShockAPI/Handlers/SyncTilePickingHandler.cs:23
 #, csharp-format
 msgid "SyncTilePickingHandler: X and Y position is out of world bounds! - From {0}"
-msgstr ""
+msgstr "SyncTilePickingHandler: ¡Las posiciones X e Y están fuera de los límites del mundo! - De {0}"
 
 #: ../../TShockAPI/Commands.cs:3029
 #, csharp-format
