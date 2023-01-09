@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-12-06 05:43:49+0000\n"
-"PO-Revision-Date: 2023-01-08 02:02\n"
+"PO-Revision-Date: 2023-01-09 05:57\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -5052,16 +5052,16 @@ msgstr "El proyectil {0} no está prohibido."
 
 #: ../../TShockAPI/Commands.cs:4159
 msgid "Projectile Ban Sub-Commands ({{0}}/{{1}}):"
-msgstr ""
+msgstr "Sub-Comandos de Projectile Ban ({{0}}/{{1}}):"
 
 #: ../../TShockAPI/Commands.cs:4177
 msgid "Projectile bans ({{0}}/{{1}}):"
-msgstr ""
+msgstr "Prohibiciones de Proyectil ({{0}}/{{1}}):"
 
 #: ../../TShockAPI/Bouncer.cs:1286
 #, csharp-format
 msgid "Projectile create threshold exceeded {0}."
-msgstr ""
+msgstr "El límite de creación de proyectiles excedió {0}."
 
 #: ../../TShockAPI/Bouncer.cs:1192
 #, csharp-format
@@ -5070,7 +5070,7 @@ msgstr "El daño del proyectil es mayor que {0}."
 
 #: ../../TShockAPI/Commands.cs:5198
 msgid "protect <name> <true/false> - Sets whether the tiles inside the region are protected or not."
-msgstr ""
+msgstr "protect <nombre> <true/false> - Establece si las casillas en el interior de la región están o no protegidas."
 
 #: ../../TShockAPI/RegionHandler.cs:159
 msgid "Protected regions at this point: "
@@ -5079,33 +5079,33 @@ msgstr "Regiones protegidas en este punto: "
 #: ../../TShockAPI/Commands.cs:4950
 #, csharp-format
 msgid "Protected: {0}."
-msgstr ""
+msgstr "Protegido: {0}."
 
 #: ../../TShockAPI/Commands.cs:1373
 #, csharp-format
 msgid "Quick usage: {0} {1} \"Griefing\""
-msgstr ""
+msgstr "Uso abreviado: {0} {1} \"Molestar\""
 
 #: ../../TShockAPI/TSPlayer.cs:758
 #, csharp-format
 msgid "Rangecheck failed for {0} ({1}, {2}) (rg: {3}/{5}, {4}/{5})"
-msgstr ""
+msgstr "Rangecheck falló para {0} ({1}, {2}) (rg: {3}/{5}, {4}/{5})"
 
 #: ../../TShockAPI/TShock.cs:1196
 msgid "Reached HealOtherPlayer threshold"
-msgstr ""
+msgstr "Se alcanzó el umbral de HealOtherPlayer"
 
 #: ../../TShockAPI/Bouncer.cs:2110
 msgid "Reached HealOtherPlayer threshold."
-msgstr ""
+msgstr "Se alcanzó el umbral de HealOtherPlayer."
 
 #: ../../TShockAPI/TShock.cs:1187
 msgid "Reached paint threshold"
-msgstr ""
+msgstr "Se alcanzó el umbral de pintura"
 
 #: ../../TShockAPI/Bouncer.cs:1290
 msgid "Reached projectile create threshold."
-msgstr ""
+msgstr "Se alcanzó el umbral de creación de proyectiles."
 
 #: ../../TShockAPI/TShock.cs:1178
 msgid "Reached projectile threshold"
