@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-12-06 05:43:49+0000\n"
-"PO-Revision-Date: 2023-01-09 18:08\n"
+"PO-Revision-Date: 2023-01-14 06:57\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -5830,27 +5830,27 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:446
 msgid "Teleports you to an npc."
-msgstr ""
+msgstr "Te teletransporta a un PNJ."
 
 #: ../../TShockAPI/Commands.cs:451
 msgid "Teleports you to tile coordinates."
-msgstr ""
+msgstr "Te teletransporta a coordenadas de casilla."
 
 #: ../../TShockAPI/Commands.cs:324
 msgid "Temporarily elevates you to Super Admin."
-msgstr ""
+msgstr "Te asciende temporalmente a Super Admin."
 
 #: ../../TShockAPI/Commands.cs:320
 msgid "Temporarily sets another player's group."
-msgstr ""
+msgstr "Establece de forma temporal el grupo de otro usuario."
 
 #: ../../TShockAPI/Commands.cs:4759
 msgid "Temporary region set points have been removed."
-msgstr ""
+msgstr "Los puntos temporales para demarcar región fueron quitados."
 
 #: ../../TShockAPI/Commands.cs:5411
 msgid "Temporary system access has been given to you, so you can run one command."
-msgstr ""
+msgstr "Se te ha dado acceso temporal de sistema, así que puedes ejecutar un comando."
 
 #: ../../TShockAPI/Commands.cs:5387
 msgid "Thank you for using TShock for Terraria!"
@@ -5862,7 +5862,7 @@ msgstr "No existe ese grupo."
 
 #: ../../TShockAPI/DB/BanManager.cs:258
 msgid "The ban is invalid because a current ban for this identifier already exists."
-msgstr ""
+msgstr "El baneo es inválido porque ya existe un ban actual para este identificador."
 
 #: ../../TShockAPI/DB/BanManager.cs:295
 msgid "The ban was not valid for an unknown reason."
