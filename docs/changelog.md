@@ -162,6 +162,7 @@ The following translators contributed changes from November 1, 2022 to November 
 This release was scrubbed. All changes have been re-allocated to the 5.1.1 release. We consider a verison "final" after the tick and do not apply more changes. Thus, we were unable to simply release 5.0.0 as-is, as a late-breaking bug was discovered and fixed after the tick.
 
 ## TShock 5.0.0
+* Your changes could be here!
 * Reduced load/save console spam. (@SignatureBeef, @YehnBeep)
 * Replaced SQLite library with Microsoft.Data.Sqlite for arm64 support. (@SignatureBeef)
 * Initial support for MonoMod hooks on Raspberry Pi (arm64). (@kevzhao2)
