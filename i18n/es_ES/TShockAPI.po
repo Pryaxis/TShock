@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-12-06 05:43:49+0000\n"
-"PO-Revision-Date: 2023-01-14 06:57\n"
+"PO-Revision-Date: 2023-01-14 19:09\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -5866,7 +5866,7 @@ msgstr "El baneo es inválido porque ya existe un ban actual para este identific
 
 #: ../../TShockAPI/DB/BanManager.cs:295
 msgid "The ban was not valid for an unknown reason."
-msgstr ""
+msgstr "El ban no es válido por razón desconocida."
 
 #: ../../TShockAPI/Commands.cs:2634
 msgid "the Brain of Cthulhu"
@@ -5875,19 +5875,19 @@ msgstr "el Cerebro de Cthulhu"
 #: ../../TShockAPI/Commands.cs:4522
 #, csharp-format
 msgid "The current time is {0}:{1:D2}."
-msgstr ""
+msgstr "La hora actual es {0}:{1:D2}."
 
 #: ../../TShockAPI/DB/GroupManager.cs:218
 msgid "The default usergroup could not be found."
-msgstr ""
+msgstr "No se pudo encontrar el grupo predeterminado."
 
 #: ../../TShockAPI/DB/GroupManager.cs:217
 msgid "The default usergroup could not be found. This may indicate a typo in the configuration file, or that the group was renamed or deleted."
-msgstr ""
+msgstr "No se pudo encontrar el grupo de usuarios predeterminado. Esto puede indicar un error tipográfico en el archivo de configuración, o que el grupo fue renombrado o eliminado."
 
 #: ../../TShockAPI/Commands.cs:3174
 msgid "The destination coordinates provided don't look like valid numbers."
-msgstr ""
+msgstr "Las coordenadas de destino proporcionadas no parecen ser números válidos."
 
 #: ../../TShockAPI/Commands.cs:3334
 #: ../../TShockAPI/Commands.cs:3349
