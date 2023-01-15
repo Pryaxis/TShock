@@ -9,6 +9,9 @@
 !TShockLauncher/
 !TShockLauncher.Tests/
 !TShock.sln
+!TShockInstaller/
+!TShockPluginManager/
+
 
 # but exclude build artifacts
 */bin/
