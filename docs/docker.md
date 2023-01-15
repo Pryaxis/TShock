@@ -33,7 +33,8 @@ Using `docker buildx`, you could build [multi-platform images](https://docs.dock
 For Example:
 ```bash
 # Building the image using buildx and loading it into docker
-sudo docker buildx build -t tshock:linux-arm64 --platform linux/arm64 --load .
+sudo docker buildx build -t tshock:linux-arm64 --build-arg TARGETPLATFORM=linux/arm64 --platform linux/arm64 --load .
+
 
 # Running the image
 docker run -p 7777:7777 -p 7878:7878 \
