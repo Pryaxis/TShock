@@ -22,7 +22,7 @@ RUN \
     ;; \
     "windows/amd64") export ARCH="win-x64" \
     ;; \
-    *) echo "Error: Unsupported platform ${TARGETPLATFORM}" && exit 1 \
+    *) echo "Error: Unsupported platform ${TARGETPLATFORM} (supported: linux/amd64, linux/arm64, linux/arm/v7, windows/amd64)" && exit 1 \
     ;; \
   esac && \
   dotnet publish -o output/ -r "${ARCH}" -v m -f net6.0 -c Release -p:PublishSingleFile=true --self-contained false
