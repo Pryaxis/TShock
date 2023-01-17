@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-12-06 05:43:49+0000\n"
-"PO-Revision-Date: 2023-01-17 05:14\n"
+"PO-Revision-Date: 2023-01-17 17:30\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -1802,7 +1802,7 @@ msgstr "Bouncer / OnItemDrop rechazado desde la comprobación de rango de {0}"
 #: ../../TShockAPI/Bouncer.cs:1141
 #, csharp-format
 msgid "Bouncer / OnItemDrop rejected from sneaky from {0}"
-msgstr ""
+msgstr "Bouncer / OnItemDrop rechazado desde un sospechoso de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2703
 #, csharp-format
@@ -1832,37 +1832,37 @@ msgstr "Bouncer / OnLiquidSet rechazó el permiso de construcción de {0}"
 #: ../../TShockAPI/Bouncer.cs:1676
 #, csharp-format
 msgid "Bouncer / OnLiquidSet rejected disabled from {0}"
-msgstr ""
+msgstr "Bouncer / OnLiquidSet rechazo por deshabilitamiento de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1694
 #, csharp-format
 msgid "Bouncer / OnLiquidSet rejected from liquid threshold from {0} {1}/{2}"
-msgstr ""
+msgstr "Bouncer / OnLiquidSet rechazado desde el umbral de líquido de {0} {1}/{2}"
 
 #: ../../TShockAPI/Bouncer.cs:1669
 #, csharp-format
 msgid "Bouncer / OnLiquidSet rejected invalid check from {0}"
-msgstr ""
+msgstr "Bouncer / OnLiquidSet rechazó comprobación inválida desde {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1731
 #, csharp-format
 msgid "Bouncer / OnLiquidSet rejected liquid type {0} from {1} holding {2}"
-msgstr ""
+msgstr "Bouncer / OnLiquidSet rechazó el tipo de líquido {0} de {1} sosteniendo {2}"
 
 #: ../../TShockAPI/Bouncer.cs:1840
 #, csharp-format
 msgid "Bouncer / OnLiquidSet rejected range checks from {0}"
-msgstr ""
+msgstr "Bouncer / OnLiquidSet rechazó las comprobaciones de rango de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1848
 #, csharp-format
 msgid "Bouncer / OnLiquidSet rejected throttle from {0}"
-msgstr ""
+msgstr "Bouncer / OnLiquidSet rechazó limitación desde {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2573
 #, csharp-format
 msgid "Bouncer / OnMassWireOperation rejected build perms from {0}"
-msgstr ""
+msgstr "Bouncer / OnMassWireOperation rechazó los permisos de construcción desde {0}"
 
 #: ../../TShockAPI/Bouncer.cs:2566
 #, csharp-format
