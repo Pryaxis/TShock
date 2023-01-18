@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-12-06 05:43:49+0000\n"
-"PO-Revision-Date: 2023-01-18 05:49\n"
+"PO-Revision-Date: 2023-01-18 17:58\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -1897,67 +1897,67 @@ msgstr "Bouncer / OnNewProjectile rechazado desde el bouncer por IA modificada d
 #: ../../TShockAPI/Bouncer.cs:1331
 #, csharp-format
 msgid "Bouncer / OnNewProjectile rejected from bouncer modified Zenith projectile from {0}."
-msgstr ""
+msgstr "Bouncer / OnNewProjectile rechazado desde el bouncer por proyectil Cenit modificado de {0}."
 
 #: ../../TShockAPI/Bouncer.cs:1302
 #, csharp-format
 msgid "Bouncer / OnNewProjectile rejected from bouncer throttle from {0}"
-msgstr ""
+msgstr "Bouncer / OnNewProjectile rechazado desde el bouncer por limitación de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1201
 #, csharp-format
 msgid "Bouncer / OnNewProjectile rejected from disabled from {0}"
-msgstr ""
+msgstr "Bouncer / OnNewProjectile rechazó desde estado deshabilitado de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1238
 #, csharp-format
 msgid "Bouncer / OnNewProjectile rejected from hostile projectile from {0}"
-msgstr ""
+msgstr "Bouncer / OnNewProjectile rechazado por uso de proyectil hostil de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1183
 #, csharp-format
 msgid "Bouncer / OnNewProjectile rejected from permission check from {0} {1}"
-msgstr ""
+msgstr "Bouncer / OnNewProjectile rechazado por comprobación de permisos de {0} {1}"
 
 #: ../../TShockAPI/Bouncer.cs:1294
 #, csharp-format
 msgid "Bouncer / OnNewProjectile rejected from projectile create threshold from {0} {1}/{2}"
-msgstr ""
+msgstr "Bouncer / OnNewProjectile rechazado por umbral de creación de proyectil desde {0} {1}/{2}"
 
 #: ../../TShockAPI/Bouncer.cs:1193
 #, csharp-format
 msgid "Bouncer / OnNewProjectile rejected from projectile damage limit from {0} {1}/{2}"
-msgstr ""
+msgstr "Bouncer / OnNewProjectile rechazado por límite de daño de proyectil desde {0} {1}/{2}"
 
 #: ../../TShockAPI/Bouncer.cs:1249
 #, csharp-format
 msgid "Bouncer / OnNewProjectile rejected from tombstones from {0}"
-msgstr ""
+msgstr "Bouncer / OnNewProjectile rechazado por lápidas de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1269
 #, csharp-format
 msgid "Bouncer / OnNewProjectile rejected from weird check from {0} {1}"
-msgstr ""
+msgstr "Bouncer / OnNewProjectile rechazado por comprobación extraña de {0} {1}"
 
 #: ../../TShockAPI/Bouncer.cs:2040
 #, csharp-format
 msgid "Bouncer / OnNPCAddBuff rejected abnormal buff ({0}, last for {4}) added to {1} ({2}) from {3}."
-msgstr ""
+msgstr "Bouncer / OnNPCAddBuff rechazó un buff anormal ({0}, de duración {4}) aplicado a {1} ({2}) por {3}."
 
 #: ../../TShockAPI/Bouncer.cs:1994
 #, csharp-format
 msgid "Bouncer / OnNPCAddBuff rejected disabled from {0}"
-msgstr ""
+msgstr "Bouncer / OnNPCAddBuff rechazó el estado deshabilitado desde {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1987
 #, csharp-format
 msgid "Bouncer / OnNPCAddBuff rejected null npc from {0}"
-msgstr ""
+msgstr "Bouncer / OnNPCAddBuff rechazó PNJ nulo de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1978
 #, csharp-format
 msgid "Bouncer / OnNPCAddBuff rejected out of bounds NPC update from {0}"
-msgstr ""
+msgstr "Bouncer / OnNPCAddBuff rechazó actualización de PNJ fuera de los bordes desde {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1416
 #, csharp-format
