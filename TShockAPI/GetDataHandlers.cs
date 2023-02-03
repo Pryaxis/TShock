@@ -2248,6 +2248,7 @@ namespace TShockAPI
 
 			var args = new SyncTilePickingEventArgs
 			{
+                                Player = player,
 				PlayerIndex = playerIndex,
 				TileX = tileX,
 				TileY = tileY,
