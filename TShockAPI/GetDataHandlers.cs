@@ -2581,15 +2581,21 @@ namespace TShockAPI
 				bypassTrashCanCheck = true;
 			}
 
-			if (OnPlayerSlot(args.Player, args.Data, plr, slot, stack, prefix, type) || plr != args.Player.Index || slot < 0 ||
-				slot > NetItem.MaxInventory)
+			// reject bogus slots entirely
+			if (plr != args.Player.Index || slot < 0 || slot > NetItem.MaxInventory)
 				return true;
-			if (args.Player.IgnoreSSCPackets)
+
+			// reject players attempting to set their slots when SSC is enabled and the client has been sent
+			// the worldinfo packet informing them that the server is in fact SSC
+			if (Main.ServerSideCharacter && args.Player.State >= 2)
 			{
 				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandlePlayerSlot rejected ignore ssc packets"));
-				args.Player.SendData(PacketTypes.PlayerSlot, "", args.Player.Index, slot, prefix);
+				var currentPrefix = args.Player.TPlayer.inventory[slot].prefix;
+				args.Player.SendData(PacketTypes.PlayerSlot, "", args.Player.Index, slot, currentPrefix);
 				return true;
 			}
+			if (OnPlayerSlot(args.Player, args.Data, plr, slot, stack, prefix, type))
+				return true;
 
 			// Garabage? Or will it cause some internal initialization or whatever?
 			var item = new Item();
@@ -3785,7 +3791,7 @@ namespace TShockAPI
 			if (type == 0 && !args.Player.HasPermission(Permissions.rod))
 			{
 				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleTeleport rejected rod type {0} {1}", args.Player.Name, type));
-				args.Player.SendErrorMessage(GetString("You do not have permission to teleport using items.")); // Was going to write using RoD but Hook of Disonnance and Potion of Return both use the same teleport packet as RoD. 
+				args.Player.SendErrorMessage(GetString("You do not have permission to teleport using items.")); // Was going to write using RoD but Hook of Disonnance and Potion of Return both use the same teleport packet as RoD.
 				args.Player.Teleport(args.TPlayer.position.X, args.TPlayer.position.Y); // Suggest renaming rod permission unless someone plans to add separate perms for the other 2 tp items.
 				return true;
 			}
