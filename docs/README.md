@@ -32,7 +32,7 @@ Generally, TShock needs at least 1GB of memory, but alternative tile providers m
           ServerPlugins\
           |------TShockAPI.dll
 
-1. Start `TShock.Server.exe` (or `TShock.Server` on other platforms) and TShock will boot, creating a folder called `tshock` to store its database and configuration files. Answer the startup questions, and you should be ready to roll. In the background, TShock made some folders for you. We'll come back to those later.
+1. Start `TShock.Server.exe` (or `TShock.Server` on other platforms by typing `./TShock.Server`) and TShock will boot, creating a folder called `tshock` to store its database and configuration files. Answer the startup questions, and you should be ready to roll. In the background, TShock made some folders for you. We'll come back to those later.
 
 1. Startup Terraria. Connect to a `multiplayer` server via IP and enter `localhost` if you're doing this on your local computer. If you're doing it on another computer, you need its IP address.
 
@@ -54,7 +54,7 @@ To upgrade TShock 5 to future versions of TShock 5, simply download the latest r
 
 If you're upgrading from TShock 4, we suggest downloading the new release of TShock, copying the `tshock` configuration folder over (containing the `sqlitedb` file as well as the `json` configuration files, etc) to the new server, and starting the new server that way. This is because many files are removed and the existing files are no longer required from TShock 4. In addition, the new binary you need to run is called `TShock.Server.exe` or `TShock.Server`, not `TerrariaServer.exe`.
 
-In addition, you no longer need to install `mono-complete` or `mono` on non-Windows operating systems.
+In addition, you no longer need to install `mono-complete` or `mono` on non-Windows operating systems. This means you cannot start the server using the `mono` command. Instead, to run the new binary (`TShock.Server`) on Linux-based operating systems, just enter `./TShock.Server`.
 
 ### Apple Silicon
 
