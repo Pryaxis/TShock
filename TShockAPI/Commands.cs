@@ -1872,7 +1872,7 @@ namespace TShockAPI
 		{
 			args.Player.SendMessage(GetString("TShock SSC Help"), Color.White);
 			args.Player.SendMessage(GetString("Available SSC commands:"), Color.White);
-			args.Player.SendMessage(GetString($"ssc {"reset".Color(Utils.RedHighlight)} <Target> [Flags]"), Color.White);
+			args.Player.SendMessage(GetString($"ssc {"reset".Color(Utils.RedHighlight)} <User>"), Color.White);
 		}
 
 		private static void OverrideSSC(CommandArgs args)
