@@ -351,7 +351,6 @@ namespace Rests
 			{
 				str = string.Format("{0}({1});", jsonp, str);
 			}
-			e.Response.Connection.Type = ConnectionType.Close;
 			e.Response.ContentType = new ContentTypeHeader("application/json; charset=utf-8");
 			e.Response.Add(serverHeader);
 			var bytes = Encoding.UTF8.GetBytes(str);
