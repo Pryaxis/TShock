@@ -6691,7 +6691,7 @@ namespace TShockAPI
 					break;
 					
 				case "ash":
-					prepareAreaForGrow(TileID.Ash);
+					prepareAreaForGrow(TileID.AshGrass);
 					WorldGen.TryGrowingTreeByType(TileID.TreeAsh, x, y);
 					name = GetString("Ashwood Tree");
 					break;
