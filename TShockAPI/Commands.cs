@@ -6693,7 +6693,7 @@ namespace TShockAPI
 				case "ash":
 					prepareAreaForGrow(TileID.Ash);
 					WorldGen.TryGrowingTreeByType(TileID.TreeAsh, x, y);
-					name = GetString("Ashwood Tree);
+					name = GetString("Ashwood Tree");
 					break;
 							 
 				default:
