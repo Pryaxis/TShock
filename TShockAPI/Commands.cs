@@ -6502,7 +6502,7 @@ namespace TShockAPI
 							GetString("- Gem trees :"),
 							GetString("     'topaz', 'amethyst', 'sapphire', 'emerald', 'ruby', 'diamond', 'amber'."),
 							GetString("- Misc :"),
-							GetString("     'cactus', 'herb', 'mushroom', `ash`.")
+							GetString("     'cactus', 'herb', 'mushroom', 'ash'.")
 						};
 
 						PaginationTools.SendPage(args.Player, pageNumber, lines,
