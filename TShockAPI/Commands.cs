@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -26,17 +27,13 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using Terraria;
+using Terraria.GameContent.Creative;
+using Terraria.GameContent.Events;
 using Terraria.ID;
 using Terraria.Localization;
 using TShockAPI.DB;
-using TerrariaApi.Server;
 using TShockAPI.Hooks;
-using Terraria.GameContent.Events;
-using Microsoft.Xna.Framework;
 using TShockAPI.Localization;
-using System.Text.RegularExpressions;
-using Terraria.DataStructures;
-using Terraria.GameContent.Creative;
 
 namespace TShockAPI
 {
@@ -191,8 +188,8 @@ namespace TShockAPI
 
 	public static class Commands
 	{
-		public static List<Command> ChatCommands = new List<Command>();
-		public static ReadOnlyCollection<Command> TShockCommands = new ReadOnlyCollection<Command>(new List<Command>());
+		public static List<Command> ChatCommands = new();
+		public static ReadOnlyCollection<Command> TShockCommands = new(new List<Command>());
 
 		/// <summary>
 		/// The command specifier, defaults to "/"
@@ -214,13 +211,12 @@ namespace TShockAPI
 
 		public static void InitCommands()
 		{
-			List<Command> tshockCommands = new List<Command>(100);
+			List<Command> tshockCommands = new(100);
 			Action<Command> add = (cmd) =>
 			{
 				tshockCommands.Add(cmd);
 				ChatCommands.Add(cmd);
 			};
-
 			add(new Command(SetupToken, "setup")
 			{
 				AllowServer = false,
@@ -263,6 +259,10 @@ namespace TShockAPI
 			});
 			#endregion
 			#region Admin Commands
+			add(new Command(Permissions.managegroup, SSCManager, "ssc")
+			{
+				HelpText = GetString("Manages SSC.")
+			});
 			add(new Command(Permissions.ban, Ban, "ban")
 			{
 				HelpText = GetString("Manages player bans.")
@@ -903,7 +903,7 @@ namespace TShockAPI
 					args.Player.SendSuccessMessage(GetString("Authenticated as {0} successfully.", account.Name));
 
 					TShock.Log.ConsoleInfo(GetString("{0} authenticated successfully as user: {1}.", args.Player.Name, account.Name));
-					if ((args.Player.LoginHarassed) && (TShock.Config.Settings.RememberLeavePos))
+					if (args.Player.LoginHarassed && TShock.Config.Settings.RememberLeavePos)
 					{
 						if (TShock.RememberedPos.GetLeavePos(args.Player.Name, args.Player.IP) != Vector2.Zero)
 						{
@@ -1512,7 +1512,7 @@ namespace TShockAPI
 				bool banName = args.Parameters.Any(p => p == "-n");
 				bool banIp = args.Parameters.Any(p => p == "-ip");
 
-				List<string> flags = new List<string>() { "-e", "-a", "-u", "-n", "-ip" };
+				List<string> flags = new() { "-e", "-a", "-u", "-n", "-ip" };
 
 				string reason = GetString("Banned.");
 				string duration = null;
@@ -1740,7 +1740,7 @@ namespace TShockAPI
 
 		private static void DisplayLogs(CommandArgs args)
 		{
-			args.Player.DisplayLogs = (!args.Player.DisplayLogs);
+			args.Player.DisplayLogs = !args.Player.DisplayLogs;
 			if (args.Player.DisplayLogs)
 			{
 				args.Player.SendSuccessMessage(GetString("Log display enabled."));
@@ -1764,6 +1764,115 @@ namespace TShockAPI
 					}
 				}
 			}
+		}
+
+		private static void SSCManager(CommandArgs args)
+		{
+			if (Main.ServerSideCharacter)
+			{
+				if (args.Parameters.Count <= 0)
+				{
+					SSCHelp(args);
+					return;
+				}
+
+				string subcmd = args.Parameters[0].ToLower();
+				switch (subcmd)
+				{
+					case "reset":
+						{
+							if (args.Parameters.Count <= 1)
+							{
+								args.Player.SendErrorMessage($"Please enter a player to reset! Ex. /ssc reset {args.Player.Name}");
+								return;
+							}
+
+							string target = args.Parameters[1];
+							if (target == "*" || target == "all")
+							{
+								foreach (UserAccount account in TShock.UserAccounts.GetUserAccounts())
+								{
+									TShock.CharacterDB.RemovePlayer(account.ID);
+									TShock.CharacterDB.SeedInitialData(account);
+									var list = TSPlayer.FindByNameOrID("tsi:" + account.ID);
+									if (list.Count() > 0)
+									{
+										var ply = list.First();
+										if (ply.HasPermission(Permissions.bypassssc))
+										{
+											continue;
+										}
+										ply.PlayerData = TShock.CharacterDB.GetPlayerData(ply, ply.Account.ID);
+										ply.PlayerData.RestoreCharacter(ply);
+									}
+								}
+								if (!args.Silent)
+									TSPlayer.All.SendInfoMessage($"All inventories have been reset!");
+								return;
+							}
+							List<TSPlayer> playerSearch = TSPlayer.FindByNameOrID(target);
+							UserAccount acc;
+							TSPlayer affectedPlayer;
+							if (playerSearch.Count > 1)
+							{
+								args.Player.SendErrorMessage($"More than one player matched the name or ID provided: {target}.");
+								return;
+							}
+							if (playerSearch.Count <= 0)
+							{
+								acc = TShock.UserAccounts.GetUserAccountByName(target);
+								if (acc == null)
+								{
+									args.Player.SendErrorMessage($"No players matched the name or ID provided: {target}");
+									return;
+								}
+								TShock.CharacterDB.RemovePlayer(acc.ID);
+								TShock.CharacterDB.SeedInitialData(acc);
+								args.Player.SendSuccessMessage($"{acc.Name}'s inventory has been reset!");
+
+							}
+							else
+							{
+								affectedPlayer = playerSearch.First();
+								if (affectedPlayer.HasPermission(Permissions.bypassssc))
+								{
+									args.Player.SendErrorMessage("This player could not be reset, as they are overriding SSC");
+									return;
+								}
+
+								TShock.CharacterDB.RemovePlayer(affectedPlayer.Account.ID);
+								TShock.CharacterDB.SeedInitialData(affectedPlayer.Account);
+								affectedPlayer.PlayerData = TShock.CharacterDB.GetPlayerData(affectedPlayer, affectedPlayer.Account.ID);
+								affectedPlayer.PlayerData.RestoreCharacter(affectedPlayer);
+								if (!args.Silent)
+									affectedPlayer.SendInfoMessage("Your inventory has been reset by " + args.Player.Name);
+
+								args.Player.SendSuccessMessage($"{affectedPlayer.Name}'s inventory has been reset!");
+							}
+
+							return;
+						}
+
+					default:
+						SSCHelp(args);
+						return;
+				}
+
+
+
+			}
+			else
+			{
+				args.Player.SendErrorMessage("Server-side characters is disabled.");
+				return;
+			}
+		}
+
+		private static void SSCHelp(CommandArgs args)
+		{
+			args.Player.SendMessage(GetString("TShock SSC Help"), Color.White);
+			args.Player.SendMessage(GetString("Available SSC commands:"), Color.White);
+			args.Player.SendMessage(GetString($"ssc {"reset".Color(Utils.RedHighlight)} <Target> [Flags]"), Color.White);
 		}
 
 		private static void OverrideSSC(CommandArgs args)
@@ -2037,13 +2146,13 @@ namespace TShockAPI
 				}
 			}
 
-			string reason = ((args.Parameters.Count > 0) ? GetString("Server shutting down: ") + String.Join(" ", args.Parameters) : GetString("Server shutting down!"));
+			string reason = (args.Parameters.Count > 0) ? GetString("Server shutting down: ") + String.Join(" ", args.Parameters) : GetString("Server shutting down!");
 			TShock.Utils.StopServer(true, reason);
 		}
 
 		private static void OffNoSave(CommandArgs args)
 		{
-			string reason = ((args.Parameters.Count > 0) ? GetString("Server shutting down: ") + String.Join(" ", args.Parameters) : GetString("Server shutting down."));
+			string reason = (args.Parameters.Count > 0) ? GetString("Server shutting down: ") + String.Join(" ", args.Parameters) : GetString("Server shutting down.");
 			TShock.Utils.StopServer(false, reason);
 		}
 
@@ -2075,7 +2184,7 @@ namespace TShockAPI
 						if (!PaginationTools.TryParsePageNumber(args.Parameters, 1, args.Player, out pageNumber))
 							return;
 
-						Dictionary<string, int> restUsersTokens = new Dictionary<string, int>();
+						Dictionary<string, int> restUsersTokens = new();
 						foreach (Rests.SecureRest.TokenData tokenData in TShock.RestApi.Tokens.Values)
 						{
 							if (restUsersTokens.ContainsKey(tokenData.Username))
@@ -2084,7 +2193,7 @@ namespace TShockAPI
 								restUsersTokens.Add(tokenData.Username, 1);
 						}
 
-						List<string> restUsers = new List<string>(
+						List<string> restUsers = new(
 							restUsersTokens.Select(ut => GetString("{0} ({1} tokens)", ut.Key, ut.Value)));
 
 						PaginationTools.SendPage(
@@ -2118,7 +2227,7 @@ namespace TShockAPI
 
 		#region Cause Events and Spawn Monsters Commands
 
-		static readonly List<string> _validEvents = new List<string>()
+		static readonly List<string> _validEvents = new()
 		{
 			"meteor",
 			"fullmoon",
@@ -2129,7 +2238,7 @@ namespace TShockAPI
 			"rain",
 			"lanternsnight"
 		};
-		static readonly List<string> _validInvasions = new List<string>()
+		static readonly List<string> _validInvasions = new()
 		{
 			"goblins",
 			"snowmen",
@@ -2532,7 +2641,7 @@ namespace TShockAPI
 			}
 		}
 
-		static Dictionary<string, int> _worldModes = new Dictionary<string, int>
+		static Dictionary<string, int> _worldModes = new()
 		{
 			{ "normal",    0 },
 			{ "expert",    1 },
@@ -2611,7 +2720,7 @@ namespace TShockAPI
 
 
 			string spawnName;
-			NPC npc = new NPC();
+			NPC npc = new();
 			switch (args.Parameters[0].ToLower())
 			{
 				case "*":
@@ -4519,7 +4628,7 @@ namespace TShockAPI
 				if (!Main.dayTime)
 					time += 15.0;
 				time = time % 24.0;
-				args.Player.SendInfoMessage(GetString("The current time is {0}:{1:D2}.", (int)Math.Floor(time), (int)Math.Floor((time % 1.0) * 60.0)));
+				args.Player.SendInfoMessage(GetString("The current time is {0}:{1:D2}.", (int)Math.Floor(time), (int)Math.Floor(time % 1.0 * 60.0)));
 				return;
 			}
 
@@ -4943,7 +5052,7 @@ namespace TShockAPI
 						if (!PaginationTools.TryParsePageNumber(args.Parameters, pageNumberIndex, args.Player, out pageNumber))
 							break;
 
-						List<string> lines = new List<string>
+						List<string> lines = new()
 						{
 							GetString("X: {0}; Y: {1}; W: {2}; H: {3}, Z: {4}", region.Area.X, region.Area.Y, region.Area.Width, region.Area.Height, region.Z),
 							GetString($"Region owner: {region.Owner}."),
@@ -4994,7 +5103,7 @@ namespace TShockAPI
 							foreach (Point boundaryPoint in Utils.Instance.EnumerateRegionBoundaries(regionArea))
 							{
 								// Preferring dotted lines as those should easily be distinguishable from actual wires.
-								if ((boundaryPoint.X + boundaryPoint.Y & 1) == 0)
+								if (((boundaryPoint.X + boundaryPoint.Y) & 1) == 0)
 								{
 									// Could be improved by sending raw tile data to the client instead but not really
 									// worth the effort as chances are very low that overwriting the wire for a few
@@ -5018,7 +5127,7 @@ namespace TShockAPI
 							boundaryHideTimer = new Timer((state) =>
 							{
 								foreach (Point boundaryPoint in Utils.Instance.EnumerateRegionBoundaries(regionArea))
-									if ((boundaryPoint.X + boundaryPoint.Y & 1) == 0)
+									if (((boundaryPoint.X + boundaryPoint.Y) & 1) == 0)
 										args.Player.SendTileSquareCentered(boundaryPoint.X, boundaryPoint.Y, 1);
 
 								Debug.Assert(boundaryHideTimer != null);
@@ -5181,7 +5290,8 @@ namespace TShockAPI
 						if (!PaginationTools.TryParsePageNumber(args.Parameters, pageParamIndex, args.Player, out pageNumber))
 							return;
 
-						List<string> lines = new List<string> {
+						List<string> lines = new()
+						{
 						  GetString("set <1/2> - Sets the temporary region points."),
 						  GetString("clear - Clears the temporary region points."),
 						  GetString("define <name> - Defines the region with the given name."),
@@ -5301,7 +5411,7 @@ namespace TShockAPI
 
 		private static void ListConnectedPlayers(CommandArgs args)
 		{
-			bool invalidUsage = (args.Parameters.Count > 2);
+			bool invalidUsage = args.Parameters.Count > 2;
 
 			bool displayIdsRequested = false;
 			int pageNumber = 1;
@@ -5840,7 +5950,7 @@ namespace TShockAPI
 							float dX = Main.item[i].position.X - user.X;
 							float dY = Main.item[i].position.Y - user.Y;
 
-							if (Main.item[i].active && dX * dX + dY * dY <= radius * radius * 256f)
+							if (Main.item[i].active && (dX * dX) + (dY * dY) <= radius * radius * 256f)
 							{
 								Main.item[i].active = false;
 								everyone.SendData(PacketTypes.ItemDrop, "", i);
@@ -5863,7 +5973,7 @@ namespace TShockAPI
 							float dX = Main.npc[i].position.X - user.X;
 							float dY = Main.npc[i].position.Y - user.Y;
 
-							if (Main.npc[i].active && dX * dX + dY * dY <= radius * radius * 256f)
+							if (Main.npc[i].active && (dX * dX) + (dY * dY) <= radius * radius * 256f)
 							{
 								Main.npc[i].active = false;
 								Main.npc[i].type = 0;
@@ -5888,7 +5998,7 @@ namespace TShockAPI
 							float dX = Main.projectile[i].position.X - user.X;
 							float dY = Main.projectile[i].position.Y - user.Y;
 
-							if (Main.projectile[i].active && dX * dX + dY * dY <= radius * radius * 256f)
+							if (Main.projectile[i].active && (dX * dX) + (dY * dY) <= radius * radius * 256f)
 							{
 								Main.projectile[i].active = false;
 								Main.projectile[i].type = 0;
