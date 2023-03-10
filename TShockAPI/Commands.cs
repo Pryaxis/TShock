@@ -6502,7 +6502,7 @@ namespace TShockAPI
 							GetString("- Gem trees :"),
 							GetString("     'topaz', 'amethyst', 'sapphire', 'emerald', 'ruby', 'diamond', 'amber'."),
 							GetString("- Misc :"),
-							GetString("     'cactus', 'herb', 'mushroom'.")
+							GetString("     'cactus', 'herb', 'mushroom', `ash`.")
 						};
 
 						PaginationTools.SendPage(args.Player, pageNumber, lines,
@@ -6689,7 +6689,13 @@ namespace TShockAPI
 					WorldGen.GrowShroom(x, y);
 					name = GetString("Glowing Mushroom Tree");
 					break;
-
+					
+				case "ash":
+					prepareAreaForGrow(TileID.Ash);
+					WorldGen.TryGrowingTreeByType(TileID.TreeAsh, x, y);
+					name = GetString("Ashwood Tree);
+					break;
+							 
 				default:
 					args.Player.SendErrorMessage(GetString("Unknown plant!"));
 					return;
