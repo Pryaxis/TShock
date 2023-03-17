@@ -2618,10 +2618,10 @@ namespace TShockAPI
 
 		private static bool HandleConnecting(GetDataHandlerArgs args)
 		{
-			var account = TShock.UserAccounts.GetUserAccountByName(args.Player.Name);//
-			args.Player.DataWhenJoined = new PlayerData(args.Player);
+			var account = TShock.UserAccounts.GetUserAccountByName(args.Player.Name);
+			args.Player.DataWhenJoined = new PlayerData(false);
 			args.Player.DataWhenJoined.CopyCharacter(args.Player);
-			args.Player.PlayerData = new PlayerData(args.Player);
+			args.Player.PlayerData = new PlayerData();
 			args.Player.PlayerData.CopyCharacter(args.Player);
 
 			if (account != null && !TShock.Config.Settings.DisableUUIDLogin)
