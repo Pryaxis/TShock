@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
- using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -150,6 +150,21 @@ namespace TShockAPI
 		}
 
 		/// <summary>
+		/// Gets the item copy.
+		/// </summary>
+		public Item TItem
+		{
+			get
+			{
+				Item item = new Item();
+				item.netDefaults(NetId);
+				item.stack = Stack;
+				item.prefix = PrefixId;
+				return item;
+			}
+		}
+
+		/// <summary>
 		/// Creates a new <see cref="NetItem"/>.
 		/// </summary>
 		/// <param name="netId">The net ID.</param>
@@ -160,6 +175,14 @@ namespace TShockAPI
 			_netId = netId;
 			_stack = stack;
 			_prefixId = prefixId;
+		}
+
+		/// <summary>
+		/// Creates a new <see cref="NetItem"/>.
+		/// </summary>
+		/// <param name="item">The <see cref="Item"/></param>
+		public NetItem(Terraria.Item item) : this(item.netID, item.stack, item.prefix)
+		{
 		}
 
 		/// <summary>
@@ -203,7 +226,7 @@ namespace TShockAPI
 		{
 			return item == null
 				? new NetItem()
-				: new NetItem(item.netID, item.stack, item.prefix);
+				: new NetItem(item);
 		}
 	}
 }
