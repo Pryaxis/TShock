@@ -271,6 +271,7 @@ This release was scrubbed. All changes have been re-allocated to the 5.1.1 relea
 * Removed the config options `TileRectangleSizeThreshold` and `KickOnTileRectangleSizeThresholdBroken` because they are made obsolete by the new system, which will only allow valid rectangle sizes (at a maximum of only 4 by 4 tiles in 1.4.3.6). (@punchready)
 * Bumped Newtonsoft Json to 13.0.1. (@dependabot)
 * Allow the Cool Whip to apply `CoolWhipNPCDebuff` for `240` ticks, fixing abnormal NPC buff add rejects in Bouncer. (@drunderscore)
+* Added a new account hook that checks for changes in a player's group.
 
 ## TShock 4.5.17
 * Fixed duplicate characters (twins) after repeatedly logging in as the same character due to connection not being immediately closed during `NetHooks_NameCollision`. (@PotatoCider)
