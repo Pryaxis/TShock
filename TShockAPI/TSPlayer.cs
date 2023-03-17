@@ -34,6 +34,7 @@ using TShockAPI.Hooks;
 using TShockAPI.Net;
 using Timer = System.Timers.Timer;
 using System.Linq;
+using Terraria.GameContent.Creative;
 
 namespace TShockAPI
 {
@@ -937,7 +938,15 @@ namespace TShockAPI
 		/// <summary>
 		/// Player cant die, unless onehit
 		/// </summary>
-		public bool GodMode = false;
+		//public bool GodMode = false;
+
+		public bool GodMode
+		{
+			get =>
+				CreativePowerManager.Instance.GetPower<CreativePowers.GodmodePower>().IsEnabledForPlayer(Index);
+			set =>
+				CreativePowerManager.Instance.GetPower<CreativePowers.GodmodePower>().SetEnabledState(Index, value);
+		}
 
 		/// <summary>
 		/// Players controls are inverted if using SSC
@@ -998,8 +1007,8 @@ namespace TShockAPI
 		/// </summary>
 		public int State
 		{
-			get { return Netplay.Clients[Index].State; }
-			set { Netplay.Clients[Index].State = value; }
+			get { return Client.State; }
+			set { Client.State = value; }
 		}
 
 		/// <summary>
@@ -1007,7 +1016,7 @@ namespace TShockAPI
 		/// </summary>
 		public string UUID
 		{
-			get { return RealPlayer ? Netplay.Clients[Index].ClientUUID : ""; }
+			get { return RealPlayer ? Client.ClientUUID : ""; }
 		}
 
 		/// <summary>
@@ -1019,8 +1028,8 @@ namespace TShockAPI
 			{
 				if (string.IsNullOrEmpty(CacheIP))
 					return
-						CacheIP = RealPlayer ? (Netplay.Clients[Index].Socket.IsConnected()
-								? TShock.Utils.GetRealIP(Netplay.Clients[Index].Socket.GetRemoteAddress().ToString())
+						CacheIP = RealPlayer ? (Client.Socket.IsConnected()
+								? TShock.Utils.GetRealIP(Client.Socket.GetRemoteAddress().ToString())
 								: "")
 							: "127.0.0.1";
 				else
@@ -1112,6 +1121,11 @@ namespace TShockAPI
 		}
 
 		/// <summary>
+		/// Player RemoteClient.
+		/// </summary>
+		public RemoteClient Client => Netplay.Clients[Index];
+
+		/// <summary>
 		/// Gets the player's name.
 		/// </summary>
 		public string Name
@@ -1136,11 +1150,16 @@ namespace TShockAPI
 		}
 
 		/// <summary>
+		/// A player's position in the world.
+		/// </summary>
+		public Vector2 Position => RealPlayer ? TPlayer.position : Vector2.Zero;
+
+		/// <summary>
 		/// Gets the player's X coordinate.
 		/// </summary>
 		public float X
 		{
-			get { return RealPlayer ? TPlayer.position.X : Main.spawnTileX * 16; }
+			get { return RealPlayer ? Position.X : Main.spawnTileX * 16; }
 		}
 
 		/// <summary>
@@ -1148,7 +1167,7 @@ namespace TShockAPI
 		/// </summary>
 		public float Y
 		{
-			get { return RealPlayer ? TPlayer.position.Y : Main.spawnTileY * 16; }
+			get { return RealPlayer ? Position.Y : Main.spawnTileY * 16; }
 		}
 
 		/// <summary>
@@ -1488,6 +1507,35 @@ namespace TShockAPI
 		}
 
 		/// <summary>
+		/// Sets the visibility of the sections.
+		/// </summary>
+		/// <param name="rectangle">Section to be changed for the player. The minimum size should be set to 200x150.
+		/// </param>
+		/// <param name="visibility">Section visibility</param>
+		// The server does not send the player the whole world, it sends it in sections. To do this, it sets up visible and invisible sections.
+		// If the player was not in any section(Client.TileSections[x, y] == false) then the server will send the missing section of the world.
+		// This method allows you to simulate what the player has or has not seen these sections.
+		// For example, we can put some number of earths blocks in some vast area, for example, for the whole world, but the player will not see the changes, because some section is already loaded for him. At this point this method can come into effect! With it we will be able to select some zone and make it both visible and invisible to the player.
+		// The server will assume that the zone is not loaded on the player, and will resend the data, but with earth blocks.
+		public void UpdateSection(Rectangle? rectangle = null, bool visibility = false)
+		{
+			if (rectangle.HasValue)
+			{
+				for (int i = Netplay.GetSectionX(rectangle.Value.X); i < Netplay.GetSectionX(rectangle.Value.X + rectangle.Value.Width)
+					&& i < Main.maxTilesX; i++)
+					for (int j = Netplay.GetSectionY(rectangle.Value.Y); j < Netplay.GetSectionY(rectangle.Value.Y + rectangle.Value.Height)
+						&& j < Main.maxSectionsY; j++)
+							Client.TileSections[i, j] = visibility;
+			}
+			else
+			{
+				for (int i = 0; i < Main.maxSectionsX; i++)
+					for (int j = 0; j < Main.maxSectionsY; j++)
+						Client.TileSections[i, j] = visibility;
+			}
+		}
+
+		/// <summary>
 		/// Gives an item to the player. Includes banned item spawn prevention to check if the player can spawn the item.
 		/// </summary>
 		/// <param name="type">The item ID.</param>
@@ -1517,6 +1565,15 @@ namespace TShockAPI
 				GiveItemDirectly(type, stack, prefix);
 			else
 				GiveItemByDrop(type, stack, prefix);
+		}
+
+		/// <summary>
+		/// Gives an item to the player.
+		/// </summary>
+		/// <param name="item">The item</param>
+		public void GiveItem(NetItem item)
+		{
+			GiveItem(item.NetId, item.Stack, item.PrefixId);
 		}
 
 		private Item EmptySentinelItem = new Item();
@@ -1813,17 +1870,21 @@ namespace TShockAPI
 		/// Wounds the player with the given damage.
 		/// </summary>
 		/// <param name="damage">The amount of damage the player will take.</param>
-		public virtual void DamagePlayer(int damage)
+		/// <param name="reason">Player death reason</param>
+		public virtual void DamagePlayer(int damage, PlayerDeathReason? reason = null)
 		{
-			NetMessage.SendPlayerHurt(Index, PlayerDeathReason.LegacyDefault(), damage, (new Random()).Next(-1, 1), false, false, 0, -1, -1);
+			NetMessage.SendPlayerHurt(Index, reason ?? PlayerDeathReason.LegacyDefault(),
+				damage, (new Random()).Next(-1, 1), false, false, 0, -1, -1);
 		}
 
 		/// <summary>
 		/// Kills the player.
 		/// </summary>
-		public virtual void KillPlayer()
+		/// <param name="reason">Player death reason</param>
+		public virtual void KillPlayer(PlayerDeathReason? reason = null)
 		{
-			NetMessage.SendPlayerDeath(Index, PlayerDeathReason.LegacyDefault(), 99999, (new Random()).Next(-1, 1), false, -1, -1);
+			NetMessage.SendPlayerDeath(Index, reason ?? PlayerDeathReason.LegacyDefault(),
+				99999, (new Random()).Next(-1, 1), false, -1, -1);
 		}
 
 		/// <summary>
@@ -1840,6 +1901,7 @@ namespace TShockAPI
 		/// Sets the player's pvp.
 		/// </summary>
 		/// <param name="mode">The state of the pvp mode.</param>
+		/// <param name="withMsg">Is it necessary to send a message about changing pvp mode</param>
 		public virtual void SetPvP(bool mode, bool withMsg = false)
 		{
 			Main.player[Index].hostile = mode;
