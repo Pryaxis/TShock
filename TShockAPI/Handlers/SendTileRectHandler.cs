@@ -38,6 +38,10 @@ namespace TShockAPI.Handlers
 			{
 				TileID.JungleGrass
 			} },
+			{ TileID.AshPlants, new HashSet<ushort>()
+			{
+				TileID.AshGrass
+			} },
 		};
 
 		/// <summary>
@@ -66,6 +70,10 @@ namespace TShockAPI.Handlers
 			{ TileID.JunglePlants2, new HashSet<ushort>()
 			{
 				9, 10, 11, 12, 13, 14, 15, 16,
+			} },
+			{ TileID.AshPlants, new HashSet<ushort>()
+			{
+				6, 7, 8, 9, 10,
 			} },
 		};
 
@@ -173,6 +181,7 @@ namespace TShockAPI.Handlers
 					}
 
 					NetTile newTile = tiles[x, y];
+
 					TileObjectData data;
 
 					// If the new tile has an associated TileObjectData object, we take the tile and the surrounding tiles that make up the tile object
@@ -210,10 +219,26 @@ namespace TShockAPI.Handlers
 								case TileID.ShimmerMonolith:
 									{
 										// Allowed changes
+
+										// Based on empirical tests, these should be some conservative upper bounds for framing values
+										if (newTile.FrameX != -1 || newTile.FrameY != -1)
+										{
+											if (newTile.FrameX is < 0 or > 1000)
+											{
+												processed[x, y] = true;
+												continue;
+											}
+											if (newTile.FrameY is < 0 or > 5000)
+											{
+												processed[x, y] = true;
+												continue;
+											}
+										}
 									}
 									break;
 								default:
 									{
+										processed[x, y] = true;
 										continue;
 									}
 							}
@@ -233,10 +258,26 @@ namespace TShockAPI.Handlers
 								case TileID.TargetDummy:
 									{
 										// Allowed placements
+
+										// Based on empirical tests, these should be some conservative upper bounds for framing values
+										if (newTile.FrameX != -1 || newTile.FrameY != -1)
+										{
+											if (newTile.FrameX is < 0 or > 1000)
+											{
+												processed[x, y] = true;
+												continue;
+											}
+											if (newTile.FrameY is < 0 or > 500)
+											{
+												processed[x, y] = true;
+												continue;
+											}
+										}
 									}
 									break;
 								default:
 									{
+										processed[x, y] = true;
 										continue;
 									}
 							}
