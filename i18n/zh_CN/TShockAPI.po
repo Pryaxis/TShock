@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-12-06 05:43:49+0000\n"
-"PO-Revision-Date: 2022-12-06 17:49\n"
+"PO-Revision-Date: 2023-01-04 07:35\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -99,7 +99,7 @@ msgstr "   {1}会被作为玩家名称或序号进行识别，除非添加了参
 #: ../../TShockAPI/Commands.cs:1262
 #, csharp-format
 msgid " -> Logged-in as: {0}; in group {1}."
-msgstr " -> 登录为用户 {0} , 在组 {1} 中。"
+msgstr " ->登录为用户 {0} , 在组 {1} 中。"
 
 #: ../../TShockAPI/Commands.cs:1398
 #, csharp-format
@@ -127,7 +127,7 @@ msgstr "- 根据用户名封禁一个不在线的玩家"
 
 #: ../../TShockAPI/Commands.cs:1445
 msgid "- Ban an offline player by IP address"
-msgstr "- 封禁离线玩家的IP地址"
+msgstr "- 通过IP地址封禁离线的玩家"
 
 #: ../../TShockAPI/Commands.cs:1448
 msgid "- Ban an online player by index (Useful for hard to type names)"
@@ -345,7 +345,7 @@ msgstr "{0} <{1}|{2}|{3}> [{4}]"
 #: ../../TShockAPI/Commands.cs:1106
 #, csharp-format
 msgid "{0} added account {1} to group {2}."
-msgstr "{0} 将账号 {1} 添加至组 {2}！"
+msgstr "{0} 将账号 {1} 添加至组 {2}!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3546
 #, csharp-format
@@ -365,7 +365,7 @@ msgstr "{0}使用了游商背包（[i:5343]）。"
 #: ../../TShockAPI/Commands.cs:1064
 #, csharp-format
 msgid "{0} attempted to register for the account {1} but it was already taken."
-msgstr "{0}尝试注册账号“{1}” ，但它已被注册。"
+msgstr "{0}试图注册账号“{1}” ，但它已被占用。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:2637
 #: ../../TShockAPI/GetDataHandlers.cs:3212
@@ -381,7 +381,7 @@ msgstr "{0}已成功登录账号{1}。"
 #: ../../TShockAPI/TSPlayer.cs:1955
 #, csharp-format
 msgid "{0} banned {1} for '{2}'."
-msgstr "{0} 以'{2}'为理由封禁了{1}"
+msgstr "{0} 以'{2}'为理由封禁了'{1}'"
 
 #: ../../TShockAPI/Commands.cs:6051
 #, csharp-format
@@ -553,7 +553,7 @@ msgstr "{0}已将你所属的用户组更改为{1}。"
 #: ../../TShockAPI/Commands.cs:3026
 #, csharp-format
 msgid "{0} has disabled incoming teleports."
-msgstr "{0} 禁止玩家对其使用传送"
+msgstr "{0} 禁止玩家对其使用传送。"
 
 #: ../../TShockAPI/Commands.cs:2412
 #, csharp-format
@@ -608,22 +608,22 @@ msgstr "{0} 已将你复活。"
 #: ../../TShockAPI/GetDataHandlers.cs:3555
 #, csharp-format
 msgid "{0} has sent a request to the bunny delivery service!"
-msgstr "{0}联系了兔兔运送服务站。"
+msgstr "{0}从递送站申领了新的兔兔！"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3561
 #, csharp-format
 msgid "{0} has sent a request to the cat delivery service!"
-msgstr "{0}联系了猫咪运送服务站。"
+msgstr "{0}从递送站申领了新的猫猫！"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3558
 #, csharp-format
 msgid "{0} has sent a request to the dog delivery service!"
-msgstr "{0}联系了狗狗运送服务站。"
+msgstr "{0}从递送站申领了新的狗狗！"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3552
 #, csharp-format
 msgid "{0} has sent a request to the slime delivery service!"
-msgstr "{0}联系了史莱姆运送服务站。"
+msgstr "{0}已向史莱姆递送服务发送请求！"
 
 #: ../../TShockAPI/Commands.cs:2878
 #, csharp-format
@@ -684,7 +684,7 @@ msgstr "{0}为他自己恢复了{1}血量。"
 #: ../../TShockAPI/Commands.cs:4250
 #, csharp-format
 msgid "{0} is already allowed to place tile {1}."
-msgstr "{0} 已被允许放置方块 {1}。"
+msgstr "{0} 已被允许放置图格 {1}。"
 
 #: ../../TShockAPI/Commands.cs:3885
 #, csharp-format
@@ -719,12 +719,12 @@ msgstr "{0} 已被禁止使用射弹 {1}。"
 #: ../../TShockAPI/ItemBans.cs:234
 #, csharp-format
 msgid "{0} is banned! Remove it!"
-msgstr "{0} 已被封禁！请删除它！"
+msgstr "{0} 已被禁用！请移除它！"
 
 #: ../../TShockAPI/Commands.cs:6751
 #, csharp-format
 msgid "{0} is no longer in god mode."
-msgstr "已关闭{0}的无敌模式。"
+msgstr "已关闭{0}的上帝模式。"
 
 #: ../../TShockAPI/Commands.cs:5546
 #: ../../TShockAPI/Commands.cs:5577
@@ -1253,7 +1253,7 @@ msgstr "成功移除账号。"
 
 #: ../../TShockAPI/Commands.cs:2094
 msgid "Active REST Users ({{0}}/{{1}}):"
-msgstr "活跃REST用户({{0}}/{{1}}):"
+msgstr "有效的临时REST用户({{0}}/{{1}}):"
 
 #: ../../TShockAPI/Commands.cs:3971
 msgid "add <item> - Adds an item ban."
@@ -1307,7 +1307,7 @@ msgstr "{0}{1}的别名:{0}{2}"
 
 #: ../../TShockAPI/Commands.cs:6013
 msgid "All alive NPCs (excluding town NPCs) on the server will be killed if you do not input a name or ID."
-msgstr "输入名称或序号可以消灭特定NPC，否则将默认消灭所有非城镇NPC。"
+msgstr "输入NPC名称或ID可以杀死特定NPC，否则将默认杀死所有非城镇NPC。"
 
 #: ../../TShockAPI/Commands.cs:2626
 msgid "all bosses"
@@ -1315,7 +1315,7 @@ msgstr "所有boss"
 
 #: ../../TShockPluginManager/NugetCLI.cs:169
 msgid "All done! :)"
-msgstr "下载完毕！"
+msgstr "下载完毕！: )"
 
 #: ../../TShockAPI/Commands.cs:2104
 msgid "All REST tokens have been destroyed."
@@ -1328,15 +1328,15 @@ msgstr "已分配内存: {0}"
 
 #: ../../TShockAPI/Commands.cs:3972
 msgid "allow <item> <group> - Allows a group to use an item."
-msgstr "allow <物品> <组名> - 允许指定组使用被禁用的物品"
+msgstr "allow <物品> <用户组> - 给予用户组使用特定物品的豁免权。"
 
 #: ../../TShockAPI/Commands.cs:4150
 msgid "allow <projectile ID> <group> - Allows a group to use a projectile."
-msgstr "allow <射弹> <用户组> - 给与用户组使用特定射弹的豁免权。"
+msgstr "allow <射弹> <用户组> - 给予用户组使用特定射弹的豁免权。"
 
 #: ../../TShockAPI/Commands.cs:4326
 msgid "allow <tile ID> <group> - Allows a group to place a tile."
-msgstr "allow <物块> <用户组> - 给与用户组使用特定物块的豁免权。"
+msgstr "allow <物块> <用户组> - 给予用户组使用特定物块的豁免权。"
 
 #: ../../TShockAPI/Commands.cs:5193
 msgid "allow <user> <region> - Allows a user to a region."
@@ -1374,20 +1374,20 @@ msgstr "执行指令时发生了异常。"
 
 #: ../../TShockAPI/DB/BanManager.cs:644
 msgid "An identifier for a character name."
-msgstr "角色名字的标识。"
+msgstr "可以匹配游戏内的角色名。"
 
 #: ../../TShockAPI/DB/BanManager.cs:648
 msgid "An identifier for a TShock User Account name."
-msgstr "一个TShock用户名的标识符。"
+msgstr "可以匹配TShock用户名。"
 
 #: ../../TShockAPI/DB/BanManager.cs:640
 msgid "An identifier for a UUID."
-msgstr "UUID的标识。"
+msgstr "可以匹配UUID。"
 
 #: ../../TShockAPI/DB/BanManager.cs:636
 #, csharp-format
 msgid "An identifier for an IP Address in octet format. e.g., '{0}'."
-msgstr "用句点分隔的十进制格式的IP地址，例如{0}。"
+msgstr "可以匹配IP地址，格式为用句点分隔的十进制，例如{0}。"
 
 #: ../../TShockAPI/Commands.cs:2052
 msgid "An update check has been queued. If an update is available, you will be notified shortly."
@@ -1446,7 +1446,7 @@ msgstr "自动存档已开启。"
 
 #: ../../TShockAPI/Rest/RestManager.cs:811
 msgid "AutoSave has been disabled"
-msgstr "自动存档已关闭"
+msgstr "自动保存已关闭"
 
 #: ../../TShockAPI/Rest/RestManager.cs:807
 msgid "AutoSave has been enabled"
@@ -1466,7 +1466,7 @@ msgstr "可用Ban指令:"
 
 #: ../../TShockAPI/Commands.cs:1432
 msgid "Available identifiers ({{0}}/{{1}}):"
-msgstr "可用的标识符 ({{0}}/{{1}}):"
+msgstr "可选的匹配代码 ({{0}}/{{1}}):"
 
 #: ../../TShockAPI/Commands.cs:5208
 msgid "Available Region Sub-Commands ({{0}}/{{1}}):"
@@ -1474,7 +1474,7 @@ msgstr "可用的区域子命令 ({{0}}/{{1}}):"
 
 #: ../../TShockAPI/Commands.cs:2109
 msgid "Available REST Sub-Commands:"
-msgstr "Rest命令使用帮助:"
+msgstr "REST命令使用帮助:"
 
 #: ../../TShockAPI/BackupManager.cs:75
 msgid "Backing up world..."
@@ -1684,7 +1684,7 @@ msgstr "Bouncer / OnFishOutNPC（钓出NPC防护）因没有召唤Boss的权限�
 #: ../../TShockAPI/Bouncer.cs:2781
 #, csharp-format
 msgid "Bouncer / OnFoodPlatterTryPlacing rejected disabled from {0}"
-msgstr "Bouncer / OnFoodPlatterTryPlacing（放置食物防护）因玩家被拘束阻止了{0}"
+msgstr "Bouncer / OnFoodPlatterTryPlacing（放置食物防护）因玩家被限制行动而阻止了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:2774
 #, csharp-format
@@ -1997,7 +1997,7 @@ msgstr "Bouncer / OnPlaceChest（宝箱放置防护）因超出范围而阻止�
 #: ../../TShockAPI/Bouncer.cs:1562
 #, csharp-format
 msgid "Bouncer / OnPlaceChest rejected from weird check from {0}"
-msgstr "Bouncer / OnPlaceChest 拒绝了来自 {0} 的怪物的检查"
+msgstr "Bouncer / OnPlaceChest 拒绝了来自 {0} 的奇怪的检查"
 
 #: ../../TShockAPI/Bouncer.cs:1573
 #, csharp-format
@@ -2998,7 +2998,7 @@ msgstr "检测到恶意攻击"
 #: ../../TShockAPI/Commands.cs:1494
 #, csharp-format
 msgid "Failed to add ban for identifier: {0}."
-msgstr "无法给{0}添加封禁标识符"
+msgstr "无法添加封禁（匹配代码{0}）。"
 
 #: ../../TShockAPI/Rest/RestManager.cs:671
 #, csharp-format
@@ -3515,7 +3515,7 @@ msgstr "用户组{1}为{0}的父组，但也同时是它的子组。已删除此
 
 #: ../../TShockAPI/DB/GroupManager.cs:578
 msgid "Group \"superadmin\" is defined in the database even though it's a reserved group name."
-msgstr "组 ”superadmin”(超级管理员)已存在于数据库中，即使这是一个保留的组名。"
+msgstr "数据库中存在superadmin组，但它已被预留，不应存在于数据库中。"
 
 #: ../../TShockAPI/DB/GroupManager.cs:708
 #, csharp-format
@@ -3573,7 +3573,7 @@ msgstr "用户组{0}的父组为{1}，但该用户组不存在。已删除此父
 #: ../../TShockAPI/DB/GroupManager.cs:637
 #, csharp-format
 msgid "Group {0} is referencing itself as parent group; parent reference was removed."
-msgstr "组{0}试图将自己作为父组。父组的引用已被删除。"
+msgstr "用户组{0}的父组为它自己。已删除此父子关系。"
 
 #: ../../TShockAPI/Commands.cs:4862
 #: ../../TShockAPI/Commands.cs:4897
@@ -5849,7 +5849,7 @@ msgstr "此用户组不存在。"
 
 #: ../../TShockAPI/DB/BanManager.cs:258
 msgid "The ban is invalid because a current ban for this identifier already exists."
-msgstr "禁令无效，因为当前禁止此标识符的禁令已经存在。"
+msgstr "目前已经封禁了符合这个匹配代码的玩家，无法再次封禁。"
 
 #: ../../TShockAPI/DB/BanManager.cs:295
 msgid "The ban was not valid for an unknown reason."
@@ -5986,7 +5986,7 @@ msgstr "史莱姆皇后"
 
 #: ../../TShockAPI/Rest/RestManager.cs:158
 msgid "The REST authentication token."
-msgstr "REST 身份验证令牌。"
+msgstr "REST 授权令牌"
 
 #: ../../TShockAPI/UpdateManager.cs:150
 msgid "The server is out of date. Latest version: "
@@ -6047,7 +6047,7 @@ msgstr "当前没有任何有效的临时REST用户。"
 
 #: ../../TShockAPI/Commands.cs:1434
 msgid "There are currently no available identifiers."
-msgstr "目前没有可用的匹配代码。"
+msgstr "目前没有可选的匹配代码。"
 
 #: ../../TShockAPI/Commands.cs:4001
 msgid "There are currently no banned items."
