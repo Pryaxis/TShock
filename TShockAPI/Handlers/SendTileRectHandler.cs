@@ -38,6 +38,10 @@ namespace TShockAPI.Handlers
 			{
 				TileID.JungleGrass
 			} },
+			{ TileID.AshPlants, new HashSet<ushort>()
+			{
+				TileID.AshGrass
+			} },
 		};
 
 		/// <summary>
@@ -66,6 +70,10 @@ namespace TShockAPI.Handlers
 			{ TileID.JunglePlants2, new HashSet<ushort>()
 			{
 				9, 10, 11, 12, 13, 14, 15, 16,
+			} },
+			{ TileID.AshPlants, new HashSet<ushort>()
+			{
+				6, 7, 8, 9, 10,
 			} },
 		};
 
