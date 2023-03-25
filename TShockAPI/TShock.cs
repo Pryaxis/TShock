@@ -676,13 +676,9 @@ namespace TShockAPI
 
 			if (args.Chest != null)
 			{
+				// After checking for protected regions, no further range checking is necessarily because the client packet only specifies the
+				// inventory slot to quick stack. The vanilla Terraria server itself determines what chests are close enough to the player.
 				if (Config.Settings.RegionProtectChests && !Regions.CanBuild((int)args.WorldPosition.X, (int)args.WorldPosition.Y, tsplr))
-				{
-					args.Handled = true;
-					return;
-				}
-
-				if (!tsplr.IsInRange(args.Chest.x, args.Chest.y))
 				{
 					args.Handled = true;
 					return;
