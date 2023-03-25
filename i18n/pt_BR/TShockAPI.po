@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-12-06 05:43:49+0000\n"
-"PO-Revision-Date: 2022-12-06 05:52\n"
+"PO-Revision-Date: 2022-12-30 01:02\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "MIME-Version: 1.0\n"
@@ -1149,7 +1149,7 @@ msgstr "De {0} a {1}"
 #: ../../TShockPluginManager/NugetCLI.cs:187
 #, csharp-format
 msgid "<green>{0} <black>from <blue>{1} <black>[{2}]"
-msgstr ""
+msgstr "<verde>{0} <preto>de <azul>{1} <preto>[{2}]"
 
 #: ../../TShockPluginManager/NugetCLI.cs:178
 #, csharp-format
@@ -1166,15 +1166,15 @@ msgstr "<Para {0}> {1}"
 #, csharp-format
 msgid "=== Dependency ==="
 msgid_plural "=== Dependencies ==="
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "=== Dependência ==="
+msgstr[1] "=== Dependências ==="
 
 #: ../../TShockPluginManager/NugetCLI.cs:133
 #, csharp-format
 msgid "=== Requested Plugin ==="
 msgid_plural "=== Requested Plugins ==="
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "=== Plugin exigido ==="
+msgstr[1] "=== Plugins exigidos ==="
 
 #: ../../TShockAPI/Commands.cs:2818
 msgid "a Deerclops"
@@ -1325,7 +1325,7 @@ msgstr "todos os chefes"
 
 #: ../../TShockPluginManager/NugetCLI.cs:169
 msgid "All done! :)"
-msgstr ""
+msgstr "Concluído!"
 
 #: ../../TShockAPI/Commands.cs:2104
 msgid "All REST tokens have been destroyed."
@@ -1847,7 +1847,7 @@ msgstr "Bouncer / OnLiquidSet rejeitou a verificação inválida de {0}"
 #: ../../TShockAPI/Bouncer.cs:1731
 #, csharp-format
 msgid "Bouncer / OnLiquidSet rejected liquid type {0} from {1} holding {2}"
-msgstr ""
+msgstr "Segurador / OnLiquidSet rejeitou o tipo líquido {0} de {1} segurando {2}"
 
 #: ../../TShockAPI/Bouncer.cs:1840
 #, csharp-format
@@ -2671,7 +2671,7 @@ msgstr "Configuração, permissões e regiões recarregadas completamente. Algum
 
 #: ../../TShockPluginManager/NugetCLI.cs:100
 msgid "Connect to the internet to figure out what to download?"
-msgstr ""
+msgstr "Conectar-se à internet para descobrir o que baixar?"
 
 #: ../../TShockAPI/TShock.cs:1329
 msgid "Connecting via a proxy is not allowed."
@@ -2901,7 +2901,7 @@ msgstr "disallow <ID do bloco> <grupo> - Desautoriza um grupo de usar o bloco."
 #: ../../TShockPluginManager/NugetCLI.cs:140
 #: ../../TShockPluginManager/NugetCLI.cs:161
 msgid "Download and install the given packages?"
-msgstr ""
+msgstr "Baixar e instalar os pacotes indicados?"
 
 #: ../../TShockAPI/Commands.cs:2648
 msgid "Duke Fishron"
@@ -3739,11 +3739,11 @@ msgstr "Se você entendeu, por favor digite {0}login <nome de usuário> <senha> 
 
 #: ../../TShockPluginManager/NugetCLI.cs:142
 msgid "If you want to know which plugins need which dependencies, press E."
-msgstr ""
+msgstr "Se você quiser saber quais plugins precisam de quais dependências, pressione E."
 
 #: ../../TShockPluginManager/NugetCLI.cs:162
 msgid "If you'd like to see which plugins need which dependencies again, press E."
-msgstr ""
+msgstr "Se você quiser ver quais plugins precisam de dependências novamente, pressione E."
 
 #: ../../TShockAPI/Bouncer.cs:986
 msgid "If you're seeing this message and you know what that player did, please report it to TShock for further investigation."
@@ -3799,7 +3799,7 @@ msgstr "Falha ao inserir o banimento no banco de dados."
 
 #: ../../TShockPluginManager/NugetCLI.cs:39
 msgid "Install the plugins as specified in the plugins.json"
-msgstr ""
+msgstr "Instalar os plugins conforme especificado no plugins.json"
 
 #: ../../TShockAPI/Rest/Rest.cs:426
 msgid "Internal server error."
@@ -4566,7 +4566,7 @@ msgstr "Nome da máquina: {0}"
 
 #: ../../TShockPluginManager/NugetCLI.cs:141
 msgid "Make sure that you trust the plugins you're installing."
-msgstr ""
+msgstr "Certifique-se de confiar nos plugins que você está instalando."
 
 #: ../../TShockAPI/Bouncer.cs:2471
 msgid "Malicious portal attempt."
@@ -4574,7 +4574,7 @@ msgstr "Tentativa de portal malicioso."
 
 #: ../../TShockPluginManager/NugetCLI.cs:35
 msgid "Manage plugins and their requirements"
-msgstr ""
+msgstr "Gerenciar plugins e suas exigências"
 
 #: ../../TShockAPI/Commands.cs:280
 msgid "Manages groups."
@@ -4614,7 +4614,7 @@ msgstr "Gerencia contas de usuários."
 
 #: ../../TShockAPI/Bouncer.cs:1775
 msgid "Manipulating unknown liquid type"
-msgstr ""
+msgstr "Manipulando tipo de líquido desconhecido"
 
 #: ../../TShockAPI/Commands.cs:4721
 #, csharp-format
@@ -4816,7 +4816,7 @@ msgstr "Dano do NPC excedeu {0}."
 
 #: ../../TShockPluginManager/NugetCLI.cs:103
 msgid "One moment..."
-msgstr ""
+msgstr "Aguarde..."
 
 #: ../../TShockAPI/DB/RegionManager.cs:102
 #, csharp-format
@@ -5141,7 +5141,7 @@ msgstr "Limite de TilePlace atingido."
 
 #: ../../TShockPluginManager/NugetCLI.cs:128
 msgid "Read the message below to find out more."
-msgstr ""
+msgstr "Leia a mensagem abaixo para saber mais."
 
 #: ../../TShockAPI/Commands.cs:1495
 #, csharp-format
@@ -6041,7 +6041,7 @@ msgstr "O valor deve ser maior que zero."
 
 #: ../../TShockPluginManager/NugetCLI.cs:127
 msgid "The versions of plugins you requested aren't compatible with eachother."
-msgstr ""
+msgstr "As versões de plugins que você solicitou não são compatíveis uns com os outros."
 
 #: ../../TShockAPI/Commands.cs:2722
 msgid "the Wall of Flesh"
@@ -6110,17 +6110,17 @@ msgstr "Ocorreu um erro ao processar seu login ou solicitação relacionada à a
 
 #: ../../TShockPluginManager/NugetCLI.cs:121
 msgid "There was an issue figuring out what to download."
-msgstr ""
+msgstr "Houve um problema ao descobrir o que baixar."
 
 #: ../../TShockPluginManager/NugetCLI.cs:90
 msgid "There was an issue reading the packages.json."
-msgstr ""
+msgstr "Houve um problema ao ler packages.json."
 
 #: ../../TShockPluginManager/NugetCLI.cs:99
 #, csharp-format
 msgid "This is the plugin you requested to install."
 msgid_plural "These are the plugins you requested to install"
-msgstr[0] ""
+msgstr[0] "Este é o plugin que você solicitou para instalar."
 msgstr[1] ""
 
 #: ../../TShockAPI/TShock.cs:1013
@@ -6574,37 +6574,37 @@ msgstr "Usando {0} para implementação de bloco"
 #: ../../TShockAPI/Bouncer.cs:1794
 #, csharp-format
 msgid "Using {0} on non-honey"
-msgstr ""
+msgstr "Usando {0} em não-mel"
 
 #: ../../TShockAPI/Bouncer.cs:1803
 #, csharp-format
 msgid "Using {0} on non-lava"
-msgstr ""
+msgstr "Usando {0} em não-lava"
 
 #: ../../TShockAPI/Bouncer.cs:1810
 #, csharp-format
 msgid "Using {0} on non-shimmer"
-msgstr ""
+msgstr "Usando {0} em não-cintilante"
 
 #: ../../TShockAPI/Bouncer.cs:1785
 #, csharp-format
 msgid "Using {0} on non-water"
-msgstr ""
+msgstr "Usando {0} em não-água"
 
 #: ../../TShockAPI/Bouncer.cs:1817
 #, csharp-format
 msgid "Using {0} on non-water or shimmer"
-msgstr ""
+msgstr "Usando {0} em não-água ou cintilante"
 
 #: ../../TShockAPI/Bouncer.cs:1825
 #, csharp-format
 msgid "Using {0} to manipulate unknown liquid {1}"
-msgstr ""
+msgstr "Usando {0} para manipular líquido desconhecido {1}"
 
 #: ../../TShockAPI/Bouncer.cs:1740
 #, csharp-format
 msgid "Using banned {0} to manipulate liquid"
-msgstr ""
+msgstr "Uso banido {0} para manipular líquido"
 
 #: ../../TShockAPI/Bouncer.cs:1763
 msgid "Using banned honey bucket without permissions"
@@ -6616,7 +6616,7 @@ msgstr "Usando balde de lava banido sem permissões"
 
 #: ../../TShockAPI/Bouncer.cs:1770
 msgid "Using banned shimmering water bucket without permissions"
-msgstr ""
+msgstr "Usando balde de água cintilante banido sem permissões"
 
 #: ../../TShockAPI/Bouncer.cs:1749
 msgid "Using banned water bucket without permissions"
@@ -6694,7 +6694,7 @@ msgstr "Árvore de salgueiro"
 
 #: ../../TShockPluginManager/NugetCLI.cs:85
 msgid "Without a list of plugins to install, no plugins can be installed."
-msgstr ""
+msgstr "Sem uma lista de plugins para instalar, nenhum plugin pode ser instalado."
 
 #: ../../TShockAPI/BackupManager.cs:80
 #, csharp-format
@@ -7319,7 +7319,7 @@ msgstr "Não é permitido alterar blocos aqui!"
 
 #: ../../TShockPluginManager/NugetCLI.cs:84
 msgid "You're trying to sync, but you don't have a packages.json file."
-msgstr ""
+msgstr "Você está tentando sincronizar, mas não tem um arquivo packages.json."
 
 #: ../../TShockAPI/Commands.cs:1987
 msgid "Your account has been elevated to superadmin for 10 minutes."
