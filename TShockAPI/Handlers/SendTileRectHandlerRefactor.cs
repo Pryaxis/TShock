@@ -107,8 +107,8 @@ namespace TShockAPI.Handlers
 			/// <param name="width">The width of the placement.</param>
 			/// <param name="height">The height of the placement.</param>
 			/// <param name="tileType">The tile type of the placement.</param>
-			/// <param name="maxFrameX">The maximum allowed frameX of the placement, or <see cref="IGNORE_FRAME"/> if this operation does not change frameX.</param>
-			/// <param name="maxFrameY">The maximum allowed frameY of the placement, or <see cref="IGNORE_FRAME"/> if this operation does not change frameY.</param>
+			/// <param name="maxFrameX">The maximum allowed frameX of the placement.</param>
+			/// <param name="maxFrameY">The maximum allowed frameY of the placement.</param>
 			/// <param name="frameXStep">The step size in which frameX changes for this placement, or <c>1</c> if any value is allowed.</param>
 			/// <param name="frameYStep">The step size in which frameX changes for this placement, or <c>1</c> if any value is allowed.</param>
 			/// <returns>The resulting operation match.</returns>
@@ -282,14 +282,8 @@ namespace TShockAPI.Handlers
 					{
 						Main.tile[x + rect.X, y + rect.Y].active(active: true);
 						Main.tile[x + rect.X, y + rect.Y].type = rect[x, y].Type;
-						if (MaxFrameX != IGNORE_FRAME)
-						{
-							Main.tile[x + rect.X, y + rect.Y].frameX = rect[x, y].FrameX;
-						}
-						if (MaxFrameY != IGNORE_FRAME)
-						{
-							Main.tile[x + rect.X, y + rect.Y].frameY = rect[x, y].FrameY;
-						}
+						Main.tile[x + rect.X, y + rect.Y].frameX = rect[x, y].FrameX;
+						Main.tile[x + rect.X, y + rect.Y].frameY = rect[x, y].FrameY;
 					}
 				}
 
