@@ -416,6 +416,16 @@ namespace TShockAPI.Handlers
 			// this handler handles the entire logic of this packet
 			args.Handled = true;
 
+			// as of 1.4 this is the biggest size the client will send in any case, determined by full code analysis
+			// see default matches above and special cases below
+			if (args.Width > 4 || args.Length > 4)
+			{
+				TShock.Log.ConsoleDebug(GetString($"Bouncer / SendTileRect rejected from size from {args.Player.Name}"));
+
+				// definitely invalid; do not send any correcting data
+				return;
+			}
+
 			// player throttled?
 			if (args.Player.IsBouncerThrottled())
 			{
@@ -433,16 +443,6 @@ namespace TShockAPI.Handlers
 
 				// send correcting data
 				args.Player.SendTileRect(args.TileX, args.TileY, args.Length, args.Width);
-				return;
-			}
-
-			// as of 1.4 this is the biggest size the client will send in any case, determined by full code analysis
-			// see default matches above and special cases below
-			if (args.Width > 4 || args.Length > 4)
-			{
-				TShock.Log.ConsoleDebug(GetString($"Bouncer / SendTileRect rejected from non-vanilla tilemod from {args.Player.Name}"));
-
-				// definitely invalid; do not send any correcting data
 				return;
 			}
 
