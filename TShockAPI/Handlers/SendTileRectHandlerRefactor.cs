@@ -69,7 +69,7 @@ namespace TShockAPI.Handlers
 		/// </summary>
 		private readonly struct TileRectMatch
 		{
-			public const short IGNORE_FRAME = -1;
+			private const short IGNORE_FRAME = -1;
 
 			private enum MatchType
 			{
@@ -84,10 +84,12 @@ namespace TShockAPI.Handlers
 			private readonly ushort TileType;
 			private readonly short MaxFrameX;
 			private readonly short MaxFrameY;
+			private readonly short FrameXStep;
+			private readonly short FrameYStep;
 
 			private readonly MatchType Type;
 
-			private TileRectMatch(MatchType type, int width, int height, ushort tileType, short maxFrameX, short maxFrameY)
+			private TileRectMatch(MatchType type, int width, int height, ushort tileType, short maxFrameX, short maxFrameY, short frameXStep, short frameYStep)
 			{
 				Type = type;
 				Width = width;
@@ -95,6 +97,8 @@ namespace TShockAPI.Handlers
 				TileType = tileType;
 				MaxFrameX = maxFrameX;
 				MaxFrameY = maxFrameY;
+				FrameXStep = frameXStep;
+				FrameYStep = frameYStep;
 			}
 
 			/// <summary>
@@ -105,10 +109,12 @@ namespace TShockAPI.Handlers
 			/// <param name="tileType">The tile type of the placement.</param>
 			/// <param name="maxFrameX">The maximum allowed frameX of the placement, or <see cref="IGNORE_FRAME"/> if this operation does not change frameX.</param>
 			/// <param name="maxFrameY">The maximum allowed frameY of the placement, or <see cref="IGNORE_FRAME"/> if this operation does not change frameY.</param>
+			/// <param name="frameXStep">The step size in which frameX changes for this placement, or <c>1</c> if any value is allowed.</param>
+			/// <param name="frameYStep">The step size in which frameX changes for this placement, or <c>1</c> if any value is allowed.</param>
 			/// <returns>The resulting operation match.</returns>
-			public static TileRectMatch Placement(int width, int height, ushort tileType, short maxFrameX, short maxFrameY)
+			public static TileRectMatch Placement(int width, int height, ushort tileType, short maxFrameX, short maxFrameY, short frameXStep, short frameYStep)
 			{
-				return new TileRectMatch(MatchType.Placement, width, height, tileType, maxFrameX, maxFrameY);
+				return new TileRectMatch(MatchType.Placement, width, height, tileType, maxFrameX, maxFrameY, frameXStep, frameYStep);
 			}
 
 			/// <summary>
@@ -117,12 +123,42 @@ namespace TShockAPI.Handlers
 			/// <param name="width">The width of the state change.</param>
 			/// <param name="height">The height of the state change.</param>
 			/// <param name="tileType">The target tile type of the state change.</param>
-			/// <param name="maxFrameX">The maximum allowed frameX of the state change, or <see cref="IGNORE_FRAME"/> if this operation does not change frameX.</param>
-			/// <param name="maxFrameY">The maximum allowed frameY of the state change, or <see cref="IGNORE_FRAME"/> if this operation does not change frameY.</param>
+			/// <param name="maxFrameX">The maximum allowed frameX of the state change.</param>
+			/// <param name="maxFrameY">The maximum allowed frameY of the state change.</param>
+			/// <param name="frameXStep">The step size in which frameX changes for this placement, or <c>1</c> if any value is allowed.</param>
+			/// <param name="frameYStep">The step size in which frameY changes for this placement, or <c>1</c> if any value is allowed.</param>
 			/// <returns>The resulting operation match.</returns>
-			public static TileRectMatch StateChange(int width, int height, ushort tileType, short maxFrameX, short maxFrameY)
+			public static TileRectMatch StateChange(int width, int height, ushort tileType, short maxFrameX, short maxFrameY, short frameXStep, short frameYStep)
 			{
-				return new TileRectMatch(MatchType.StateChange, width, height, tileType, maxFrameX, maxFrameY);
+				return new TileRectMatch(MatchType.StateChange, width, height, tileType, maxFrameX, maxFrameY, frameXStep, frameYStep);
+			}
+
+			/// <summary>
+			/// Creates a new state change operation which only changes frameX.
+			/// </summary>
+			/// <param name="width">The width of the state change.</param>
+			/// <param name="height">The height of the state change.</param>
+			/// <param name="tileType">The target tile type of the state change.</param>
+			/// <param name="maxFrame">The maximum allowed frameX of the state change.</param>
+			/// <param name="frameStep">The step size in which frameX changes for this placement, or <c>1</c> if any value is allowed.</param>
+			/// <returns>The resulting operation match.</returns>
+			public static TileRectMatch StateChangeX(int width, int height, ushort tileType, short maxFrame, short frameStep)
+			{
+				return new TileRectMatch(MatchType.StateChange, width, height, tileType, maxFrame, IGNORE_FRAME, frameStep, 0);
+			}
+
+			/// <summary>
+			/// Creates a new state change operation which only changes frameY.
+			/// </summary>
+			/// <param name="width">The width of the state change.</param>
+			/// <param name="height">The height of the state change.</param>
+			/// <param name="tileType">The target tile type of the state change.</param>
+			/// <param name="maxFrame">The maximum allowed frameY of the state change.</param>
+			/// <param name="frameStep">The step size in which frameY changes for this placement, or <c>1</c> if any value is allowed.</param>
+			/// <returns>The resulting operation match.</returns>
+			public static TileRectMatch StateChangeY(int width, int height, ushort tileType, short maxFrame, short frameStep)
+			{
+				return new TileRectMatch(MatchType.StateChange, width, height, tileType, IGNORE_FRAME, maxFrame, 0, frameStep);
 			}
 
 			/// <summary>
@@ -134,7 +170,7 @@ namespace TShockAPI.Handlers
 			/// <returns>The resulting operation match.</returns>
 			public static TileRectMatch Removal(int width, int height, ushort tileType)
 			{
-				return new TileRectMatch(MatchType.Removal, width, height, tileType, 0, 0);
+				return new TileRectMatch(MatchType.Removal, width, height, tileType, 0, 0, 0, 0);
 			}
 
 			/// <summary>
@@ -166,14 +202,14 @@ namespace TShockAPI.Handlers
 						{
 							if (MaxFrameX != IGNORE_FRAME)
 							{
-								if (tile.FrameX < 0 || tile.FrameX > MaxFrameX)
+								if (tile.FrameX < 0 || tile.FrameX > MaxFrameX || tile.FrameX % FrameXStep != 0)
 								{
 									return false;
 								}
 							}
 							if (MaxFrameY != IGNORE_FRAME)
 							{
-								if (tile.FrameY < 0 || tile.FrameY > MaxFrameY)
+								if (tile.FrameY < 0 || tile.FrameY > MaxFrameY || tile.FrameY % FrameYStep != 0)
 								{
 									return false;
 								}
@@ -321,38 +357,47 @@ namespace TShockAPI.Handlers
 		/// <summary>
 		/// Contains the complete list of valid tile rect operations the game currently performs.
 		/// </summary>
+		// The matches restrict the tile rects to only place one kind of tile, and only with the given maximum values and step sizes for frameX and frameY. This performs pretty much perfect checks on the data, allowing only valid placements.
+		// For TileID.MinecartTrack, the data is taken from `Minecart._trackSwitchOptions`, allowing any framing value in this array (currently 0-36).
+		// For TileID.Plants, it is taken from `ItemID.Sets.flowerPacketInfo[n].stylesOnPurity`, allowing every style multiplied by 18.
+		// The other operations are based on code analysis and manual observation.
 		private static readonly TileRectMatch[] Matches = new TileRectMatch[]
 		{
-			TileRectMatch.Placement(2, 3, TileID.TargetDummy, 54, 36),
-			TileRectMatch.Placement(3, 4, TileID.TeleportationPylon, 468, 54),
-			TileRectMatch.Placement(2, 3, TileID.DisplayDoll, 126, 36),
-			TileRectMatch.Placement(2, 3, TileID.HatRack, 90, 54),
-			TileRectMatch.Placement(2, 2, TileID.ItemFrame, 162, 18),
-			TileRectMatch.Placement(3, 3, TileID.WeaponsRack2, 90, 36),
-			TileRectMatch.Placement(1, 1, TileID.FoodPlatter, 18, 0),
-			TileRectMatch.Placement(1, 1, TileID.LogicSensor, 108, 0),
+			TileRectMatch.Placement(2, 3, TileID.TargetDummy, 54, 36, 18, 18),
+			TileRectMatch.Placement(3, 4, TileID.TeleportationPylon, 468, 54, 18, 18),
+			TileRectMatch.Placement(2, 3, TileID.DisplayDoll, 126, 36, 18, 18),
+			TileRectMatch.Placement(2, 3, TileID.HatRack, 90, 54, 18, 18),
+			TileRectMatch.Placement(2, 2, TileID.ItemFrame, 162, 18, 18, 18),
+			TileRectMatch.Placement(3, 3, TileID.WeaponsRack2, 90, 36, 18, 18),
+			TileRectMatch.Placement(1, 1, TileID.FoodPlatter, 18, 0, 18, 18),
+			TileRectMatch.Placement(1, 1, TileID.LogicSensor, 108, 0, 18, 18),
 
-			TileRectMatch.StateChange(3, 2, TileID.Campfire, TileRectMatch.IGNORE_FRAME, 54),
-			TileRectMatch.StateChange(4, 3, TileID.Cannon, TileRectMatch.IGNORE_FRAME, 468),
-			TileRectMatch.StateChange(2, 2, TileID.ArrowSign, TileRectMatch.IGNORE_FRAME, 270),
-			TileRectMatch.StateChange(2, 2, TileID.PaintedArrowSign, TileRectMatch.IGNORE_FRAME, 270),
-			TileRectMatch.StateChange(2, 2, TileID.MusicBoxes, 54, TileRectMatch.IGNORE_FRAME),
-			TileRectMatch.StateChange(2, 3, TileID.LunarMonolith, TileRectMatch.IGNORE_FRAME, 92),
-			TileRectMatch.StateChange(2, 3, TileID.BloodMoonMonolith, TileRectMatch.IGNORE_FRAME, 90),
-			TileRectMatch.StateChange(2, 3, TileID.VoidMonolith, TileRectMatch.IGNORE_FRAME, 90),
-			TileRectMatch.StateChange(2, 3, TileID.EchoMonolith, TileRectMatch.IGNORE_FRAME, 90),
-			TileRectMatch.StateChange(2, 3, TileID.ShimmerMonolith, TileRectMatch.IGNORE_FRAME, 144),
-			TileRectMatch.StateChange(2, 4, TileID.WaterFountain, TileRectMatch.IGNORE_FRAME, 126),
-			TileRectMatch.StateChange(1, 1, TileID.Candles, 18, TileRectMatch.IGNORE_FRAME),
-			TileRectMatch.StateChange(1, 1, TileID.PeaceCandle, 18, TileRectMatch.IGNORE_FRAME),
-			TileRectMatch.StateChange(1, 1, TileID.WaterCandle, 18, TileRectMatch.IGNORE_FRAME),
-			TileRectMatch.StateChange(1, 1, TileID.PlatinumCandle, 18, TileRectMatch.IGNORE_FRAME),
-			TileRectMatch.StateChange(1, 1, TileID.ShadowCandle, 18, TileRectMatch.IGNORE_FRAME),
-			TileRectMatch.StateChange(1, 1, TileID.Traps, 90, 90),
-			TileRectMatch.StateChange(1, 1, TileID.WirePipe, 36, TileRectMatch.IGNORE_FRAME),
-			TileRectMatch.StateChange(1, 1, TileID.ProjectilePressurePad, 66, TileRectMatch.IGNORE_FRAME),
-			TileRectMatch.StateChange(1, 1, TileID.Plants, 792, TileRectMatch.IGNORE_FRAME),
-			TileRectMatch.StateChange(1, 1, TileID.MinecartTrack, 36, TileRectMatch.IGNORE_FRAME),
+			TileRectMatch.StateChangeY(3, 2, TileID.Campfire, 54, 18),
+			TileRectMatch.StateChangeY(4, 3, TileID.Cannon, 468, 18),
+			TileRectMatch.StateChangeY(2, 2, TileID.ArrowSign, 270, 18),
+			TileRectMatch.StateChangeY(2, 2, TileID.PaintedArrowSign, 270, 18),
+
+			TileRectMatch.StateChangeX(2, 2, TileID.MusicBoxes, 54, 18),
+
+			TileRectMatch.StateChangeY(2, 3, TileID.LunarMonolith, 92, 18),
+			TileRectMatch.StateChangeY(2, 3, TileID.BloodMoonMonolith, 90, 18),
+			TileRectMatch.StateChangeY(2, 3, TileID.VoidMonolith, 90, 18),
+			TileRectMatch.StateChangeY(2, 3, TileID.EchoMonolith, 90, 18),
+			TileRectMatch.StateChangeY(2, 3, TileID.ShimmerMonolith, 144, 18),
+			TileRectMatch.StateChangeY(2, 4, TileID.WaterFountain, 126, 18),
+
+			TileRectMatch.StateChangeX(1, 1, TileID.Candles, 18, 18),
+			TileRectMatch.StateChangeX(1, 1, TileID.PeaceCandle, 18, 18),
+			TileRectMatch.StateChangeX(1, 1, TileID.WaterCandle, 18, 18),
+			TileRectMatch.StateChangeX(1, 1, TileID.PlatinumCandle, 18, 18),
+			TileRectMatch.StateChangeX(1, 1, TileID.ShadowCandle, 18, 18),
+
+			TileRectMatch.StateChange(1, 1, TileID.Traps, 90, 90, 18, 18),
+
+			TileRectMatch.StateChangeX(1, 1, TileID.WirePipe, 36, 18),
+			TileRectMatch.StateChangeX(1, 1, TileID.ProjectilePressurePad, 66, 22),
+			TileRectMatch.StateChangeX(1, 1, TileID.Plants, 792, 18),
+			TileRectMatch.StateChangeX(1, 1, TileID.MinecartTrack, 36, 1),
 
 			TileRectMatch.Removal(1, 2, TileID.Firework),
 			TileRectMatch.Removal(1, 1, TileID.LandMine),
