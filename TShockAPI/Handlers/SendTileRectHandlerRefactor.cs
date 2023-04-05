@@ -211,9 +211,13 @@ namespace TShockAPI.Handlers
 							{
 								if (tile.FrameY < 0 || tile.FrameY > MaxFrameY || tile.FrameY % FrameYStep != 0)
 								{
+									// this is the only tile type sent in a tile rect where the frame have a different pattern (56, 74, 92 instead of 54, 72, 90)
+									if (!(TileType == TileID.LunarMonolith && tile.FrameY % FrameYStep == 2))
+									{
 									return false;
 								}
 							}
+						}
 						}
 						if (Type == MatchType.Removal)
 						{
