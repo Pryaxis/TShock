@@ -36,10 +36,7 @@ if (args.Length > 0 && args[0].ToLower() == "plugins")
 	await NugetCLI.Main(items);
 	return;
 }
-else
-{
-	Start();
-}
+
 
 Dictionary<string, Assembly> _cache = new Dictionary<string, Assembly>();
 

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2022-12-06 05:43:49+0000\n"
-"PO-Revision-Date: 2022-12-06 05:52\n"
+"PO-Revision-Date: 2023-01-11 13:30\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -1028,12 +1028,12 @@ msgstr "{0} adlı oyuncunun son bilinen IP adresi {1}."
 #: ../../TShockAPI/Commands.cs:1286
 #, csharp-format
 msgid "{0}'s last login occurred {1} {2} UTC{3}."
-msgstr ""
+msgstr "{0} adlı oyuncunun son girişi {1} {2} UTC {3}."
 
 #: ../../TShockAPI/Commands.cs:1298
 #, csharp-format
 msgid "{0}'s register date is {1} {2} UTC{3}."
-msgstr ""
+msgstr "{0} adlı oyuncunun kayıt tarihi {1} {2} UTC{3}."
 
 #: ../../TShockAPI/Commands.cs:5778
 #, csharp-format
@@ -1093,19 +1093,19 @@ msgstr ""
 #: ../../TShockAPI/Permissions.cs:547
 #, csharp-format
 msgid "* **Commands**: `{0}`"
-msgstr ""
+msgstr "* **Komutlar**: `{0}`"
 
 #: ../../TShockAPI/Configuration/ServerSideConfig.cs:123
 #: ../../TShockAPI/Configuration/TShockConfig.cs:645
 #, csharp-format
 msgid "* **Default**: `{0}`"
-msgstr ""
+msgstr "* **Varsayılan**: `{0}`"
 
 #: ../../TShockAPI/Configuration/ServerSideConfig.cs:122
 #: ../../TShockAPI/Configuration/TShockConfig.cs:644
 #, csharp-format
 msgid "* **Field type**: `{0}`"
-msgstr ""
+msgstr "* **Alan türü**: `{0}`"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1220
 #, csharp-format
@@ -1167,14 +1167,14 @@ msgstr "<{0} hedefine> {1}"
 msgid "=== Dependency ==="
 msgid_plural "=== Dependencies ==="
 msgstr[0] ""
-msgstr[1] ""
+msgstr[1] "=== Bağımlılıklar ==="
 
 #: ../../TShockPluginManager/NugetCLI.cs:133
 #, csharp-format
 msgid "=== Requested Plugin ==="
 msgid_plural "=== Requested Plugins ==="
 msgstr[0] ""
-msgstr[1] ""
+msgstr[1] "=== İstenen Eklentiler ==="
 
 #: ../../TShockAPI/Commands.cs:2818
 msgid "a Deerclops"

@@ -330,7 +330,7 @@ namespace TShockAPI
 		/// <returns>The item represented by the tag.</returns>
 		public Item GetItemFromTag(string tag)
 		{
-			Regex regex = new Regex(@"\[i(tem)?(?:\/s(?<Stack>\d{1,3}))?(?:\/p(?<Prefix>\d{1,3}))?:(?<NetID>-?\d{1,4})\]");
+			Regex regex = new Regex(@"\[i(tem)?(?:\/s(?<Stack>\d{1,4}))?(?:\/p(?<Prefix>\d{1,3}))?:(?<NetID>-?\d{1,4})\]");
 			Match match = regex.Match(tag);
 			if (!match.Success)
 				return null;
