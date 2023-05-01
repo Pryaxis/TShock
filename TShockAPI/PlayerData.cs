@@ -106,6 +106,21 @@ namespace TShockAPI
 		}
 
 		/// <summary>
+		/// Stores an item at the specific storage slot
+		/// </summary>
+		/// <param name="slot"></param>
+		/// <param name="item"></param>
+		public void StoreSlot(int slot, NetItem item)
+		{
+			if (slot > (this.inventory.Length - 1) || slot < 0) //if the slot is out of range then dont save
+			{
+				return;
+			}
+
+			this.inventory[slot] = item;
+		}
+
+		/// <summary>
 		/// Copies a characters data to this object
 		/// </summary>
 		/// <param name="player"></param>
