@@ -665,7 +665,7 @@ namespace TShockAPI
 
 			IEnumerable<Command> cmds = ChatCommands.FindAll(c => c.HasAlias(cmdName));
 
-			if (Hooks.PlayerHooks.OnPlayerCommand(player, cmdName, cmdText, args, ref cmds, cmdPrefix))
+			if (Hooks.PlayerHooks.OnPrePlayerCommand(player, cmdName, cmdText, args, ref cmds, cmdPrefix))
 				return true;
 
 			if (cmds.Count() == 0)
@@ -705,6 +705,8 @@ namespace TShockAPI
 					else
 						TShock.Utils.SendLogs(GetString("{0} executed (args omitted): {1}{2}.", player.Name, silent ? SilentSpecifier : Specifier, cmdName), Color.PaleVioletRed, player);
 					cmd.Run(cmdText, silent, player, args);
+					PlayerHooks.OnPostPlayerCommand(player, cmd,
+						new CommandArgs(cmdText, silent, player, args));
 				}
 			}
 			return true;
@@ -1173,17 +1175,24 @@ namespace TShockAPI
 			{
 				var account = new UserAccount();
 				account.Name = args.Parameters[1];
+				string newGroup = args.Parameters[2];
 
 				try
 				{
-					TShock.UserAccounts.SetUserGroup(account, args.Parameters[2]);
-					TShock.Log.ConsoleInfo(GetString("{0} changed account {1} to group {2}.", args.Player.Name, account.Name, args.Parameters[2]));
-					args.Player.SendSuccessMessage(GetString("Account {0} has been changed to group {1}.", account.Name, args.Parameters[2]));
+					if (!AccountHooks.OnAccountGroupChange(account, args.Player, account.Group, ref newGroup))
+					{
+						args.Player.SendErrorMessage("Failed to change the user group.");
+						return;
+					}
+					TShock.UserAccounts.SetUserGroup(account, newGroup);
+					TShock.Log.ConsoleInfo(GetString("{0} changed account {1} to group {2}.", args.Player.Name, account.Name, newGroup));
+					args.Player.SendSuccessMessage(GetString("Account {0} has been changed to group {1}.", account.Name, newGroup));
 
 					//send message to player with matching account name
 					var player = TShock.Players.FirstOrDefault(p => p != null && p.Account?.Name == account.Name);
 					if (player != null && !args.Silent)
-						player.SendSuccessMessage(GetString($"{args.Player.Name} has changed your group to {args.Parameters[2]}."));
+						player.SendSuccessMessage(GetString($"{args.Player.Name} has changed your group to {newGroup}."));
+
 				}
 				catch (GroupNotExistsException)
 				{

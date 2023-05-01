@@ -84,9 +84,9 @@ namespace TShockAPI.Hooks
 	}
 
 	/// <summary>
-	/// EventArgs used for the <see cref="PlayerHooks.PlayerCommand"/> event.
+	/// EventArgs used for the <see cref="PlayerHooks.PrePlayerCommand"/> event.
 	/// </summary>
-	public class PlayerCommandEventArgs : HandledEventArgs
+	public class PrePlayerCommandEventArgs : HandledEventArgs
 	{
 		/// <summary>
 		/// The player who fired the event.
@@ -117,6 +117,20 @@ namespace TShockAPI.Hooks
 		/// The prefix used to send the command (either <see cref="Commands.Specifier"/> or <see cref="Commands.SilentSpecifier"/>).
 		/// </summary>
 		public string CommandPrefix { get; set; }
+	}
+
+	/// <summary>
+	/// EventArgs used for the <see cref="PlayerHooks.PostPlayerCommand"/> event.
+	/// </summary>
+	public class PostPlayerCommandEventArgs
+	{
+		/// <summary>
+		/// The player who fired the event.
+		/// </summary>
+		public TSPlayer Player { get; set; }
+
+		public Command Command { get; init; }
+		public CommandArgs CommandArgs { get; init; }
 	}
 
 	/// <summary>
@@ -334,14 +348,24 @@ namespace TShockAPI.Hooks
 		public static event PlayerLogoutD PlayerLogout;
 
 		/// <summary>
-		/// The delegate of the <see cref="PlayerCommand"/> event.
+		/// The delegate of the <see cref="PrePlayerCommand"/> event.
 		/// </summary>
 		/// <param name="e">The EventArgs for this event.</param>
-		public delegate void PlayerCommandD(PlayerCommandEventArgs e);
+		public delegate void PrePlayerCommandD(PrePlayerCommandEventArgs e);
 		/// <summary>
 		/// Fired by players when using a command.
 		/// </summary>
-		public static event PlayerCommandD PlayerCommand;
+		public static event PrePlayerCommandD PrePlayerCommand;
+
+		/// <summary>
+		/// The delegate of the <see cref="PostPlayerCommand"/> event.
+		/// </summary>
+		/// <param name="e">The EventArgs for this event.</param>
+		public delegate void PostPlayerCommandD(PostPlayerCommandEventArgs e);
+		/// <summary>
+		/// Fired after the player has used the command.
+		/// </summary>
+		public static event PostPlayerCommandD PostPlayerCommand;
 
 		/// <summary>
 		/// The delegate of the <see cref="PlayerChat"/> event.
@@ -421,7 +445,7 @@ namespace TShockAPI.Hooks
 		}
 
 		/// <summary>
-		/// Fires the <see cref="PlayerCommand"/> event.
+		/// Fires the <see cref="PrePlayerCommand"/> event.
 		/// </summary>
 		/// <param name="player">The player firing the event.</param>
 		/// <param name="cmdName">The command name.</param>
@@ -430,13 +454,13 @@ namespace TShockAPI.Hooks
 		/// <param name="commands">The list of commands.</param>
 		/// <param name="cmdPrefix">The command specifier used.</param>
 		/// <returns>True if the event has been handled.</returns>
-		public static bool OnPlayerCommand(TSPlayer player, string cmdName, string cmdText, List<string> args, ref IEnumerable<Command> commands, string cmdPrefix)
+		public static bool OnPrePlayerCommand(TSPlayer player, string cmdName, string cmdText, List<string> args, ref IEnumerable<Command> commands, string cmdPrefix)
 		{
-			if (PlayerCommand == null)
+			if (PrePlayerCommand == null)
 			{
 				return false;
 			}
-			PlayerCommandEventArgs playerCommandEventArgs = new PlayerCommandEventArgs()
+			PrePlayerCommandEventArgs playerCommandEventArgs = new PrePlayerCommandEventArgs()
 			{
 				Player = player,
 				CommandName = cmdName,
@@ -445,8 +469,27 @@ namespace TShockAPI.Hooks
 				CommandList = commands,
 				CommandPrefix = cmdPrefix,
 			};
-			PlayerCommand(playerCommandEventArgs);
+			PrePlayerCommand(playerCommandEventArgs);
 			return playerCommandEventArgs.Handled;
+		}
+
+		/// <summary>
+		/// Fires the <see cref="PostPlayerCommand"/> event.
+		/// </summary>
+		/// <param name="player">The player firing the event.</param>
+		/// <param name="command">The command.</param>
+		/// <param name="args">The command args.</param>>
+		public static void OnPostPlayerCommand(TSPlayer player, Command command, CommandArgs args)
+		{
+			if (PostPlayerCommand == null)
+				return;
+			PostPlayerCommandEventArgs playerCommandEventArgs = new PostPlayerCommandEventArgs()
+			{
+				Player = player,
+				Command = command,
+				CommandArgs = args
+			};
+			PostPlayerCommand(playerCommandEventArgs);
 		}
 
 		/// <summary>

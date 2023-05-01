@@ -40,33 +40,26 @@ namespace TShockAPI.Hooks
 		}
 	}
 
-	public class AccountGroupChangeEventArgs
+	public class AccountGroupUpdateEventArgs
 	{
 		public bool Handled = false;
 
-		public UserAccount Author { get; private set; }
+		public TSPlayer Author { get; private set; }
 		public UserAccount Account { get; private set; }
 
-		public Group OldGroup { get; private set; }
-		public Group NewGroup { get; set; }
+		public readonly string oldGroupName;
+		public string newGroupName;
 
-		public AccountGroupChangeEventArgs(UserAccount account, UserAccount author, Group oldGroup, Group newGroup)
+		public Group OldGroup => TShock.Groups.GetGroupByName(oldGroupName);
+		public Group NewGroup => TShock.Groups.GetGroupByName(newGroupName);
+
+		public AccountGroupUpdateEventArgs(UserAccount account, TSPlayer author, string beforeChangeGroup, string afterChangeGroup)
 		{
 			this.Account = account;
 			this.Author = author;
-			this.OldGroup = oldGroup;
-			this.NewGroup = newGroup;
-		}
 
-		public TSPlayer FindAuthor()
-		{
-			for (int i = 0; i < TShock.Players.Length; i++)
-			{
-				var plr = TShock.Players[i];
-				if (plr.IsLoggedIn && plr.Account.ID == Author.ID)
-					return plr;
-			}
-			return null;
+			this.oldGroupName = beforeChangeGroup;
+			this.newGroupName = afterChangeGroup;
 		}
 	}
 
@@ -94,14 +87,14 @@ namespace TShockAPI.Hooks
 			AccountDelete(new AccountDeleteEventArgs(u));
 		}
 
-		public delegate void AccountGroupChangeD(AccountGroupChangeEventArgs e);
-		public static event AccountGroupChangeD AccountGroupChange;
+		public delegate void AccountGroupUpdateD(AccountGroupUpdateEventArgs e);
+		public static event AccountGroupUpdateD AccountGroupChange;
 
-		public static bool OnAccountGroupChange(UserAccount account, UserAccount author, Group oldGroup, ref Group newGroup)
+		public static bool OnAccountGroupChange(UserAccount account, TSPlayer author, string oldGroup, ref string newGroup)
 		{
-			AccountGroupChangeEventArgs args = new AccountGroupChangeEventArgs(account, author, oldGroup, newGroup);
+			AccountGroupUpdateEventArgs args = new AccountGroupUpdateEventArgs(account, author, oldGroup, newGroup);
 			AccountGroupChange(args);
-			newGroup = args.NewGroup;
+			newGroup = args.newGroupName;
 
 			return args.Handled;
 		}
