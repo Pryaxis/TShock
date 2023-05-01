@@ -170,7 +170,7 @@ namespace TShockAPI
 		/// <param name="netId">The net ID.</param>
 		/// <param name="stack">The stack.</param>
 		/// <param name="prefixId">The prefix ID.</param>
-		public NetItem(int netId, int stack, byte prefixId)
+		public NetItem(int netId, int stack = 1, byte prefixId = 0)
 		{
 			_netId = netId;
 			_stack = stack;
