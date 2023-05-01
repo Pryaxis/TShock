@@ -1181,7 +1181,7 @@ namespace TShockAPI
 				{
 					if (!AccountHooks.OnAccountGroupChange(account, args.Player, account.Group, ref newGroup))
 					{
-						args.Player.SendErrorMessage("Failed to change the user group.");
+						args.Player.SendErrorMessage(GetString("Failed to change the user group."));
 						return;
 					}
 					TShock.UserAccounts.SetUserGroup(account, newGroup);
