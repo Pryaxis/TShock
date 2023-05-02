@@ -1917,7 +1917,7 @@ namespace TShockAPI
 		/// Sets the player's pvp.
 		/// </summary>
 		/// <param name="mode">The state of the pvp mode.</param>
-		/// <param name="withMsg">Is it necessary to send a message about changing pvp mode</param>
+		/// <param name="withMsg">Whether a chat message about the change should be sent.</param>
 		public virtual void SetPvP(bool mode, bool withMsg = false)
 		{
 			Main.player[Index].hostile = mode;
