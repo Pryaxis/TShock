@@ -150,16 +150,20 @@ namespace TShockAPI
 
 		public bool Run(string msg, bool silent, TSPlayer ply, List<string> parms)
 		{
-			if (!CanRun(ply))
+			return Run(new CommandArgs(msg, silent, ply, parms));
+		}
+		public bool Run(CommandArgs args)
+		{
+			if (!CanRun(args.Player))
 				return false;
 
 			try
 			{
-				CommandDelegate(new CommandArgs(msg, silent, ply, parms));
+				CommandDelegate(args);
 			}
 			catch (Exception e)
 			{
-				ply.SendErrorMessage(GetString("Command failed, check logs for more details."));
+				args.Player.SendErrorMessage(GetString("Command failed, check logs for more details."));
 				TShock.Log.Error(e.ToString());
 			}
 
@@ -665,7 +669,7 @@ namespace TShockAPI
 
 			IEnumerable<Command> cmds = ChatCommands.FindAll(c => c.HasAlias(cmdName));
 
-			if (Hooks.PlayerHooks.OnPrePlayerCommand(player, cmdName, cmdText, args, ref cmds, cmdPrefix))
+			if (Hooks.PlayerHooks.OnPlayerCommand(player, cmdName, cmdText, args, ref cmds, cmdPrefix))
 				return true;
 
 			if (cmds.Count() == 0)
@@ -704,9 +708,12 @@ namespace TShockAPI
 						TShock.Utils.SendLogs(GetString("{0} executed: {1}{2}.", player.Name, silent ? SilentSpecifier : Specifier, cmdText), Color.PaleVioletRed, player);
 					else
 						TShock.Utils.SendLogs(GetString("{0} executed (args omitted): {1}{2}.", player.Name, silent ? SilentSpecifier : Specifier, cmdName), Color.PaleVioletRed, player);
-					cmd.Run(cmdText, silent, player, args);
-					PlayerHooks.OnPostPlayerCommand(player, cmd,
-						new CommandArgs(cmdText, silent, player, args));
+
+					CommandArgs commandArgs = new CommandArgs(cmdText, silent, player, args);
+					bool handled = PlayerHooks.OnPrePlayerCommand(player, cmd, ref commandArgs);
+					if (!handled)
+						cmd.Run(cmdText, silent, player, args);
+					PlayerHooks.OnPostPlayerCommand(player, cmd, commandArgs, handled);
 				}
 			}
 			return true;
