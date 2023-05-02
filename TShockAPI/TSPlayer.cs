@@ -1870,21 +1870,37 @@ namespace TShockAPI
 		/// Wounds the player with the given damage.
 		/// </summary>
 		/// <param name="damage">The amount of damage the player will take.</param>
-		/// <param name="reason">Player death reason</param>
-		public virtual void DamagePlayer(int damage, PlayerDeathReason? reason = null)
+		public virtual void DamagePlayer(int damage)
 		{
-			NetMessage.SendPlayerHurt(Index, reason ?? PlayerDeathReason.LegacyDefault(),
+			NetMessage.SendPlayerHurt(Index, PlayerDeathReason.LegacyDefault(),
+				damage, (new Random()).Next(-1, 1), false, false, 0, -1, -1);
+		}
+		/// <summary>
+		/// Wounds the player with the given damage.
+		/// </summary>
+		/// <param name="damage">The amount of damage the player will take.</param>
+		/// <param name="reason">Player death reason</param>
+		public virtual void DamagePlayer(int damage, PlayerDeathReason reason)
+		{
+			NetMessage.SendPlayerHurt(Index, reason,
 				damage, (new Random()).Next(-1, 1), false, false, 0, -1, -1);
 		}
 
 		/// <summary>
 		/// Kills the player.
 		/// </summary>
-		/// <param name="reason">Player death reason</param>
-		public virtual void KillPlayer(PlayerDeathReason? reason = null)
+		public virtual void KillPlayer()
 		{
-			NetMessage.SendPlayerDeath(Index, reason ?? PlayerDeathReason.LegacyDefault(),
+			NetMessage.SendPlayerDeath(Index, PlayerDeathReason.LegacyDefault(),
 				99999, (new Random()).Next(-1, 1), false, -1, -1);
+		}
+		/// <summary>
+		/// Kills the player.
+		/// </summary>
+		/// <param name="reason">Player death reason</param>
+		public virtual void KillPlayer(PlayerDeathReason reason)
+		{
+			NetMessage.SendPlayerDeath(Index, reason, 99999, (new Random()).Next(-1, 1), false, -1, -1);
 		}
 
 		/// <summary>
