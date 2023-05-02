@@ -200,7 +200,7 @@ namespace TShockAPI.DB
 			if (AccountHooks.OnAccountGroupUpdate(account, author, ref grp))
 				throw new ArgumentException("The hook blocked the change of the user group.");
 
-			if (_database.Query("UPDATE Users SET UserGroup = @0 WHERE Username = @1;", group, account.Name) == 0)
+			if (_database.Query("UPDATE Users SET UserGroup = @0 WHERE Username = @1;", grp.Name, account.Name) == 0)
 				throw new UserAccountNotExistException(account.Name);
 
 			try
