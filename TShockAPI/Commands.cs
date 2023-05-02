@@ -1173,24 +1173,13 @@ namespace TShockAPI
 			// Group changing requires a username or IP address, and a new group to set
 			else if (subcmd == "group" && args.Parameters.Count == 3)
 			{
-				UserAccount account = TShock.UserAccounts.GetUserAccountByName(args.Parameters[1]);
-				if (account == null)
-				{
-					args.Player.SendErrorMessage(GetString($"User {args.Parameters[1]} does not exist."));
-					return;
-				}
-
+				var account = new UserAccount();
+				account.Name = args.Parameters[1];
 				string newGroup = args.Parameters[2];
 
 				try
 				{
-					if (AccountHooks.OnAccountGroupChange(account, args.Player, account.Group, ref newGroup))
-					{
-						args.Player.SendErrorMessage(GetString("Failed to change the user group."));
-						return;
-					}
-
-					TShock.UserAccounts.SetUserGroup(account, newGroup);
+					TShock.UserAccounts.SetUserGroup(args.Player, account, newGroup);
 					TShock.Log.ConsoleInfo(GetString("{0} changed account {1} to group {2}.", args.Player.Name, account.Name, newGroup));
 					args.Player.SendSuccessMessage(GetString("Account {0} has been changed to group {1}.", account.Name, newGroup));
 
@@ -1200,11 +1189,14 @@ namespace TShockAPI
 						player.SendSuccessMessage(GetString($"{args.Player.Name} has changed your group to {newGroup}."));
 
 				}
+				catch (ArgumentException)
+				{
+					args.Player.SendErrorMessage(GetString("Failed to change the user group."));
+				}
 				catch (GroupNotExistsException)
 				{
 					args.Player.SendErrorMessage(GetString("That group does not exist."));
 				}
-				// In case of an unforeseen error, let it stay.
 				catch (UserAccountNotExistException)
 				{
 					args.Player.SendErrorMessage(GetString($"User {account.Name} does not exist."));

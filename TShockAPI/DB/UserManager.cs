@@ -25,6 +25,7 @@ using MySql.Data.MySqlClient;
 using System.Text.RegularExpressions;
 using BCrypt.Net;
 using System.Security.Cryptography;
+using TShockAPI.Hooks;
 
 namespace TShockAPI.DB
 {
@@ -160,6 +161,7 @@ namespace TShockAPI.DB
 		/// </summary>
 		/// <param name="account">The user account</param>
 		/// <param name="group">The user account group to be set</param>
+		[Obsolete("Doesn't accept the author's argument.")]
 		public void SetUserGroup(UserAccount account, string group)
 		{
 			Group grp = TShock.Groups.GetGroupByName(group);
@@ -168,6 +170,38 @@ namespace TShockAPI.DB
 
 			if (_database.Query("UPDATE Users SET UserGroup = @0 WHERE Username = @1;", group, account.Name) == 0)
 				throw new UserAccountNotExistException(account.Name);
+
+			try
+			{
+				// Update player group reference for any logged in player
+				foreach (var player in TShock.Players.Where(p => p != null && p.Account != null && p.Account.Name == account.Name))
+				{
+					player.Group = grp;
+				}
+			}
+			catch (Exception ex)
+			{
+				throw new UserAccountManagerException(GetString("SetUserGroup SQL returned an error"), ex);
+			}
+		}
+
+		/// <summary>
+		/// Sets the group for a given username
+		/// </summary>
+		/// <param name="author">Who changes the group</param>
+		/// <param name="account">The user account</param>
+		/// <param name="group">The user account group to be set</param>
+		public void SetUserGroup(TSPlayer author, UserAccount account, string group)
+		{
+			Group grp = TShock.Groups.GetGroupByName(group);
+			if (null == grp)
+				throw new GroupNotExistsException(group);
+
+			if (_database.Query("UPDATE Users SET UserGroup = @0 WHERE Username = @1;", group, account.Name) == 0)
+				throw new UserAccountNotExistException(account.Name);
+
+			if (AccountHooks.OnAccountGroupUpdate(account, author, ref grp))
+				throw new ArgumentException("The hook blocked the change of the user group.");
 
 			try
 			{
