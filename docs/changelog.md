@@ -113,7 +113,7 @@ Use past tense when adding new entries; sign your name off when you add or chang
 * Added a check to try to change -1 slot in `PlayerData`. (@AgaSpace)
 * Removed the `TSPlayer.GodMode` field and replaced it with the `TSPlayer.GodMode` property, which changes the GodMode in Journey mode. (@AgaSpace)
 * Added the `TSPlayer.Client` property, which returns `Terraria.RemoteClient` for this user. (@AgaSpace)
-* Added a method "TSPlayer.UpdateSection" with arguments `rectangle` and `visibility`, which will load some area from the server to the user. (@AgaSpace)
+* Added a method `TSPlayer.UpdateSection` with arguments `rectangle` and `isLoaded`, which will load some area from the server to the user. (@AgaSpace)
 * Added `TSPlayer.GiveItem` with an argument taking the structure `TShockAPI.NetItem`. (@AgaSpace)
 * Added a reason to damage(`TSPlayer.Damage`) a player. (@AgaSpace)
 * Added a reason for killing(`TSPlayer.Kill`) a player. (@AgaSpace)
