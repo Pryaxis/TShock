@@ -1872,8 +1872,7 @@ namespace TShockAPI
 		/// <param name="damage">The amount of damage the player will take.</param>
 		public virtual void DamagePlayer(int damage)
 		{
-			NetMessage.SendPlayerHurt(Index, PlayerDeathReason.LegacyDefault(),
-				damage, (new Random()).Next(-1, 1), false, false, 0, -1, -1);
+			DamagePlayer(damage, PlayerDeathReason.LegacyDefault());
 		}
 		/// <summary>
 		/// Wounds the player with the given damage.
@@ -1891,8 +1890,7 @@ namespace TShockAPI
 		/// </summary>
 		public virtual void KillPlayer()
 		{
-			NetMessage.SendPlayerDeath(Index, PlayerDeathReason.LegacyDefault(),
-				99999, (new Random()).Next(-1, 1), false, -1, -1);
+			KillPlayer(PlayerDeathReason.LegacyDefault());
 		}
 		/// <summary>
 		/// Kills the player.
