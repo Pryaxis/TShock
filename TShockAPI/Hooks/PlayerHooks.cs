@@ -516,9 +516,10 @@ namespace TShockAPI.Hooks
 				CommandArgs = args
 			};
 
+			PrePlayerCommand(playerCommandEventArgs);
+
 			args = playerCommandEventArgs.CommandArgs;
 
-			PrePlayerCommand(playerCommandEventArgs);
 			return playerCommandEventArgs.Handled;
 		}
 
