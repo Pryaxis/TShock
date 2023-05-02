@@ -45,15 +45,12 @@ namespace TShockAPI.Hooks
 		public bool Handled = false;
 
 		public TSPlayer Author { get; private set; }
-		/// <summary>
-		/// Contains only the user name. Use <see cref="UserAccountManager.GetUserAccountByName(string)"/> for more information.
-		/// </summary>
-		public UserAccount Account { get; private set; }
+		public string AccountName { get; private set; }
 		public Group Group { get; set; }
 
-		public AccountGroupUpdateEventArgs(UserAccount account, TSPlayer author, Group group)
+		public AccountGroupUpdateEventArgs(string accountName, TSPlayer author, Group group)
 		{
-			this.Account = account;
+			this.AccountName = accountName;
 			this.Author = author;
 
 			this.Group = group;
@@ -89,7 +86,7 @@ namespace TShockAPI.Hooks
 
 		public static bool OnAccountGroupUpdate(UserAccount account, TSPlayer author, ref Group group)
 		{
-			AccountGroupUpdateEventArgs args = new AccountGroupUpdateEventArgs(account, author, group);
+			AccountGroupUpdateEventArgs args = new AccountGroupUpdateEventArgs(account.Name, author, group);
 			AccountGroupChange(args);
 			group = args.Group;
 
