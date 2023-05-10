@@ -168,6 +168,9 @@ namespace TShockAPI.DB
 			if (null == grp)
 				throw new GroupNotExistsException(group);
 
+			if (AccountHooks.OnAccountGroupUpdate(account, null, ref grp))
+				throw new UserGroupUpdateLockedException(account.Name);
+
 			if (_database.Query("UPDATE Users SET UserGroup = @0 WHERE Username = @1;", group, account.Name) == 0)
 				throw new UserAccountNotExistException(account.Name);
 
@@ -198,7 +201,7 @@ namespace TShockAPI.DB
 				throw new GroupNotExistsException(group);
 
 			if (AccountHooks.OnAccountGroupUpdate(account, author, ref grp))
-				throw new ArgumentException("The hook blocked the change of the user group.");
+				throw new UserGroupUpdateLockedException(account.Name);
 
 			if (_database.Query("UPDATE Users SET UserGroup = @0 WHERE Username = @1;", grp.Name, account.Name) == 0)
 				throw new UserAccountNotExistException(account.Name);
@@ -653,10 +656,23 @@ namespace TShockAPI.DB
 	public class UserAccountNotExistException : UserAccountManagerException
 	{
 		/// <summary>Creates a new UserAccountNotExistException object, with the user account name in the message.</summary>
-		/// <param name="name">The user account name to be pasesd in the message.</param>
+		/// <param name="name">The user account name to be passed in the message.</param>
 		/// <returns>A new UserAccountNotExistException object with a message containing the user account name that does not exist.</returns>
 		public UserAccountNotExistException(string name)
 			: base(GetString($"User account {name} does not exist"))
+		{
+		}
+	}
+
+	/// <summary>The UserGroupUpdateLockedException used when the user group update failed and the request failed as a result.</summary>.
+	[Serializable]
+	public class UserGroupUpdateLockedException : UserAccountManagerException
+	{
+		/// <summary>Creates a new UserGroupUpdateLockedException object.</summary>
+		/// <param name="name">The name of the user who failed to change the group.</param>
+		/// <returns>New UserGroupUpdateLockedException object with a message containing the name of the user account that failed to change the group.</returns>
+		public UserGroupUpdateLockedException(string name) :
+			base(GetString($"The {name} user group could not be updated."))
 		{
 		}
 	}
