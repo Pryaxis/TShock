@@ -1196,10 +1196,6 @@ namespace TShockAPI
 						player.SendSuccessMessage(GetString($"{args.Player.Name} has changed your group to {newGroup}."));
 
 				}
-				catch (ArgumentException)
-				{
-					args.Player.SendErrorMessage(GetString("Failed to change the user group."));
-				}
 				catch (GroupNotExistsException)
 				{
 					args.Player.SendErrorMessage(GetString("That group does not exist."));
@@ -1207,6 +1203,10 @@ namespace TShockAPI
 				catch (UserAccountNotExistException)
 				{
 					args.Player.SendErrorMessage(GetString($"User {account.Name} does not exist."));
+				}
+				catch (UserGroupUpdateLockedException)
+				{
+					args.Player.SendErrorMessage(GetString("Failed to change the user group."));
 				}
 				catch (UserAccountManagerException e)
 				{
