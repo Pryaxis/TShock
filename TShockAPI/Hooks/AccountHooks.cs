@@ -18,6 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using TShockAPI.DB;
 using System.Linq;
+using System.ComponentModel;
+
 namespace TShockAPI.Hooks
 {
 	public class AccountDeleteEventArgs
@@ -40,7 +42,38 @@ namespace TShockAPI.Hooks
 		}
 	}
 
-	public class AccountGroupUpdateEventArgs
+	public abstract class AccountGroupUpdateEventArgs : HandledEventArgs
+	{
+		public string AccountName { get; private set; }
+		public Group Group { get; set; }
+
+		public AccountGroupUpdateEventArgs(string accountName, Group group)
+		{
+			this.AccountName = accountName;
+			this.Group = group;
+		}
+	}
+
+	public class AccountGroupUpdateByPluginEventArgs : AccountGroupUpdateEventArgs
+	{
+		public AccountGroupUpdateByPluginEventArgs(string accountName, Group group) : base(accountName, group)
+		{
+		}
+	}
+	public class AccountGroupUpdateByPlayerEventArgs : AccountGroupUpdateEventArgs
+	{
+		/// <summary>
+		/// The player who updated the user's group
+		/// </summary>
+		public TSPlayer Player { get; private set; }
+
+		public AccountGroupUpdateByPlayerEventArgs(TSPlayer player, string accountName, Group group) : base(accountName, group)
+		{
+			this.Player = player;
+		}
+	}
+
+	/*public class AccountGroupUpdateEventArgs
 	{
 		public bool Handled = false;
 
@@ -55,7 +88,7 @@ namespace TShockAPI.Hooks
 
 			this.Group = group;
 		}
-	}
+	}*/
 
 	public class AccountHooks
 	{
@@ -86,7 +119,15 @@ namespace TShockAPI.Hooks
 
 		public static bool OnAccountGroupUpdate(UserAccount account, TSPlayer author, ref Group group)
 		{
-			AccountGroupUpdateEventArgs args = new AccountGroupUpdateEventArgs(account.Name, author, group);
+			AccountGroupUpdateEventArgs args = new AccountGroupUpdateByPlayerEventArgs(author, account.Name, group);
+			AccountGroupChange(args);
+			group = args.Group;
+
+			return args.Handled;
+		}
+		public static bool OnAccountGroupUpdate(UserAccount account, ref Group group)
+		{
+			AccountGroupUpdateEventArgs args = new AccountGroupUpdateByPluginEventArgs(account.Name, group);
 			AccountGroupChange(args);
 			group = args.Group;
 

@@ -168,7 +168,7 @@ namespace TShockAPI.DB
 			if (null == grp)
 				throw new GroupNotExistsException(group);
 
-			if (AccountHooks.OnAccountGroupUpdate(account, null, ref grp))
+			if (AccountHooks.OnAccountGroupUpdate(account, ref grp))
 				throw new UserGroupUpdateLockedException(account.Name);
 
 			if (_database.Query("UPDATE Users SET UserGroup = @0 WHERE Username = @1;", group, account.Name) == 0)
