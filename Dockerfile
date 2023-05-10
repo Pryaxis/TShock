@@ -1,7 +1,7 @@
 ARG TARGETPLATFORM=linux/amd64
 ARG BUILDPLATFORM=${TARGETPLATFORM}
 
-FROM --platform=${BUILDPLATFORM} mcr.microsoft.com/dotnet/sdk:6.0 AS builder
+FROM --platform=${BUILDPLATFORM} mcr.microsoft.com/dotnet/sdk:7.0 AS builder
 
 ARG TARGETPLATFORM
 
