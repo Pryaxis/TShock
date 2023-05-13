@@ -530,8 +530,8 @@ namespace TShockAPI
 				var desc = descattr != null && !string.IsNullOrWhiteSpace(descattr.Description) ? descattr.Description : GetString("No description available.");
 
 				var strs = GetCommands(name).Select(c => c.Names.Count > 1
-					? $"{c.Name} ({string.Join(" ", c.Names.Skip(1).Select(n => $"/{n}"))})"
-					: c.Name);
+					? $"/{c.Name} (/{string.Join(" /", c.Names.Skip(1))})"
+					: $"/{c.Name}");
 
 				sb.AppendLine($"## {name}");
 				sb.AppendLine($"{desc}");
