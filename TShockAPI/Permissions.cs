@@ -529,18 +529,9 @@ namespace TShockAPI
 					field.GetCustomAttributes(false).FirstOrDefault(o => o is DescriptionAttribute) as DescriptionAttribute;
 				var desc = descattr != null && !string.IsNullOrWhiteSpace(descattr.Description) ? descattr.Description : GetString("No description available.");
 
-				var commands = GetCommands(name);
-				foreach (var c in commands)
-				{
-					for (var i = 0; i < c.Names.Count; i++)
-					{
-						c.Names[i] = "/" + c.Names[i];
-					}
-				}
-				var strs =
-					commands.Select(
-						c =>
-						c.Name + (c.Names.Count > 1 ? " ({0})".SFormat(string.Join(" ", c.Names.ToArray(), 1, c.Names.Count - 1)) : ""));
+				var strs = GetCommands(name).Select(c => c.Names.Count > 1
+					? $"/{c.Name} (/{string.Join(" /", c.Names.Skip(1))})"
+					: $"/{c.Name}");
 
 				sb.AppendLine($"## {name}");
 				sb.AppendLine($"{desc}");
