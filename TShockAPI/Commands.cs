@@ -1176,7 +1176,7 @@ namespace TShockAPI
 
 				try
 				{
-					TShock.UserAccounts.SetUserGroup(account, args.Parameters[2]);
+					TShock.UserAccounts.SetUserGroup(args.Player, account, args.Parameters[2]);
 					TShock.Log.ConsoleInfo(GetString("{0} changed account {1} to group {2}.", args.Player.Name, account.Name, args.Parameters[2]));
 					args.Player.SendSuccessMessage(GetString("Account {0} has been changed to group {1}.", account.Name, args.Parameters[2]));
 
@@ -1192,6 +1192,10 @@ namespace TShockAPI
 				catch (UserAccountNotExistException)
 				{
 					args.Player.SendErrorMessage(GetString($"User {account.Name} does not exist."));
+				}
+				catch (UserGroupUpdateLockedException)
+				{
+					args.Player.SendErrorMessage(GetString("Hook blocked the attempt to change the user group."));
 				}
 				catch (UserAccountManagerException e)
 				{
