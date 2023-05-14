@@ -988,7 +988,7 @@ namespace TShockAPI
 			get
 			{
 				return RealPlayer
-					   && (Netplay.Clients[Index] != null && Netplay.Clients[Index].IsActive && !Netplay.Clients[Index].PendingTermination);
+					   && (Client != null && Client.IsActive && !Client.PendingTermination);
 			}
 		}
 
@@ -1005,8 +1005,8 @@ namespace TShockAPI
 		/// </summary>
 		public int State
 		{
-			get { return Netplay.Clients[Index].State; }
-			set { Netplay.Clients[Index].State = value; }
+			get { return Client.State; }
+			set { Client.State = value; }
 		}
 
 		/// <summary>
@@ -1014,7 +1014,7 @@ namespace TShockAPI
 		/// </summary>
 		public string UUID
 		{
-			get { return RealPlayer ? Netplay.Clients[Index].ClientUUID : ""; }
+			get { return RealPlayer ? Client.ClientUUID : ""; }
 		}
 
 		/// <summary>
@@ -1026,8 +1026,8 @@ namespace TShockAPI
 			{
 				if (string.IsNullOrEmpty(CacheIP))
 					return
-						CacheIP = RealPlayer ? (Netplay.Clients[Index].Socket.IsConnected()
-								? TShock.Utils.GetRealIP(Netplay.Clients[Index].Socket.GetRemoteAddress().ToString())
+						CacheIP = RealPlayer ? (Client.Socket.IsConnected()
+								? TShock.Utils.GetRealIP(Client.Socket.GetRemoteAddress().ToString())
 								: "")
 							: "127.0.0.1";
 				else
@@ -1109,6 +1109,11 @@ namespace TShockAPI
 			}
 
 		}
+
+		/// <summary>
+		/// Player RemoteClient.
+		/// </summary>
+		public RemoteClient Client => Netplay.Clients[Index];
 
 		/// <summary>
 		/// Gets the Terraria Player object associated with the player.
@@ -2071,7 +2076,7 @@ namespace TShockAPI
 			if (!RealPlayer || !ConnectionAlive)
 				return;
 
-			Netplay.Clients[Index].Socket.AsyncSend(data, 0, data.Length, Netplay.Clients[Index].ServerWriteCallBack);
+			Client.Socket.AsyncSend(data, 0, data.Length, Client.ServerWriteCallBack);
 		}
 
 		/// <summary>
