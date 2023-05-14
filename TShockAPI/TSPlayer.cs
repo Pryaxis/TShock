@@ -1148,6 +1148,11 @@ namespace TShockAPI
 		}
 
 		/// <summary>
+		/// Gets PvP player mode.
+		/// </summary>
+		public bool Hostile => TPlayer.hostile;
+
+		/// <summary>
 		/// Gets the player's X coordinate.
 		/// </summary>
 		public float X
