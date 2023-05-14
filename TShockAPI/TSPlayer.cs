@@ -1267,7 +1267,7 @@ namespace TShockAPI
 				}
 			}
 
-			PlayerData = new PlayerData(this);
+			PlayerData = new PlayerData();
 			Group = TShock.Groups.GetGroupByName(TShock.Config.Settings.DefaultGuestGroupName);
 			tempGroup = null;
 			if (tempGroupTimer != null)
