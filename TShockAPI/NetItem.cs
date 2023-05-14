@@ -163,6 +163,24 @@ namespace TShockAPI
 		}
 
 		/// <summary>
+		/// Creates <see cref="Terraria.Item"/> based on data from this structure.
+		/// </summary>
+		/// <returns>A copy of the item.</returns>
+		/// <exception cref="Exception">If the item ID is 0.</exception>
+		public Item Build()
+		{
+			if (_netId == 0)
+				throw new Exception("It is impossible to create an item whose ID is 0.");
+			Item item = new Item();
+
+			item.netDefaults(_netId);
+			item.stack = _stack;
+			item.prefix = _prefixId;
+
+			return item;
+		}
+
+		/// <summary>
 		/// Converts the <see cref="NetItem"/> to a string.
 		/// </summary>
 		/// <returns></returns>
