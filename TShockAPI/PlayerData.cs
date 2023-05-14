@@ -96,12 +96,22 @@ namespace TShockAPI
 		/// <param name="stack"></param>
 		public void StoreSlot(int slot, int netID, byte prefix, int stack)
 		{
-			if (slot > (this.inventory.Length - 1)) //if the slot is out of range then dont save
+			StoreSlot(slot, new NetItem(netID, stack, prefix));
+		}
+
+		/// <summary>
+		/// Stores an item at the specific storage slot
+		/// </summary>
+		/// <param name="slot"></param>
+		/// <param name="item"></param>
+		public void StoreSlot(int slot, NetItem item)
+		{
+			if (slot > (this.inventory.Length - 1) || slot < 0) //if the slot is out of range then dont save
 			{
 				return;
 			}
 
-			this.inventory[slot] = new NetItem(netID, stack, prefix);
+			this.inventory[slot] = item;
 		}
 
 		/// <summary>
