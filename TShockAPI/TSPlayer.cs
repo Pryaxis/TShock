@@ -34,6 +34,7 @@ using TShockAPI.Hooks;
 using TShockAPI.Net;
 using Timer = System.Timers.Timer;
 using System.Linq;
+using Terraria.GameContent.Creative;
 
 namespace TShockAPI
 {
@@ -935,9 +936,15 @@ namespace TShockAPI
 		public bool LoginHarassed = false;
 
 		/// <summary>
-		/// Player cant die, unless onehit
+		/// Controls the journey godmode
 		/// </summary>
-		public bool GodMode = false;
+		public bool GodMode
+		{
+			get =>
+				CreativePowerManager.Instance.GetPower<CreativePowers.GodmodePower>().IsEnabledForPlayer(Index);
+			set =>
+				CreativePowerManager.Instance.GetPower<CreativePowers.GodmodePower>().SetEnabledState(Index, value);
+		}
 
 		/// <summary>
 		/// Players controls are inverted if using SSC

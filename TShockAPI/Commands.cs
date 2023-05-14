@@ -6740,10 +6740,6 @@ namespace TShockAPI
 
 			playerToGod.GodMode = !playerToGod.GodMode;
 
-			var godPower = CreativePowerManager.Instance.GetPower<CreativePowers.GodmodePower>();
-
-			godPower.SetEnabledState(playerToGod.Index, playerToGod.GodMode);
-
 			if (playerToGod != args.Player)
 			{
 				args.Player.SendSuccessMessage(playerToGod.GodMode
