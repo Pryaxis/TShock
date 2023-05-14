@@ -619,7 +619,7 @@ namespace TShockAPI.DB
 	public class UserAccountNotExistException : UserAccountManagerException
 	{
 		/// <summary>Creates a new UserAccountNotExistException object, with the user account name in the message.</summary>
-		/// <param name="name">The user account name to be pasesd in the message.</param>
+		/// <param name="name">The user account name to be passed in the message.</param>
 		/// <returns>A new UserAccountNotExistException object with a message containing the user account name that does not exist.</returns>
 		public UserAccountNotExistException(string name)
 			: base(GetString($"User account {name} does not exist"))
