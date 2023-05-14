@@ -1566,6 +1566,15 @@ namespace TShockAPI
 				GiveItemByDrop(type, stack, prefix);
 		}
 
+		/// <summary>
+		/// Gives an item to the player.
+		/// </summary>
+		/// <param name="item">Item with data to be given to the player.</param>
+		public virtual void GiveItem(NetItem item)
+		{
+			GiveItem(item.NetId, item.Stack, item.PrefixId);
+		}
+
 		private Item EmptySentinelItem = new Item();
 
 		private bool Depleted(Item item)
