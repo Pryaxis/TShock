@@ -1500,6 +1500,41 @@ namespace TShockAPI
 		}
 
 		/// <summary>
+		/// Changes the values of the <see cref="RemoteClient.TileSections"/> array.
+		/// </summary>
+		/// <param name="rectangle">The area of the sections you want to set a value to.
+		/// The minimum size should be set to 200x150. If null, then the entire map is specified.</param>
+		/// <param name="isLoaded">Is the section loaded.</param>
+		// The server does not send the player the whole world, it sends it in sections. To do this, it sets up visible and invisible sections.
+		// If the player was not in any section(Client.TileSections[x, y] == false) then the server will send the missing section of the world.
+		// This method allows you to simulate what the player has or has not seen these sections.
+		// For example, we can put some number of earths blocks in some vast area, for example, for the whole world, but the player will not see the changes, because some section is already loaded for him. At this point this method can come into effect! With it we will be able to select some zone and make it both visible and invisible to the player.
+		// The server will assume that the zone is not loaded on the player, and will resend the data, but with earth blocks.
+		public void UpdateSection(Rectangle? rectangle = null, bool isLoaded = false)
+		{
+			if (rectangle.HasValue)
+			{
+				for (int i = Netplay.GetSectionX(rectangle.Value.X); i < Netplay.GetSectionX(rectangle.Value.X + rectangle.Value.Width) && i < Main.maxSectionsX; i++)
+				{
+					for (int j = Netplay.GetSectionY(rectangle.Value.Y); j < Netplay.GetSectionY(rectangle.Value.Y + rectangle.Value.Height) && j < Main.maxSectionsY; j++)
+					{
+						Client.TileSections[i, j] = isLoaded;
+					}
+				}	
+			}
+			else
+			{
+				for (int i = 0; i < Main.maxSectionsX; i++)
+				{
+					for (int j = 0; j < Main.maxSectionsY; j++)
+					{
+						Client.TileSections[i, j] = isLoaded;
+					}
+				}
+			}
+		}
+
+		/// <summary>
 		/// Gives an item to the player. Includes banned item spawn prevention to check if the player can spawn the item.
 		/// </summary>
 		/// <param name="type">The item ID.</param>
