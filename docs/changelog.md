@@ -78,7 +78,9 @@ Use past tense when adding new entries; sign your name off when you add or chang
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change. -->
 
 ## Upcoming changes
-Your changes could be here!
+* Added a constructor for `TShockAPI.PlayerData` that accepts the `includingStarterInventory` parameter, which is responsible for loading the TShock inventory.
+* Declared the constructor `TShockAPI.PlayerData` accepting the argument `TShockAPI.TSPlayer` obsolete.
+* Updated the `PlayerData.StoreSlot` method: Added an overload that takes `TShockAPI.NetItem`.
 
 ## TShock 5.2
 * An additional option `pvpwithnoteam` is added at `PvPMode` to enable PVP with no team. (@CelestialAnarchy, #2617, @ATFGK)
