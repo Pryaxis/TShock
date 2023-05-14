@@ -163,6 +163,17 @@ namespace TShockAPI
 		}
 
 		/// <summary>
+		/// Creates a new <see cref="NetItem"/>.
+		/// </summary>
+		/// <param name="item">Item in the game.</param>
+		public NetItem(Item item)
+		{
+			_netId = item.netID;
+			_stack = item.stack;
+			_prefixId = item.prefix;
+		}
+
+		/// <summary>
 		/// Creates <see cref="Terraria.Item"/> based on data from this structure.
 		/// </summary>
 		/// <returns>A copy of the item.</returns>
