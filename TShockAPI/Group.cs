@@ -20,6 +20,8 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
+using Microsoft.Xna.Framework;
+
 namespace TShockAPI
 {
 	/// <summary>
@@ -163,6 +165,17 @@ namespace TShockAPI
 		/// The group's chat color blue byte.
 		/// </summary>
 		public virtual byte B { get; set; } = 255;
+
+		public virtual Color Color
+		{
+			get => new Color(R, G, B);
+			set
+			{
+				R = value.R;
+				G = value.G;
+				B = value.B;
+			}
+		}
 
 		/// <summary>
 		/// The default group attributed to unregistered users.
