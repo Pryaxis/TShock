@@ -166,6 +166,9 @@ namespace TShockAPI
 		/// </summary>
 		public virtual byte B { get; set; } = 255;
 
+		/// <summary>
+		/// Simplifies work with the <see cref="R"/>, <see cref="G"/>, <see cref="B"/> properties.
+		/// </summary>
 		public virtual Color Color
 		{
 			get => new Color(R, G, B);
