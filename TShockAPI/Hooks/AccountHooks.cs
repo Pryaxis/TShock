@@ -40,7 +40,7 @@ namespace TShockAPI.Hooks
 		}
 	}
 
-	public abstract class AccountGroupUpdateEventArgs : HandledEventArgs
+	public class AccountGroupUpdateEventArgs : HandledEventArgs
 	{
 		public string AccountName { get; private set; }
 		public Group Group { get; set; }
@@ -52,12 +52,6 @@ namespace TShockAPI.Hooks
 		}
 	}
 
-	public class AccountGroupUpdateByPluginEventArgs : AccountGroupUpdateEventArgs
-	{
-		public AccountGroupUpdateByPluginEventArgs(string accountName, Group group) : base(accountName, group)
-		{
-		}
-	}
 	public class AccountGroupUpdateByPlayerEventArgs : AccountGroupUpdateEventArgs
 	{
 		/// <summary>
@@ -108,7 +102,7 @@ namespace TShockAPI.Hooks
 		}
 		public static bool OnAccountGroupUpdate(UserAccount account, ref Group group)
 		{
-			AccountGroupUpdateEventArgs args = new AccountGroupUpdateByPluginEventArgs(account.Name, group);
+			AccountGroupUpdateEventArgs args = new AccountGroupUpdateEventArgs(account.Name, group);
 			AccountGroupUpdate?.Invoke(args);
 			group = args.Group;
 
