@@ -78,7 +78,10 @@ Use past tense when adding new entries; sign your name off when you add or chang
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change. -->
 
 ## Upcoming changes
-* An additional option `pvpwithnoteam` is added at `PvPMode` to enable PVP with no team.(@CelestialAnarchy, #2617, @ATFGK)
+Your changes could be here!
+
+## TShock 5.2
+* An additional option `pvpwithnoteam` is added at `PvPMode` to enable PVP with no team. (@CelestialAnarchy, #2617, @ATFGK)
 * Corrected and updated deserialization of the following packets (@ATFGK):
   * `ProjectileNew`: Read the third `AI` value.
     * Before this change, it was previously possible for the projectile damage limit to falsely trigger, such as when using the Terra Balde and Fire Gauntlet together.

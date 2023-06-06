@@ -18,11 +18,11 @@
       Also, be sure to release on github with the exact assembly version tag as below
       so that the update manager works correctly (via the Github releases api and mimic)
     -->
-    <Version>5.1.3</Version>
+    <Version>5.2.0</Version>
     <AssemblyTitle>TShock for Terraria</AssemblyTitle>
     <Company>Pryaxis &amp; TShock Contributors</Company>
     <Product>TShockAPI</Product>
-    <Copyright>Copyright © Pryaxis &amp; TShock Contributors 2011-2022</Copyright>
+    <Copyright>Copyright © Pryaxis &amp; TShock Contributors 2011-2023</Copyright>
     <!-- extras for nuget -->
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
