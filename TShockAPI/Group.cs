@@ -52,17 +52,17 @@ namespace TShockAPI
 		/// <summary>
 		/// The group that this group inherits permissions from.
 		/// </summary>
-		public Group Parent { get; set; }
+		public virtual Group Parent { get; set; }
 
 		/// <summary>
 		/// The chat prefix for this group.
 		/// </summary>
-		public string Prefix { get; set; }
+		public virtual string Prefix { get; set; }
 
 		/// <summary>
 		/// The chat suffix for this group.
 		/// </summary>
-		public string Suffix { get; set; }
+		public virtual string Suffix { get; set; }
 
 		/// <summary>
 		/// The name of the parent, not particularly sure why this is here.
@@ -154,15 +154,15 @@ namespace TShockAPI
 		/// <summary>
 		/// The group's chat color red byte.
 		/// </summary>
-		public byte R = 255;
+		public virtual byte R { get; set; } = 255;
 		/// <summary>
 		/// The group's chat color green byte.
 		/// </summary>
-		public byte G = 255;
+		public virtual byte G { get; set; } = 255;
 		/// <summary>
 		/// The group's chat color blue byte.
 		/// </summary>
-		public byte B = 255;
+		public virtual byte B { get; set; } = 255;
 
 		/// <summary>
 		/// The default group attributed to unregistered users.
@@ -242,7 +242,7 @@ namespace TShockAPI
 		/// Adds a permission to the list of negated permissions.
 		/// </summary>
 		/// <param name="permission">The permission to negate.</param>
-		public void NegatePermission(string permission)
+		public virtual void NegatePermission(string permission)
 		{
 			// Avoid duplicates
 			if (!negatedpermissions.Contains(permission))
@@ -256,7 +256,7 @@ namespace TShockAPI
 		/// Adds a permission to the list of permissions.
 		/// </summary>
 		/// <param name="permission">The permission to add.</param>
-		public void AddPermission(string permission)
+		public virtual void AddPermission(string permission)
 		{
 			if (permission.StartsWith("!"))
 			{
@@ -276,7 +276,7 @@ namespace TShockAPI
 		/// will parse "!permission" and add it to the negated permissions.
 		/// </summary>
 		/// <param name="permission">The new list of permissions to associate with the group.</param>
-		public void SetPermission(List<string> permission)
+		public virtual void SetPermission(List<string> permission)
 		{
 			permissions.Clear();
 			negatedpermissions.Clear();
@@ -288,7 +288,7 @@ namespace TShockAPI
 		/// where "!permission" will remove a negated permission.
 		/// </summary>
 		/// <param name="permission"></param>
-		public void RemovePermission(string permission)
+		public virtual void RemovePermission(string permission)
 		{
 			if (permission.StartsWith("!"))
 			{
@@ -302,7 +302,7 @@ namespace TShockAPI
 		/// Assigns all fields of this instance to another.
 		/// </summary>
 		/// <param name="otherGroup">The other instance.</param>
-		public void AssignTo(Group otherGroup)
+		public virtual void AssignTo(Group otherGroup)
 		{
 			otherGroup.Name = Name;
 			otherGroup.Parent = Parent;
