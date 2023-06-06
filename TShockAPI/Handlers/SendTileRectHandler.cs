@@ -266,7 +266,7 @@ namespace TShockAPI.Handlers
 				{
 					for (int y = rect.Y; y < rect.Y + rect.Height; y++)
 					{
-						if (Main.tile[x, y].active() && !(Main.tile[x, y].type != TileID.RollingCactus && (Main.tileCut[Main.tile[x, y].type] || TileID.Sets.BreakableWhenPlacing[Main.tile[x, y].type])))
+						if (Main.tile[x, y].active()) // the client will kill tiles that auto break before placing the object
 						{
 							return false;
 						}
