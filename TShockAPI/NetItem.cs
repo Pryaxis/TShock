@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
- using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -178,7 +178,7 @@ namespace TShockAPI
 		/// </summary>
 		/// <returns>A copy of the item.</returns>
 		/// <exception cref="Exception">If the item ID is 0.</exception>
-		public Item Build()
+		public Item ToItem()
 		{
 			if (_netId == 0)
 				throw new Exception("It is impossible to create an item whose ID is 0.");
