@@ -506,11 +506,7 @@ namespace TShockAPI.Handlers
 			}
 
 			// a few special cases
-			if (
-				MatchesConversionSpread(args.Player, rect) ||
-				MatchesGrassMow(args.Player, rect) ||
-				MatchesChristmasTree(args.Player, rect)
-				)
+			if (MatchesGrassMow(args.Player, rect) || MatchesChristmasTree(args.Player, rect))
 			{
 				TShock.Log.ConsoleDebug(GetString($"Bouncer / SendTileRect reimplemented from {args.Player.Name}"));
 
