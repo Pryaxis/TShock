@@ -80,7 +80,7 @@ Use past tense when adding new entries; sign your name off when you add or chang
 ## Upcoming changes
 * Updated `TShockAPI.NetItem` (@AgaSpace):
   * Added constructor overload with parameter `Terraria.Item`.
-  * Added the `Build` method to get a copy of `Terraria.Item`.
+  * Added the `ToItem` method to get a copy of `Terraria.Item`.
   * In the constructor I added optional parameters `stack` and `prefix`.
 
 ## TShock 5.2
