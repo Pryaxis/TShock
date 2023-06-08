@@ -177,7 +177,6 @@ namespace TShockAPI
 		/// Creates <see cref="Terraria.Item"/> based on data from this structure.
 		/// </summary>
 		/// <returns>A copy of the item.</returns>
-		/// <exception cref="Exception">If the item ID is 0.</exception>
 		public Item ToItem()
 		{
 			Item item = new Item();
