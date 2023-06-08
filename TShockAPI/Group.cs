@@ -156,15 +156,15 @@ namespace TShockAPI
 		/// <summary>
 		/// The group's chat color red byte.
 		/// </summary>
-		public virtual byte R { get; set; } = 255;
+		public byte R = 255;
 		/// <summary>
 		/// The group's chat color green byte.
 		/// </summary>
-		public virtual byte G { get; set; } = 255;
+		public byte G = 255;
 		/// <summary>
 		/// The group's chat color blue byte.
 		/// </summary>
-		public virtual byte B { get; set; } = 255;
+		public byte B = 255;
 
 		/// <summary>
 		/// Simplifies work with the <see cref="R"/>, <see cref="G"/>, <see cref="B"/> properties.
