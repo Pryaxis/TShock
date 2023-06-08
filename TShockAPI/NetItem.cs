@@ -180,8 +180,6 @@ namespace TShockAPI
 		/// <exception cref="Exception">If the item ID is 0.</exception>
 		public Item ToItem()
 		{
-			if (_netId == 0)
-				throw new Exception("It is impossible to create an item whose ID is 0.");
 			Item item = new Item();
 
 			item.netDefaults(_netId);
