@@ -88,6 +88,7 @@ Use past tense when adding new entries; sign your name off when you add or chang
 * Added a method `TSPlayer.UpdateSection` with arguments `rectangle` and `isLoaded`, which will load some area from the server to the player. (@AgaSpace)
 * Added a method `TSPlayer.GiveItem`, which has `TShockAPI.NetItem` structure in its arguments. (@AgaSpace)
 * Added a property `TSPlayer.Hostile`, which gets pvp player mode.
+* Ensured `TSPlayer.PlayerData` is non-null whilst syncing loadouts. (@drunderscore)
 
 ## TShock 5.2
 * An additional option `pvpwithnoteam` is added at `PvPMode` to enable PVP with no team. (@CelestialAnarchy, #2617, @ATFGK)
