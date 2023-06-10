@@ -670,7 +670,7 @@ namespace TShockAPI.DB
 		/// <param name="name">The name of the user who failed to change the group.</param>
 		/// <returns>New UserGroupUpdateLockedException object with a message containing the name of the user account that failed to change the group.</returns>
 		public UserGroupUpdateLockedException(string name) :
-			base(GetString($"The user {name} group could not be updated"))
+			base(GetString($"Unable to update group of user {name}."))
 		{
 		}
 	}
