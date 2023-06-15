@@ -6472,7 +6472,7 @@ namespace TShockAPI
 					if (target == user)
 						user.SendSuccessMessage(GetString($"You buffed yourself with {TShock.Utils.GetBuffName(id)} ({TShock.Utils.GetBuffDescription(id)}) for {time} seconds."));
 					else
-						target.SendSuccessMessage(GetString($"You have buffed {user.Name} with {TShock.Utils.GetBuffName(id)} ({TShock.Utils.GetBuffDescription(id)}) for {time} seconds!"));
+						user.SendSuccessMessage(GetString($"You have buffed {target.Name} with {TShock.Utils.GetBuffName(id)} ({TShock.Utils.GetBuffDescription(id)}) for {time} seconds!"));
 					if (!args.Silent && target != user)
 						target.SendSuccessMessage(GetString($"{user.Name} has buffed you with {TShock.Utils.GetBuffName(id)} ({TShock.Utils.GetBuffDescription(id)}) for {time} seconds!"));
 				}
@@ -6749,10 +6749,6 @@ namespace TShockAPI
 			}
 
 			playerToGod.GodMode = !playerToGod.GodMode;
-
-			var godPower = CreativePowerManager.Instance.GetPower<CreativePowers.GodmodePower>();
-
-			godPower.SetEnabledState(playerToGod.Index, playerToGod.GodMode);
 
 			if (playerToGod != args.Player)
 			{
