@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using TShockAPI.DB;
@@ -388,6 +389,7 @@ namespace TShockAPI.Hooks
 		/// <summary>
 		/// Fired by players when using a command.
 		/// </summary>
+		[Obsolete("There is an alternative to PlayerHooks.PrePlayerCommand")]
 		public static event PlayerCommandD PlayerCommand;
 
 		/// <summary>
