@@ -398,7 +398,7 @@ namespace TShockAPI.Hooks
 		/// <param name="e">The EventArgs for this event.</param>
 		public delegate void PrePlayerCommandD(PrePlayerCommandEventArgs e);
 		/// <summary>
-		/// Fired before the command is run.
+		/// Fired before a command is run.
 		/// </summary>
 		public static event PrePlayerCommandD PrePlayerCommand;
 
