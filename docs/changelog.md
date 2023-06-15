@@ -78,7 +78,8 @@ Use past tense when adding new entries; sign your name off when you add or chang
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change. -->
 
 ## Upcoming changes
-Your changes could be here!
+* Added `PlayerHooks.PrePlayerCommand` hook, which fired before command execution.
+* Added `PlayerHooks.PostPlayerCommand` hook, which fired after command execution.
 
 ## TShock 5.2
 * An additional option `pvpwithnoteam` is added at `PvPMode` to enable PVP with no team. (@CelestialAnarchy, #2617, @ATFGK)
