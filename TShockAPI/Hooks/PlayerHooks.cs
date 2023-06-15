@@ -144,7 +144,7 @@ namespace TShockAPI.Hooks
 	/// <summary>
 	/// EventArgs used for the <see cref="PlayerHooks.PostPlayerCommand"/> event.
 	/// </summary>
-	public class PostPlayerCommandEventArgs
+	public class PostPlayerCommandEventArgs : HandledEventArgs
 	{
 		/// <summary>
 		/// The command entered by the player.
@@ -154,10 +154,6 @@ namespace TShockAPI.Hooks
 		/// Command arguments.
 		/// </summary>
 		public CommandArgs Arguments { get; }
-		/// <summary>
-		/// Is the command executed.
-		/// </summary>
-		public bool Handled { get; }
 
 		public PostPlayerCommandEventArgs(Command command, CommandArgs arguments, bool handled)
 		{
