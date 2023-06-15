@@ -385,7 +385,6 @@ namespace TShockAPI.Hooks
 		/// <summary>
 		/// Fired by players when using a command.
 		/// </summary>
-		[Obsolete("Use PlayerHooks.PrePlayerCommand.")]
 		public static event PlayerCommandD PlayerCommand;
 
 		/// <summary>
