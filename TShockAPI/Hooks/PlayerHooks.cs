@@ -408,7 +408,7 @@ namespace TShockAPI.Hooks
 		/// <param name="e">The EventArgs for this event.</param>
 		public delegate void PostPlayerCommandD(PostPlayerCommandEventArgs e);
 		/// <summary>
-		/// Fired after the command is run.
+		/// Fired after a command is run.
 		/// </summary>
 		public static event PostPlayerCommandD PostPlayerCommand;
 
