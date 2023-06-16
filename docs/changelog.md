@@ -123,6 +123,7 @@ Use past tense when adding new entries; sign your name off when you add or chang
 * Allowed Flower Boots to place Ash Flowers on Ash Grass blocks. (@punchready)
 * Removed unnecessary range check that artifically shortened quick stack reach. (@boddyn, #2885, @bcat)
 * Improved the exploit protection in tile rect handling. (@punchready)
+* Changed the use of `Player.active` to `TSPlayer.Active` for consistency. (@sgkoishi, #2939)
 
 ## TShock 5.1.3
 * Added support for Terraria 1.4.4.9 via OTAPI 3.1.20. (@SignatureBeef)

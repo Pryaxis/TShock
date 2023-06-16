@@ -172,7 +172,7 @@ namespace TShockAPI
 			foreach (TSPlayer player in TShock.Players)
 			{
 				if (player != null && player != excludedPlayer && player.Active && player.HasPermission(Permissions.logs) &&
-						player.DisplayLogs && TShock.Config.Settings.DisableSpewLogs == false)
+						player.DisplayLogs && !TShock.Config.Settings.DisableSpewLogs)
 					player.SendMessage(log, color);
 			}
 		}
@@ -183,7 +183,7 @@ namespace TShockAPI
 		/// <returns>The number of active players on the server.</returns>
 		public int GetActivePlayerCount()
 		{
-			return Main.player.Where(p => null != p && p.active).Count();
+			return TShock.Players.Count(p => null != p && p.Active);
 		}
 
 		//Random should not be generated in a method

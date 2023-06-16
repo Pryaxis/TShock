@@ -3070,12 +3070,12 @@ namespace TShockAPI
 						args.Player.SendErrorMessage(GetString("You do not have permission to teleport all other players."));
 						return;
 					}
-					for (int i = 0; i < Main.maxPlayers; i++)
+					foreach (var player in TShock.Players)
 					{
-						if (Main.player[i].active && (Main.player[i] != args.TPlayer))
+						if (player != null && player.Active && player.Index != args.Player.Index)
 						{
-							if (TShock.Players[i].Teleport(args.TPlayer.position.X, args.TPlayer.position.Y))
-								TShock.Players[i].SendSuccessMessage(GetString("You were teleported to {0}.", args.Player.Name));
+							if (player.Teleport(args.TPlayer.position.X, args.TPlayer.position.Y))
+								player.SendSuccessMessage(GetString("You were teleported to {0}.", args.Player.Name));
 						}
 					}
 					args.Player.SendSuccessMessage(GetString("Teleported everyone to yourself."));
