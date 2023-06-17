@@ -78,6 +78,17 @@ Use past tense when adding new entries; sign your name off when you add or chang
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change. -->
 
 ## Upcoming changes
+* Updated `TSPlayer.GodMode`. (@AgaSpace)
+  * Previously the field was used as some kind of dataset changed by /godmode command, but now it is a property that receives/changes data in journey mode.
+* Added the `TSPlayer.Client` property. It allows the developer to get the `RemoteClient` player, without an additional call to `Terraria.Netplay.Clients`. (@AgaSpace)
+* Updated the documentation for the `TSPlayer.SetPvP` method. The `sendMsg` parameter, which is responsible for sending a pvp mode change message, was not documented earlier. (@AgaSpace)
+* Added methods `TSPlayer.KillPlayer` and `TSPlayer.DamagePlayer` for which you can specify the cause (`PlayerDeathReason`) in parameters. (@AgaSpace)
+* Added an error when trying to change a `TSPlayer` team to, say, 9, when there are only 6. (@AgaSpace)
+* Added an error when trying to call the `TSPlayer.SetTeam` method with an argument (team) greater than 5 or less than 0. (@AgaSpace)
+* Added a method `TSPlayer.UpdateSection` with arguments `rectangle` and `isLoaded`, which will load some area from the server to the player. (@AgaSpace)
+* Added a method `TSPlayer.GiveItem`, which has `TShockAPI.NetItem` structure in its arguments. (@AgaSpace)
+* Added a property `TSPlayer.Hostile`, which gets pvp player mode. (@AgaSpace)
+* Fixed typo in `/gbuff`. (@sgkoishi, #2955)
 * Added a constructor for `TShockAPI.PlayerData` that accepts the `includingStarterInventory` parameter, which is responsible for loading the TShock inventory.
 * Declared the constructor `TShockAPI.PlayerData` accepting the argument `TShockAPI.TSPlayer` obsolete.
 * Updated the `PlayerData.StoreSlot` method: Added an overload that takes `TShockAPI.NetItem`.
