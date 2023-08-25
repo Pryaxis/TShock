@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using TShockAPI.DB;
@@ -117,6 +118,49 @@ namespace TShockAPI.Hooks
 		/// The prefix used to send the command (either <see cref="Commands.Specifier"/> or <see cref="Commands.SilentSpecifier"/>).
 		/// </summary>
 		public string CommandPrefix { get; set; }
+	}
+
+	/// <summary>
+	/// EventArgs used for the <see cref="PlayerHooks.PrePlayerCommand"/> event.
+	/// </summary>
+	public class PrePlayerCommandEventArgs : HandledEventArgs
+	{
+		/// <summary>
+		/// The command entered by the player.
+		/// </summary>
+		public Command Command { get; }
+		/// <summary>
+		/// Command arguments.
+		/// </summary>
+		public CommandArgs Arguments { get; set; }
+
+		public PrePlayerCommandEventArgs(Command command, CommandArgs args)
+		{
+			Command = command;
+			Arguments = args;
+		}
+	}
+
+	/// <summary>
+	/// EventArgs used for the <see cref="PlayerHooks.PostPlayerCommand"/> event.
+	/// </summary>
+	public class PostPlayerCommandEventArgs : HandledEventArgs
+	{
+		/// <summary>
+		/// The command entered by the player.
+		/// </summary>
+		public Command Command { get; }
+		/// <summary>
+		/// Command arguments.
+		/// </summary>
+		public CommandArgs Arguments { get; }
+
+		public PostPlayerCommandEventArgs(Command command, CommandArgs arguments, bool handled)
+		{
+			Command = command;
+			Arguments = arguments;
+			Handled = handled;
+		}
 	}
 
 	/// <summary>
@@ -344,6 +388,26 @@ namespace TShockAPI.Hooks
 		public static event PlayerCommandD PlayerCommand;
 
 		/// <summary>
+		/// The delegate of the <see cref="PrePlayerCommand"/> event.
+		/// </summary>
+		/// <param name="e">The EventArgs for this event.</param>
+		public delegate void PrePlayerCommandD(PrePlayerCommandEventArgs e);
+		/// <summary>
+		/// Fired before a command is run.
+		/// </summary>
+		public static event PrePlayerCommandD PrePlayerCommand;
+
+		/// <summary>
+		/// The delegate of the <see cref="PostPlayerCommand"/> event.
+		/// </summary>
+		/// <param name="e">The EventArgs for this event.</param>
+		public delegate void PostPlayerCommandD(PostPlayerCommandEventArgs e);
+		/// <summary>
+		/// Fired after a command is run.
+		/// </summary>
+		public static event PostPlayerCommandD PostPlayerCommand;
+
+		/// <summary>
 		/// The delegate of the <see cref="PlayerChat"/> event.
 		/// </summary>
 		/// <param name="e">The EventArgs for this event.</param>
@@ -447,6 +511,40 @@ namespace TShockAPI.Hooks
 			};
 			PlayerCommand(playerCommandEventArgs);
 			return playerCommandEventArgs.Handled;
+		}
+
+		/// <summary>
+		/// Fires the <see cref="PrePlayerCommand"/> event.
+		/// </summary>
+		/// <param name="cmd">Command to be executed</param>
+		/// <param name="arguments">Command arguments</param>
+		/// <returns>True if the event has been handled.</returns>
+		public static bool OnPrePlayerCommand(Command cmd, ref CommandArgs arguments)
+		{
+			if (PrePlayerCommand == null)
+				return false;
+
+			PrePlayerCommandEventArgs args = new PrePlayerCommandEventArgs(cmd, arguments);
+
+			PrePlayerCommand(args);
+
+			arguments = args.Arguments;
+			return args.Handled;
+		}
+
+		/// <summary>
+		/// Fires the <see cref="PostPlayerCommand"/> event.
+		/// </summary>
+		/// <param name="cmd">Executed command.</param>
+		/// <param name="arguments">Command arguments.</param>
+		/// <param name="handled">Is the command executed.</param>
+		public static void OnPostPlayerCommand(Command cmd, CommandArgs arguments, bool handled)
+		{
+			if (PostPlayerCommand == null)
+				return;
+
+			PostPlayerCommandEventArgs args = new PostPlayerCommandEventArgs(cmd, arguments, handled);
+			PostPlayerCommand(args);
 		}
 
 		/// <summary>
