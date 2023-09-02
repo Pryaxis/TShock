@@ -555,7 +555,8 @@ namespace TShockAPI
 			{
 				try
 				{
-					TShock.UserAccounts.SetUserGroup(account, group);
+					TShock.UserAccounts.SetUserGroup(new TSRestPlayer(args.TokenData.Username, TShock.Groups.GetGroupByName(args.TokenData.UserGroupName)),
+						account, group);
 					response.Add("group-response", "Group updated successfully");
 				}
 				catch (Exception e)
