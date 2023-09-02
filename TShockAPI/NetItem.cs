@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
- using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -155,11 +155,37 @@ namespace TShockAPI
 		/// <param name="netId">The net ID.</param>
 		/// <param name="stack">The stack.</param>
 		/// <param name="prefixId">The prefix ID.</param>
-		public NetItem(int netId, int stack, byte prefixId)
+		public NetItem(int netId, int stack = 1, byte prefixId = 0)
 		{
 			_netId = netId;
 			_stack = stack;
 			_prefixId = prefixId;
+		}
+
+		/// <summary>
+		/// Creates a new <see cref="NetItem"/>.
+		/// </summary>
+		/// <param name="item">Item in the game.</param>
+		public NetItem(Item item)
+		{
+			_netId = item.netID;
+			_stack = item.stack;
+			_prefixId = item.prefix;
+		}
+
+		/// <summary>
+		/// Creates <see cref="Terraria.Item"/> based on data from this structure.
+		/// </summary>
+		/// <returns>A copy of the item.</returns>
+		public Item ToItem()
+		{
+			Item item = new Item();
+
+			item.netDefaults(_netId);
+			item.stack = _stack;
+			item.prefix = _prefixId;
+
+			return item;
 		}
 
 		/// <summary>
