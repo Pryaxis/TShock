@@ -31,6 +31,6 @@ These command line flags are in-addition to the ones that the Terraria server of
 
 ## Autostarting TShock
 
-If you want to start TShock automatically though a script, and bypass the interactive startup prompt, you need to specify a `-world` path, a `-port`, and `-maxplayers`.
+If you want to start TShock automatically though a script, and bypass the interactive startup prompt, you need to specify a `-world` path and `-autocreate`.
 
-For example: `TShock.Server.exe -world C:\Terraria\worlds\MyWorld.wld -port 7777 -maxplayers 8`
+For example: `TShock.Server.exe -world C:\Terraria\worlds\MyWorld.wld -autocreate 1`
