@@ -14,15 +14,15 @@ Open ports can also be passed through using `-p <host_port>:<container_port>`.
 
 For Example:
 ```bash
-# Building the image
-docker build -t tshock:linux-amd64 --build-arg TARGETPLATFORM=linux/amd64 .
+# Building the image using buildx and loading it into docker
+docker buildx build -t tshock:latest --load .
 
 # Running the image
 docker run -p 7777:7777 -p 7878:7878 \
            -v /home/cider/tshock/:/tshock \
            -v /home/cider/.local/share/Terraria/Worlds:/worlds \
            -v /home/cider/tshock/plugins:/plugins \
-           --rm -it tshock:linux-amd64 \
+           --rm -it tshock:latest \
            -world /worlds/backflip.wld -motd "OMFG DOCKER"
 ```
 
@@ -33,7 +33,7 @@ Using `docker buildx`, you could build [multi-platform images](https://docs.dock
 For Example:
 ```bash
 # Building the image using buildx and loading it into docker
-sudo docker buildx build -t tshock:linux-arm64 --platform linux/arm64 --load .
+docker buildx build -t tshock:linux-arm64 --platform linux/arm64 --load .
 
 # Running the image
 docker run -p 7777:7777 -p 7878:7878 \
