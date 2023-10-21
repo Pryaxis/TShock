@@ -1,15 +1,20 @@
-# ignore every file
-*
+# Ignore all Git metadata and build output (in all directories).
+**/.git*
+**/bin/
+**/obj/
 
-# except for the ones required for building
-!i18n/
-!prebuilts/
-!TerrariaServerAPI/
-!TShockAPI/
-!TShockLauncher/
-!TShockLauncher.Tests/
-!TShock.sln
-
-# but exclude build artifacts
-*/bin/
-*/obj/
+# Ignore other specific files that aren't needed for the build itself.
+/.all-contributorsrc
+/.dockerignore
+/.editorconfig
+/.vscode
+/appveyor.yml
+/COPYING
+/crowdin.yml
+/Dockerfile
+/docs
+/README.md
+/README_cn.md
+/renovate.json
+/scripts
+/SECURITY.md
