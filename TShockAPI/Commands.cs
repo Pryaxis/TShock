@@ -5258,6 +5258,7 @@ namespace TShockAPI
 					new PaginationTools.Settings
 					{
 						HeaderFormat = GetString("Commands ({{0}}/{{1}}):"),
+						HeaderTextColor = new Color(117, 188, 250),
 						FooterFormat = GetString("Type {0}help {{0}} for more.", Specifier)
 					});
 			}

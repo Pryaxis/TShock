@@ -97,7 +97,7 @@ namespace TShockAPI
 		/// <summary>Users - Static reference to the user manager for accessing the user database system.</summary>
 		public static UserAccountManager UserAccounts;
 		/// <summary>ProjectileBans - Static reference to the projectile ban system.</summary>
-		public static ProjectileManagager ProjectileBans;
+		public static ProjectileManager ProjectileBans;
 		/// <summary>TileBans - Static reference to the tile ban system.</summary>
 		public static TileManager TileBans;
 		/// <summary>RememberedPos - Static reference to the remembered position manager.</summary>
@@ -314,13 +314,13 @@ namespace TShockAPI
 			// Further exceptions are written to TShock's log from now on.
 			try
 			{
-				if (Config.Settings.StorageType.ToLower() == "sqlite")
+				if (Config.Settings.StorageType.ToLower() == "sqlite" && Config.Settings.TShockDBType != "mysql")
 				{
 					string sql = Path.Combine(SavePath, Config.Settings.SqliteDBPath);
 					Directory.CreateDirectory(Path.GetDirectoryName(sql));
 					DB = new Microsoft.Data.Sqlite.SqliteConnection(string.Format("Data Source={0}", sql));
 				}
-				else if (Config.Settings.StorageType.ToLower() == "mysql")
+				else if (Config.Settings.StorageType.ToLower() == "mysql" || (Config.Settings.isStorageTypeSeperateFromTShockDBType == true && Config.Settings.TShockDBType == "mysql"))
 				{
 					try
 					{
@@ -371,7 +371,7 @@ namespace TShockAPI
 				Regions = new RegionManager(DB);
 				UserAccounts = new UserAccountManager(DB);
 				Groups = new GroupManager(DB);
-				ProjectileBans = new ProjectileManagager(DB);
+				ProjectileBans = new ProjectileManager(DB);
 				TileBans = new TileManager(DB);
 				RememberedPos = new RememberedPosManager(DB);
 				CharacterDB = new CharacterManager(DB);
@@ -1430,8 +1430,8 @@ namespace TShockAPI
 			if (tsplr.ReceivedInfo)
 			{
 				if (!tsplr.SilentKickInProgress && tsplr.State >= 3)
-					Utils.Broadcast(GetString("{0} has left.", tsplr.Name), Color.Yellow);
-				Log.Info(GetString("{0} disconnected.", tsplr.Name));
+					Utils.Broadcast(tsplr.Name + " [c/ff6464:h][c/ff6b65:a][c/ff7266:s] [c/ff8069:l][c/ff876a:e][c/ff8e6c:f][c/ff956d:t][c/ff9d6f:!]", Color.IndianRed);
+				Log.Info("{0} disconnected.", tsplr.Name);
 
 				if (tsplr.IsLoggedIn && !tsplr.IsDisabledPendingTrashRemoval && Main.ServerSideCharacter && (!tsplr.Dead || tsplr.TPlayer.difficulty != 2))
 				{
@@ -1696,14 +1696,14 @@ namespace TShockAPI
 									   player.Group.Name, player.Country, TShock.Utils.GetActivePlayerCount(),
 									   TShock.Config.Settings.MaxSlots));
 				if (!player.SilentJoinInProgress)
-					Utils.Broadcast(GetString("{0} ({1}) has joined.", player.Name, player.Country), Color.Yellow);
+					Utils.Broadcast(GetString("{0} ({1}) [c/8080ff:h][c/8073ff:a][c/8066ff:s] [c/804cff:j][c/8040ff:o][c/8033ff:i][c/8026ff:n][c/8019ff:e][c/800cff:d][c/8000ff:!]", player.Name, player.Country), Color.LightGreen);
 			}
 			else
 			{
 				Log.Info(GetString("{0} ({1}) from '{2}' group joined. ({3}/{4})", player.Name, player.IP,
 									   player.Group.Name, TShock.Utils.GetActivePlayerCount(), TShock.Config.Settings.MaxSlots));
 				if (!player.SilentJoinInProgress)
-					Utils.Broadcast(GetString("{0} has joined.", player.Name), Color.Yellow);
+					Utils.Broadcast(GetString("{0} [c/8080ff:h][c/8073ff:a][c/8066ff:s] [c/804cff:j][c/8040ff:o][c/8033ff:i][c/8026ff:n][c/8019ff:e][c/800cff:d][c/8000ff:!]", player.Name), Color.LightGreen);
 			}
 
 			if (Config.Settings.DisplayIPToAdmins)
