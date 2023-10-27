@@ -93,7 +93,7 @@ namespace TShockAPI
 		/// <summary>Users - Static reference to the user manager for accessing the user database system.</summary>
 		public static UserAccountManager UserAccounts;
 		/// <summary>ProjectileBans - Static reference to the projectile ban system.</summary>
-		public static ProjectileManagager ProjectileBans;
+		public static ProjectileManager ProjectileBans;
 		/// <summary>TileBans - Static reference to the tile ban system.</summary>
 		public static TileManager TileBans;
 		/// <summary>RememberedPos - Static reference to the remembered position manager.</summary>
@@ -367,7 +367,7 @@ namespace TShockAPI
 				Regions = new RegionManager(DB);
 				UserAccounts = new UserAccountManager(DB);
 				Groups = new GroupManager(DB);
-				ProjectileBans = new ProjectileManagager(DB);
+				ProjectileBans = new ProjectileManager(DB);
 				TileBans = new TileManager(DB);
 				RememberedPos = new RememberedPosManager(DB);
 				CharacterDB = new CharacterManager(DB);
