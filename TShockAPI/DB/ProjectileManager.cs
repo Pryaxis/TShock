@@ -25,12 +25,12 @@ using TShockAPI.Hooks;
 
 namespace TShockAPI.DB
 {
-	public class ProjectileManagager
+	public class ProjectileManager
 	{
 		private IDbConnection database;
 		public List<ProjectileBan> ProjectileBans = new List<ProjectileBan>();
 
-		public ProjectileManagager(IDbConnection db)
+		public ProjectileManager(IDbConnection db)
 		{
 			database = db;
 
