@@ -507,6 +507,10 @@ namespace TShockAPI.Configuration
 		[Description("Displays a player's IP on join to users with the log permission.")]
 		public bool DisplayIPToAdmins;
 
+		/// <summary>Displays chat messages to Server.</summary>
+		[Description("Displays chat messages to Server.")]
+		public bool DisplayChatToServerConsole = true;
+
 		/// <summary>Changes in-game chat format: {0} = Group Name, {1} = Group Prefix, {2} = Player Name, {3} = Group Suffix, {4} = Chat Message.</summary>
 		[Description("Changes in-game chat format: {0} = Group Name, {1} = Group Prefix, {2} = Player Name, {3} = Group Suffix, {4} = Chat Message.")]
 		public string ChatFormat = "{1}{2}{3}: {4}";

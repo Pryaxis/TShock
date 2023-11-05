@@ -1551,7 +1551,10 @@ namespace TShockAPI
 						return;
 					}
 
-					Utils.Broadcast(text, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
+					TSPlayer.All.SendMessage(text, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
+					if (Config.Settings.DisplayChatToServerConsole)
+						TSPlayer.Server.SendMessage(text, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
+					TShock.Log.Info(GetString("Broadcast: {0}", text));
 				}
 				else
 				{
@@ -1589,7 +1592,8 @@ namespace TShockAPI
 
 					//Send the original sender their nicely formatted message, and do all the loggy things
 					tsplr.SendMessage(msg, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
-					TSPlayer.Server.SendMessage(msg, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
+					if (Config.Settings.DisplayChatToServerConsole)
+						TSPlayer.Server.SendMessage(msg, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
 					Log.Info("Broadcast: {0}", msg);
 					args.Handled = true;
 				}
