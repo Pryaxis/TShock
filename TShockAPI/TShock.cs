@@ -50,7 +50,6 @@ using Terraria.Achievements;
 using Terraria.Initializers;
 using Terraria.UI.Chat;
 using TShockAPI.Modules;
-using Org.BouncyCastle.Ocsp;
 
 namespace TShockAPI
 {
