@@ -43,3 +43,31 @@ docker run -p 7777:7777 -p 7878:7878 \
            --rm -it tshock:linux-arm64 \
            -world /worlds/backflip.wld -motd "ARM64 ftw"
 ```
+
+## Using Docker Compose
+
+If you have [Docker Compose](https://docs.docker.com/compose/) installed, you can skip building the image explicitly, and rather use a `docker-compose.yml` file like so:
+```yml
+version: "3"
+
+services:
+  terraria:
+    build:
+      context: https://github.com/Pryaxis/TShock.git
+      args:
+        TARGETPLATFORM: linux/amd64
+    container_name: terraria
+    restart: unless-stopped
+    volumes:
+      - "./tshock/:/tshock"
+      - "./worlds:/worlds"
+      - "./plugins:/plugins"
+      - "/etc/localtime:/etc/localtime:ro"
+    ports:
+      - "7777:7777"
+      - "7878:7878" # can be removed if you don't use the REST service
+    command: -world /worlds/my_world.wld
+```
+
+To run the server interactively, for example to generate a world, use `docker compose run --rm terraria` (without the `command:` for now).
+Then, you can use `docker compose up -d` to run it in the background, and have it automatically restart with your host system.
