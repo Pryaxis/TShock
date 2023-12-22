@@ -434,9 +434,9 @@ namespace TShockAPI
 				CanBeAddedWithoutHostile = true,
 				CanOnlyBeAppliedToSender = true
 			};
-			PlayerAddBuffWhitelist[BuffID.WindPushed] = new BuffLimit
+			PlayerAddBuffWhitelist[BuffID.ParryDamageBuff] = new BuffLimit
 			{
-				MaxTicks = 2,
+				MaxTicks = 300,
 				CanBeAddedWithoutHostile = true,
 				CanOnlyBeAppliedToSender = true
 			};
