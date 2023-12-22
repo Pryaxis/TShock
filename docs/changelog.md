@@ -90,6 +90,7 @@ Use past tense when adding new entries; sign your name off when you add or chang
 * Added a property `TSPlayer.Hostile`, which gets pvp player mode. (@AgaSpace)
 * Fixed typo in `/gbuff`. (@sgkoishi, #2955)
 * Rewrote the `.dockerignore` file into a denylist. (@timschumi)
+* Added `ParryDamageBuff` (Striking Moment with Brand of the Inferno and shield) to the `PlayerAddBuffWhitelist` (@sgkoishi, #3005)
 
 ## TShock 5.2
 * An additional option `pvpwithnoteam` is added at `PvPMode` to enable PVP with no team. (@CelestialAnarchy, #2617, @ATFGK)
