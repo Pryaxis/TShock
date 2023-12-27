@@ -2860,7 +2860,7 @@ namespace TShockAPI
 			{ BuffID.Poisoned, 3600 },              // BuffID: 20
 			{ BuffID.OnFire, 1200 },                // BuffID: 24
 			{ BuffID.Confused, short.MaxValue },    // BuffID: 31 Brain of Confusion Internal Item ID: 3223
-			{ BuffID.CursedInferno, 420 },          // BuffID: 39
+			{ BuffID.CursedInferno, 600 },          // BuffID: 39
 			{ BuffID.Frostburn, 900 },              // BuffID: 44
 			{ BuffID.Ichor, 1200 },                 // BuffID: 69
 			{ BuffID.Venom, 1800 },                 // BuffID: 70
