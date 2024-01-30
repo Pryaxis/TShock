@@ -2044,6 +2044,7 @@ namespace TShockAPI
 		private static void OffNoSave(CommandArgs args)
 		{
 			string reason = ((args.Parameters.Count > 0) ? GetString("Server shutting down: ") + String.Join(" ", args.Parameters) : GetString("Server shutting down."));
+			Netplay.SaveOnServerExit = false;
 			TShock.Utils.StopServer(false, reason);
 		}
 
