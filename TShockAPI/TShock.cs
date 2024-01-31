@@ -166,21 +166,19 @@ namespace TShockAPI
 		/// <value>value - "TShock"</value>
 		public override string Name
 		{
-			get { return "TShock"; }
+			get { return "TShockModified"; }
 		}
 
 		/// <summary>Author - The author of the plugin.</summary>
-		/// <value>value - "The TShock Team"</value>
 		public override string Author
 		{
-			get { return "The TShock Team"; }
+			get { return "TSD"; }
 		}
 
 		/// <summary>Description - The plugin description.</summary>
-		/// <value>value - "The administration modification of the future."</value>
 		public override string Description
 		{
-			get { return "The administration modification of the future."; }
+			get { return "A modified version of TShock to fit the needs of TSD."; }
 		}
 
 		/// <summary>TShock - The constructor for the TShock plugin.</summary>
