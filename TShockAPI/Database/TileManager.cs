@@ -23,7 +23,7 @@ using System.Linq;
 using MySql.Data.MySqlClient;
 using TShockAPI.Hooks;
 
-namespace TShockAPI.DB
+namespace TShockAPI.Database
 {
 	public class TileManager
 	{

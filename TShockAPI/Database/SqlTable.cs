@@ -22,7 +22,7 @@ using System.Data;
 using System.Linq;
 using MySql.Data.MySqlClient;
 
-namespace TShockAPI.DB
+namespace TShockAPI.Database
 {
 	public class SqlTable
 	{

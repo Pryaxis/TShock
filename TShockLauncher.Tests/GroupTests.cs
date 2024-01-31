@@ -1,6 +1,6 @@
 using NUnit.Framework;
 using TShockAPI;
-using TShockAPI.DB;
+using TShockAPI.Database;
 
 namespace TShockLauncher.Tests;
 

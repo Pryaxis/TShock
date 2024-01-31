@@ -24,7 +24,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using TShockAPI.Extensions;
 
-namespace TShockAPI.DB
+namespace TShockAPI.Database
 {
 	/// <summary>
 	/// Interface for various SQL related utilities.

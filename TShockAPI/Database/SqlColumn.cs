@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using MySql.Data.MySqlClient;
 using System;
 
-namespace TShockAPI.DB
+namespace TShockAPI.Database
 {
 	public class SqlColumn
 	{

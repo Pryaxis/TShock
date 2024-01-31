@@ -24,7 +24,7 @@ using System.Diagnostics;
 using System.Linq;
 using MySql.Data.MySqlClient;
 
-namespace TShockAPI.DB
+namespace TShockAPI.Database
 {
 	/// <summary>
 	/// Represents the GroupManager, which is in charge of group management.
@@ -196,7 +196,7 @@ namespace TShockAPI.DB
 						Permissions.createdumps));
 			}
 
-			// Load Permissions from the DB
+			// Load Permissions from the Database
 			LoadPermisions();
 
 			Group.DefaultGroup = GetGroupByName(TShock.Config.Settings.DefaultGuestGroupName);
@@ -360,7 +360,7 @@ namespace TShockAPI.DB
 				}
 			}
 
-			// Ensure any group validation is also persisted to the DB.
+			// Ensure any group validation is also persisted to the Database.
 			var newGroup = new Group(name, parent, chatcolor, permissions);
 			newGroup.Prefix = prefix;
 			newGroup.Suffix = suffix;
@@ -531,7 +531,7 @@ namespace TShockAPI.DB
 			if (database.Query("UPDATE GroupList SET Commands=@0 WHERE GroupName=@1", group.Permissions, name) == 1)
 				return "Group " + name + " has been modified successfully.";
 
-			// Restore old permissions so DB and internal object are in a consistent state
+			// Restore old permissions so Database and internal object are in a consistent state
 			group.Permissions = oldperms;
 			return "";
 		}
@@ -554,7 +554,7 @@ namespace TShockAPI.DB
 			if (database.Query("UPDATE GroupList SET Commands=@0 WHERE GroupName=@1", group.Permissions, name) == 1)
 				return "Group " + name + " has been modified successfully.";
 
-			// Restore old permissions so DB and internal object are in a consistent state
+			// Restore old permissions so Database and internal object are in a consistent state
 			group.Permissions = oldperms;
 			return "";
 		}

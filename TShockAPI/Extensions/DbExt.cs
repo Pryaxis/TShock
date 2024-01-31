@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
 
-namespace TShockAPI.DB
+namespace TShockAPI.Database
 {
 	/// <summary>
 	/// Database extensions

@@ -28,12 +28,15 @@
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <Authors>Pryaxis &amp; TShock Contributors</Authors>
     <Description>TShock is a toolbox for Terraria servers and communities.</Description>
-    <PackageId>TShock</PackageId> <!-- package name for nuget, instead of TShockAPI -->
+    <PackageId>TShock</PackageId>
+    <Nullable>enable</Nullable> <!-- package name for nuget, instead of TShockAPI -->
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="GetText.NET" Version="1.7.14" />
+    <PackageReference Include="MongoDB.Driver" Version="2.23.1" />
+    <PackageReference Include="MongoDB.Entities" Version="23.0.1" />
     <PackageReference Include="MySql.Data" Version="8.0.31" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="6.0.11" />
   </ItemGroup>

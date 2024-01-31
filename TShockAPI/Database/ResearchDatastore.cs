@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Terraria;
 using Terraria.ID;
 
-namespace TShockAPI.DB
+namespace TShockAPI.Database
 {
 	/// <summary>
 	/// This class is used as the data interface for Journey mode research.
@@ -26,7 +26,7 @@ namespace TShockAPI.DB
 		private Dictionary<int, int> _itemsSacrificed;
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="TShockAPI.DB.ResearchDatastore"/> class.
+		/// Initializes a new instance of the <see cref="ResearchDatastore"/> class.
 		/// </summary>
 		/// <param name="db">A valid connection to the TShock database</param>
 		public ResearchDatastore(IDbConnection db)

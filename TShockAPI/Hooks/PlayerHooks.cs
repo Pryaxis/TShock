@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
 using System.ComponentModel;
-using TShockAPI.DB;
+using TShockAPI.Database;
 
 namespace TShockAPI.Hooks
 {

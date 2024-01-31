@@ -22,7 +22,7 @@ using System.Linq;
 using System.Net;
 using HttpServer;
 using TShockAPI;
-using TShockAPI.DB;
+using TShockAPI.Database;
 using Microsoft.Xna.Framework;
 using Terraria;
 using System.Security.Cryptography;

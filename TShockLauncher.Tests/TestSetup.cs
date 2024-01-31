@@ -23,6 +23,6 @@ public class TestSetup
 		Lang.InitializeLegacyLocalization(); // TShockAPI.Localization will fail without preparing NPC names etc
 
 		var ts = new TShock(null); // prepares configs etc
-		ts.Initialize(); // used to prepare tshocks own static variables, such as the TShock.DB instance
+		ts.Initialize(); // used to prepare tshocks own static variables, such as the TShock.Database instance
 	}
 }

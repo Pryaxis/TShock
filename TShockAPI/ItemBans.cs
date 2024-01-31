@@ -19,7 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria.ID;
-using TShockAPI.DB;
+using TShockAPI.Database;
 using TShockAPI.Net;
 using Terraria;
 using Microsoft.Xna.Framework;

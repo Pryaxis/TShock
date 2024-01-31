@@ -26,7 +26,7 @@ using System.Text.RegularExpressions;
 using BCrypt.Net;
 using System.Security.Cryptography;
 
-namespace TShockAPI.DB
+namespace TShockAPI.Database
 {
 	/// <summary>UserAccountManager - Methods for dealing with database user accounts and other related functionality within TShock.</summary>
 	public class UserAccountManager

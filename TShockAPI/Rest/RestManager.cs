@@ -27,7 +27,7 @@ using System.Text;
 using HttpServer;
 using Rests;
 using Terraria;
-using TShockAPI.DB;
+using TShockAPI.Database;
 using Newtonsoft.Json;
 
 namespace TShockAPI
@@ -665,7 +665,7 @@ namespace TShockAPI
 					player.Kick(reason, true);
 				}
 
-				return RestResponse(GetString($"Ban added. Ticket number: {banResult.Ban.TicketNumber}"));
+				return RestResponse(GetString($"Ban added. Ticket number: {banResult.Ban.BanId}"));
 			}
 
 			return RestError(GetString($"Failed to add ban. {banResult.Message}"), status: "500");
@@ -723,7 +723,7 @@ namespace TShockAPI
 
 			return new RestObject
 			{
-				{ "ticket_number", ban.TicketNumber },
+				{ "ticket_number", ban.BanId },
 				{ "identifier", ban.Identifier },
 				{ "reason", ban.Reason },
 				{ "banning_user", ban.BanningUser },
@@ -746,7 +746,7 @@ namespace TShockAPI
 				banList.Add(
 					new Dictionary<string, object>
 					{
-						{ "ticket_number", ban.TicketNumber },
+						{ "ticket_number", ban.BanId },
 						{ "identifier", ban.Identifier },
 						{ "reason", ban.Reason },
 						{ "banning_user", ban.BanningUser },

@@ -24,7 +24,7 @@ using System.Text;
 using MySql.Data.MySqlClient;
 using Terraria;
 
-namespace TShockAPI.DB
+namespace TShockAPI.Database
 {
 	public class CharacterManager
 	{

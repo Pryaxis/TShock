@@ -26,7 +26,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Terraria.ID;
-using TShockAPI.DB;
+using TShockAPI.Database;
 using TShockAPI.Net;
 using Terraria;
 using Terraria.ObjectData;

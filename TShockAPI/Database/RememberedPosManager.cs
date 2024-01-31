@@ -22,7 +22,7 @@ using MySql.Data.MySqlClient;
 using Terraria;
 using Microsoft.Xna.Framework;
 
-namespace TShockAPI.DB
+namespace TShockAPI.Database
 {
 	public class RememberedPosManager
 	{

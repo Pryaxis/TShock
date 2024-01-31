@@ -28,7 +28,7 @@ using System.Threading;
 using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
-using TShockAPI.DB;
+using TShockAPI.Database;
 using TerrariaApi.Server;
 using TShockAPI.Hooks;
 using Terraria.GameContent.Events;
@@ -1038,7 +1038,7 @@ namespace TShockAPI
 					return;
 				}
 
-				account.Group = TShock.Config.Settings.DefaultRegistrationGroupName; // FIXME -- we should get this from the DB. --Why?
+				account.Group = TShock.Config.Settings.DefaultRegistrationGroupName; // FIXME -- we should get this from the Database. --Why?
 				account.UUID = args.Player.UUID;
 
 				if (TShock.UserAccounts.GetUserAccountByName(account.Name) == null && account.Name != TSServerPlayer.AccountName) // Cheap way of checking for existance of a user
@@ -1458,7 +1458,7 @@ namespace TShockAPI
 
 			void DisplayBanDetails(Ban ban)
 			{
-				args.Player.SendMessage(GetString($"{"Ban Details".Color(Utils.BoldHighlight)} - Ticket Number: {ban.TicketNumber.Color(Utils.GreenHighlight)}"), Color.White);
+				args.Player.SendMessage(GetString($"{"Ban Details".Color(Utils.BoldHighlight)} - Ticket Number: {ban.BanId.Color(Utils.GreenHighlight)}"), Color.White);
 				args.Player.SendMessage(GetString($"{"Identifier:".Color(Utils.BoldHighlight)} {ban.Identifier}"), Color.White);
 				args.Player.SendMessage(GetString($"{"Reason:".Color(Utils.BoldHighlight)} {ban.Reason}"), Color.White);
 				args.Player.SendMessage(GetString($"{"Banned by:".Color(Utils.BoldHighlight)} {ban.BanningUser.Color(Utils.GreenHighlight)} on {ban.BanDateTime.ToString("yyyy/MM/dd").Color(Utils.RedHighlight)} ({ban.GetPrettyTimeSinceBanString().Color(Utils.YellowHighlight)} ago)"), Color.White);
@@ -1487,7 +1487,7 @@ namespace TShockAPI
 				AddBanResult banResult = TShock.Bans.InsertBan(ident, reason, args.Player.Account.Name, DateTime.UtcNow, expiration);
 				if (banResult.Ban != null)
 				{
-					args.Player.SendSuccessMessage(GetString($"Ban added. Ticket Number {banResult.Ban.TicketNumber.Color(Utils.GreenHighlight)} was created for identifier {ident.Color(Utils.WhiteHighlight)}."));
+					args.Player.SendSuccessMessage(GetString($"Ban added. Ticket Number {banResult.Ban.BanId.Color(Utils.GreenHighlight)} was created for identifier {ident.Color(Utils.WhiteHighlight)}."));
 				}
 				else
 				{
@@ -1610,7 +1610,7 @@ namespace TShockAPI
 
 				if (banResult?.Ban != null)
 				{
-					player.Disconnect(GetString($"#{banResult.Ban.TicketNumber} - You have been banned: {banResult.Ban.Reason}."));
+					player.Disconnect(GetString($"#{banResult.Ban.BanId} - You have been banned: {banResult.Ban.Reason}."));
 				}
 			}
 

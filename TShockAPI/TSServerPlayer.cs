@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.Utilities;
 using TShockAPI;
-using TShockAPI.DB;
+using TShockAPI.Database;
 using Terraria.Localization;
 using System.Linq;
 using Terraria.DataStructures;
