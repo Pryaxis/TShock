@@ -4629,7 +4629,7 @@ namespace TShockAPI
 			float mph;
 			if (!float.TryParse(args.Parameters[0], out mph) || mph is < -40f or > 40f)
 			{
-				args.Player.SendErrorMessage(GetString("Invalid wind speed (must be between -40mph and 40mph)."));
+				args.Player.SendErrorMessage(GetString("Invalid wind speed (must be between -40 and 40)."));
 				return;
 			}
 
