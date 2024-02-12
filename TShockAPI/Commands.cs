@@ -4622,21 +4622,22 @@ namespace TShockAPI
 		{
 			if (args.Parameters.Count != 1)
 			{
-				args.Player.SendErrorMessage(GetString("Invalid syntax. Proper syntax: {0}wind <speed>.", Specifier));
+				args.Player.SendErrorMessage(GetString("Invalid syntax. Proper syntax: {0}wind <speed in mph>.", Specifier));
 				return;
 			}
 
-			int speed;
-			if (!int.TryParse(args.Parameters[0], out speed) || speed * 100 < 0)
+			float mph;
+			if (!float.TryParse(args.Parameters[0], out mph) || mph is < -40f or > 40f)
 			{
-				args.Player.SendErrorMessage(GetString("Invalid wind speed."));
+				args.Player.SendErrorMessage(GetString("Invalid wind speed (must be between -40 and 40)."));
 				return;
 			}
 
+			float speed = mph / 50f; // -40 to 40 mph -> -0.8 to 0.8
 			Main.windSpeedCurrent = speed;
 			Main.windSpeedTarget = speed;
 			TSPlayer.All.SendData(PacketTypes.WorldInfo);
-			TSPlayer.All.SendInfoMessage(GetString("{0} changed the wind speed to {1}.", args.Player.Name, speed));
+			TSPlayer.All.SendInfoMessage(GetString("{0} changed the wind speed to {1}mph.", args.Player.Name, mph));
 		}
 
 		#endregion Time/PvpFun Commands
