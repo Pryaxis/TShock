@@ -88,6 +88,7 @@ Use past tense when adding new entries; sign your name off when you add or chang
 * Added a method `TSPlayer.UpdateSection` with arguments `rectangle` and `isLoaded`, which will load some area from the server to the player. (@AgaSpace)
 * Added a method `TSPlayer.GiveItem`, which has `TShockAPI.NetItem` structure in its arguments. (@AgaSpace)
 * Added a property `TSPlayer.Hostile`, which gets pvp player mode. (@AgaSpace)
+* Fixed bug where when the `UseSqlLogs` config property is true, an empty log file would still get created. (@ZakFahey)
 * Fixed typo in `/gbuff`. (@sgkoishi, #2955)
 * Rewrote the `.dockerignore` file into a denylist. (@timschumi)
 

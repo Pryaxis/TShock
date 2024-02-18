@@ -29,7 +29,8 @@ namespace TShockAPI
 	/// </summary>
 	public class TextLog : ILog, IDisposable
 	{
-		private readonly StreamWriter _logWriter;
+		private readonly bool ClearFile;
+		private StreamWriter _logWriter;
 
 		/// <summary>
 		/// File name of the Text log
@@ -44,7 +45,7 @@ namespace TShockAPI
 		public TextLog(string filename, bool clear)
 		{
 			FileName = filename;
-			_logWriter = new StreamWriter(filename, !clear);
+			ClearFile = clear;
 		}
 
 		public bool MayWriteType(TraceLevel type)
@@ -247,6 +248,10 @@ namespace TShockAPI
 		{
 			if (!MayWriteType(level))
 				return;
+			if (_logWriter is null)
+			{
+				_logWriter = new StreamWriter(FileName, !ClearFile);
+			}
 
 			var caller = "TShock";
 
@@ -278,7 +283,10 @@ namespace TShockAPI
 
 		public void Dispose()
 		{
-			_logWriter.Dispose();
+			if (_logWriter != null)
+			{
+				_logWriter.Dispose();
+			}
 		}
 	}
 }
