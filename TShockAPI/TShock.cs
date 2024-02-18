@@ -137,6 +137,17 @@ namespace TShockAPI
 		/// </summary>
 		public static Dictionary<string, SecureRest.TokenData> RESTStartupTokens = new Dictionary<string, SecureRest.TokenData>();
 
+		/// <summary>
+		/// Whether to set a player's inventory with SSC and force them to log in to play. Set this to false to enable
+		/// server-side inventory setting while overriding TShock's implementation of it.
+		/// </summary>
+		public static bool UseSSCInventory { get; set; } = true;
+
+		/// <summary>
+		/// Whether TShock's server-side character system is enabled.
+		/// </summary>
+		public static bool UsingTShockSSC => Main.ServerSideCharacter && UseSSCInventory;
+
 		/// <summary>The TShock anti-cheat/anti-exploit system.</summary>
 		internal Bouncer Bouncer;
 
@@ -1100,7 +1111,7 @@ namespace TShockAPI
 				LastCheck = DateTime.UtcNow;
 			}
 
-			if (Main.ServerSideCharacter && (DateTime.UtcNow - LastSave).TotalMinutes >= ServerSideCharacterConfig.Settings.ServerSideCharacterSave)
+			if (UsingTShockSSC && (DateTime.UtcNow - LastSave).TotalMinutes >= ServerSideCharacterConfig.Settings.ServerSideCharacterSave)
 			{
 				foreach (TSPlayer player in Players)
 				{
@@ -1433,7 +1444,7 @@ namespace TShockAPI
 					Utils.Broadcast(GetString("{0} has left.", tsplr.Name), Color.Yellow);
 				Log.Info(GetString("{0} disconnected.", tsplr.Name));
 
-				if (tsplr.IsLoggedIn && !tsplr.IsDisabledPendingTrashRemoval && Main.ServerSideCharacter && (!tsplr.Dead || tsplr.TPlayer.difficulty != 2))
+				if (tsplr.IsLoggedIn && !tsplr.IsDisabledPendingTrashRemoval && UsingTShockSSC && (!tsplr.Dead || tsplr.TPlayer.difficulty != 2))
 				{
 					tsplr.PlayerData.CopyCharacter(tsplr);
 					CharacterDB.InsertPlayerData(tsplr);
@@ -1721,10 +1732,10 @@ namespace TShockAPI
 
 			if (!player.IsLoggedIn)
 			{
-				if (Main.ServerSideCharacter)
+				if (UsingTShockSSC)
 				{
 					player.IsDisabledForSSC = true;
-					player.SendErrorMessage(GetString("Server side characters is enabled! Please {0}register or {0}login to play!", Commands.Specifier));
+					player.SendErrorMessage(GetString("Server side characters are enabled! Please {0}register or {0}login to play!", Commands.Specifier));
 					player.LoginHarassed = true;
 				}
 				else if (Config.Settings.RequireLogin)
