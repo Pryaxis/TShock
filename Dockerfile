@@ -1,7 +1,7 @@
 ARG TARGETPLATFORM=linux/amd64
 ARG BUILDPLATFORM=${TARGETPLATFORM}
 
-FROM --platform=${BUILDPLATFORM} mcr.microsoft.com/dotnet/sdk:6.0 AS builder
+FROM --platform=${BUILDPLATFORM} mcr.microsoft.com/dotnet/sdk:8.0 AS builder
 
 ARG TARGETPLATFORM
 
@@ -28,7 +28,7 @@ RUN \
   dotnet publish -o output/ -r "${ARCH}" -v m -f net6.0 -c Release -p:PublishSingleFile=true --self-contained false
 
 # Runtime image
-FROM --platform=${TARGETPLATFORM} mcr.microsoft.com/dotnet/runtime:6.0 AS runner
+FROM --platform=${TARGETPLATFORM} mcr.microsoft.com/dotnet/runtime:8.0 AS runner
 WORKDIR /server
 COPY --from=builder /TShock/TShockLauncher/output ./
 

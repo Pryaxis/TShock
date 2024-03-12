@@ -31,7 +31,7 @@
 	<ItemGroup>
 		<PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
 		<PackageReference Include="MySql.Data" Version="8.0.31" />
-		<PackageReference Include="Microsoft.Data.Sqlite" Version="6.0.11" />
+		<PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.3" />
 		<PackageReference Include="ModFramework" Version="1.1.7" GeneratePathProperty="true" /> <!-- only used to extract out to ./bin. -->
 		<PackageReference Include="GetText.NET" Version="1.7.14" /> <!-- only used to extract out to ./bin. -->
 
