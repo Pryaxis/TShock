@@ -160,7 +160,7 @@ Allows you to disable or enable protection against creating custom messages with
 * **Default**: `True`
 
 ## DisableDefaultIPBan  
-Disbales IP bans by default, if no arguments are passed to the ban command.
+Disables IP bans by default, if no arguments are passed to the ban command.
 * **Field type**: `Boolean`
 * **Default**: `False`
 
