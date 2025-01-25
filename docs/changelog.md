@@ -79,6 +79,7 @@ Use past tense when adding new entries; sign your name off when you add or chang
 
 ## Upcoming changes
 * You know the drill
+* Fix typo in config for IP bans. (@redchess64)
 
 ## TShock 5.2.1
 * Updated `TSPlayer.GodMode`. (@AgaSpace)
