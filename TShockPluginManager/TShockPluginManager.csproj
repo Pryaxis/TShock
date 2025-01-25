@@ -12,7 +12,7 @@
 		<PackageReference Include="NuGet.Resolver" Version="6.3.1" />
 		<PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
     <PackageReference Include="System.Reflection.MetadataLoadContext" Version="6.0.0" />
-    <PackageReference Include="GetText.NET" Version="1.7.14" />
+    <PackageReference Include="GetText.NET" Version="1.9.14" />
   </ItemGroup>
 
 </Project>
