@@ -78,6 +78,7 @@ Use past tense when adding new entries; sign your name off when you add or chang
   * If there is no section called "Upcoming changes" below this line, please add one with `## Upcoming changes` as the first line, and then a bulleted item directly after with the first change. -->
 
 ## Upcoming changes
+* Fixed invasions not working. (@ohayo)
 * Added a variable for handshake (True upon spawn player), clients no longer notify others of their presence and cant chat if this is never set to true. (@ohayo)
 * Fixed a security issue with how bans are handled on join. (@ohayo)
 * Fixed `/dump-reference-data` mutate the command names. (#2943, @sgkoishi)
