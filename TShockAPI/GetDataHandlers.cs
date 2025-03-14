@@ -3720,7 +3720,7 @@ namespace TShockAPI
 					break;
 			}
 
-			if (NPCID.Sets.MPAllowedEnemies[thingType])
+			if (invasions.Contains(thingType) || NPCID.Sets.MPAllowedEnemies[thingType])
 			{
 				if (TShock.Config.Settings.AnonymousBossInvasions)
 					TShock.Utils.SendLogs(thing, Color.PaleVioletRed, args.Player);
