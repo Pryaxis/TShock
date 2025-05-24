@@ -1742,12 +1742,8 @@ namespace TShockAPI
 
 		private static void Whitelist(CommandArgs args)
 		{
-			if (args.Parameters.Count == 1)
+			if (args.Parameters is [{ } ip] && TShock.Whitelist.AddToWhitelist(ip))
 			{
-				using (var tw = new StreamWriter(FileTools.WhitelistPath, true))
-				{
-					tw.WriteLine(args.Parameters[0]);
-				}
 				args.Player.SendSuccessMessage(GetString($"Added {args.Parameters[0]} to the whitelist."));
 			}
 		}
