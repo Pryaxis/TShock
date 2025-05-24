@@ -138,39 +138,6 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Tells if a user is on the whitelist
-		/// </summary>
-		/// <param name="ip">string ip of the user</param>
-		/// <returns>true/false</returns>
-		public static bool OnWhitelist(string ip)
-		{
-			if (!TShock.Config.Settings.EnableWhitelist)
-			{
-				return true;
-			}
-			CreateIfNot(WhitelistPath, "127.0.0.1");
-			using (var tr = new StreamReader(WhitelistPath))
-			{
-				string whitelist = tr.ReadToEnd();
-				ip = TShock.Utils.GetRealIP(ip);
-				bool contains = whitelist.Contains(ip);
-				if (!contains)
-				{
-					foreach (var line in whitelist.Split(Environment.NewLine.ToCharArray()))
-					{
-						if (string.IsNullOrWhiteSpace(line))
-							continue;
-						contains = TShock.Utils.GetIPv4AddressFromHostname(line).Equals(ip);
-						if (contains)
-							return true;
-					}
-					return false;
-				}
-				return true;
-			}
-		}
-
-		/// <summary>
 		/// Looks for a 'Settings' token in the json object. If one is not found, returns a new json object with all tokens of the previous object added
 		/// as children to a root 'Settings' token
 		/// </summary>
