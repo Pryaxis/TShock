@@ -128,6 +128,12 @@ namespace TShockAPI
 		public static ILog Log;
 		/// <summary>instance - Static reference to the TerrariaPlugin instance.</summary>
 		public static TerrariaPlugin instance;
+
+		/// <summary>
+		/// Whitelist - Static reference to the whitelist system, which allows whitelisting of IP addresses and networks.
+		/// </summary>
+		public static Whitelist Whitelist { get; set; }
+
 		/// <summary>
 		/// Static reference to a <see cref="CommandLineParser"/> used for simple command-line parsing
 		/// </summary>
@@ -139,11 +145,6 @@ namespace TShockAPI
 
 		/// <summary>The TShock anti-cheat/anti-exploit system.</summary>
 		internal Bouncer Bouncer;
-
-		/// <summary>
-		/// TShock's whitelist system.
-		/// </summary>
-		internal Whitelist Whitelist { get; set; }
 
 		/// <summary>The TShock item ban system.</summary>
 		public static ItemBans ItemBans;
