@@ -140,6 +140,11 @@ namespace TShockAPI
 		/// <summary>The TShock anti-cheat/anti-exploit system.</summary>
 		internal Bouncer Bouncer;
 
+		/// <summary>
+		/// TShock's whitelist system.
+		/// </summary>
+		internal Whitelist Whitelist { get; set; }
+
 		/// <summary>The TShock item ban system.</summary>
 		public static ItemBans ItemBans;
 
@@ -354,6 +359,7 @@ namespace TShockAPI
 				Bouncer = new Bouncer();
 				RegionSystem = new RegionHandler(Regions);
 				ItemBans = new ItemBans(this, DB);
+				Whitelist = new(FileTools.WhitelistPath);
 
 				var geoippath = "GeoIP.dat";
 				if (Config.Settings.EnableGeoIP && File.Exists(geoippath))
@@ -1317,7 +1323,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (!FileTools.OnWhitelist(player.IP))
+			if (!Whitelist.IsWhitelisted(player.IP))
 			{
 				player.Kick(Config.Settings.WhitelistKickReason, true, true, null, false);
 				args.Handled = true;
