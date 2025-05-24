@@ -49,10 +49,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Path to the file containing the whitelist.
 		/// </summary>
-		internal static string WhitelistPath
-		{
-			get { return Path.Combine(TShock.SavePath, "whitelist.txt"); }
-		}
+		internal static string WhitelistPath => Path.Combine(TShock.SavePath, "whitelist.txt");
 
 		/// <summary>
 		/// Path to the file containing the config.
@@ -104,8 +101,8 @@ namespace TShockAPI
 
 			CreateIfNot(RulesPath, "Respect the admins!\nDon't use TNT!");
 			CreateIfNot(MotdPath, MotdFormat);
-						
-			CreateIfNot(WhitelistPath);
+
+			CreateIfNot(WhitelistPath, Whitelist.DefaultWhitelistContent);
 			bool writeConfig = true; // Default to true if the file doesn't exist
 			if (File.Exists(ConfigPath))
 			{

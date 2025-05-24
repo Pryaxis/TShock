@@ -44,7 +44,7 @@ public sealed class Whitelist
 	/// <remarks>Shorthand to the current <see cref="TShockSettings.EnableWhitelist" /> setting.</remarks>
 	private bool Enabled => TShock.Config.Settings.EnableWhitelist;
 
-	private const string DefaultWhitelistContent = /*lang=conf*/
+	internal const string DefaultWhitelistContent = /*lang=conf*/
 		"""
 		# Localhost
 		127.0.0.1
@@ -58,7 +58,7 @@ public sealed class Whitelist
 		# fd00::/8
 		""";
 
-	private const char CommentPrefix = '#';
+	internal const char CommentPrefix = '#';
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="Whitelist"/> class.
@@ -67,7 +67,12 @@ public sealed class Whitelist
 	public Whitelist(string path)
 	{
 		_file = new(path);
-		FileTools.CreateIfNot(_file.FullName, DefaultWhitelistContent);
+
+		if (!_file.Exists)
+		{
+			throw new FileNotFoundException("The whitelist file does not exist", _file.FullName);
+		}
+
 		ReadWhitelistFromFile();
 	}
 
