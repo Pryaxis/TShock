@@ -50,8 +50,12 @@ public sealed class Whitelist
 		127.0.0.1
 		::1
 
-		# Uncomment to allow all IPs in your home network
-		# 192.168.0.0/24
+		# Uncomment to allow IPs within private ranges
+		# 10.0.0.0/8
+		# 172.16.0.0/12
+		# 192.168.0.0/16
+		# fe80::/10
+		# fd00::/8
 		""";
 
 	private const char CommentPrefix = '#';
