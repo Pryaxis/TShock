@@ -197,7 +197,23 @@ public sealed class Whitelist
 	{
 		lock (_fileLock)
 		{
+
 			using StreamWriter sw = _file.AppendText();
+
+			// Case: File does not end with a newline, add one
+			bool needsNewLine;
+
+			using (FileStream fs = _file.OpenRead())
+			{
+				fs.Seek(-1, SeekOrigin.End);
+				needsNewLine = fs.Length > 0 && fs.ReadByte() != '\n';
+			}
+
+			if (needsNewLine)
+			{
+				sw.WriteLine();
+			}
+
 			sw.WriteLine(content);
 			return true;
 		}
