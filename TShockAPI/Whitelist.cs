@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Threading;
 using TShockAPI.Configuration;
 
@@ -49,14 +50,11 @@ public sealed class Whitelist
 		"""
 		# Localhost
 		127.0.0.1
-		::1
 
 		# Uncomment to allow IPs within private ranges
 		# 10.0.0.0/8
 		# 172.16.0.0/12
 		# 192.168.0.0/16
-		# fe80::/10
-		# fd00::/8
 		""";
 
 	internal const char CommentPrefix = '#';
@@ -89,9 +87,19 @@ public sealed class Whitelist
 			return true;
 		}
 
-		if (!IPAddress.TryParse(TShock.Utils.GetRealIP(host), out IPAddress? ip))
+		if (!IPAddress.TryParse(host, out IPAddress? ip))
 		{
 			throw new ArgumentException($"The provided host '{host}' is not a valid IP address.", nameof(host));
+		}
+
+		// HACK: Terraria doesn't support IPv6 yet, so we can't check for it.
+		// Remove once TShock supports IPv6.
+		if (ip.AddressFamily is AddressFamily.InterNetworkV6)
+		{
+			TShock.Log.Warn($"IPv6 address '{ip}' is not supported by Terraria. Skipping check.");
+			TShock.Log.Warn("If you somehow managed to get this message, please report it to the TShock team :");
+			TShock.Log.Warn("https://github.com/Pryaxis/TShock/issues");
+			return false;
 		}
 
 		// First check if the IP address is directly whitelisted
