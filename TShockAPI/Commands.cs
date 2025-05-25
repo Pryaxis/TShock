@@ -1742,9 +1742,20 @@ namespace TShockAPI
 
 		private static void Whitelist(CommandArgs args)
 		{
-			if (args.Parameters is [{ } ip] && TShock.Whitelist.AddToWhitelist(ip))
+			if (args.Parameters is [{ } ip])
 			{
-				args.Player.SendSuccessMessage(GetString($"Added {args.Parameters[0]} to the whitelist."));
+				if (TShock.Whitelist.AddToWhitelist(ip))
+				{
+					args.Player.SendSuccessMessage(GetString($"Added {ip} to the whitelist."));
+				}
+				else
+				{
+					args.Player.SendErrorMessage(GetString($"Failed to add {ip} to the whitelist. Perhaps it is already whitelisted?"));
+				}
+			}
+			else
+			{
+				args.Player.SendErrorMessage(GetString($"Invalid Whitelist syntax. Refer to {Specifier}whitelist help for details on how to use the {Specifier}whitelist command"));
 			}
 		}
 
