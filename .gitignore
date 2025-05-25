@@ -69,3 +69,5 @@ packages/*
 
 # Private key files #
 scripts/ssh_private_key
+
+.idea/
