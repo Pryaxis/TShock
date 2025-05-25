@@ -108,6 +108,19 @@ public sealed class Whitelist
 			|| _whitelistNetworks.Any(n => n.Contains(ip));
 	}
 
+	/// <summary>
+	/// Reloads the whitelist from the file.
+	/// </summary>
+	public void ReloadFromFile()
+	{
+		lock (_fileLock)
+		{
+			_whitelistAddresses.Clear();
+			_whitelistNetworks.Clear();
+			ReadWhitelistFromFile();
+		}
+	}
+
 	private void ReadWhitelistFromFile()
 	{
 		using StreamReader sr = _file.OpenText();
@@ -123,7 +136,7 @@ public sealed class Whitelist
 	private void ReadWhitelistLine(scoped ReadOnlySpan<char> content, int line)
 	{
 		// Ignore blank line or comment
-		if (content is [] or [CommentPrefix, ..])
+		if (content is [] or [CommentPrefix, ..] || content.IsWhiteSpace())
 		{
 			return;
 		}
