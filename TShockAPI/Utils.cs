@@ -1,4 +1,4 @@
-﻿/*
+/*
 TShock, a server mod for Terraria
 Copyright (C) 2011-2019 Pryaxis & TShock Contributors
 
@@ -607,6 +607,7 @@ namespace TShockAPI
 			TShock.ItemBans.DataModel.UpdateItemBans();
 			TShock.ProjectileBans.UpdateBans();
 			TShock.TileBans.UpdateBans();
+			TShock.Bans.UpdateBans();
 			TShock.Whitelist.ReloadFromFile();
 		}
 
