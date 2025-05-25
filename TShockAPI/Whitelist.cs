@@ -201,19 +201,19 @@ public sealed class Whitelist
 
 	private bool AddToWhitelist(IPAddress ip)
 		=> _whitelistAddresses.Add(ip)
-		&& AddLine(ip.ToString());
+			& AddLine(ip.ToString());
 
 	private bool AddToWhitelist(IPNetwork network)
 		=> _whitelistNetworks.Add(network)
-		&& AddLine(network.ToString());
+			& AddLine(network.ToString());
 
 	private bool RemoveFromWhitelist(IPAddress ip)
 		=> _whitelistAddresses.Remove(ip)
-		&& RemoveLine(ip.ToString());
+			& RemoveLine(ip.ToString());
 
 	private bool RemoveFromWhitelist(IPNetwork network)
 		=> _whitelistNetworks.Remove(network)
-		&& RemoveLine(network.ToString());
+			& RemoveLine(network.ToString());
 
 	private bool AddLine(scoped ReadOnlySpan<char> content)
 	{
