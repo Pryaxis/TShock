@@ -56,8 +56,8 @@ namespace TShockAPI.Configuration
 		public bool IgnoreChestStacksOnLoad = false;
 
 		/// <summary>Allows changing of the default world tile provider.</summary>
-		[Description("Allows changing of the default world tile provider.")]
-		public string WorldTileProvider = "default";
+		[Description("Allows changing of the default world tile provider. By default, you can use 'default', 'heaptile' or 'constileation'. Alternative providers have different CPU and memory usage characteristics.")]
+		public string WorldTileProvider = "constileation";
 
 		#endregion
 
@@ -70,7 +70,7 @@ namespace TShockAPI.Configuration
 
 		/// <summary>Enable or disable world save announcements.</summary>
 		[Description("Enable or disable world save announcements.")]
-		public bool AnnounceSave = true;
+		public bool AnnounceSave = false;
 
 		/// <summary>Whether or not to show backup auto save messages.</summary>
 		[Description("Whether or not to show backup auto save messages.")]
@@ -119,7 +119,7 @@ namespace TShockAPI.Configuration
 
 		/// <summary>Prevents tiles from being placed within SpawnProtectionRadius of the default spawn.</summary>
 		[Description("Prevents tiles from being placed within SpawnProtectionRadius of the default spawn.")]
-		public bool SpawnProtection = true;
+		public bool SpawnProtection = false;
 
 		/// <summary>The tile radius around the spawn tile that is protected by the SpawnProtection setting.</summary>
 		[Description("The tile radius around the spawn tile that is protected by the SpawnProtection setting.")]
@@ -127,7 +127,7 @@ namespace TShockAPI.Configuration
 
 		/// <summary>Enable or disable anti-cheat range checks based on distance between the player and their block placements.</summary>
 		[Description("Enable or disable anti-cheat range checks based on distance between the player and their block placements.")]
-		public bool RangeChecks = true;
+		public bool RangeChecks;
 
 		/// <summary>Prevents non-hardcore players from connecting.</summary>
 		[Description("Prevents non-hardcore players from connecting.")]
@@ -163,7 +163,7 @@ namespace TShockAPI.Configuration
 
 		/// <summary>Disables tombstone dropping during death for all players.</summary>
 		[Description("Disables tombstone dropping during death for all players.")]
-		public bool DisableTombstones = true;
+		public bool DisableTombstones;
 
 		/// <summary>
 		/// Disables Skeletron Prime Bombs from spawning, useful for preventing unwanted world destruction on for the worthy seed world.
@@ -201,11 +201,11 @@ namespace TShockAPI.Configuration
 
 		/// <summary>Allows players to break temporary tiles (grass, pots, etc) where they cannot usually build.</summary>
 		[Description("Allows players to break temporary tiles (grass, pots, etc) where they cannot usually build.")]
-		public bool AllowCutTilesAndBreakables = false;
+		public bool AllowCutTilesAndBreakables;
 
 		/// <summary>Allows ice placement even where a user cannot usually build.</summary>
 		[Description("Allows ice placement even where a user cannot usually build.")]
-		public bool AllowIce = false;
+		public bool AllowIce;
 
 		/// <summary>Allows the crimson to spread when a world is in hardmode.</summary>
 		[Description("Allows the crimson to spread when a world is in hardmode.")]
@@ -387,11 +387,11 @@ namespace TShockAPI.Configuration
 
 		/// <summary>Kick clients that don't send their UUID to the server.</summary>
 		[Description("Kick clients that don't send their UUID to the server.")]
-		public bool KickEmptyUUID;
+		public bool KickEmptyUUID = true;
 
 		/// <summary>Disables a player if this number of tiles is painted within 1 second.</summary>
 		[Description("Disables a player if this number of tiles is painted within 1 second.")]
-		public int TilePaintThreshold = 15;
+		public int TilePaintThreshold = 200;
 
 		/// <summary>Whether or not to kick users when they surpass the TilePaint threshold.</summary>
 		[Description("Whether or not to kick users when they surpass the TilePaint threshold.")]
@@ -399,11 +399,11 @@ namespace TShockAPI.Configuration
 
 		/// <summary>The maximum damage a player/NPC can inflict.</summary>
 		[Description("The maximum damage a player/NPC can inflict.")]
-		public int MaxDamage = 1175;
+		public int MaxDamage = 20000;
 
 		/// <summary>The maximum damage a projectile can inflict.</summary>
 		[Description("The maximum damage a projectile can inflict.")]
-		public int MaxProjDamage = 1175;
+		public int MaxProjDamage = 20000;
 
 		/// <summary>Whether or not to kick users when they surpass the MaxDamage threshold.</summary>
 		[Description("Whether or not to kick users when they surpass the MaxDamage threshold.")]
@@ -411,7 +411,7 @@ namespace TShockAPI.Configuration
 
 		/// <summary>Disables a player and reverts their actions if this number of tile kills is exceeded within 1 second.</summary>
 		[Description("Disables a player and reverts their actions if this number of tile kills is exceeded within 1 second.")]
-		public int TileKillThreshold = 60;
+		public int TileKillThreshold = 200;
 
 		/// <summary>Whether or not to kick users when they surpass the TileKill threshold.</summary>
 		[Description("Whether or not to kick users when they surpass the TileKill threshold.")]
@@ -419,7 +419,7 @@ namespace TShockAPI.Configuration
 
 		/// <summary>Disables a player and reverts their actions if this number of tile places is exceeded within 1 second.</summary>
 		[Description("Disables a player and reverts their actions if this number of tile places is exceeded within 1 second.")]
-		public int TilePlaceThreshold = 32;
+		public int TilePlaceThreshold = 200;
 
 		/// <summary>Whether or not to kick users when they surpass the TilePlace threshold.</summary>
 		[Description("Whether or not to kick users when they surpass the TilePlace threshold.")]
@@ -427,7 +427,7 @@ namespace TShockAPI.Configuration
 
 		/// <summary>Disables a player if this number of liquid sets is exceeded within 1 second.</summary>
 		[Description("Disables a player if this number of liquid sets is exceeded within 1 second.")]
-		public int TileLiquidThreshold = 50;
+		public int TileLiquidThreshold = 200;
 
 		/// <summary>Whether or not to kick users when they surpass the TileLiquid threshold.</summary>
 		[Description("Whether or not to kick users when they surpass the TileLiquid threshold.")]
@@ -439,7 +439,7 @@ namespace TShockAPI.Configuration
 
 		/// <summary>Disable a player if this number of projectiles is created within 1 second.</summary>
 		[Description("Disable a player if this number of projectiles is created within 1 second.")]
-		public int ProjectileThreshold = 50;
+		public int ProjectileThreshold = 200;
 
 		/// <summary>Whether or not to kick users when they surpass the Projectile threshold.</summary>
 		[Description("Whether or not to kick users when they surpass the Projectile threshold.")]
@@ -447,7 +447,7 @@ namespace TShockAPI.Configuration
 
 		/// <summary>Disables a player if this number of HealOtherPlayer packets is sent within 1 second.</summary>
 		[Description("Disables a player if this number of HealOtherPlayer packets is sent within 1 second.")]
-		public int HealOtherThreshold = 50;
+		public int HealOtherThreshold = 200;
 
 		/// <summary>Whether or not to kick users when they surpass the HealOther threshold.</summary>
 		[Description("Whether or not to kick users when they surpass the HealOther threshold.")]
@@ -501,11 +501,11 @@ namespace TShockAPI.Configuration
 
 		/// <summary>Whether or not to announce a player's geographic location on join, based on their IP.</summary>
 		[Description("Whether or not to announce a player's geographic location on join, based on their IP.")]
-		public bool EnableGeoIP;
+		public bool EnableGeoIP = true;
 
 		/// <summary>Displays a player's IP on join to users with the log permission.</summary>
 		[Description("Displays a player's IP on join to users with the log permission.")]
-		public bool DisplayIPToAdmins;
+		public bool DisplayIPToAdmins = true;
 
 		/// <summary>Changes in-game chat format: {0} = Group Name, {1} = Group Prefix, {2} = Player Name, {3} = Group Suffix, {4} = Chat Message.</summary>
 		[Description("Changes in-game chat format: {0} = Group Name, {1} = Group Prefix, {2} = Player Name, {3} = Group Suffix, {4} = Chat Message.")]
@@ -517,7 +517,7 @@ namespace TShockAPI.Configuration
 
 		/// <summary>Whether or not to display chat messages above players' heads.</summary>
 		[Description("Whether or not to display chat messages above players' heads.")]
-		public bool EnableChatAboveHeads = false;
+		public bool EnableChatAboveHeads = true;
 
 		/// <summary>The RGB values used for the color of broadcast messages.</summary>
 		[Description("The RGB values used for the color of broadcast messages.\n#.#.# = Red/Blue/Green\nMax value: 255")]

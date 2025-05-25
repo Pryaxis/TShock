@@ -607,6 +607,7 @@ namespace TShockAPI
 			TShock.ItemBans.DataModel.UpdateItemBans();
 			TShock.ProjectileBans.UpdateBans();
 			TShock.TileBans.UpdateBans();
+			TShock.Bans.UpdateBans();
 		}
 
 		/// <summary>

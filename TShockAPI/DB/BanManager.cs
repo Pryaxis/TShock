@@ -82,7 +82,7 @@ namespace TShockAPI.DB
 				throw new Exception(GetString("Could not find a database library (probably Sqlite3.dll)"));
 			}
 
-			EnsureBansCollection();
+			UpdateBans();
 			TryConvertBans();
 
 			OnBanValidate += BanValidateCheck;
@@ -90,14 +90,11 @@ namespace TShockAPI.DB
 		}
 
 		/// <summary>
-		/// Ensures the <see cref="_bans"/> collection is ready to use.
+		/// Updates the <see cref="_bans"/> collection from database.
 		/// </summary>
-		private void EnsureBansCollection()
+		public void UpdateBans()
 		{
-			if (_bans == null)
-			{
-				_bans = RetrieveAllBans().ToDictionary(b => b.TicketNumber);
-			}
+			_bans = RetrieveAllBans().ToDictionary(b => b.TicketNumber);
 		}
 
 		/// <summary>
