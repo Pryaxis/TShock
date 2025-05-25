@@ -15,6 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 #nullable enable
 
 using System;
@@ -197,7 +198,6 @@ public sealed class Whitelist
 	{
 		lock (_fileLock)
 		{
-
 			using StreamWriter sw = _file.AppendText();
 
 			// Case: File does not end with a newline, add one
@@ -264,7 +264,7 @@ public sealed class Whitelist
 				File.Delete(tempFile);
 			}
 
-            return removed;
+			return removed;
 		}
 	}
 }
