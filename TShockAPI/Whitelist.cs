@@ -219,16 +219,16 @@ public sealed class Whitelist
 	{
 		lock (_fileLock)
 		{
-			using StreamWriter sw = _file.AppendText();
-
 			// Case: File does not end with a newline, add one
 			bool needsNewLine;
 
-			using (FileStream fs = _file.OpenRead())
+			using (FileStream fs = _file.Open(FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
 			{
 				fs.Seek(-1, SeekOrigin.End);
-				needsNewLine = fs.Length > 0 && fs.ReadByte() != '\n';
+				needsNewLine = fs.Length > 0 && fs.ReadByte() is not '\n';
 			}
+
+			using StreamWriter sw = _file.AppendText();
 
 			if (needsNewLine)
 			{
