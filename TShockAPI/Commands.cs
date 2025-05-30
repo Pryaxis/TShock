@@ -1744,6 +1744,14 @@ namespace TShockAPI
 		{
 			if (args.Parameters is [{ } ip])
 			{
+				// Warn if IP addr/net is v6
+				if (ip.Contains(':'))
+				{
+					args.Player.SendWarningMessage(GetString(
+						"IPv6 addresses are not supported as of yet by TShock. This rule will have no effect for now. Adding anyways."
+					));
+				}
+
 				if (TShock.Whitelist.AddToWhitelist(ip))
 				{
 					args.Player.SendSuccessMessage(GetString($"Added {ip} to the whitelist."));
@@ -1755,7 +1763,7 @@ namespace TShockAPI
 			}
 			else
 			{
-				args.Player.SendErrorMessage(GetString($"Invalid Whitelist syntax. Refer to {Specifier}whitelist help for details on how to use the {Specifier}whitelist command"));
+				args.Player.SendErrorMessage(GetString($"Invalid Whitelist syntax. Usage: {Specifier}whitelist <ip[/range]>"));
 			}
 		}
 
