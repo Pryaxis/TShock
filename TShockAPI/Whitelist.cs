@@ -96,9 +96,10 @@ public sealed class Whitelist
 		// Remove once TShock supports IPv6.
 		if (ip.AddressFamily is AddressFamily.InterNetworkV6)
 		{
-			TShock.Log.Warn($"IPv6 address '{ip}' is not supported by Terraria. Skipping check.");
-			TShock.Log.Warn("If you somehow managed to get this message, please report it to the TShock team :");
-			TShock.Log.Warn("https://github.com/Pryaxis/TShock/issues");
+			TShock.Log.Warn(GetString($"IPv6 address '{ip}' is not supported by Terraria. Skipping check."));
+			TShock.Log.Warn(GetString("If you somehow managed to get this message, please report it to the TShock team :"));
+			TShock.Log.Warn(GetString("https://github.com/Pryaxis/TShock/issues"));
+
 			return false;
 		}
 
@@ -154,7 +155,7 @@ public sealed class Whitelist
 		{
 			// If we reach here, the line is not a valid IP address or network.
 			// We could throw this, but for now we just log and ignore it.
-			TShock.Log.Warn($"Invalid whitelist entry at line {line}: \"{content.ToString()}\", skipped");
+			TShock.Log.Warn(GetString($"Invalid whitelist entry at line {line}: \"{content.ToString()}\", skipped"));
 		}
 	}
 
