@@ -137,7 +137,7 @@ namespace TShockAPI
 			GetDataHandlers.KillMe += OnKillMe;
 			GetDataHandlers.FishOutNPC += OnFishOutNPC;
 			GetDataHandlers.FoodPlatterTryPlacing += OnFoodPlatterTryPlacing;
-			OTAPI.Hooks.Chest.QuickStack += OnChestOnQuickStack;
+			OTAPI.Hooks.Chest.QuickStack += OnQuickStack;
 
 
 			// The following section is based off Player.PlaceThing_Tiles_PlaceIt and Player.PlaceThing_Tiles_PlaceIt_GetLegacyTileStyle.
@@ -2877,7 +2877,7 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="args"></param>
-		internal void OnChestOnQuickStack(object sender, OTAPI.Hooks.Chest.QuickStackEventArgs args)
+		internal void OnQuickStack(object sender, OTAPI.Hooks.Chest.QuickStackEventArgs args)
 		{
 			var id = args.ChestIndex;
 			var plr = TShock.Players[args.PlayerId];
@@ -2898,13 +2898,6 @@ namespace TShockAPI
 			if (!plr.HasBuildPermission(Main.chest[id].x, Main.chest[id].y) && TShock.Config.Settings.RegionProtectChests)
 			{
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnQuickStack rejected from region protection? from {0}", plr.Name));
-				args.Result = HookResult.Cancel;
-				return;
-			}
-
-			if (!plr.IsInRange(Main.chest[id].x, Main.chest[id].y, 600/16))
-			{
-				TShock.Log.ConsoleDebug(GetString("Bouncer / OnQuickStack rejected from range check from {0}", plr.Name));
 				args.Result = HookResult.Cancel;
 				return;
 			}
