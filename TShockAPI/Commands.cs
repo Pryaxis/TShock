@@ -629,6 +629,24 @@ namespace TShockAPI
 			{
 				HelpText = GetString("Shows the server's rules.")
 			});
+			add(new Command(ShowDeath, "death")
+			{
+				HelpText = GetString("Shows your number of deaths."),
+				AllowServer = false
+			});
+			add(new Command(ShowPVPDeath, "pvpdeath")
+			{
+				HelpText = GetString("Shows your number of PVP deaths."),
+				AllowServer = false
+			});
+			add(new Command(ShowAllDeath, "alldeath")
+			{
+				HelpText = GetString("Shows the number of deaths for all online players."),
+			});
+			add(new Command(ShowAllPVPDeath, "allpvpdeath")
+			{
+				HelpText = GetString("Shows the number of PVP deaths for all online players."),
+			});
 
 			TShockCommands = new ReadOnlyCollection<Command>(tshockCommands);
 		}
@@ -5814,6 +5832,49 @@ namespace TShockAPI
 			args.Player.SendWarningMessage(GetString("Sync'd!"));
 			return;
 		}
+
+		private static void ShowDeath(CommandArgs args)
+		{
+			args.Player.SendErrorMessage(GetString($"*You were slain {args.Player.DeathsPVE} times."));
+		}
+
+		private static void ShowPVPDeath(CommandArgs args)
+		{
+			args.Player.SendErrorMessage(GetString($"*You were slain by other players {args.Player.DeathsPVP} times."));
+		}
+
+		private static void ShowAllDeath(CommandArgs args)
+		{
+			if (TShock.Utils.GetActivePlayerCount() == 0)
+			{
+				args.Player.SendErrorMessage(GetString("There are currently no players online."));
+				return;
+			}
+
+			var deathsRank = TShock.Players
+				.Where(p => p is { Active: true })
+				.OrderByDescending(x => x.DeathsPVE)
+				.Select(x => $"*{x.Name} was slain {x.DeathsPVE} times.");
+
+			args.Player.SendErrorMessage(string.Join('\n',deathsRank));
+		}
+
+		private static void ShowAllPVPDeath(CommandArgs args)
+		{
+			if (TShock.Utils.GetActivePlayerCount() == 0)
+			{
+				args.Player.SendErrorMessage(GetString("There are currently no players online."));
+				return;
+			}
+
+			var deathsRank = TShock.Players
+				.Where(p => p is { Active: true })
+				.OrderByDescending(x => x.DeathsPVP)
+				.Select(x => $"*{x.Name} was slain by other players {x.DeathsPVP} times.");
+
+			args.Player.SendErrorMessage(string.Join('\n',deathsRank));
+		}
+
 
 		#endregion General Commands
 
