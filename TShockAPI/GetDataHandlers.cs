@@ -130,7 +130,6 @@ namespace TShockAPI
 					{ PacketTypes.NumberOfAnglerQuestsCompleted, HandleNumberOfAnglerQuestsCompleted },
 					{ PacketTypes.PlaceObject, HandlePlaceObject },
 					{ PacketTypes.LoadNetModule, HandleLoadNetModule },
-					{ PacketTypes.ForceItemIntoNearestChest, HandleForceItemIntoNearestChest },
 					{ PacketTypes.PlaceTileEntity, HandlePlaceTileEntity },
 					{ PacketTypes.PlaceItemFrame, HandlePlaceItemFrame },
 					{ PacketTypes.UpdateItemDrop, HandleItemDrop },
@@ -1788,30 +1787,6 @@ namespace TShockAPI
 			};
 
 			PlaceObject.Invoke(null, args);
-			return args.Handled;
-		}
-
-		/// <summary>For use in a ForceItemIntoNearestChest event.</summary>
-		public class ForceItemIntoNearestChestEventArgs : GetDataHandledEventArgs
-		{
-			/// <summary>The slot index of the item being attempted to put into a chest.</summary>
-			public short Slot { get; set; }
-
-		}
-
-		/// <summary>Fired when a ForceItemIntoNearestChest event occurs.</summary>
-		public static HandlerList<ForceItemIntoNearestChestEventArgs> ForceItemIntoNearestChest = new HandlerList<ForceItemIntoNearestChestEventArgs>();
-		private static bool OnForceItemIntoNearest(TSPlayer player, MemoryStream data, short slot)
-		{
-
-			var args = new ForceItemIntoNearestChestEventArgs
-			{
-				Player = player,
-				Data = data,
-				Slot = slot
-			};
-
-			ForceItemIntoNearestChest.Invoke(null, args);
 			return args.Handled;
 		}
 
@@ -4106,18 +4081,6 @@ namespace TShockAPI
 			short moduleId = args.Data.ReadInt16();
 
 			if (OnReadNetModule(args.Player, args.Data, (NetModuleType)moduleId))
-			{
-				return true;
-			}
-
-			return false;
-		}
-
-		private static bool HandleForceItemIntoNearestChest(GetDataHandlerArgs args)
-		{
-			var slot  = args.Data.ReadInt16();
-
-			if (OnForceItemIntoNearest(args.Player, args.Data, slot))
 			{
 				return true;
 			}
