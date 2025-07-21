@@ -5854,7 +5854,7 @@ namespace TShockAPI
 			var deathsRank = TShock.Players
 				.Where(p => p is { Active: true })
 				.OrderByDescending(x => x.DeathsPVE)
-				.Select(x => $"*{x.Name} was slain {x.DeathsPVE} times.");
+				.Select(x => GetString($"*{x.Name} was slain {x.DeathsPVE} times."));
 
 			args.Player.SendErrorMessage(string.Join('\n',deathsRank));
 		}
@@ -5870,7 +5870,7 @@ namespace TShockAPI
 			var deathsRank = TShock.Players
 				.Where(p => p is { Active: true })
 				.OrderByDescending(x => x.DeathsPVP)
-				.Select(x => $"*{x.Name} was slain by other players {x.DeathsPVP} times.");
+				.Select(x => GetString($"*{x.Name} was slain by other players {x.DeathsPVP} times."));
 
 			args.Player.SendErrorMessage(string.Join('\n',deathsRank));
 		}
