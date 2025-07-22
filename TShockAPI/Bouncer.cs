@@ -1323,7 +1323,6 @@ namespace TShockAPI
 			// Portal Gun Gate projectiles must meet several validation criteria:
 			// 1. The angle must be within valid discrete directions (45 degree increments)
 			// 2. Must have an active PortalGunBolt projectile associated
-			// 3. The bolt position must match the expected position
 			if (type == ProjectileID.PortalGunGate)
 			{
 			    // Validate the gate angle is one of 8 possible cardinal directions (every 45 degrees)
@@ -1347,15 +1346,7 @@ namespace TShockAPI
 			        return;
 			    }
 
-			    // Validate the bolt position matches where the gate is being placed
-			    var boltProjectile = Main.projectile[boltProjectileData.Index];
-			    if (boltProjectile.position.Equals(args.Position))
-			    {
-				    TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile rejected from portal gate from {0} (position mismatch)", args.Player.Name));
-			        args.Player.RemoveProjectile(ident, owner);
-			        args.Handled = true;
-			        return;
-			    }
+			    boltProjectileData.Killed = true;
 			}
 
 			if (!TShock.Config.Settings.IgnoreProjUpdate && !args.Player.HasPermission(Permissions.ignoreprojectiledetection))
