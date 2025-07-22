@@ -1308,6 +1308,56 @@ namespace TShockAPI
 				return;
 			}
 
+			// If the created projectile is a Portal Gun Bolt but the player isn't holding a Portal Gun,
+			// reject the projectile as this indicates potential cheating.
+			if (type == ProjectileID.PortalGunBolt)
+			{
+			    if (args.Player.SelectedItem.type != ItemID.PortalGun)
+			    {
+				    TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile rejected from portal gun bolt from {0} (not holding portal gun)", args.Player.Name));
+			        args.Player.RemoveProjectile(ident, owner);
+			        args.Handled = true;
+			    }
+			}
+
+			// Portal Gun Gate projectiles must meet several validation criteria:
+			// 1. The angle must be within valid discrete directions (45 degree increments)
+			// 2. Must have an active PortalGunBolt projectile associated
+			// 3. The bolt position must match the expected position
+			if (type == ProjectileID.PortalGunGate)
+			{
+			    // Validate the gate angle is one of 8 possible cardinal directions (every 45 degrees)
+			    var wrappedAngle = MathHelper.WrapAngle(ai[0]);
+			    var discreteDirection = (int)Math.Round(wrappedAngle / (MathF.PI / 4f));
+			    if (discreteDirection is < -3 or > 4)
+			    {
+				    TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile rejected from portal gate from {0} (invalid angle: {1})", args.Player.Name, discreteDirection));
+			        args.Player.RemoveProjectile(ident, owner);
+			        args.Handled = true;
+			        return;
+			    }
+
+			    // Validate we found an active bolt projectile
+			    var boltProjectileData = args.Player.RecentlyCreatedProjectiles.FirstOrDefault(p => Main.projectile[p.Index].type == ProjectileID.PortalGunBolt);
+			    if (boltProjectileData.Type == 0 || boltProjectileData.Killed)
+			    {
+				    TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile rejected from portal gate from {0} (invalid angle: {1})", args.Player.Name, discreteDirection));
+			        args.Player.RemoveProjectile(ident, owner);
+			        args.Handled = true;
+			        return;
+			    }
+
+			    // Validate the bolt position matches where the gate is being placed
+			    var boltProjectile = Main.projectile[boltProjectileData.Index];
+			    if (boltProjectile.position.Equals(args.Position))
+			    {
+				    TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile rejected from portal gate from {0} (position mismatch)", args.Player.Name));
+			        args.Player.RemoveProjectile(ident, owner);
+			        args.Handled = true;
+			        return;
+			    }
+			}
+
 			if (!TShock.Config.Settings.IgnoreProjUpdate && !args.Player.HasPermission(Permissions.ignoreprojectiledetection))
 			{
 				if (type == ProjectileID.BlowupSmokeMoonlord
