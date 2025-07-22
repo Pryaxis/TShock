@@ -1308,18 +1308,6 @@ namespace TShockAPI
 				return;
 			}
 
-			// If the created projectile is a Portal Gun Bolt but the player isn't holding a Portal Gun,
-			// reject the projectile as this indicates potential cheating.
-			if (type == ProjectileID.PortalGunBolt)
-			{
-			    if (args.Player.SelectedItem.type != ItemID.PortalGun)
-			    {
-				    TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile rejected from portal gun bolt from {0} (not holding portal gun)", args.Player.Name));
-			        args.Player.RemoveProjectile(ident, owner);
-			        args.Handled = true;
-			    }
-			}
-
 			// Portal Gun Gate projectiles must meet several validation criteria:
 			// 1. The angle must be within valid discrete directions (45 degree increments)
 			// 2. Must have an active PortalGunBolt projectile associated
