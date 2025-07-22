@@ -1328,7 +1328,7 @@ namespace TShockAPI
 			    var boltProjectileData = args.Player.RecentlyCreatedProjectiles.FirstOrDefault(p => Main.projectile[p.Index].type == ProjectileID.PortalGunBolt);
 			    if (boltProjectileData.Type == 0 || boltProjectileData.Killed)
 			    {
-				    TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile rejected from portal gate from {0} (invalid angle: {1})", args.Player.Name, discreteDirection));
+				    TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile rejected from portal gate from {0} (missing active Portal Gun bolt)", args.Player.Name, discreteDirection));
 			        args.Player.RemoveProjectile(ident, owner);
 			        args.Handled = true;
 			        return;
