@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TShock\n"
-"POT-Creation-Date: 2025-06-15 18:04:23+0000\n"
-"PO-Revision-Date: 2025-06-15 18:04:24+0000\n"
+"POT-Creation-Date: 2025-08-25 16:50:33+0000\n"
+"PO-Revision-Date: 2025-08-25 16:50:34+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -1476,9 +1476,9 @@ msgid ""
 "Arguments: send [player] [warp name], hide [warp name] [Enable(true/false)]."
 msgstr ""
 
+#: ../../TShockAPI/Commands.cs:913
 #: ../../TShockAPI/GetDataHandlers.cs:2673
 #: ../../TShockAPI/GetDataHandlers.cs:3288
-#: ../../TShockAPI/Commands.cs:913
 #, csharp-format
 msgid "Authenticated as {0} successfully."
 msgstr ""
@@ -3793,6 +3793,12 @@ msgstr ""
 msgid "Group {0} has been deleted successfully."
 msgstr ""
 
+#: ../../TShockAPI/DB/GroupManager.cs:568
+#: ../../TShockAPI/DB/GroupManager.cs:591
+#, csharp-format
+msgid "Group {0} has been modified successfully."
+msgstr ""
+
 #: ../../TShockAPI/DB/GroupManager.cs:501
 #, csharp-format
 msgid "Group {0} has been renamed to {1}."
@@ -4034,8 +4040,8 @@ msgstr ""
 msgid "Incorrect setup code. This incident has been logged."
 msgstr ""
 
-#: ../../TShockAPI/DB/ProjectileManager.cs:210
 #: ../../TShockAPI/DB/TileManager.cs:220
+#: ../../TShockAPI/DB/ProjectileManager.cs:210
 #, csharp-format
 msgid "Infinite group parenting ({0})"
 msgstr ""
@@ -5102,9 +5108,9 @@ msgid ""
 "token was not valid."
 msgstr ""
 
-#: ../../TShockAPI/Rest/SecureRest.cs:180
 #: ../../TShockAPI/Rest/RestCommand.cs:95
 #: ../../TShockAPI/Rest/RestCommand.cs:101
+#: ../../TShockAPI/Rest/SecureRest.cs:180
 msgid "Not authorized. The specified API endpoint requires a token."
 msgstr ""
 
@@ -5440,8 +5446,8 @@ msgstr ""
 msgid "Reached projectile threshold"
 msgstr ""
 
-#: ../../TShockAPI/Bouncer.cs:946
 #: ../../TShockAPI/TShock.cs:1114
+#: ../../TShockAPI/Bouncer.cs:946
 msgid "Reached TileKill threshold."
 msgstr ""
 
@@ -7372,8 +7378,8 @@ msgstr ""
 msgid "You do not have permission to modify a Hat Rack in a protected area!"
 msgstr ""
 
-#: ../../TShockAPI/Handlers/DisplayDollItemSyncHandler.cs:21
 #: ../../TShockAPI/Handlers/RequestTileEntityInteractionHandler.cs:28
+#: ../../TShockAPI/Handlers/DisplayDollItemSyncHandler.cs:21
 msgid "You do not have permission to modify a Mannequin in a protected area!"
 msgstr ""
 
