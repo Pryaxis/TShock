@@ -565,7 +565,7 @@ namespace TShockAPI.DB
 			permissions.ForEach(p => group.AddPermission(p));
 
 			if (database.Query("UPDATE GroupList SET Commands=@0 WHERE GroupName=@1", group.Permissions, name) == 1)
-				return "Group " + name + " has been modified successfully.";
+				return GetString($"Group {name} has been modified successfully.");
 
 			// Restore old permissions so DB and internal object are in a consistent state
 			group.Permissions = oldperms;
@@ -588,7 +588,7 @@ namespace TShockAPI.DB
 			permissions.ForEach(p => group.RemovePermission(p));
 
 			if (database.Query("UPDATE GroupList SET Commands=@0 WHERE GroupName=@1", group.Permissions, name) == 1)
-				return "Group " + name + " has been modified successfully.";
+				return GetString($"Group {name} has been modified successfully.");
 
 			// Restore old permissions so DB and internal object are in a consistent state
 			group.Permissions = oldperms;
