@@ -1652,12 +1652,8 @@ namespace TShockAPI
 				return;
 			}
 
-			int length = e.Length - 1;
-			if (length < 0)
-			{
-				length = 0;
-			}
-			using (var data = new MemoryStream(e.Msg.readBuffer, e.Index, e.Length - 1))
+			int length = Math.Max(e.Length - 1, 0);
+			using (var data = new MemoryStream(e.Msg.readBuffer, e.Index, length))
 			{
 				// Exceptions are already handled
 				e.Handled = GetDataHandlers.HandlerGetData(type, player, data);
