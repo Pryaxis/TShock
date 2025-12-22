@@ -1645,8 +1645,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if ((player.State < (int)ConnectionState.Complete || player.Dead) &&
-			    (type != PacketTypes.PlayerUpdate || player.Difficulty != 2 || !player.Dead) &&
+			if ((player.State < (int)ConnectionState.Complete) &&
 			    type > PacketTypes.PlayerSpawn && type != PacketTypes.PlayerHp && type != PacketTypes.PlayerMana &&
 			    type != PacketTypes.PlayerBuff && type != PacketTypes.PasswordSend && type != PacketTypes.ItemDrop &&
 			    type != PacketTypes.ItemOwner && type != PacketTypes.SyncLoadout)
