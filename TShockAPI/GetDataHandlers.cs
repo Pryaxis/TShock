@@ -2925,10 +2925,19 @@ namespace TShockAPI
 				// handle initial connection
 				if (args.Player.State == 3)
 				{
+					//same as TeleportSpawnpoint
+					int x = args.TPlayer.SpawnX;
+					int y = args.TPlayer.SpawnY;
+					if ((x == -1 && y == -1) ||
+					    !Main.tile[x, y - 1].active() || Main.tile[x, y - 1].type != TileID.Beds || !WorldGen.StartRoomCheck(x, y - 1))
+					{
+						x = Main.spawnTileX;
+						y = Main.spawnTileY;
+					}
 					// server saved spawnpoint value
 					args.Player.initialSpawn = true;
-					args.Player.initialServerSpawnX = args.TPlayer.SpawnX;
-					args.Player.initialServerSpawnY = args.TPlayer.SpawnY;
+					args.Player.initialServerSpawnX = x;
+					args.Player.initialServerSpawnY = y;
 
 					// initial client spawn point, do not use this to spawn the player
 					// we only use it to detect if the spawnpoint has changed during this session
