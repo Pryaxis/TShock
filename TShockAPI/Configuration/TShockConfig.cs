@@ -269,7 +269,7 @@ namespace TShockAPI.Configuration
 
 		/// <summary>If players should be instantly respawned upon death when a boss is nearby.</summary>
 		[Description("If players should be instantly respawned upon death when a boss is nearby.")]
-		public bool InstantRespawnBoss = false;
+		public bool InstantRespawnDuringBoss = false;
 
 		/// <summary>Whether or not to announce boss spawning or invasion starts.</summary>
 		[Description("Whether or not to announce boss spawning or invasion starts.")]

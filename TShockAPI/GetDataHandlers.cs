@@ -4378,7 +4378,7 @@ namespace TShockAPI
 			// It may be possible for certain vanilla circumstances to spam death messages as well. Use with caution.
 			if (args.TPlayer.difficulty != 2 && // Not hardcore
 				(args.Player.RespawnTimer == TShock.Config.Settings.RespawnSeconds && TShock.Config.Settings.InstantRespawn ||
-				args.Player.RespawnTimer == TShock.Config.Settings.RespawnBossSeconds && TShock.Config.Settings.InstantRespawnBoss))
+				args.Player.RespawnTimer == TShock.Config.Settings.RespawnBossSeconds && TShock.Config.Settings.InstantRespawnDuringBoss))
 			{
 				args.Player.Dead = false;
 				args.Player.RespawnTimer = 0;
