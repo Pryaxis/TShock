@@ -2734,8 +2734,11 @@ namespace TShockAPI
 
 			if (OnPlayerSpawn(args.Player, args.Data, player, spawnX, spawnY, respawnTimer, numberOfDeathsPVE, numberOfDeathsPVP, context))
 				return true;
-			
-			args.Player.Dead = respawnTimer > 0;
+
+			if (!Main.ServerSideCharacter || context != PlayerSpawnContext.SpawningIntoWorld)
+			{
+				args.Player.Dead = respawnTimer > 0;
+			}
 
 			if (Main.ServerSideCharacter)
 			{
