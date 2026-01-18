@@ -401,6 +401,48 @@ namespace TShockAPI
 		/// <summary>Determines if the player has finished the handshake (Sent all necessary packets for connection, such as Request World Data, Spawn Player, etc). A normal client would do all of this no problem.</summary>
 		public bool FinishedHandshake = false;
 
+		/// <summary>Server-side character's recorded death count.</summary>
+		public int sscDeathsPVE = 0;
+
+		/// <summary>Server-side character's recorded PVP death count.</summary>
+		public int sscDeathsPVP = 0;
+
+		/// <summary>
+		/// Gets the player's total death count.
+		/// If server-side characters are enabled and player doesn't have bypass permission,
+		/// returns the server-stored value; otherwise returns the client's value.
+		/// </summary>
+		public int DeathsPVE
+		{
+			get
+			{
+				if (Main.ServerSideCharacter && !this.HasPermission(Permissions.bypassssc))
+				{
+					return sscDeathsPVE;
+				}
+
+				return this.TPlayer.numberOfDeathsPVE;
+			}
+		}
+
+		/// <summary>
+		/// Gets the player's total PVP death count.
+		/// If server-side characters are enabled and player doesn't have bypass permission,
+		/// returns the server-stored value; otherwise returns the client's value.
+		/// </summary>
+		public int DeathsPVP
+		{
+			get
+			{
+				if (Main.ServerSideCharacter && !this.HasPermission(Permissions.bypassssc))
+				{
+					return sscDeathsPVP;
+				}
+
+				return this.TPlayer.numberOfDeathsPVP;
+			}
+		}
+
 		/// <summary>Checks to see if active throttling is happening on events by Bouncer. Rejects repeated events by malicious clients in a short window.</summary>
 		/// <returns>If the player is currently being throttled by Bouncer, or not.</returns>
 		public bool IsBouncerThrottled()
