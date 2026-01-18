@@ -4330,6 +4330,15 @@ namespace TShockAPI
 			args.Player.Dead = true;
 			args.Player.RespawnTimer = TShock.Config.Settings.RespawnSeconds;
 
+			if (Main.ServerSideCharacter && !args.Player.HasPermission(Permissions.bypassssc))
+			{
+				if (pvp)
+				{
+					args.Player.sscDeathsPVP++;
+				}
+				args.Player.sscDeathsPVE++;
+			}
+
 			foreach (NPC npc in Main.npc)
 			{
 				if (npc.active && (npc.boss || npc.type == 13 || npc.type == 14 || npc.type == 15) &&
