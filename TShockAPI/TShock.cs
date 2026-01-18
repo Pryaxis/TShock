@@ -1765,7 +1765,7 @@ namespace TShockAPI
 		{
 			if (e.MsgId == PacketTypes.PlayerHp)
 			{
-				if (Main.player[(byte)e.number].statLife <= 0)
+				if (Main.player[(byte)e.number].statLife <= 0 && !Players[e.number].Dead)
 				{
 					e.Handled = true;
 					return;

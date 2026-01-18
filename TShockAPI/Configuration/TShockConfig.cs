@@ -263,6 +263,14 @@ namespace TShockAPI.Configuration
 		[Description("The number of seconds a player must wait before being respawned if there is a boss nearby. Valid range: 0 (default) to 30 seconds. Use at your own risk.")]
 		public int RespawnBossSeconds = 0;
 
+		/// <summary>If players should be instantly respawned upon death when a boss is NOT nearby.</summary>
+		[Description("If players should be instantly respawned upon death when a boss is NOT nearby.")]
+		public bool InstantRespawn = false;
+
+		/// <summary>If players should be instantly respawned upon death when a boss is nearby.</summary>
+		[Description("If players should be instantly respawned upon death when a boss is nearby.")]
+		public bool InstantRespawnBoss = false;
+
 		/// <summary>Whether or not to announce boss spawning or invasion starts.</summary>
 		[Description("Whether or not to announce boss spawning or invasion starts.")]
 		public bool AnonymousBossInvasions = true;
