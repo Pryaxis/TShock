@@ -1309,6 +1309,35 @@ namespace TShockAPI
 				return;
 			}
 
+			// Portal Gun Gate projectiles must meet several validation criteria:
+			// 1. The angle must be within valid discrete directions (45 degree increments)
+			// 2. Must have an active PortalGunBolt projectile associated
+			if (type == ProjectileID.PortalGunGate)
+			{
+			    // Validate the gate angle is one of 8 possible cardinal directions (every 45 degrees)
+			    var wrappedAngle = MathHelper.WrapAngle(ai[0]);
+			    var discreteDirection = (int)Math.Round(wrappedAngle / (MathF.PI / 4f));
+			    if (discreteDirection is < -3 or > 4)
+			    {
+				    TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile rejected from portal gate from {0} (invalid angle: {1})", args.Player.Name, discreteDirection));
+			        args.Player.RemoveProjectile(ident, owner);
+			        args.Handled = true;
+			        return;
+			    }
+
+			    // Validate we found an active bolt projectile
+			    var boltProjectileData = args.Player.RecentlyCreatedProjectiles.FirstOrDefault(p => Main.projectile[p.Index].type == ProjectileID.PortalGunBolt);
+			    if (boltProjectileData.Type == 0 || boltProjectileData.Killed)
+			    {
+				    TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile rejected from portal gate from {0} (missing active Portal Gun bolt)", args.Player.Name, discreteDirection));
+			        args.Player.RemoveProjectile(ident, owner);
+			        args.Handled = true;
+			        return;
+			    }
+
+			    boltProjectileData.Killed = true;
+			}
+
 			if (!TShock.Config.Settings.IgnoreProjUpdate && !args.Player.HasPermission(Permissions.ignoreprojectiledetection))
 			{
 				if (type == ProjectileID.BlowupSmokeMoonlord

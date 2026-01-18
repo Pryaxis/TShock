@@ -1263,6 +1263,11 @@ namespace TShockAPI
 		/// <returns>True if allowed, otherwise false</returns>
 		private bool OnCreep(int tileType)
 		{
+			if (WorldGen.generatingWorld)
+			{
+				return true;
+			}
+
 			if (!Config.Settings.AllowCrimsonCreep && (tileType == TileID.Dirt || tileType == TileID.CrimsonGrass
 				|| TileID.Sets.Crimson[tileType]))
 			{
@@ -1456,7 +1461,7 @@ namespace TShockAPI
 
 			if (!tsplr.FinishedHandshake)
 			{
-				tsplr.Kick(GetString("Your client didn't send the right connection information."), true);
+				tsplr.Kick(GetString("Your client didn't send the right connection information."), true, true);
 				args.Handled = true;
 				return;
 			}
