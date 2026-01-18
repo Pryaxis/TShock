@@ -1461,7 +1461,7 @@ namespace TShockAPI
 
 			if (!tsplr.FinishedHandshake)
 			{
-				tsplr.Kick(GetString("Your client didn't send the right connection information."), true);
+				tsplr.Kick(GetString("Your client didn't send the right connection information."), true, true);
 				args.Handled = true;
 				return;
 			}
