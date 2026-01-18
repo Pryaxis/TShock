@@ -19,7 +19,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria.ID;
-using TShockAPI.Net;
 using Terraria;
 using Microsoft.Xna.Framework;
 using TShockAPI.Localization;
@@ -29,6 +28,7 @@ using Terraria.DataStructures;
 using Terraria.Localization;
 using TShockAPI.Models.PlayerUpdate;
 using System.Threading.Tasks;
+using OTAPI;
 using Terraria.GameContent.Tile_Entities;
 
 namespace TShockAPI
@@ -137,6 +137,7 @@ namespace TShockAPI
 			GetDataHandlers.KillMe += OnKillMe;
 			GetDataHandlers.FishOutNPC += OnFishOutNPC;
 			GetDataHandlers.FoodPlatterTryPlacing += OnFoodPlatterTryPlacing;
+			OTAPI.Hooks.Chest.QuickStack += OnQuickStack;
 
 
 			// The following section is based off Player.PlaceThing_Tiles_PlaceIt and Player.PlaceThing_Tiles_PlaceIt_GetLegacyTileStyle.
@@ -2534,7 +2535,7 @@ namespace TShockAPI
 				Main.item[num].playerIndexTheItemIsReservedFor = args.Player.Index;
 				NetMessage.SendData((int)PacketTypes.ItemDrop, args.Player.Index, -1, NetworkText.Empty, num, 1f);
 				NetMessage.SendData((int)PacketTypes.ItemOwner, args.Player.Index, -1, NetworkText.Empty, num);
-				
+
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlaceItemFrame rejected permissions from {0}", args.Player.Name));
 				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, NetworkText.Empty, args.ItemFrame.ID, 0, 1);
 				args.Handled = true;
@@ -2564,8 +2565,8 @@ namespace TShockAPI
 			}
 
 			//Generic bounds checking, though I'm not sure if anyone would willingly hack themselves outside the map?
-			if (args.NewPosition.X > Main.maxTilesX || args.NewPosition.X < 0
-				|| args.NewPosition.Y > Main.maxTilesY || args.NewPosition.Y < 0)
+			if (args.NewPosition.X > Main.maxTilesX *16 || args.NewPosition.X < 0
+				|| args.NewPosition.Y > Main.maxTilesY *16 || args.NewPosition.Y < 0)
 			{
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerPortalTeleport rejected teleport out of bounds from {0}", args.Player.Name));
 				args.Handled = true;
@@ -2896,6 +2897,37 @@ namespace TShockAPI
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnFoodPlatterTryPlacing rejected range checks from {0}", args.Player.Name));
 				args.Player.SendTileSquareCentered(args.TileX, args.TileY, 1);
 				args.Handled = true;
+				return;
+			}
+		}
+
+		/// <summary>
+		/// Called when a player is trying to put an item into chest through Quick Stack.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		internal void OnQuickStack(object sender, OTAPI.Hooks.Chest.QuickStackEventArgs args)
+		{
+			var id = args.ChestIndex;
+			var plr = TShock.Players[args.PlayerId];
+
+			if (plr is not { Active: true })
+			{
+				args.Result = HookResult.Cancel;
+				return;
+			}
+
+			if (plr.IsBeingDisabled())
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnQuickStack rejected from disable from {0}", plr.Name));
+				args.Result = HookResult.Cancel;
+				return;
+			}
+
+			if (!plr.HasBuildPermission(Main.chest[id].x, Main.chest[id].y) && TShock.Config.Settings.RegionProtectChests)
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnQuickStack rejected from region protection? from {0}", plr.Name));
+				args.Result = HookResult.Cancel;
 				return;
 			}
 		}

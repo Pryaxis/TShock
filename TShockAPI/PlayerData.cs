@@ -63,6 +63,8 @@ namespace TShockAPI
 		public int usedAmbrosia;
 		public int unlockedSuperCart;
 		public int enabledSuperCart;
+		public int deathsPVE;
+		public int deathsPVP;
 
 		/// <summary>
 		/// Sets the default values for the inventory.
@@ -152,6 +154,8 @@ namespace TShockAPI
 			this.usedAmbrosia = player.TPlayer.usedAmbrosia ? 1 : 0;
 			this.unlockedSuperCart = player.TPlayer.unlockedSuperCart ? 1 : 0;
 			this.enabledSuperCart = player.TPlayer.enabledSuperCart ? 1 : 0;
+			this.deathsPVE = player.TPlayer.numberOfDeathsPVE;
+			this.deathsPVP = player.TPlayer.numberOfDeathsPVP;
 
 			Item[] inventory = player.TPlayer.inventory;
 			Item[] armor = player.TPlayer.armor;
@@ -293,6 +297,8 @@ namespace TShockAPI
 			player.TPlayer.usedAmbrosia = this.usedAmbrosia == 1;
 			player.TPlayer.unlockedSuperCart = this.unlockedSuperCart == 1;
 			player.TPlayer.enabledSuperCart = this.enabledSuperCart == 1;
+			player.sscDeathsPVE = this.deathsPVE;
+			player.sscDeathsPVP = this.deathsPVP;
 
 			if (extraSlot != null)
 				player.TPlayer.extraAccessory = extraSlot.Value == 1 ? true : false;
