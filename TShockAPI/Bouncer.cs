@@ -2564,8 +2564,8 @@ namespace TShockAPI
 			}
 
 			//Generic bounds checking, though I'm not sure if anyone would willingly hack themselves outside the map?
-			if (args.NewPosition.X > Main.maxTilesX || args.NewPosition.X < 0
-				|| args.NewPosition.Y > Main.maxTilesY || args.NewPosition.Y < 0)
+			if (args.NewPosition.X > Main.maxTilesX *16 || args.NewPosition.X < 0
+				|| args.NewPosition.Y > Main.maxTilesY *16 || args.NewPosition.Y < 0)
 			{
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerPortalTeleport rejected teleport out of bounds from {0}", args.Player.Name));
 				args.Handled = true;
