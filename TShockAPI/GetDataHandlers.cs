@@ -4329,6 +4329,7 @@ namespace TShockAPI
 
 			args.Player.Dead = true;
 			args.Player.RespawnTimer = TShock.Config.Settings.RespawnSeconds;
+			bool instantRespawn = TShock.Config.Settings.InstantRespawn;
 
 			foreach (NPC npc in Main.npc)
 			{
@@ -4336,6 +4337,7 @@ namespace TShockAPI
 					Math.Abs(args.TPlayer.Center.X - npc.Center.X) + Math.Abs(args.TPlayer.Center.Y - npc.Center.Y) < 4000f)
 				{
 					args.Player.RespawnTimer = TShock.Config.Settings.RespawnBossSeconds;
+					instantRespawn = TShock.Config.Settings.InstantRespawnDuringBoss;
 					break;
 				}
 			}
@@ -4376,14 +4378,12 @@ namespace TShockAPI
 
 			// Slight warning: Instant respawn allows for malicious clients to spam death messages.
 			// It may be possible for certain vanilla circumstances to spam death messages as well. Use with caution.
-			if (args.TPlayer.difficulty != 2 && // Not hardcore
-				(args.Player.RespawnTimer == TShock.Config.Settings.RespawnSeconds && TShock.Config.Settings.InstantRespawn ||
-				args.Player.RespawnTimer == TShock.Config.Settings.RespawnBossSeconds && TShock.Config.Settings.InstantRespawnDuringBoss))
+			if (args.TPlayer.difficulty != 2 && instantRespawn) // Not in hardcore
 			{
 				args.Player.Dead = false;
 				args.Player.RespawnTimer = 0;
 				args.Player.Spawn(PlayerSpawnContext.ReviveFromDeath);
-				args.TPlayer.Spawn(PlayerSpawnContext.ReviveFromDeath); // Slight server desync if we don't
+				args.TPlayer.Spawn(PlayerSpawnContext.ReviveFromDeath); // Slight server desync if we don't do this, for some reason. Re-evaluate necessity.
 				return false;
 			}
 
