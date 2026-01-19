@@ -1488,6 +1488,22 @@ namespace TShockAPI
 		}
 
 		/// <summary>
+		/// Broadcasts the player's death message and drops a tombstone if <see cref="Configuration.TShockSettings.DisableTombstones"/> is disabled.
+		/// </summary>
+		/// <param name="reason"></param>
+		/// <param name="damage"></param>
+		/// <param name="direction"></param>
+		public void FakeDeath(PlayerDeathReason reason, int damage, int direction)
+		{
+			NetworkText nT = reason.GetDeathText(Name);
+			Terraria.Chat.ChatHelper.BroadcastChatMessage(nT, new Color(225, 25, 25));
+
+			if (!TShock.Config.Settings.DisableTombstones)
+				TPlayer.DropTombstone(Terraria.Utils.CoinsCount(out bool _, TPlayer.inventory), nT, direction);
+
+		}
+
+		/// <summary>
 		/// Spawns the player at the given coordinates.
 		/// </summary>
 		/// <param name="tilex">The X coordinate.</param>

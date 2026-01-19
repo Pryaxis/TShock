@@ -4382,10 +4382,11 @@ namespace TShockAPI
 			{
 				args.Player.Dead = false;
 				args.Player.RespawnTimer = 0;
-				args.Player.TPlayer.KillMe(playerDeathReason, dmg, direction, pvp); // Simulate the death & respawn, causes slight server desync if we don't.
-				args.Player.TPlayer.Spawn(PlayerSpawnContext.ReviveFromDeath);
 
-				// Handled to prevent desync
+				// Fake the player's death. Doing otherwise will cause minor desyncs.
+				args.Player.FakeDeath(playerDeathReason, dmg, direction);
+				args.Player.Spawn(PlayerSpawnContext.ReviveFromDeath);
+
 				return true;
 			}
 
