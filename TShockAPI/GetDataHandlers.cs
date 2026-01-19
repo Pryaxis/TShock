@@ -4384,7 +4384,7 @@ namespace TShockAPI
 				args.Player.RespawnTimer = 0;
 
 				// Fake the player's death. Not doing so will cause minor desyncs.
-				args.Player.FakeDeath(playerDeathReason, dmg, direction);
+				args.Player.FakeDeath(playerDeathReason, dmg, direction, pvp);
 				args.Player.Spawn(PlayerSpawnContext.ReviveFromDeath);
 
 				// Handled to prevent vanilla behavior

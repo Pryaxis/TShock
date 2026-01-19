@@ -1490,11 +1490,15 @@ namespace TShockAPI
 		/// <summary>
 		/// Broadcasts the player's death message and drops a tombstone if <see cref="Configuration.TShockSettings.DisableTombstones"/> is disabled.
 		/// </summary>
-		/// <param name="reason"></param>
-		/// <param name="damage"></param>
-		/// <param name="direction"></param>
-		public void FakeDeath(PlayerDeathReason reason, int damage, int direction)
+		/// <param name="reason">The reason for dying/</param>
+		/// <param name="damage">The amount of damage recieved</param>
+		/// <param name="direction">The direction the damage is from/</param>
+		/// <param name="pvp">If the death occured from a PvP action.</param>
+		public void FakeDeath(PlayerDeathReason reason, int damage, int direction, bool pvp = false)
 		{
+			// Send their death to other clients, but not to them
+			NetMessage.SendPlayerDeath(Index, reason, damage, direction, pvp, -1, Index);
+
 			NetworkText nT = reason.GetDeathText(Name);
 			Terraria.Chat.ChatHelper.BroadcastChatMessage(nT, new Color(225, 25, 25));
 
