@@ -2725,10 +2725,10 @@ namespace TShockAPI
 
 			if (args.Player.Dead && args.Player.RespawnTimer > 0)
 			{
-				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleSpawn rejected dead player spawn request {0}", args.Player.Name));
 				// Prevent fast-spawn.
 				if (respawnTimer <= 0 && Main.ServerSideCharacter)
 				{
+					TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleSpawn rejected dead player spawn request {0}", args.Player.Name));
 					args.Player.SyncRespawnTimer();
 				}
 				return true;
@@ -4382,9 +4382,11 @@ namespace TShockAPI
 			{
 				args.Player.Dead = false;
 				args.Player.RespawnTimer = 0;
-				args.Player.Spawn(PlayerSpawnContext.ReviveFromDeath);
-				args.TPlayer.Spawn(PlayerSpawnContext.ReviveFromDeath); // Slight server desync if we don't do this, for some reason. Re-evaluate necessity.
-				return false;
+				args.Player.TPlayer.KillMe(playerDeathReason, dmg, direction, pvp); // Simulate the death & respawn, causes slight server desync if we don't.
+				args.Player.TPlayer.Spawn(PlayerSpawnContext.ReviveFromDeath);
+
+				// Handled to prevent desync
+				return true;
 			}
 
 			// We can sync the respawn timer in SSC. Otherwise the client refuses the HP packet, which is necessary to sync it properly.
