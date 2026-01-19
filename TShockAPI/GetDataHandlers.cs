@@ -4383,10 +4383,11 @@ namespace TShockAPI
 				args.Player.Dead = false;
 				args.Player.RespawnTimer = 0;
 
-				// Fake the player's death. Doing otherwise will cause minor desyncs.
+				// Fake the player's death. Not doing so will cause minor desyncs.
 				args.Player.FakeDeath(playerDeathReason, dmg, direction);
 				args.Player.Spawn(PlayerSpawnContext.ReviveFromDeath);
 
+				// Handled to prevent vanilla behavior
 				return true;
 			}
 
