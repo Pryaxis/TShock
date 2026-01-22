@@ -1466,9 +1466,11 @@ namespace TShockAPI
 				return;
 			}
 
-			if (args.Text.Length > 500)
+			var maxLength = Math.Clamp(Config.Settings.MaximumChatMessageLength, 256, 2048);
+			if (args.Text.Length > maxLength)
 			{
-				tsplr.Kick(GetString("Crash attempt via long chat packet."), true);
+				Log.ConsoleDebug(GetString("TShock / OnChat rejected due to length of {0}/{1} from {2}", args.Text.Length, maxLength, tsplr.Name));
+				tsplr.SendErrorMessage(GetString("Your chat message exceeds the maximum length of {1} characters. ({0}/{1}).", args.Text.Length, maxLength));
 				args.Handled = true;
 				return;
 			}

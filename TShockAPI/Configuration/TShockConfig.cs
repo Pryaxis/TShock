@@ -243,6 +243,18 @@ namespace TShockAPI.Configuration
 		[Description("Prevents players from placing tiles with an invalid style.")]
 		public bool PreventInvalidPlaceStyle = true;
 
+		/// <summary>Prevents players from placing tiles, walls, or wiring that don't match what their held item places.</summary>
+		[Description("Prevents players from placing tiles, walls, or wiring that don't match what their held item places.")]
+		public bool PreventMismatchedPlace = true;
+
+		/// <summary>Prevents players from breaking tiles, walls, or wiring that their held item is unable to break.</summary>
+		[Description("Prevents players from breaking tiles, walls, or wiring that their held item is unable to break.")]
+		public bool PreventInvalidBreaking = true;
+
+		/// <summary>Allows placement of the Fake_NewChest items.</summary>
+		[Description("Allows placement of the Fake_NewChest items.")]
+		public bool AllowFakeNewChest = false;
+
 		/// <summary>Forces Christmas-only events to occur all year.</summary>
 		[Description("Forces Christmas-only events to occur all year.")]
 		public bool ForceXmas = false;
@@ -375,6 +387,10 @@ namespace TShockAPI.Configuration
 		/// <summary>The minimum password length for new user accounts. Can never be lower than 4.</summary>
 		[Description("The minimum password length for new user accounts. Can never be lower than 4.")]
 		public int MinimumPasswordLength = 4;
+
+		/// <summary>The maximum allowed length for chat messages. Valid range: 256 characters to 2048 characters.</summary>
+		[Description("The maximum allowed length for chat messages. Valid range: 256 characters to 2048 characters.")]
+		public int MaximumChatMessageLength = 500;
 
 		/// <summary>Determines the BCrypt work factor to use. If increased, all passwords will be upgraded to new work-factor on verify.
 		/// The number of computational rounds is 2^n. Increase with caution. Range: 5-31.</summary>
