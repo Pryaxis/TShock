@@ -3011,19 +3011,11 @@ namespace TShockAPI
 			{ BuffID.Daybreak, 300 },               // BuffID: 189 Solar Eruption Item ID: 3473, Daybreak Item ID: 3543
 			{ BuffID.BetsysCurse, 600 },            // BuffID: 203
 			{ BuffID.Oiled, 540 },                  // BuffID: 204
-			{ BuffID.BlandWhipEnemyDebuff, 240  },  // BuffID: 307
-			{ BuffID.SwordWhipNPCDebuff, 240  },    // BuffID: 309
 			{ BuffID.ScytheWhipEnemyDebuff, 240  }, // BuffID: 310
-			{ BuffID.FlameWhipEnemyDebuff, 240  },  // BuffID: 313
-			{ BuffID.ThornWhipNPCDebuff, 240  },    // BuffID: 315
-			{ BuffID.RainbowWhipNPCDebuff, 240  },  // BuffID: 316
-			{ BuffID.MaceWhipNPCDebuff, 240  },     // BuffID: 319
 			{ BuffID.GelBalloonBuff, 1800  },       // BuffID: 320
 			{ BuffID.OnFire3, 1200 },               // BuffID: 323
 			{ BuffID.Frostburn2, 1200 },            // BuffID: 324
-			{ BuffID.BoneWhipNPCDebuff, 240 },      // BuffID: 326
 			{ BuffID.TentacleSpike, 540 },          // BuffID: 337
-			{ BuffID.CoolWhipNPCDebuff, 240 },      // BuffID: 340
 			{ BuffID.BloodButcherer, 540 },         // BuffID: 344
 			{ BuffID.Shimmer, 100 },		        // BuffID: 353
 		};
