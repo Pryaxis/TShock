@@ -5919,7 +5919,7 @@ namespace TShockAPI
 
 							if (Main.item[i].active && dX * dX + dY * dY <= radius * radius * 256f)
 							{
-								Main.item[i].active = false;
+								Main.item[i].TurnToAir();
 								everyone.SendData(PacketTypes.ItemDrop, "", i);
 								cleared++;
 							}
