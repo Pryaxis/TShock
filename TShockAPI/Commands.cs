@@ -1265,7 +1265,7 @@ namespace TShockAPI
 			args.Player.SendInfoMessage(GetString($"Name: {(TShock.Config.Settings.UseServerName ? TShock.Config.Settings.ServerName : Main.worldName)}"));
 			args.Player.SendInfoMessage(GetString("Size: {0}x{1}", Main.maxTilesX, Main.maxTilesY));
 			args.Player.SendInfoMessage(GetString($"ID: {Main.worldID}"));
-			args.Player.SendInfoMessage(GetString($"Seed: {WorldGen.currentWorldSeed}"));
+			args.Player.SendInfoMessage(GetString($"Seed: {Main.ActiveWorldFileData.Seed}"));
 			args.Player.SendInfoMessage(GetString($"Mode: {Main.GameMode}"));
 			args.Player.SendInfoMessage(GetString($"Path: {Main.worldPathName}"));
 		}
