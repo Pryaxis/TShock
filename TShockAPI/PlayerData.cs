@@ -333,7 +333,7 @@ namespace TShockAPI
 					//0-58
 					player.TPlayer.inventory[i].netDefaults(this.inventory[i].NetId);
 
-					if (player.TPlayer.inventory[i].netID != 0)
+					if (player.TPlayer.inventory[i].type != 0)
 					{
 						player.TPlayer.inventory[i].stack = this.inventory[i].Stack;
 						player.TPlayer.inventory[i].prefix = this.inventory[i].PrefixId;

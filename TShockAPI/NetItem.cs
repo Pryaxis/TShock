@@ -168,7 +168,7 @@ namespace TShockAPI
 		/// <param name="item">Item in the game.</param>
 		public NetItem(Item item)
 		{
-			_netId = item.netID;
+			_netId = item.type;
 			_stack = item.stack;
 			_prefixId = item.prefix;
 		}
@@ -229,7 +229,7 @@ namespace TShockAPI
 		{
 			return item == null
 				? new NetItem()
-				: new NetItem(item.netID, item.stack, item.prefix);
+				: new NetItem(item.type, item.stack, item.prefix);
 		}
 	}
 }
