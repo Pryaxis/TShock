@@ -1759,7 +1759,7 @@ namespace TShockAPI
 		private Item GiveItemDirectly_FillIntoOccupiedSlot(Item item, int slot)
 		{
 			var inv = this.TPlayer.inventory;
-			if (inv[slot].type <= 0 || inv[slot].stack >= inv[slot].maxStack || !item.IsTheSameAs(inv[slot]))
+			if (inv[slot].type <= 0 || inv[slot].stack >= inv[slot].maxStack || item.type != inv[slot].type)
 				return item;
 
 			if (item.stack + inv[slot].stack <= inv[slot].maxStack)
