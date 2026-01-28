@@ -708,7 +708,7 @@ namespace TShockAPI
 
 			NetMessage.SendData(39, player.Index, -1, NetworkText.Empty, 400);
 
-			if (Main.GameModeInfo.IsJourneyMode)
+			if (Main.GameMode == GameModeID.Creative)
 			{
 				var sacrificedItems = TShock.ResearchDatastore.GetSacrificedItems();
 				for(int i = 0; i < ItemID.Count; i++)
