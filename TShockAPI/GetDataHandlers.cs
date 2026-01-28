@@ -2511,12 +2511,15 @@ namespace TShockAPI
 			byte playerid = args.Data.ReadInt8();
 			// 0-3 male; 4-7 female
 			int skinVariant = args.Data.ReadByte();
+			// 1.4.5: new voice fields
+			byte voiceVariant = args.Data.ReadInt8();
+			float voicePitchOffset = args.Data.ReadSingle();
 			var hair = args.Data.ReadInt8();
 			string name = args.Data.ReadString();
 			byte hairDye = args.Data.ReadInt8();
 
-			BitsByte hideVisual = args.Data.ReadInt8();
-			BitsByte hideVisual2 = args.Data.ReadInt8();
+			// 1.4.5: hideVisibleAccessory is now a ushort instead of two BitsByte
+			ushort hideVisualFlags = args.Data.ReadUInt16();
 			BitsByte hideMisc = args.Data.ReadInt8();
 
 			Color hairColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
@@ -2591,14 +2594,9 @@ namespace TShockAPI
 				args.Player.TPlayer.shirtColor = shirtColor;
 				args.Player.TPlayer.underShirtColor = underShirtColor;
 				args.Player.TPlayer.shoeColor = shoeColor;
-				//@Olink: If you need to change bool[10], please make sure you also update the for loops below to account for it.
-				//There are two arrays from terraria that we only have a single array for.  You will need to make sure that you are looking
-				//at the correct terraria array (hideVisual or hideVisual2).
-				args.Player.TPlayer.hideVisibleAccessory = new bool[10];
-				for (int i = 0; i < 8; i++)
-					args.Player.TPlayer.hideVisibleAccessory[i] = hideVisual[i];
-				for (int i = 0; i < 2; i++)
-					args.Player.TPlayer.hideVisibleAccessory[i + 8] = hideVisual2[i];
+				// 1.4.5: hideVisibleAccessory is now read from a ushort
+				for (int i = 0; i < args.Player.TPlayer.hideVisibleAccessory.Length; i++)
+					args.Player.TPlayer.hideVisibleAccessory[i] = (hideVisualFlags & (1 << i)) != 0;
 				args.Player.TPlayer.hideMisc = hideMisc;
 				args.Player.TPlayer.extraAccessory = extraSlot;
 				args.Player.TPlayer.UsingBiomeTorches = usingBiomeTorches;
