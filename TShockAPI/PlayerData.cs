@@ -719,8 +719,11 @@ namespace TShockAPI
 						amount = sacrificedItems[i];
 					}
 
+					// TODO: FIX THIS (1.4.4.9, 1.4.5.0, UPDATE, WIP)
+					/*
 					var response = NetCreativeUnlocksModule.SerializeItemSacrifice(i, amount);
 					NetManager.Instance.SendToClient(response, player.Index);
+					*/
 				}
 			}
 		}
