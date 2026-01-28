@@ -165,7 +165,12 @@ namespace TShockAPI
 						var usingBiomeTorches = player.UsingBiomeTorches;
 						player.UsingBiomeTorches = true;
 						// BiomeTorchPlaceStyle returns the place style of the player's current biome's biome torch
-						var biomeTorchPlaceStyle = player.BiomeTorchPlaceStyle(actualItemPlaceStyle);
+						int biomeTorchPlaceStyle = actualItemPlaceStyle;
+						{
+							// Prevent modification of original variable because it is passed by reference
+							var placeStyle = actualItemPlaceStyle;
+							player.BiomeTorchPlaceStyle(ref placeStyle, ref biomeTorchPlaceStyle);
+						}
 						// Reset UsingBiomeTorches value
 						player.UsingBiomeTorches = usingBiomeTorches;
 
@@ -2404,8 +2409,20 @@ namespace TShockAPI
 
 				if (args.Player.SelectedItem.placeStyle != style)
 				{
-					var validTorch = args.Player.SelectedItem.createTile == TileID.Torches && args.Player.TPlayer.BiomeTorchPlaceStyle(args.Player.SelectedItem.placeStyle) == style;
-					var validCampfire = args.Player.SelectedItem.createTile == TileID.Campfire && args.Player.TPlayer.BiomeCampfirePlaceStyle(args.Player.SelectedItem.placeStyle) == style;
+					int biomeTorchPlaceStyle = args.Player.SelectedItem.placeStyle;
+					{
+						// Prevent modification of original variable because it is passed by reference
+						int typeCopy = biomeTorchPlaceStyle;
+						args.Player.TPlayer.BiomeTorchPlaceStyle(ref typeCopy, ref biomeTorchPlaceStyle);
+					}
+					int biomeCampfirePlaceStyle = args.Player.SelectedItem.placeStyle;
+					{
+						// Prevent modification of original variable because it is passed by reference
+						int typeCopy = biomeCampfirePlaceStyle;
+						args.Player.TPlayer.BiomeCampfirePlaceStyle(ref typeCopy, ref biomeCampfirePlaceStyle);
+					}
+					var validTorch = args.Player.SelectedItem.createTile == TileID.Torches && biomeTorchPlaceStyle == style;
+					var validCampfire = args.Player.SelectedItem.createTile == TileID.Campfire && biomeCampfirePlaceStyle == style;
 					if (!args.Player.TPlayer.unlockedBiomeTorches || (!validTorch && !validCampfire))
 					{
 						TShock.Log.ConsoleError(GetString("Bouncer / OnPlaceObject rejected object placement with invalid style {1} (expected {2}) from {0}", args.Player.Name, style, args.Player.SelectedItem.placeStyle));
