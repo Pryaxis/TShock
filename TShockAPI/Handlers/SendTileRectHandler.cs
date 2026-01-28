@@ -474,8 +474,8 @@ namespace TShockAPI.Handlers
 			{
 				TShock.Log.ConsoleDebug(GetString($"Bouncer / SendTileRect reimplemented from {args.Player.Name}"));
 
-				// send correcting data
-				args.Player.SendTileRect(args.TileX, args.TileY, args.Width, args.Length);
+				// send to all players and tile frame
+				FrameAndSyncRect(rect);
 				return;
 			}
 
@@ -494,8 +494,8 @@ namespace TShockAPI.Handlers
 			{
 				TShock.Log.ConsoleDebug(GetString($"Bouncer / SendTileRect reimplemented from {args.Player.Name}"));
 
-				// send correcting data
-				args.Player.SendTileRect(args.TileX, args.TileY, args.Width, args.Length);
+				// send to all players and tile frame
+				FrameAndSyncRect(rect);
 				return;
 			}
 
@@ -510,8 +510,11 @@ namespace TShockAPI.Handlers
 					// send correcting data
 					if (result == TileRectMatch.MatchResult.RejectChanges)
 						args.Player.SendTileRect(args.TileX, args.TileY, args.Width, args.Length);
+
+					// send to all players and tile frame
 					if (result == TileRectMatch.MatchResult.BroadcastChanges)
-						TSPlayer.All.SendTileRect(args.TileX, args.TileY, args.Width, args.Length);
+						FrameAndSyncRect(rect);
+
 					return;
 				}
 			}
@@ -521,8 +524,8 @@ namespace TShockAPI.Handlers
 			{
 				TShock.Log.ConsoleDebug(GetString($"Bouncer / SendTileRect reimplemented from {args.Player.Name}"));
 
-				// send correcting data
-				args.Player.SendTileRect(args.TileX, args.TileY, args.Width, args.Length);
+				// send to all players and tile frame
+				FrameAndSyncRect(rect);
 				return;
 			}
 
@@ -853,6 +856,16 @@ namespace TShockAPI.Handlers
 			}
 
 			return false;
+		}
+
+		/// <summary>
+		/// Calls <see cref="WorldGen.RangeFrame(int, int, int, int)"/> and syncs the tile rect to all clients, follwoing vanilla behavior.
+		/// </summary>
+		/// <param name="rect"></param>
+		private static void FrameAndSyncRect(TileRect rect)
+		{
+			WorldGen.RangeFrame(rect.X, rect.Y, rect.X + rect.Width, rect.Y + rect.Height);
+			TSPlayer.All.SendTileRect((short)rect.X, (short)rect.Y, (byte)rect.Width, (byte)rect.Height);
 		}
 	}
 

@@ -24,6 +24,15 @@ namespace TShockAPI.Handlers
 				args.Handled = true;
 				return;
 			}
+
+			if (args.Player.IsBeingDisabled() || args.Player.IsBouncerThrottled()
+				|| !args.Player.HasBuildPermission(args.TileX, args.TileY) || !args.Player.IsInRange(args.TileX, args.TileY))
+			{
+				// Reject silently without logging. This packet is sent when TileEdit is sent, no need to double-log.
+				// It's not possible to send correcting data for this packet.
+				args.Handled = true;
+				return;
+			}
 		}
 	}
 }
