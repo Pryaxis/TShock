@@ -123,10 +123,6 @@ namespace TShockAPI.Sockets
 			}
 		}
 
-		void ISocket.SendQueuedPackets()
-		{
-		}
-
 		void ISocket.AsyncSend(byte[] data, int offset, int size, SocketSendCallback callback, object state)
 		{
 			byte[] array = LegacyNetBufferPool.RequestBuffer(data, offset, size);

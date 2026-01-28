@@ -1,7 +1,9 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.IO.Streams;
 using Terraria;
 using Terraria.GameContent.NetModules;
+using Terraria.ID;
 using Terraria.Net;
 
 namespace TShockAPI.Handlers.NetModules
@@ -12,9 +14,18 @@ namespace TShockAPI.Handlers.NetModules
 	public class CreativeUnlocksHandler : INetModuleHandler
 	{
 		/// <summary>
-		/// An unknown field. If this does not have a value of '0' the packet should be rejected.
+		/// This field used to always be 0 in 1.4.4.9. Starting 1.4.5, this field now contains the ID of the player researching/sacrificing the item.
 		/// </summary>
-		public byte UnknownField { get; set; }
+		[Obsolete($"Use {nameof(PlayerId)} instead. This field used to always be 0 in 1.4.4.9. Starting 1.4.5, this field now contains the ID of the player researching/sacrificing the item.")]
+		public byte UnknownField
+		{
+			get => PlayerId;
+			set => PlayerId = value;
+		}
+		/// <summary>
+		/// ID of the player researching/sacrificing the item.
+		/// </summary>
+		public byte PlayerId { get; set; }
 		/// <summary>
 		/// ID of the item being sacrificed
 		/// </summary>
@@ -30,15 +41,9 @@ namespace TShockAPI.Handlers.NetModules
 		/// <param name="data"></param>
 		public void Deserialize(MemoryStream data)
 		{
-			// For whatever reason Terraria writes '0' to the stream at the beginning of this packet.
-			// If this value is not 0 then its been crafted by a non-vanilla client.
-			// We don't actually know why the 0 is written, so we're just going to call this UnknownField for now
-			UnknownField = data.ReadInt8();
-			if (UnknownField == 0)
-			{
-				ItemId = data.ReadUInt16();
-				Amount = data.ReadUInt16();
-			}
+			PlayerId = data.ReadInt8();
+			ItemId = data.ReadUInt16();
+			Amount = data.ReadUInt16();
 		}
 
 		/// <summary>
@@ -49,20 +54,10 @@ namespace TShockAPI.Handlers.NetModules
 		/// <param name="rejectPacket"></param>
 		public void HandlePacket(TSPlayer player, out bool rejectPacket)
 		{
-			if (!Main.GameModeInfo.IsJourneyMode)
+			if (Main.GameMode != GameModeID.Creative)
 			{
 				TShock.Log.ConsoleDebug(
 					GetString($"NetModuleHandler received attempt to unlock sacrifice while not in journey mode from {player.Name}")
-				);
-
-				rejectPacket = true;
-				return;
-			}
-
-			if (UnknownField != 0)
-			{
-				TShock.Log.ConsoleDebug(
-					GetString($"CreativeUnlocksHandler received non-vanilla unlock request. Random field value: {UnknownField} but should be 0 from {player.Name}")
 				);
 
 				rejectPacket = true;
@@ -76,12 +71,31 @@ namespace TShockAPI.Handlers.NetModules
 				return;
 			}
 
+#if TRUE
+			// NOTE: this is a temporary solution to get TShock to build
+			/* Given that the NetCreativeUnlocksModule has been removed in 1.4.5.0,
+			 * TShock can no longer directly set the research progress of items. Therefore,
+			 * the following codepath does not function at all.
+			 */
+			/* NetCreativeUnlocksPlayerReportModule can be used in place of NetCreativeUnlocksModule,
+			 * however, it is plagued with two issues.
+			 * 1. The client will only accept the change if it is in a team (not white), and
+			 *    the player with PlayerId is in the same team as them
+			 * 2. The vanilla handling of NetCreativeUnlocksPlayerReportModule does not broadcast the
+			 *    packet back to the sender, and the sender does not update their research progress
+			 *    if SSC is on unless it receives a response from the server. Even if no. 1 were not true,
+			 *    this bug causes researching items to break when SSC is on.
+			 */
+			rejectPacket = true;
+			return;
+#else
 			var totalSacrificed = TShock.ResearchDatastore.SacrificeItem(ItemId, Amount, player);
 
 			var response = NetCreativeUnlocksModule.SerializeItemSacrifice(ItemId, totalSacrificed);
 			NetManager.Instance.Broadcast(response);
 
 			rejectPacket = false;
+#endif
 		}
 	}
 }

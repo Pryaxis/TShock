@@ -165,7 +165,12 @@ namespace TShockAPI
 						var usingBiomeTorches = player.UsingBiomeTorches;
 						player.UsingBiomeTorches = true;
 						// BiomeTorchPlaceStyle returns the place style of the player's current biome's biome torch
-						var biomeTorchPlaceStyle = player.BiomeTorchPlaceStyle(actualItemPlaceStyle);
+						int biomeTorchPlaceStyle = actualItemPlaceStyle;
+						{
+							// Prevent modification of original variable because it is passed by reference
+							var placeStyle = actualItemPlaceStyle;
+							player.BiomeTorchPlaceStyle(ref placeStyle, ref biomeTorchPlaceStyle);
+						}
 						// Reset UsingBiomeTorches value
 						player.UsingBiomeTorches = usingBiomeTorches;
 
@@ -720,7 +725,7 @@ namespace TShockAPI
 				if (action == EditAction.KillTile && !Main.tileCut[tile.type] && !breakableTiles.Contains(tile.type) && args.Player.RecentFuse == 0)
 				{
 					// If the tile is an axe tile and they aren't selecting an axe, they're hacking.
-					if (Main.tileAxe[tile.type] && ((args.Player.TPlayer.mount.Type != MountID.Drill && selectedItem.axe == 0) && !ItemID.Sets.Explosives[selectedItem.netID]))
+					if (Main.tileAxe[tile.type] && ((args.Player.TPlayer.mount.Type != MountID.Drill && selectedItem.axe == 0) && !ItemID.Sets.Explosives[selectedItem.type]))
 					{
 						TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected from (axe) {0} {1} {2}", args.Player.Name, action, editData));
 						args.Player.SendTileSquareCentered(tileX, tileY, 4);
@@ -728,7 +733,7 @@ namespace TShockAPI
 						return;
 					}
 					// If the tile is a hammer tile and they aren't selecting a hammer, they're hacking.
-					else if (Main.tileHammer[tile.type] && ((args.Player.TPlayer.mount.Type != MountID.Drill && selectedItem.hammer == 0) && !ItemID.Sets.Explosives[selectedItem.netID]))
+					else if (Main.tileHammer[tile.type] && ((args.Player.TPlayer.mount.Type != MountID.Drill && selectedItem.hammer == 0) && !ItemID.Sets.Explosives[selectedItem.type]))
 					{
 						TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected from (hammer) {0} {1} {2}", args.Player.Name, action, editData));
 						args.Player.SendTileSquareCentered(tileX, tileY, 4);
@@ -740,7 +745,7 @@ namespace TShockAPI
 					// also add an exception for snake coils, they can be removed when the player places a new one or after x amount of time
 					// If the tile is part of the breakable when placing set, it might be getting broken by a placement.
 					else if (tile.type != TileID.ItemFrame && tile.type != TileID.MysticSnakeRope
-														   && !ItemID.Sets.Explosives[selectedItem.netID]
+														   && !ItemID.Sets.Explosives[selectedItem.type]
 														   && !TileID.Sets.BreakableWhenPlacing[tile.type]
 														   && !Main.tileAxe[tile.type] && !Main.tileHammer[tile.type] && tile.wall == 0
 														   && selectedItem.pick == 0 && selectedItem.type != ItemID.GravediggerShovel
@@ -757,7 +762,7 @@ namespace TShockAPI
 				else if (action == EditAction.KillWall)
 				{
 					// If they aren't selecting a hammer, they could be hacking.
-					if (selectedItem.hammer == 0 && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0 && selectedItem.createWall == 0)
+					if (selectedItem.hammer == 0 && !ItemID.Sets.Explosives[selectedItem.type] && args.Player.RecentFuse == 0 && selectedItem.createWall == 0)
 					{
 						TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected from (hammer2) {0} {1} {2}", args.Player.Name, action, editData));
 						args.Player.SendTileSquareCentered(tileX, tileY, 1);
@@ -774,11 +779,11 @@ namespace TShockAPI
 					// Handle placement if the user is placing rope that comes from a ropecoil,
 					// but have not created the ropecoil projectile recently or the projectile was not at the correct coordinate, or the tile that the projectile places does not match the rope it is suposed to place
 					// projectile should be the same X coordinate as all tile places (Note by @Olink)
-					if (ropeCoilPlacements.ContainsKey(selectedItem.netID) &&
+					if (ropeCoilPlacements.ContainsKey(selectedItem.type) &&
 						!args.Player.RecentlyCreatedProjectiles.Any(p => GetDataHandlers.projectileCreatesTile.ContainsKey(p.Type) && GetDataHandlers.projectileCreatesTile[p.Type] == editData &&
 						!p.Killed && Math.Abs((int)(Main.projectile[p.Index].position.X / 16f) - tileX) <= Math.Abs(Main.projectile[p.Index].velocity.X)))
 					{
-						TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected from (inconceivable rope coil) {0} {1} {2} selectedItem:{3} itemCreateTile:{4}", args.Player.Name, action, editData, selectedItem.netID, selectedItem.createTile));
+						TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected from (inconceivable rope coil) {0} {1} {2} selectedItem:{3} itemCreateTile:{4}", args.Player.Name, action, editData, selectedItem.type, selectedItem.createTile));
 						args.Player.SendTileSquareCentered(tileX, tileY, 1);
 						args.Handled = true;
 						return;
@@ -796,7 +801,7 @@ namespace TShockAPI
 					}
 
 					/// Handle placement action if the player is using an Ice Rod but not placing the iceblock.
-					if (selectedItem.netID == ItemID.IceRod && editData != TileID.MagicalIceBlock)
+					if (selectedItem.type == ItemID.IceRod && editData != TileID.MagicalIceBlock)
 					{
 						TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected from using ice rod but not placing ice block {0} {1} {2}", args.Player.Name, action, editData));
 						args.Player.SendTileSquareCentered(tileX, tileY, 4);
@@ -806,9 +811,9 @@ namespace TShockAPI
 					if ((action == EditAction.PlaceTile || action == EditAction.ReplaceTile) && editData != selectedItem.createTile)
 					{
 						/// These would get caught up in the below check because Terraria does not set their createTile field.
-						if (selectedItem.netID != ItemID.IceRod && selectedItem.netID != ItemID.DirtBomb && selectedItem.netID != ItemID.StickyBomb && (args.Player.TPlayer.mount.Type != MountID.DiggingMoleMinecart || editData != TileID.MinecartTrack))
+						if (selectedItem.type != ItemID.IceRod && selectedItem.type != ItemID.DirtBomb && selectedItem.type != ItemID.StickyBomb && (args.Player.TPlayer.mount.Type != MountID.DiggingMoleMinecart || editData != TileID.MinecartTrack))
 						{
-							TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected from tile placement not matching selected item createTile {0} {1} {2} selectedItemID:{3} createTile:{4}", args.Player.Name, action, editData, selectedItem.netID, selectedItem.createTile));
+							TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected from tile placement not matching selected item createTile {0} {1} {2} selectedItemID:{3} createTile:{4}", args.Player.Name, action, editData, selectedItem.type, selectedItem.createTile));
 							args.Player.SendTileSquareCentered(tileX, tileY, 4);
 							args.Handled = true;
 							return;
@@ -817,7 +822,7 @@ namespace TShockAPI
 					/// If they aren't selecting the item which creates the wall, they're hacking.
 					if ((action == EditAction.PlaceWall || action == EditAction.ReplaceWall) && editData != selectedItem.createWall)
 					{
-						TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected from wall placement not matching selected item createWall {0} {1} {2} selectedItemID:{3} createWall:{4}", args.Player.Name, action, editData, selectedItem.netID, selectedItem.createWall));
+						TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected from wall placement not matching selected item createWall {0} {1} {2} selectedItemID:{3} createWall:{4}", args.Player.Name, action, editData, selectedItem.type, selectedItem.createWall));
 						args.Player.SendTileSquareCentered(tileX, tileY, 4);
 						args.Handled = true;
 						return;
@@ -917,7 +922,7 @@ namespace TShockAPI
 						return;
 					}
 
-					if (action == EditAction.KillTile || action == EditAction.KillWall && ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0)
+					if (action == EditAction.KillTile || action == EditAction.KillWall && ItemID.Sets.Explosives[selectedItem.type] && args.Player.RecentFuse == 0)
 					{
 						args.Handled = false;
 						return;
@@ -1156,7 +1161,7 @@ namespace TShockAPI
 
 			// stop the client from changing the item type of a drop but
 			// only if the client isn't picking up the item
-			if (Main.item[id].active && Main.item[id].netID != type)
+			if (Main.item[id].active && Main.item[id].type != type)
 			{
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnItemDrop rejected from item drop/pickup check from {0}", args.Player.Name));
 				args.Player.SendData(PacketTypes.ItemDrop, "", id);
@@ -2404,8 +2409,20 @@ namespace TShockAPI
 
 				if (args.Player.SelectedItem.placeStyle != style)
 				{
-					var validTorch = args.Player.SelectedItem.createTile == TileID.Torches && args.Player.TPlayer.BiomeTorchPlaceStyle(args.Player.SelectedItem.placeStyle) == style;
-					var validCampfire = args.Player.SelectedItem.createTile == TileID.Campfire && args.Player.TPlayer.BiomeCampfirePlaceStyle(args.Player.SelectedItem.placeStyle) == style;
+					int biomeTorchPlaceStyle = args.Player.SelectedItem.placeStyle;
+					{
+						// Prevent modification of original variable because it is passed by reference
+						int typeCopy = biomeTorchPlaceStyle;
+						args.Player.TPlayer.BiomeTorchPlaceStyle(ref typeCopy, ref biomeTorchPlaceStyle);
+					}
+					int biomeCampfirePlaceStyle = args.Player.SelectedItem.placeStyle;
+					{
+						// Prevent modification of original variable because it is passed by reference
+						int typeCopy = biomeCampfirePlaceStyle;
+						args.Player.TPlayer.BiomeCampfirePlaceStyle(ref typeCopy, ref biomeCampfirePlaceStyle);
+					}
+					var validTorch = args.Player.SelectedItem.createTile == TileID.Torches && biomeTorchPlaceStyle == style;
+					var validCampfire = args.Player.SelectedItem.createTile == TileID.Campfire && biomeCampfirePlaceStyle == style;
 					if (!args.Player.TPlayer.unlockedBiomeTorches || (!validTorch && !validCampfire))
 					{
 						TShock.Log.ConsoleError(GetString("Bouncer / OnPlaceObject rejected object placement with invalid style {1} (expected {2}) from {0}", args.Player.Name, style, args.Player.SelectedItem.placeStyle));
@@ -2994,19 +3011,11 @@ namespace TShockAPI
 			{ BuffID.Daybreak, 300 },               // BuffID: 189 Solar Eruption Item ID: 3473, Daybreak Item ID: 3543
 			{ BuffID.BetsysCurse, 600 },            // BuffID: 203
 			{ BuffID.Oiled, 540 },                  // BuffID: 204
-			{ BuffID.BlandWhipEnemyDebuff, 240  },  // BuffID: 307
-			{ BuffID.SwordWhipNPCDebuff, 240  },    // BuffID: 309
 			{ BuffID.ScytheWhipEnemyDebuff, 240  }, // BuffID: 310
-			{ BuffID.FlameWhipEnemyDebuff, 240  },  // BuffID: 313
-			{ BuffID.ThornWhipNPCDebuff, 240  },    // BuffID: 315
-			{ BuffID.RainbowWhipNPCDebuff, 240  },  // BuffID: 316
-			{ BuffID.MaceWhipNPCDebuff, 240  },     // BuffID: 319
 			{ BuffID.GelBalloonBuff, 1800  },       // BuffID: 320
 			{ BuffID.OnFire3, 1200 },               // BuffID: 323
 			{ BuffID.Frostburn2, 1200 },            // BuffID: 324
-			{ BuffID.BoneWhipNPCDebuff, 240 },      // BuffID: 326
 			{ BuffID.TentacleSpike, 540 },          // BuffID: 337
-			{ BuffID.CoolWhipNPCDebuff, 240 },      // BuffID: 340
 			{ BuffID.BloodButcherer, 540 },         // BuffID: 344
 			{ BuffID.Shimmer, 100 },		        // BuffID: 353
 		};

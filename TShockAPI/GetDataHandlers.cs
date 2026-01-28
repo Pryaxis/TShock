@@ -2124,6 +2124,26 @@ namespace TShockAPI
 		}
 
 		/// <summary>
+		/// Represents the ID of an inventory inside a <see cref="TEDisplayDoll"/>.
+		/// </summary>
+		public enum DisplayDollInventoryID
+		{
+			/// <summary>
+			/// The ID of the inventory holding the equipment items.
+			/// </summary>
+			Equipment = 0,
+
+			/// <summary>
+			/// The ID of the inventory holding the dyes.
+			/// </summary>
+			Dyes = 1,
+
+			/// <summary>
+			/// The ID of the inventory holding the miscellaneous items (mounts, pets, etc.).
+			/// </summary>
+			Misc = 2,
+		}
+		/// <summary>
 		/// For use in a TileEntityDisplayDollItemSync event.
 		/// </summary>
 		public class DisplayDollItemSyncEventArgs : GetDataHandledEventArgs
@@ -2147,7 +2167,19 @@ namespace TShockAPI
 			/// <summary>
 			/// Whether or not the slot that is being modified is a Dye slot.
 			/// </summary>
-			public bool IsDye { get; set; }
+			[Obsolete($"Use {nameof(InventoryID)} instead.")]
+			public bool IsDye
+			{
+				get => InventoryID == DisplayDollInventoryID.Dyes;
+				set => InventoryID = value
+					? DisplayDollInventoryID.Dyes
+					: DisplayDollInventoryID.Equipment
+					;
+			}
+			/// <summary>
+			/// The ID of the inventory that is being modified.
+			/// </summary>
+			public DisplayDollInventoryID InventoryID { get; set; }
 			/// <summary>
 			/// The current item that is present in the slot before the modification.
 			/// </summary>
@@ -2161,7 +2193,7 @@ namespace TShockAPI
 		/// Called when a player modifies a DisplayDoll (Mannequin) item slot.
 		/// </summary>
 		public static HandlerList<DisplayDollItemSyncEventArgs> DisplayDollItemSync = new HandlerList<DisplayDollItemSyncEventArgs>();
-		private static bool OnDisplayDollItemSync(TSPlayer player, MemoryStream data, byte playerIndex, int tileEntityID, TEDisplayDoll displayDollEntity, int slot, bool isDye, Item oldItem, Item newItem)
+		private static bool OnDisplayDollItemSync(TSPlayer player, MemoryStream data, byte playerIndex, int tileEntityID, TEDisplayDoll displayDollEntity, int slot, DisplayDollInventoryID inventoryID, Item oldItem, Item newItem)
 		{
 			if (DisplayDollItemSync == null)
 				return false;
@@ -2174,11 +2206,55 @@ namespace TShockAPI
 				TileEntityID = tileEntityID,
 				DisplayDollEntity = displayDollEntity,
 				Slot = slot,
-				IsDye = isDye,
+				InventoryID = inventoryID,
 				OldItem = oldItem,
 				NewItem = newItem
 			};
 			DisplayDollItemSync.Invoke(null, args);
+			return args.Handled;
+		}
+
+		/// <summary>
+		/// For use in a <see cref="DisplayDollPoseSync"/> event.
+		/// </summary>
+		public class DisplayDollPoseSyncEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// The player index in the packet who modifies the DisplayDoll item slot.
+			/// </summary>
+			public byte PlayerIndex { get; set; }
+			/// <summary>
+			/// The ID of the TileEntity that is being modified.
+			/// </summary>
+			public int TileEntityID { get; set; }
+			/// <summary>
+			/// The TEDisplayDoll object that is being modified.
+			/// </summary>
+			public TEDisplayDoll DisplayDollEntity { get; set; }
+			/// <summary>
+			/// The incoming pose ID of the TEDisplayDoll.
+			/// </summary>
+			public byte Pose { get; set; }
+		}
+		/// <summary>
+		/// Called when a player modifies a DisplayDoll (Mannequin) pose.
+		/// </summary>
+		public static HandlerList<DisplayDollPoseSyncEventArgs> DisplayDollPoseSync = new();
+		private static bool OnDisplayDollPoseSync(TSPlayer player, MemoryStream data, byte playerIndex, int tileEntityID, TEDisplayDoll displayDollEntity, byte pose)
+		{
+			if (DisplayDollPoseSync == null)
+				return false;
+
+			var args = new DisplayDollPoseSyncEventArgs
+			{
+				Player = player,
+				Data = data,
+				PlayerIndex = playerIndex,
+				TileEntityID = tileEntityID,
+				DisplayDollEntity = displayDollEntity,
+				Pose = pose,
+			};
+			DisplayDollPoseSync.Invoke(null, args);
 			return args.Handled;
 		}
 
@@ -4402,41 +4478,51 @@ namespace TShockAPI
 			byte playerIndex = args.Data.ReadInt8();
 			int tileEntityID = args.Data.ReadInt32();
 			int slot = args.Data.ReadByte();
-			bool isDye = false;
-			if (slot >= 8)
-			{
-				isDye = true;
-				slot -= 8;
-			}
+			int subtype = args.Data.ReadByte();
 
-			Item newItem = new Item();
-			Item oldItem = new Item();
-
-			if (!TileEntity.ByID.TryGetValue(tileEntityID, out TileEntity tileEntity))
+			if (!TileEntity.TryGet(tileEntityID, out TEDisplayDoll displayDoll))
 				return false;
 
-			TEDisplayDoll displayDoll = tileEntity as TEDisplayDoll;
-			if (displayDoll != null)
+			switch (subtype)
 			{
-				oldItem = displayDoll._items[slot];
-				if (isDye)
-					oldItem = displayDoll._dyes[slot];
+				case 0:
+					return HandleItemSync(DisplayDollInventoryID.Equipment, displayDoll._equip);
+				case 1:
+					return HandleItemSync(DisplayDollInventoryID.Dyes, displayDoll._dyes);
+				case 3:
+					return HandleItemSync(DisplayDollInventoryID.Misc, displayDoll._misc);
+
+				case 2:
+				{
+					byte pose = (byte)args.Data.ReadByte();
+					return OnDisplayDollPoseSync(args.Player, args.Data, playerIndex, tileEntityID, displayDoll, pose);
+				}
+
+				default:
+					return false;
+			}
+
+			bool HandleItemSync(DisplayDollInventoryID inventoryID, Item[] items)
+			{
+				Item oldItem = items[slot];
 
 				ushort itemType = args.Data.ReadUInt16();
 				ushort stack = args.Data.ReadUInt16();
 				int prefix = args.Data.ReadByte();
 
-				if (oldItem.type == 0 && newItem.type == 0)
+				if (oldItem.type == 0 && itemType == 0)
 					return false;
 
+				Item newItem = new Item();
 				newItem.SetDefaults(itemType);
 				newItem.stack = stack;
 				newItem.Prefix(prefix);
 
-				if (OnDisplayDollItemSync(args.Player, args.Data, playerIndex, tileEntityID, displayDoll, slot, isDye, oldItem, newItem))
+				if (OnDisplayDollItemSync(args.Player, args.Data, playerIndex, tileEntityID, displayDoll, slot, inventoryID, oldItem, newItem))
 					return true;
+
+				return false;
 			}
-			return false;
 		}
 
 		private static bool HandleRequestTileEntityInteraction(GetDataHandlerArgs args)

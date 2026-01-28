@@ -494,9 +494,9 @@ namespace TShockAPI
 					// From above: this is slots 0-58 in the inventory.
 					// 0-58
 					Item item = new Item();
-					if (inventory[i] != null && inventory[i].netID != 0)
+					if (inventory[i] != null && inventory[i].type != 0)
 					{
-						item.netDefaults(inventory[i].netID);
+						item.netDefaults(inventory[i].type);
 						item.Prefix(inventory[i].prefix);
 						item.AffixName();
 						if (inventory[i].stack > item.maxStack || inventory[i].stack < 0)
@@ -514,9 +514,9 @@ namespace TShockAPI
 					// 59-78
 					var index = i - NetItem.ArmorIndex.Item1;
 					Item item = new Item();
-					if (armor[index] != null && armor[index].netID != 0)
+					if (armor[index] != null && armor[index].type != 0)
 					{
-						item.netDefaults(armor[index].netID);
+						item.netDefaults(armor[index].type);
 						item.Prefix(armor[index].prefix);
 						item.AffixName();
 						if (armor[index].stack > item.maxStack || armor[index].stack < 0)
@@ -534,9 +534,9 @@ namespace TShockAPI
 					// 79-88
 					var index = i - NetItem.DyeIndex.Item1;
 					Item item = new Item();
-					if (dye[index] != null && dye[index].netID != 0)
+					if (dye[index] != null && dye[index].type != 0)
 					{
-						item.netDefaults(dye[index].netID);
+						item.netDefaults(dye[index].type);
 						item.Prefix(dye[index].prefix);
 						item.AffixName();
 						if (dye[index].stack > item.maxStack || dye[index].stack < 0)
@@ -554,9 +554,9 @@ namespace TShockAPI
 					// 89-93
 					var index = i - NetItem.MiscEquipIndex.Item1;
 					Item item = new Item();
-					if (miscEquips[index] != null && miscEquips[index].netID != 0)
+					if (miscEquips[index] != null && miscEquips[index].type != 0)
 					{
-						item.netDefaults(miscEquips[index].netID);
+						item.netDefaults(miscEquips[index].type);
 						item.Prefix(miscEquips[index].prefix);
 						item.AffixName();
 						if (miscEquips[index].stack > item.maxStack || miscEquips[index].stack < 0)
@@ -574,9 +574,9 @@ namespace TShockAPI
 					// 93-98
 					var index = i - NetItem.MiscDyeIndex.Item1;
 					Item item = new Item();
-					if (miscDyes[index] != null && miscDyes[index].netID != 0)
+					if (miscDyes[index] != null && miscDyes[index].type != 0)
 					{
-						item.netDefaults(miscDyes[index].netID);
+						item.netDefaults(miscDyes[index].type);
 						item.Prefix(miscDyes[index].prefix);
 						item.AffixName();
 						if (miscDyes[index].stack > item.maxStack || miscDyes[index].stack < 0)
@@ -594,9 +594,9 @@ namespace TShockAPI
 					// 98-138
 					var index = i - NetItem.PiggyIndex.Item1;
 					Item item = new Item();
-					if (piggy[index] != null && piggy[index].netID != 0)
+					if (piggy[index] != null && piggy[index].type != 0)
 					{
-						item.netDefaults(piggy[index].netID);
+						item.netDefaults(piggy[index].type);
 						item.Prefix(piggy[index].prefix);
 						item.AffixName();
 
@@ -615,9 +615,9 @@ namespace TShockAPI
 					// 138-178
 					var index = i - NetItem.SafeIndex.Item1;
 					Item item = new Item();
-					if (safe[index] != null && safe[index].netID != 0)
+					if (safe[index] != null && safe[index].type != 0)
 					{
-						item.netDefaults(safe[index].netID);
+						item.netDefaults(safe[index].type);
 						item.Prefix(safe[index].prefix);
 						item.AffixName();
 
@@ -635,9 +635,9 @@ namespace TShockAPI
 				{
 					// 178-179
 					Item item = new Item();
-					if (trash != null && trash.netID != 0)
+					if (trash != null && trash.type != 0)
 					{
-						item.netDefaults(trash.netID);
+						item.netDefaults(trash.type);
 						item.Prefix(trash.prefix);
 						item.AffixName();
 
@@ -656,9 +656,9 @@ namespace TShockAPI
 					// 179-220
 					var index = i - NetItem.ForgeIndex.Item1;
 					Item item = new Item();
-					if (forge[index] != null && forge[index].netID != 0)
+					if (forge[index] != null && forge[index].type != 0)
 					{
-						item.netDefaults(forge[index].netID);
+						item.netDefaults(forge[index].type);
 						item.Prefix(forge[index].prefix);
 						item.AffixName();
 
@@ -677,9 +677,9 @@ namespace TShockAPI
 					// 220-260
 					var index = i - NetItem.VoidIndex.Item1;
 					Item item = new Item();
-					if (voidVault[index] != null && voidVault[index].netID != 0)
+					if (voidVault[index] != null && voidVault[index].type != 0)
 					{
-						item.netDefaults(voidVault[index].netID);
+						item.netDefaults(voidVault[index].type);
 						item.Prefix(voidVault[index].prefix);
 						item.AffixName();
 
@@ -697,9 +697,9 @@ namespace TShockAPI
 				{
 					var index = i - NetItem.Loadout1Armor.Item1;
 					Item item = new Item();
-					if (loadout1Armor[index] != null && loadout1Armor[index].netID != 0)
+					if (loadout1Armor[index] != null && loadout1Armor[index].type != 0)
 					{
-						item.netDefaults(loadout1Armor[index].netID);
+						item.netDefaults(loadout1Armor[index].type);
 						item.Prefix(loadout1Armor[index].prefix);
 						item.AffixName();
 
@@ -717,9 +717,9 @@ namespace TShockAPI
 				{
 					var index = i - NetItem.Loadout1Dye.Item1;
 					Item item = new Item();
-					if (loadout1Dye[index] != null && loadout1Dye[index].netID != 0)
+					if (loadout1Dye[index] != null && loadout1Dye[index].type != 0)
 					{
-						item.netDefaults(loadout1Dye[index].netID);
+						item.netDefaults(loadout1Dye[index].type);
 						item.Prefix(loadout1Dye[index].prefix);
 						item.AffixName();
 
@@ -737,9 +737,9 @@ namespace TShockAPI
 				{
 					var index = i - NetItem.Loadout2Armor.Item1;
 					Item item = new Item();
-					if (loadout2Armor[index] != null && loadout2Armor[index].netID != 0)
+					if (loadout2Armor[index] != null && loadout2Armor[index].type != 0)
 					{
-						item.netDefaults(loadout2Armor[index].netID);
+						item.netDefaults(loadout2Armor[index].type);
 						item.Prefix(loadout2Armor[index].prefix);
 						item.AffixName();
 
@@ -757,9 +757,9 @@ namespace TShockAPI
 				{
 					var index = i - NetItem.Loadout2Dye.Item1;
 					Item item = new Item();
-					if (loadout2Dye[index] != null && loadout2Dye[index].netID != 0)
+					if (loadout2Dye[index] != null && loadout2Dye[index].type != 0)
 					{
-						item.netDefaults(loadout2Dye[index].netID);
+						item.netDefaults(loadout2Dye[index].type);
 						item.Prefix(loadout2Dye[index].prefix);
 						item.AffixName();
 
@@ -777,9 +777,9 @@ namespace TShockAPI
 				{
 					var index = i - NetItem.Loadout3Armor.Item1;
 					Item item = new Item();
-					if (loadout3Armor[index] != null && loadout3Armor[index].netID != 0)
+					if (loadout3Armor[index] != null && loadout3Armor[index].type != 0)
 					{
-						item.netDefaults(loadout3Armor[index].netID);
+						item.netDefaults(loadout3Armor[index].type);
 						item.Prefix(loadout3Armor[index].prefix);
 						item.AffixName();
 
@@ -797,9 +797,9 @@ namespace TShockAPI
 				{
 					var index = i - NetItem.Loadout3Dye.Item1;
 					Item item = new Item();
-					if (loadout3Dye[index] != null && loadout3Dye[index].netID != 0)
+					if (loadout3Dye[index] != null && loadout3Dye[index].type != 0)
 					{
-						item.netDefaults(loadout3Dye[index].netID);
+						item.netDefaults(loadout3Dye[index].type);
 						item.Prefix(loadout3Dye[index].prefix);
 						item.AffixName();
 
@@ -1759,7 +1759,7 @@ namespace TShockAPI
 		private Item GiveItemDirectly_FillIntoOccupiedSlot(Item item, int slot)
 		{
 			var inv = this.TPlayer.inventory;
-			if (inv[slot].type <= 0 || inv[slot].stack >= inv[slot].maxStack || !item.IsTheSameAs(inv[slot]))
+			if (inv[slot].type <= 0 || inv[slot].stack >= inv[slot].maxStack || item.type != inv[slot].type)
 				return item;
 
 			if (item.stack + inv[slot].stack <= inv[slot].maxStack)

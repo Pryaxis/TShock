@@ -1265,7 +1265,7 @@ namespace TShockAPI
 			args.Player.SendInfoMessage(GetString($"Name: {(TShock.Config.Settings.UseServerName ? TShock.Config.Settings.ServerName : Main.worldName)}"));
 			args.Player.SendInfoMessage(GetString("Size: {0}x{1}", Main.maxTilesX, Main.maxTilesY));
 			args.Player.SendInfoMessage(GetString($"ID: {Main.worldID}"));
-			args.Player.SendInfoMessage(GetString($"Seed: {WorldGen.currentWorldSeed}"));
+			args.Player.SendInfoMessage(GetString($"Seed: {Main.ActiveWorldFileData.Seed}"));
 			args.Player.SendInfoMessage(GetString($"Mode: {Main.GameMode}"));
 			args.Player.SendInfoMessage(GetString($"Path: {Main.worldPathName}"));
 		}
@@ -3841,7 +3841,7 @@ namespace TShockAPI
 						}
 						else if (items.Count > 1)
 						{
-							args.Player.SendMultipleMatchError(items.Select(i => $"{i.Name}({i.netID})"));
+							args.Player.SendMultipleMatchError(items.Select(i => $"{i.Name}({i.type})"));
 						}
 						else
 						{
@@ -3892,7 +3892,7 @@ namespace TShockAPI
 						}
 						else if (items.Count > 1)
 						{
-							args.Player.SendMultipleMatchError(items.Select(i => $"{i.Name}({i.netID})"));
+							args.Player.SendMultipleMatchError(items.Select(i => $"{i.Name}({i.type})"));
 						}
 						else
 						{
@@ -3937,7 +3937,7 @@ namespace TShockAPI
 						}
 						else if (items.Count > 1)
 						{
-							args.Player.SendMultipleMatchError(items.Select(i => $"{i.Name}({i.netID})"));
+							args.Player.SendMultipleMatchError(items.Select(i => $"{i.Name}({i.type})"));
 						}
 						else
 						{
@@ -3963,7 +3963,7 @@ namespace TShockAPI
 						}
 						else if (items.Count > 1)
 						{
-							args.Player.SendMultipleMatchError(items.Select(i => $"{i.Name}({i.netID})"));
+							args.Player.SendMultipleMatchError(items.Select(i => $"{i.Name}({i.type})"));
 						}
 						else
 						{
@@ -5919,7 +5919,7 @@ namespace TShockAPI
 
 							if (Main.item[i].active && dX * dX + dY * dY <= radius * radius * 256f)
 							{
-								Main.item[i].active = false;
+								Main.item[i].TurnToAir();
 								everyone.SendData(PacketTypes.ItemDrop, "", i);
 								cleared++;
 							}
@@ -6162,7 +6162,7 @@ namespace TShockAPI
 			}
 			else if (matchedItems.Count > 1)
 			{
-				args.Player.SendMultipleMatchError(matchedItems.Select(i => $"{i.Name}({i.netID})"));
+				args.Player.SendMultipleMatchError(matchedItems.Select(i => $"{i.Name}({i.type})"));
 				return;
 			}
 			else
@@ -6310,7 +6310,7 @@ namespace TShockAPI
 			}
 			else if (items.Count > 1)
 			{
-				args.Player.SendMultipleMatchError(items.Select(i => $"{i.Name}({i.netID})"));
+				args.Player.SendMultipleMatchError(items.Select(i => $"{i.Name}({i.type})"));
 			}
 			else
 			{
