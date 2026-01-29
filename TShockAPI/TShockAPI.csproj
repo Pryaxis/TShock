@@ -3,7 +3,7 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <!-- 
@@ -29,6 +29,7 @@
     <Authors>Pryaxis &amp; TShock Contributors</Authors>
     <Description>TShock is a toolbox for Terraria servers and communities.</Description>
     <PackageId>TShock</PackageId> <!-- package name for nuget, instead of TShockAPI -->
+    <LangVersion>14</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
