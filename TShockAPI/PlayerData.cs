@@ -277,6 +277,8 @@ namespace TShockAPI
 			// Start ignoring SSC-related packets! This is critical so that we don't send or receive dirty data!
 			player.IgnoreSSCPackets = true;
 
+			try
+			{
 			player.TPlayer.statLife = this.health;
 			player.TPlayer.statLifeMax = this.maxHealth;
 			player.TPlayer.statMana = this.maxMana;
@@ -712,6 +714,12 @@ namespace TShockAPI
 					NetManager.Instance.SendToClient(response, player.Index);
 					*/
 				}
+			}
+			}
+			finally
+			{
+				// Ensure IgnoreSSCPackets is reset even if an exception occurs
+				player.IgnoreSSCPackets = false;
 			}
 		}
 	}
