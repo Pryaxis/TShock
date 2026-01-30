@@ -85,7 +85,7 @@ namespace TShockAPI
 				for (int i = 0; i < TShock.ServerSideCharacterConfig.Settings.StartingInventory.Count; i++)
 				{
 					var item = TShock.ServerSideCharacterConfig.Settings.StartingInventory[i];
-					StoreSlot(i, item.NetId, item.PrefixId, item.Stack);
+					StoreSlot(i, item.NetId, item.PrefixId, item.Stack, item.Favorited);
 				}
 		}
 
@@ -96,9 +96,10 @@ namespace TShockAPI
 		/// <param name="netID"></param>
 		/// <param name="prefix"></param>
 		/// <param name="stack"></param>
-		public void StoreSlot(int slot, int netID, byte prefix, int stack)
+		/// <param name="favorited"></param>
+		public void StoreSlot(int slot, int netID, byte prefix, int stack, bool favorited)
 		{
-			StoreSlot(slot, new NetItem(netID, stack, prefix));
+			StoreSlot(slot, new NetItem(netID, stack, prefix, favorited));
 		}
 
 		/// <summary>

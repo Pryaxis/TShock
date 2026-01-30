@@ -248,12 +248,22 @@ namespace TShockAPI
 			/// Item type
 			/// </summary>
 			public short Type { get; set; }
+			/// <summary>
+			/// The favorited state.
+			/// </summary>
+			public bool Favorited { get; set; }
+
+			/// <summary>
+			/// Indicate the player the slot is blocked
+			/// </summary>
+			public bool IndicateBlocked { get; set; }
 		}
 		/// <summary>
 		/// PlayerSlot - called at a PlayerSlot event
 		/// </summary>
 		public static HandlerList<PlayerSlotEventArgs> PlayerSlot = new HandlerList<PlayerSlotEventArgs>();
-		private static bool OnPlayerSlot(TSPlayer player, MemoryStream data, byte _plr, short _slot, short _stack, byte _prefix, short _type)
+		private static bool OnPlayerSlot(TSPlayer player, MemoryStream data, byte _plr, short _slot, short _stack,
+			byte _prefix, short _type, bool _favorited, bool _indicateBlocked)
 		{
 			if (PlayerSlot == null)
 				return false;
@@ -266,7 +276,9 @@ namespace TShockAPI
 				Slot = _slot,
 				Stack = _stack,
 				Prefix = _prefix,
-				Type = _type
+				Type = _type,
+				Favorited = _favorited,
+				IndicateBlocked = _indicateBlocked
 			};
 			PlayerSlot.Invoke(null, args);
 			return args.Handled;
@@ -2649,6 +2661,9 @@ namespace TShockAPI
 			short stack = args.Data.ReadInt16();
 			byte prefix = args.Data.ReadInt8();
 			short type = args.Data.ReadInt16();
+			BitsByte bitsByte4 = (BitsByte) args.Data.ReadByte();
+			bool favorited = bitsByte4[0];
+			bool indicateBlocked = bitsByte4[1];
 
 			// Players send a slot update packet for each inventory slot right after they've joined.
 			bool bypassTrashCanCheck = false;
@@ -2658,7 +2673,7 @@ namespace TShockAPI
 				bypassTrashCanCheck = true;
 			}
 
-			if (OnPlayerSlot(args.Player, args.Data, plr, slot, stack, prefix, type) || plr != args.Player.Index || slot < 0 ||
+			if (OnPlayerSlot(args.Player, args.Data, plr, slot, stack, prefix, type, favorited, indicateBlocked) || plr != args.Player.Index || slot < 0 ||
 				slot > NetItem.MaxInventory)
 				return true;
 			if (args.Player.IgnoreSSCPackets)
@@ -2675,7 +2690,7 @@ namespace TShockAPI
 
 			if (args.Player.IsLoggedIn)
 			{
-				args.Player.PlayerData.StoreSlot(slot, type, prefix, stack);
+				args.Player.PlayerData.StoreSlot(slot, type, prefix, stack, favorited);
 			}
 			else if (Main.ServerSideCharacter && TShock.Config.Settings.DisableLoginBeforeJoin && !bypassTrashCanCheck &&
 					 args.Player.HasSentInventory && !args.Player.HasPermission(Permissions.bypassssc))
