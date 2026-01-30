@@ -2676,15 +2676,16 @@ namespace TShockAPI
 			bool blockedSlot = slotFlags[1];
 
 			// Players send a slot update packet for each inventory slot right after they've joined.
+			// 1.4.5: The last actual item slot is Loadout3_Dye_0 + LoadoutDyeSlots - 1
 			bool bypassTrashCanCheck = false;
-			if (plr == args.Player.Index && !args.Player.HasSentInventory && slot == NetItem.MaxInventory)
+			if (plr == args.Player.Index && !args.Player.HasSentInventory && slot == PlayerItemSlotID.Loadout3_Dye_0 + NetItem.LoadoutDyeSlots - 1)
 			{
 				args.Player.HasSentInventory = true;
 				bypassTrashCanCheck = true;
 			}
 
 			if (OnPlayerSlot(args.Player, args.Data, plr, slot, stack, prefix, type, favorited, blockedSlot)
-				|| plr != args.Player.Index || slot < 0 || slot > NetItem.MaxInventory)
+				|| plr != args.Player.Index || slot < 0 || slot >= PlayerItemSlotID.Count)
 				return true;
 			if (args.Player.IgnoreSSCPackets)
 			{
