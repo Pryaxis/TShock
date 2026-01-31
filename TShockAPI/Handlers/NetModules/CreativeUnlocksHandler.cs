@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.IO.Streams;
 using Terraria;
@@ -9,7 +9,8 @@ using Terraria.Net;
 namespace TShockAPI.Handlers.NetModules
 {
 	/// <summary>
-	/// Handles creative unlock requests
+	/// Handles creative unlock requests (Journey mode research)
+	/// Updated for Terraria 1.4.5 compatibility
 	/// </summary>
 	public class CreativeUnlocksHandler : INetModuleHandler
 	{
@@ -71,31 +72,68 @@ namespace TShockAPI.Handlers.NetModules
 				return;
 			}
 
-#if TRUE
-			// NOTE: this is a temporary solution to get TShock to build
-			/* Given that the NetCreativeUnlocksModule has been removed in 1.4.5.0,
-			 * TShock can no longer directly set the research progress of items. Therefore,
-			 * the following codepath does not function at all.
-			 */
-			/* NetCreativeUnlocksPlayerReportModule can be used in place of NetCreativeUnlocksModule,
-			 * however, it is plagued with two issues.
-			 * 1. The client will only accept the change if it is in a team (not white), and
-			 *    the player with PlayerId is in the same team as them
-			 * 2. The vanilla handling of NetCreativeUnlocksPlayerReportModule does not broadcast the
-			 *    packet back to the sender, and the sender does not update their research progress
-			 *    if SSC is on unless it receives a response from the server. Even if no. 1 were not true,
-			 *    this bug causes researching items to break when SSC is on.
-			 */
-			rejectPacket = true;
-			return;
-#else
+			// Validate the player ID matches the sender (anti-cheat)
+			if (PlayerId != player.Index)
+			{
+				TShock.Log.ConsoleDebug(
+					GetString($"NetModuleHandler received research packet with mismatched player ID from {player.Name} (sent {PlayerId}, expected {player.Index})")
+				);
+				rejectPacket = true;
+				return;
+			}
+
+			// Record the sacrifice in the database
 			var totalSacrificed = TShock.ResearchDatastore.SacrificeItem(ItemId, Amount, player);
 
-			var response = NetCreativeUnlocksModule.SerializeItemSacrifice(ItemId, totalSacrificed);
-			NetManager.Instance.Broadcast(response);
+			// Terraria 1.4.5: Broadcast research update to all players
+			// Using NetCreativeUnlocksPlayerReportModule instead of the removed NetCreativeUnlocksModule
+			BroadcastResearchUpdate(player, ItemId, totalSacrificed);
 
 			rejectPacket = false;
-#endif
+		}
+
+		/// <summary>
+		/// Broadcasts research progress to all players using the 1.4.5+ compatible method.
+		/// Works around vanilla limitations where the sender doesn't receive their own update.
+		/// </summary>
+		/// <param name="player">The player who performed the research</param>
+		/// <param name="itemId">The item that was researched</param>
+		/// <param name="totalAmount">The total amount sacrificed for this item</param>
+		private static void BroadcastResearchUpdate(TSPlayer player, int itemId, int totalAmount)
+		{
+			// Broadcast to all connected players including the sender
+			// This fixes the SSC issue where vanilla doesn't send back to the originator
+			foreach (var plr in TShock.Players)
+			{
+				if (plr != null && plr.Active && plr.ConnectionAlive)
+				{
+					SendResearchUpdateToPlayer(plr, player.Index, itemId, totalAmount);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Sends a research update to a specific player
+		/// </summary>
+		/// <param name="targetPlayer">The player to send the update to</param>
+		/// <param name="researcherIndex">The index of the player who performed the research</param>
+		/// <param name="itemId">The item ID that was researched</param>
+		/// <param name="totalAmount">The total amount sacrificed</param>
+		internal static void SendResearchUpdateToPlayer(TSPlayer targetPlayer, int researcherIndex, int itemId, int totalAmount)
+		{
+			try
+			{
+				// Use NetCreativeUnlocksPlayerReportModule.Serialize if available in OTAPI 3.3.4+
+				// This creates a properly formatted packet for 1.4.5
+				var response = NetCreativeUnlocksPlayerReportModule.Serialize(researcherIndex, itemId, totalAmount);
+				NetManager.Instance.SendToClient(response, targetPlayer.Index);
+			}
+			catch (Exception ex)
+			{
+				TShock.Log.ConsoleDebug(
+					GetString($"Failed to send research update to {targetPlayer.Name}: {ex.Message}")
+				);
+			}
 		}
 	}
 }

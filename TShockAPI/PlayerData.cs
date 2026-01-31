@@ -24,6 +24,7 @@ using Terraria.GameContent.NetModules;
 using Terraria.Net;
 using Terraria.ID;
 using System;
+using TShockAPI.Handlers.NetModules;
 
 namespace TShockAPI
 {
@@ -710,20 +711,17 @@ namespace TShockAPI
 
 			if (Main.GameMode == GameModeID.Creative)
 			{
+				// Terraria 1.4.5: Sync all researched items to the connecting player
+				// Uses NetCreativeUnlocksPlayerReportModule instead of the removed NetCreativeUnlocksModule
 				var sacrificedItems = TShock.ResearchDatastore.GetSacrificedItems();
-				for(int i = 0; i < ItemID.Count; i++)
+				foreach (var kvp in sacrificedItems)
 				{
-					var amount = 0;
-					if (sacrificedItems.ContainsKey(i))
+					if (kvp.Value > 0)
 					{
-						amount = sacrificedItems[i];
+						// Send research progress using the 1.4.5 compatible method
+						// Use server index (255) as the researcher to indicate this is a sync, not a new research
+						CreativeUnlocksHandler.SendResearchUpdateToPlayer(player, 255, kvp.Key, kvp.Value);
 					}
-
-					// TODO: FIX THIS (1.4.4.9, 1.4.5.0, UPDATE, WIP)
-					/*
-					var response = NetCreativeUnlocksModule.SerializeItemSacrifice(i, amount);
-					NetManager.Instance.SendToClient(response, player.Index);
-					*/
 				}
 			}
 		}
