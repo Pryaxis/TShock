@@ -76,6 +76,15 @@ namespace TShockAPI.Models.PlayerUpdate
 		}
 
 		/// <summary>
+		/// Gets or Sets the Has Mount flag on the backing field (1.4.5+)
+		/// </summary>
+		public bool HasMount
+		{
+			get => bitsbyte[7];
+			set => bitsbyte[7] = value;
+		}
+
+		/// <summary>
 		/// Constructs a new instance of MiscDataSet1 with the given backing BitsByte
 		/// </summary>
 		/// <param name="bitsbyte"></param>
