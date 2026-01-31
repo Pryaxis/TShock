@@ -223,13 +223,19 @@ namespace TShockAPI
 				throw new ArgumentNullException("str");
 
 			string[] comp = str.Split(',');
-			if (comp.Length != 4)
-				throw new FormatException("String does not contain four sections.");
+			if (comp.Length < 3)
+				throw new FormatException("String should contain at least three sections.");
 
 			int netId = Int32.Parse(comp[0]);
 			int stack = Int32.Parse(comp[1]);
 			byte prefixId = Byte.Parse(comp[2]);
-			bool favorited = int.Parse(comp[3]) == 1;
+
+			bool favorited = false;
+			if (comp.Length > 3)
+			{
+				favorited = int.Parse(comp[3]) == 1;
+			}
+
 
 			return new NetItem(netId, stack, prefixId, favorited);
 		}
