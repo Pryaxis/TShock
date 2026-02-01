@@ -2511,7 +2511,6 @@ namespace TShockAPI
 			byte playerid = args.Data.ReadInt8();
 			// 0-3 male; 4-7 female
 			int skinVariant = args.Data.ReadByte();
-			// 1.4.5: new voice fields
 			byte voiceVariant = args.Data.ReadInt8();
 			float voicePitchOffset = args.Data.ReadSingle();
 			var hair = args.Data.ReadInt8();
@@ -2593,7 +2592,6 @@ namespace TShockAPI
 				args.Player.TPlayer.shirtColor = shirtColor;
 				args.Player.TPlayer.underShirtColor = underShirtColor;
 				args.Player.TPlayer.shoeColor = shoeColor;
-				// 1.4.5: hideVisibleAccessory is now read from a ushort
 				for (int i = 0; i < args.Player.TPlayer.hideVisibleAccessory.Length; i++)
 					args.Player.TPlayer.hideVisibleAccessory[i] = (hideVisualFlags & (1 << i)) != 0;
 				args.Player.TPlayer.hideMisc = hideMisc;
