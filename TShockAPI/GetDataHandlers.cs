@@ -2676,9 +2676,8 @@ namespace TShockAPI
 			bool blockedSlot = slotFlags[1];
 
 			// Players send a slot update packet for each inventory slot right after they've joined.
-			// 1.4.5: The last actual item slot is Loadout3_Dye_0 + LoadoutDyeSlots - 1
 			bool bypassTrashCanCheck = false;
-			if (plr == args.Player.Index && !args.Player.HasSentInventory && slot == PlayerItemSlotID.Loadout3_Dye_0 + NetItem.LoadoutDyeSlots - 1)
+			if (plr == args.Player.Index && !args.Player.HasSentInventory && slot == PlayerItemSlotID.Loadout3_Dye_0 + NetItem.LoadoutDyeSlots - 1) // equals to 989, avoid hardcoding
 			{
 				args.Player.HasSentInventory = true;
 				bypassTrashCanCheck = true;
@@ -2701,7 +2700,11 @@ namespace TShockAPI
 
 			if (args.Player.IsLoggedIn)
 			{
-				args.Player.PlayerData.StoreSlot(slot, type, prefix, stack, favorited);
+				int internalSlot = NetworkSlotToInternalSlot(slot);
+				if (internalSlot >= 0)
+				{
+					args.Player.PlayerData.StoreSlot(internalSlot, type, prefix, stack, favorited);
+				}
 			}
 			else if (Main.ServerSideCharacter && TShock.Config.Settings.DisableLoginBeforeJoin && !bypassTrashCanCheck &&
 					 args.Player.HasSentInventory && !args.Player.HasPermission(Permissions.bypassssc))
@@ -2717,6 +2720,63 @@ namespace TShockAPI
 			}
 
 			return false;
+		}
+		// 1.4.5 reserved 40+160 slots per bank in network protocol instead of 40.
+		// This function maps the network slot IDs(0-989) to the internal NetItem slot IDs(0-349).
+		private static int NetworkSlotToInternalSlot(int networkSlot)
+		{
+			if (networkSlot < PlayerItemSlotID.Bank1_0)
+				return networkSlot;
+
+			if (networkSlot < PlayerItemSlotID.Bank1_0 + NetItem.PiggySlots)
+				return NetItem.PiggyIndex.Item1 + (networkSlot - PlayerItemSlotID.Bank1_0);
+
+			if (networkSlot < PlayerItemSlotID.Bank2_0)
+				return -1;
+
+			if (networkSlot < PlayerItemSlotID.Bank2_0 + NetItem.SafeSlots)
+				return NetItem.SafeIndex.Item1 + (networkSlot - PlayerItemSlotID.Bank2_0);
+
+			if (networkSlot < PlayerItemSlotID.TrashItem)
+				return -1;
+
+			if (networkSlot == PlayerItemSlotID.TrashItem)
+				return NetItem.TrashIndex.Item1;
+
+			if (networkSlot < PlayerItemSlotID.Bank3_0)
+				return -1;
+
+			if (networkSlot < PlayerItemSlotID.Bank3_0 + NetItem.ForgeSlots)
+				return NetItem.ForgeIndex.Item1 + (networkSlot - PlayerItemSlotID.Bank3_0);
+
+			if (networkSlot < PlayerItemSlotID.Bank4_0)
+				return -1;
+
+			if (networkSlot < PlayerItemSlotID.Bank4_0 + NetItem.VoidSlots)
+				return NetItem.VoidIndex.Item1 + (networkSlot - PlayerItemSlotID.Bank4_0);
+
+			if (networkSlot < PlayerItemSlotID.Loadout1_Armor_0)
+				return -1;
+
+			if (networkSlot < PlayerItemSlotID.Loadout1_Armor_0 + NetItem.LoadoutArmorSlots)
+				return NetItem.Loadout1Armor.Item1 + (networkSlot - PlayerItemSlotID.Loadout1_Armor_0);
+
+			if (networkSlot < PlayerItemSlotID.Loadout1_Dye_0 + NetItem.LoadoutDyeSlots)
+				return NetItem.Loadout1Dye.Item1 + (networkSlot - PlayerItemSlotID.Loadout1_Dye_0);
+
+			if (networkSlot < PlayerItemSlotID.Loadout2_Armor_0 + NetItem.LoadoutArmorSlots)
+				return NetItem.Loadout2Armor.Item1 + (networkSlot - PlayerItemSlotID.Loadout2_Armor_0);
+
+			if (networkSlot < PlayerItemSlotID.Loadout2_Dye_0 + NetItem.LoadoutDyeSlots)
+				return NetItem.Loadout2Dye.Item1 + (networkSlot - PlayerItemSlotID.Loadout2_Dye_0);
+
+			if (networkSlot < PlayerItemSlotID.Loadout3_Armor_0 + NetItem.LoadoutArmorSlots)
+				return NetItem.Loadout3Armor.Item1 + (networkSlot - PlayerItemSlotID.Loadout3_Armor_0);
+
+			if (networkSlot < PlayerItemSlotID.Loadout3_Dye_0 + NetItem.LoadoutDyeSlots)
+				return NetItem.Loadout3Dye.Item1 + (networkSlot - PlayerItemSlotID.Loadout3_Dye_0);
+
+			return -1;
 		}
 
 		private static bool HandleConnecting(GetDataHandlerArgs args)
