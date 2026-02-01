@@ -2518,7 +2518,6 @@ namespace TShockAPI
 			string name = args.Data.ReadString();
 			byte hairDye = args.Data.ReadInt8();
 
-			// 1.4.5: hideVisibleAccessory is now a ushort instead of two BitsByte
 			ushort hideVisualFlags = args.Data.ReadUInt16();
 			BitsByte hideMisc = args.Data.ReadInt8();
 
