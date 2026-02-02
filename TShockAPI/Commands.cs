@@ -2463,52 +2463,67 @@ namespace TShockAPI
 
 		private static void Rain(CommandArgs args)
 		{
-			bool slime = false;
-			if (args.Parameters.Count > 1 && args.Parameters[1].ToLowerInvariant() == "slime")
+			var type = args.Parameters.Count > 1 ? args.Parameters[1].ToLowerInvariant() : "normal";
+			switch (type)
 			{
-				slime = true;
-			}
+				case "slime":
+					if (Main.raining)
+					{
+						args.Player.SendErrorMessage(GetString(
+							"Slime rain cannot be activated during normal rain. Stop the normal rainstorm and try again."));
+						return;
+					}
 
-			if (!slime)
-			{
-				args.Player.SendInfoMessage(GetString("Use \"{0}worldevent rain slime\" to start slime rain!", Specifier));
-			}
+					if (Main.slimeRain)
+					{
+						Main.StopSlimeRain(false);
+						TSPlayer.All.SendData(PacketTypes.WorldInfo);
+						TSPlayer.All.SendInfoMessage(GetString("{0} ended the slime rain.", args.Player.Name));
+					}
+					else
+					{
+						Main.StartSlimeRain(false);
+						TSPlayer.All.SendData(PacketTypes.WorldInfo);
+						TSPlayer.All.SendInfoMessage(GetString("{0} caused it to rain slime.", args.Player.Name));
+					}
 
-			if (slime && Main.raining) //Slime rain cannot be activated during normal rain
-			{
-				args.Player.SendErrorMessage(GetString("Slime rain cannot be activated during normal rain. Stop the normal rainstorm and try again."));
-				return;
-			}
+					break;
 
-			if (slime && Main.slimeRain) //Toggle slime rain off
-			{
-				Main.StopSlimeRain(false);
-				TSPlayer.All.SendData(PacketTypes.WorldInfo);
-				TSPlayer.All.SendInfoMessage(GetString("{0} ended the slime rain.", args.Player.Name));
-				return;
-			}
+				case "coin":
+					if (Main.coinRain != 0)
+					{
+						Main.StopRain();
+						TSPlayer.All.SendData(PacketTypes.WorldInfo);
+						TSPlayer.All.SendInfoMessage(GetString("{0} ended the coin rain.", args.Player.Name));
+					}
+					else
+					{
+						Main.StartRain(garenteeCoinRain: true);
+						TSPlayer.All.SendData(PacketTypes.WorldInfo);
+						TSPlayer.All.SendInfoMessage(GetString("{0} caused it to coin rain.", args.Player.Name));
+					}
 
-			if (slime && !Main.slimeRain) //Toggle slime rain on
-			{
-				Main.StartSlimeRain(false);
-				TSPlayer.All.SendData(PacketTypes.WorldInfo);
-				TSPlayer.All.SendInfoMessage(GetString("{0} caused it to rain slime.", args.Player.Name));
-			}
+					break;
 
-			if (Main.raining && !slime) //Toggle rain off
-			{
-				Main.StopRain();
-				TSPlayer.All.SendData(PacketTypes.WorldInfo);
-				TSPlayer.All.SendInfoMessage(GetString("{0} ended the rain.", args.Player.Name));
-				return;
-			}
+				default:
+					if (Main.raining)
+					{
+						Main.StopRain();
+						TSPlayer.All.SendData(PacketTypes.WorldInfo);
+						TSPlayer.All.SendInfoMessage(GetString("{0} ended the rain.", args.Player.Name));
+					}
+					else
+					{
+						Main.StartRain();
+						TSPlayer.All.SendData(PacketTypes.WorldInfo);
+						TSPlayer.All.SendInfoMessage(GetString("{0} caused it to rain.", args.Player.Name));
+					}
 
-			if (!Main.raining && !slime) //Toggle rain on
-			{
-				Main.StartRain();
-				TSPlayer.All.SendData(PacketTypes.WorldInfo);
-				TSPlayer.All.SendInfoMessage(GetString("{0} caused it to rain.", args.Player.Name));
-				return;
+					args.Player.SendInfoMessage(GetString("Use \"{0}worldevent rain slime\" to start slime rain!",
+						Specifier));
+					args.Player.SendInfoMessage(GetString("Use \"{0}worldevent rain coin\" to start coin rain!",
+						Specifier));
+					break;
 			}
 		}
 
