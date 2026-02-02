@@ -2160,7 +2160,8 @@ namespace TShockAPI
 			"invasion",
 			"sandstorm",
 			"rain",
-			"lanternsnight"
+			"lanternsnight",
+			"meteorshower"
 		};
 		static readonly List<string> _validInvasions = new List<string>()
 		{
@@ -2267,6 +2268,15 @@ namespace TShockAPI
 						return;
 					}
 					LanternsNight(args);
+					return;
+
+				case "meteorshower":
+					if (!args.Player.HasPermission(Permissions.managemeteorshowerevent))
+					{
+						FailedPermissionCheck();
+						return;
+					}
+					MeteorShower(args);
 					return;
 
 				default:
@@ -2551,6 +2561,20 @@ namespace TShockAPI
 				{
 					TSPlayer.All.SendInfoMessage(GetString("{0} stopped the lantern night.", args.Player.Name));
 				}
+			}
+		}
+
+		private static void MeteorShower(CommandArgs args)
+		{
+			if (WorldGen.meteorShowerCount > 0)
+			{
+				WorldGen.meteorShowerCount = 0;
+				TSPlayer.All.SendInfoMessage(GetString("{0} stopped the meteor shower.", args.Player.Name));
+			}
+			else
+			{
+				WorldGen.StartMeteorShower();
+				TSPlayer.All.SendInfoMessage(GetString("{0} started a meteor shower.", args.Player.Name));
 			}
 		}
 
