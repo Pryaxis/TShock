@@ -19,27 +19,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.IO.Streams;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Terraria.ID;
-using TShockAPI.DB;
-using TShockAPI.Net;
+using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.ObjectData;
 using Terraria.DataStructures;
 using Terraria.GameContent.Tile_Entities;
+using Terraria.ID;
 using Terraria.Localization;
-using Microsoft.Xna.Framework;
-using TShockAPI.Localization;
-using TShockAPI.Models;
 using TShockAPI.Models.PlayerUpdate;
-using TShockAPI.Models.Projectiles;
-using Terraria.Net;
-using Terraria.GameContent.NetModules;
 
 namespace TShockAPI
 {
@@ -183,6 +172,14 @@ namespace TShockAPI
 			/// </summary>
 			public byte PlayerId { get; set; }
 			/// <summary>
+			/// Voice variant
+			/// </summary>
+			public byte VoiceVariant { get; set; }
+			/// <summary>
+			/// Voice pitch offset
+			/// </summary>
+			public float VoicePitchOffset { get; set; }
+			/// <summary>
 			/// Hair color
 			/// </summary>
 			public byte Hair { get; set; }
@@ -204,7 +201,8 @@ namespace TShockAPI
 		/// If this is cancelled, the server will kick the player. If this should be changed in the future, let someone know.
 		/// </summary>
 		public static HandlerList<PlayerInfoEventArgs> PlayerInfo = new HandlerList<PlayerInfoEventArgs>();
-		private static bool OnPlayerInfo(TSPlayer player, MemoryStream data, byte _plrid, byte _hair, int _style, byte _difficulty, string _name)
+		private static bool OnPlayerInfo(TSPlayer player, MemoryStream data, byte _plrid, byte _voiceVariant, float _voicePitchOffset,
+			byte _hair, int _style, byte _difficulty, string _name)
 		{
 			if (PlayerInfo == null)
 				return false;
@@ -214,6 +212,8 @@ namespace TShockAPI
 				Player = player,
 				Data = data,
 				PlayerId = _plrid,
+				VoiceVariant = _voiceVariant,
+				VoicePitchOffset = _voicePitchOffset,
 				Hair = _hair,
 				Style = _style,
 				Difficulty = _difficulty,
@@ -248,12 +248,20 @@ namespace TShockAPI
 			/// Item type
 			/// </summary>
 			public short Type { get; set; }
+			/// <summary>
+			/// Whether the item is favorited
+			/// </summary>
+			public bool Favorited { get; set; }
+			/// <summary>
+			/// Whether this is a blocked slot indicator
+			/// </summary>
+			public bool BlockedSlot { get; set; }
 		}
 		/// <summary>
 		/// PlayerSlot - called at a PlayerSlot event
 		/// </summary>
 		public static HandlerList<PlayerSlotEventArgs> PlayerSlot = new HandlerList<PlayerSlotEventArgs>();
-		private static bool OnPlayerSlot(TSPlayer player, MemoryStream data, byte _plr, short _slot, short _stack, byte _prefix, short _type)
+		private static bool OnPlayerSlot(TSPlayer player, MemoryStream data, byte _plr, short _slot, short _stack, byte _prefix, short _type, bool _favorited, bool _blockedSlot)
 		{
 			if (PlayerSlot == null)
 				return false;
@@ -266,7 +274,9 @@ namespace TShockAPI
 				Slot = _slot,
 				Stack = _stack,
 				Prefix = _prefix,
-				Type = _type
+				Type = _type,
+				Favorited = _favorited,
+				BlockedSlot = _blockedSlot
 			};
 			PlayerSlot.Invoke(null, args);
 			return args.Handled;
@@ -280,10 +290,14 @@ namespace TShockAPI
 
 			/// <summary>The Y position requested. Or -1 for spawn.</summary>
 			public int Y { get; set; }
+
+			/// <summary>The team of the requesting player.</summary>
+			public byte Team { get; set; }
 		}
+
 		/// <summary>The hook for a GetSection event.</summary>
 		public static HandlerList<GetSectionEventArgs> GetSection = new HandlerList<GetSectionEventArgs>();
-		private static bool OnGetSection(TSPlayer player, MemoryStream data, int x, int y)
+		private static bool OnGetSection(TSPlayer player, MemoryStream data, int x, int y, byte team)
 		{
 			if (GetSection == null)
 				return false;
@@ -294,6 +308,7 @@ namespace TShockAPI
 				Data = data,
 				X = x,
 				Y = y,
+				Team = team,
 			};
 
 			GetSection.Invoke(null, args);
@@ -865,6 +880,10 @@ namespace TShockAPI
 			/// </summary>
 			public int NumberOfDeathsPVP { get; set; }
 			/// <summary>
+			/// The team of the requesting player.
+			/// </summary>
+			public byte Team { get; set; }
+			/// <summary>
 			/// Context of where the player is spawning from.
 			/// </summary>
 			public PlayerSpawnContext SpawnContext { get; set; }
@@ -873,7 +892,9 @@ namespace TShockAPI
 		/// PlayerSpawn - When a player spawns
 		/// </summary>
 		public static HandlerList<SpawnEventArgs> PlayerSpawn = new HandlerList<SpawnEventArgs>();
-		private static bool OnPlayerSpawn(TSPlayer player, MemoryStream data, byte pid, int spawnX, int spawnY, int respawnTimer, int numberOfDeathsPVE, int numberOfDeathsPVP, PlayerSpawnContext spawnContext)
+		private static bool OnPlayerSpawn(
+			TSPlayer player, MemoryStream data, byte pid, int spawnX, int spawnY, int respawnTimer, int numberOfDeathsPVE, int numberOfDeathsPVP,
+			byte team, PlayerSpawnContext spawnContext)
 		{
 			if (PlayerSpawn == null)
 				return false;
@@ -1048,12 +1069,17 @@ namespace TShockAPI
 			/// 0 = The Aether
 			/// </summary>
 			public BitsByte Zone5 { get; set; }
+			/// <summary>
+			/// The number of nearby town NPCs.
+			/// </summary>
+			public byte TownNPCs { get; set; }
 		}
 		/// <summary>
 		/// PlayerZone - When the player sends it's zone/biome information to the server
 		/// </summary>
 		public static HandlerList<PlayerZoneEventArgs> PlayerZone = new HandlerList<PlayerZoneEventArgs>();
-		private static bool OnPlayerZone(TSPlayer player, MemoryStream data, byte plr, BitsByte zone1, BitsByte zone2, BitsByte zone3, BitsByte zone4, BitsByte zone5)
+		private static bool OnPlayerZone(TSPlayer player, MemoryStream data, byte plr, BitsByte zone1, BitsByte zone2,
+			BitsByte zone3, BitsByte zone4, BitsByte zone5, byte townNPCs)
 		{
 			if (PlayerZone == null)
 				return false;
@@ -1067,7 +1093,8 @@ namespace TShockAPI
 				Zone2 = zone2,
 				Zone3 = zone3,
 				Zone4 = zone4,
-				Zone5 = zone5
+				Zone5 = zone5,
+				TownNPCs = townNPCs,
 			};
 			PlayerZone.Invoke(null, args);
 			return args.Handled;
@@ -2511,12 +2538,13 @@ namespace TShockAPI
 			byte playerid = args.Data.ReadInt8();
 			// 0-3 male; 4-7 female
 			int skinVariant = args.Data.ReadByte();
+			byte voiceVariant = args.Data.ReadInt8();
+			float voicePitchOffset = args.Data.ReadSingle();
 			var hair = args.Data.ReadInt8();
 			string name = args.Data.ReadString();
 			byte hairDye = args.Data.ReadInt8();
 
-			BitsByte hideVisual = args.Data.ReadInt8();
-			BitsByte hideVisual2 = args.Data.ReadInt8();
+			ushort hideVisualFlags = args.Data.ReadUInt16();
 			BitsByte hideMisc = args.Data.ReadInt8();
 
 			Color hairColor = new Color(args.Data.ReadInt8(), args.Data.ReadInt8(), args.Data.ReadInt8());
@@ -2557,7 +2585,7 @@ namespace TShockAPI
 			bool usedAmbrosia = bitsByte10[5];
 			bool ateArtisanBread = bitsByte10[6];
 
-			if (OnPlayerInfo(args.Player, args.Data, playerid, hair, skinVariant, difficulty, name))
+			if (OnPlayerInfo(args.Player, args.Data, playerid, voiceVariant, voicePitchOffset, hair, skinVariant, difficulty, name))
 			{
 				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandlePlayerInfo rejected plugin phase {0}", name));
 				args.Player.Kick(GetString("A plugin on this server stopped your login."), true, true);
@@ -2591,14 +2619,8 @@ namespace TShockAPI
 				args.Player.TPlayer.shirtColor = shirtColor;
 				args.Player.TPlayer.underShirtColor = underShirtColor;
 				args.Player.TPlayer.shoeColor = shoeColor;
-				//@Olink: If you need to change bool[10], please make sure you also update the for loops below to account for it.
-				//There are two arrays from terraria that we only have a single array for.  You will need to make sure that you are looking
-				//at the correct terraria array (hideVisual or hideVisual2).
-				args.Player.TPlayer.hideVisibleAccessory = new bool[10];
-				for (int i = 0; i < 8; i++)
-					args.Player.TPlayer.hideVisibleAccessory[i] = hideVisual[i];
-				for (int i = 0; i < 2; i++)
-					args.Player.TPlayer.hideVisibleAccessory[i + 8] = hideVisual2[i];
+				for (int i = 0; i < args.Player.TPlayer.hideVisibleAccessory.Length; i++)
+					args.Player.TPlayer.hideVisibleAccessory[i] = (hideVisualFlags & (1 << i)) != 0;
 				args.Player.TPlayer.hideMisc = hideMisc;
 				args.Player.TPlayer.extraAccessory = extraSlot;
 				args.Player.TPlayer.UsingBiomeTorches = usingBiomeTorches;
@@ -2649,6 +2671,9 @@ namespace TShockAPI
 			short stack = args.Data.ReadInt16();
 			byte prefix = args.Data.ReadInt8();
 			short type = args.Data.ReadInt16();
+			BitsByte slotFlags = args.Data.ReadInt8();
+			bool favorited = slotFlags[0];
+			bool blockedSlot = slotFlags[1];
 
 			// Players send a slot update packet for each inventory slot right after they've joined.
 			bool bypassTrashCanCheck = false;
@@ -2658,8 +2683,8 @@ namespace TShockAPI
 				bypassTrashCanCheck = true;
 			}
 
-			if (OnPlayerSlot(args.Player, args.Data, plr, slot, stack, prefix, type) || plr != args.Player.Index || slot < 0 ||
-				slot > NetItem.MaxInventory)
+			if (OnPlayerSlot(args.Player, args.Data, plr, slot, stack, prefix, type, favorited, blockedSlot)
+				|| plr != args.Player.Index || slot < 0 || slot > NetItem.MaxInventory)
 				return true;
 			if (args.Player.IgnoreSSCPackets)
 			{
@@ -2774,7 +2799,11 @@ namespace TShockAPI
 
 		private static bool HandleGetSection(GetDataHandlerArgs args)
 		{
-			if (OnGetSection(args.Player, args.Data, args.Data.ReadInt32(), args.Data.ReadInt32()))
+			int x = args.Data.ReadInt32();
+			int y = args.Data.ReadInt32();
+			byte team = args.Data.ReadInt8();
+
+			if (OnGetSection(args.Player, args.Data, x, y, team))
 				return true;
 
 			if (TShock.Utils.GetActivePlayerCount() + 1 > TShock.Config.Settings.MaxSlots &&
@@ -2803,12 +2832,13 @@ namespace TShockAPI
 			int respawnTimer = args.Data.ReadInt32();
 			short numberOfDeathsPVE = args.Data.ReadInt16();
 			short numberOfDeathsPVP = args.Data.ReadInt16();
+			byte team = args.Data.ReadInt8();
 			PlayerSpawnContext context = (PlayerSpawnContext)args.Data.ReadByte();
 
 			if (args.Player.State >= (int)ConnectionState.RequestingWorldData && !args.Player.FinishedHandshake)
 				args.Player.FinishedHandshake = true; //If the player has requested world data before sending spawn player, they should be at the obvious ClientRequestedWorldData state. Also only set this once to remove redundant updates.
 
-			if (OnPlayerSpawn(args.Player, args.Data, player, spawnX, spawnY, respawnTimer, numberOfDeathsPVE, numberOfDeathsPVP, context))
+			if (OnPlayerSpawn(args.Player, args.Data, player, spawnX, spawnY, respawnTimer, numberOfDeathsPVE, numberOfDeathsPVP, team, context))
 				return true;
 
 			if (!Main.ServerSideCharacter || context != PlayerSpawnContext.SpawningIntoWorld)
@@ -2892,6 +2922,10 @@ namespace TShockAPI
 			Vector2 velocity = Vector2.Zero;
 			if (miscData1.HasVelocity)
 				velocity = args.Data.ReadVector2();
+
+			ushort mountType = 0;
+			if (miscData1.HasMount)
+				mountType = args.Data.ReadUInt16();
 
 			Vector2? originalPosition = new Vector2?();
 			Vector2? homePosition = Vector2.Zero;
@@ -3305,8 +3339,9 @@ namespace TShockAPI
 			BitsByte zone3 = args.Data.ReadInt8();
 			BitsByte zone4 = args.Data.ReadInt8();
 			BitsByte zone5 = args.Data.ReadInt8();
+			byte townNPCs = args.Data.ReadInt8();
 
-			if (OnPlayerZone(args.Player, args.Data, plr, zone1, zone2, zone3, zone4, zone5))
+			if (OnPlayerZone(args.Player, args.Data, plr, zone1, zone2, zone3, zone4, zone5, townNPCs))
 				return true;
 
 			return false;
@@ -3543,31 +3578,27 @@ namespace TShockAPI
 			if (OnPlayerBuffUpdate(args.Player, args.Data, id))
 				return true;
 
-			for (int i = 0; i < Terraria.Player.maxBuffs; i++)
+			int buffIndex = 0;
+			ushort buff;
+			while ((buff = args.Data.ReadUInt16()) > 0 && buffIndex < Player.maxBuffs)
 			{
-				var buff = args.Data.ReadUInt16();
-
 				if (buff == 10 && TShock.Config.Settings.DisableInvisPvP && args.TPlayer.hostile)
 					buff = 0;
 
-				if (Netplay.Clients[args.TPlayer.whoAmI].State < (int)ConnectionState.AwaitingPlayerInfo && (buff == 156 || buff == 47 || buff == 149))
+				if (Netplay.Clients[args.TPlayer.whoAmI].State < (int)ConnectionState.AwaitingPlayerInfo && (buff == BuffID.Stoned || buff == BuffID.Frozen || buff == BuffID.Webbed))
 				{
 					TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandlePlayerBuffList zeroed player buff due to below state awaiting player information {0} {1}", args.Player.Name, buff));
 					buff = 0;
 				}
 
-				args.TPlayer.buffType[i] = buff;
-				if (args.TPlayer.buffType[i] > 0)
-				{
-					args.TPlayer.buffTime[i] = 60;
-				}
-				else
-				{
-					args.TPlayer.buffTime[i] = 0;
-				}
+				args.TPlayer.buffType[buffIndex] = buff;
+				args.TPlayer.buffTime[buffIndex] = 60;
+				buffIndex++;
 			}
 
-			TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandlePlayerBuffList handled event and sent data {0}", args.Player.Name));
+			// Clear remaining buff slots
+			Array.Clear(args.TPlayer.buffType, buffIndex, args.TPlayer.buffType.Length - buffIndex);
+			Array.Clear(args.TPlayer.buffTime, buffIndex, args.TPlayer.buffTime.Length - buffIndex);
 			NetMessage.SendData((int)PacketTypes.PlayerBuff, -1, args.Player.Index, NetworkText.Empty, args.Player.Index);
 			return true;
 		}
@@ -4480,7 +4511,7 @@ namespace TShockAPI
 			int slot = args.Data.ReadByte();
 			int subtype = args.Data.ReadByte();
 
-			if (!TileEntity.TryGet(tileEntityID, out TEDisplayDoll displayDoll))
+			if (!TileEntity.ByID.TryGetValue(tileEntityID, out TileEntity entity) || entity is not TEDisplayDoll displayDoll)
 				return false;
 
 			switch (subtype)
