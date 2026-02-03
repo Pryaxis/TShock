@@ -1520,7 +1520,9 @@ namespace TShockAPI
 		/// <param name="respawnTimer">The respawn timer, will be Player.respawnTimer if parameter is null.</param>
 		/// <param name="numberOfDeathsPVE">The number of deaths PVE, will be TPlayer.numberOfDeathsPVE if parameter is null.</param>
 		/// <param name="numberOfDeathsPVP">The number of deaths PVP, will be TPlayer.numberOfDeathsPVP if parameter is null.</param>
-		public void Spawn(int tilex, int tiley, PlayerSpawnContext context, int? respawnTimer = null, short? numberOfDeathsPVE = null, short? numberOfDeathsPVP = null)
+		/// <param name="team">The team after player spawn.</param>
+		public void Spawn(int tilex, int tiley, PlayerSpawnContext context, int? respawnTimer = null,
+				short? numberOfDeathsPVE = null, short? numberOfDeathsPVP = null, int team = -1)
 		{
 			using (var ms = new MemoryStream())
 			{
@@ -1532,6 +1534,7 @@ namespace TShockAPI
 					RespawnTimer = respawnTimer ?? TShock.Players[Index].RespawnTimer * 60,
 					NumberOfDeathsPVE = numberOfDeathsPVE ?? (short)TPlayer.numberOfDeathsPVE,
 					NumberOfDeathsPVP = numberOfDeathsPVP ?? (short)TPlayer.numberOfDeathsPVP,
+					Team = team == -1 ? TPlayer.team : team,
 					PlayerSpawnContext = context,
 				};
 				msg.PackFull(ms);

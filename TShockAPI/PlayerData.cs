@@ -85,7 +85,7 @@ namespace TShockAPI
 				for (int i = 0; i < TShock.ServerSideCharacterConfig.Settings.StartingInventory.Count; i++)
 				{
 					var item = TShock.ServerSideCharacterConfig.Settings.StartingInventory[i];
-					StoreSlot(i, item.NetId, item.PrefixId, item.Stack);
+					StoreSlot(i, item.NetId, item.PrefixId, item.Stack, item.Favorited);
 				}
 		}
 
@@ -96,9 +96,10 @@ namespace TShockAPI
 		/// <param name="netID"></param>
 		/// <param name="prefix"></param>
 		/// <param name="stack"></param>
-		public void StoreSlot(int slot, int netID, byte prefix, int stack)
+		/// <param name="favorited"></param>
+		public void StoreSlot(int slot, int netID, byte prefix, int stack, bool favorited)
 		{
-			StoreSlot(slot, new NetItem(netID, stack, prefix));
+			StoreSlot(slot, new NetItem(netID, stack, prefix, favorited));
 		}
 
 		/// <summary>
@@ -337,6 +338,7 @@ namespace TShockAPI
 					{
 						player.TPlayer.inventory[i].stack = this.inventory[i].Stack;
 						player.TPlayer.inventory[i].prefix = this.inventory[i].PrefixId;
+						player.TPlayer.inventory[i].favorited = this.inventory[i].Favorited;
 					}
 				}
 				else if (i < NetItem.ArmorIndex.Item2)
@@ -349,6 +351,7 @@ namespace TShockAPI
 					{
 						player.TPlayer.armor[index].stack = this.inventory[i].Stack;
 						player.TPlayer.armor[index].prefix = (byte)this.inventory[i].PrefixId;
+						player.TPlayer.armor[index].favorited = this.inventory[i].Favorited;
 					}
 				}
 				else if (i < NetItem.DyeIndex.Item2)
@@ -361,6 +364,7 @@ namespace TShockAPI
 					{
 						player.TPlayer.dye[index].stack = this.inventory[i].Stack;
 						player.TPlayer.dye[index].prefix = (byte)this.inventory[i].PrefixId;
+						player.TPlayer.dye[index].favorited = this.inventory[i].Favorited;
 					}
 				}
 				else if (i < NetItem.MiscEquipIndex.Item2)
@@ -373,6 +377,7 @@ namespace TShockAPI
 					{
 						player.TPlayer.miscEquips[index].stack = this.inventory[i].Stack;
 						player.TPlayer.miscEquips[index].prefix = (byte)this.inventory[i].PrefixId;
+						player.TPlayer.miscEquips[index].favorited = this.inventory[i].Favorited;
 					}
 				}
 				else if (i < NetItem.MiscDyeIndex.Item2)
@@ -385,6 +390,7 @@ namespace TShockAPI
 					{
 						player.TPlayer.miscDyes[index].stack = this.inventory[i].Stack;
 						player.TPlayer.miscDyes[index].prefix = (byte)this.inventory[i].PrefixId;
+						player.TPlayer.miscDyes[index].favorited = this.inventory[i].Favorited;
 					}
 				}
 				else if (i < NetItem.PiggyIndex.Item2)
@@ -397,6 +403,7 @@ namespace TShockAPI
 					{
 						player.TPlayer.bank.item[index].stack = this.inventory[i].Stack;
 						player.TPlayer.bank.item[index].prefix = (byte)this.inventory[i].PrefixId;
+						player.TPlayer.bank.item[index].favorited = this.inventory[i].Favorited;
 					}
 				}
 				else if (i < NetItem.SafeIndex.Item2)
@@ -409,6 +416,7 @@ namespace TShockAPI
 					{
 						player.TPlayer.bank2.item[index].stack = this.inventory[i].Stack;
 						player.TPlayer.bank2.item[index].prefix = (byte)this.inventory[i].PrefixId;
+						player.TPlayer.bank2.item[index].favorited = this.inventory[i].Favorited;
 					}
 				}
 				else if (i < NetItem.TrashIndex.Item2)
@@ -421,6 +429,7 @@ namespace TShockAPI
 					{
 						player.TPlayer.trashItem.stack = this.inventory[i].Stack;
 						player.TPlayer.trashItem.prefix = (byte)this.inventory[i].PrefixId;
+						player.TPlayer.trashItem.favorited = this.inventory[i].Favorited;
 					}
 				}
 				else if (i < NetItem.ForgeIndex.Item2)
@@ -433,6 +442,7 @@ namespace TShockAPI
 					{
 						player.TPlayer.bank3.item[index].stack = this.inventory[i].Stack;
 						player.TPlayer.bank3.item[index].Prefix((byte)this.inventory[i].PrefixId);
+						player.TPlayer.bank3.item[index].favorited = this.inventory[i].Favorited;
 					}
 				}
 				else if (i < NetItem.VoidIndex.Item2)
@@ -445,6 +455,7 @@ namespace TShockAPI
 					{
 						player.TPlayer.bank4.item[index].stack = this.inventory[i].Stack;
 						player.TPlayer.bank4.item[index].Prefix((byte)this.inventory[i].PrefixId);
+						player.TPlayer.bank4.item[index].favorited = this.inventory[i].Favorited;
 					}
 				}
 				else if (i < NetItem.Loadout1Armor.Item2)
@@ -456,6 +467,7 @@ namespace TShockAPI
 					{
 						player.TPlayer.Loadouts[0].Armor[index].stack = this.inventory[i].Stack;
 						player.TPlayer.Loadouts[0].Armor[index].Prefix((byte)this.inventory[i].PrefixId);
+						player.TPlayer.Loadouts[0].Armor[index].favorited = this.inventory[i].Favorited;
 					}
 				}
 				else if (i < NetItem.Loadout1Dye.Item2)
@@ -467,6 +479,7 @@ namespace TShockAPI
 					{
 						player.TPlayer.Loadouts[0].Dye[index].stack = this.inventory[i].Stack;
 						player.TPlayer.Loadouts[0].Dye[index].Prefix((byte)this.inventory[i].PrefixId);
+						player.TPlayer.Loadouts[0].Dye[index].favorited = this.inventory[i].Favorited;
 					}
 				}
 				else if (i < NetItem.Loadout2Armor.Item2)
@@ -478,6 +491,7 @@ namespace TShockAPI
 					{
 						player.TPlayer.Loadouts[1].Armor[index].stack = this.inventory[i].Stack;
 						player.TPlayer.Loadouts[1].Armor[index].Prefix((byte)this.inventory[i].PrefixId);
+						player.TPlayer.Loadouts[1].Armor[index].favorited = this.inventory[i].Favorited;
 					}
 				}
 				else if (i < NetItem.Loadout2Dye.Item2)
@@ -489,6 +503,7 @@ namespace TShockAPI
 					{
 						player.TPlayer.Loadouts[1].Dye[index].stack = this.inventory[i].Stack;
 						player.TPlayer.Loadouts[1].Dye[index].Prefix((byte)this.inventory[i].PrefixId);
+						player.TPlayer.Loadouts[1].Dye[index].favorited = this.inventory[i].Favorited;
 					}
 				}
 				else if (i < NetItem.Loadout3Armor.Item2)
@@ -500,6 +515,7 @@ namespace TShockAPI
 					{
 						player.TPlayer.Loadouts[2].Armor[index].stack = this.inventory[i].Stack;
 						player.TPlayer.Loadouts[2].Armor[index].Prefix((byte)this.inventory[i].PrefixId);
+						player.TPlayer.Loadouts[2].Armor[index].favorited = this.inventory[i].Favorited;
 					}
 				}
 				else if (i < NetItem.Loadout3Dye.Item2)
@@ -511,6 +527,7 @@ namespace TShockAPI
 					{
 						player.TPlayer.Loadouts[2].Dye[index].stack = this.inventory[i].Stack;
 						player.TPlayer.Loadouts[2].Dye[index].Prefix((byte)this.inventory[i].PrefixId);
+						player.TPlayer.Loadouts[2].Dye[index].favorited = this.inventory[i].Favorited;
 					}
 				}
 			}
