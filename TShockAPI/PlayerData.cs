@@ -552,7 +552,7 @@ namespace TShockAPI
 			}
 			for (int k = 0; k < NetItem.DyeSlots; k++)
 			{
-				NetMessage.SendData(5, -1, -1, NetworkText.FromLiteral(Main.player[player.Index].dye[k].Name), player.Index, PlayerItemSlotID.Dye0 + k, (float)Main.player[player.Index].dye[k].prefix);
+				NetMessage.SendData(5, -1, -1, NetworkText.Empty, player.Index, PlayerItemSlotID.Dye0 + k);
 			}
 			for (int k = 0; k < NetItem.MiscEquipSlots; k++)
 			{
