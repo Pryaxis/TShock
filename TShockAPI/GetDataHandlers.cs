@@ -2700,7 +2700,7 @@ namespace TShockAPI
 
 			if (args.Player.IsLoggedIn)
 			{
-				args.Player.PlayerData.StoreSlot(slot, type, prefix, stack);
+				args.Player.PlayerData.StoreSlot(slot, type, prefix, stack, favorited);
 			}
 			else if (Main.ServerSideCharacter && TShock.Config.Settings.DisableLoginBeforeJoin && !bypassTrashCanCheck &&
 					 args.Player.HasSentInventory && !args.Player.HasPermission(Permissions.bypassssc))
