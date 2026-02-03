@@ -4936,12 +4936,18 @@ namespace TShockAPI
 			Ping,
 			Ambience,
 			Bestiary,
-			CreativeUnlocks,
 			CreativePowers,
 			CreativeUnlocksPlayerReport,
 			TeleportPylon,
 			Particles,
-			CreativePowerPermissions
+			CreativePowerPermissions,
+			Banners,
+			CraftingRequests,
+			TagEffectState,
+			LeashedEntity,
+			UnbreakableWallScan,
+			[Obsolete("Removed in 1.4.5")]
+			CreativeUnlocks
 		}
 
 		public enum CreativePowerTypes
