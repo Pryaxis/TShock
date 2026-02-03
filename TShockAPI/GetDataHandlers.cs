@@ -2677,7 +2677,7 @@ namespace TShockAPI
 
 			// Players send a slot update packet for each inventory slot right after they've joined.
 			bool bypassTrashCanCheck = false;
-			if (plr == args.Player.Index && !args.Player.HasSentInventory && slot == PlayerItemSlotID.Loadout3_Dye_0 + NetItem.LoadoutDyeSlots - 1) // equals to 989, avoid hardcoding
+			if (plr == args.Player.Index && !args.Player.HasSentInventory && slot == PlayerItemSlotID.Count - 1) // equals to 989, avoid hardcoding
 			{
 				args.Player.HasSentInventory = true;
 				bypassTrashCanCheck = true;
