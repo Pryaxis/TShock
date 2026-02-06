@@ -765,6 +765,19 @@ namespace TShockAPI
 														   && args.Player.TPlayer.mount.Type != MountID.Drill
 														   && args.Player.TPlayer.mount.Type != MountID.DiggingMoleMinecart)
 					{
+						if (args.Player.TPlayer.ownedProjectileCounts[ProjectileID.PalworldDigtoise] > 0)
+						{
+							var digtoiseProjectile = Main.projectile
+								.FirstOrDefault(p =>
+									p is { active: true, type: 1098 } && p.owner == args.Player.Index);
+
+							if (digtoiseProjectile?.ai[0] is 1f or 2f or 3f
+							    && digtoiseProjectile.ai[1] > 40f)
+							{
+								return;
+							}
+						}
+
 						TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected from (pick) {0} {1} {2}", args.Player.Name, action,
 							editData));
 						args.Player.SendTileSquareCentered(tileX, tileY, 4);
