@@ -3038,34 +3038,39 @@ namespace TShockAPI
 		// Moved to Projectile.StatusNPC(int i).
 		private static Dictionary<int, short> NPCAddBuffTimeMax = new Dictionary<int, short>()
 		{
-			{ BuffID.Poisoned, 3600 },              // BuffID: 20
-			{ BuffID.OnFire, 1200 },                // BuffID: 24
-			{ BuffID.Confused, short.MaxValue },    // BuffID: 31 Brain of Confusion Internal Item ID: 3223
-			{ BuffID.CursedInferno, 600 },          // BuffID: 39
-			{ BuffID.Frostburn, 900 },              // BuffID: 44
-			{ BuffID.Ichor, 1200 },                 // BuffID: 69
-			{ BuffID.Venom, 1800 },                 // BuffID: 70
-			{ BuffID.Midas, 120 },                  // BuffID: 72
-			{ BuffID.Wet, 1500 },                   // BuffID: 103
-			{ BuffID.Lovestruck, 1800 },            // BuffID: 119
-			{ BuffID.Stinky, 1800 },                // BuffID: 120
-			{ BuffID.Slimed, 1500 },                // BuffID: 137
-			{ BuffID.SoulDrain, 30 },               // BuffID: 151
-			{ BuffID.ShadowFlame, 660 },            // BuffID: 153
-			{ BuffID.DryadsWard, 120 },             // BuffID: 165
-			{ BuffID.BoneJavelin, 900 },            // BuffID: 169
-			{ BuffID.StardustMinionBleed, 900 },    // BuffID: 183
-			{ BuffID.DryadsWardDebuff, 120 },       // BuffID: 186
-			{ BuffID.Daybreak, 300 },               // BuffID: 189 Solar Eruption Item ID: 3473, Daybreak Item ID: 3543
-			{ BuffID.BetsysCurse, 600 },            // BuffID: 203
-			{ BuffID.Oiled, 540 },                  // BuffID: 204
-			{ BuffID.ScytheWhipEnemyDebuff, 240  }, // BuffID: 310
-			{ BuffID.GelBalloonBuff, 1800  },       // BuffID: 320
-			{ BuffID.OnFire3, 1200 },               // BuffID: 323
-			{ BuffID.Frostburn2, 1200 },            // BuffID: 324
-			{ BuffID.TentacleSpike, 540 },          // BuffID: 337
-			{ BuffID.BloodButcherer, 540 },         // BuffID: 344
-			{ BuffID.Shimmer, 100 },		        // BuffID: 353
+			{ BuffID.Shimmer, 100 },
+			{ BuffID.Venom, 1800 },
+			{ BuffID.CursedInferno, 600 },
+			{ BuffID.OnFire, 19392 }, // It's supposed to be 600, but it's actually 19392. And I can't find 19132 anywhere.
+			{ BuffID.Ichor, 1140 },
+			{ BuffID.Confused, 16684 },
+			{ BuffID.Poisoned, 3600 },
+			{ BuffID.Midas, 120 },
+			{ BuffID.Bleeding, 720 },
+			{ BuffID.Frostburn2, 1200 },
+			{ BuffID.OnFire3, 1200 },
+			{ BuffID.Stinky, 1800 },
+			{ BuffID.Slimed, 180 },
+			{ BuffID.Hemorrhage, 720 },
+			{ BuffID.BrokenArmor, 1200 },
+			{ BuffID.BoneJavelin, 900 },
+			{ BuffID.Daybreak, 300 },
+			{ BuffID.TentacleSpike, 540 },
+			{ BuffID.BloodButcherer, 540 },
+			{ BuffID.BetsysCurse, 600 },
+			{ BuffID.StardustMinionBleed, 900 },
+			{ BuffID.ShadowFlame, 600 },
+			{ BuffID.Frostburn, 239 },
+			{ BuffID.Oiled, 510 },
+			{ BuffID.SoulDrain, 30 },
+			{ BuffID.EelWhipNPCDebuff, 240 },
+			{ BuffID.ScytheWhipEnemyDebuff, 240 },
+			{ BuffID.Wet, 1500 },
+			{ BuffID.DryadsWard, 120 },
+			{ BuffID.DryadsWardDebuff, 120 },
+			{ BuffID.Tipsy, 3659 },
+			{ BuffID.Lovestruck, 1800 },
+			{ BuffID.GelBalloonBuff, 1800 },
 		};
 
 		/// <summary>
