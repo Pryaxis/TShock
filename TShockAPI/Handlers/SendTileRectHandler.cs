@@ -398,6 +398,7 @@ namespace TShockAPI.Handlers
 			TileRectMatch.StateChangeX(1, 1, TileID.ShadowCandle, 18, 18),
 
 			TileRectMatch.StateChange(1, 1, TileID.Traps, 90, 90, 18, 18),
+			TileRectMatch.StateChange(1, 1, TileID.Torches, 0, 198, 0, 0),
 
 			TileRectMatch.StateChangeX(1, 1, TileID.WirePipe, 36, 18),
 			TileRectMatch.StateChangeX(1, 1, TileID.ProjectilePressurePad, 66, 22),
