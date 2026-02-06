@@ -2694,9 +2694,6 @@ namespace TShockAPI
 			}
 
 			// Garabage? Or will it cause some internal initialization or whatever?
-			var item = new Item();
-			item.netDefaults(type);
-			item.Prefix(prefix);
 
 			if (args.Player.IsLoggedIn)
 			{
@@ -2711,7 +2708,11 @@ namespace TShockAPI
 
 			if (slot == 58) //this is the hand
 			{
+				var item = new Item();
+				item.netDefaults(type);
+				item.Prefix(prefix);
 				item.stack = stack;
+				item.favorited = favorited;
 				args.Player.ItemInHand = item;
 			}
 
@@ -2849,14 +2850,14 @@ namespace TShockAPI
 			if (Main.ServerSideCharacter)
 			{
 				// As long as the player has not changed his spawnpoint since initial connection,
-				// we should not use the client's spawnpoint value. This is because the spawnpoint 
-				// value is not saved on the client when SSC is enabled. Hence, we have to assert 
-				// the server-saved spawnpoint value until we can detect that the player has changed 
+				// we should not use the client's spawnpoint value. This is because the spawnpoint
+				// value is not saved on the client when SSC is enabled. Hence, we have to assert
+				// the server-saved spawnpoint value until we can detect that the player has changed
 				// his spawn. Once we detect the spawnpoint changed, the client's spawnpoint value
 				// becomes the correct one to use.
 				//
-				// Note that spawnpoint changes (right-clicking beds) are not broadcasted to the 
-				// server. Hence, the only way to detect spawnpoint changes is from the 
+				// Note that spawnpoint changes (right-clicking beds) are not broadcasted to the
+				// server. Hence, the only way to detect spawnpoint changes is from the
 				// PlayerSpawn packet.
 
 				// handle initial connection
@@ -2872,13 +2873,13 @@ namespace TShockAPI
 					args.Player.initialClientSpawnX = spawnX;
 					args.Player.initialClientSpawnY = spawnY;
 
-					// we first let the game handle completing the connection (state 3 => 10), 
-					// then we will spawn the player at the saved spawnpoint in the next second, 
+					// we first let the game handle completing the connection (state 3 => 10),
+					// then we will spawn the player at the saved spawnpoint in the next second,
 					// by reasserting the correct spawnpoint value
 					return false;
 				}
 
-				// once we detect the client has changed his spawnpoint in the current session, 
+				// once we detect the client has changed his spawnpoint in the current session,
 				// the client spawnpoint value will be correct for the rest of the session
 				if (args.Player.spawnSynced || args.Player.initialClientSpawnX != spawnX || args.Player.initialClientSpawnY != spawnY)
 				{
@@ -2890,11 +2891,11 @@ namespace TShockAPI
 				// spawn the player before teleporting
 				NetMessage.SendData((int)PacketTypes.PlayerSpawn, -1, args.Player.Index, null, args.Player.Index, (int)PlayerSpawnContext.ReviveFromDeath);
 
-				// the player has not changed his spawnpoint yet, so we assert the server-saved spawnpoint 
+				// the player has not changed his spawnpoint yet, so we assert the server-saved spawnpoint
 				// by teleporting the player instead of letting the game use the client's incorrect spawnpoint.
 				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleSpawn force ssc teleport for {0} at ({1},{2})", args.Player.Name, args.TPlayer.SpawnX, args.TPlayer.SpawnY));
 				args.Player.TeleportSpawnpoint();
-				
+
 				args.TPlayer.respawnTimer = respawnTimer;
 				args.TPlayer.numberOfDeathsPVE = numberOfDeathsPVE;
 				args.TPlayer.numberOfDeathsPVP = numberOfDeathsPVP;
@@ -3993,7 +3994,7 @@ namespace TShockAPI
 			if (type == 0 && !args.Player.HasPermission(Permissions.rod))
 			{
 				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleTeleport rejected rod type {0} {1}", args.Player.Name, type));
-				args.Player.SendErrorMessage(GetString("You do not have permission to teleport using items.")); // Was going to write using RoD but Hook of Disonnance and Potion of Return both use the same teleport packet as RoD. 
+				args.Player.SendErrorMessage(GetString("You do not have permission to teleport using items.")); // Was going to write using RoD but Hook of Disonnance and Potion of Return both use the same teleport packet as RoD.
 				args.Player.Teleport(args.TPlayer.position.X, args.TPlayer.position.Y); // Suggest renaming rod permission unless someone plans to add separate perms for the other 2 tp items.
 				return true;
 			}
