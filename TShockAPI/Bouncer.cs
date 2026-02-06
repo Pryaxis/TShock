@@ -1165,7 +1165,7 @@ namespace TShockAPI
 			if (type < -48 || type >= Terraria.ID.ItemID.Count)
 			{
 				// Causes item duplications. Will be re added later if necessary
-				//args.Player.SendData(PacketTypes.ItemDrop, "", id);
+				//args.Player.SendData(PacketTypes.SyncItemDespaw, "", id);
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnItemDrop rejected from attempt crash from {0}", args.Player.Name));
 				args.Handled = true;
 				return;
@@ -1178,32 +1178,31 @@ namespace TShockAPI
 			{
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnItemDrop rejected from prefix check from {0}", args.Player.Name));
 
-				args.Player.SendData(PacketTypes.ItemDrop, "", id);
+				args.Player.SendData(PacketTypes.SyncItemDespawn, "", id);
 				args.Handled = true;
 				return;
 			}
 
-			//Item removed, let client do this to prevent item duplication
-			// client side (but only if it passed the range check) (i.e., return false)
-			if (type == 0)
-			{
-				if (!args.Player.IsInRange((int)(Main.item[id].position.X / 16f), (int)(Main.item[id].position.Y / 16f)))
-				{
-					// Causes item duplications. Will be re added if necessary
-					//args.Player.SendData(PacketTypes.ItemDrop, "", id);
-					TShock.Log.ConsoleDebug(GetString("Bouncer / OnItemDrop rejected from dupe range check from {0}", args.Player.Name));
-					args.Handled = true;
-					return;
-				}
-
-				args.Handled = false;
-				return;
-			}
+			// Item removed by PacketTypes.SyncItemDespawn now
+			// if (type == 0)
+			// {
+			// 	if (!args.Player.IsInRange((int)(Main.item[id].position.X / 16f), (int)(Main.item[id].position.Y / 16f)))
+			// 	{
+			// 		// Causes item duplications. Will be re added if necessary
+			// 		//args.Player.SendData(PacketTypes.ItemDrop, "", id);
+			// 		TShock.Log.ConsoleDebug(GetString("Bouncer / OnItemDrop rejected from dupe range check from {0}", args.Player.Name));
+			// 		args.Handled = true;
+			// 		return;
+			// 	}
+			//
+			// 	args.Handled = false;
+			// 	return;
+			// }
 
 			if (!args.Player.IsInRange((int)(pos.X / 16f), (int)(pos.Y / 16f)))
 			{
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnItemDrop rejected from range check from {0}", args.Player.Name));
-				args.Player.SendData(PacketTypes.ItemDrop, "", id);
+				args.Player.SendData(PacketTypes.SyncItemDespawn, "", id);
 				args.Handled = true;
 				return;
 			}
@@ -1213,7 +1212,7 @@ namespace TShockAPI
 			if (Main.item[id].active && Main.item[id].type != type)
 			{
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnItemDrop rejected from item drop/pickup check from {0}", args.Player.Name));
-				args.Player.SendData(PacketTypes.ItemDrop, "", id);
+				args.Player.SendData(PacketTypes.SyncItemDespawn, "", id);
 				args.Handled = true;
 				return;
 			}
@@ -1223,7 +1222,7 @@ namespace TShockAPI
 			if ((stacks > item.maxStack || stacks <= 0) || (TShock.ItemBans.DataModel.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), args.Player) && !args.Player.HasPermission(Permissions.allowdroppingbanneditems)))
 			{
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnItemDrop rejected from drop item ban check / max stack check / min stack check from {0}", args.Player.Name));
-				args.Player.SendData(PacketTypes.ItemDrop, "", id);
+				args.Player.SendData(PacketTypes.SyncItemDespawn, "", id);
 				args.Handled = true;
 				return;
 			}
@@ -1234,7 +1233,7 @@ namespace TShockAPI
 				//Player is probably trying to sneak items onto the server in their hands!!!
 				TShock.Log.ConsoleInfo(GetString("Player {0} tried to sneak {1} onto the server!", args.Player.Name, item.Name));
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnItemDrop rejected from sneaky from {0}", args.Player.Name));
-				args.Player.SendData(PacketTypes.ItemDrop, "", id);
+				args.Player.SendData(PacketTypes.SyncItemDespawn, "", id);
 				args.Handled = true;
 				return;
 
@@ -1243,7 +1242,7 @@ namespace TShockAPI
 			if (args.Player.IsBeingDisabled())
 			{
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnItemDrop rejected from disabled from {0}", args.Player.Name));
-				args.Player.SendData(PacketTypes.ItemDrop, "", id);
+				args.Player.SendData(PacketTypes.SyncItemDespawn, "", id);
 				args.Handled = true;
 				return;
 			}
