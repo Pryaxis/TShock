@@ -2137,6 +2137,12 @@ namespace TShockAPI
 
 			if (!args.Player.HasPermission(Permissions.ignorenpcbuffdetection))
 			{
+				// "TorchSlime" will add a super long burn buff
+				if (type == BuffID.OnFire && Main.getGoodWorld && npc.aiStyle == 1 && (short)npc.ai[1] == ItemID.Torch)
+				{
+					return;
+				}
+
 				bool detectedNPCBuffTimeCheat = false;
 
 				if (NPCAddBuffTimeMax.ContainsKey(type))
