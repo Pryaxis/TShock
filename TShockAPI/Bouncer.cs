@@ -1172,8 +1172,6 @@ namespace TShockAPI
 			}
 
 			// make sure the prefix is a legit value
-			// Note: Not checking if prefix is less than 1 because if it is, this check
-			// will break item pickups on the client.
 			if (prefix > PrefixID.Count)
 			{
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnItemDrop rejected from prefix check from {0}", args.Player.Name));
@@ -1207,12 +1205,12 @@ namespace TShockAPI
 				return;
 			}
 
-			// stop the client from changing the item type of a drop but
-			// only if the client isn't picking up the item
-			if (Main.item[id].active && Main.item[id].type != type)
+			// stop the client from changing the item type of a drop
+			if (Main.item[id].active && Main.item[id].type != type &&
+			    !(Main.item[id].type == ItemID.EmptyBucket && type == ItemID.WaterBucket)) // Empty bucket turns into Water Bucket on rainy days
 			{
-				TShock.Log.ConsoleDebug(GetString("Bouncer / OnItemDrop rejected from item drop/pickup check from {0}", args.Player.Name));
-				args.Player.SendData(PacketTypes.SyncItemDespawn, "", id);
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnItemDrop rejected from item drop check from {0}", args.Player.Name));
+				args.Player.SendData(PacketTypes.ItemDrop, "", id);
 				args.Handled = true;
 				return;
 			}
