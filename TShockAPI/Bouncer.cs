@@ -828,25 +828,30 @@ namespace TShockAPI
 					// Handle placement action for Regrowth tools to ensure they only replant herbs on valid containers.
 					if (selectedItem.type is ItemID.AcornAxe or ItemID.StaffofRegrowth)
 					{
-						if ((int)editData is TileID.Grass or TileID.HallowedGrass or TileID.CorruptGrass
+						if ((int)editData is not (TileID.Grass or TileID.HallowedGrass or TileID.CorruptGrass
 						    or TileID.CrimsonGrass or TileID.JungleGrass or TileID.MushroomGrass
-						    or TileID.CorruptJungleGrass or TileID.CrimsonJungleGrass or TileID.AshGrass
-						    || TileID.Sets.Conversion.Moss[editData])
+						    or TileID.CorruptJungleGrass or TileID.CrimsonJungleGrass or TileID.AshGrass)
+						    && !TileID.Sets.Conversion.Moss[editData])
 						{
-							return;
-						}
-						if (editData != TileID.ImmatureHerbs)
-						{
-							TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected {0} from placing non-herb tile {1} using {2}", args.Player.Name, editData, selectedItem.Name));
-							args.Player.SendTileSquareCentered(tileX, tileY, 4);
-							args.Handled = true;
-						}
-						var containerTile = Main.tile[tileX, tileY + 1];
-						if (!containerTile.active() || containerTile.type is not (TileID.ClayPot or TileID.RockGolemHead or TileID.PlanterBox))
-						{
-							TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected {0} from planting herb on invalid tile {1} using {2}", args.Player.Name, containerTile.type, selectedItem.Name));
-							args.Player.SendTileSquareCentered(tileX, tileY, 4);
-							args.Handled = true;
+							if (editData != TileID.ImmatureHerbs)
+							{
+								TShock.Log.ConsoleDebug(GetString(
+									"Bouncer / OnTileEdit rejected {0} from placing non-herb tile {1} using {2}",
+									args.Player.Name, editData, selectedItem.Name));
+								args.Player.SendTileSquareCentered(tileX, tileY, 4);
+								args.Handled = true;
+							}
+
+							var containerTile = Main.tile[tileX, tileY + 1];
+							if (!containerTile.active() ||
+							    containerTile.type is not (TileID.ClayPot or TileID.RockGolemHead or TileID.PlanterBox))
+							{
+								TShock.Log.ConsoleDebug(GetString(
+									"Bouncer / OnTileEdit rejected {0} from planting herb on invalid tile {1} using {2}",
+									args.Player.Name, containerTile.type, selectedItem.Name));
+								args.Player.SendTileSquareCentered(tileX, tileY, 4);
+								args.Handled = true;
+							}
 						}
 					}
 					/// Handle placement action if the player is using an Ice Rod but not placing the iceblock.
