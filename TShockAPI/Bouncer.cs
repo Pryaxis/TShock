@@ -863,17 +863,17 @@ namespace TShockAPI
 						args.Handled = true;
 					}
 
-					/// Handle placement action if the player is using an Ice Rod but not placing the iceblock.
+					// Handle placement action if the player is using an Ice Rod but not placing the iceblock.
 					if (selectedItem.type == ItemID.IceRod && editData != TileID.MagicalIceBlock)
 					{
 						TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected from using ice rod but not placing ice block {0} {1} {2}", args.Player.Name, action, editData));
 						args.Player.SendTileSquareCentered(tileX, tileY, 4);
 						args.Handled = true;
 					}
-					/// If they aren't selecting the item which creates the tile, they're hacking.
+					// If they aren't selecting the item which creates the tile, they're hacking.
 					if ((action == EditAction.PlaceTile || action == EditAction.ReplaceTile) && editData != selectedItem.createTile)
 					{
-						/// These would get caught up in the below check because Terraria does not set their createTile field.
+						// These would get caught up in the below check because Terraria does not set their createTile field.
 						if (selectedItem.type != ItemID.IceRod &&
 						    selectedItem.type != ItemID.DirtBomb &&
 						    selectedItem.type != ItemID.StickyBomb &&
@@ -891,7 +891,7 @@ namespace TShockAPI
 							return;
 						}
 					}
-					/// If they aren't selecting the item which creates the wall, they're hacking.
+					// If they aren't selecting the item which creates the wall, they're hacking.
 					if ((action == EditAction.PlaceWall || action == EditAction.ReplaceWall) && editData != selectedItem.createWall)
 					{
 						TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected from wall placement not matching selected item createWall {0} {1} {2} selectedItemID:{3} createWall:{4}", args.Player.Name, action, editData, selectedItem.type, selectedItem.createWall));
