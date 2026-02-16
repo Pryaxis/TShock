@@ -1512,6 +1512,24 @@ namespace TShockAPI
 		}
 
 		/// <summary>
+		/// Synchronizes the player's <see cref="RespawnTimer"/> by spawning the player, teleporting them to where they died, and setting their HP to 0.
+		/// <br/>Requires SSC to function.
+		/// </summary>
+		public bool SyncRespawnTimer()
+		{
+			if (!Main.ServerSideCharacter)
+				return false;
+		
+			// The client will respawn from this and no longer be dead. By not using SpawningIntoWorld, the respawn timer is set but not cleared.
+			// By doing this, we can set their HP to 0 and sync that to them, which makes them appear dead on their end. Results in proper sync of the RespawnTimer.
+			Spawn(PlayerSpawnContext.RecallFromItem, TPlayer.respawnTimer);
+			SendData(PacketTypes.PlayerUpdate, number: Index);
+			TPlayer.statLife = 0;
+			SendData(PacketTypes.PlayerHp, number: Index);
+			return true;
+		}
+
+		/// <summary>
 		/// Spawns the player at the given coordinates.
 		/// </summary>
 		/// <param name="tilex">The X coordinate.</param>
