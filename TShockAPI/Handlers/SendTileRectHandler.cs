@@ -369,7 +369,7 @@ namespace TShockAPI.Handlers
 		private static readonly TileRectMatch[] Matches = new TileRectMatch[]
 		{
 			TileRectMatch.Placement(2, 3, TileID.TargetDummy, 54, 36, 18, 18),
-			TileRectMatch.Placement(3, 4, TileID.TeleportationPylon, 468, 54, 18, 18),
+			TileRectMatch.Placement(3, 4, TileID.TeleportationPylon, 522, 54, 18, 18),
 			TileRectMatch.Placement(2, 3, TileID.DisplayDoll, 126, 36, 18, 18),
 			TileRectMatch.Placement(3, 4, TileID.HatRack, 90, 54, 18, 18),
 			TileRectMatch.Placement(2, 2, TileID.ItemFrame, 162, 18, 18, 18),
@@ -398,6 +398,7 @@ namespace TShockAPI.Handlers
 			TileRectMatch.StateChangeX(1, 1, TileID.ShadowCandle, 18, 18),
 
 			TileRectMatch.StateChange(1, 1, TileID.Traps, 90, 90, 18, 18),
+			TileRectMatch.StateChange(1, 1, TileID.Torches, 0, 198, 0, 0),
 
 			TileRectMatch.StateChangeX(1, 1, TileID.WirePipe, 36, 18),
 			TileRectMatch.StateChangeX(1, 1, TileID.ProjectilePressurePad, 66, 22),
