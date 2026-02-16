@@ -714,9 +714,13 @@ namespace TShockAPI
 				}
 			}
 			}
+			catch (Exception ex)
+			{
+				TShock.Log.ConsoleError(GetString($"SSC restore failed for {player.Name}: {ex.Message}"));
+				player.Kick(GetString("SSC restore failed. Please rejoin."));
+			}
 			finally
 			{
-				// Ensure IgnoreSSCPackets is reset even if an exception occurs
 				player.IgnoreSSCPackets = false;
 			}
 		}
