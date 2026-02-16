@@ -4028,11 +4028,12 @@ namespace TShockAPI
 		{
 			BitsByte flag = (BitsByte)args.Data.ReadByte();
 			short id = args.Data.ReadInt16();
-			Vector2 position = args.Data.ReadVector2();
+			float x = args.Data.ReadSingle();
+			float y = args.Data.ReadSingle();
 			byte style = args.Data.ReadInt8();
 
 			int type = 0;
-			int extraInfo = -1;
+			int extraInfo = 0;
 			bool getPositionFromTarget = false;
 
 			if (flag[0])
@@ -4043,10 +4044,20 @@ namespace TShockAPI
 				getPositionFromTarget = true;
 			if (flag[3])
 				extraInfo = args.Data.ReadInt32();
+			if (flag[3])
+				extraInfo = args.Data.ReadInt32();
+			
+            //update take position from target 
 			if (getPositionFromTarget)
-				position = Main.player[id].position;
+			{
+				if (type == 2 && id < Main.maxPlayers && Main.player[id] != null)
+				{
+					x = Main.player[id].position.X;
+					y = Main.player[id].position.Y;
+				}
+			}
 
-			if (OnTeleport(args.Player, args.Data, id, flag, position.X, position.Y, style, extraInfo))
+			if (OnTeleport(args.Player, args.Data, id, flag, x, y, style, extraInfo))
 				return true;
 
 			//Rod of Discord teleport (usually (may be used by modded clients to teleport))
