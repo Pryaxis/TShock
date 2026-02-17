@@ -141,7 +141,8 @@ namespace TShockAPI
 					{ PacketTypes.FishOutNPC, HandleFishOutNPC },
 					{ PacketTypes.FoodPlatterTryPlacing, HandleFoodPlatterTryPlacing },
 					{ PacketTypes.SyncCavernMonsterType, HandleSyncCavernMonsterType },
-					{ PacketTypes.SyncLoadout, HandleSyncLoadout }
+					{ PacketTypes.SyncLoadout, HandleSyncLoadout },
+				    { PacketTypes.DeadCellsDisplayJarTryPlacing, HandleDeadCellsDisplayJarTryPlacing }
 				};
 		}
 
@@ -2498,6 +2499,62 @@ namespace TShockAPI
 		}
 
 		/// <summary>
+		/// For use in a DeadCellsDisplayJar placement event.
+		/// </summary>
+		public class DeadCellsDisplayJarTryPlacingEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// The X tile position of the placement action.
+			/// </summary>
+			public short X { get; set; }
+		
+			/// <summary>
+			/// The Y tile position of the placement action.
+			/// </summary>
+			public short Y { get; set; }
+		
+			/// <summary>
+			/// The Item ID that is being placed into the Dead Cells Display Jar.
+			/// </summary>
+			public short ItemType { get; set; }
+		
+			/// <summary>
+			/// The prefix of the item being placed.
+			/// </summary>
+			public byte Prefix { get; set; }
+		
+			/// <summary>
+			/// The stack amount of the item being placed.
+			/// </summary>
+			public short Stack { get; set; }
+		}
+		
+		/// <summary>
+		/// Called when a player attempts to place an item into a DeadCellsDisplay Jar.
+		/// </summary>
+		public static HandlerList<DeadCellsDisplayJarTryPlacingEventArgs> DeadCellsDisplayJarTryPlacing = new HandlerList<DeadCellsDisplayJarTryPlacingEventArgs>();
+		
+		private static bool OnDeadCellsDisplayJarTryPlacing(TSPlayer player, MemoryStream data, short x, short y, short itemType, byte prefix, short stack)
+		{
+			if (DeadCellsDisplayJarTryPlacing == null)
+				return false;
+		
+			var args = new DeadCellsDisplayJarTryPlacingEventArgs
+			{
+				Player = player,
+				Data = data,
+				X = x,
+				Y = y,
+				ItemType = itemType,
+				Prefix = prefix,
+				Stack = stack
+			};
+		
+			DeadCellsDisplayJarTryPlacing.Invoke(null, args);
+			return args.Handled;
+		}
+
+		/// <summary>
 		/// Used when a net module is loaded
 		/// </summary>
 		public class ReadNetModuleEventArgs : GetDataHandledEventArgs
@@ -4806,6 +4863,22 @@ namespace TShockAPI
 				Terraria.Utils.Swap(ref args.Player.PlayerData.inventory[switchedLoadoutDyeSlotStartIndex + i],
 					ref args.Player.PlayerData.inventory[NetItem.DyeIndex.Item1 + i]);
 
+			return false;
+		}
+
+		private static bool HandleDeadCellsDisplayJarTryPlacing(GetDataHandlerArgs args)
+		{
+			short x = args.Data.ReadInt16();
+			short y = args.Data.ReadInt16();
+			short itemType = args.Data.ReadInt16();
+			byte prefix = args.Data.ReadInt8();
+			short stack = args.Data.ReadInt16();
+		
+			if (OnDeadCellsDisplayJarTryPlacing(args.Player,args.Data, x, y, itemType, prefix, stack))
+			{
+				return true;
+			}
+		
 			return false;
 		}
 
