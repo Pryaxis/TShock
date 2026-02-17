@@ -2676,8 +2676,9 @@ namespace TShockAPI
 			bool blockedSlot = slotFlags[1];
 
 			// Players send a slot update packet for each inventory slot right after they've joined.
+			// The last slot the client sends is Count - 1 (Count is total slots, so Count - 1 is the last index)
 			bool bypassTrashCanCheck = false;
-			if (plr == args.Player.Index && !args.Player.HasSentInventory && slot == PlayerItemSlotID.Count - 1) // equals to 989, avoid hardcoding
+			if (plr == args.Player.Index && !args.Player.HasSentInventory && slot == PlayerItemSlotID.Count - 1)
 			{
 				args.Player.HasSentInventory = true;
 				bypassTrashCanCheck = true;
