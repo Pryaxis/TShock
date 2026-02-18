@@ -376,6 +376,8 @@ namespace TShockAPI.Handlers
 			TileRectMatch.Placement(3, 3, TileID.WeaponsRack2, 90, 36, 18, 18),
 			TileRectMatch.Placement(1, 1, TileID.FoodPlatter, 18, 0, 18, 18),
 			TileRectMatch.Placement(1, 1, TileID.LogicSensor, 18, 108, 18, 18),
+			TileRectMatch.Placement(1, 1, TileID.KiteAnchor, 72, 0, 0, 0),
+			TileRectMatch.Placement(1, 1, TileID.CritterAnchor, 72, 72, 0, 0),
 
 			TileRectMatch.StateChangeY(3, 2, TileID.Campfire, 54, 18),
 			TileRectMatch.StateChangeY(4, 3, TileID.Cannon, 468, 18),
