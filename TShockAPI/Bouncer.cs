@@ -2492,6 +2492,16 @@ namespace TShockAPI
 					return;
 				}
 			}
+			else if (type == TileID.Books)
+			{
+				if (style is > 4 or < 0)
+				{
+					TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlaceObject rejected {0} due to invalid book style {1}", args.Player.Name, style));
+					args.Player.SendTileSquareCentered(x, y, 4);
+					args.Handled = true;
+					return;
+				}
+			}
 			else
 			{
 				// This is necessary to check in order to prevent special tiles such as
