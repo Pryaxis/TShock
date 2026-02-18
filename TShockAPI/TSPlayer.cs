@@ -1,4 +1,4 @@
-﻿/*
+/*
 TShock, a server mod for Terraria
 Copyright (C) 2011-2022 Pryaxis & TShock Contributors
 
@@ -1794,9 +1794,14 @@ namespace TShockAPI
 		private void GiveItemByDrop(int type, int stack, int prefix)
 		{
 			int itemIndex = Item.NewItem(new EntitySource_DebugCommand(), (int)X, (int)Y, TPlayer.width, TPlayer.height, type, stack, true, prefix, true);
-			Main.item[itemIndex].playerIndexTheItemIsReservedFor = this.Index;
+			// Dead players cannot pick up items; use 255 (no owner) so any player can pick up.
+			byte owner = (byte)(Dead ? 255 : Index);
+			Main.item[itemIndex].playerIndexTheItemIsReservedFor = owner;
 			SendData(PacketTypes.ItemDrop, "", itemIndex, 1);
-			SendData(PacketTypes.ItemOwner, null, itemIndex);
+			if (Dead)
+				NetMessage.SendData((int)PacketTypes.ItemOwner, -1, -1, NetworkText.Empty, itemIndex, 255f);
+			else
+				SendData(PacketTypes.ItemOwner, null, itemIndex);
 		}
 
 		/// <summary>

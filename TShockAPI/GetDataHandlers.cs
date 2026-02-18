@@ -1,4 +1,4 @@
-﻿/*
+/*
 TShock, a server mod for Terraria
 Copyright (C) 2011-2019 Pryaxis & TShock Contributors
 
@@ -4498,6 +4498,17 @@ namespace TShockAPI
 
 			args.Player.Dead = true;
 			args.Player.RespawnTimer = TShock.Config.Settings.RespawnSeconds;
+
+			// Clear item reservations so items dropped by or given to this player can be picked up by anyone.
+			int playerIndex = args.Player.Index;
+			for (int i = 0; i < Main.maxItems; i++)
+			{
+				if (Main.item[i].active && Main.item[i].playerIndexTheItemIsReservedFor == playerIndex)
+				{
+					Main.item[i].playerIndexTheItemIsReservedFor = 255;
+					NetMessage.SendData((int)PacketTypes.ItemOwner, -1, -1, NetworkText.Empty, i, 255f);
+				}
+			}
 
 			if (Main.ServerSideCharacter && !args.Player.HasPermission(Permissions.bypassssc))
 			{
