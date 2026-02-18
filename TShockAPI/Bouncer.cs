@@ -1204,21 +1204,20 @@ namespace TShockAPI
 				return;
 			}
 
-			// Item removed by PacketTypes.SyncItemDespawn now
-			// if (type == 0)
-			// {
-			// 	if (!args.Player.IsInRange((int)(Main.item[id].position.X / 16f), (int)(Main.item[id].position.Y / 16f)))
-			// 	{
-			// 		// Causes item duplications. Will be re added if necessary
-			// 		//args.Player.SendData(PacketTypes.ItemDrop, "", id);
-			// 		TShock.Log.ConsoleDebug(GetString("Bouncer / OnItemDrop rejected from dupe range check from {0}", args.Player.Name));
-			// 		args.Handled = true;
-			// 		return;
-			// 	}
-			//
-			// 	args.Handled = false;
-			// 	return;
-			// }
+			if (type == 0)
+			{
+				if (!args.Player.IsInRange((int)(Main.item[id].position.X / 16f), (int)(Main.item[id].position.Y / 16f)))
+				{
+					// Causes item duplications. Will be re added if necessary
+					//args.Player.SendData(PacketTypes.ItemDrop, "", id);
+					TShock.Log.ConsoleDebug(GetString("Bouncer / OnItemDrop rejected from dupe range check from {0}", args.Player.Name));
+					args.Handled = true;
+					return;
+				}
+
+				args.Handled = false;
+				return;
+			}
 
 			if (!args.Player.IsInRange((int)(pos.X / 16f), (int)(pos.Y / 16f), 128))
 			{
