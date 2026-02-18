@@ -3099,7 +3099,7 @@ namespace TShockAPI
 			{ BuffID.CursedInferno, 600 },
 			{ BuffID.OnFire, 19392 }, // FTW world: 216000 overflows to ushort -> 19392 for torch slime
 			{ BuffID.Ichor, 1140 },
-			{ BuffID.Confused, 16684 },
+			{ BuffID.Confused, short.MaxValue },
 			{ BuffID.Poisoned, 3600 },
 			{ BuffID.Midas, 120 },
 			{ BuffID.Bleeding, 720 },
