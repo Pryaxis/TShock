@@ -277,6 +277,8 @@ namespace TShockAPI
 			// Start ignoring SSC-related packets! This is critical so that we don't send or receive dirty data!
 			player.IgnoreSSCPackets = true;
 
+			try
+			{
 			player.TPlayer.statLife = this.health;
 			player.TPlayer.statLifeMax = this.maxHealth;
 			player.TPlayer.statMana = this.maxMana;
@@ -539,82 +541,66 @@ namespace TShockAPI
 			NetMessage.SendData((int)PacketTypes.SyncLoadout, remoteClient: player.Index, number: player.Index, number2: player.TPlayer.CurrentLoadoutIndex);
 			NetMessage.SendData((int)PacketTypes.SyncLoadout, ignoreClient: player.Index, number: player.Index, number2: player.TPlayer.CurrentLoadoutIndex);
 
-			float slot = 0f;
 			for (int k = 0; k < NetItem.InventorySlots; k++)
 			{
-				NetMessage.SendData(5, -1, -1, NetworkText.FromLiteral(Main.player[player.Index].inventory[k].Name), player.Index, slot, (float)Main.player[player.Index].inventory[k].prefix);
-				slot++;
+				NetMessage.SendData(5, -1, -1, NetworkText.Empty, player.Index, PlayerItemSlotID.Inventory0 + k);
 			}
 			for (int k = 0; k < NetItem.ArmorSlots; k++)
 			{
-				NetMessage.SendData(5, -1, -1, NetworkText.FromLiteral(Main.player[player.Index].armor[k].Name), player.Index, slot, (float)Main.player[player.Index].armor[k].prefix);
-				slot++;
+				NetMessage.SendData(5, -1, -1, NetworkText.Empty, player.Index, PlayerItemSlotID.Armor0 + k);
 			}
 			for (int k = 0; k < NetItem.DyeSlots; k++)
 			{
-				NetMessage.SendData(5, -1, -1, NetworkText.FromLiteral(Main.player[player.Index].dye[k].Name), player.Index, slot, (float)Main.player[player.Index].dye[k].prefix);
-				slot++;
+				NetMessage.SendData(5, -1, -1, NetworkText.Empty, player.Index, PlayerItemSlotID.Dye0 + k);
 			}
 			for (int k = 0; k < NetItem.MiscEquipSlots; k++)
 			{
-				NetMessage.SendData(5, -1, -1, NetworkText.FromLiteral(Main.player[player.Index].miscEquips[k].Name), player.Index, slot, (float)Main.player[player.Index].miscEquips[k].prefix);
-				slot++;
+				NetMessage.SendData(5, -1, -1, NetworkText.Empty, player.Index, PlayerItemSlotID.Misc0 + k);
 			}
 			for (int k = 0; k < NetItem.MiscDyeSlots; k++)
 			{
-				NetMessage.SendData(5, -1, -1, NetworkText.FromLiteral(Main.player[player.Index].miscDyes[k].Name), player.Index, slot, (float)Main.player[player.Index].miscDyes[k].prefix);
-				slot++;
+				NetMessage.SendData(5, -1, -1, NetworkText.Empty, player.Index, PlayerItemSlotID.MiscDye0 + k);
 			}
 			for (int k = 0; k < NetItem.PiggySlots; k++)
 			{
-				NetMessage.SendData(5, -1, -1, NetworkText.FromLiteral(Main.player[player.Index].bank.item[k].Name), player.Index, slot, (float)Main.player[player.Index].bank.item[k].prefix);
-				slot++;
+				NetMessage.SendData(5, -1, -1, NetworkText.Empty, player.Index, PlayerItemSlotID.Bank1_0 + k);
 			}
 			for (int k = 0; k < NetItem.SafeSlots; k++)
 			{
-				NetMessage.SendData(5, -1, -1, NetworkText.FromLiteral(Main.player[player.Index].bank2.item[k].Name), player.Index, slot, (float)Main.player[player.Index].bank2.item[k].prefix);
-				slot++;
+				NetMessage.SendData(5, -1, -1, NetworkText.Empty, player.Index, PlayerItemSlotID.Bank2_0 + k);
 			}
-			NetMessage.SendData(5, -1, -1, NetworkText.FromLiteral(Main.player[player.Index].trashItem.Name), player.Index, slot++, (float)Main.player[player.Index].trashItem.prefix);
+			NetMessage.SendData(5, -1, -1, NetworkText.Empty, player.Index, PlayerItemSlotID.TrashItem);
 			for (int k = 0; k < NetItem.ForgeSlots; k++)
 			{
-				NetMessage.SendData(5, -1, -1, NetworkText.FromLiteral(Main.player[player.Index].bank3.item[k].Name), player.Index, slot, (float)Main.player[player.Index].bank3.item[k].prefix);
-				slot++;
+				NetMessage.SendData(5, -1, -1, NetworkText.Empty, player.Index, PlayerItemSlotID.Bank3_0 + k);
 			}
 			for (int k = 0; k < NetItem.VoidSlots; k++)
 			{
-				NetMessage.SendData(5, -1, -1, NetworkText.FromLiteral(Main.player[player.Index].bank4.item[k].Name), player.Index, slot, (float)Main.player[player.Index].bank4.item[k].prefix);
-				slot++;
+				NetMessage.SendData(5, -1, -1, NetworkText.Empty, player.Index, PlayerItemSlotID.Bank4_0 + k);
 			}
 			for (int k = 0; k < NetItem.LoadoutArmorSlots; k++)
 			{
-				NetMessage.SendData(5, -1, -1, NetworkText.FromLiteral(Main.player[player.Index].Loadouts[0].Armor[k].Name), player.Index, slot, (float)Main.player[player.Index].Loadouts[0].Armor[k].prefix);
-				slot++;
+				NetMessage.SendData(5, -1, -1, NetworkText.Empty, player.Index, PlayerItemSlotID.Loadout1_Armor_0 + k);
 			}
 			for (int k = 0; k < NetItem.LoadoutDyeSlots; k++)
 			{
-				NetMessage.SendData(5, -1, -1, NetworkText.FromLiteral(Main.player[player.Index].Loadouts[0].Dye[k].Name), player.Index, slot, (float)Main.player[player.Index].Loadouts[0].Dye[k].prefix);
-				slot++;
+				NetMessage.SendData(5, -1, -1, NetworkText.Empty, player.Index, PlayerItemSlotID.Loadout1_Dye_0 + k);
 			}
 			for (int k = 0; k < NetItem.LoadoutArmorSlots; k++)
 			{
-				NetMessage.SendData(5, -1, -1, NetworkText.FromLiteral(Main.player[player.Index].Loadouts[1].Armor[k].Name), player.Index, slot, (float)Main.player[player.Index].Loadouts[1].Armor[k].prefix);
-				slot++;
+				NetMessage.SendData(5, -1, -1, NetworkText.Empty, player.Index, PlayerItemSlotID.Loadout2_Armor_0 + k);
 			}
 			for (int k = 0; k < NetItem.LoadoutDyeSlots; k++)
 			{
-				NetMessage.SendData(5, -1, -1, NetworkText.FromLiteral(Main.player[player.Index].Loadouts[1].Dye[k].Name), player.Index, slot, (float)Main.player[player.Index].Loadouts[1].Dye[k].prefix);
-				slot++;
+				NetMessage.SendData(5, -1, -1, NetworkText.Empty, player.Index, PlayerItemSlotID.Loadout2_Dye_0 + k);
 			}
 			for (int k = 0; k < NetItem.LoadoutArmorSlots; k++)
 			{
-				NetMessage.SendData(5, -1, -1, NetworkText.FromLiteral(Main.player[player.Index].Loadouts[2].Armor[k].Name), player.Index, slot, (float)Main.player[player.Index].Loadouts[2].Armor[k].prefix);
-				slot++;
+				NetMessage.SendData(5, -1, -1, NetworkText.Empty, player.Index, PlayerItemSlotID.Loadout3_Armor_0 + k);
 			}
 			for (int k = 0; k < NetItem.LoadoutDyeSlots; k++)
 			{
-				NetMessage.SendData(5, -1, -1, NetworkText.FromLiteral(Main.player[player.Index].Loadouts[1].Dye[k].Name), player.Index, slot, (float)Main.player[player.Index].Loadouts[2].Dye[k].prefix);
-				slot++;
+				NetMessage.SendData(5, -1, -1, NetworkText.Empty, player.Index, PlayerItemSlotID.Loadout3_Dye_0 + k);
 			}
 
 
@@ -622,82 +608,66 @@ namespace TShockAPI
 			NetMessage.SendData(42, -1, -1, NetworkText.Empty, player.Index, 0f, 0f, 0f, 0);
 			NetMessage.SendData(16, -1, -1, NetworkText.Empty, player.Index, 0f, 0f, 0f, 0);
 
-			slot = 0f;
 			for (int k = 0; k < NetItem.InventorySlots; k++)
 			{
-				NetMessage.SendData(5, player.Index, -1, NetworkText.FromLiteral(Main.player[player.Index].inventory[k].Name), player.Index, slot, (float)Main.player[player.Index].inventory[k].prefix);
-				slot++;
+				NetMessage.SendData(5, player.Index, -1, NetworkText.Empty, player.Index, PlayerItemSlotID.Inventory0 + k);
 			}
 			for (int k = 0; k < NetItem.ArmorSlots; k++)
 			{
-				NetMessage.SendData(5, player.Index, -1, NetworkText.FromLiteral(Main.player[player.Index].armor[k].Name), player.Index, slot, (float)Main.player[player.Index].armor[k].prefix);
-				slot++;
+				NetMessage.SendData(5, player.Index, -1, NetworkText.Empty, player.Index, PlayerItemSlotID.Armor0 + k);
 			}
 			for (int k = 0; k < NetItem.DyeSlots; k++)
 			{
-				NetMessage.SendData(5, player.Index, -1, NetworkText.FromLiteral(Main.player[player.Index].dye[k].Name), player.Index, slot, (float)Main.player[player.Index].dye[k].prefix);
-				slot++;
+				NetMessage.SendData(5, player.Index, -1, NetworkText.Empty, player.Index, PlayerItemSlotID.Dye0 + k);
 			}
 			for (int k = 0; k < NetItem.MiscEquipSlots; k++)
 			{
-				NetMessage.SendData(5, player.Index, -1, NetworkText.FromLiteral(Main.player[player.Index].miscEquips[k].Name), player.Index, slot, (float)Main.player[player.Index].miscEquips[k].prefix);
-				slot++;
+				NetMessage.SendData(5, player.Index, -1, NetworkText.Empty, player.Index, PlayerItemSlotID.Misc0 + k);
 			}
 			for (int k = 0; k < NetItem.MiscDyeSlots; k++)
 			{
-				NetMessage.SendData(5, player.Index, -1, NetworkText.FromLiteral(Main.player[player.Index].miscDyes[k].Name), player.Index, slot, (float)Main.player[player.Index].miscDyes[k].prefix);
-				slot++;
+				NetMessage.SendData(5, player.Index, -1, NetworkText.Empty, player.Index, PlayerItemSlotID.MiscDye0 + k);
 			}
 			for (int k = 0; k < NetItem.PiggySlots; k++)
 			{
-				NetMessage.SendData(5, player.Index, -1, NetworkText.FromLiteral(Main.player[player.Index].bank.item[k].Name), player.Index, slot, (float)Main.player[player.Index].bank.item[k].prefix);
-				slot++;
+				NetMessage.SendData(5, player.Index, -1, NetworkText.Empty, player.Index, PlayerItemSlotID.Bank1_0 + k);
 			}
 			for (int k = 0; k < NetItem.SafeSlots; k++)
 			{
-				NetMessage.SendData(5, player.Index, -1, NetworkText.FromLiteral(Main.player[player.Index].bank2.item[k].Name), player.Index, slot, (float)Main.player[player.Index].bank2.item[k].prefix);
-				slot++;
+				NetMessage.SendData(5, player.Index, -1, NetworkText.Empty, player.Index, PlayerItemSlotID.Bank2_0 + k);
 			}
-			NetMessage.SendData(5, player.Index, -1, NetworkText.FromLiteral(Main.player[player.Index].trashItem.Name), player.Index, slot++, (float)Main.player[player.Index].trashItem.prefix);
+			NetMessage.SendData(5, player.Index, -1, NetworkText.Empty, player.Index, PlayerItemSlotID.TrashItem);
 			for (int k = 0; k < NetItem.ForgeSlots; k++)
 			{
-				NetMessage.SendData(5, player.Index, -1, NetworkText.FromLiteral(Main.player[player.Index].bank3.item[k].Name), player.Index, slot, (float)Main.player[player.Index].bank3.item[k].prefix);
-				slot++;
+				NetMessage.SendData(5, player.Index, -1, NetworkText.Empty, player.Index, PlayerItemSlotID.Bank3_0 + k);
 			}
 			for (int k = 0; k < NetItem.VoidSlots; k++)
 			{
-				NetMessage.SendData(5, player.Index, -1, NetworkText.FromLiteral(Main.player[player.Index].bank4.item[k].Name), player.Index, slot, (float)Main.player[player.Index].bank4.item[k].prefix);
-				slot++;
+				NetMessage.SendData(5, player.Index, -1, NetworkText.Empty, player.Index, PlayerItemSlotID.Bank4_0 + k);
 			}
 			for (int k = 0; k < NetItem.LoadoutArmorSlots; k++)
 			{
-				NetMessage.SendData(5, player.Index, -1, NetworkText.FromLiteral(Main.player[player.Index].Loadouts[0].Armor[k].Name), player.Index, slot, (float)Main.player[player.Index].Loadouts[0].Armor[k].prefix);
-				slot++;
+				NetMessage.SendData(5, player.Index, -1, NetworkText.Empty, player.Index, PlayerItemSlotID.Loadout1_Armor_0 + k);
 			}
 			for (int k = 0; k < NetItem.LoadoutDyeSlots; k++)
 			{
-				NetMessage.SendData(5, player.Index, -1, NetworkText.FromLiteral(Main.player[player.Index].Loadouts[0].Dye[k].Name), player.Index, slot, (float)Main.player[player.Index].Loadouts[0].Dye[k].prefix);
-				slot++;
+				NetMessage.SendData(5, player.Index, -1, NetworkText.Empty, player.Index, PlayerItemSlotID.Loadout1_Dye_0 + k);
 			}
 			for (int k = 0; k < NetItem.LoadoutArmorSlots; k++)
 			{
-				NetMessage.SendData(5, player.Index, -1, NetworkText.FromLiteral(Main.player[player.Index].Loadouts[1].Armor[k].Name), player.Index, slot, (float)Main.player[player.Index].Loadouts[1].Armor[k].prefix);
-				slot++;
+				NetMessage.SendData(5, player.Index, -1, NetworkText.Empty, player.Index, PlayerItemSlotID.Loadout2_Armor_0 + k);
 			}
 			for (int k = 0; k < NetItem.LoadoutDyeSlots; k++)
 			{
-				NetMessage.SendData(5, player.Index, -1, NetworkText.FromLiteral(Main.player[player.Index].Loadouts[1].Dye[k].Name), player.Index, slot, (float)Main.player[player.Index].Loadouts[1].Dye[k].prefix);
-				slot++;
+				NetMessage.SendData(5, player.Index, -1, NetworkText.Empty, player.Index, PlayerItemSlotID.Loadout2_Dye_0 + k);
 			}
 			for (int k = 0; k < NetItem.LoadoutArmorSlots; k++)
 			{
-				NetMessage.SendData(5, player.Index, -1, NetworkText.FromLiteral(Main.player[player.Index].Loadouts[2].Armor[k].Name), player.Index, slot, (float)Main.player[player.Index].Loadouts[2].Armor[k].prefix);
-				slot++;
+				NetMessage.SendData(5, player.Index, -1, NetworkText.Empty, player.Index, PlayerItemSlotID.Loadout3_Armor_0 + k);
 			}
 			for (int k = 0; k < NetItem.LoadoutDyeSlots; k++)
 			{
-				NetMessage.SendData(5, player.Index, -1, NetworkText.FromLiteral(Main.player[player.Index].Loadouts[2].Dye[k].Name), player.Index, slot, (float)Main.player[player.Index].Loadouts[2].Dye[k].prefix);
-				slot++;
+				NetMessage.SendData(5, player.Index, -1, NetworkText.Empty, player.Index, PlayerItemSlotID.Loadout3_Dye_0 + k);
 			}
 
 
@@ -742,6 +712,16 @@ namespace TShockAPI
 					NetManager.Instance.SendToClient(response, player.Index);
 					*/
 				}
+			}
+			}
+			catch (Exception ex)
+			{
+				TShock.Log.ConsoleError(GetString($"SSC restore failed for {player.Name}: {ex.Message}"));
+				player.Kick(GetString("SSC restore failed. Please rejoin."));
+			}
+			finally
+			{
+				player.IgnoreSSCPackets = false;
 			}
 		}
 	}
