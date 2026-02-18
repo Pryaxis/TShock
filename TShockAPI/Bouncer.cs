@@ -2462,16 +2462,6 @@ namespace TShockAPI
 					return;
 				}
 			}
-			else if (type == TileID.GardenGnome)
-			{
-				if (style is > 4 or < 0)
-				{
-					TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlaceObject rejected {0} due to invalid garden gnome style {1}", args.Player.Name, style));
-					args.Player.SendTileSquareCentered(x, y, 4);
-					args.Handled = true;
-					return;
-				}
-			}
 			else if (type == TileID.KiteAnchor)
 			{
 				if (style != 0)
@@ -2492,30 +2482,36 @@ namespace TShockAPI
 					return;
 				}
 			}
-			else if (type == TileID.Books)
-			{
-				if (style is > 4 or < 0)
-				{
-					TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlaceObject rejected {0} due to invalid book style {1}", args.Player.Name, style));
-					args.Player.SendTileSquareCentered(x, y, 4);
-					args.Handled = true;
-					return;
-				}
-			}
 			else
 			{
+				List<int> allowTypes = [args.Player.TPlayer.inventory[args.Player.TPlayer.selectedItem].createTile];
+				List<int> allowStyles = [args.Player.TPlayer.inventory[args.Player.TPlayer.selectedItem].placeStyle];
+				var flexibleTileWand = args.Player.SelectedItem.GetFlexibleTileWand();
+				if (flexibleTileWand != null)
+				{
+					var flexibleTypes = flexibleTileWand._options
+						.SelectMany(kvp => kvp.Value.Options)
+						.Select(option => option.TileIdToPlace);
+
+					allowTypes.AddRange(flexibleTypes);
+
+					var flexibleStyles = flexibleTileWand._options
+						.SelectMany(kvp => kvp.Value.Options)
+						.Select(option => option.TileStyleToPlace);
+
+					allowStyles.AddRange(flexibleStyles);
+				}
 				// This is necessary to check in order to prevent special tiles such as
 				// queen bee larva, paintings etc that use this packet from being placed
 				// without selecting the right item.
-				if (type != args.Player.TPlayer.inventory[args.Player.TPlayer.selectedItem].createTile)
+				if (!allowTypes.Contains(type))
 				{
-					TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlaceObject rejected awkward tile creation/selection from {0}", args.Player.Name));
+					TShock.Log.ConsoleError(GetString("Bouncer / OnPlaceObject rejected object placement with invalid tile type {1} (expected {2}) from {0}", args.Player.Name, type, string.Join(',', allowTypes)));
 					args.Player.SendTileSquareCentered(x, y, 4);
 					args.Handled = true;
 					return;
 				}
-
-				if (args.Player.SelectedItem.placeStyle != style)
+				if (!allowStyles.Contains(style))
 				{
 					int biomeTorchPlaceStyle = args.Player.SelectedItem.placeStyle;
 					{
@@ -2533,7 +2529,7 @@ namespace TShockAPI
 					var validCampfire = args.Player.SelectedItem.createTile == TileID.Campfire && biomeCampfirePlaceStyle == style;
 					if (!args.Player.TPlayer.unlockedBiomeTorches || (!validTorch && !validCampfire))
 					{
-						TShock.Log.ConsoleError(GetString("Bouncer / OnPlaceObject rejected object placement with invalid style {1} (expected {2}) from {0}", args.Player.Name, style, args.Player.SelectedItem.placeStyle));
+						TShock.Log.ConsoleError(GetString("Bouncer / OnPlaceObject rejected object placement with invalid style {1} (expected {2}) from {0}", args.Player.Name, style, string.Join(',', allowStyles)));
 						args.Player.SendTileSquareCentered(x, y, 4);
 						args.Handled = true;
 						return;
