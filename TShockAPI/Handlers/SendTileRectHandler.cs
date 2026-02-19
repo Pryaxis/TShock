@@ -2,6 +2,7 @@
 using System.IO;
 
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 
 using TShockAPI.Net;
@@ -354,7 +355,6 @@ namespace TShockAPI.Handlers
 						Main.tile[x + rect.X, y + rect.Y].frameY = -1;
 					}
 				}
-
 				return MatchResult.BroadcastChanges;
 			}
 		}
@@ -369,7 +369,7 @@ namespace TShockAPI.Handlers
 		private static readonly TileRectMatch[] Matches = new TileRectMatch[]
 		{
 			TileRectMatch.Placement(2, 3, TileID.TargetDummy, 54, 36, 18, 18),
-			TileRectMatch.Placement(3, 4, TileID.TeleportationPylon, 576, 54, 18, 18),
+			TileRectMatch.Placement(3, 4, TileID.TeleportationPylon, (int)TeleportPylonType.Count * 54 - 18, 54, 18, 18),
 			TileRectMatch.Placement(2, 3, TileID.DisplayDoll, 126, 36, 18, 18),
 			TileRectMatch.Placement(3, 4, TileID.HatRack, 90, 54, 18, 18),
 			TileRectMatch.Placement(2, 2, TileID.ItemFrame, 162, 18, 18, 18),

@@ -769,8 +769,9 @@ namespace TShockAPI
 						{
 							var digtoiseProjectile = Main.projectile
 								.FirstOrDefault(p =>
-									p is { active: true, type: 1098 } && p.owner == args.Player.Index);
+									p is { active: true, type: ProjectileID.PalworldDigtoise } && p.owner == args.Player.Index);
 
+							// Digtoise starts digging
 							if (digtoiseProjectile?.ai[0] is 1f or 2f or 3f
 							    && digtoiseProjectile.ai[1] > 40f)
 							{
