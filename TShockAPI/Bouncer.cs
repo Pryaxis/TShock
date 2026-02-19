@@ -1181,8 +1181,6 @@ namespace TShockAPI
 			// player is attempting to crash clients
 			if (type < -48 || type >= Terraria.ID.ItemID.Count)
 			{
-				// Causes item duplications. Will be re added later if necessary
-				//args.Player.SendData(PacketTypes.SyncItemDespaw, "", id);
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnItemDrop rejected from attempt crash from {0}", args.Player.Name));
 				args.Handled = true;
 				return;
