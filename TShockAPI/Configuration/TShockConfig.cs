@@ -540,9 +540,34 @@ namespace TShockAPI.Configuration
 		[Description("The type of database to use when storing data (either \"sqlite\", \"mysql\" or \"postgres\").")]
 		public string StorageType = "sqlite";
 
+		/// <summary>
+		/// The connection string to use when connecting to a SQLite database.
+		/// </summary>
+		/// <remarks>This property will override the <see cref="SqliteDBPath"/> property, if used.</remarks>
+		/// <seealso href="https://www.connectionstrings.com/sqlite-net-provider/">Example SQLite connection strings (connectionstrings.com)</seealso>
+		[Description("The connection string to use when connecting to a SQLite database. This property will override the SqliteDBPath property, if used.")]
+		public string SqliteConnectionString = "";
+
 		/// <summary>The path of sqlite db.</summary>
 		[Description("The path of sqlite db.")]
 		public string SqliteDBPath = "tshock.sqlite";
+
+		/// <summary>
+		/// The connection string to use when connecting to a MySQL database.
+		/// </summary>
+		/// <remarks>
+		/// This property will override the
+		/// <see cref="MySqlHost"/>,
+		/// <see cref="MySqlDbName"/>,
+		/// <see cref="MySqlUsername"/>,
+		/// and <see cref="MySqlPassword"/> properties, if used.
+		/// </remarks>
+		/// <seealso href="https://www.connectionstrings.com/mysql-connector-net-mysqlconnection/">
+		/// Example MySQL connection strings (connectionstrings.com)
+		/// </seealso>
+		[Description("The connection string to use when connecting to a MySQL database. " +
+		             "This property will override the MySqlHost, MySqlDbName, MySqlUsername and MySqlPassword properties, if used.")]
+		public string MySqlConnectionString = "";
 
 		/// <summary>The MySQL hostname and port to direct connections to.</summary>
 		[Description("The MySQL hostname and port to direct connections to.")]
@@ -559,6 +584,21 @@ namespace TShockAPI.Configuration
 		/// <summary>The password used when connecting to a MySQL database.</summary>
 		[Description("The password used when connecting to a MySQL database.")]
 		public string MySqlPassword = "";
+
+		/// <summary>
+		/// The connection string to use when connecting to a Postgres database.
+		/// </summary>
+		/// <remarks>
+		/// This property will override the
+		/// <see cref="PostgresHost"/>,
+		/// <see cref="PostgresDbName"/>,
+		/// <see cref="PostgresUsername"/>,
+		/// and <see cref="PostgresPassword"/> properties, if used.
+		/// </remarks>
+		/// <seealso href="https://www.connectionstrings.com/npgsql/">Example Npgsql connection strings (connectionstrings.com)</seealso>
+		[Description("The connection string to use when connecting to a Postgres database. " +
+		             "This property will override the PostgresHost, PostgresDbName, PostgresUsername and PostgresPassword properties, if used.")]
+		public string PostgresConnectionString = "";
 
 		///<summary>The Postgres hostname and port to direct connections to.</summary>
 		[Description("The Postgres hostname and port to direct connections to.")]

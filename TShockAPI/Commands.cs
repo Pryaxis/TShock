@@ -36,6 +36,7 @@ using Microsoft.Xna.Framework;
 using TShockAPI.Localization;
 using System.Text.RegularExpressions;
 using Terraria.DataStructures;
+using Terraria.GameContent;
 using Terraria.GameContent.Creative;
 
 namespace TShockAPI
@@ -628,6 +629,28 @@ namespace TShockAPI
 			add(new Command(Rules, "rules")
 			{
 				HelpText = GetString("Shows the server's rules.")
+			});
+			add(new Command(ShowDeath, "death")
+			{
+				HelpText = GetString("Shows your number of deaths."),
+				AllowServer = false
+			});
+			add(new Command(ShowPVPDeath, "pvpdeath")
+			{
+				HelpText = GetString("Shows your number of PVP deaths."),
+				AllowServer = false
+			});
+			add(new Command(ShowAllDeath, "alldeath")
+			{
+				HelpText = GetString("Shows the number of deaths for all online players."),
+			});
+			add(new Command(ShowAllPVPDeath, "allpvpdeath")
+			{
+				HelpText = GetString("Shows the number of PVP deaths for all online players."),
+			});
+			add(new Command(BossDamage, "bossdamage")
+			{
+				HelpText = GetString("Shows recent boss kill contribution."),
 			});
 
 			TShockCommands = new ReadOnlyCollection<Command>(tshockCommands);
@@ -1247,7 +1270,7 @@ namespace TShockAPI
 			args.Player.SendInfoMessage(GetString($"Name: {(TShock.Config.Settings.UseServerName ? TShock.Config.Settings.ServerName : Main.worldName)}"));
 			args.Player.SendInfoMessage(GetString("Size: {0}x{1}", Main.maxTilesX, Main.maxTilesY));
 			args.Player.SendInfoMessage(GetString($"ID: {Main.worldID}"));
-			args.Player.SendInfoMessage(GetString($"Seed: {WorldGen.currentWorldSeed}"));
+			args.Player.SendInfoMessage(GetString($"Seed: {Main.ActiveWorldFileData.Seed}"));
 			args.Player.SendInfoMessage(GetString($"Mode: {Main.GameMode}"));
 			args.Player.SendInfoMessage(GetString($"Path: {Main.worldPathName}"));
 		}
@@ -2142,7 +2165,8 @@ namespace TShockAPI
 			"invasion",
 			"sandstorm",
 			"rain",
-			"lanternsnight"
+			"lanternsnight",
+			"meteorshower"
 		};
 		static readonly List<string> _validInvasions = new List<string>()
 		{
@@ -2249,6 +2273,15 @@ namespace TShockAPI
 						return;
 					}
 					LanternsNight(args);
+					return;
+
+				case "meteorshower":
+					if (!args.Player.HasPermission(Permissions.managemeteorshowerevent))
+					{
+						FailedPermissionCheck();
+						return;
+					}
+					MeteorShower(args);
 					return;
 
 				default:
@@ -2445,52 +2478,67 @@ namespace TShockAPI
 
 		private static void Rain(CommandArgs args)
 		{
-			bool slime = false;
-			if (args.Parameters.Count > 1 && args.Parameters[1].ToLowerInvariant() == "slime")
+			var type = args.Parameters.Count > 1 ? args.Parameters[1].ToLowerInvariant() : "normal";
+			switch (type)
 			{
-				slime = true;
-			}
+				case "slime":
+					if (Main.raining)
+					{
+						args.Player.SendErrorMessage(GetString(
+							"Slime rain cannot be activated during normal rain. Stop the normal rainstorm and try again."));
+						return;
+					}
 
-			if (!slime)
-			{
-				args.Player.SendInfoMessage(GetString("Use \"{0}worldevent rain slime\" to start slime rain!", Specifier));
-			}
+					if (Main.slimeRain)
+					{
+						Main.StopSlimeRain(false);
+						TSPlayer.All.SendData(PacketTypes.WorldInfo);
+						TSPlayer.All.SendInfoMessage(GetString("{0} ended the slime rain.", args.Player.Name));
+					}
+					else
+					{
+						Main.StartSlimeRain(false);
+						TSPlayer.All.SendData(PacketTypes.WorldInfo);
+						TSPlayer.All.SendInfoMessage(GetString("{0} caused it to rain slime.", args.Player.Name));
+					}
 
-			if (slime && Main.raining) //Slime rain cannot be activated during normal rain
-			{
-				args.Player.SendErrorMessage(GetString("Slime rain cannot be activated during normal rain. Stop the normal rainstorm and try again."));
-				return;
-			}
+					break;
 
-			if (slime && Main.slimeRain) //Toggle slime rain off
-			{
-				Main.StopSlimeRain(false);
-				TSPlayer.All.SendData(PacketTypes.WorldInfo);
-				TSPlayer.All.SendInfoMessage(GetString("{0} ended the slime rain.", args.Player.Name));
-				return;
-			}
+				case "coin":
+					if (Main.coinRain != 0)
+					{
+						Main.StopRain();
+						TSPlayer.All.SendData(PacketTypes.WorldInfo);
+						TSPlayer.All.SendInfoMessage(GetString("{0} ended the coin rain.", args.Player.Name));
+					}
+					else
+					{
+						Main.StartRain(garenteeCoinRain: true);
+						TSPlayer.All.SendData(PacketTypes.WorldInfo);
+						TSPlayer.All.SendInfoMessage(GetString("{0} caused it to coin rain.", args.Player.Name));
+					}
 
-			if (slime && !Main.slimeRain) //Toggle slime rain on
-			{
-				Main.StartSlimeRain(false);
-				TSPlayer.All.SendData(PacketTypes.WorldInfo);
-				TSPlayer.All.SendInfoMessage(GetString("{0} caused it to rain slime.", args.Player.Name));
-			}
+					break;
 
-			if (Main.raining && !slime) //Toggle rain off
-			{
-				Main.StopRain();
-				TSPlayer.All.SendData(PacketTypes.WorldInfo);
-				TSPlayer.All.SendInfoMessage(GetString("{0} ended the rain.", args.Player.Name));
-				return;
-			}
+				default:
+					if (Main.raining)
+					{
+						Main.StopRain();
+						TSPlayer.All.SendData(PacketTypes.WorldInfo);
+						TSPlayer.All.SendInfoMessage(GetString("{0} ended the rain.", args.Player.Name));
+					}
+					else
+					{
+						Main.StartRain();
+						TSPlayer.All.SendData(PacketTypes.WorldInfo);
+						TSPlayer.All.SendInfoMessage(GetString("{0} caused it to rain.", args.Player.Name));
+					}
 
-			if (!Main.raining && !slime) //Toggle rain on
-			{
-				Main.StartRain();
-				TSPlayer.All.SendData(PacketTypes.WorldInfo);
-				TSPlayer.All.SendInfoMessage(GetString("{0} caused it to rain.", args.Player.Name));
-				return;
+					args.Player.SendInfoMessage(GetString("Use \"{0}worldevent rain slime\" to start slime rain!",
+						Specifier));
+					args.Player.SendInfoMessage(GetString("Use \"{0}worldevent rain coin\" to start coin rain!",
+						Specifier));
+					break;
 			}
 		}
 
@@ -2518,6 +2566,20 @@ namespace TShockAPI
 				{
 					TSPlayer.All.SendInfoMessage(GetString("{0} stopped the lantern night.", args.Player.Name));
 				}
+			}
+		}
+
+		private static void MeteorShower(CommandArgs args)
+		{
+			if (WorldGen.meteorShowerCount > 0)
+			{
+				WorldGen.meteorShowerCount = 0;
+				TSPlayer.All.SendInfoMessage(GetString("{0} stopped the meteor shower.", args.Player.Name));
+			}
+			else
+			{
+				WorldGen.StartMeteorShower();
+				TSPlayer.All.SendInfoMessage(GetString("{0} started a meteor shower.", args.Player.Name));
 			}
 		}
 
@@ -3823,7 +3885,7 @@ namespace TShockAPI
 						}
 						else if (items.Count > 1)
 						{
-							args.Player.SendMultipleMatchError(items.Select(i => $"{i.Name}({i.netID})"));
+							args.Player.SendMultipleMatchError(items.Select(i => $"{i.Name}({i.type})"));
 						}
 						else
 						{
@@ -3874,7 +3936,7 @@ namespace TShockAPI
 						}
 						else if (items.Count > 1)
 						{
-							args.Player.SendMultipleMatchError(items.Select(i => $"{i.Name}({i.netID})"));
+							args.Player.SendMultipleMatchError(items.Select(i => $"{i.Name}({i.type})"));
 						}
 						else
 						{
@@ -3919,7 +3981,7 @@ namespace TShockAPI
 						}
 						else if (items.Count > 1)
 						{
-							args.Player.SendMultipleMatchError(items.Select(i => $"{i.Name}({i.netID})"));
+							args.Player.SendMultipleMatchError(items.Select(i => $"{i.Name}({i.type})"));
 						}
 						else
 						{
@@ -3945,7 +4007,7 @@ namespace TShockAPI
 						}
 						else if (items.Count > 1)
 						{
-							args.Player.SendMultipleMatchError(items.Select(i => $"{i.Name}({i.netID})"));
+							args.Player.SendMultipleMatchError(items.Select(i => $"{i.Name}({i.type})"));
 						}
 						else
 						{
@@ -5815,6 +5877,70 @@ namespace TShockAPI
 			return;
 		}
 
+		private static void ShowDeath(CommandArgs args)
+		{
+			args.Player.SendErrorMessage(GetString($"*You were slain {args.Player.DeathsPVE} times."));
+		}
+
+		private static void ShowPVPDeath(CommandArgs args)
+		{
+			args.Player.SendErrorMessage(GetString($"*You were slain by other players {args.Player.DeathsPVP} times."));
+		}
+
+		private static void ShowAllDeath(CommandArgs args)
+		{
+			if (TShock.Utils.GetActivePlayerCount() == 0)
+			{
+				args.Player.SendErrorMessage(GetString("There are currently no players online."));
+				return;
+			}
+
+			var deathsRank = TShock.Players
+				.Where(p => p is { Active: true })
+				.OrderByDescending(x => x.DeathsPVE)
+				.Select(x => GetString($"*{x.Name} was slain {x.DeathsPVE} times."));
+
+			args.Player.SendErrorMessage(string.Join('\n',deathsRank));
+		}
+
+		private static void ShowAllPVPDeath(CommandArgs args)
+		{
+			if (TShock.Utils.GetActivePlayerCount() == 0)
+			{
+				args.Player.SendErrorMessage(GetString("There are currently no players online."));
+				return;
+			}
+
+			var deathsRank = TShock.Players
+				.Where(p => p is { Active: true })
+				.OrderByDescending(x => x.DeathsPVP)
+				.Select(x => GetString($"*{x.Name} was slain by other players {x.DeathsPVP} times."));
+
+			args.Player.SendErrorMessage(string.Join('\n',deathsRank));
+		}
+
+		private static void BossDamage(CommandArgs args)
+		{
+			var attempts = NPCDamageTracker.RecentAttempts().ToList();
+
+			if (attempts.Count == 0)
+			{
+				args.Player.SendWarningMessage(GetString("No recent boss kill data found."));
+				return;
+			}
+			foreach (var recentAttempt in attempts)
+			{
+				for (var playerId = 0; playerId < byte.MaxValue; ++playerId)
+				{
+					if (Main.player[playerId].active)
+					{
+						args.Player.SendSuccessMessage(recentAttempt.GetReport(Main.player[playerId]).ToString());
+					}
+				}
+			}
+		}
+
+
 		#endregion General Commands
 
 		#region Game Commands
@@ -5858,7 +5984,7 @@ namespace TShockAPI
 
 							if (Main.item[i].active && dX * dX + dY * dY <= radius * radius * 256f)
 							{
-								Main.item[i].active = false;
+								Main.item[i].TurnToAir();
 								everyone.SendData(PacketTypes.ItemDrop, "", i);
 								cleared++;
 							}
@@ -6101,7 +6227,7 @@ namespace TShockAPI
 			}
 			else if (matchedItems.Count > 1)
 			{
-				args.Player.SendMultipleMatchError(matchedItems.Select(i => $"{i.Name}({i.netID})"));
+				args.Player.SendMultipleMatchError(matchedItems.Select(i => $"{i.Name}({i.type})"));
 				return;
 			}
 			else
@@ -6249,7 +6375,7 @@ namespace TShockAPI
 			}
 			else if (items.Count > 1)
 			{
-				args.Player.SendMultipleMatchError(items.Select(i => $"{i.Name}({i.netID})"));
+				args.Player.SendMultipleMatchError(items.Select(i => $"{i.Name}({i.type})"));
 			}
 			else
 			{
