@@ -1,0 +1,30 @@
+{
+  "Settings": {
+    "Enabled": false,
+    "ServerSideCharacterSave": 5,
+    "LogonDiscardThreshold": 250,
+    "StartingHealth": 100,
+    "StartingMana": 20,
+    "StartingInventory": [
+      {
+        "netID": -15,
+        "prefix": 0,
+        "stack": 1,
+        "favorited": false
+      },
+      {
+        "netID": -13,
+        "prefix": 0,
+        "stack": 1,
+        "favorited": false
+      },
+      {
+        "netID": -16,
+        "prefix": 0,
+        "stack": 1,
+        "favorited": false
+      }
+    ],
+    "WarnPlayersAboutBypassPermission": true
+  }
+}
