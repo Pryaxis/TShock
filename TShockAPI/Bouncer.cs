@@ -602,7 +602,7 @@ namespace TShockAPI
 				}
 
 				// Corpses don't move, but ghost
-				if (args.Player.Dead && args.Player.Difficulty != 2)
+				if (args.Player.Dead && !args.Player.TPlayer.ghost)
 				{
 					TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerUpdate rejected from (corpses don't move) {0}", args.Player.Name));
 					args.Handled = true;
