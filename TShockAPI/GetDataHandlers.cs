@@ -2888,6 +2888,7 @@ namespace TShockAPI
 					return false;
 				}
 
+				args.TPlayer.team = team;
 				args.TPlayer.Spawn(context);
 				// spawn the player before teleporting
 				NetMessage.SendData((int)PacketTypes.PlayerSpawn, -1, args.Player.Index, null, args.Player.Index, (int)PlayerSpawnContext.ReviveFromDeath);
