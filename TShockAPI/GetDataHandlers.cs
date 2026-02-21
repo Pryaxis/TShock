@@ -3777,7 +3777,8 @@ namespace TShockAPI
 				args.Player.SelectedItem.type != ItemID.SpectrePaintbrush &&
 				!args.Player.Accessories.Any(HasPaintSprayerAbilities) &&
 				!args.Player.Inventory.Any(HasPaintSprayerAbilities) &&
-				!args.TPlayer.bank4.item.Any(HasPaintSprayerAbilities)) //Void Bag
+				!args.TPlayer.bank4.item.Any(HasPaintSprayerAbilities) && //Void Bag
+				!args.Player.HasPermission(Permissions.ignoreitemsafetychecks))
 			{
 				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandlePaintTile rejected select consistency {0}", args.Player.Name));
 				args.Player.SendData(PacketTypes.PaintTile, "", x, y, Main.tile[x, y].color());
@@ -3826,7 +3827,8 @@ namespace TShockAPI
 				args.Player.SelectedItem.type != ItemID.SpectrePaintbrush &&
 				!args.Player.Accessories.Any(HasPaintSprayerAbilities) &&
 				!args.Player.Inventory.Any(HasPaintSprayerAbilities)&&
-				!args.TPlayer.bank4.item.Any(HasPaintSprayerAbilities)) //Void Bag
+				!args.TPlayer.bank4.item.Any(HasPaintSprayerAbilities) && //Void Bag
+				!args.Player.HasPermission(Permissions.ignoreitemsafetychecks))
 			{
 				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandlePaintWall rejected selector consistency {0}", args.Player.Name));
 				args.Player.SendData(PacketTypes.PaintWall, "", x, y, Main.tile[x, y].wallColor());

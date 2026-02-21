@@ -149,6 +149,9 @@ namespace TShockAPI
 		[Description("Prevents you from being disabled by paint abuse detection.")]
 		public static readonly string ignorepaintdetection = "tshock.ignore.paint";
 
+		[Description("Allows you to ignore safety checks on incorrect item usage for world manipulation.")]
+		public static readonly string ignoreitemsafetychecks = "tshock.ignore.itemsafety";
+
 		[Description("Prevents you from being disabled by stack hack detection.")]
 		public static readonly string ignorestackhackdetection = "tshock.ignore.itemstack";
 

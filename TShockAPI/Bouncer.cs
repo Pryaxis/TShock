@@ -721,7 +721,7 @@ namespace TShockAPI
 				var tryingToPlaceIce = action == EditAction.PlaceTile && editData == TileID.MagicalIceBlock &&
 					args.Player.RecentlyCreatedProjectiles.Any(p => p.Type == ProjectileID.IceBlock && !p.Killed);
 
-				if (action == EditAction.KillTile && !Main.tileCut[tile.type] && !breakableTiles.Contains(tile.type) && args.Player.RecentFuse == 0 && TShock.Config.Settings.PreventInvalidBreaking)
+				if (action == EditAction.KillTile && !Main.tileCut[tile.type] && !breakableTiles.Contains(tile.type) && args.Player.RecentFuse == 0 && !args.Player.HasPermission(Permissions.ignoreitemsafetychecks))
 				{
 					// If the tile is an axe tile and they aren't selecting an axe, they're hacking.
 					if (Main.tileAxe[tile.type] && ((args.Player.TPlayer.mount.Type != MountID.Drill && selectedItem.axe == 0) && !ItemID.Sets.Explosives[selectedItem.netID]))
@@ -758,7 +758,7 @@ namespace TShockAPI
 						return;
 					}
 				}
-				else if (action == EditAction.KillWall && TShock.Config.Settings.PreventInvalidBreaking)
+				else if (action == EditAction.KillWall && !args.Player.HasPermission(Permissions.ignoreitemsafetychecks))
 				{
 					// If they aren't selecting a hammer, they could be hacking.
 					if (selectedItem.hammer == 0 && !ItemID.Sets.Explosives[selectedItem.netID] && args.Player.RecentFuse == 0 && selectedItem.createWall == 0)
@@ -773,15 +773,14 @@ namespace TShockAPI
 				{
 					args.Player.LastKilledProjectile = 0;
 				}
-				else if (CoilTileIds.Contains(editData))
+				else if (CoilTileIds.Contains(editData) && !args.Player.HasPermission(Permissions.ignoreitemsafetychecks))
 				{
 					// Handle placement if the user is placing rope that comes from a ropecoil,
 					// but have not created the ropecoil projectile recently or the projectile was not at the correct coordinate, or the tile that the projectile places does not match the rope it is suposed to place
 					// projectile should be the same X coordinate as all tile places (Note by @Olink)
 					if (ropeCoilPlacements.ContainsKey(selectedItem.netID) &&
 						!args.Player.RecentlyCreatedProjectiles.Any(p => GetDataHandlers.projectileCreatesTile.ContainsKey(p.Type) && GetDataHandlers.projectileCreatesTile[p.Type] == editData &&
-						!p.Killed && Math.Abs((int)(Main.projectile[p.Index].position.X / 16f) - tileX) <= Math.Abs(Main.projectile[p.Index].velocity.X)) &&
-						TShock.Config.Settings.PreventMismatchedPlace)
+						!p.Killed && Math.Abs((int)(Main.projectile[p.Index].position.X / 16f) - tileX) <= Math.Abs(Main.projectile[p.Index].velocity.X)))
 					{
 						TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected from (inconceivable rope coil) {0} {1} {2} selectedItem:{3} itemCreateTile:{4}", args.Player.Name, action, editData, selectedItem.netID, selectedItem.createTile));
 						args.Player.SendTileSquareCentered(tileX, tileY, 1);
@@ -800,38 +799,41 @@ namespace TShockAPI
 						return;
 					}
 
-					// Handle placement action if the player is using an Ice Rod but not placing the iceblock.
-					if (selectedItem.netID == ItemID.IceRod && editData != TileID.MagicalIceBlock && TShock.Config.Settings.PreventMismatchedPlace)
+					if (!args.Player.HasPermission(Permissions.ignoreitemsafetychecks))
 					{
-						TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected from using ice rod but not placing ice block {0} {1} {2}", args.Player.Name, action, editData));
-						args.Player.SendTileSquareCentered(tileX, tileY, 4);
-						args.Handled = true;
-						return;
-					}
-
-					// If they aren't selecting the item which creates the tile, they're hacking.
-					// We need to exclude ice block as it's checked above.
-					if ((action == EditAction.PlaceTile || action == EditAction.ReplaceTile) && !tryingToPlaceIce && editData != selectedItem.createTile &&
-						TShock.Config.Settings.PreventMismatchedPlace)
-					{
-						// These would get caught up in the below check because Terraria does not set their createTile field.
-						if (selectedItem.netID != ItemID.DirtBomb && selectedItem.netID != ItemID.StickyBomb &&
-							(args.Player.TPlayer.mount.Type != MountID.DiggingMoleMinecart || editData != TileID.MinecartTrack))
+						// Handle placement action if the player is using an Ice Rod but not placing the iceblock.
+						if (selectedItem.netID == ItemID.IceRod && editData != TileID.MagicalIceBlock)
 						{
-							TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected from tile placement not matching selected item createTile {0} {1} {2} selectedItemID:{3} createTile:{4}", args.Player.Name, action, editData, selectedItem.netID, selectedItem.createTile));
+							TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected from using ice rod but not placing ice block {0} {1} {2}", args.Player.Name, action, editData));
+							args.Player.SendTileSquareCentered(tileX, tileY, 4);
+							args.Handled = true;
+							return;
+						}
+
+						// If they aren't selecting the item which creates the tile, they're hacking.
+						// We need to exclude ice block as it's checked above.
+						if ((action == EditAction.PlaceTile || action == EditAction.ReplaceTile) && !tryingToPlaceIce && editData != selectedItem.createTile)
+						{
+							// These would get caught up in the below check because Terraria does not set their createTile field.
+							if (selectedItem.netID != ItemID.DirtBomb && selectedItem.netID != ItemID.StickyBomb &&
+								(args.Player.TPlayer.mount.Type != MountID.DiggingMoleMinecart || editData != TileID.MinecartTrack))
+							{
+								TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected from tile placement not matching selected item createTile {0} {1} {2} selectedItemID:{3} createTile:{4}", args.Player.Name, action, editData, selectedItem.netID, selectedItem.createTile));
+								args.Player.SendTileSquareCentered(tileX, tileY, 4);
+								args.Handled = true;
+								return;
+							}
+						}
+						// If they aren't selecting the item which creates the wall, they're hacking.
+						if ((action == EditAction.PlaceWall || action == EditAction.ReplaceWall) && editData != selectedItem.createWall)
+						{
+							TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected from wall placement not matching selected item createWall {0} {1} {2} selectedItemID:{3} createWall:{4}", args.Player.Name, action, editData, selectedItem.netID, selectedItem.createWall));
 							args.Player.SendTileSquareCentered(tileX, tileY, 4);
 							args.Handled = true;
 							return;
 						}
 					}
-					// If they aren't selecting the item which creates the wall, they're hacking.
-					if ((action == EditAction.PlaceWall || action == EditAction.ReplaceWall) && editData != selectedItem.createWall && TShock.Config.Settings.PreventMismatchedPlace)
-					{
-						TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected from wall placement not matching selected item createWall {0} {1} {2} selectedItemID:{3} createWall:{4}", args.Player.Name, action, editData, selectedItem.netID, selectedItem.createWall));
-						args.Player.SendTileSquareCentered(tileX, tileY, 4);
-						args.Handled = true;
-						return;
-					}
+
 					if (action == EditAction.PlaceTile && (editData == TileID.Containers || editData == TileID.Containers2))
 					{
 						if (TShock.Utils.HasWorldReachedMaxChests())
@@ -844,7 +846,7 @@ namespace TShockAPI
 						}
 					}
 				}
-				else if (action == EditAction.PlaceWire || action == EditAction.PlaceWire2 || action == EditAction.PlaceWire3 && TShock.Config.Settings.PreventMismatchedPlace)
+				else if (action == EditAction.PlaceWire || action == EditAction.PlaceWire2 || action == EditAction.PlaceWire3 && !args.Player.HasPermission(Permissions.ignoreitemsafetychecks))
 				{
 					// If they aren't selecting a wrench, they're hacking.
 					// WireKite = The Grand Design
@@ -861,13 +863,13 @@ namespace TShockAPI
 						return;
 					}
 				}
-				else if (action == EditAction.KillActuator || action == EditAction.KillWire ||
-					action == EditAction.KillWire2 || action == EditAction.KillWire3)
+				else if ((action == EditAction.KillActuator || action == EditAction.KillWire ||
+					action == EditAction.KillWire2 || action == EditAction.KillWire3) && !args.Player.HasPermission(Permissions.ignoreitemsafetychecks))
 				{
 					// If they aren't selecting the wire cutter, they're hacking.
 					if (selectedItem.type != ItemID.WireCutter
 						&& selectedItem.type != ItemID.WireKite
-						&& selectedItem.type != ItemID.MulticolorWrench && TShock.Config.Settings.PreventInvalidBreaking)
+						&& selectedItem.type != ItemID.MulticolorWrench)
 					{
 						TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected from wire cutter from {0} {1} {2}", args.Player.Name, action, editData));
 						args.Player.SendTileSquareCentered(tileX, tileY, 1);
@@ -875,7 +877,7 @@ namespace TShockAPI
 						return;
 					}
 				}
-				else if (action == EditAction.PlaceActuator && TShock.Config.Settings.PreventMismatchedPlace)
+				else if (action == EditAction.PlaceActuator && !args.Player.HasPermission(Permissions.ignoreitemsafetychecks))
 				{
 					// If they aren't selecting the actuator and don't have the Presserator equipped, they're hacking.
 					if (selectedItem.type != ItemID.Actuator && !args.Player.TPlayer.autoActuator)
@@ -2380,7 +2382,7 @@ namespace TShockAPI
 			{
 				if (type != TileID.LargePilesEcho && type != TileID.LargePiles2Echo && type != TileID.SmallPiles2x1Echo &&
 					type != TileID.SmallPiles1x1Echo && type != TileID.PlantDetritus3x2Echo && type != TileID.PlantDetritus2x2Echo &&
-					TShock.Config.Settings.PreventMismatchedPlace)
+					!args.Player.HasPermission(Permissions.ignoreitemsafetychecks))
 				{
 					TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlaceObject rejected rubblemaker I can't believe it's not rubble! from {0}",
 						args.Player.Name));
@@ -2391,7 +2393,7 @@ namespace TShockAPI
 			}
 			else if (args.Player.SelectedItem.type == ItemID.AcornAxe)
 			{
-				if (type != TileID.Saplings && TShock.Config.Settings.PreventMismatchedPlace)
+				if (type != TileID.Saplings && !args.Player.HasPermission(Permissions.ignoreitemsafetychecks))
 				{
 					TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlaceObject rejected Axe of Regrowth only places saplings {0}", args.Player.Name));
 					args.Player.SendTileSquareCentered(x, y, 4);
@@ -2404,7 +2406,7 @@ namespace TShockAPI
 				// This is necessary to check in order to prevent special tiles such as
 				// queen bee larva, paintings etc that use this packet from being placed
 				// without selecting the right item.
-				if (type != args.Player.TPlayer.inventory[args.Player.TPlayer.selectedItem].createTile && TShock.Config.Settings.PreventMismatchedPlace)
+				if (type != args.Player.TPlayer.inventory[args.Player.TPlayer.selectedItem].createTile && !args.Player.HasPermission(Permissions.ignoreitemsafetychecks))
 				{
 					TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlaceObject rejected awkward tile creation/selection from {0}", args.Player.Name));
 					args.Player.SendTileSquareCentered(x, y, 4);
@@ -2960,7 +2962,7 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Returns the max <see cref="Item.placeStyle"/> associated with the given <paramref name="tileID"/>. Or -1 if there's no association
+		/// Returns the max <see cref="Item.placeStyle"/> associated with the given <paramref name="tileID"/>. Or 0 if there's no association
 		/// </summary>
 		/// <param name="tileID">Tile ID to query for</param>
 		/// <returns>The max <see cref="Item.placeStyle"/>, otherwise 0 if there's no association</returns>
@@ -2974,7 +2976,9 @@ namespace TShockAPI
 			}
 			else
 			{
-				return 0; // 0 is equivalent of no place style/default place style. Returning -1 breaks the PreventMismatchedPlace config option.
+				// Returning -1 interferes with Permissions.ignoreitemsafetychecks.
+				// Because we only use this method in OnTileEdit, the requested place style can never be -1, so it would incorrectly reject someone with permission to ignore item safety.
+				return 0;
 			}
 		}
 
