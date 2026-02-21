@@ -931,7 +931,7 @@ namespace TShockAPI
 		/// <returns>The <paramref name="item"/> NetID surrounded by the item tag with proper stack/prefix data.</returns>
 		public string ItemTag(Item item)
 		{
-			int netID = item.netID;
+			int netID = item.type;
 			int stack = item.stack;
 			int prefix = item.prefix;
 			string options = stack > 1 ? "/s" + stack : prefix != 0 ? "/p" + prefix : "";

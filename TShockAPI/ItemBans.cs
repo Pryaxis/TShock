@@ -88,7 +88,7 @@ namespace TShockAPI
 				UnTaint(player);
 
 				// No matter the player type, we do a check when a player is holding an item that's banned.
-				if (DataModel.ItemIsBanned(EnglishLanguage.GetItemNameById(player.TPlayer.inventory[player.TPlayer.selectedItem].netID), player))
+				if (DataModel.ItemIsBanned(EnglishLanguage.GetItemNameById(player.TPlayer.inventory[player.TPlayer.selectedItem].type), player))
 				{
 					string itemName = player.TPlayer.inventory[player.TPlayer.selectedItem].Name;
 					player.Disable(GetString($"holding banned item: {itemName}"), disableFlags);
@@ -157,7 +157,7 @@ namespace TShockAPI
 			TSPlayer player = args.Player;
 			string itemName = player.TPlayer.inventory[args.SelectedItem].Name;
 
-			if (DataModel.ItemIsBanned(EnglishLanguage.GetItemNameById(player.TPlayer.inventory[args.SelectedItem].netID), args.Player))
+			if (DataModel.ItemIsBanned(EnglishLanguage.GetItemNameById(player.TPlayer.inventory[args.SelectedItem].type), args.Player))
 			{
 				player.TPlayer.controlUseItem = false;
 				player.Disable(GetString($"holding banned item: {itemName}"), disableFlags);
@@ -204,7 +204,7 @@ namespace TShockAPI
 					return;
 				}
 
-				if (DataModel.ItemIsBanned(EnglishLanguage.GetItemNameById(args.Player.SelectedItem.netID), args.Player))
+				if (DataModel.ItemIsBanned(EnglishLanguage.GetItemNameById(args.Player.SelectedItem.type), args.Player))
 				{
 					args.Player.SendTileSquareCentered(args.X, args.Y, 4);
 					args.Handled = true;

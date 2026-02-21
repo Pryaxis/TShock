@@ -989,7 +989,7 @@ namespace TShockAPI
 				{"muted", player.mute },
 				{"position", player.TileX + "," + player.TileY},
 				{"inventory", string.Join(", ", inventory.Select(p => (p.Name + ":" + p.stack)))},
-				{"armor", string.Join(", ", equipment.Select(p => (p.netID + ":" + p.prefix)))},
+				{"armor", string.Join(", ", equipment.Select(p => (p.type + ":" + p.prefix)))},
 				{"dyes", string.Join(", ", dyes.Select(p => (p.Name)))},
 				{"buffs", string.Join(", ", player.TPlayer.buffType)}
 			};
