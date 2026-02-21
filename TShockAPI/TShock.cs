@@ -1623,6 +1623,23 @@ namespace TShockAPI
 			args.Handled = true;
 		}
 
+		private static readonly HashSet<PacketTypes> AllowedEarlyPackets =
+		[
+			PacketTypes.ConnectRequest,
+			PacketTypes.PlayerInfo,
+			PacketTypes.PlayerSlot,
+			PacketTypes.ContinueConnecting2,
+			PacketTypes.TileGetSection,
+			PacketTypes.PlayerSpawn,
+			PacketTypes.PlayerHp,
+			PacketTypes.PlayerMana,
+			PacketTypes.PlayerBuff,
+			PacketTypes.PasswordSend,
+			PacketTypes.ItemDrop,
+			PacketTypes.ItemOwner,
+			PacketTypes.SyncLoadout
+		];
+
 		/// <summary>OnGetData - Called when the server gets raw data packets.</summary>
 		/// <param name="e">e - The GetDataEventArgs object.</param>
 		private void OnGetData(GetDataEventArgs e)
@@ -1645,10 +1662,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if ((player.State < (int)ConnectionState.Complete) &&
-			    type > PacketTypes.PlayerSpawn && type != PacketTypes.PlayerHp && type != PacketTypes.PlayerMana &&
-			    type != PacketTypes.PlayerBuff && type != PacketTypes.PasswordSend && type != PacketTypes.ItemDrop &&
-			    type != PacketTypes.ItemOwner && type != PacketTypes.SyncLoadout)
+			if (player.State < (int)ConnectionState.Complete && !AllowedEarlyPackets.Contains(type))
 			{
 				e.Handled = true;
 				return;
