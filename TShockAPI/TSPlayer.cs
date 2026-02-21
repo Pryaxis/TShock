@@ -34,6 +34,7 @@ using TShockAPI.Hooks;
 using TShockAPI.Net;
 using Timer = System.Timers.Timer;
 using System.Linq;
+using Terraria.GameContent;
 using Terraria.GameContent.Creative;
 namespace TShockAPI
 {
@@ -1476,7 +1477,7 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Teleports the player to their spawnpoint. 
+		/// Teleports the player to their spawnpoint.
 		/// Teleports to main spawnpoint if their bed is not active.
 		/// Supports SSC.
 		/// </summary>
@@ -1485,11 +1486,19 @@ namespace TShockAPI
 			// NOTE: it is vanilla behaviour to not permanently override the spawnpoint if the bed spawn is broken/invalid
 			int x = TPlayer.SpawnX;
 			int y = TPlayer.SpawnY;
-			if ((x == -1 && y == -1) || 
+			if ((x == -1 && y == -1) ||
 				!Main.tile[x, y - 1].active() || Main.tile[x, y - 1].type != TileID.Beds || !WorldGen.StartRoomCheck(x, y - 1))
 			{
-				x = Main.spawnTileX;
-				y = Main.spawnTileY;
+				if (Main.teamBasedSpawnsSeed && ExtraSpawnPointManager.TryGetExtraSpawnPointForTeam(Team, out var spawnPoint))
+				{
+					x = spawnPoint.X;
+					y = spawnPoint.Y;
+				}
+				else
+				{
+					x = Main.spawnTileX;
+					y = Main.spawnTileY;
+				}
 			}
 			return Teleport(x * 16, y * 16 - 48);
 		}
@@ -1635,7 +1644,7 @@ namespace TShockAPI
 					{
 						Client.TileSections[i, j] = isLoaded;
 					}
-				}	
+				}
 			}
 			else
 			{
