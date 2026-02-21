@@ -2925,15 +2925,7 @@ namespace TShockAPI
 				// handle initial connection
 				if (args.Player.State == 3)
 				{
-					//same as TeleportSpawnpoint
-					int x = args.TPlayer.SpawnX;
-					int y = args.TPlayer.SpawnY;
-					if ((x == -1 && y == -1) ||
-					    !Main.tile[x, y - 1].active() || Main.tile[x, y - 1].type != TileID.Beds || !WorldGen.StartRoomCheck(x, y - 1))
-					{
-						x = Main.spawnTileX;
-						y = Main.spawnTileY;
-					}
+					ResolveSpawnpoint(args.TPlayer, out int x, out int y);
 					// server saved spawnpoint value
 					args.Player.initialSpawn = true;
 					args.Player.initialServerSpawnX = x;
@@ -2975,6 +2967,18 @@ namespace TShockAPI
 				return true;
 			}
 			return false;
+		}
+
+		public static void ResolveSpawnpoint(Player player, out int x, out int y)
+		{
+			x = player.SpawnX;
+			y = player.SpawnY;
+			if ((x == -1 && y == -1) ||
+				!Main.tile[x, y - 1].active() || Main.tile[x, y - 1].type != TileID.Beds || !WorldGen.StartRoomCheck(x, y - 1))
+			{
+				x = Main.spawnTileX;
+				y = Main.spawnTileY;
+			}
 		}
 
 		private static bool HandlePlayerUpdate(GetDataHandlerArgs args)
