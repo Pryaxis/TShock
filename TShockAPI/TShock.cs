@@ -1466,7 +1466,7 @@ namespace TShockAPI
 				return;
 			}
 
-			var maxLength = Math.Clamp(Config.Settings.MaximumChatMessageLength, 250, 2048);
+			var maxLength = Math.Clamp(Config.Settings.MaximumChatMessageLength, 250, 2000);
 			if (args.Text.Length > maxLength && !Config.Settings.TruncateExcessiveChatMessages)
 			{
 				Log.ConsoleDebug(GetString("TShock / OnChat rejected due to length of {0}/{1} from {2}", args.Text.Length, maxLength, tsplr.Name));
@@ -1636,11 +1636,11 @@ namespace TShockAPI
 		private string TruncateChatMessageIfNecessary(ServerChatEventArgs args)
 		{
 			string chatMsg = args.Text;
-			var maxLength = Math.Clamp(Config.Settings.MaximumChatMessageLength, 250, 2048);
+			var maxLength = Math.Clamp(Config.Settings.MaximumChatMessageLength, 250, 2000);
 			if (chatMsg.Length > maxLength)
 			{
 				Log.ConsoleDebug(GetString("TShock / TruncateChatMessageIfNecessary truncating excessive chat message length of {0}/{1} from {2}", args.Text.Length, maxLength, Players[args.Who].Name));
-				chatMsg = chatMsg.Substring(0, Math.Clamp(Config.Settings.MaximumChatMessageLength, 250, 2048)) + "...";
+				chatMsg = chatMsg.Substring(0, maxLength) + "...";
 			}
 			return chatMsg;
 		}
