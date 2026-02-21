@@ -1639,7 +1639,7 @@ namespace TShockAPI
 			var maxLength = Math.Clamp(Config.Settings.MaximumChatMessageLength, 250, 2048);
 			if (chatMsg.Length > maxLength)
 			{
-				Log.ConsoleDebug(GetString("TShock / OnChat truncating excessive chat message length of {0}/{1} from {2}", args.Text.Length, maxLength, Players[args.Who].Name));
+				Log.ConsoleDebug(GetString("TShock / TruncateChatMessageIfNecessary truncating excessive chat message length of {0}/{1} from {2}", args.Text.Length, maxLength, Players[args.Who].Name));
 				chatMsg = chatMsg.Substring(0, Math.Clamp(Config.Settings.MaximumChatMessageLength, 250, 2048)) + "...";
 			}
 			return chatMsg;
