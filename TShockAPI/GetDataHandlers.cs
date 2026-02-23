@@ -4898,6 +4898,7 @@ namespace TShockAPI
 		internal static Dictionary<int, int> projectileCreatesTile = new Dictionary<int, int>
 		{
 			{ ProjectileID.DirtBall, TileID.Dirt },
+			{ ProjectileID.MudBallPlayer, TileID.Mud },
 			{ ProjectileID.SandBallGun, TileID.Sand },
 			{ ProjectileID.EbonsandBallGun, TileID.Ebonsand },
 			{ ProjectileID.PearlSandBallGun, TileID.Pearlsand },
