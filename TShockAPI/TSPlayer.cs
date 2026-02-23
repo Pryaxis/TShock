@@ -1484,22 +1484,7 @@ namespace TShockAPI
 		public bool TeleportSpawnpoint()
 		{
 			// NOTE: it is vanilla behaviour to not permanently override the spawnpoint if the bed spawn is broken/invalid
-			int x = TPlayer.SpawnX;
-			int y = TPlayer.SpawnY;
-			if ((x == -1 && y == -1) ||
-				!Main.tile[x, y - 1].active() || Main.tile[x, y - 1].type != TileID.Beds || !WorldGen.StartRoomCheck(x, y - 1))
-			{
-				if (Main.teamBasedSpawnsSeed && ExtraSpawnPointManager.TryGetExtraSpawnPointForTeam(Team, out var spawnPoint))
-				{
-					x = spawnPoint.X;
-					y = spawnPoint.Y;
-				}
-				else
-				{
-					x = Main.spawnTileX;
-					y = Main.spawnTileY;
-				}
-			}
+			GetDataHandlers.ResolveSpawnpoint(TPlayer, out int x, out int y);
 			return Teleport(x * 16, y * 16 - 48);
 		}
 

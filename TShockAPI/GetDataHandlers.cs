@@ -2976,8 +2976,16 @@ namespace TShockAPI
 			if ((x == -1 && y == -1) ||
 				!Main.tile[x, y - 1].active() || Main.tile[x, y - 1].type != TileID.Beds || !WorldGen.StartRoomCheck(x, y - 1))
 			{
-				x = Main.spawnTileX;
-				y = Main.spawnTileY;
+				if (Main.teamBasedSpawnsSeed && ExtraSpawnPointManager.TryGetExtraSpawnPointForTeam(Team, out var spawnPoint))
+				{
+					x = spawnPoint.X;
+					y = spawnPoint.Y;
+				}
+				else
+				{
+					x = Main.spawnTileX;
+					y = Main.spawnTileY;
+				}
 			}
 		}
 
