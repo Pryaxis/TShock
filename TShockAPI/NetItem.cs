@@ -171,6 +171,7 @@ namespace TShockAPI
 			_netId = netId;
 			_stack = stack;
 			_prefixId = prefixId;
+			_favorited = favorited;
 		}
 
 		/// <summary>
