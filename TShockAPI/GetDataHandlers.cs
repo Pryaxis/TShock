@@ -2619,6 +2619,8 @@ namespace TShockAPI
 				args.Player.TPlayer.shirtColor = shirtColor;
 				args.Player.TPlayer.underShirtColor = underShirtColor;
 				args.Player.TPlayer.shoeColor = shoeColor;
+				args.Player.TPlayer.voiceVariant = voiceVariant;
+				args.Player.TPlayer.voicePitchOffset = voicePitchOffset;
 				for (int i = 0; i < args.Player.TPlayer.hideVisibleAccessory.Length; i++)
 					args.Player.TPlayer.hideVisibleAccessory[i] = (hideVisualFlags & (1 << i)) != 0;
 				args.Player.TPlayer.hideMisc = hideMisc;
@@ -4898,6 +4900,7 @@ namespace TShockAPI
 		internal static Dictionary<int, int> projectileCreatesTile = new Dictionary<int, int>
 		{
 			{ ProjectileID.DirtBall, TileID.Dirt },
+			{ ProjectileID.MudBallPlayer, TileID.Mud },
 			{ ProjectileID.SandBallGun, TileID.Sand },
 			{ ProjectileID.EbonsandBallGun, TileID.Ebonsand },
 			{ ProjectileID.PearlSandBallGun, TileID.Pearlsand },
