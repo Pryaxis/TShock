@@ -49,10 +49,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Path to the file containing the whitelist.
 		/// </summary>
-		internal static string WhitelistPath
-		{
-			get { return Path.Combine(TShock.SavePath, "whitelist.txt"); }
-		}
+		internal static string WhitelistPath => Path.Combine(TShock.SavePath, "whitelist.txt");
 
 		/// <summary>
 		/// Path to the file containing the config.
@@ -104,8 +101,8 @@ namespace TShockAPI
 
 			CreateIfNot(RulesPath, "Respect the admins!\nDon't use TNT!");
 			CreateIfNot(MotdPath, MotdFormat);
-						
-			CreateIfNot(WhitelistPath);
+
+			CreateIfNot(WhitelistPath, Whitelist.DefaultWhitelistContent);
 			bool writeConfig = true; // Default to true if the file doesn't exist
 			if (File.Exists(ConfigPath))
 			{
@@ -137,39 +134,6 @@ namespace TShockAPI
 					}
 				};
 				TShock.ServerSideCharacterConfig.Write(ServerSideCharacterConfigPath);
-			}
-		}
-
-		/// <summary>
-		/// Tells if a user is on the whitelist
-		/// </summary>
-		/// <param name="ip">string ip of the user</param>
-		/// <returns>true/false</returns>
-		public static bool OnWhitelist(string ip)
-		{
-			if (!TShock.Config.Settings.EnableWhitelist)
-			{
-				return true;
-			}
-			CreateIfNot(WhitelistPath, "127.0.0.1");
-			using (var tr = new StreamReader(WhitelistPath))
-			{
-				string whitelist = tr.ReadToEnd();
-				ip = TShock.Utils.GetRealIP(ip);
-				bool contains = whitelist.Contains(ip);
-				if (!contains)
-				{
-					foreach (var line in whitelist.Split(Environment.NewLine.ToCharArray()))
-					{
-						if (string.IsNullOrWhiteSpace(line))
-							continue;
-						contains = TShock.Utils.GetIPv4AddressFromHostname(line).Equals(ip);
-						if (contains)
-							return true;
-					}
-					return false;
-				}
-				return true;
 			}
 		}
 

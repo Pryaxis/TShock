@@ -128,6 +128,12 @@ namespace TShockAPI
 		public static ILog Log;
 		/// <summary>instance - Static reference to the TerrariaPlugin instance.</summary>
 		public static TerrariaPlugin instance;
+
+		/// <summary>
+		/// Whitelist - Static reference to the whitelist system, which allows whitelisting of IP addresses and networks.
+		/// </summary>
+		public static Whitelist Whitelist { get; set; }
+
 		/// <summary>
 		/// Static reference to a <see cref="CommandLineParser"/> used for simple command-line parsing
 		/// </summary>
@@ -354,6 +360,7 @@ namespace TShockAPI
 				Bouncer = new Bouncer();
 				RegionSystem = new RegionHandler(Regions);
 				ItemBans = new ItemBans(this, DB);
+				Whitelist = new(FileTools.WhitelistPath);
 
 				var geoippath = "GeoIP.dat";
 				if (Config.Settings.EnableGeoIP && File.Exists(geoippath))
@@ -1322,7 +1329,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (!FileTools.OnWhitelist(player.IP))
+			if (!Whitelist.IsWhitelisted(player.IP))
 			{
 				player.Kick(Config.Settings.WhitelistKickReason, true, true, null, false);
 				args.Handled = true;
