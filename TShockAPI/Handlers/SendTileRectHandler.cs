@@ -2,6 +2,7 @@
 using System.IO;
 
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 
 using TShockAPI.Net;
@@ -354,7 +355,6 @@ namespace TShockAPI.Handlers
 						Main.tile[x + rect.X, y + rect.Y].frameY = -1;
 					}
 				}
-
 				return MatchResult.BroadcastChanges;
 			}
 		}
@@ -369,13 +369,15 @@ namespace TShockAPI.Handlers
 		private static readonly TileRectMatch[] Matches = new TileRectMatch[]
 		{
 			TileRectMatch.Placement(2, 3, TileID.TargetDummy, 54, 36, 18, 18),
-			TileRectMatch.Placement(3, 4, TileID.TeleportationPylon, 468, 54, 18, 18),
+			TileRectMatch.Placement(3, 4, TileID.TeleportationPylon, (int)TeleportPylonType.Count * 54 - 18, 54, 18, 18),
 			TileRectMatch.Placement(2, 3, TileID.DisplayDoll, 126, 36, 18, 18),
 			TileRectMatch.Placement(3, 4, TileID.HatRack, 90, 54, 18, 18),
 			TileRectMatch.Placement(2, 2, TileID.ItemFrame, 162, 18, 18, 18),
 			TileRectMatch.Placement(3, 3, TileID.WeaponsRack2, 90, 36, 18, 18),
 			TileRectMatch.Placement(1, 1, TileID.FoodPlatter, 18, 0, 18, 18),
 			TileRectMatch.Placement(1, 1, TileID.LogicSensor, 18, 108, 18, 18),
+			TileRectMatch.Placement(1, 1, TileID.KiteAnchor, 72, 0, 18, 18),
+			TileRectMatch.Placement(1, 1, TileID.CritterAnchor, 72, 72, 18, 18),
 
 			TileRectMatch.StateChangeY(3, 2, TileID.Campfire, 54, 18),
 			TileRectMatch.StateChangeY(4, 3, TileID.Cannon, 468, 18),
@@ -398,6 +400,7 @@ namespace TShockAPI.Handlers
 			TileRectMatch.StateChangeX(1, 1, TileID.ShadowCandle, 18, 18),
 
 			TileRectMatch.StateChange(1, 1, TileID.Traps, 90, 90, 18, 18),
+			TileRectMatch.StateChange(1, 1, TileID.Torches, 110, (short)(TorchID.Count * 22 - 22), 22, 22),
 
 			TileRectMatch.StateChangeX(1, 1, TileID.WirePipe, 36, 18),
 			TileRectMatch.StateChangeX(1, 1, TileID.ProjectilePressurePad, 66, 22),
@@ -474,8 +477,8 @@ namespace TShockAPI.Handlers
 			{
 				TShock.Log.ConsoleDebug(GetString($"Bouncer / SendTileRect reimplemented from {args.Player.Name}"));
 
-				// send correcting data
-				args.Player.SendTileRect(args.TileX, args.TileY, args.Width, args.Length);
+				// send to all players and tile frame
+				FrameAndSyncRect(rect);
 				return;
 			}
 
@@ -494,8 +497,8 @@ namespace TShockAPI.Handlers
 			{
 				TShock.Log.ConsoleDebug(GetString($"Bouncer / SendTileRect reimplemented from {args.Player.Name}"));
 
-				// send correcting data
-				args.Player.SendTileRect(args.TileX, args.TileY, args.Width, args.Length);
+				// send to all players and tile frame
+				FrameAndSyncRect(rect);
 				return;
 			}
 
@@ -510,8 +513,11 @@ namespace TShockAPI.Handlers
 					// send correcting data
 					if (result == TileRectMatch.MatchResult.RejectChanges)
 						args.Player.SendTileRect(args.TileX, args.TileY, args.Width, args.Length);
+
+					// send to all players and tile frame
 					if (result == TileRectMatch.MatchResult.BroadcastChanges)
-						TSPlayer.All.SendTileRect(args.TileX, args.TileY, args.Width, args.Length);
+						FrameAndSyncRect(rect);
+
 					return;
 				}
 			}
@@ -521,8 +527,8 @@ namespace TShockAPI.Handlers
 			{
 				TShock.Log.ConsoleDebug(GetString($"Bouncer / SendTileRect reimplemented from {args.Player.Name}"));
 
-				// send correcting data
-				args.Player.SendTileRect(args.TileX, args.TileY, args.Width, args.Length);
+				// send to all players and tile frame
+				FrameAndSyncRect(rect);
 				return;
 			}
 
@@ -853,6 +859,16 @@ namespace TShockAPI.Handlers
 			}
 
 			return false;
+		}
+
+		/// <summary>
+		/// Calls <see cref="WorldGen.RangeFrame(int, int, int, int)"/> and syncs the tile rect to all clients, follwoing vanilla behavior.
+		/// </summary>
+		/// <param name="rect"></param>
+		private static void FrameAndSyncRect(TileRect rect)
+		{
+			WorldGen.RangeFrame(rect.X, rect.Y, rect.X + rect.Width, rect.Y + rect.Height);
+			TSPlayer.All.SendTileRect((short)rect.X, (short)rect.Y, (byte)rect.Width, (byte)rect.Height);
 		}
 	}
 

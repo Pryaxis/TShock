@@ -39,12 +39,12 @@ jobs:
       - name: Produce installer
         run: |
             cd TShockInstaller
-            dotnet publish -r ${{ matrix.arch }} -f net9.0 -c Release -p:PublishSingleFile=true --self-contained true
+            dotnet publish -r ${{ matrix.arch }} -f net9.0 -c Release -p:PublishSingleFile=true --self-contained
 
       - name: Produce build
         run: |
             cd TShockLauncher
-            dotnet publish -r ${{ matrix.arch }} -f net9.0 -c Release -p:PublishSingleFile=true --self-contained false
+            dotnet publish -r ${{ matrix.arch }} -f net9.0 -c Release -p:PublishSingleFile=true --no-self-contained
 
       - name: Chmod scripts
         if: ${{ matrix.arch != 'win-x64' }}
