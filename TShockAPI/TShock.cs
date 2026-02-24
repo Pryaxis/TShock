@@ -1466,14 +1466,19 @@ namespace TShockAPI
 				return;
 			}
 
-			if (args.Text.Length > 500)
+			var maxLength = Math.Clamp(Config.Settings.MaximumChatMessageLength, 250, 2000);
+			if (args.Text.Length > maxLength && !Config.Settings.TruncateExcessiveChatMessages)
 			{
-				tsplr.Kick(GetString("Crash attempt via long chat packet."), true);
+				Log.ConsoleDebug(GetString("TShock / OnChat rejected due to length of {0}/{1} from {2}", args.Text.Length, maxLength, tsplr.Name));
+				tsplr.SendErrorMessage(GetString("Your chat message exceeds the maximum length of {1} characters. ({0}/{1}).", args.Text.Length, maxLength));
 				args.Handled = true;
 				return;
 			}
 
-			string text = args.Text;
+			string text = TruncateChatMessageIfNecessary(args);
+			// We should now use the truncated message instead of the original, we don't want anything to fire off on text that has been "removed"...
+			// Yes, double assignment like this looks bad...
+			var chatText = text;
 
 			// Terraria now has chat commands on the client side.
 			// These commands remove the commands prefix (e.g. /me /playing) and send the command id instead
@@ -1527,10 +1532,10 @@ namespace TShockAPI
 				else if (!TShock.Config.Settings.EnableChatAboveHeads)
 				{
 					text = String.Format(Config.Settings.ChatFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix,
-											 args.Text);
+											 chatText);
 
 					//Invoke the PlayerChat hook. If this hook event is handled then we need to prevent sending the chat message
-					bool cancelChat = PlayerHooks.OnPlayerChat(tsplr, args.Text, ref text);
+					bool cancelChat = PlayerHooks.OnPlayerChat(tsplr, chatText, ref text);
 					args.Handled = true;
 
 					if (cancelChat)
@@ -1551,7 +1556,7 @@ namespace TShockAPI
 					//Give that poor player their name back :'c
 					ply.name = name;
 
-					bool cancelChat = PlayerHooks.OnPlayerChat(tsplr, args.Text, ref text);
+					bool cancelChat = PlayerHooks.OnPlayerChat(tsplr, chatText, ref text);
 					if (cancelChat)
 					{
 						args.Handled = true;
@@ -1623,6 +1628,23 @@ namespace TShockAPI
 			args.Handled = true;
 		}
 
+		/// <summary>
+		/// Truncates a chat message if it exceeds the <see cref="TShockSettings.MaximumChatMessageLength"/>.
+		/// </summary>
+		/// <param name="args">args - The ServerChatEventArgs object.</param>
+		/// <returns></returns>
+		private string TruncateChatMessageIfNecessary(ServerChatEventArgs args)
+		{
+			string chatMsg = args.Text;
+			var maxLength = Math.Clamp(Config.Settings.MaximumChatMessageLength, 250, 2000);
+			if (chatMsg.Length > maxLength)
+			{
+				Log.ConsoleDebug(GetString("TShock / TruncateChatMessageIfNecessary truncating excessive chat message length of {0}/{1} from {2}", args.Text.Length, maxLength, Players[args.Who].Name));
+				chatMsg = chatMsg.Substring(0, maxLength) + "...";
+			}
+			return chatMsg;
+		}
+    
 		private static readonly HashSet<PacketTypes> AllowedEarlyPackets =
 		[
 			PacketTypes.ConnectRequest,
