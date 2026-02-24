@@ -869,6 +869,7 @@ namespace TShockAPI
 						if (selectedItem.type != ItemID.IceRod &&
 						    selectedItem.type != ItemID.DirtBomb &&
 						    selectedItem.type != ItemID.StickyBomb &&
+						    selectedItem.type != ItemID.MudBallPlayer &&
 						    selectedItem.type != ItemID.AcornAxe &&
 						    selectedItem.type != ItemID.StaffofRegrowth &&
 						    !(args.Player.RecentlyCreatedProjectiles.Any(x =>
