@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2026-02-24 14:15:24+0000\n"
-"PO-Revision-Date: 2026-02-24 15:04\n"
+"PO-Revision-Date: 2026-02-24 17:45\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -3772,7 +3772,7 @@ msgstr "一个插件阻止了你修改用户组。"
 
 #: ../../TShockAPI/Whitelist.cs:101
 msgid "https://github.com/Pryaxis/TShock/issues"
-msgstr ""
+msgstr "https://github.com/Pryaxis/TShock/issues"
 
 #: ../../TShockAPI/Commands.cs:1272
 #, csharp-format
@@ -3836,7 +3836,7 @@ msgstr "如果持续时间为{0}，那么默认为415天。"
 
 #: ../../TShockAPI/Whitelist.cs:100
 msgid "If you somehow managed to get this message, please report it to the TShock team :"
-msgstr ""
+msgstr "如果您意外看到此消息，请向 TShock 团队报告。"
 
 #: ../../TShockAPI/Commands.cs:5509
 #, csharp-format
@@ -4494,12 +4494,12 @@ msgstr "传送点名无效。 'list', 'hide', 'del' 和 'add' 等已被保留。
 #: ../../TShockAPI/Whitelist.cs:158
 #, csharp-format
 msgid "Invalid whitelist entry at line {0}: \"{1}\", skipped"
-msgstr ""
+msgstr "白名单第{0}行存在无效条目：\"{1}\"，已跳过"
 
 #: ../../TShockAPI/Commands.cs:1789
 #, csharp-format
 msgid "Invalid Whitelist syntax. Usage: {0}whitelist <ip[/range]>"
-msgstr ""
+msgstr "白名单语法无效。用法：{0}whitelist <IP[/范围]>"
 
 #: ../../TShockAPI/Commands.cs:4724
 msgid "Invalid wind speed (must be between -40 and 40)."
@@ -4518,11 +4518,11 @@ msgstr "IP地址：{0}。"
 #: ../../TShockAPI/Whitelist.cs:99
 #, csharp-format
 msgid "IPv6 address '{0}' is not supported by Terraria. Skipping check."
-msgstr ""
+msgstr "Terraria不支持 IPv6 地址“{0}”，跳过检查。"
 
 #: ../../TShockAPI/Commands.cs:1774
 msgid "IPv6 addresses are not supported as of yet by TShock. This rule will have no effect for now. Adding anyways."
-msgstr ""
+msgstr "TShock目前尚不支持 IPv6 地址。此规则暂时不会生效，但仍会添加。"
 
 #: ../../TShockAPI/Commands.cs:4073
 msgid "Item Ban Sub-Commands ({{0}}/{{1}}):"
