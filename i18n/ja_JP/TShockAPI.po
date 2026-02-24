@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2026-02-24 14:15:24+0000\n"
-"PO-Revision-Date: 2026-02-24 16:16\n"
+"PO-Revision-Date: 2026-02-24 17:45\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
@@ -1285,7 +1285,7 @@ msgstr "アカウント {0} がグループ {1} に変更されました。"
 #: ../../TShockAPI/Bouncer.cs:581
 #, csharp-format
 msgid "Account needed! Please {0}register or {0}login to play!"
-msgstr "アカウントが必要です！ {0}register か  {0}login してからプレイしてください！"
+msgstr "アカウントが必要です！ {0}register か {0}loginしてからプレイしてください！"
 
 #: ../../TShockAPI/Commands.cs:1164
 msgid "Account removed successfully."
@@ -4452,34 +4452,34 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:4681
 #: ../../TShockAPI/Commands.cs:4689
 msgid "Invalid target player."
-msgstr ""
+msgstr "無効なターゲットプレーヤーです。"
 
 #: ../../TShockAPI/Commands.cs:1664
 #: ../../TShockAPI/Commands.cs:1723
 #, csharp-format
 msgid "Invalid Ticket Number. Refer to {0} for details on how to use the {1} command"
-msgstr ""
+msgstr "無効なチケット番号です。 {0} コマンドの使い方については、 {1} を参照してください。"
 
 #: ../../TShockAPI/Commands.cs:4308
 #: ../../TShockAPI/Commands.cs:4345
 #: ../../TShockAPI/Commands.cs:4366
 #: ../../TShockAPI/Commands.cs:4404
 msgid "Invalid tile ID."
-msgstr ""
+msgstr "無効なタイルIDです。"
 
 #: ../../TShockAPI/Commands.cs:1995
 msgid "Invalid time string! Proper format: _d_h_m_s, with at least one time specifier."
-msgstr ""
+msgstr "タイム文字列が無効です！適切なフォーマット：_d_h_m_s、少なくとも1回の指定子が付いています。"
 
 #: ../../TShockAPI/Commands.cs:4640
 #: ../../TShockAPI/Commands.cs:4649
 msgid "Invalid time string. Proper format: hh:mm, in 24-hour time."
-msgstr ""
+msgstr "無効な時間文字列です。適切なフォーマット: hh:mm, 24 時間です。"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1333
 #, csharp-format
 msgid "Invalid Type: '{0}'"
-msgstr ""
+msgstr "Invalid Type: '{0}'"
 
 #: ../../TShockAPI/Commands.cs:1112
 #: ../../TShockAPI/Commands.cs:1249
@@ -4489,12 +4489,12 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:3334
 msgid "Invalid warp name. The names 'list', 'hide', 'del' and 'add' are reserved for commands."
-msgstr ""
+msgstr "無効なワープ名です。'list'、'hide'、'del'、'add'はコマンド用に予約されています。"
 
 #: ../../TShockAPI/Whitelist.cs:158
 #, csharp-format
 msgid "Invalid whitelist entry at line {0}: \"{1}\", skipped"
-msgstr ""
+msgstr "{0}行目のホワイトリストエントリが無効です: \"{1}\" はスキップされました"
 
 #: ../../TShockAPI/Commands.cs:1789
 #, csharp-format
@@ -4503,48 +4503,48 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:4724
 msgid "Invalid wind speed (must be between -40 and 40)."
-msgstr ""
+msgstr "風速が無効です（-40～40の間でなければなりません）"
 
 #: ../../TShockAPI/Commands.cs:2651
 #, csharp-format
 msgid "Invalid world mode. Valid world modes: {0}"
-msgstr ""
+msgstr "無効なワールドモードです。有効なモード： {0}"
 
 #: ../../TShockAPI/Commands.cs:1297
 #, csharp-format
 msgid "IP Address: {0}."
-msgstr ""
+msgstr "IPアドレス: {0}."
 
 #: ../../TShockAPI/Whitelist.cs:99
 #, csharp-format
 msgid "IPv6 address '{0}' is not supported by Terraria. Skipping check."
-msgstr ""
+msgstr "IPv6 アドレス '{0}' はテラリアではサポートされていません。 スキップチェック。"
 
 #: ../../TShockAPI/Commands.cs:1774
 msgid "IPv6 addresses are not supported as of yet by TShock. This rule will have no effect for now. Adding anyways."
-msgstr ""
+msgstr "IPv6アドレスはTShockではまだサポートされていません。 このルールは今のところ効果がありません。"
 
 #: ../../TShockAPI/Commands.cs:4073
 msgid "Item Ban Sub-Commands ({{0}}/{{1}}):"
-msgstr ""
+msgstr "アイテム禁止サブコマンド ({{0}}/{{1}}):"
 
 #: ../../TShockAPI/Commands.cs:4091
 msgid "Item bans ({{0}}/{{1}}):"
-msgstr ""
+msgstr "アイテム禁止 ({{0}}/{{1}}):"
 
 #: ../../TShockAPI/TSPlayer.cs:2126
 #, csharp-format
 msgid "Kicked {0} for : '{1}'"
-msgstr ""
+msgstr "{0} を「{1}」にキックしました。"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1050
 msgid "Kicked via web"
-msgstr ""
+msgstr "ウェブ経由でキックされました。"
 
 #: ../../TShockAPI/TSPlayer.cs:2125
 #, csharp-format
 msgid "Kicked: {0}"
-msgstr ""
+msgstr "キック: {0}"
 
 #: ../../TShockAPI/Commands.cs:6074
 msgid "Kill syntax and example"
@@ -4552,11 +4552,11 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:559
 msgid "Kills another player."
-msgstr ""
+msgstr "他のプレイヤーを倒しました。"
 
 #: ../../TShockAPI/Commands.cs:399
 msgid "Kills hostile NPCs or NPCs of a certain type."
-msgstr ""
+msgstr "特定の種類の敵対的なNPCやNPCを倒す。"
 
 #: ../../TShockAPI/Handlers/LandGolfBallInCupHandler.cs:114
 #, csharp-format
@@ -4585,19 +4585,19 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:2571
 msgid "Lanterns are now down."
-msgstr ""
+msgstr "ランタンが落ちました。"
 
 #: ../../TShockAPI/Commands.cs:2567
 msgid "Lanterns are now up."
-msgstr ""
+msgstr "ランタンが立ち上がった。"
 
 #: ../../TShockAPI/Commands.cs:4515
 msgid "Liquids are already settling."
-msgstr ""
+msgstr "液体はすでに沈静化している。"
 
 #: ../../TShockAPI/Commands.cs:5284
 msgid "list - Lists all regions."
-msgstr ""
+msgstr "list - すべての地域を一覧表示します。"
 
 #: ../../TShockAPI/Commands.cs:4067
 msgid "list [page] - Lists all item bans."
@@ -4653,20 +4653,20 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:1802
 msgid "Log display disabled."
-msgstr ""
+msgstr "ログ表示が無効になりました。"
 
 #: ../../TShockAPI/Commands.cs:1798
 msgid "Log display enabled."
-msgstr ""
+msgstr "ログの表示が有効になりました。"
 
 #: ../../TShockAPI/TShock.cs:798
 #, csharp-format
 msgid "Log path has been set to {0}"
-msgstr ""
+msgstr "ログパスが {0}に設定されました。"
 
 #: ../../TShockAPI/Commands.cs:907
 msgid "Login attempt failed - see the message above."
-msgstr ""
+msgstr "ログインに失敗しました - 上記のメッセージを参照してください。"
 
 #: ../../TShockAPI/TShock.cs:993
 msgid "Login before join enabled. Users may be prompted for an account specific password instead of a server password on connect."
@@ -4678,20 +4678,20 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:246
 msgid "Logs you into an account."
-msgstr ""
+msgstr "アカウントにログインします。"
 
 #: ../../TShockAPI/Commands.cs:252
 msgid "Logs you out of your current account."
-msgstr ""
+msgstr "現在のアカウントからログアウトします。"
 
 #: ../../TShockAPI/Commands.cs:1264
 #, csharp-format
 msgid "Machine name: {0}"
-msgstr ""
+msgstr "マシン名: {0}"
 
 #: ../../TShockPluginManager/NugetCLI.cs:141
 msgid "Make sure that you trust the plugins you're installing."
-msgstr ""
+msgstr "インストールしているプラグインを信頼していることを確認してください。"
 
 #: ../../TShockAPI/Bouncer.cs:2677
 msgid "Malicious portal attempt."
@@ -4699,43 +4699,43 @@ msgstr "悪意のあるポータルの試行です。"
 
 #: ../../TShockPluginManager/NugetCLI.cs:35
 msgid "Manage plugins and their requirements"
-msgstr ""
+msgstr "プラグインとその要件を管理"
 
 #: ../../TShockAPI/Commands.cs:286
 msgid "Manages groups."
-msgstr ""
+msgstr "グループを管理"
 
 #: ../../TShockAPI/Commands.cs:290
 msgid "Manages item bans."
-msgstr ""
+msgstr "アイテム禁止を管理"
 
 #: ../../TShockAPI/Commands.cs:274
 msgid "Manages player bans."
-msgstr ""
+msgstr "プレイヤーBANを管理"
 
 #: ../../TShockAPI/Commands.cs:294
 msgid "Manages projectile bans."
-msgstr ""
+msgstr "発射物禁止を管理"
 
 #: ../../TShockAPI/Commands.cs:302
 msgid "Manages regions."
-msgstr ""
+msgstr "地域を管理"
 
 #: ../../TShockAPI/Commands.cs:576
 msgid "Manages the REST API."
-msgstr ""
+msgstr "REST API を管理"
 
 #: ../../TShockAPI/Commands.cs:382
 msgid "Manages the server whitelist."
-msgstr ""
+msgstr "サーバーのホワイトリストを管理"
 
 #: ../../TShockAPI/Commands.cs:298
 msgid "Manages tile bans."
-msgstr ""
+msgstr "タイル禁止を管理"
 
 #: ../../TShockAPI/Commands.cs:238
 msgid "Manages user accounts."
-msgstr ""
+msgstr "ユーザーアカウントを管理"
 
 #: ../../TShockAPI/Bouncer.cs:1928
 msgid "Manipulating unknown liquid type"
@@ -4744,7 +4744,7 @@ msgstr "不明な液体タイプの操作"
 #: ../../TShockAPI/Commands.cs:4814
 #, csharp-format
 msgid "Marked region {0} as protected."
-msgstr ""
+msgstr "{0} を保護済みとしてマークしました。"
 
 #: ../../TShockAPI/Commands.cs:4821
 #, csharp-format
