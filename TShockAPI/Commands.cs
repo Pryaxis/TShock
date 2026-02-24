@@ -1765,13 +1765,28 @@ namespace TShockAPI
 
 		private static void Whitelist(CommandArgs args)
 		{
-			if (args.Parameters.Count == 1)
+			if (args.Parameters is [{ } ip])
 			{
-				using (var tw = new StreamWriter(FileTools.WhitelistPath, true))
+				// Warn if IP addr/net is v6
+				if (ip.Contains(':'))
 				{
-					tw.WriteLine(args.Parameters[0]);
+					args.Player.SendWarningMessage(GetString(
+						"IPv6 addresses are not supported as of yet by TShock. This rule will have no effect for now. Adding anyways."
+					));
 				}
-				args.Player.SendSuccessMessage(GetString($"Added {args.Parameters[0]} to the whitelist."));
+
+				if (TShock.Whitelist.AddToWhitelist(ip))
+				{
+					args.Player.SendSuccessMessage(GetString($"Added {ip} to the whitelist."));
+				}
+				else
+				{
+					args.Player.SendErrorMessage(GetString($"Failed to add {ip} to the whitelist. Perhaps it is already whitelisted?"));
+				}
+			}
+			else
+			{
+				args.Player.SendErrorMessage(GetString($"Invalid Whitelist syntax. Usage: {Specifier}whitelist <ip[/range]>"));
 			}
 		}
 

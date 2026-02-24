@@ -479,6 +479,14 @@ namespace TShockAPI.Configuration
 		[Description("Specifies which string starts a command silently.\nNote: Will not function properly if the string length is bigger than 1.")]
 		public string CommandSilentSpecifier = ".";
 
+		/// <summary>The maximum allowed length for chat messages. Valid range: 250 characters to 2000 characters.</summary>
+		[Description("The maximum allowed length for chat messages. Valid range: 250 characters to 2000 characters.")]
+		public int MaximumChatMessageLength = 500;
+
+		/// <summary>If a chat message that exceeds MaximumChatMessageLength should be truncated or rejected.</summary>
+		[Description("If a chat message that exceeds MaximumChatMessageLength should be truncated or rejected.")]
+		public bool TruncateExcessiveChatMessages = false;
+
 		/// <summary>Disables sending logs as messages to players with the log permission.</summary>
 		[Description("Disables sending logs as messages to players with the log permission.")]
 		public bool DisableSpewLogs = true;

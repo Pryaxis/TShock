@@ -128,6 +128,12 @@ namespace TShockAPI
 		public static ILog Log;
 		/// <summary>instance - Static reference to the TerrariaPlugin instance.</summary>
 		public static TerrariaPlugin instance;
+
+		/// <summary>
+		/// Whitelist - Static reference to the whitelist system, which allows whitelisting of IP addresses and networks.
+		/// </summary>
+		public static Whitelist Whitelist { get; set; }
+
 		/// <summary>
 		/// Static reference to a <see cref="CommandLineParser"/> used for simple command-line parsing
 		/// </summary>
@@ -354,6 +360,7 @@ namespace TShockAPI
 				Bouncer = new Bouncer();
 				RegionSystem = new RegionHandler(Regions);
 				ItemBans = new ItemBans(this, DB);
+				Whitelist = new(FileTools.WhitelistPath);
 
 				var geoippath = "GeoIP.dat";
 				if (Config.Settings.EnableGeoIP && File.Exists(geoippath))
@@ -1322,7 +1329,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (!FileTools.OnWhitelist(player.IP))
+			if (!Whitelist.IsWhitelisted(player.IP))
 			{
 				player.Kick(Config.Settings.WhitelistKickReason, true, true, null, false);
 				args.Handled = true;
@@ -1466,14 +1473,19 @@ namespace TShockAPI
 				return;
 			}
 
-			if (args.Text.Length > 500)
+			var maxLength = Math.Clamp(Config.Settings.MaximumChatMessageLength, 250, 2000);
+			if (args.Text.Length > maxLength && !Config.Settings.TruncateExcessiveChatMessages)
 			{
-				tsplr.Kick(GetString("Crash attempt via long chat packet."), true);
+				Log.ConsoleDebug(GetString("TShock / OnChat rejected due to length of {0}/{1} from {2}", args.Text.Length, maxLength, tsplr.Name));
+				tsplr.SendErrorMessage(GetString("Your chat message exceeds the maximum length of {1} characters. ({0}/{1}).", args.Text.Length, maxLength));
 				args.Handled = true;
 				return;
 			}
 
-			string text = args.Text;
+			string text = TruncateChatMessageIfNecessary(args);
+			// We should now use the truncated message instead of the original, we don't want anything to fire off on text that has been "removed"...
+			// Yes, double assignment like this looks bad...
+			var chatText = text;
 
 			// Terraria now has chat commands on the client side.
 			// These commands remove the commands prefix (e.g. /me /playing) and send the command id instead
@@ -1527,10 +1539,10 @@ namespace TShockAPI
 				else if (!TShock.Config.Settings.EnableChatAboveHeads)
 				{
 					text = String.Format(Config.Settings.ChatFormat, tsplr.Group.Name, tsplr.Group.Prefix, tsplr.Name, tsplr.Group.Suffix,
-											 args.Text);
+											 chatText);
 
 					//Invoke the PlayerChat hook. If this hook event is handled then we need to prevent sending the chat message
-					bool cancelChat = PlayerHooks.OnPlayerChat(tsplr, args.Text, ref text);
+					bool cancelChat = PlayerHooks.OnPlayerChat(tsplr, chatText, ref text);
 					args.Handled = true;
 
 					if (cancelChat)
@@ -1551,7 +1563,7 @@ namespace TShockAPI
 					//Give that poor player their name back :'c
 					ply.name = name;
 
-					bool cancelChat = PlayerHooks.OnPlayerChat(tsplr, args.Text, ref text);
+					bool cancelChat = PlayerHooks.OnPlayerChat(tsplr, chatText, ref text);
 					if (cancelChat)
 					{
 						args.Handled = true;
@@ -1623,6 +1635,40 @@ namespace TShockAPI
 			args.Handled = true;
 		}
 
+		/// <summary>
+		/// Truncates a chat message if it exceeds the <see cref="TShockSettings.MaximumChatMessageLength"/>.
+		/// </summary>
+		/// <param name="args">args - The ServerChatEventArgs object.</param>
+		/// <returns></returns>
+		private string TruncateChatMessageIfNecessary(ServerChatEventArgs args)
+		{
+			string chatMsg = args.Text;
+			var maxLength = Math.Clamp(Config.Settings.MaximumChatMessageLength, 250, 2000);
+			if (chatMsg.Length > maxLength)
+			{
+				Log.ConsoleDebug(GetString("TShock / TruncateChatMessageIfNecessary truncating excessive chat message length of {0}/{1} from {2}", args.Text.Length, maxLength, Players[args.Who].Name));
+				chatMsg = chatMsg.Substring(0, maxLength) + "...";
+			}
+			return chatMsg;
+		}
+    
+		private static readonly HashSet<PacketTypes> AllowedEarlyPackets =
+		[
+			PacketTypes.ConnectRequest,
+			PacketTypes.PlayerInfo,
+			PacketTypes.PlayerSlot,
+			PacketTypes.ContinueConnecting2,
+			PacketTypes.TileGetSection,
+			PacketTypes.PlayerSpawn,
+			PacketTypes.PlayerHp,
+			PacketTypes.PlayerMana,
+			PacketTypes.PlayerBuff,
+			PacketTypes.PasswordSend,
+			PacketTypes.ItemDrop,
+			PacketTypes.ItemOwner,
+			PacketTypes.SyncLoadout
+		];
+
 		/// <summary>OnGetData - Called when the server gets raw data packets.</summary>
 		/// <param name="e">e - The GetDataEventArgs object.</param>
 		private void OnGetData(GetDataEventArgs e)
@@ -1645,19 +1691,14 @@ namespace TShockAPI
 				return;
 			}
 
-			if ((player.State < (int)ConnectionState.Complete || player.Dead) && (int)type > 12 && (int)type != 16 && (int)type != 42 && (int)type != 50 &&
-				(int)type != 38 && (int)type != 21 && (int)type != 22 && type != PacketTypes.SyncLoadout)
+			if (player.State < (int)ConnectionState.Complete && !AllowedEarlyPackets.Contains(type))
 			{
 				e.Handled = true;
 				return;
 			}
 
-			int length = e.Length - 1;
-			if (length < 0)
-			{
-				length = 0;
-			}
-			using (var data = new MemoryStream(e.Msg.readBuffer, e.Index, e.Length - 1))
+			int length = Math.Max(e.Length - 1, 0);
+			using (var data = new MemoryStream(e.Msg.readBuffer, e.Index, length))
 			{
 				// Exceptions are already handled
 				e.Handled = GetDataHandlers.HandlerGetData(type, player, data);
