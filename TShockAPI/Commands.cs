@@ -3417,7 +3417,7 @@ namespace TShockAPI
 				if (warp != null)
 				{
 					// For compatibility, warps are technically floating, so we have to move the target position down by 3 blocks.
-					if (plr.Teleport(new Point(warp.Position.X, warp.Position.Y + 3), true))
+					if (plr.Teleport(new Vector2(warp.Position.X * 16 + (plr.TPlayer.width / 2), (warp.Position.Y + 3) * 16), true))
 					{
 						plr.SendSuccessMessage(GetString("{0} warped you to {1}.", args.Player.Name, warpName));
 						args.Player.SendSuccessMessage(GetString("You warped {0} to {1}.", plr.Name, warpName));
@@ -3436,7 +3436,7 @@ namespace TShockAPI
 				if (warp != null)
 				{
 					// For compatibility, warps are technically floating, so we have to move the target position down by 3 blocks.
-					if (args.Player.Teleport(new Point(warp.Position.X, warp.Position.Y + 3), true))
+					if (args.Player.Teleport(new Vector2(warp.Position.X * 16 + (args.Player.TPlayer.width / 2), (warp.Position.Y + 3) * 16), true))
 						args.Player.SendSuccessMessage(GetString($"Warped to {warpName}."));
 				}
 				else
