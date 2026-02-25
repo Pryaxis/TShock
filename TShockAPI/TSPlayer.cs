@@ -1521,6 +1521,44 @@ namespace TShockAPI
 		}
 
 		/// <summary>
+		/// Synchronizes the player's <see cref="RespawnTimer"/> by spawning the player, teleporting them to where they died, and setting their HP to 0.
+		/// <br/>Requires SSC to function.
+		/// </summary>
+		public bool SyncRespawnTimer()
+		{
+			if (!Main.ServerSideCharacter)
+				return false;
+
+			// The client will respawn from this and no longer be dead. By not using SpawningIntoWorld, the respawn timer is set but not cleared.
+			// By doing this, we can set their HP to 0 and sync that to them, which makes them appear dead on their end. Results in proper sync of the RespawnTimer.
+			Spawn(PlayerSpawnContext.RecallFromItem, TPlayer.respawnTimer);
+			SendData(PacketTypes.PlayerUpdate, number: Index);
+			TPlayer.statLife = 0;
+			SendData(PacketTypes.PlayerHp, number: Index);
+			return true;
+		}
+
+		/// <summary>
+		/// Broadcasts the player's death message and drops a tombstone if <see cref="Configuration.TShockSettings.DisableTombstones"/> is disabled.
+		/// </summary>
+		/// <param name="reason">The reason for dying/</param>
+		/// <param name="damage">The amount of damage recieved</param>
+		/// <param name="direction">The direction the damage is from/</param>
+		/// <param name="pvp">If the death occured from a PvP action.</param>
+		public void FakeDeath(PlayerDeathReason reason, int damage, int direction, bool pvp = false)
+		{
+			// Send their death to other clients, but not to them
+			NetMessage.SendPlayerDeath(Index, reason, damage, direction, pvp, -1, Index);
+
+			NetworkText nT = reason.GetDeathText(Name);
+			Terraria.Chat.ChatHelper.BroadcastChatMessage(nT, new Color(225, 25, 25));
+
+			if (!TShock.Config.Settings.DisableTombstones)
+				TPlayer.DropTombstone(Terraria.Utils.CoinsCount(out bool _, TPlayer.inventory), nT, direction);
+
+		}
+
+		/// <summary>
 		/// Spawns the player at the given coordinates.
 		/// </summary>
 		/// <param name="tilex">The X coordinate.</param>

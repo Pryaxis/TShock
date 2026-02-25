@@ -2885,12 +2885,6 @@ namespace TShockAPI
 
 		private static bool HandleSpawn(GetDataHandlerArgs args)
 		{
-			if (args.Player.Dead && args.Player.RespawnTimer > 0)
-			{
-				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleSpawn rejected dead player spawn request {0}", args.Player.Name));
-				return true;
-			}
-
 			byte player = args.Data.ReadInt8();
 			short spawnX = args.Data.ReadInt16();
 			short spawnY = args.Data.ReadInt16();
@@ -2899,6 +2893,17 @@ namespace TShockAPI
 			short numberOfDeathsPVP = args.Data.ReadInt16();
 			byte team = args.Data.ReadInt8();
 			PlayerSpawnContext context = (PlayerSpawnContext)args.Data.ReadByte();
+
+			if (args.Player.Dead && args.Player.RespawnTimer > 0)
+			{
+				// Prevent fast-spawn.
+				if (respawnTimer <= 0 && Main.ServerSideCharacter)
+				{
+					TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleSpawn rejected dead player spawn request {0}", args.Player.Name));
+					args.Player.SyncRespawnTimer();
+				}
+				return true;
+			}
 
 			if (args.Player.State >= (int)ConnectionState.RequestingWorldData && !args.Player.FinishedHandshake)
 				args.Player.FinishedHandshake = true; //If the player has requested world data before sending spawn player, they should be at the obvious ClientRequestedWorldData state. Also only set this once to remove redundant updates.
@@ -3015,7 +3020,7 @@ namespace TShockAPI
 			var cur = args.Data.ReadInt16();
 			var max = args.Data.ReadInt16();
 
-			if (OnPlayerHP(args.Player, args.Data, plr, cur, max) || cur <= 0 || max <= 0 || args.Player.IgnoreSSCPackets)
+			if (OnPlayerHP(args.Player, args.Data, plr, cur, max) || cur <= 0 || max <= 0 || args.Player.IgnoreSSCPackets || args.Player.State == 10 && args.Player.Dead && args.Player.RespawnTimer > 0)
 				return true;
 
 			if (max > TShock.Config.Settings.MaxHP && !args.Player.HasPermission(Permissions.ignorehp))
@@ -4494,6 +4499,7 @@ namespace TShockAPI
 
 			args.Player.Dead = true;
 			args.Player.RespawnTimer = TShock.Config.Settings.RespawnSeconds;
+			bool instantRespawn = TShock.Config.Settings.InstantRespawn;
 
 			if (Main.ServerSideCharacter && !args.Player.HasPermission(Permissions.bypassssc))
 			{
@@ -4510,6 +4516,7 @@ namespace TShockAPI
 					Math.Abs(args.TPlayer.Center.X - npc.Center.X) + Math.Abs(args.TPlayer.Center.Y - npc.Center.Y) < 4000f)
 				{
 					args.Player.RespawnTimer = TShock.Config.Settings.RespawnBossSeconds;
+					instantRespawn = TShock.Config.Settings.InstantRespawnDuringBoss;
 					break;
 				}
 			}
@@ -4546,6 +4553,27 @@ namespace TShockAPI
 					args.Player.SendErrorMessage(GetString("You have fallen in hardcore mode, and your items have been lost forever."));
 					TShock.CharacterDB.SeedInitialData(args.Player.Account);
 				}
+			}
+
+			// Slight warning: Instant respawn allows for malicious clients to spam death messages.
+			// It may be possible for certain vanilla circumstances to spam death messages as well. Use with caution.
+			if (args.TPlayer.difficulty != 2 && instantRespawn) // Not in hardcore
+			{
+				args.Player.Dead = false;
+				args.Player.RespawnTimer = 0;
+
+				// Fake the player's death. Not doing so will cause minor desyncs.
+				args.Player.FakeDeath(playerDeathReason, dmg, direction, pvp);
+				args.Player.Spawn(PlayerSpawnContext.ReviveFromDeath);
+
+				// Handled to prevent vanilla behavior
+				return true;
+			}
+
+			// We can sync the respawn timer in SSC. Otherwise the client refuses the HP packet, which is necessary to sync it properly.
+			if (args.Player.RespawnTimer > 0 && Main.ServerSideCharacter)
+			{
+				args.Player.SyncRespawnTimer();
 			}
 
 			return false;
