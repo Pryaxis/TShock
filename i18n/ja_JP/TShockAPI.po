@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2026-02-24 14:15:24+0000\n"
-"PO-Revision-Date: 2026-02-24 17:45\n"
+"PO-Revision-Date: 2026-02-25 09:20\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
@@ -135,7 +135,7 @@ msgstr "- オンラインプレイヤーを目次選択でBANします（名前�
 
 #: ../../TShockAPI/Commands.cs:6655
 msgid "- Default trees :"
-msgstr "- デフォルトの木:"
+msgstr "- 普通の木:"
 
 #: ../../TShockAPI/Commands.cs:6659
 msgid "- Gem trees :"
@@ -234,12 +234,12 @@ msgstr "{0} ({1}) はアカウント {2} のパスワード変更に失敗しま
 #: ../../TShockAPI/TShock.cs:1723
 #, csharp-format
 msgid "{0} ({1}) from '{2}' group from '{3}' joined. ({4}/{5})"
-msgstr ""
+msgstr "{0} '{3}' から '{2}' グループから({1}) が参加しました。 ({4}/{5})"
 
 #: ../../TShockAPI/TShock.cs:1731
 #, csharp-format
 msgid "{0} ({1}) from '{2}' group joined. ({3}/{4})"
-msgstr ""
+msgstr "{0} '{2}' グループから({1}) が参加しました。 ({3}/{4})"
 
 #: ../../TShockAPI/Commands.cs:808
 #, csharp-format
@@ -295,7 +295,7 @@ msgstr "{0} {1} {2}"
 #: ../../TShockAPI/Commands.cs:1501
 #, csharp-format
 msgid "{0} {1} on {2} ({3} ago)"
-msgstr ""
+msgstr "{0} {1} on {2} ({3} 前)"
 
 #: ../../TShockAPI/Commands.cs:6525
 #, csharp-format
@@ -443,19 +443,19 @@ msgstr "{0} は風速を {1}mphに変更しました。"
 #, csharp-format
 msgid "{0} deleted {1} item within a radius of {2}."
 msgid_plural "{0} deleted {1} items within a radius of {2}."
-msgstr[0] ""
+msgstr[0] "{0} は {2} の半径内の {1}アイテムを削除しました。"
 
 #: ../../TShockAPI/Commands.cs:6034
 #, csharp-format
 msgid "{0} deleted {1} NPC within a radius of {2}."
 msgid_plural "{0} deleted {1} NPCs within a radius of {2}."
-msgstr[0] ""
+msgstr[0] "{0} は {2} の半径内の {1} NPC を削除しました。"
 
 #: ../../TShockAPI/Commands.cs:6059
 #, csharp-format
 msgid "{0} deleted {1} projectile within a radius of {2}."
 msgid_plural "{0} deleted {1} projectiles within a radius of {2}."
-msgstr[0] ""
+msgstr[0] "{0} は {2} の半径内の {1} 発射物を削除しました。"
 
 #: ../../TShockAPI/Commands.cs:1939
 #, csharp-format
@@ -1060,22 +1060,22 @@ msgstr "{0}{1} ヘルプ: "
 #: ../../TShockAPI/Utils.cs:1156
 #, csharp-format
 msgid "{0}{1}/{2} on {3} @ {4}:{5} (TShock for Terraria v{6})"
-msgstr ""
+msgstr "{0}{1}/{2} on {3} @ {4}:{5} (TShock for Terraria v{6})"
 
 #: ../../TShockAPI/Commands.cs:883
 #, csharp-format
 msgid "{0}login - Authenticates you using your UUID and character name."
-msgstr "{0}login  - あなたのUUIDとキャラクター名を使ってログインします"
+msgstr "{0}login - あなたのUUIDとキャラクター名を使ってログインします"
 
 #: ../../TShockAPI/Commands.cs:888
 #, csharp-format
 msgid "{0}login <password> - Authenticates you using your password and character name."
-msgstr "{0}login  <password> - あなたのキャラクター名とパスワードを使用して認証します。"
+msgstr "{0}login <password> - あなたのキャラクター名とパスワードを使用して認証します。"
 
 #: ../../TShockAPI/Commands.cs:886
 #, csharp-format
 msgid "{0}login <username> <password> - Authenticates you using your username and password."
-msgstr "{0}login  <username> <password> - ユーザー名とパスワードを使用して認証します。"
+msgstr "{0}login <username> <password> - ユーザー名とパスワードを使用して認証します。"
 
 #: ../../TShockAPI/Commands.cs:5506
 #, csharp-format
@@ -1435,7 +1435,7 @@ msgstr "更新がキューに追加されました。アップデートが利用
 
 #: ../../TShockAPI/Commands.cs:5692
 msgid "Annoy Syntax"
-msgstr "Annoy Syntax"
+msgstr "Syntax をいたずらする"
 
 #: ../../TShockAPI/Commands.cs:5709
 #, csharp-format
@@ -1631,7 +1631,7 @@ msgstr "BAN({{0}}/{{1}}):"
 
 #: ../../TShockAPI/Commands.cs:6749
 msgid "Basic Tree"
-msgstr "普通の木"
+msgstr "基本の木"
 
 #: ../../TShockAPI/Commands.cs:2847
 msgid "Betsy"
@@ -2638,11 +2638,11 @@ msgstr "サーバー上の全員にメッセージを送信します。"
 
 #: ../../TShockAPI/Commands.cs:6524
 msgid "Buff Syntax and Example"
-msgstr ""
+msgstr "Syntax と Example をバフする"
 
 #: ../../TShockAPI/Commands.cs:6167
 msgid "Butcher Syntax and Example"
-msgstr ""
+msgstr "Syntax と Example を殺す"
 
 #: ../../TShockAPI/GetDataHandlers.cs:2822
 msgid "Bypass SSC is enabled for your account. SSC data will not be loaded or saved."
@@ -3028,7 +3028,7 @@ msgstr "使用例: {0}"
 #: ../../TShockAPI/Commands.cs:5556
 #, csharp-format
 msgid "Example usage: {0} \"{1}\" \"{2}\""
-msgstr "使用例: {0} \"{1}\"  \"{2}\""
+msgstr "使用例: {0} \"{1}\" \"{2}\""
 
 #: ../../TShockAPI/Commands.cs:6526
 #, csharp-format
@@ -3157,11 +3157,11 @@ msgstr "FetchHashedPasswordAndGroup SQL returned an error: {0}"
 
 #: ../../TShockAPI/Commands.cs:5776
 msgid "Firework Syntax"
-msgstr ""
+msgstr "Syntax を打ち上げる"
 
 #: ../../TShockAPI/Commands.cs:1996
 msgid "For example, 1d and 10h-30m+2m are both valid time strings, but 2 is not."
-msgstr "例えば、1dと10h-30m+2mはどちらも有効なタイム文字列ですが、2は有効ではありません。"
+msgstr "例えば、1dと10h-30m+2mはどちらも有効なタイム文字列ですが、2 は有効ではありません。"
 
 #: ../../TShockAPI/Commands.cs:1411
 #, csharp-format
@@ -3566,11 +3566,11 @@ msgstr "GetUser SQL がエラー {0} を返しました"
 
 #: ../../TShockAPI/Commands.cs:6574
 msgid "Give Buff Syntax and Example"
-msgstr ""
+msgstr "Syntax と Example にバフを与える"
 
 #: ../../TShockAPI/Commands.cs:547
 msgid "Gives another player a buff or debuff for an amount of time. Putting -1 for time will set it to 415 days."
-msgstr "他のプレイヤーにバフまたはデバフを与えます。-1を指定すると415日間に設定されます。"
+msgstr "他のプレイヤーにバフまたはデバフを与えます。-1 を指定すると 415 日間に設定されます。"
 
 #: ../../TShockAPI/Commands.cs:388
 msgid "Gives another player an item."
@@ -3578,7 +3578,7 @@ msgstr "他のプレイヤーにアイテムを与えます。"
 
 #: ../../TShockAPI/Commands.cs:539
 msgid "Gives yourself a buff or debuff for an amount of time. Putting -1 for time will set it to 415 days."
-msgstr "あなた自身にバフまたはデバフを与えます。-1を入力すると415日に設定されます。"
+msgstr "あなた自身にバフまたはデバフを与えます。-1 を入力すると 415 日に設定されます。"
 
 #: ../../TShockAPI/Commands.cs:393
 msgid "Gives yourself an item."
@@ -3591,31 +3591,31 @@ msgstr "Glowing Mushroomの木"
 #: ../../TShockAPI/Handlers/LandGolfBallInCupHandler.cs:123
 #, csharp-format
 msgid "GolfPacketHandler: Player did not have create a golf club projectile the last 5 seconds! - From {0}"
-msgstr ""
+msgstr "GolfPacketHandler: プレーヤーは最後の 5 秒間のゴルフクラブ発射体を作成していませんでした! - {0}"
 
 #: ../../TShockAPI/Commands.cs:3598
 #, csharp-format
 msgid "Group \"{0}\" has no parent."
-msgstr ""
+msgstr "グループ \"{0}\" には親がありません。"
 
 #: ../../TShockAPI/Commands.cs:3688
 #, csharp-format
 msgid "Group \"{0}\" has no prefix."
-msgstr ""
+msgstr "グループ \"{0}\" にプレフィックスがありません。"
 
 #: ../../TShockAPI/Commands.cs:3643
 #, csharp-format
 msgid "Group \"{0}\" has no suffix."
-msgstr ""
+msgstr "グループ \"{0}\" にサフィックスがありません。"
 
 #: ../../TShockAPI/DB/GroupManager.cs:682
 #, csharp-format
 msgid "Group \"{0}\" is referencing parent group {1} which is already part of the parent chain. Parent reference removed."
-msgstr ""
+msgstr "グループ \"{0}\" は親グループ {1} を参照しています。親参照は削除されました。"
 
 #: ../../TShockAPI/DB/GroupManager.cs:614
 msgid "Group \"superadmin\" is defined in the database even though it's a reserved group name."
-msgstr ""
+msgstr "グループ「上級管理者」は、予約済みのグループ名であってもデータベース内で定義されています。"
 
 #: ../../TShockAPI/DB/GroupManager.cs:744
 #, csharp-format
@@ -3625,12 +3625,12 @@ msgstr "グループ {0} は既に存在します。"
 #: ../../TShockAPI/Rest/RestManager.cs:1159
 #, csharp-format
 msgid "Group {0} created successfully"
-msgstr "グループは正常に作成されました。"
+msgstr "グループ{0}は正常に作成されました。"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1134
 #, csharp-format
 msgid "Group {0} deleted successfully"
-msgstr "グループは正常に削除されました。"
+msgstr "グループ{0}は正常に削除されました。"
 
 #: ../../TShockAPI/DB/UserManager.cs:681
 #: ../../TShockAPI/DB/GroupManager.cs:761
@@ -3674,12 +3674,12 @@ msgstr "グループ {0} の名前を {1} に変更しました。"
 #: ../../TShockAPI/DB/GroupManager.cs:667
 #, csharp-format
 msgid "Group {0} is referencing a non existent parent group {1}, parent reference was removed."
-msgstr ""
+msgstr "グループ {0} は存在しない親グループ {1}を参照しています。親参照は削除されました。"
 
 #: ../../TShockAPI/DB/GroupManager.cs:673
 #, csharp-format
 msgid "Group {0} is referencing itself as parent group; parent reference was removed."
-msgstr ""
+msgstr "グループ {0} は、親グループとして自身を参照しています。親参照は削除されました。"
 
 #: ../../TShockAPI/Commands.cs:4955
 #: ../../TShockAPI/Commands.cs:4990
@@ -3716,7 +3716,7 @@ msgstr "Hallowパーム"
 #: ../../TShockAPI/GetDataHandlers.cs:4702
 #, csharp-format
 msgid "HandleSyncCavernMonsterType: Player is trying to modify NPC cavernMonsterType; this is a crafted packet! - From {0}"
-msgstr ""
+msgstr "HandleSyncCavernMonsterType: プレイヤーはNPC cavernMonsterType; を変更しようとしています。これは細工されたパケットです! - {0}"
 
 #: ../../TShockAPI/Commands.cs:2685
 msgid "Hardmode is disabled in the server configuration file."
@@ -3732,7 +3732,7 @@ msgstr "ハードモードがオンになっています。"
 
 #: ../../TShockAPI/Commands.cs:6464
 msgid "Heal Syntax and Example"
-msgstr ""
+msgstr "Syntax と Example を回復する"
 
 #: ../../TShockAPI/Bouncer.cs:2250
 msgid "HealOtherPlayer cheat attempt!"
@@ -3866,7 +3866,7 @@ msgstr "Illegal name: prefixes tsi: と tsn: は禁止されています。"
 #: ../../TShockAPI/Handlers/IllegalPerSe/EmojiPlayerMismatch.cs:19
 #, csharp-format
 msgid "IllegalPerSe: Emoji packet rejected for ID spoofing. Expected {0}, received {1} from {2}."
-msgstr ""
+msgstr "IllegalPerSe: Emoji パケットが ID 偽装のために拒否されました。期待される {0}、 {1} から {2}を受け取りました。"
 
 #: ../../TShockAPI/Commands.cs:3281
 msgid "Incoming teleports are now allowed."
@@ -3884,7 +3884,7 @@ msgstr "セットアップコードが正しくありません。この問題は
 #: ../../TShockAPI/DB/ProjectileManager.cs:210
 #, csharp-format
 msgid "Infinite group parenting ({0})"
-msgstr ""
+msgstr "グループの親付けを無限にする({0})"
 
 #: ../../TShockAPI/Commands.cs:5290
 msgid "info <region> [-d] - Displays several information about the given region."
@@ -3914,22 +3914,22 @@ msgstr "サーバーの内部エラーです。"
 #: ../../TShockAPI/Commands.cs:1542
 #, csharp-format
 msgid "Invalid Ban Add syntax. Refer to {0} for details on how to use the {1} command"
-msgstr ""
+msgstr "無効なBan Add syntax。 {1} の使用方法については、 {0} を参照してください。"
 
 #: ../../TShockAPI/Commands.cs:1658
 #, csharp-format
 msgid "Invalid Ban Del syntax. Refer to {0} for details on how to use the {1} command"
-msgstr ""
+msgstr "無効なBan Del syntax。  {1} の使用方法については、 {0} を参照してください。"
 
 #: ../../TShockAPI/Commands.cs:1717
 #, csharp-format
 msgid "Invalid Ban Details syntax. Refer to {0} for details on how to use the {1} command"
-msgstr ""
+msgstr "無効なBan Details syntax。  {1} の使用方法については、 {0} を参照してください。"
 
 #: ../../TShockAPI/Commands.cs:1695
 #, csharp-format
 msgid "Invalid Ban List syntax. Refer to {0} for details on how to use the {1} command"
-msgstr ""
+msgstr "無効なBan List syntax。  {1} の使用方法については、 {0} を参照してください。"
 
 #: ../../TShockAPI/DB/UserManager.cs:529
 msgid "Invalid BCrypt work factor in config file! Creating new hash using default work factor."
@@ -4031,12 +4031,12 @@ msgstr "無効なページ番号です。ページ番号は数値でなければ
 #: ../../TShockAPI/DB/GroupManager.cs:342
 #, csharp-format
 msgid "Invalid parent group {0} for group {1}"
-msgstr ""
+msgstr "グループ {1} に対する無効な親グループ {0}"
 
 #: ../../TShockAPI/DB/GroupManager.cs:387
 #, csharp-format
 msgid "Invalid parent group {0} for group {1}."
-msgstr ""
+msgstr "グループ {1} に対する無効な親グループ {0}。"
 
 #: ../../TShockAPI/Commands.cs:961
 msgid "Invalid password."
@@ -4093,359 +4093,359 @@ msgstr "無効なサブコマンドです！ 有効なコマンドの詳細に�
 #: ../../TShockAPI/Commands.cs:4101
 #, csharp-format
 msgid "Invalid subcommand. Type {0}itemban help for more information on valid subcommands."
-msgstr ""
+msgstr "無効なサブコマンドです！ 有効なコマンドの詳細については、{0}itemban ヘルプを入力してください。"
 
 #: ../../TShockAPI/Commands.cs:4279
 #, csharp-format
 msgid "Invalid subcommand. Type {0}projban help for more information on valid subcommands."
-msgstr ""
+msgstr "無効なサブコマンドです！ 有効なコマンドの詳細については、{0}projban ヘルプを入力してください。"
 
 #: ../../TShockAPI/Commands.cs:4455
 #, csharp-format
 msgid "Invalid subcommand. Type {0}tileban help for more information on valid subcommands."
-msgstr ""
+msgstr "無効なサブコマンドです！ 有効なコマンドの詳細については、{0}tileban ヘルプを入力してください。"
 
 #: ../../TShockAPI/Commands.cs:3733
 msgid "Invalid syntax for color, expected \"rrr,ggg,bbb\"."
-msgstr ""
+msgstr "色のための無効なSyntaxです。\"rr,gggg,bb\"を想定しています。"
 
 #: ../../TShockAPI/Commands.cs:1967
 msgid "Invalid syntax."
-msgstr ""
+msgstr "無効なSyntaxです。"
 
 #: ../../TShockAPI/Commands.cs:2395
 #, csharp-format
 msgid "Invalid syntax. Proper syntax:  {0}worldevent invasion [invasion type] [invasion wave]."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax: {0}worldevent invasion [invasion type] [invasion wave]"
 
 #: ../../TShockAPI/Commands.cs:1307
 #: ../../TShockAPI/Commands.cs:1341
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}accountinfo <username>."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax: {0}accountinfo <username>"
 
 #: ../../TShockAPI/Commands.cs:5847
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}aliases <command or alias>"
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax: {0}aliases <command or alias>"
 
 #: ../../TShockAPI/Commands.cs:3461
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}group add <group name> [permissions]."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}group add <group name> [permissions]"
 
 #: ../../TShockAPI/Commands.cs:3490
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}group addperm <group name> <permissions...>."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}group addperm <group name> <permissions...>"
 
 #: ../../TShockAPI/Commands.cs:3698
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}group color <group name> [new color(000,000,000)]."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}group color <group name> [new color(000,000,000)]"
 
 #: ../../TShockAPI/Commands.cs:3771
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}group del <group name>."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}group del <group name>"
 
 #: ../../TShockAPI/Commands.cs:3795
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}group delperm <group name> <permissions...>."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}group delperm <group name> <permissions...>"
 
 #: ../../TShockAPI/Commands.cs:3848
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}group listperm <group name> [page]."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}group listperm <group name> [page]"
 
 #: ../../TShockAPI/Commands.cs:3558
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}group parent <group name> [new parent group name]."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}group parent <group name> [new parent group name]"
 
 #: ../../TShockAPI/Commands.cs:3653
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}group prefix <group name> [new prefix]."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}group prefix <group name> [new prefix]"
 
 #: ../../TShockAPI/Commands.cs:3748
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}group rename <group> <new name>."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}group rename <group> <new name>"
 
 #: ../../TShockAPI/Commands.cs:3608
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}group suffix <group name> [new suffix]."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}group suffix <group name> [new suffix]"
 
 #: ../../TShockAPI/Commands.cs:5334
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}help <command/page>"
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax: {0}help <command/page>"
 
 #: ../../TShockAPI/Commands.cs:6215
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}item <item name/id> [item amount] [prefix id/name]"
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax: {0}item <item name/id> [item amount] [prefix id/name]"
 
 #: ../../TShockAPI/Commands.cs:3892
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}itemban add <item name>."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}itemban add <item name>"
 
 #: ../../TShockAPI/Commands.cs:3943
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}itemban allow <item name> <group name>."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}itemban allow <item name> <group name>"
 
 #: ../../TShockAPI/Commands.cs:3988
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}itemban del <item name>."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}itemban del <item name>"
 
 #: ../../TShockAPI/Commands.cs:4014
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}itemban disallow <item name> <group name>."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax: {0}itemban disallow <item name> <group name>"
 
 #: ../../TShockAPI/Commands.cs:1348
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}kick <player> [reason]."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}kick <player> [reason]"
 
 #: ../../TShockAPI/Commands.cs:5517
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}me <text>"
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax: {0}me <text>"
 
 #: ../../TShockAPI/Commands.cs:5530
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}p <team chat text>"
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}p <team chat text>"
 
 #: ../../TShockAPI/Commands.cs:4122
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}projban add <proj id>"
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}projban add <proj id>"
 
 #: ../../TShockAPI/Commands.cs:4141
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}projban allow <id> <group>."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}projban allow <id> <group>"
 
 #: ../../TShockAPI/Commands.cs:4178
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}projban del <id>."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}projban del <id>"
 
 #: ../../TShockAPI/Commands.cs:4199
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}projban disallow <id> <group name>."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}projban disallow <id> <group name>"
 
 #: ../../TShockAPI/Commands.cs:4889
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}region allow <name> <region>."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax: {0}region allow <name> <region>"
 
 #: ../../TShockAPI/Commands.cs:4959
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}region allowg <group> <region>."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}region allowg <group> <region>"
 
 #: ../../TShockAPI/Commands.cs:4803
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}region define <name>."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}region define <name>"
 
 #: ../../TShockAPI/Commands.cs:4845
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}region delete <name>."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}region delete <name>"
 
 #: ../../TShockAPI/Commands.cs:5018
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}region info <region> [-d] [page]."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}region info <region> [-d] [page]"
 
 #: ../../TShockAPI/Commands.cs:4826
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}region protect <name> <true/false>."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax: {0}region protect <name> <true/false>"
 
 #: ../../TShockAPI/Commands.cs:4924
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}region remove <name> <region>."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}region remove <name> <region>"
 
 #: ../../TShockAPI/Commands.cs:4994
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}region removeg <group> <region>."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}region removeg <group> <region>"
 
 #: ../../TShockAPI/Commands.cs:5202
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}region rename <region> <new name>"
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax: {0}region rename <region> <new name>"
 
 #: ../../TShockAPI/Commands.cs:5192
 #: ../../TShockAPI/Commands.cs:5195
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}region resize <region> <u/d/l/r> <amount>"
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}region resize <region> <u/d/l/r> <amount>"
 
 #: ../../TShockAPI/Commands.cs:5252
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}region tp <region>."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}region tp <region>"
 
 #: ../../TShockAPI/Commands.cs:5140
 #: ../../TShockAPI/Commands.cs:5143
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}region z <name> <#>"
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax: {0}region z <name> <#>"
 
 #: ../../TShockAPI/Commands.cs:1070
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}register <password>."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}register <password>"
 
 #: ../../TShockAPI/Commands.cs:6314
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}renameNPC <guide, nurse, etc.> <newname>"
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}renameNPC <guide, nurse, etc.> <newname>"
 
 #: ../../TShockAPI/Commands.cs:4494
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}serverpassword \"<new password>\"."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}serverpassword \"<new password>\""
 
 #: ../../TShockAPI/Commands.cs:4675
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}slap <player> [damage]."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}slap <player> [damage]"
 
 #: ../../TShockAPI/Commands.cs:2693
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}spawnboss <boss type> [amount]."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}spawnboss <boss type> [amount]"
 
 #: ../../TShockAPI/Commands.cs:2931
 #: ../../TShockAPI/Commands.cs:2943
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}spawnmob <mob type> [amount]."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}spawnmob <mob type> [amount]"
 
 #: ../../TShockAPI/Commands.cs:4298
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}tileban add <tile id>."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}tileban add <tile id>"
 
 #: ../../TShockAPI/Commands.cs:4317
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}tileban allow <id> <group>."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}tileban allow <id> <group>"
 
 #: ../../TShockAPI/Commands.cs:4354
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}tileban del <id>."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}tileban del <id>"
 
 #: ../../TShockAPI/Commands.cs:4375
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}tileban disallow <id> <group name>."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax: {0}tileban disallow <id> <group name>"
 
 #: ../../TShockAPI/Commands.cs:3023
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}tp <player> [player 2]."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}tp <player> [player 2]"
 
 #: ../../TShockAPI/Commands.cs:3025
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}tp <player>."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}tp <player>"
 
 #: ../../TShockAPI/Commands.cs:3150
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}tphere <player>."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}tphere <player>"
 
 #: ../../TShockAPI/Commands.cs:3148
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}tphere <player|*>."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}tphere <player|*>"
 
 #: ../../TShockAPI/Commands.cs:3195
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}tpnpc <NPC>."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}tpnpc <NPC>"
 
 #: ../../TShockAPI/Commands.cs:3259
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}tppos <tile x> <tile y>."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}tppos <tile x> <tile y>"
 
 #: ../../TShockAPI/Commands.cs:1286
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}userinfo <player>."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}userinfo <player>"
 
 #: ../../TShockAPI/Commands.cs:3294
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}warp [command] [arguments]."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}warp [command] [arguments]"
 
 #: ../../TShockAPI/Commands.cs:3303
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}warp [name] or {0}warp list <page>."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}warp [name] or {0}warp list <page>"
 
 #: ../../TShockAPI/Commands.cs:3346
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}warp add [name]."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}warp add [name]"
 
 #: ../../TShockAPI/Commands.cs:3363
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}warp del [name]."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax: {0}warp del [name]"
 
 #: ../../TShockAPI/Commands.cs:3386
 #: ../../TShockAPI/Commands.cs:3389
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}warp hide [name] <true/false>."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}warp hide [name] <true/false>"
 
 #: ../../TShockAPI/Commands.cs:3397
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}warp send [player] [warpname]."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax: {0}warp send [player] [warpname]"
 
 #: ../../TShockAPI/Commands.cs:4717
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}wind <speed in mph>."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}wind <speed in mph>"
 
 #: ../../TShockAPI/Commands.cs:2200
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}worldevent <event type>."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}worldevent <event type>"
 
 #: ../../TShockAPI/Commands.cs:2640
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}worldmode <mode>."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:{0}worldmode <mode>"
 
 #: ../../TShockAPI/Commands.cs:4829
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: /region protect <name> <true/false>."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax: /region protect <name> <true/false>"
 
 #: ../../TShockAPI/Commands.cs:4769
 msgid "Invalid syntax. Proper syntax: /region set <1/2>."
-msgstr ""
+msgstr "無効なSyntaxです。適切なSyntax:/region set <1/2>"
 
 #: ../../TShockAPI/Commands.cs:3243
 #: ../../TShockAPI/Commands.cs:3404
@@ -4485,7 +4485,7 @@ msgstr "Invalid Type: '{0}'"
 #: ../../TShockAPI/Commands.cs:1249
 #, csharp-format
 msgid "Invalid user syntax. Try {0}user help."
-msgstr ""
+msgstr "無効なユーザーSyntaxです。 {0}user ヘルプをお試しください。"
 
 #: ../../TShockAPI/Commands.cs:3334
 msgid "Invalid warp name. The names 'list', 'hide', 'del' and 'add' are reserved for commands."
@@ -4499,11 +4499,11 @@ msgstr "{0}行目のホワイトリストエントリが無効です: \"{1}\" �
 #: ../../TShockAPI/Commands.cs:1789
 #, csharp-format
 msgid "Invalid Whitelist syntax. Usage: {0}whitelist <ip[/range]>"
-msgstr ""
+msgstr "無効なホワイトリストSyntaxです。使用例：{0}whitelist <ip[/range]>"
 
 #: ../../TShockAPI/Commands.cs:4724
 msgid "Invalid wind speed (must be between -40 and 40)."
-msgstr "風速が無効です（-40～40の間でなければなりません）"
+msgstr "風速が無効です（-40 ～ 40 の間でなければなりません）"
 
 #: ../../TShockAPI/Commands.cs:2651
 #, csharp-format
@@ -4548,7 +4548,7 @@ msgstr "キック: {0}"
 
 #: ../../TShockAPI/Commands.cs:6074
 msgid "Kill syntax and example"
-msgstr ""
+msgstr "Syntax と Example を殺す"
 
 #: ../../TShockAPI/Commands.cs:559
 msgid "Kills another player."
@@ -4561,27 +4561,27 @@ msgstr "特定の種類の敵対的なNPCやNPCを倒す。"
 #: ../../TShockAPI/Handlers/LandGolfBallInCupHandler.cs:114
 #, csharp-format
 msgid "LandGolfBallInCupHandler: Invalid golf ball projectile ID {0}! - From {1}"
-msgstr ""
+msgstr "LandGolfBallInCupHandler: 無効なゴルフボール発射体ID {0}! - {1} から"
 
 #: ../../TShockAPI/Handlers/LandGolfBallInCupHandler.cs:130
 #, csharp-format
 msgid "LandGolfBallInCupHandler: Item selected is not a golf club! - From {0}"
-msgstr ""
+msgstr "LandGolfBallInCupHandler: 選択したアイテムはゴルフクラブではありません! - {0} から"
 
 #: ../../TShockAPI/Handlers/LandGolfBallInCupHandler.cs:92
 #, csharp-format
 msgid "LandGolfBallInCupHandler: Packet rejected for ID spoofing. Expected {0}, received {1} from {2}."
-msgstr ""
+msgstr "LandGolfBallInCupHandler: ID偽装のために拒否されたパケット。 {0}が予想され、 {1} から {2} を受け取りました。"
 
 #: ../../TShockAPI/Handlers/LandGolfBallInCupHandler.cs:107
 #, csharp-format
 msgid "LandGolfBallInCupHandler: Tile at packet position X:{0} Y:{1} is not a golf hole! - From {2}"
-msgstr ""
+msgstr "LandGolfBallInCupHandler: パケット位置X:{0} Y:{1} はゴルフホールではありません! - {2}"
 
 #: ../../TShockAPI/Handlers/LandGolfBallInCupHandler.cs:100
 #, csharp-format
 msgid "LandGolfBallInCupHandler: X and Y position is out of world bounds! - From {0}"
-msgstr ""
+msgstr "LandGolfBallInCupHandler: XとY位置はワールドの範囲外です! - {0} から"
 
 #: ../../TShockAPI/Commands.cs:2571
 msgid "Lanterns are now down."
@@ -4601,55 +4601,55 @@ msgstr "list - すべての地域を一覧表示します。"
 
 #: ../../TShockAPI/Commands.cs:4067
 msgid "list [page] - Lists all item bans."
-msgstr ""
+msgstr "list [page] - すべてのアイテム禁止リストを表示します。"
 
 #: ../../TShockAPI/Commands.cs:4245
 msgid "list [page] - Lists all projectile bans."
-msgstr ""
+msgstr "list [page] - すべての発射物禁止のリストを表示します。"
 
 #: ../../TShockAPI/Commands.cs:4421
 msgid "list [page] - Lists all tile bans."
-msgstr ""
+msgstr "list [page] - すべてのタイル禁止のリストを表示します。"
 
 #: ../../TShockAPI/Commands.cs:3536
 msgid "list [page] - Lists groups."
-msgstr ""
+msgstr "list [page] - グループを一覧表示します。"
 
 #: ../../TShockAPI/Commands.cs:5420
 msgid "List Online Players Syntax"
-msgstr ""
+msgstr "オンラインプレイヤーのSyntax一覧"
 
 #: ../../TShockAPI/TShock.cs:841
 #, csharp-format
 msgid "Listening on IP {0}."
-msgstr ""
+msgstr "IP {0} を確認中。"
 
 #: ../../TShockAPI/TShock.cs:822
 #, csharp-format
 msgid "Listening on port {0}."
-msgstr ""
+msgstr "ポート {0} を確認中。"
 
 #: ../../TShockAPI/Commands.cs:3537
 msgid "listperm <group> [page] - Lists a group's permissions."
-msgstr ""
+msgstr "listperm <group> [page] - グループの権限を表示します。"
 
 #: ../../TShockAPI/Commands.cs:619
 msgid "Lists commands or gives help on them."
-msgstr ""
+msgstr "コマンドのリストやヘルプを表示します。"
 
 #: ../../TShockAPI/Commands.cs:2163
 msgid "listusers - Lists all REST users and their current active tokens."
-msgstr ""
+msgstr "listusers - すべての REST ユーザーとその現在のアクティブなトークンのリストを表示します。"
 
 #: ../../TShockAPI/TShock.cs:811
 #, csharp-format
 msgid "Loading dedicated config file: {0}"
-msgstr ""
+msgstr "専用設定ファイルを読み込んでいます: {0}"
 
 #: ../../TShockAPI/Commands.cs:3251
 #, csharp-format
 msgid "Location of {0} is ({1}, {2})."
-msgstr ""
+msgstr "{0} の場所は ({1}, {2} ) です。"
 
 #: ../../TShockAPI/Commands.cs:1802
 msgid "Log display disabled."
@@ -4670,11 +4670,11 @@ msgstr "ログインに失敗しました - 上記のメッセージを参照し
 
 #: ../../TShockAPI/TShock.cs:993
 msgid "Login before join enabled. Users may be prompted for an account specific password instead of a server password on connect."
-msgstr ""
+msgstr "参加が有効になる前にログインします。接続時にサーバーパスワードの代わりに、ユーザーがアカウント固有のパスワードを求められることがあります。"
 
 #: ../../TShockAPI/TShock.cs:998
 msgid "Login using UUID enabled. Users automatically login via UUID."
-msgstr ""
+msgstr "UUIDログインが有効です。UUIDで自動的にログインします。"
 
 #: ../../TShockAPI/Commands.cs:246
 msgid "Logs you into an account."
@@ -4749,152 +4749,152 @@ msgstr "{0} を保護済みとしてマークしました。"
 #: ../../TShockAPI/Commands.cs:4821
 #, csharp-format
 msgid "Marked region {0} as unprotected."
-msgstr ""
+msgstr "{0} を保護されていない領域としてマークしました。"
 
 #: ../../TShockAPI/Commands.cs:1259
 #, csharp-format
 msgid "Memory usage: {0}"
-msgstr ""
+msgstr "メモリ使用量: {0}"
 
 #: ../../TShockAPI/SqlLog.cs:40
 #, csharp-format
 msgid "Message: {0}: {1}: {2}"
-msgstr ""
+msgstr "メッセージ: {0}: {1}: {2}"
 
 #: ../../TShockAPI/Rest/RestManager.cs:875
 msgid "Meteor has been spawned"
-msgstr ""
+msgstr "流星が出現しました"
 
 #: ../../TShockAPI/Commands.cs:1371
 msgid "Misbehaviour."
-msgstr ""
+msgstr "不正行為。"
 
 #: ../../TShockAPI/Commands.cs:6371
 msgid "Missing item name/id."
-msgstr ""
+msgstr "item name/idがありません。"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1275
 #, csharp-format
 msgid "Missing or empty {0} parameter"
-msgstr ""
+msgstr "{0} パラメータがありません。"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1285
 #, csharp-format
 msgid "Missing or invalid {0} parameter"
-msgstr ""
+msgstr "{0} パラメータがありません"
 
 #: ../../TShockAPI/Commands.cs:6376
 msgid "Missing player name."
-msgstr ""
+msgstr "プレイヤー名が見つかりません。"
 
 #: ../../TShockAPI/Commands.cs:1274
 #, csharp-format
 msgid "Mode: {0}"
-msgstr ""
+msgstr "モード: {0}"
 
 #: ../../TShockAPI/TSPlayer.cs:2172
 msgid "More than one match found -- unable to decide which is correct: "
-msgstr ""
+msgstr "複数の一致が見つかりました - どちらが正しいか判断できません: "
 
 #: ../../TShockAPI/Commands.cs:2859
 msgid "Mourning Wood"
-msgstr ""
+msgstr "Mourning Wood"
 
 #: ../../TShockAPI/Net/BaseMsg.cs:29
 msgid "Msg ID not implemented"
-msgstr ""
+msgstr "Msg ID は実装されていません"
 
 #: ../../TShockAPI/DB/UserManager.cs:326
 #, csharp-format
 msgid "Multiple user accounts found for {0} '{1}'"
-msgstr ""
+msgstr "{0} '{1} ' の複数のユーザーアカウントが見つかりました"
 
 #: ../../TShockAPI/Commands.cs:5554
 msgid "Mute Syntax"
-msgstr ""
+msgstr "Syntaxをミュート"
 
 #: ../../TShockAPI/Commands.cs:1330
 msgid "N/A"
-msgstr ""
+msgstr "N/A"
 
 #: ../../TShockAPI/Commands.cs:5282
 msgid "name [-u][-z][-p] - Shows the name of the region at the given point."
-msgstr ""
+msgstr "name [-u][-z][-p] - 指定したポイントの地域名を表示します。"
 
 #: ../../TShockAPI/Commands.cs:1270
 #, csharp-format
 msgid "Name: {0}"
-msgstr ""
+msgstr "名前: {0}"
 
 #: ../../TShockAPI/Handlers/NetModules/CreativeUnlocksHandler.cs:60
 #, csharp-format
 msgid "NetModuleHandler received attempt to unlock sacrifice while not in journey mode from {0}"
-msgstr ""
+msgstr "NetModuleHandler は {0} から移動モードではない間、犠牲のロックを解除しようとしました"
 
 #: ../../TShockAPI/Commands.cs:1511
 msgid "Never."
-msgstr ""
+msgstr "決して。"
 
 #: ../../TShockAPI/Commands.cs:6333
 msgid "New name is too large!"
-msgstr ""
+msgstr "新しい名前が大きすぎます！"
 
 #: ../../TShockAPI/TShock.cs:877
 #, csharp-format
 msgid "New worlds will be generated with the {0} world evil type!"
-msgstr ""
+msgstr "新しいワールドが {0} ワールドの邪悪なタイプで生成されます！"
 
 #: ../../TShockAPI/Permissions.cs:548
 msgid "No associated commands."
-msgstr ""
+msgstr "関連するコマンドはありません。"
 
 #: ../../TShockAPI/Commands.cs:1731
 msgid "No bans found matching the provided ticket number."
-msgstr ""
+msgstr "提供されたチケット番号と一致する禁止が見つかりませんでした。"
 
 #: ../../TShockAPI/Commands.cs:5877
 #, csharp-format
 msgid "No command or command alias matching \"{0}\" found."
-msgstr ""
+msgstr "\"{0}\" に一致するコマンドまたはコマンドエイリアスが見つかりません。"
 
 #: ../../TShockAPI/Permissions.cs:540
 msgid "No description available."
-msgstr ""
+msgstr "説明が設定されていません。"
 
 #: ../../TShockAPI/Commands.cs:146
 msgid "No help available."
-msgstr ""
+msgstr "利用可能なヘルプはありません。"
 
 #: ../../TShockAPI/Rest/RestManager.cs:722
 msgid "No matching bans found."
-msgstr ""
+msgstr "一致するBANが見つかりませんでした。"
 
 #: ../../TShockAPI/Commands.cs:1881
 #, csharp-format
 msgid "No player was found matching '{0}'."
-msgstr ""
+msgstr "「{0}」に一致するプレイヤーが見つかりませんでした。"
 
 #: ../../TShockAPI/Commands.cs:1838
 #, csharp-format
 msgid "No players matched \"{0}\"."
-msgstr ""
+msgstr "\"{0}\"に一致するプレイヤーはいません。"
 
 #: ../../TShockAPI/Commands.cs:6280
 #, csharp-format
 msgid "No prefix matched \"{0}\"."
-msgstr ""
+msgstr "\"{0}\"に一致するプレフィックスはありません。"
 
 #: ../../TShockAPI/Commands.cs:5585
 msgid "No reason specified."
-msgstr ""
+msgstr "理由が指定されていません。"
 
 #: ../../TShockAPI/Commands.cs:5943
 msgid "No recent boss kill data found."
-msgstr ""
+msgstr "最近のボスのキルデータが見つかりません。"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1225
 msgid "No special permissions are required for this route."
-msgstr ""
+msgstr "このルートには特別な権限は必要ありません。"
 
 #: ../../TShockAPI/Commands.cs:3566
 #: ../../TShockAPI/Commands.cs:3575
@@ -4903,39 +4903,39 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:3706
 #, csharp-format
 msgid "No such group \"{0}\"."
-msgstr ""
+msgstr "そのようなグループ \"{0}\" はありません。"
 
 #: ../../TShockAPI/DB/Queries/GenericQueryBuilder.cs:94
 msgid "No values supplied"
-msgstr ""
+msgstr "指定された値はありません"
 
 #: ../../TShockAPI/Rest/SecureRest.cs:194
 msgid "Not authorized. The provided token became invalid due to group changes, please create a new token."
-msgstr ""
+msgstr "許可されていません。グループ変更により提供されたトークンが無効になりました。新しいトークンを作成してください。"
 
 #: ../../TShockAPI/Rest/SecureRest.cs:186
 msgid "Not authorized. The specified API endpoint requires a token, but the provided token was not valid."
-msgstr ""
+msgstr "許可されていません。指定された API エンドポイントにはトークンが必要ですが、指定されたトークンは無効です。"
 
 #: ../../TShockAPI/Rest/SecureRest.cs:180
 #: ../../TShockAPI/Rest/RestCommand.cs:95
 #: ../../TShockAPI/Rest/RestCommand.cs:101
 msgid "Not authorized. The specified API endpoint requires a token."
-msgstr ""
+msgstr "許可されていません。指定された API エンドポイントにはトークンが必要です。"
 
 #: ../../TShockAPI/Rest/SecureRest.cs:200
 #, csharp-format
 msgid "Not authorized. User \"{0}\" has no access to use the specified API endpoint."
-msgstr ""
+msgstr "許可されていません。ユーザー \"{0}\" は指定された API エンドポイントを使用する権限がありません。"
 
 #: ../../TShockAPI/Commands.cs:1024
 #, csharp-format
 msgid "Not logged in or Invalid syntax. Proper syntax: {0}password <oldpassword> <newpassword>."
-msgstr ""
+msgstr "ログインしていない、または無効なSyntaxです。適切なSyntax: {0}password <oldpassword> <newpassword>"
 
 #: ../../TShockAPI/DB/UserManager.cs:497
 msgid "Not upgrading work factor because bcrypt hash in an invalid format."
-msgstr ""
+msgstr "bcryptハッシュが無効なフォーマットのため作業係数をアップグレードしていません。"
 
 #: ../../TShockAPI/Bouncer.cs:1536
 #: ../../TShockAPI/Bouncer.cs:1540
@@ -4945,70 +4945,70 @@ msgstr "NPCダメージが {0}を超えました。"
 
 #: ../../TShockPluginManager/NugetCLI.cs:103
 msgid "One moment..."
-msgstr ""
+msgstr "ちょっと待って..."
 
 #: ../../TShockAPI/DB/RegionManager.cs:98
 #, csharp-format
 msgid "One of your UserIDs is not a usable integer: {0}"
-msgstr ""
+msgstr "ユーザーIDのいずれかが使用可能な整数ではありません: {0}"
 
 #: ../../TShockAPI/Commands.cs:5437
 #, csharp-format
 msgid "Online Players ({0}/{1})"
-msgstr ""
+msgstr "オンラインプレイヤー ({0}/{1})"
 
 #: ../../TShockAPI/TShock.cs:1163
 #, csharp-format
 msgid "OnSecondUpdate / initial ssc spawn for {0} at ({1}, {2})"
-msgstr ""
+msgstr "OnSecondUpdate / initial ssc spawn for {0} at ({1}, {2})"
 
 #: ../../TShockAPI/Commands.cs:1262
 #, csharp-format
 msgid "Operating system: {0}"
-msgstr ""
+msgstr "OS: {0}"
 
 #: ../../TShockAPI/Commands.cs:314
 msgid "Overrides serverside characters for a player, temporarily."
-msgstr ""
+msgstr "プレイヤーのサーバーサイドキャラクターを一時的に上書きします。"
 
 #: ../../TShockAPI/PaginationTools.cs:105
 msgid "Page {{0}} of {{1}}"
-msgstr ""
+msgstr "ページ {{0}} / {{1}}"
 
 #: ../../TShockAPI/Commands.cs:3538
 msgid "parent <group> <parent group> - Changes a group's parent group."
-msgstr ""
+msgstr "parent <group> <parent group> - グループの親グループを変更。"
 
 #: ../../TShockAPI/Commands.cs:3596
 #, csharp-format
 msgid "Parent of \"{0}\" is \"{1}\"."
-msgstr ""
+msgstr " \"{0}\"の親は \"{1}\" です。"
 
 #: ../../TShockAPI/Commands.cs:3584
 #, csharp-format
 msgid "Parent of group \"{0}\" set to \"{1}\"."
-msgstr ""
+msgstr "グループ\"{0}\"の親は\"{1}\"に設定されています。"
 
 #: ../../TShockAPI/DB/GroupManager.cs:396
 #, csharp-format
 msgid "Parenting group {0} to {1} would cause loops in the parent chain."
-msgstr ""
+msgstr "親グループ {0} から {1} は親チェーンのループを引き起こします。"
 
 #: ../../TShockAPI/Commands.cs:1196
 #, csharp-format
 msgid "Password change attempt for {0} failed for an unknown reason. Check the server console for more details."
-msgstr ""
+msgstr "{0} のパスワード変更の試みは不明な理由で失敗しました。詳細はサーバーコンソールを確認してください。"
 
 #: ../../TShockAPI/Commands.cs:1188
 #, csharp-format
 msgid "Password change succeeded for {0}."
-msgstr ""
+msgstr "{0} のパスワード変更に成功しました。"
 
 #: ../../TShockAPI/DB/UserManager.cs:521
 #: ../../TShockAPI/DB/UserManager.cs:542
 #, csharp-format
 msgid "Password must be at least {0} characters."
-msgstr ""
+msgstr "パスワードは最低でも{0}文字以上でなければなりません。"
 
 #: ../../TShockAPI/Commands.cs:1013
 #: ../../TShockAPI/Commands.cs:1050
@@ -5017,17 +5017,17 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:1201
 #, csharp-format
 msgid "Password must be greater than or equal to {0} characters."
-msgstr ""
+msgstr "パスワードは {0} 文字以上でなければなりません。"
 
 #: ../../TShockAPI/Commands.cs:1030
 #, csharp-format
 msgid "PasswordUser returned an error: {0}."
-msgstr ""
+msgstr "PasswordUser がエラーを返しました: {0}."
 
 #: ../../TShockAPI/Commands.cs:1275
 #, csharp-format
 msgid "Path: {0}"
-msgstr ""
+msgstr "パス: {0}"
 
 #: ../../TShockAPI/Commands.cs:6779
 msgid "Pearlwood Tree"
@@ -5036,54 +5036,54 @@ msgstr "パールウッドの木"
 #: ../../TShockAPI/Commands.cs:3866
 #, csharp-format
 msgid "Permissions for {0} ({{0}}/{{1}}):"
-msgstr ""
+msgstr "{0} のアクセス許可 ({{0}}/{{1}}):"
 
 #: ../../TShockAPI/Commands.cs:2772
 msgid "Plantera"
-msgstr ""
+msgstr "Plantera"
 
 #: ../../TShockAPI/Commands.cs:1855
 #, csharp-format
 msgid "Player \"{0}\" has to perform a /login attempt first."
-msgstr ""
+msgstr "プレイヤー \"{0}\" は、/login を最初に試みる必要があります。"
 
 #: ../../TShockAPI/Commands.cs:1860
 #, csharp-format
 msgid "Player \"{0}\" has to reconnect first, because they need to delete their trash."
-msgstr ""
+msgstr "プレイヤー \"{0}\" は最初に再接続する必要があります。なぜなら、ゴミ箱を削除する必要があるからです。"
 
 #: ../../TShockAPI/Commands.cs:1850
 #, csharp-format
 msgid "Player \"{0}\" is already logged in."
-msgstr ""
+msgstr "プレイヤー \"{0}\" はすでにログインしています。"
 
 #: ../../TShockAPI/TSPlayer.cs:2089
 #: ../../TShockAPI/TSPlayer.cs:2093
 #, csharp-format
 msgid "Player {0} has been disabled for {1}."
-msgstr ""
+msgstr "{0} は {1}のため、無効化されました。"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1395
 #, csharp-format
 msgid "Player {0} has been muted"
-msgstr ""
+msgstr "プレイヤー {0} はミュートされました"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1400
 #, csharp-format
 msgid "Player {0} has been unmuted"
-msgstr ""
+msgstr "プレイヤー {0} のミュートを解除しました"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1308
 #, csharp-format
 msgid "Player {0} matches {1} player"
 msgid_plural "Player {0} matches {1} players"
-msgstr[0] ""
+msgstr[0] "プレイヤー {0} は {1} プレイヤーにマッチしました"
 
 #: ../../TShockAPI/Commands.cs:4885
 #: ../../TShockAPI/Commands.cs:4920
 #, csharp-format
 msgid "Player {0} not found."
-msgstr ""
+msgstr "プレイヤー {0} が見つかりません。"
 
 #: ../../TShockAPI/Bouncer.cs:1248
 #, csharp-format
@@ -5093,12 +5093,12 @@ msgstr "プレイヤー {0} がサーバーに {1} 侵入しようとしまし�
 #: ../../TShockAPI/Rest/RestManager.cs:1070
 #, csharp-format
 msgid "Player {0} was killed"
-msgstr ""
+msgstr "プレイヤー {0} が殺されました"
 
 #: ../../TShockAPI/Rest/RestManager.cs:1306
 #, csharp-format
 msgid "Player {0} was not found"
-msgstr ""
+msgstr "プレイヤー {0} が見つかりませんでした"
 
 #: ../../TShockAPI/Bouncer.cs:2810
 #: ../../TShockAPI/Bouncer.cs:2817
@@ -5108,7 +5108,7 @@ msgstr "プレイヤーのダメージが {0}を超えました。"
 
 #: ../../TShockAPI/Commands.cs:6446
 msgid "Player does not have free slots!"
-msgstr ""
+msgstr "プレイヤーに空きスロットがありません！"
 
 #: ../../TShockAPI/Bouncer.cs:1306
 #, csharp-format
@@ -5117,80 +5117,80 @@ msgstr "発射物 {0} を作成する権限がありません。"
 
 #: ../../TShockAPI/Commands.cs:1361
 msgid "Player not found. Unable to kick the player."
-msgstr ""
+msgstr "プレイヤーが見つかりません。プレイヤーをキックすることができません。"
 
 #: ../../TShockAPI/TShock.cs:1760
 #, csharp-format
 msgid "Please {0}register or {0}login to play!"
-msgstr ""
+msgstr "プレイするには、{0}register または {0}loginしてください！"
 
 #: ../../TShockAPI/Commands.cs:984
 msgid "Please close NPC windows before logging out."
-msgstr ""
+msgstr "ログアウトする前にNPCウィンドウを閉じてください。"
 
 #: ../../TShockAPI/Commands.cs:5854
 msgid "Please enter a proper command name or alias."
-msgstr ""
+msgstr "正しいコマンド名またはエイリアスを入力してください。"
 
 #: ../../TShockAPI/Commands.cs:1096
 msgid "Please try a different username."
-msgstr ""
+msgstr "別のユーザー名をお試しください。"
 
 #: ../../TShockAPI/Commands.cs:5508
 #, csharp-format
 msgid "Please use {0}login <username> <password> after this process."
-msgstr ""
+msgstr "このプロセスの後、 {0}login <username> <password>を使用してください。"
 
 #: ../../TShockAPI/Commands.cs:5505
 msgid "Please use the following to create a permanent account for you."
-msgstr ""
+msgstr "永久アカウントを作成するには、以下をご利用ください。"
 
 #: ../../TShockAPI/TShock.cs:908
 #, csharp-format
 msgid "Port overridden by startup argument. Set to {0}"
-msgstr ""
+msgstr "起動時の引数によってポートがオーバーライドされています。 {0}に設定します"
 
 #: ../../TShockAPI/DB/ResearchDatastore.cs:53
 #: ../../TShockAPI/DB/BanManager.cs:81
 msgid "Possible problem with your database - is Sqlite3.dll present?"
-msgstr ""
+msgstr "データベースに問題がある可能性があります - Sqlite3.dllは存在しますか?"
 
 #: ../../TShockAPI/Commands.cs:3539
 msgid "prefix <group> <prefix> - Changes a group's prefix."
-msgstr ""
+msgstr "prefix <group> <prefix> - グループのプレフィックスを変更します。"
 
 #: ../../TShockAPI/Commands.cs:3686
 #, csharp-format
 msgid "Prefix of \"{0}\" is \"{1}\"."
-msgstr ""
+msgstr "\"{0}\" のプレフィックスは \"{1}\" です。"
 
 #: ../../TShockAPI/Commands.cs:3674
 #, csharp-format
 msgid "Prefix of group \"{0}\" set to \"{1}\"."
-msgstr ""
+msgstr "グループ \"{0}\" のプレフィックスが \"{1}\" に設定されています。"
 
 #: ../../TShockAPI/Commands.cs:310
 msgid "Prevents a player from talking."
-msgstr ""
+msgstr "プレイヤーの発言を防ぎます。"
 
 #: ../../TShockAPI/Commands.cs:1263
 #, csharp-format
 msgid "Proc count: {0}"
-msgstr ""
+msgstr "プロック数: {0}"
 
 #: ../../TShockAPI/Commands.cs:4157
 #: ../../TShockAPI/Commands.cs:4215
 #, csharp-format
 msgid "Projectile {0} is not banned."
-msgstr ""
+msgstr "発射物 {0} は禁止されていません。"
 
 #: ../../TShockAPI/Commands.cs:4251
 msgid "Projectile Ban Sub-Commands ({{0}}/{{1}}):"
-msgstr ""
+msgstr "発射物禁止サブコマンド ({{0}}/{{1}}):"
 
 #: ../../TShockAPI/Commands.cs:4269
 msgid "Projectile bans ({{0}}/{{1}}):"
-msgstr ""
+msgstr "発射物の禁止 ({{0}}/{{1}}):"
 
 #: ../../TShockAPI/Bouncer.cs:1439
 #, csharp-format
@@ -5204,30 +5204,30 @@ msgstr "発射物のダメージが {0}よりも大きい。"
 
 #: ../../TShockAPI/Commands.cs:5291
 msgid "protect <name> <true/false> - Sets whether the tiles inside the region are protected or not."
-msgstr ""
+msgstr "protect <name> <true/false> - 領域内のタイルが保護されているかどうかを設定します。"
 
 #: ../../TShockAPI/RegionHandler.cs:159
 msgid "Protected regions at this point: "
-msgstr ""
+msgstr "この時点での保護地域: "
 
 #: ../../TShockAPI/Commands.cs:5043
 #, csharp-format
 msgid "Protected: {0}."
-msgstr ""
+msgstr "保護済み: {0}."
 
 #: ../../TShockAPI/Commands.cs:1410
 #, csharp-format
 msgid "Quick usage: {0} {1} \"Griefing\""
-msgstr ""
+msgstr "クイック使用: {0} {1} \"グリーフィング\""
 
 #: ../../TShockAPI/TSPlayer.cs:852
 #, csharp-format
 msgid "Rangecheck failed for {0} ({1}, {2}) (rg: {3}/{5}, {4}/{5})"
-msgstr ""
+msgstr "{0} ({1}, {2}) (rg: {3}/{5}, {4}/{5} ) の範囲チェックに失敗しました"
 
 #: ../../TShockAPI/TShock.cs:1209
 msgid "Reached HealOtherPlayer threshold"
-msgstr ""
+msgstr "HealOtherPlayerのしきい値に達しました"
 
 #: ../../TShockAPI/Bouncer.cs:2263
 msgid "Reached HealOtherPlayer threshold."
@@ -5235,7 +5235,7 @@ msgstr "HealOtherPlayerのしきい値に達しました。"
 
 #: ../../TShockAPI/TShock.cs:1200
 msgid "Reached paint threshold"
-msgstr ""
+msgstr "ペイントのしきい値に達しました"
 
 #: ../../TShockAPI/Bouncer.cs:1443
 msgid "Reached projectile create threshold."
@@ -5243,7 +5243,7 @@ msgstr "発射物作成がしきい値に達しました。"
 
 #: ../../TShockAPI/TShock.cs:1191
 msgid "Reached projectile threshold"
-msgstr ""
+msgstr "発射体のしきい値に達しました"
 
 #: ../../TShockAPI/Bouncer.cs:1020
 #: ../../TShockAPI/TShock.cs:1121
@@ -5252,7 +5252,7 @@ msgstr "TileKill しきい値に達しました。"
 
 #: ../../TShockAPI/TShock.cs:1182
 msgid "Reached TileLiquid threshold"
-msgstr ""
+msgstr "タイル設置のしきい値に達しました"
 
 #: ../../TShockAPI/Bouncer.cs:1839
 #, csharp-format
@@ -5265,7 +5265,7 @@ msgstr "タイル液体設置のしきい値に達しました。"
 
 #: ../../TShockAPI/TShock.cs:1138
 msgid "Reached TilePlace threshold"
-msgstr ""
+msgstr "タイル液体設置のしきい値に達しました"
 
 #: ../../TShockAPI/Bouncer.cs:1038
 #: ../../TShockAPI/Bouncer.cs:2577
@@ -5274,79 +5274,79 @@ msgstr "タイル設置のしきい値に達しました。"
 
 #: ../../TShockPluginManager/NugetCLI.cs:128
 msgid "Read the message below to find out more."
-msgstr ""
+msgstr "詳細については、以下のメッセージをお読みください。"
 
 #: ../../TShockAPI/Commands.cs:1532
 #, csharp-format
 msgid "Reason: {0}."
-msgstr ""
+msgstr "理由: {0}."
 
 #: ../../TShockAPI/Extensions/DbExt.cs:265
 #, csharp-format
 msgid "Received type '{0}', however column '{1}' expects type '{2}'"
-msgstr ""
+msgstr "受信した型 '{0}' ですが、列 '{1}' は型'{2}' を期待しています"
 
 #: ../../TShockAPI/Commands.cs:5228
 #, csharp-format
 msgid "Region \"{0}\" already exists."
-msgstr ""
+msgstr "地域 \"{0}\" は既に存在します。"
 
 #: ../../TShockAPI/Commands.cs:5260
 #, csharp-format
 msgid "Region \"{0}\" does not exist."
-msgstr ""
+msgstr "地域 \"{0}\" は存在しません。"
 
 #: ../../TShockAPI/Commands.cs:4794
 #, csharp-format
 msgid "Region {0} already exists."
-msgstr ""
+msgstr "地域 {0} は既に存在します。"
 
 #: ../../TShockAPI/Commands.cs:5073
 msgid "Region is not shared with any groups."
-msgstr ""
+msgstr "地域はどのグループとも共有されてません。"
 
 #: ../../TShockAPI/Commands.cs:5062
 msgid "Region is not shared with any users."
-msgstr ""
+msgstr "地域はどのユーザーと共有されてません。"
 
 #: ../../TShockAPI/Commands.cs:5042
 #, csharp-format
 msgid "Region owner: {0}."
-msgstr ""
+msgstr "地域の所有者: {0}"
 
 #: ../../TShockAPI/Commands.cs:4799
 msgid "Region points need to be defined first. Use /region set 1 and /region set 2."
-msgstr ""
+msgstr "最初に地域ポイントを定義する必要があります。/region set 1 と /region set 2 を使用してください。"
 
 #: ../../TShockAPI/Commands.cs:5234
 msgid "Region renamed successfully!"
-msgstr ""
+msgstr "地域名の変更に成功しました！"
 
 #: ../../TShockAPI/Commands.cs:5188
 msgid "Region Resized Successfully!"
-msgstr ""
+msgstr "地域のサイズ変更に成功しました！"
 
 #: ../../TShockAPI/Commands.cs:5135
 #, csharp-format
 msgid "Region's z is now {0}"
-msgstr ""
+msgstr "地域のz値は現在 {0}です"
 
 #: ../../TShockAPI/Commands.cs:5008
 msgid "Regions ({{0}}/{{1}}):"
-msgstr ""
+msgstr "地域 ({{0}}/{{1}}):"
 
 #: ../../TShockAPI/RegionHandler.cs:159
 msgid "Regions at this point: "
-msgstr ""
+msgstr "この時点の地域: "
 
 #: ../../TShockAPI/Commands.cs:264
 msgid "Registers you an account."
-msgstr ""
+msgstr "アカウントを登録します。"
 
 #: ../../TShockAPI/Commands.cs:1103
 #, csharp-format
 msgid "RegisterUser returned an error: {0}."
-msgstr ""
+msgstr "RegisterUserは {0}エラーを返しました。"
 
 #: ../../TShockAPI/Bouncer.cs:2314
 msgid "Released critter was not from its item."
@@ -5354,115 +5354,115 @@ msgstr "解放された生き物は品目からではありませんでした。
 
 #: ../../TShockAPI/Commands.cs:370
 msgid "Reloads the server configuration file."
-msgstr ""
+msgstr "サーバ設定ファイルを再読み込みします。"
 
 #: ../../TShockAPI/Commands.cs:5287
 msgid "remove <user> <region> - Removes a user from a region."
-msgstr ""
+msgstr "remove <user> <region> - 地域からユーザーを削除します。"
 
 #: ../../TShockAPI/Commands.cs:2613
 #, csharp-format
 msgid "Removed {0} players from the angler quest completion list for today."
-msgstr ""
+msgstr "今日の釣り人クエスト完了リストから {0} ユーザーを削除しました。"
 
 #: ../../TShockAPI/Commands.cs:4983
 #, csharp-format
 msgid "Removed group {0} from {1}"
-msgstr ""
+msgstr "グループ {0} を {1}から削除しました"
 
 #: ../../TShockAPI/Commands.cs:3586
 #, csharp-format
 msgid "Removed parent of group \"{0}\"."
-msgstr ""
+msgstr "グループ\"{0}\"の親を削除しました。"
 
 #: ../../TShockAPI/Commands.cs:3676
 #, csharp-format
 msgid "Removed prefix of group \"{0}\"."
-msgstr ""
+msgstr "グループ \"{0}\" のプレフィックスを削除しました。"
 
 #: ../../TShockAPI/Commands.cs:3631
 #, csharp-format
 msgid "Removed suffix of group \"{0}\"."
-msgstr ""
+msgstr "グループ \"{0}\" のサフィックスを削除しました。"
 
 #: ../../TShockAPI/Commands.cs:4913
 #, csharp-format
 msgid "Removed user {0} from {1}."
-msgstr ""
+msgstr "ユーザー {0} を {1}から削除しました。"
 
 #: ../../TShockAPI/Commands.cs:5289
 msgid "removeg <group> <region> - Removes a user group from a region."
-msgstr ""
+msgstr "removeg <group> <region> - ユーザーグループを地域から削除します。"
 
 #: ../../TShockAPI/Commands.cs:306
 msgid "Removes a player from the server."
-msgstr ""
+msgstr "プレイヤーをサーバーから削除します。"
 
 #: ../../TShockAPI/DB/UserManager.cs:114
 msgid "RemoveUser SQL returned an error"
-msgstr ""
+msgstr "RemoveUser SQLがエラーを返しました"
 
 #: ../../TShockAPI/Commands.cs:3533
 msgid "rename <group> <new name> - Changes a group's name."
-msgstr ""
+msgstr "rename <group> <new name> - グループの名前を変更します。"
 
 #: ../../TShockAPI/Commands.cs:5283
 msgid "rename <region> <new name> - Renames the given region."
-msgstr ""
+msgstr "rename <region> <new name> - 指定した地域の名前を変更します。"
 
 #: ../../TShockAPI/Commands.cs:403
 msgid "Renames an NPC."
-msgstr ""
+msgstr "NPCの名前を変更します。"
 
 #: ../../TShockAPI/Commands.cs:572
 msgid "Replies to a PM sent to you."
-msgstr ""
+msgstr "あなたに送信されたPMへの返信。"
 
 #: ../../TShockAPI/Rest/SecureRest.cs:93
 msgid "Requested token was successfully destroyed."
-msgstr ""
+msgstr "要求されたトークンは正常に破棄されました。"
 
 #: ../../TShockAPI/Handlers/RequestTileEntityInteractionHandler.cs:35
 #, csharp-format
 msgid "RequestTileEntityInteractionHandler: Rejected packet due to lack of building permissions! - From {0} | Position X:{1} Y:{2}, TileEntity type: {3}, Tile type: {4}"
-msgstr ""
+msgstr "RequestTileEntityInteractionHandler: ビルドの権限がないため拒否されたパケット! - From {0} | Position X:{1} Y:{2}, TileEntity type: {3}, tile type: {4}"
 
 #: ../../TShockAPI/Commands.cs:425
 msgid "Resets the list of users who have completed an angler quest that day."
-msgstr ""
+msgstr "その日に釣り人クエストを完了したユーザーのリストをリセットします。"
 
 #: ../../TShockAPI/SaveManager.cs:163
 #, csharp-format
 msgid "resetTime {0}, direct {1}"
-msgstr ""
+msgstr "resetTime {0}, direct {1}"
 
 #: ../../TShockAPI/Commands.cs:5285
 msgid "resize <region> <u/d/l/r> <amount> - Resizes a region."
-msgstr ""
+msgstr "resize <region> <u/d/l/r> <amount> - 地域のサイズを変更します。"
 
 #: ../../TShockAPI/Commands.cs:609
 msgid "Respawn yourself or another player."
-msgstr ""
+msgstr "自分または他のプレイヤーを復活させます。"
 
 #: ../../TShockAPI/UpdateManager.cs:87
 msgid "Retrying in 5 minutes."
-msgstr ""
+msgstr "5分後に再試行します"
 
 #: ../../TShockAPI/Commands.cs:462
 msgid "Returns the user's or specified user's current position."
-msgstr ""
+msgstr "ユーザーまたは指定されたユーザーの現在位置を返します。"
 
 #: ../../TShockAPI/Commands.cs:6757
 msgid "Rich Mahogany"
-msgstr ""
+msgstr "Rich Mahogany"
 
 #: ../../TShockAPI/Commands.cs:5720
 msgid "Rocket Syntax"
-msgstr ""
+msgstr "Rocket Syntax"
 
 #: ../../TShockAPI/Commands.cs:348
 msgid "Rockets a player upwards. Requires SSC."
-msgstr ""
+msgstr "Rockets a player upwards. Requires SSC."
 
 #: ../../TShockAPI/Commands.cs:6819
 msgid "Ruby Gemtree"
@@ -5474,7 +5474,7 @@ msgstr "桜の木"
 
 #: ../../TShockAPI/Commands.cs:2875
 msgid "Santa-NK1"
-msgstr ""
+msgstr "Santa-NK1"
 
 #: ../../TShockAPI/Commands.cs:6811
 msgid "Sapphire Gemtree"
@@ -5482,151 +5482,151 @@ msgstr "サファイアの木"
 
 #: ../../TShockAPI/Commands.cs:318
 msgid "Saves all serverside characters."
-msgstr ""
+msgstr "すべてのサーバーサイドキャラクターを保存します。"
 
 #: ../../TShockAPI/Commands.cs:506
 msgid "Saves the world file."
-msgstr ""
+msgstr "ワールドを保存します。"
 
 #: ../../TShockAPI/SaveManager.cs:58
 msgid "Saving world..."
-msgstr ""
+msgstr "ワールドを保存中..."
 
 #: ../../TShockAPI/Commands.cs:1273
 #, csharp-format
 msgid "Seed: {0}"
-msgstr ""
+msgstr "シード値：{0}"
 
 #: ../../TShockAPI/Commands.cs:568
 msgid "Sends a message to everyone on your team."
-msgstr ""
+msgstr "チーム全員にメッセージを送る。"
 
 #: ../../TShockAPI/Commands.cs:592
 msgid "Sends a PM to a player."
-msgstr ""
+msgstr "プレイヤーにPMを送信します。"
 
 #: ../../TShockAPI/Commands.cs:605
 msgid "Sends all tiles from the server to the player to resync the client with the actual world state."
-msgstr ""
+msgstr "サーバーからプレイヤーにすべてのタイルを送信し、実際のワールドの状態でクライアントを再同期します。"
 
 #: ../../TShockAPI/Commands.cs:563
 msgid "Sends an action message to everyone."
-msgstr ""
+msgstr "全員にアクションメッセージを送信します。"
 
 #: ../../TShockAPI/Commands.cs:437
 msgid "Sends you to the world's spawn point."
-msgstr ""
+msgstr "ワールドのスポーン地点に移動します。"
 
 #: ../../TShockAPI/Commands.cs:432
 msgid "Sends you to your spawn point."
-msgstr ""
+msgstr "スポーン地点に移動します。"
 
 #: ../../TShockAPI/TShock.cs:751
 msgid "Server console interrupted!"
-msgstr ""
+msgstr "サーバーコンソールが中断されました！"
 
 #: ../../TShockAPI/Configuration/TShockConfig.cs:337
 msgid "Server is full"
-msgstr ""
+msgstr "サーバーは満員です"
 
 #: ../../TShockAPI/Configuration/TShockConfig.cs:341
 msgid "Server is full. No reserved slots open."
-msgstr ""
+msgstr "サーバーは満員です。予約済みのスロットがありません。"
 
 #: ../../TShockAPI/TShock.cs:1318
 msgid "Server is shutting down..."
-msgstr ""
+msgstr "サーバーがシャットダウン中..."
 
 #: ../../TShockAPI/BackupManager.cs:73
 msgid "Server map saving..."
-msgstr ""
+msgstr "サーバーマップを保存中..."
 
 #: ../../TShockAPI/Commands.cs:4499
 #, csharp-format
 msgid "Server password has been changed to: {0}."
-msgstr ""
+msgstr "サーバーパスワードが {0}に変更されました。"
 
 #: ../../TShockAPI/Commands.cs:2092
 #: ../../TShockAPI/Commands.cs:2098
 msgid "Server shutting down: "
-msgstr ""
+msgstr "サーバーシャットダウン中: "
 
 #: ../../TShockAPI/Commands.cs:2092
 msgid "Server shutting down!"
-msgstr ""
+msgstr "サーバーがシャットダウン中です！"
 
 #: ../../TShockAPI/Commands.cs:2098
 msgid "Server shutting down."
-msgstr ""
+msgstr "サーバーシャットダウン中。"
 
 #: ../../TShockAPI/Commands.cs:992
 msgid "Server side characters are enabled. You need to be logged-in to play."
-msgstr ""
+msgstr "サーバーサイドキャラクターが有効になっています。プレイするにはログインが必要です。"
 
 #: ../../TShockAPI/TShock.cs:1755
 #, csharp-format
 msgid "Server side characters is enabled! Please {0}register or {0}login to play!"
-msgstr ""
+msgstr "サーバーサイドキャラクターが有効になっています。プレイするには {0}register か {0}login が必要です。"
 
 #: ../../TShockAPI/Commands.cs:1865
 #, csharp-format
 msgid "Server-side character data from \"{0}\" has been replaced by their current local data."
-msgstr ""
+msgstr "\"{0}\" からのサーバーサイドキャラクターデータは現在のローカルデータに置き換えられました。"
 
 #: ../../TShockAPI/Commands.cs:1825
 msgid "Server-side characters is disabled."
-msgstr ""
+msgstr "サーバーサイドキャラクターは無効です。"
 
 #: ../../TShockAPI/Commands.cs:5278
 msgid "set <1/2> - Sets the temporary region points."
-msgstr ""
+msgstr "set <1/2> - 一時地域ポイントを設定します。"
 
 #: ../../TShockAPI/Commands.cs:4790
 #, csharp-format
 msgid "Set region {0}."
-msgstr ""
+msgstr "地域 {0}を設定します。"
 
 #: ../../TShockAPI/RegionHandler.cs:187
 #, csharp-format
 msgid "Set temp point {0}."
-msgstr ""
+msgstr "一時ポイント {0}を設定します。"
 
 #: ../../TShockAPI/Commands.cs:516
 msgid "Sets the dungeon's position to your location."
-msgstr ""
+msgstr "ダンジョンの位置を現在地に設定します。"
 
 #: ../../TShockAPI/Commands.cs:407
 msgid "Sets the maximum number of NPCs."
-msgstr ""
+msgstr "NPCの最大数を設定します。"
 
 #: ../../TShockAPI/Commands.cs:421
 msgid "Sets the spawn rate of NPCs."
-msgstr ""
+msgstr "NPC のスポーン率を設定します。"
 
 #: ../../TShockAPI/Commands.cs:524
 msgid "Sets the world time."
-msgstr ""
+msgstr "ワールドの時刻を設定します。"
 
 #: ../../TShockAPI/Commands.cs:511
 msgid "Sets the world's spawn point to your location."
-msgstr ""
+msgstr "ワールドのスポーン地点を現在地に設定します。"
 
 #: ../../TShockAPI/Commands.cs:4519
 msgid "Settling liquids."
-msgstr ""
+msgstr "Settling liquids."
 
 #: ../../TShockAPI/DB/UserManager.cs:187
 #: ../../TShockAPI/DB/UserManager.cs:218
 msgid "SetUserGroup SQL returned an error"
-msgstr ""
+msgstr "SetUserGroup SQL はエラーを返しました"
 
 #: ../../TShockAPI/DB/UserManager.cs:136
 msgid "SetUserPassword SQL returned an error"
-msgstr ""
+msgstr "SetUserPassword SQL はエラーを返しました"
 
 #: ../../TShockAPI/DB/UserManager.cs:156
 msgid "SetUserUUID SQL returned an error"
-msgstr ""
+msgstr "SetUserUUID SQL はエラーを返しました"
 
 #: ../../TShockAPI/Commands.cs:6769
 msgid "Shadewood Tree"
@@ -5634,568 +5634,568 @@ msgstr "Shadewoodの木"
 
 #: ../../TShockAPI/Commands.cs:5479
 msgid "Share your server, talk with admins, and chill on GitHub & Discord. -- https://tshock.co/"
-msgstr ""
+msgstr "あなたのサーバーを共有し、管理者と話し、GitHub & Discordでリラックスしてください。 -- https://tshock.co/"
 
 #: ../../TShockAPI/Commands.cs:5068
 msgid "Shared with groups: "
-msgstr ""
+msgstr "グループと共有: "
 
 #: ../../TShockAPI/Commands.cs:5057
 msgid "Shared with: "
-msgstr ""
+msgstr "共有先: "
 
 #: ../../TShockAPI/Commands.cs:615
 msgid "Shows a command's aliases."
-msgstr ""
+msgstr "コマンドのエイリアスを表示"
 
 #: ../../TShockAPI/Commands.cs:338
 msgid "Shows information about a player."
-msgstr ""
+msgstr "プレイヤーに関する情報を表示します。"
 
 #: ../../TShockAPI/Commands.cs:268
 msgid "Shows information about a user."
-msgstr ""
+msgstr "ユーザーに関する情報を表示します。"
 
 #: ../../TShockAPI/Commands.cs:532
 msgid "Shows information about the current world."
-msgstr ""
+msgstr "現在のワールドに関する情報を表示します。"
 
 #: ../../TShockAPI/Commands.cs:653
 msgid "Shows recent boss kill contribution."
-msgstr ""
+msgstr "最近のボスキル貢献を表示します。"
 
 #: ../../TShockAPI/Commands.cs:627
 msgid "Shows the currently connected players."
-msgstr ""
+msgstr "現在接続しているプレイヤーを表示します。"
 
 #: ../../TShockAPI/Commands.cs:623
 msgid "Shows the message of the day."
-msgstr ""
+msgstr "今日のメッセージを表示します。"
 
 #: ../../TShockAPI/Commands.cs:645
 msgid "Shows the number of deaths for all online players."
-msgstr ""
+msgstr "すべてのオンラインプレイヤーの死亡数を表示します。"
 
 #: ../../TShockAPI/Commands.cs:649
 msgid "Shows the number of PVP deaths for all online players."
-msgstr ""
+msgstr "すべてのオンラインプレイヤーの PVP 死亡数を表示します。"
 
 #: ../../TShockAPI/Commands.cs:584
 msgid "Shows the server information."
-msgstr ""
+msgstr "サーバー情報を表示します。"
 
 #: ../../TShockAPI/Commands.cs:631
 msgid "Shows the server's rules."
-msgstr ""
+msgstr "サーバーのルールを表示します。"
 
 #: ../../TShockAPI/Commands.cs:378
 msgid "Shows the TShock version."
-msgstr ""
+msgstr "TShock のバージョンを表示します。"
 
 #: ../../TShockAPI/Commands.cs:635
 msgid "Shows your number of deaths."
-msgstr ""
+msgstr "死亡数を表示します。"
 
 #: ../../TShockAPI/Commands.cs:640
 msgid "Shows your number of PVP deaths."
-msgstr ""
+msgstr "PVPによる死亡数を表示します。"
 
 #: ../../TShockAPI/Commands.cs:362
 msgid "Shuts down the server while saving."
-msgstr ""
+msgstr "保存してからサーバーをシャットダウンします"
 
 #: ../../TShockAPI/Commands.cs:366
 msgid "Shuts down the server without saving."
-msgstr ""
+msgstr "保存せずにサーバーをシャットダウンします"
 
 #: ../../TShockAPI/TShock.cs:748
 msgid "Shutting down safely. To force shutdown, send SIGINT (CTRL + C) again."
-msgstr ""
+msgstr "安全にシャットダウンします。強制終了するには、SIGINT (CTRL + C) をもう一度送信します。"
 
 #: ../../TShockAPI/Commands.cs:1271
 #, csharp-format
 msgid "Size: {0}x{1}"
-msgstr ""
+msgstr "サイズ: {0}x{1}"
 
 #: ../../TShockAPI/Commands.cs:2791
 msgid "Skeletron"
-msgstr ""
+msgstr "スケルトン"
 
 #: ../../TShockAPI/Commands.cs:2779
 msgid "Skeletron Prime"
-msgstr ""
+msgstr "スケルトン・プライム"
 
 #: ../../TShockAPI/TSPlayer.cs:1169
 #, csharp-format
 msgid "Skipping SSC save (due to tshock.ignore.ssc) for {0}"
-msgstr ""
+msgstr "{0}のSSCセーブをスキップ中 (tshock.ignore.ssc による)"
 
 #: ../../TShockAPI/Commands.cs:580
 msgid "Slaps a player, dealing damage."
-msgstr ""
+msgstr "プレイヤーをたたき、ダメージを与える。"
 
 #: ../../TShockAPI/Commands.cs:2503
 msgid "Slime rain cannot be activated during normal rain. Stop the normal rainstorm and try again."
-msgstr ""
+msgstr "通常の雨中にスライムの雨は召喚できません。通常の雨を止めて再度お試し下さい。"
 
 #: ../../TShockAPI/Commands.cs:1095
 #, csharp-format
 msgid "Sorry, {0} was already taken by another person."
-msgstr ""
+msgstr "申し訳ありませんが、 {0} はすでに他人に使用しています。"
 
 #: ../../TShockAPI/Commands.cs:1029
 #: ../../TShockAPI/Commands.cs:1102
 #, csharp-format
 msgid "Sorry, an error occurred: {0}."
-msgstr ""
+msgstr "申し訳ありませんが、エラーが発生しました: {0}。"
 
 #: ../../TShockAPI/Commands.cs:4470
 msgid "Spawn has now been set at your location."
-msgstr ""
+msgstr "スポーン地点を設定しました。"
 
 #: ../../TShockAPI/Commands.cs:5323
 msgid "Spawn is now open."
-msgstr ""
+msgstr "スポーン地点を開きました。"
 
 #: ../../TShockAPI/Commands.cs:5323
 msgid "Spawn is now protected."
-msgstr ""
+msgstr "スポーン地点は保護されました。"
 
 #: ../../TShockAPI/Commands.cs:2966
 #, csharp-format
 msgid "Spawned {0} {1} time."
 msgid_plural "Spawned {0} {1} times."
-msgstr[0] ""
+msgstr[0] "{0}を{1}回、スポーンしました。"
 
 #: ../../TShockAPI/Commands.cs:2983
 msgid "Spawned a Wall of Flesh."
-msgstr ""
+msgstr " ウォールオブフレッシュを生成しました。"
 
 #: ../../TShockAPI/Commands.cs:412
 msgid "Spawns a number of bosses around you."
-msgstr ""
+msgstr "あなたの周りにたくさんのボスをスポーンさせます。"
 
 #: ../../TShockAPI/Commands.cs:417
 msgid "Spawns a number of mobs around you."
-msgstr ""
+msgstr "周囲にたくさんのモブをスポーンさせます。"
 
 #: ../../TShockAPI/Commands.cs:352
 msgid "Spawns fireworks at a player."
-msgstr ""
+msgstr "プレイヤーに花火をスポーンさせます。"
 
 #: ../../TShockAPI/Rest/Rest.cs:432
 msgid "Specified API endpoint doesn't exist. Refer to the documentation for a list of valid endpoints."
-msgstr ""
+msgstr "指定された API エンドポイントは存在しません。有効なエンドポイントのリストについては、ドキュメントを参照してください。"
 
 #: ../../TShockAPI/SqlLog.cs:344
 #, csharp-format
 msgid "SQL log failed at: {0}. {1}"
-msgstr ""
+msgstr "SQLログに失敗しました: {0}. {1}"
 
 #: ../../TShockAPI/SqlLog.cs:315
 #, csharp-format
 msgid "SQL Log insert query failed: {0}"
-msgstr ""
+msgstr "SQL ログの挿入クエリに失敗しました: {0}"
 
 #: ../../TShockAPI/Commands.cs:5760
 msgid "SSC must be enabled to use this command."
-msgstr ""
+msgstr "このコマンドを使用するには、SSCを有効にする必要があります。"
 
 #: ../../TShockAPI/PlayerData.cs:719
 #, csharp-format
 msgid "SSC restore failed for {0}: {1}"
-msgstr ""
+msgstr "{0}のSSC復元に失敗しました: {1}"
 
 #: ../../TShockAPI/PlayerData.cs:720
 msgid "SSC restore failed. Please rejoin."
-msgstr ""
+msgstr "SSCの復元に失敗しました。再接続してください。"
 
 #: ../../TShockAPI/TSPlayer.cs:528
 #, csharp-format
 msgid "Stack cheat detected. Remove armor {0} ({1}) and then rejoin."
-msgstr ""
+msgstr "スタックチートが検出されました。防具 {0} ({1}) を削除してから、再び参加してください。"
 
 #: ../../TShockAPI/TSPlayer.cs:671
 #, csharp-format
 msgid "Stack cheat detected. Remove Defender's Forge item {0} ({1}) and then rejoin."
-msgstr ""
+msgstr "スタックチートが検出されました。Defender's Forgeのアイテム {0} （{1}）を削除してから、再び参加してください。"
 
 #: ../../TShockAPI/TSPlayer.cs:548
 #, csharp-format
 msgid "Stack cheat detected. Remove dye {0} ({1}) and then rejoin."
-msgstr ""
+msgstr "スタックチートが検出されました。染料 {0} （{1}）を削除してから再び参加してください。"
 
 #: ../../TShockAPI/TSPlayer.cs:508
 #: ../../TShockAPI/TSPlayer.cs:568
 #, csharp-format
 msgid "Stack cheat detected. Remove item {0} ({1}) and then rejoin."
-msgstr ""
+msgstr "スタックチートが検出されました。 {0} ({1}) を削除してから、再び参加してください。"
 
 #: ../../TShockAPI/TSPlayer.cs:588
 #, csharp-format
 msgid "Stack cheat detected. Remove item dye {0} ({1}) and then rejoin."
-msgstr ""
+msgstr "スタックチートが検出されました。アイテム染料 {0} （{1}）を削除してから再び参加してください。"
 
 #: ../../TShockAPI/TSPlayer.cs:712
 #: ../../TShockAPI/TSPlayer.cs:732
 #, csharp-format
 msgid "Stack cheat detected. Remove Loadout 1 item {0} ({1}) and then rejoin."
-msgstr ""
+msgstr "スタックチートが検出されました。ロードアウト1アイテム {0} （{1}）を削除し、再び参加してください。"
 
 #: ../../TShockAPI/TSPlayer.cs:752
 #: ../../TShockAPI/TSPlayer.cs:772
 #, csharp-format
 msgid "Stack cheat detected. Remove Loadout 2 item {0} ({1}) and then rejoin."
-msgstr ""
+msgstr "スタックチートが検出されました。ロードアウト2アイテム {0} （{1}）を削除し、再び参加してください。"
 
 #: ../../TShockAPI/TSPlayer.cs:792
 #: ../../TShockAPI/TSPlayer.cs:812
 #, csharp-format
 msgid "Stack cheat detected. Remove Loadout 3 item {0} ({1}) and then rejoin."
-msgstr ""
+msgstr "スタックチートが検出されました。ロードアウト3アイテム {0} （{1}）を削除し、再び参加してください。"
 
 #: ../../TShockAPI/TSPlayer.cs:609
 #, csharp-format
 msgid "Stack cheat detected. Remove piggy-bank item {0} ({1}) and then rejoin."
-msgstr ""
+msgstr "スタックチートが検出されました。piggy-bankアイテム {0} ({1}) を削除し、再び参加してください。"
 
 #: ../../TShockAPI/TSPlayer.cs:630
 #, csharp-format
 msgid "Stack cheat detected. Remove safe item {0} ({1}) and then rejoin."
-msgstr ""
+msgstr "スタックチートが検出されました。金庫アイテム {0} ({1}) を削除し、再び参加してください。"
 
 #: ../../TShockAPI/TSPlayer.cs:650
 #, csharp-format
 msgid "Stack cheat detected. Remove trash item {0} ({1}) and then rejoin."
-msgstr ""
+msgstr "スタックチートが検出されました。ゴミ箱アイテム {0} ({1}) を削除してから、再び参加してください。"
 
 #: ../../TShockAPI/TSPlayer.cs:692
 #, csharp-format
 msgid "Stack cheat detected. Remove Void Vault item {0} ({1}) and then rejoin."
-msgstr ""
+msgstr "スタックチートが検出されました。Void Vaultアイテム {0} （{1}）を削除し、再び参加してください。"
 
 #: ../../TShockAPI/Commands.cs:2342
 msgid "Started a blood moon event."
-msgstr ""
+msgstr " ブラッドムーンを開始しました。"
 
 #: ../../TShockAPI/Commands.cs:2327
 msgid "Started a full moon event."
-msgstr ""
+msgstr " 満月のイベントを開始しました。"
 
 #: ../../TShockAPI/Commands.cs:2369
 msgid "Started an eclipse."
-msgstr ""
+msgstr " 日食を始めました。"
 
 #: ../../TShockAPI/TShock.cs:940
 msgid "Startup parameter overrode maximum player slot configuration value."
-msgstr ""
+msgstr "スタートアップパラメータが最大プレイヤースロット設定値をオーバーロードしました。"
 
 #: ../../TShockAPI/TShock.cs:922
 msgid "Startup parameter overrode REST enable."
-msgstr ""
+msgstr "スタートアップパラメータがRESTをオーバーロード可能にしました。"
 
 #: ../../TShockAPI/TShock.cs:931
 msgid "Startup parameter overrode REST port."
-msgstr ""
+msgstr "スタートアップパラメータがRESTポートをオーバーロードしました。"
 
 #: ../../TShockAPI/TShock.cs:914
 msgid "Startup parameter overrode REST token."
-msgstr ""
+msgstr "スタートアップパラメータがRESTトークンをオーバーロードしました。"
 
 #: ../../TShockAPI/Commands.cs:2373
 msgid "Stopped an eclipse."
-msgstr ""
+msgstr " 日食を止めました。"
 
 #: ../../TShockAPI/Commands.cs:2346
 msgid "Stopped the current blood moon event."
-msgstr ""
+msgstr " 現在のブラッドムーンを止めた。"
 
 #: ../../TShockAPI/Rest/SecureRest.cs:167
 msgid "Successful login"
-msgstr ""
+msgstr "ログイン完了"
 
 #: ../../TShockAPI/Commands.cs:3540
 msgid "suffix <group> <suffix> - Changes a group's suffix."
-msgstr ""
+msgstr "suffix <group> <suffix> - グループのサフィックスを変更します。"
 
 #: ../../TShockAPI/Commands.cs:3641
 #, csharp-format
 msgid "Suffix of \"{0}\" is \"{1}\"."
-msgstr ""
+msgstr "\"{0}\" のサフィックスは \"{1}\" です。"
 
 #: ../../TShockAPI/Commands.cs:3629
 #, csharp-format
 msgid "Suffix of group \"{0}\" set to \"{1}\"."
-msgstr ""
+msgstr "グループ \"{0}\" のサフィックスが \"{1}\" に設定されています。"
 
 #: ../../TShockAPI/Commands.cs:5891
 msgid "Sync'd!"
-msgstr ""
+msgstr "同期中！"
 
 #: ../../TShockAPI/Handlers/SyncTilePickingHandler.cs:23
 #, csharp-format
 msgid "SyncTilePickingHandler: X and Y position is out of world bounds! - From {0}"
-msgstr ""
+msgstr "SyncTilePickingHandler: XとYの位置がワールドの範囲外です! - {0} から"
 
 #: ../../TShockAPI/Commands.cs:3121
 #, csharp-format
 msgid "Teleported {0} to {1}."
-msgstr ""
+msgstr "{0} を {1}にテレポートしました。"
 
 #: ../../TShockAPI/Commands.cs:3186
 #, csharp-format
 msgid "Teleported {0} to yourself."
-msgstr ""
+msgstr "{0} を自分にテレポートさせました。"
 
 #: ../../TShockAPI/Commands.cs:3100
 #, csharp-format
 msgid "Teleported everyone to {0}."
-msgstr ""
+msgstr "全員を {0}にテレポートさせました。"
 
 #: ../../TShockAPI/Commands.cs:3173
 msgid "Teleported everyone to yourself."
-msgstr ""
+msgstr "全員を自分にテレポートさせました。"
 
 #: ../../TShockAPI/Commands.cs:3275
 #, csharp-format
 msgid "Teleported to {0}, {1}."
-msgstr ""
+msgstr "{0}にテレポートしました, {1}。"
 
 #: ../../TShockAPI/Commands.cs:3046
 #, csharp-format
 msgid "Teleported to {0}."
-msgstr ""
+msgstr "{0} にテレポートしました。"
 
 #: ../../TShockAPI/Commands.cs:3229
 #, csharp-format
 msgid "Teleported to the '{0}'."
-msgstr ""
+msgstr "'{0}' にテレポートしました。"
 
 #: ../../TShockAPI/Commands.cs:3015
 msgid "Teleported to the map's spawn point."
-msgstr ""
+msgstr "マップのスポーン地点にテレポートしました。"
 
 #: ../../TShockAPI/Commands.cs:3009
 msgid "Teleported to your spawn point (home)."
-msgstr ""
+msgstr "スポーン地点（ホーム）にテレポートしました"
 
 #: ../../TShockAPI/Commands.cs:442
 msgid "Teleports a player to another player."
-msgstr ""
+msgstr "プレイヤーを別のプレイヤーにテレポートします。"
 
 #: ../../TShockAPI/Commands.cs:447
 msgid "Teleports a player to yourself."
-msgstr ""
+msgstr "プレイヤーを自分にテレポートします。"
 
 #: ../../TShockAPI/Commands.cs:588
 msgid "Teleports you to a warp point or manages warps."
-msgstr ""
+msgstr "ワープポイントまたはワープを管理します。"
 
 #: ../../TShockAPI/Commands.cs:452
 msgid "Teleports you to an npc."
-msgstr ""
+msgstr "npc にテレポートします。"
 
 #: ../../TShockAPI/Commands.cs:457
 msgid "Teleports you to tile coordinates."
-msgstr ""
+msgstr "タイルの座標にテレポートします。"
 
 #: ../../TShockAPI/Commands.cs:330
 msgid "Temporarily elevates you to Super Admin."
-msgstr ""
+msgstr "一時的に上級管理者に昇格します。"
 
 #: ../../TShockAPI/Commands.cs:326
 msgid "Temporarily sets another player's group."
-msgstr ""
+msgstr "一時的に他のプレイヤーのグループを設定します。"
 
 #: ../../TShockAPI/Commands.cs:4852
 msgid "Temporary region set points have been removed."
-msgstr ""
+msgstr "一時領域設定ポイントが削除されました。"
 
 #: ../../TShockAPI/Commands.cs:5504
 msgid "Temporary system access has been given to you, so you can run one command."
-msgstr ""
+msgstr "一時的なシステムアクセスが与えられました。1つのコマンドを実行できます。"
 
 #: ../../TShockAPI/Commands.cs:5480
 msgid "Thank you for using TShock for Terraria!"
-msgstr ""
+msgstr "TShock for Terrariaをご利用いただき、ありがとうございます!"
 
 #: ../../TShockAPI/Commands.cs:1223
 msgid "That group does not exist."
-msgstr ""
+msgstr "そのグループは存在しません。"
 
 #: ../../TShockAPI/DB/BanManager.cs:256
 msgid "The ban is invalid because a current ban for this identifier already exists."
-msgstr ""
+msgstr "この識別子の現在のBANが既に存在するため、BANは無効です。"
 
 #: ../../TShockAPI/DB/BanManager.cs:293
 msgid "The ban was not valid for an unknown reason."
-msgstr ""
+msgstr "BANは不明な理由で有効ではありませんでした。"
 
 #: ../../TShockAPI/Commands.cs:2726
 msgid "the Brain of Cthulhu"
-msgstr ""
+msgstr "Brain of Cthulhu"
 
 #: ../../TShockAPI/Commands.cs:4614
 #, csharp-format
 msgid "The current time is {0}:{1:D2}."
-msgstr ""
+msgstr "現在の時刻は {0}:{1:D2} です。"
 
 #: ../../TShockAPI/DB/GroupManager.cs:251
 msgid "The default usergroup could not be found."
-msgstr ""
+msgstr "デフォルトのユーザーグループが見つかりません。"
 
 #: ../../TShockAPI/DB/GroupManager.cs:250
 msgid "The default usergroup could not be found. This may indicate a typo in the configuration file, or that the group was renamed or deleted."
-msgstr ""
+msgstr "デフォルトのユーザーグループが見つかりませんでした。これは設定ファイルに誤植があるか、グループの名前が変更されたか削除されたことを示しています。"
 
 #: ../../TShockAPI/Commands.cs:3266
 msgid "The destination coordinates provided don't look like valid numbers."
-msgstr ""
+msgstr "指定された座標は有効な数字ではありません。"
 
 #: ../../TShockAPI/Commands.cs:3426
 #: ../../TShockAPI/Commands.cs:3441
 #, csharp-format
 msgid "The destination warp, {0}, was not found."
-msgstr ""
+msgstr "ワープ先の {0}が見つかりませんでした。"
 
 #: ../../TShockAPI/Commands.cs:2733
 msgid "the Destroyer"
-msgstr ""
+msgstr "Destroyer"
 
 #: ../../TShockAPI/Commands.cs:4478
 msgid "The dungeon's position has now been set at your location."
-msgstr ""
+msgstr "ダンジョンの位置があなたの位置に設定されました。"
 
 #: ../../TShockAPI/Commands.cs:2747
 msgid "the Eater of Worlds"
-msgstr ""
+msgstr "Eater of Worlds"
 
 #: ../../TShockAPI/Commands.cs:2828
 msgid "the Empress of Light"
-msgstr ""
+msgstr "Empress of Light"
 
 #: ../../TShockAPI/Commands.cs:2755
 msgid "the Eye of Cthulhu"
-msgstr ""
+msgstr "Eye of Cthulhu"
 
 #: ../../TShockAPI/Commands.cs:2854
 msgid "the Flying Dutchman"
-msgstr ""
+msgstr "Flying Dutchman"
 
 #: ../../TShockAPI/Commands.cs:2760
 msgid "the Golem"
-msgstr ""
+msgstr "Golem"
 
 #: ../../TShockAPI/DB/GroupManager.cs:631
 #, csharp-format
 msgid "The group {0} appeared more than once. Keeping current group settings."
-msgstr ""
+msgstr "グループ {0} が複数回出現しました。現在のグループ設定を維持します。"
 
 #: ../../TShockAPI/DB/GroupManager.cs:245
 msgid "The guest group could not be found."
-msgstr ""
+msgstr "ゲストグループが見つかりません。"
 
 #: ../../TShockAPI/DB/GroupManager.cs:244
 msgid "The guest group could not be found. This may indicate a typo in the configuration file, or that the group was renamed or deleted."
-msgstr ""
+msgstr "ゲストグループが見つかりませんでした。設定ファイルに誤植があるか、グループの名前を変更または削除されたことを示している可能性があります。"
 
 #: ../../TShockAPI/Commands.cs:2880
 msgid "the Ice Queen"
-msgstr ""
+msgstr "氷の女王"
 
 #: ../../TShockAPI/Commands.cs:5469
 msgid "The initial setup system is disabled. This incident has been logged."
-msgstr ""
+msgstr "初期設定システムが無効になっています。このインシデントは記録されました。"
 
 #: ../../TShockAPI/Commands.cs:6254
 #, csharp-format
 msgid "The item type {0} is invalid."
-msgstr ""
+msgstr "アイテムタイプ {0} は無効です。"
 
 #: ../../TShockAPI/Commands.cs:2767
 msgid "the King Slime"
-msgstr ""
+msgstr "キングスライム"
 
 #: ../../TShockAPI/Commands.cs:2842
 msgid "the Lunatic Cultist"
-msgstr ""
+msgstr "Lunatic Cultist"
 
 #: ../../TShockAPI/PaginationTools.cs:185
 msgid "The method referenced by LineFormatter has thrown an exception. See inner exception for details."
-msgstr ""
+msgstr "LineFormatter によって参照されるメソッドは例外を投げています。詳細は内部例外を参照してください。"
 
 #: ../../TShockAPI/PaginationTools.cs:247
 msgid "The method represented by termFormatter has thrown an exception. See inner exception for details."
-msgstr ""
+msgstr "termFormatter で表されるメソッドは例外を投げています。詳細は内部例外を参照してください。"
 
 #: ../../TShockAPI/Commands.cs:2821
 msgid "the Moon Lord"
-msgstr ""
+msgstr "ムーンロード"
 
 #: ../../TShockAPI/Commands.cs:3502
 msgid "The permissions have been added to all of the groups in the system."
-msgstr ""
+msgstr "システム内のすべてのグループに権限が追加されました。"
 
 #: ../../TShockAPI/Commands.cs:3807
 msgid "The permissions have been removed from all of the groups in the system."
-msgstr ""
+msgstr "システム内のすべてのグループから権限が削除されました。"
 
 #: ../../TShockAPI/Commands.cs:1912
 msgid "The player's character data was successfully uploaded from their initial connection."
-msgstr ""
+msgstr "プレイヤーのキャラクターデータは、最初の接続から正常にアップロードされました。"
 
 #: ../../TShockAPI/Commands.cs:2864
 msgid "the Pumpking"
-msgstr ""
+msgstr "Pumpking"
 
 #: ../../TShockAPI/Commands.cs:2785
 msgid "the Queen Bee"
-msgstr ""
+msgstr "女王蜂"
 
 #: ../../TShockAPI/Commands.cs:2834
 msgid "the Queen Slime"
-msgstr ""
+msgstr "クイーンスライム"
 
 #: ../../TShockAPI/Rest/RestManager.cs:158
 msgid "The REST authentication token."
-msgstr ""
+msgstr "REST 認証トークン"
 
 #: ../../TShockAPI/UpdateManager.cs:150
 msgid "The server is out of date. Latest version: "
-msgstr ""
+msgstr "サーバーは古いバージョンです。最新バージョン: "
 
 #: ../../TShockAPI/Commands.cs:4587
 msgid "The spawn rate you provided is out-of-range or not a number."
-msgstr ""
+msgstr "指定したスポーン率は正しくありません。"
 
 #: ../../TShockAPI/Rest/SecureRest.cs:90
 msgid "The specified token queued for destruction failed to be deleted."
-msgstr ""
+msgstr "指定されたトークンは削除に失敗しました。"
 
 #: ../../TShockAPI/Commands.cs:1921
 msgid "The target player has not logged in yet."
-msgstr ""
+msgstr "指定のプレイヤーはまだログインしていません。"
 
 #: ../../TShockAPI/Commands.cs:1901
 msgid "The targeted user cannot have their data uploaded, because they are not a player."
-msgstr ""
+msgstr "指定のユーザーはプレイヤーではないため、データをアップロードできません。"
 
 #: ../../TShockAPI/Commands.cs:2799
 msgid "the Twins"
-msgstr ""
+msgstr "Twins"
 
 #: ../../TShockAPI/Commands.cs:1169
 #, csharp-format
 msgid "The user {0} does not exist! Therefore, the account was not deleted."
-msgstr ""
+msgstr "ユーザー {0} が存在しません。したがって、アカウントは削除されませんでした。"
 
 #: ../../TShockAPI/PaginationTools.cs:95
 msgid "The value has to be greater than or equal to zero."
-msgstr ""
+msgstr "値はゼロ以上でなければなりません。"
 
 #: ../../TShockAPI/PaginationTools.cs:81
 msgid "The value has to be greater than zero."
-msgstr ""
+msgstr "値は 0 より大きくなければなりません。"
 
 #: ../../TShockPluginManager/NugetCLI.cs:127
 msgid "The versions of plugins you requested aren't compatible with eachother."
@@ -6203,7 +6203,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:2814
 msgid "the Wall of Flesh"
-msgstr ""
+msgstr "Wall of Flesh"
 
 #: ../../TShockAPI/Bouncer.cs:903
 msgid "The world's chest limit has been reached - unable to place more."
@@ -6211,96 +6211,96 @@ msgstr "ワールドのチェスト上限に達しました。これ以上設置
 
 #: ../../TShockAPI/Commands.cs:1709
 msgid "There are currently no active bans."
-msgstr ""
+msgstr "現在有効なBANはありません。"
 
 #: ../../TShockAPI/Commands.cs:2146
 msgid "There are currently no active REST users."
-msgstr ""
+msgstr "アクティブなRESTユーザーは現在いません。"
 
 #: ../../TShockAPI/Commands.cs:1471
 msgid "There are currently no available identifiers."
-msgstr ""
+msgstr "現在利用可能な識別子はありません。"
 
 #: ../../TShockAPI/Commands.cs:4093
 msgid "There are currently no banned items."
-msgstr ""
+msgstr "BANされたアイテムはありません。"
 
 #: ../../TShockAPI/Commands.cs:4271
 msgid "There are currently no banned projectiles."
-msgstr ""
+msgstr "BANされた発射物はありません。"
 
 #: ../../TShockAPI/Commands.cs:4447
 msgid "There are currently no banned tiles."
-msgstr ""
+msgstr "BANされたタイルはありません。"
 
 #: ../../TShockAPI/Commands.cs:3868
 #, csharp-format
 msgid "There are currently no permissions for {0}."
-msgstr ""
+msgstr "{0} に対する権限がありません。"
 
 #: ../../TShockAPI/Commands.cs:5434
 #: ../../TShockAPI/Commands.cs:5909
 #: ../../TShockAPI/Commands.cs:5925
 msgid "There are currently no players online."
-msgstr ""
+msgstr "現在オンラインのプレイヤーはいません。"
 
 #: ../../TShockAPI/Commands.cs:5010
 msgid "There are currently no regions defined."
-msgstr ""
+msgstr "現在、定義されている地域はありません。"
 
 #: ../../TShockAPI/Commands.cs:3322
 msgid "There are currently no warps defined."
-msgstr ""
+msgstr "現在、定義されているワープはありません。"
 
 #: ../../TShockAPI/RegionHandler.cs:155
 msgid "There are no regions at this point, or they are not protected."
-msgstr ""
+msgstr "この時点には地域がないか、または保護されていません。"
 
 #: ../../TShockAPI/RegionHandler.cs:154
 msgid "There are no regions at this point."
-msgstr ""
+msgstr "この時点で地域はありません。"
 
 #: ../../TShockAPI/Commands.cs:2805
 msgid "There is already a Wall of Flesh."
-msgstr ""
+msgstr "すでにWall of Fleshが存在してます。"
 
 #: ../../TShockAPI/Commands.cs:969
 msgid "There was an error processing your login or authentication related request."
-msgstr ""
+msgstr "ログインまたは認証関連のリクエストの処理中にエラーが発生しました。"
 
 #: ../../TShockPluginManager/NugetCLI.cs:121
 msgid "There was an issue figuring out what to download."
-msgstr ""
+msgstr "ダウンロードを把握する際、問題が発生しました。"
 
 #: ../../TShockPluginManager/NugetCLI.cs:90
 msgid "There was an issue reading the packages.json."
-msgstr ""
+msgstr "packages.jsonを読み込む際、問題が発生しました。"
 
 #: ../../TShockPluginManager/NugetCLI.cs:99
 #, csharp-format
 msgid "This is the plugin you requested to install."
 msgid_plural "These are the plugins you requested to install"
-msgstr[0] ""
+msgstr[0] "リクエストしたプラグインです"
 
 #: ../../TShockAPI/TShock.cs:1026
 #: ../../TShockAPI/TShock.cs:1036
 #, csharp-format
 msgid "This token will display until disabled by verification. ({0}setup)"
-msgstr ""
+msgstr "このトークンは検証によって無効にされるまで表示されます。({0}setup)"
 
 #: ../../TShockAPI/Commands.cs:4333
 #: ../../TShockAPI/Commands.cs:4391
 #, csharp-format
 msgid "Tile {0} is not banned."
-msgstr ""
+msgstr "タイル {0} は禁止されていません。"
 
 #: ../../TShockAPI/Commands.cs:4427
 msgid "Tile Ban Sub-Commands ({{0}}/{{1}}):"
-msgstr ""
+msgstr "タイル禁止サブコマンド ({{0}}/{{1}}):"
 
 #: ../../TShockAPI/Commands.cs:4445
 msgid "Tile bans ({{0}}/{{1}}):"
-msgstr ""
+msgstr "タイル禁止 ({{0}}/{{1}}):"
 
 #: ../../TShockAPI/Bouncer.cs:1016
 #, csharp-format
@@ -6315,69 +6315,69 @@ msgstr "タイルの場所のしきい値が {0}を超えました。"
 #: ../../TShockAPI/Commands.cs:6577
 #, csharp-format
 msgid "To buff a player without them knowing, use {0} instead of {1}"
-msgstr ""
+msgstr "知らせずにプレイヤーをバフするには、 {0} の代わりに {1}を使います。"
 
 #: ../../TShockAPI/Commands.cs:6172
 #: ../../TShockAPI/Commands.cs:6468
 #, csharp-format
 msgid "To execute this command silently, use {0} instead of {1}"
-msgstr ""
+msgstr "知らせずにこのコマンドを実行するには、 {0} の代わりに {1} を使用してください"
 
 #: ../../TShockAPI/Commands.cs:6171
 #, csharp-format
 msgid "To get rid of NPCs without making them drop items, use the {0} command instead."
-msgstr ""
+msgstr "アイテムをドロップせずに NPC を取り除くには、代わりに {0} コマンドを使用します。"
 
 #: ../../TShockAPI/Commands.cs:5557
 #, csharp-format
 msgid "To mute a player without broadcasting to chat, use the command with {0} instead of {1}"
-msgstr ""
+msgstr "知らせずにプレイヤーをミュートするには、 {0} の代わりに {1}でコマンドを使用してください"
 
 #: ../../TShockAPI/TShock.cs:1025
 #: ../../TShockAPI/TShock.cs:1035
 #, csharp-format
 msgid "To setup the server, join the game and type {0}setup {1}"
-msgstr ""
+msgstr "サーバーをセットアップするには、ゲームに参加して入力してください。{0}setup {1}"
 
 #: ../../TShockAPI/Commands.cs:477
 msgid "Toggles build protection."
-msgstr ""
+msgstr "建築保護を切り替えます。"
 
 #: ../../TShockAPI/Commands.cs:490
 msgid "Toggles christmas mode (present spawning, santa, etc)."
-msgstr ""
+msgstr "クリスマスモードを切り替えます (現在のスポーン、サンタなど)。"
 
 #: ../../TShockAPI/Commands.cs:551
 msgid "Toggles godmode on a player."
-msgstr ""
+msgstr "プレイヤーの神モードを切り替えます。"
 
 #: ../../TShockAPI/Commands.cs:486
 msgid "Toggles halloween mode (goodie bags, pumpkins, etc)."
-msgstr ""
+msgstr "ハロウィーンモードを切り替えます(グッズバッグ、カボチャなど)。"
 
 #: ../../TShockAPI/Commands.cs:502
 msgid "Toggles spawn protection."
-msgstr ""
+msgstr "スポーン保護を切り替えます。"
 
 #: ../../TShockAPI/Commands.cs:498
 msgid "Toggles the world's hardmode status."
-msgstr ""
+msgstr "世界のハードモードの状態を切り替えます。"
 
 #: ../../TShockAPI/Commands.cs:597
 msgid "Toggles to either ignore or recieve whispers from other players."
-msgstr ""
+msgstr "他のプレイヤーからのウィスパーを受信するかを切り替えます。"
 
 #: ../../TShockAPI/Commands.cs:467
 msgid "Toggles whether other people can teleport you."
-msgstr ""
+msgstr "他の人があなたをテレポートできるかどうかを切り替えます。"
 
 #: ../../TShockAPI/Commands.cs:282
 msgid "Toggles whether you receive server logs."
-msgstr ""
+msgstr "サーバログを受信するかどうかを切り替えます。"
 
 #: ../../TShockAPI/Commands.cs:810
 msgid "Too many invalid login attempts."
-msgstr ""
+msgstr "無効なログイン試行回数が多すぎます。"
 
 #: ../../TShockAPI/Commands.cs:6803
 msgid "Topaz Gemtree"
@@ -6386,11 +6386,11 @@ msgstr "トパーズの木"
 #: ../../TShockAPI/Commands.cs:1261
 #, csharp-format
 msgid "Total processor time: {0}"
-msgstr ""
+msgstr "プロセッサの合計時間: {0}"
 
 #: ../../TShockAPI/Commands.cs:5295
 msgid "tp <region> - Teleports you to the given region's center."
-msgstr ""
+msgstr "tp <region> - 特定の地域の中心にテレポートします。"
 
 #: ../../TShockAPI/Commands.cs:6668
 msgid "Trees types & misc available to use. ({{0}}/{{1}}):"
@@ -6399,7 +6399,7 @@ msgstr "ツリーの種類とその他利用可能です。({{0}}/{{1}}):"
 #: ../../TShockAPI/Commands.cs:6857
 #, csharp-format
 msgid "Tried to grow a {0}."
-msgstr ""
+msgstr "{0} を育てようとしました。"
 
 #: ../../TShockAPI/TShock.cs:382
 #, csharp-format
