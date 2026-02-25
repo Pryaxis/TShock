@@ -65,6 +65,9 @@ namespace TShockAPI
 		public int enabledSuperCart;
 		public int deathsPVE;
 		public int deathsPVP;
+		public int? voiceVariant;
+		public float? voicePitchOffset;
+		public int team;
 
 		/// <summary>
 		/// Sets the default values for the inventory.
@@ -157,6 +160,9 @@ namespace TShockAPI
 			this.enabledSuperCart = player.TPlayer.enabledSuperCart ? 1 : 0;
 			this.deathsPVE = player.TPlayer.numberOfDeathsPVE;
 			this.deathsPVP = player.TPlayer.numberOfDeathsPVP;
+			this.voiceVariant = player.TPlayer.voiceVariant;
+			this.voicePitchOffset = player.TPlayer.voicePitchOffset;
+			this.team = player.TPlayer.team;
 
 			Item[] inventory = player.TPlayer.inventory;
 			Item[] armor = player.TPlayer.armor;
@@ -302,9 +308,20 @@ namespace TShockAPI
 			player.TPlayer.enabledSuperCart = this.enabledSuperCart == 1;
 			player.sscDeathsPVE = this.deathsPVE;
 			player.sscDeathsPVP = this.deathsPVP;
+			player.TPlayer.team = this.team;
 
-			if (extraSlot != null)
-				player.TPlayer.extraAccessory = extraSlot.Value == 1 ? true : false;
+			string pvpMode = TShock.Config.Settings.PvPMode.ToLowerInvariant();
+			if (pvpMode == "pvpwithnoteam")
+				player.TPlayer.team = 0;
+
+			player.TPlayer.extraAccessory = extraSlot.HasValue && extraSlot.Value == 1 ? true : false;
+
+			if (this.voiceVariant != null)
+				player.TPlayer.voiceVariant = this.voiceVariant.Value;
+
+			if (this.voicePitchOffset != null)
+				player.TPlayer.voicePitchOffset = this.voicePitchOffset.Value;
+
 			if (this.skinVariant != null)
 				player.TPlayer.skinVariant = this.skinVariant.Value;
 			if (this.hair != null)
@@ -607,6 +624,7 @@ namespace TShockAPI
 			NetMessage.SendData(4, -1, -1, NetworkText.FromLiteral(player.Name), player.Index, 0f, 0f, 0f, 0);
 			NetMessage.SendData(42, -1, -1, NetworkText.Empty, player.Index, 0f, 0f, 0f, 0);
 			NetMessage.SendData(16, -1, -1, NetworkText.Empty, player.Index, 0f, 0f, 0f, 0);
+			NetMessage.SendData(45, -1, -1, NetworkText.Empty, player.Index);
 
 			for (int k = 0; k < NetItem.InventorySlots; k++)
 			{

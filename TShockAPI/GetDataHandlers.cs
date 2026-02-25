@@ -98,7 +98,7 @@ namespace TShockAPI
 					{ PacketTypes.NpcTalk, HandleNpcTalk },
 					{ PacketTypes.PlayerAnimation, HandlePlayerAnimation },
 					{ PacketTypes.PlayerMana, HandlePlayerMana },
-					{ PacketTypes.PlayerTeam, HandlePlayerTeam },
+					{ PacketTypes.PlayerTeam, HandlePlayerTeam }, // Clients no longer send this packet, but still here because the server still accepts it
 					{ PacketTypes.SignRead, HandleSignRead },
 					{ PacketTypes.SignNew, HandleSign },
 					{ PacketTypes.LiquidSet, HandleLiquidSet },
@@ -141,7 +141,8 @@ namespace TShockAPI
 					{ PacketTypes.FishOutNPC, HandleFishOutNPC },
 					{ PacketTypes.FoodPlatterTryPlacing, HandleFoodPlatterTryPlacing },
 					{ PacketTypes.SyncCavernMonsterType, HandleSyncCavernMonsterType },
-					{ PacketTypes.SyncLoadout, HandleSyncLoadout }
+					{ PacketTypes.SyncLoadout, HandleSyncLoadout },
+					{ PacketTypes.TeamChangeFromUI, HandlePlayerTeam } // Same packet as PlayerTeam
 				};
 		}
 
