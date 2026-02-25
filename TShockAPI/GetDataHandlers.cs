@@ -3571,6 +3571,16 @@ namespace TShockAPI
 			if (id != args.Player.Index)
 				return true;
 
+			if (team == args.Player.Team) // No need to handle, interferes with SSC if we do.
+				return true;
+
+			if (args.Player.IgnoreSSCPackets)
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandlePlayerTeam rejected ignore ssc packets"));
+				args.Player.SendData(PacketTypes.PlayerTeam, "", args.Player.Index);
+				return true;
+			}
+
 			string pvpMode = TShock.Config.Settings.PvPMode.ToLowerInvariant();
 			if (pvpMode == "pvpwithnoteam" || (DateTime.UtcNow - args.Player.LastPvPTeamChange).TotalSeconds < 5)
 			{

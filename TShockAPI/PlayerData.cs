@@ -318,10 +318,8 @@ namespace TShockAPI
 
 			if (this.voiceVariant != null)
 				player.TPlayer.voiceVariant = this.voiceVariant.Value;
-
 			if (this.voicePitchOffset != null)
 				player.TPlayer.voicePitchOffset = this.voicePitchOffset.Value;
-
 			if (this.skinVariant != null)
 				player.TPlayer.skinVariant = this.skinVariant.Value;
 			if (this.hair != null)
@@ -624,7 +622,6 @@ namespace TShockAPI
 			NetMessage.SendData(4, -1, -1, NetworkText.FromLiteral(player.Name), player.Index, 0f, 0f, 0f, 0);
 			NetMessage.SendData(42, -1, -1, NetworkText.Empty, player.Index, 0f, 0f, 0f, 0);
 			NetMessage.SendData(16, -1, -1, NetworkText.Empty, player.Index, 0f, 0f, 0f, 0);
-			NetMessage.SendData(45, -1, -1, NetworkText.Empty, player.Index);
 
 			for (int k = 0; k < NetItem.InventorySlots; k++)
 			{
@@ -710,6 +707,9 @@ namespace TShockAPI
 
 			NetMessage.SendData(76, player.Index, -1, NetworkText.Empty, player.Index);
 			NetMessage.SendData(76, -1, -1, NetworkText.Empty, player.Index);
+
+			NetMessage.SendData(45, player.Index, -1, NetworkText.Empty, player.Index);
+			NetMessage.SendData(45, -1, -1, NetworkText.Empty, player.Index);
 
 			NetMessage.SendData(39, player.Index, -1, NetworkText.Empty, 400);
 
