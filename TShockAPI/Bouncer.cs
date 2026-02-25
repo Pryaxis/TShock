@@ -586,9 +586,7 @@ namespace TShockAPI
 						}
 
 						// ??
-						var lastTileX = args.Player.LastNetPosition.X;
-						var lastTileY = args.Player.LastNetPosition.Y - 48;
-						if (!args.Player.Teleport(lastTileX, lastTileY))
+						if (!args.Player.Teleport(args.Player.LastNetPosition))
 						{
 							args.Player.Spawn(PlayerSpawnContext.RecallFromItem);
 						}

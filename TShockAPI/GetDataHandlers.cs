@@ -4053,7 +4053,7 @@ namespace TShockAPI
 			{
 				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleTeleport rejected rod type {0} {1}", args.Player.Name, type));
 				args.Player.SendErrorMessage(GetString("You do not have permission to teleport using items.")); // Was going to write using RoD but Hook of Disonnance and Potion of Return both use the same teleport packet as RoD.
-				args.Player.Teleport(args.TPlayer.position.X, args.TPlayer.position.Y); // Suggest renaming rod permission unless someone plans to add separate perms for the other 2 tp items.
+				args.Player.Teleport(args.Player.TPlayer.position); // Suggest renaming rod permission unless someone plans to add separate perms for the other 2 tp items.
 				return true;
 			}
 
@@ -4077,7 +4077,7 @@ namespace TShockAPI
 				{
 					TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleTeleport rejected p2p wormhole permission {0} {1}", args.Player.Name, type));
 					args.Player.SendErrorMessage(GetString("You do not have permission to teleport using Wormhole Potions."));
-					args.Player.Teleport(args.TPlayer.position.X, args.TPlayer.position.Y);
+					args.Player.Teleport(args.Player.TPlayer.position);
 					return true;
 				}
 			}

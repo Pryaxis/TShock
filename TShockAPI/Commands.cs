@@ -3011,7 +3011,7 @@ namespace TShockAPI
 
 		private static void Spawn(CommandArgs args)
 		{
-			if (args.Player.Teleport(Main.spawnTileX * 16, (Main.spawnTileY * 16) - 48))
+			if (args.Player.TeleportToWorldSpawn())
 				args.Player.SendSuccessMessage(GetString("Teleported to the map's spawn point."));
 		}
 
@@ -3041,7 +3041,7 @@ namespace TShockAPI
 						args.Player.SendErrorMessage(GetString("{0} has disabled incoming teleports.", target.Name));
 						return;
 					}
-					if (args.Player.Teleport(target.TPlayer.position.X, target.TPlayer.position.Y))
+					if (args.Player.Teleport(target.TPlayer.Bottom, true))
 					{
 						args.Player.SendSuccessMessage(GetString("Teleported to {0}.", target.Name));
 						if (!args.Player.HasPermission(Permissions.tpsilent))
@@ -3079,7 +3079,7 @@ namespace TShockAPI
 						{
 							if (!target.TPAllow && !args.Player.HasPermission(Permissions.tpoverride))
 								continue;
-							if (source.Teleport(target.TPlayer.position.X, target.TPlayer.position.Y))
+							if (source.Teleport(target.TPlayer.Bottom, true))
 							{
 								if (args.Player != source)
 								{
@@ -3119,7 +3119,7 @@ namespace TShockAPI
 						return;
 					}
 					args.Player.SendSuccessMessage(GetString("Teleported {0} to {1}.", source.Name, target.Name));
-					if (source.Teleport(target.TPlayer.position.X, target.TPlayer.position.Y))
+					if (source.Teleport(target.TPlayer.Bottom, true))
 					{
 						if (args.Player != source)
 						{
@@ -3166,7 +3166,7 @@ namespace TShockAPI
 					{
 						if (player != null && player.Active && player.Index != args.Player.Index)
 						{
-							if (player.Teleport(args.TPlayer.position.X, args.TPlayer.position.Y))
+							if (player.Teleport(args.Player.TPlayer.Bottom, true))
 								player.SendSuccessMessage(GetString("You were teleported to {0}.", args.Player.Name));
 						}
 					}
@@ -3180,7 +3180,7 @@ namespace TShockAPI
 			else
 			{
 				var plr = players[0];
-				if (plr.Teleport(args.TPlayer.position.X, args.TPlayer.position.Y))
+				if (plr.Teleport(args.Player.TPlayer.Bottom, true))
 				{
 					plr.SendInfoMessage(GetString("You were teleported to {0}.", args.Player.Name));
 					args.Player.SendSuccessMessage(GetString("Teleported {0} to yourself.", plr.Name));
@@ -3225,7 +3225,7 @@ namespace TShockAPI
 			}
 
 			var target = matches[0];
-			args.Player.Teleport(target.position.X, target.position.Y);
+			args.Player.Teleport(target.Bottom, true);
 			args.Player.SendSuccessMessage(GetString("Teleported to the '{0}'.", target.FullName));
 		}
 
@@ -3333,7 +3333,8 @@ namespace TShockAPI
 					{
 						args.Player.SendErrorMessage(GetString("Invalid warp name. The names 'list', 'hide', 'del' and 'add' are reserved for commands."));
 					}
-					else if (TShock.Warps.Add(args.Player.TileX, args.Player.TileY, warpName))
+					// For compatibility, warps are technically floating, so we have to add it at the player's Y position without any mount influence.
+					else if (TShock.Warps.Add(args.Player.CenterTileX, args.Player.UnmountedTileY, warpName))
 					{
 						args.Player.SendSuccessMessage(GetString($"Warp added: {warpName}."));
 					}
@@ -3415,7 +3416,8 @@ namespace TShockAPI
 				var plr = foundplr[0];
 				if (warp != null)
 				{
-					if (plr.Teleport(warp.Position.X * 16, warp.Position.Y * 16))
+					// For compatibility, warps are technically floating, so we have to move the target position down by 3 blocks.
+					if (plr.Teleport(new Vector2(warp.Position.X * 16 + (plr.TPlayer.width / 2), (warp.Position.Y + 3) * 16), true))
 					{
 						plr.SendSuccessMessage(GetString("{0} warped you to {1}.", args.Player.Name, warpName));
 						args.Player.SendSuccessMessage(GetString("You warped {0} to {1}.", plr.Name, warpName));
@@ -3433,7 +3435,8 @@ namespace TShockAPI
 				var warp = TShock.Warps.Find(warpName);
 				if (warp != null)
 				{
-					if (args.Player.Teleport(warp.Position.X * 16, warp.Position.Y * 16))
+					// For compatibility, warps are technically floating, so we have to move the target position down by 3 blocks.
+					if (args.Player.Teleport(new Vector2(warp.Position.X * 16 + (args.Player.TPlayer.width / 2), (warp.Position.Y + 3) * 16), true))
 						args.Player.SendSuccessMessage(GetString($"Warped to {warpName}."));
 				}
 				else
@@ -5261,7 +5264,7 @@ namespace TShockAPI
 							break;
 						}
 
-						args.Player.Teleport(region.Area.Center.X * 16, region.Area.Center.Y * 16);
+						args.Player.TeleportCentered(region.Area.Center.ToWorldCoordinates());
 						break;
 					}
 				case "help":
