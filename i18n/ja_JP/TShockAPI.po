@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2026-02-24 14:15:24+0000\n"
-"PO-Revision-Date: 2026-02-25 10:45\n"
+"PO-Revision-Date: 2026-02-25 11:50\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
@@ -1704,95 +1704,95 @@ msgstr "Bouncer / OnFishOutNPC {0}、アクティブなボバー投射物を見�
 #: ../../TShockAPI/Bouncer.cs:2947
 #, csharp-format
 msgid "Bouncer / OnFishOutNPC rejected for not using a fishing rod! - From {0}"
-msgstr ""
+msgstr "Bouncer / OnFishOutNPC {0}、釣り竿を使用していないため拒否されました。"
 
 #: ../../TShockAPI/Bouncer.cs:2959
 #, csharp-format
 msgid "Bouncer / OnFishOutNPC rejected for the NPC not being on the fishable NPCs list! - From {0}"
-msgstr ""
+msgstr "Bouncer / OnFishOutNPC {0}、NPCリストにないため拒否されました。"
 
 #: ../../TShockAPI/Bouncer.cs:2971
 #, csharp-format
 msgid "Bouncer / OnFishOutNPC rejected range checks from {0}"
-msgstr ""
+msgstr "Bouncer / OnFishOutNPC {0}、範囲チェックのため拒否されました。"
 
 #: ../../TShockAPI/Bouncer.cs:2965
 #, csharp-format
 msgid "Bouncer / OnFishOutNPC rejected summon boss permissions from {0}"
-msgstr ""
+msgstr "Bouncer / OnFishOutNPC {0}、ボス召喚権限のため拒否されました。"
 
 #: ../../TShockAPI/Bouncer.cs:2999
 #, csharp-format
 msgid "Bouncer / OnFoodPlatterTryPlacing rejected disabled from {0}"
-msgstr ""
+msgstr "Bouncer / OnFoodPlatterTryPlacing {0}、無効のため拒否されました。"
 
 #: ../../TShockAPI/Bouncer.cs:2992
 #, csharp-format
 msgid "Bouncer / OnFoodPlatterTryPlacing rejected item not placed by hand from {0}"
-msgstr ""
+msgstr "Bouncer / OnFoodPlatterTryPlacing {0}、手動で設置のため拒否されました。"
 
 #: ../../TShockAPI/Bouncer.cs:3010
 #, csharp-format
 msgid "Bouncer / OnFoodPlatterTryPlacing rejected permissions from {0}"
-msgstr ""
+msgstr "Bouncer / OnFoodPlatterTryPlacing {0}、権限のため拒否されました。"
 
 #: ../../TShockAPI/Bouncer.cs:3021
 #, csharp-format
 msgid "Bouncer / OnFoodPlatterTryPlacing rejected range checks from {0}"
-msgstr ""
+msgstr "Bouncer / OnFoodPlatterTryPlacing {0}、範囲チェックのため拒否されました。"
 
 #: ../../TShockAPI/Bouncer.cs:2985
 #, csharp-format
 msgid "Bouncer / OnFoodPlatterTryPlacing rejected tile placement valid from {0}"
-msgstr ""
+msgstr "Bouncer / OnFoodPlatterTryPlacing {0}、タイル設置のため拒否されました。"
 
 #: ../../TShockAPI/Bouncer.cs:2714
 #, csharp-format
 msgid "Bouncer / OnGemLockToggle invalid placement/deadmod from {0}"
-msgstr ""
+msgstr "Bouncer / OnGemLockToggle {0}、無効な配置のため拒否されました。"
 
 #: ../../TShockAPI/Bouncer.cs:2707
 #, csharp-format
 msgid "Bouncer / OnGemLockToggle rejected boundaries check from {0}"
-msgstr ""
+msgstr "Bouncer / OnGemLockToggle {0}、堺界チェックのため拒否されました。"
 
 #: ../../TShockAPI/Bouncer.cs:2721
 #, csharp-format
 msgid "Bouncer / OnGemLockToggle rejected disabled from {0}"
-msgstr ""
+msgstr "Bouncer / OnGemLockToggle {0}、無効のため拒否されました。"
 
 #: ../../TShockAPI/Bouncer.cs:2730
 #, csharp-format
 msgid "Bouncer / OnGemLockToggle rejected permissions check from {0}"
-msgstr ""
+msgstr "Bouncer / OnGemLockToggle {0}、権限チェックのため拒否されました。"
 
 #: ../../TShockAPI/Bouncer.cs:479
 msgid "Bouncer / OnGetSection rejected empty player name."
-msgstr ""
+msgstr "Bouncer / OnGetSection 、空のプレイヤー名のため拒否されました。"
 
 #: ../../TShockAPI/Bouncer.cs:471
 #, csharp-format
 msgid "Bouncer / OnGetSection rejected GetSection packet from {0}"
-msgstr ""
+msgstr "Bouncer / OnGetSection {0}、GetSectionパケットのため拒否されました。"
 
 #: ../../TShockAPI/Bouncer.cs:2249
 #, csharp-format
 msgid "Bouncer / OnHealOtherPlayer 0.2 check from {0}"
-msgstr ""
+msgstr "Bouncer / OnHealOtherPlayer {0}、0.2 チェックのため拒否されました。"
 
 #: ../../TShockAPI/Bouncer.cs:2273
 #, csharp-format
 msgid "Bouncer / OnHealOtherPlayer rejected disabled/throttled from {0}"
-msgstr ""
+msgstr "Bouncer / OnHealOtherPlayer {0}、無効のため拒否されました。"
 
 #: ../../TShockAPI/Bouncer.cs:2265
 #, csharp-format
 msgid "Bouncer / OnHealOtherPlayer rejected heal other threshold from {0} {1}/{2}"
-msgstr ""
+msgstr "Bouncer / OnHealOtherPlayer {0} {1}/{2}、他のしきい値の回復できないため拒否されました。"
 
 #: ../../TShockAPI/Bouncer.cs:2239
 msgid "Bouncer / OnHealOtherPlayer rejected null checks"
-msgstr ""
+msgstr "Bouncer / OnHealOtherPlayer 、nullチェックのため拒否されました。"
 
 #: ../../TShockAPI/Bouncer.cs:1169
 #, csharp-format
@@ -2547,7 +2547,7 @@ msgstr ""
 #: ../../TShockAPI/Bouncer.cs:861
 #, csharp-format
 msgid "Bouncer / OnTileEdit rejected from using ice rod but not placing ice block {0} {1} {2}"
-msgstr ""
+msgstr "Bouncer / OnTileEdit {0}{1}{2}、ice blockを設置せず、ice rod を使用したため拒否されました。"
 
 #: ../../TShockAPI/Bouncer.cs:893
 #, csharp-format
