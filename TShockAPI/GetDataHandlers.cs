@@ -98,7 +98,7 @@ namespace TShockAPI
 					{ PacketTypes.NpcTalk, HandleNpcTalk },
 					{ PacketTypes.PlayerAnimation, HandlePlayerAnimation },
 					{ PacketTypes.PlayerMana, HandlePlayerMana },
-					{ PacketTypes.PlayerTeam, HandlePlayerTeam }, // Clients no longer send this packet, but still here because the server still accepts it
+					{ PacketTypes.PlayerTeam, HandlePlayerTeam }, // Client only sends when recieving FinishedConnectingToServer (packet 129)
 					{ PacketTypes.SignRead, HandleSignRead },
 					{ PacketTypes.SignNew, HandleSign },
 					{ PacketTypes.LiquidSet, HandleLiquidSet },
