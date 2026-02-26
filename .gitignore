@@ -53,6 +53,11 @@ Thumbs.db
 *.user
 .vs/*
 
+# VS Code (keep shared debug/task configs tracked) #
+.vscode/*
+!.vscode/launch.json
+!.vscode/tasks.json
+
 #Template Bat file#
 ###################
 postbuild.bat
