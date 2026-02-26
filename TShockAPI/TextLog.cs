@@ -30,7 +30,12 @@ namespace TShockAPI
 	public class TextLog : ILog, IDisposable
 	{
 		private readonly bool ClearFile;
+		private readonly object _writeLock = new object();
+		private static readonly TimeSpan FlushInterval = TimeSpan.FromSeconds(1);
+		private const int FlushBatchSize = 32;
 		private StreamWriter _logWriter;
+		private DateTime _lastFlushUtc = DateTime.UtcNow;
+		private int _writesSinceFlush;
 
 		/// <summary>
 		/// File name of the Text log
@@ -248,44 +253,63 @@ namespace TShockAPI
 		{
 			if (!MayWriteType(level))
 				return;
-			if (_logWriter is null)
+			lock (_writeLock)
 			{
-				_logWriter = new StreamWriter(FileName, !ClearFile);
+				if (_logWriter is null)
+				{
+					_logWriter = new StreamWriter(FileName, !ClearFile);
+				}
+
+				var caller = ResolveCaller(level);
+				var logEntry = string.Format("{0} - {1}: {2}: {3}",
+						DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture),
+						caller, level.ToString().ToUpper(), message);
+
+				try
+				{
+					_logWriter.WriteLine(logEntry);
+					_writesSinceFlush++;
+
+					if (level <= TraceLevel.Warning || _writesSinceFlush >= FlushBatchSize || DateTime.UtcNow - _lastFlushUtc >= FlushInterval)
+					{
+						_logWriter.Flush();
+						_writesSinceFlush = 0;
+						_lastFlushUtc = DateTime.UtcNow;
+					}
+				}
+				catch (ObjectDisposedException)
+				{
+					ServerApi.LogWriter.PluginWriteLine(TShock.instance, logEntry, TraceLevel.Error);
+					Console.WriteLine("Unable to write to log as log has been disposed.");
+					Console.WriteLine("{0} - {1}: {2}: {3}",
+						DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture),
+						caller, level.ToString().ToUpper(), message);
+				}
 			}
+		}
+
+		private static string ResolveCaller(TraceLevel level)
+		{
+			if (level >= TraceLevel.Info)
+				return "TShock";
 
 			var caller = "TShock";
-
-				var frame = new StackFrame(2, false);
-				if (frame != null)
-				{
-					var meth = frame.GetMethod();
-				if (meth != null && meth.DeclaringType != null)
-					caller = meth.DeclaringType.Name;
-			}
-
-			var logEntry = string.Format("{0} - {1}: {2}: {3}",
-					DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture),
-					caller, level.ToString().ToUpper(), message);
-			try
-			{
-				_logWriter.WriteLine(logEntry);
-				_logWriter.Flush();
-			}
-			catch (ObjectDisposedException)
-			{
-				ServerApi.LogWriter.PluginWriteLine(TShock.instance, logEntry, TraceLevel.Error);
-				Console.WriteLine("Unable to write to log as log has been disposed.");
-				Console.WriteLine("{0} - {1}: {2}: {3}",
-					DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture),
-					caller, level.ToString().ToUpper(), message);
-			}
+			var frame = new StackFrame(3, false);
+			var meth = frame.GetMethod();
+			if (meth != null && meth.DeclaringType != null)
+				caller = meth.DeclaringType.Name;
+			return caller;
 		}
 
 		public void Dispose()
 		{
-			if (_logWriter != null)
+			lock (_writeLock)
 			{
-				_logWriter.Dispose();
+				if (_logWriter != null)
+				{
+					_logWriter.Flush();
+					_logWriter.Dispose();
+				}
 			}
 		}
 	}
