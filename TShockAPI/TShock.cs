@@ -77,6 +77,7 @@ namespace TShockAPI
 		private const string LogPathDefault = "tshock/logs";
 		/// <summary>This is the log path, which is initially set to the default log path, and then to the config file log path later.</summary>
 		private static string LogPath = LogPathDefault;
+		private static readonly Regex CtTagRegex = new(@"\[ct:[^\]]*\]", RegexOptions.Compiled);
 		/// <summary>LogClear - Determines whether or not the log file should be cleared on initialization.</summary>
 		private static bool LogClear;
 
@@ -1238,9 +1239,8 @@ namespace TShockAPI
 						{
 							player.Disable(flags: flags);
 						}
+						}
 					}
-				}
-			}
 
 			Bouncer.OnSecondUpdate();
 			Utils.SetConsoleTitle(false);
@@ -1497,9 +1497,9 @@ namespace TShockAPI
 
 
 			// Filter out [ct:xxx] tags because they may crash the PE client
-			if (!Config.Settings.AllowCtTag)
+			if (!Config.Settings.AllowCtTag && text.Contains("[ct:", StringComparison.Ordinal))
 			{
-				text = Regex.Replace(text, @"\[ct:[^\]]*\]", "");
+				text = CtTagRegex.Replace(text, "");
 			}
 
 			var chatText = text;
@@ -1524,7 +1524,7 @@ namespace TShockAPI
 			}
 
 			if ((text.StartsWith(Config.Settings.CommandSpecifier) || text.StartsWith(Config.Settings.CommandSilentSpecifier))
-				&& !string.IsNullOrWhiteSpace(text.Substring(1)))
+				&& HasNonWhitespaceAfterPrefix(text))
 			{
 				try
 				{
@@ -1667,6 +1667,17 @@ namespace TShockAPI
 				chatMsg = chatMsg.Substring(0, maxLength) + "...";
 			}
 			return chatMsg;
+		}
+
+		private static bool HasNonWhitespaceAfterPrefix(string text)
+		{
+			for (int i = 1; i < text.Length; i++)
+			{
+				if (!char.IsWhiteSpace(text[i]))
+					return true;
+			}
+
+			return false;
 		}
     
 		private static readonly HashSet<PacketTypes> AllowedEarlyPackets =
