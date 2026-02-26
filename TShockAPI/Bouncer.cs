@@ -553,60 +553,62 @@ namespace TShockAPI
 				return;
 			}
 
-			if (!pos.Equals(args.Player.LastNetPosition))
-			{
-				float distance = Vector2.Distance(new Vector2(pos.X / 16f, pos.Y / 16f),
-					new Vector2(args.Player.LastNetPosition.X / 16f, args.Player.LastNetPosition.Y / 16f));
-
-				if (args.Player.IsBeingDisabled())
+				if (!pos.Equals(args.Player.LastNetPosition))
 				{
-					// If the player has moved outside the disabled zone...
-					if (distance > TShock.Config.Settings.MaxRangeForDisabled)
+					if (args.Player.IsBeingDisabled())
 					{
-						// We need to tell them they were disabled and why, then revert the change.
-						if (args.Player.IsDisabledForStackDetection)
-						{
-							args.Player.SendErrorMessage(GetString("Disabled. You went too far with hacked item stacks."));
-						}
-						else if (args.Player.IsDisabledForBannedWearable)
-						{
-							args.Player.SendErrorMessage(GetString("Disabled. You went too far with banned armor."));
-						}
-						else if (args.Player.IsDisabledForSSC)
-						{
-							args.Player.SendErrorMessage(GetString("Disabled. You need to {0}login to load your saved data.", TShock.Config.Settings.CommandSpecifier));
-						}
-						else if (TShock.Config.Settings.RequireLogin && !args.Player.IsLoggedIn)
-						{
-							args.Player.SendErrorMessage(GetString("Account needed! Please {0}register or {0}login to play!", TShock.Config.Settings.CommandSpecifier));
-						}
-						else if (args.Player.IsDisabledPendingTrashRemoval)
-						{
-							args.Player.SendErrorMessage(GetString("You need to rejoin to ensure your trash can is cleared!"));
-						}
+						var maxRange = TShock.Config.Settings.MaxRangeForDisabled;
+						var maxRangeSquared = maxRange * maxRange;
+						var dx = (pos.X - args.Player.LastNetPosition.X) / 16f;
+						var dy = (pos.Y - args.Player.LastNetPosition.Y) / 16f;
 
-						// ??
-						if (!args.Player.Teleport(args.Player.LastNetPosition))
+						// If the player has moved outside the disabled zone...
+						if ((dx * dx) + (dy * dy) > maxRangeSquared)
 						{
-							args.Player.Spawn(PlayerSpawnContext.RecallFromItem);
+							// We need to tell them they were disabled and why, then revert the change.
+							if (args.Player.IsDisabledForStackDetection)
+							{
+								args.Player.SendErrorMessage(GetString("Disabled. You went too far with hacked item stacks."));
+							}
+							else if (args.Player.IsDisabledForBannedWearable)
+							{
+								args.Player.SendErrorMessage(GetString("Disabled. You went too far with banned armor."));
+							}
+							else if (args.Player.IsDisabledForSSC)
+							{
+								args.Player.SendErrorMessage(GetString("Disabled. You need to {0}login to load your saved data.", TShock.Config.Settings.CommandSpecifier));
+							}
+							else if (TShock.Config.Settings.RequireLogin && !args.Player.IsLoggedIn)
+							{
+								args.Player.SendErrorMessage(GetString("Account needed! Please {0}register or {0}login to play!", TShock.Config.Settings.CommandSpecifier));
+							}
+							else if (args.Player.IsDisabledPendingTrashRemoval)
+							{
+								args.Player.SendErrorMessage(GetString("You need to rejoin to ensure your trash can is cleared!"));
+							}
+
+							// ??
+							if (!args.Player.Teleport(args.Player.LastNetPosition))
+							{
+								args.Player.Spawn(PlayerSpawnContext.RecallFromItem);
+							}
+							TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerUpdate rejected from (??) {0}", args.Player.Name));
+							args.Handled = true;
+							return;
 						}
-						TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerUpdate rejected from (??) {0}", args.Player.Name));
+						TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerUpdate rejected from (below ??) {0}", args.Player.Name));
 						args.Handled = true;
 						return;
 					}
-					TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerUpdate rejected from (below ??) {0}", args.Player.Name));
-					args.Handled = true;
-					return;
-				}
 
-				// Corpses don't move, but ghost
-				if (args.Player.Dead && !args.Player.TPlayer.ghost)
-				{
-					TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerUpdate rejected from (corpses don't move) {0}", args.Player.Name));
-					args.Handled = true;
-					return;
+					// Corpses don't move, but ghost
+					if (args.Player.Dead && !args.Player.TPlayer.ghost)
+					{
+						TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlayerUpdate rejected from (corpses don't move) {0}", args.Player.Name));
+						args.Handled = true;
+						return;
+					}
 				}
-			}
 
 			args.Player.LastNetPosition = pos;
 			return;
@@ -804,14 +806,37 @@ namespace TShockAPI
 					// Handle placement if the user is placing rope that comes from a ropecoil,
 					// but have not created the ropecoil projectile recently or the projectile was not at the correct coordinate, or the tile that the projectile places does not match the rope it is suposed to place
 					// projectile should be the same X coordinate as all tile places (Note by @Olink)
-					if (ropeCoilPlacements.ContainsKey(selectedItem.type) &&
-						!args.Player.RecentlyCreatedProjectiles.Any(p => GetDataHandlers.projectileCreatesTile.ContainsKey(p.Type) && GetDataHandlers.projectileCreatesTile[p.Type] == editData &&
-						!p.Killed && Math.Abs((int)(Main.projectile[p.Index].position.X / 16f) - tileX) <= Math.Abs(Main.projectile[p.Index].velocity.X)))
+					if (ropeCoilPlacements.ContainsKey(selectedItem.type))
 					{
-						TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected from (inconceivable rope coil) {0} {1} {2} selectedItem:{3} itemCreateTile:{4}", args.Player.Name, action, editData, selectedItem.type, selectedItem.createTile));
-						args.Player.SendTileSquareCentered(tileX, tileY, 1);
-						args.Handled = true;
-						return;
+						bool hasMatchingRopeProjectile = false;
+						lock (args.Player.RecentlyCreatedProjectiles)
+						{
+							for (int i = 0; i < args.Player.RecentlyCreatedProjectiles.Count; i++)
+							{
+								var tracked = args.Player.RecentlyCreatedProjectiles[i];
+								if (tracked.Killed)
+									continue;
+								if (tracked.Index < 0 || tracked.Index >= Main.projectile.Length)
+									continue;
+								if (!GetDataHandlers.projectileCreatesTile.TryGetValue(tracked.Type, out var createdTile) || createdTile != editData)
+									continue;
+
+								var projectile = Main.projectile[tracked.Index];
+								if (Math.Abs((int)(projectile.position.X / 16f) - tileX) <= Math.Abs(projectile.velocity.X))
+								{
+									hasMatchingRopeProjectile = true;
+									break;
+								}
+							}
+						}
+
+						if (!hasMatchingRopeProjectile)
+						{
+							TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected from (inconceivable rope coil) {0} {1} {2} selectedItem:{3} itemCreateTile:{4}", args.Player.Name, action, editData, selectedItem.type, selectedItem.createTile));
+							args.Player.SendTileSquareCentered(tileX, tileY, 1);
+							args.Handled = true;
+							return;
+						}
 					}
 				}
 				else if (action == EditAction.PlaceTile || action == EditAction.ReplaceTile || action == EditAction.PlaceWall || action == EditAction.ReplaceWall)
@@ -860,31 +885,45 @@ namespace TShockAPI
 						args.Player.SendTileSquareCentered(tileX, tileY, 4);
 						args.Handled = true;
 					}
-					// If they aren't selecting the item which creates the tile, they're hacking.
-					if ((action == EditAction.PlaceTile || action == EditAction.ReplaceTile) && editData != selectedItem.createTile)
-					{
-						// These would get caught up in the below check because Terraria does not set their createTile field.
-						if (selectedItem.type != ItemID.IceRod &&
-						    selectedItem.type != ItemID.DirtBomb &&
-						    selectedItem.type != ItemID.StickyBomb &&
-						    selectedItem.type != ItemID.MudBallPlayer &&
-						    selectedItem.type != ItemID.AcornAxe &&
-						    selectedItem.type != ItemID.StaffofRegrowth &&
-						    !(args.Player.RecentlyCreatedProjectiles.Any(x =>
-							      x.Type == ProjectileID.AcornSlingshotAcorn) &&
-						      editData == TileID.Saplings) &&
-						    !(args.Player.TPlayer.mount.Type == MountID.DiggingMoleMinecart &&
-						      editData == TileID.MinecartTrack)
-						   )
+						// If they aren't selecting the item which creates the tile, they're hacking.
+						if ((action == EditAction.PlaceTile || action == EditAction.ReplaceTile) && editData != selectedItem.createTile)
 						{
-							TShock.Log.ConsoleDebug(GetString(
-								"Bouncer / OnTileEdit rejected from tile placement not matching selected item createTile {0} {1} {2} selectedItemID:{3} createTile:{4}",
-								args.Player.Name, action, editData, selectedItem.type, selectedItem.createTile));
-							args.Player.SendTileSquareCentered(tileX, tileY, 4);
-							args.Handled = true;
-							return;
+							bool hasRecentAcornProjectile = false;
+							if (editData == TileID.Saplings)
+							{
+								lock (args.Player.RecentlyCreatedProjectiles)
+								{
+									for (int i = 0; i < args.Player.RecentlyCreatedProjectiles.Count; i++)
+									{
+										if (args.Player.RecentlyCreatedProjectiles[i].Type == ProjectileID.AcornSlingshotAcorn)
+										{
+											hasRecentAcornProjectile = true;
+											break;
+										}
+									}
+								}
+							}
+
+							// These would get caught up in the below check because Terraria does not set their createTile field.
+							if (selectedItem.type != ItemID.IceRod &&
+							    selectedItem.type != ItemID.DirtBomb &&
+							    selectedItem.type != ItemID.StickyBomb &&
+							    selectedItem.type != ItemID.MudBallPlayer &&
+							    selectedItem.type != ItemID.AcornAxe &&
+							    selectedItem.type != ItemID.StaffofRegrowth &&
+							    !(hasRecentAcornProjectile && editData == TileID.Saplings) &&
+							    !(args.Player.TPlayer.mount.Type == MountID.DiggingMoleMinecart &&
+							      editData == TileID.MinecartTrack)
+							   )
+							{
+								TShock.Log.ConsoleDebug(GetString(
+									"Bouncer / OnTileEdit rejected from tile placement not matching selected item createTile {0} {1} {2} selectedItemID:{3} createTile:{4}",
+									args.Player.Name, action, editData, selectedItem.type, selectedItem.createTile));
+								args.Player.SendTileSquareCentered(tileX, tileY, 4);
+								args.Handled = true;
+								return;
+							}
 						}
-					}
 					// If they aren't selecting the item which creates the wall, they're hacking.
 					if ((action == EditAction.PlaceWall || action == EditAction.ReplaceWall) && editData != selectedItem.createWall)
 					{
@@ -1343,14 +1382,27 @@ namespace TShockAPI
 				return;
 			}
 
-			/// If the created projectile is a golf ball and the player is not holding a golf club item and neither a golf ball item and neither they have had a golf club projectile created recently.
-			if (Handlers.LandGolfBallInCupHandler.GolfBallProjectileIDs.Contains(type) &&
-				!Handlers.LandGolfBallInCupHandler.GolfClubItemIDs.Contains(args.Player.TPlayer.HeldItem.type) &&
-				!Handlers.LandGolfBallInCupHandler.GolfBallItemIDs.Contains(args.Player.TPlayer.HeldItem.type) &&
-				!args.Player.RecentlyCreatedProjectiles.Any(p => p.Type == ProjectileID.GolfClubHelper))
-			{
-				TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile please report to tshock about this! normally this is a reject from {0} {1} (golf)", args.Player.Name, type));
-			}
+				/// If the created projectile is a golf ball and the player is not holding a golf club item and neither a golf ball item and neither they have had a golf club projectile created recently.
+				bool hasRecentGolfClubProjectile = false;
+				lock (args.Player.RecentlyCreatedProjectiles)
+				{
+					for (int i = 0; i < args.Player.RecentlyCreatedProjectiles.Count; i++)
+					{
+						if (args.Player.RecentlyCreatedProjectiles[i].Type == ProjectileID.GolfClubHelper)
+						{
+							hasRecentGolfClubProjectile = true;
+							break;
+						}
+					}
+				}
+
+				if (Handlers.LandGolfBallInCupHandler.GolfBallProjectileIDs.Contains(type) &&
+					!Handlers.LandGolfBallInCupHandler.GolfClubItemIDs.Contains(args.Player.TPlayer.HeldItem.type) &&
+					!Handlers.LandGolfBallInCupHandler.GolfBallItemIDs.Contains(args.Player.TPlayer.HeldItem.type) &&
+					!hasRecentGolfClubProjectile)
+				{
+					TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile please report to tshock about this! normally this is a reject from {0} {1} (golf)", args.Player.Name, type));
+				}
 
 			// Main.projHostile contains projectiles that can harm players
 			// without PvP enabled and belong to enemy mobs, so they shouldn't be
@@ -1390,18 +1442,43 @@ namespace TShockAPI
 			        return;
 			    }
 
-			    // Validate we found an active bolt projectile
-			    var boltProjectileData = args.Player.RecentlyCreatedProjectiles.FirstOrDefault(p => Main.projectile[p.Index].type == ProjectileID.PortalGunBolt);
-			    if (boltProjectileData.Type == 0 || boltProjectileData.Killed)
-			    {
-				    TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile rejected from portal gate from {0} (missing active Portal Gun bolt)", args.Player.Name, discreteDirection));
-			        args.Player.RemoveProjectile(ident, owner);
-			        args.Handled = true;
-			        return;
-			    }
+					// Validate we found an active bolt projectile.
+					int boltProjectileDataIndex = -1;
+					lock (args.Player.RecentlyCreatedProjectiles)
+					{
+						for (int i = 0; i < args.Player.RecentlyCreatedProjectiles.Count; i++)
+						{
+							var tracked = args.Player.RecentlyCreatedProjectiles[i];
+							if (tracked.Index < 0 || tracked.Index >= Main.projectile.Length)
+								continue;
+							if (tracked.Killed)
+								continue;
+							if (Main.projectile[tracked.Index].type != ProjectileID.PortalGunBolt)
+								continue;
 
-			    boltProjectileData.Killed = true;
-			}
+							boltProjectileDataIndex = i;
+							break;
+						}
+					}
+
+					if (boltProjectileDataIndex < 0)
+					{
+						TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile rejected from portal gate from {0} (missing active Portal Gun bolt)", args.Player.Name, discreteDirection));
+						args.Player.RemoveProjectile(ident, owner);
+						args.Handled = true;
+						return;
+					}
+
+					lock (args.Player.RecentlyCreatedProjectiles)
+					{
+						if (boltProjectileDataIndex >= 0 && boltProjectileDataIndex < args.Player.RecentlyCreatedProjectiles.Count)
+						{
+							var tracked = args.Player.RecentlyCreatedProjectiles[boltProjectileDataIndex];
+							tracked.Killed = true;
+							args.Player.RecentlyCreatedProjectiles[boltProjectileDataIndex] = tracked;
+						}
+					}
+				}
 
 			if (!TShock.Config.Settings.IgnoreProjUpdate && !args.Player.HasPermission(Permissions.ignoreprojectiledetection))
 			{
@@ -1853,23 +1930,29 @@ namespace TShockAPI
 				args.Player.TileLiquidThreshold++;
 			}
 
-			bool wasThereABombNearby = false;
-			lock (args.Player.RecentlyCreatedProjectiles)
-			{
-				IEnumerable<int> projectileTypesThatPerformThisOperation;
-				if (amount > 0) //handle the projectiles that create fluid.
+				bool wasThereABombNearby = false;
+				lock (args.Player.RecentlyCreatedProjectiles)
 				{
-					projectileTypesThatPerformThisOperation = projectileCreatesLiquid.Where(k => k.Value == type).Select(k => k.Key);
-				}
-				else //handle the scenario where we are removing liquid
-				{
-					projectileTypesThatPerformThisOperation = projectileCreatesLiquid.Where(k => k.Value == LiquidType.Removal).Select(k => k.Key);
-				}
+					var expectedLiquidOperation = amount > 0 ? type : LiquidType.Removal;
+					var bombRadius = TShock.Config.Settings.BombExplosionRadius;
+					for (int i = 0; i < args.Player.RecentlyCreatedProjectiles.Count; i++)
+					{
+						var tracked = args.Player.RecentlyCreatedProjectiles[i];
+						if (tracked.Index < 0 || tracked.Index >= Main.projectile.Length)
+							continue;
 
-				var recentBombs = args.Player.RecentlyCreatedProjectiles.Where(p => projectileTypesThatPerformThisOperation.Contains(Main.projectile[p.Index].type));
-				wasThereABombNearby = recentBombs.Any(r => Math.Abs(args.TileX - (Main.projectile[r.Index].position.X / 16.0f)) < TShock.Config.Settings.BombExplosionRadius
-														&& Math.Abs(args.TileY - (Main.projectile[r.Index].position.Y / 16.0f)) < TShock.Config.Settings.BombExplosionRadius);
-			}
+						var projectileInstance = Main.projectile[tracked.Index];
+						if (!projectileCreatesLiquid.TryGetValue(projectileInstance.type, out var operation) || operation != expectedLiquidOperation)
+							continue;
+
+						if (Math.Abs(args.TileX - (projectileInstance.position.X / 16.0f)) < bombRadius
+							&& Math.Abs(args.TileY - (projectileInstance.position.Y / 16.0f)) < bombRadius)
+						{
+							wasThereABombNearby = true;
+							break;
+						}
+					}
+				}
 
 			// Liquid anti-cheat
 			// Arguably the banned buckets bit should be in the item bans system
@@ -2325,17 +2408,25 @@ namespace TShockAPI
 				{
 					bool areAnyBunnyProjectilesInRange;
 
-					lock (args.Player.RecentlyCreatedProjectiles)
-					{
-						areAnyBunnyProjectilesInRange = args.Player.RecentlyCreatedProjectiles.Any(projectile =>
+						lock (args.Player.RecentlyCreatedProjectiles)
 						{
-							if (projectile.Type != ProjectileID.ExplosiveBunny)
-								return false;
+							areAnyBunnyProjectilesInRange = false;
+							for (int i = 0; i < args.Player.RecentlyCreatedProjectiles.Count; i++)
+							{
+								var projectile = args.Player.RecentlyCreatedProjectiles[i];
+								if (projectile.Type != ProjectileID.ExplosiveBunny)
+									continue;
+								if (projectile.Index < 0 || projectile.Index >= Main.projectile.Length)
+									continue;
 
-							var projectileInstance = Main.projectile[projectile.Index];
-							return projectileInstance.active && projectileInstance.WithinRange(new Vector2(args.X, args.Y), 32.0f);
-						});
-					}
+								var projectileInstance = Main.projectile[projectile.Index];
+								if (projectileInstance.active && projectileInstance.WithinRange(new Vector2(args.X, args.Y), 32.0f))
+								{
+									areAnyBunnyProjectilesInRange = true;
+									break;
+								}
+							}
+						}
 
 					if (!areAnyBunnyProjectilesInRange)
 					{
@@ -2931,31 +3022,49 @@ namespace TShockAPI
 			}
 		}
 
-		/// <summary>
-		/// Called when the player fishes out an NPC.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="args"></param>
-		internal void OnFishOutNPC(object sender, GetDataHandlers.FishOutNPCEventArgs args)
-		{
-			/// Getting recent projectiles of the player and selecting the first that is a bobber.
-			var projectile = args.Player.RecentlyCreatedProjectiles.FirstOrDefault(p => Main.projectile[p.Index].bobber);
+			/// <summary>
+			/// Called when the player fishes out an NPC.
+			/// </summary>
+			/// <param name="sender"></param>
+			/// <param name="args"></param>
+			internal void OnFishOutNPC(object sender, GetDataHandlers.FishOutNPCEventArgs args)
+			{
+				// Find a recent bobber projectile for fish-out validation.
+				GetDataHandlers.ProjectileStruct projectile = default;
+				bool hasRecentBobber = false;
+				lock (args.Player.RecentlyCreatedProjectiles)
+				{
+					for (int i = 0; i < args.Player.RecentlyCreatedProjectiles.Count; i++)
+					{
+						var tracked = args.Player.RecentlyCreatedProjectiles[i];
+						if (tracked.Index < 0 || tracked.Index >= Main.projectile.Length)
+							continue;
+						if (!Main.projectile[tracked.Index].bobber)
+							continue;
 
-			if (!FishingRodItemIDs.Contains(args.Player.SelectedItem.type))
-			{
-				TShock.Log.ConsoleDebug(GetString("Bouncer / OnFishOutNPC rejected for not using a fishing rod! - From {0}", args.Player.Name));
-				args.Handled = true;
-				return;
-			}
-			if (projectile.Type == 0 || projectile.Killed) /// The bobber projectile is never killed when the NPC spawns. Type can only be 0 if no recent projectile is found that is named Bobber.
-			{
-				TShock.Log.ConsoleDebug(GetString("Bouncer / OnFishOutNPC rejected for not finding active bobber projectile! - From {0}", args.Player.Name));
-				args.Handled = true;
-				return;
-			}
-			if (!FishableNpcIDs.Contains(args.NpcID))
-			{
-				TShock.Log.ConsoleDebug(GetString("Bouncer / OnFishOutNPC rejected for the NPC not being on the fishable NPCs list! - From {0}", args.Player.Name));
+						projectile = tracked;
+						hasRecentBobber = true;
+						break;
+					}
+				}
+
+				if (!FishingRodItemIDs.Contains(args.Player.SelectedItem.type))
+				{
+					TShock.Log.ConsoleDebug(GetString("Bouncer / OnFishOutNPC rejected for not using a fishing rod! - From {0}", args.Player.Name));
+					args.Handled = true;
+					return;
+				}
+
+				if (!hasRecentBobber || projectile.Killed) // Bobber type is validated by the bobber flag above.
+				{
+					TShock.Log.ConsoleDebug(GetString("Bouncer / OnFishOutNPC rejected for not finding active bobber projectile! - From {0}", args.Player.Name));
+					args.Handled = true;
+					return;
+				}
+
+				if (!FishableNpcIDs.Contains(args.NpcID))
+				{
+					TShock.Log.ConsoleDebug(GetString("Bouncer / OnFishOutNPC rejected for the NPC not being on the fishable NPCs list! - From {0}", args.Player.Name));
 				args.Handled = true;
 				return;
 			}
