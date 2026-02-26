@@ -2557,10 +2557,10 @@ namespace TShockAPI
 
 			// Ignore rope placement range
 			if ((type != TileID.Rope
-					|| type != TileID.SilkRope
-					|| type != TileID.VineRope
-					|| type != TileID.WebRope
-					|| type != TileID.MysticSnakeRope)
+					&& type != TileID.SilkRope
+					&& type != TileID.VineRope
+					&& type != TileID.WebRope
+					&& type != TileID.MysticSnakeRope)
 					&& !args.Player.IsInRange(x, y))
 			{
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlaceObject rejected range checks from {0}", args.Player.Name));
