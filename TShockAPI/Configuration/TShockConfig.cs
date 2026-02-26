@@ -464,6 +464,10 @@ namespace TShockAPI.Configuration
 		/// <summary>Allows you to disable or enable protection against creating custom messages with death. Created for developers who came up with a more original solution to this problem.</summary>
 		[Description("Allows you to disable or enable protection against creating custom messages with death. Created for developers who came up with a more original solution to this problem.")]
 		public bool DisableCustomDeathMessages = true;
+
+		/// <summary>Allows players to use [ct:] tags in chat.</summary>
+		[Description("Allows players to use [ct:] tags in chat. Note: invalid [ct:] tags can crash mobile clients.")]
+		public bool AllowCtTag = false;
 		#endregion
 
 
