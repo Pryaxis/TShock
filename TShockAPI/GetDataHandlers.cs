@@ -3188,6 +3188,13 @@ namespace TShockAPI
 			if (OnNewProjectile(args.Data, ident, pos, vel, knockback, dmg, owner, type, index, args.Player, ai))
 				return true;
 
+			if (index < 0 || index >= Main.maxProjectiles)
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleProjectileNew rejected out of bounds projectile index {0} for {1}",
+					index, args.Player.Name));
+				return true;
+			}
+
 			lock (args.Player.RecentlyCreatedProjectiles)
 			{
 				if (!args.Player.RecentlyCreatedProjectiles.Any(p => p.Index == index))
@@ -3261,6 +3268,13 @@ namespace TShockAPI
 
 			if (OnProjectileKill(args.Player, args.Data, ident, owner, index))
 			{
+				return true;
+			}
+
+			if (index < 0 || index >= Main.maxProjectiles)
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleProjectileKill rejected out of bounds projectile index {0} for {1}",
+					index, args.Player.Name));
 				return true;
 			}
 
