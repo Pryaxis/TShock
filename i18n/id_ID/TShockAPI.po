@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2026-02-26 12:53:44+0000\n"
-"PO-Revision-Date: 2026-02-26 15:32\n"
+"PO-Revision-Date: 2026-02-26 16:55\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "MIME-Version: 1.0\n"
@@ -951,7 +951,7 @@ msgstr "{0} telah memunculkan bulan labu!"
 #: ../../TShockAPI/GetDataHandlers.cs:3863
 #, csharp-format
 msgid "{0} summoned a Slime Rain!"
-msgstr ""
+msgstr "{0} memanggil hujan slime!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3899
 #, csharp-format
@@ -1802,12 +1802,12 @@ msgstr "Penolakan / OnHealOtherPlayer penolakan pemeriksaan null"
 #: ../../TShockAPI/Bouncer.cs:1167
 #, csharp-format
 msgid "Bouncer / OnItemDrop force kicked (attempted to set position to infinity or NaN) from {0}"
-msgstr ""
+msgstr "Bouncer / OnitemDrop menendang paksa (mencoba mengatur posisi ke tak terhingga atau Nan) dari {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1175
 #, csharp-format
 msgid "Bouncer / OnItemDrop force kicked (attempted to set velocity to infinity or NaN) from {0}"
-msgstr ""
+msgstr "Bouncer / OnItemDrop menendang paksa (mencoba mengatur kecepatan ke tak terhingga atau NaN) dari {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1184
 #, csharp-format
@@ -1832,7 +1832,7 @@ msgstr "Penolakan / OnItemDrop menolak dari pemeriksaan jangkauan dupe dari {0}"
 #: ../../TShockAPI/Bouncer.cs:1226
 #, csharp-format
 msgid "Bouncer / OnItemDrop rejected from item drop check from {0}"
-msgstr ""
+msgstr "Bouncer / OnItemDrop menolak pemeriksaan item drop dari {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1192
 #, csharp-format
