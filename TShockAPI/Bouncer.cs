@@ -2883,14 +2883,15 @@ namespace TShockAPI
 		internal void OnKillMe(object sender, GetDataHandlers.KillMeEventArgs args)
 		{
 			short damage = args.Damage;
+			ushort normalizedDamage = (ushort)damage;
 			short id = args.PlayerId;
 			PlayerDeathReason playerDeathReason = args.PlayerDeathReason;
 
-			if (damage > 42000) //Abnormal values have the potential to cause infinite loops in the server.
+			if (normalizedDamage > 42000) //Abnormal values have the potential to cause infinite loops in the server.
 			{
-				TShock.Log.ConsoleDebug(GetString("Bouncer / OnKillMe rejected high damage from {0} {1}", args.Player.Name, damage));
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnKillMe rejected high damage from {0} {1}", args.Player.Name, normalizedDamage));
 				args.Player.Kick(GetString("Failed to shade polygon normals."), true, true);
-				TShock.Log.ConsoleError(GetString("Death Exploit Attempt: Damage {0}", damage));
+				TShock.Log.ConsoleError(GetString("Death Exploit Attempt: Damage {0}", normalizedDamage));
 				args.Handled = true;
 				return;
 			}
