@@ -289,7 +289,7 @@ namespace TShockAPI.DB
 						string.Join("~", playerData.inventory),
 						playerData.extraSlot,
 						playerData.spawnX,
-						playerData.spawnX,
+						playerData.spawnY,
 						playerData.skinVariant,
 						playerData.hair,
 						playerData.hairDye,
