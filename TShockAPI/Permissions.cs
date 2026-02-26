@@ -346,6 +346,9 @@ namespace TShockAPI
 		[Description("User can change hardmode state.")]
 		public static readonly string hardmode = "tshock.world.hardmode";
 
+		[Description("User can change world evil.")]
+		public static readonly string switchevil = "tshock.world.switchevil";
+
 		[Description("User can change the homes of NPCs.")]
 		public static readonly string movenpc = "tshock.world.movenpc";
 
