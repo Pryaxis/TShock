@@ -3799,7 +3799,7 @@ namespace TShockAPI
 			return false;
 		}
 
-		private static readonly int[] invasions = { -1, -2, -3, -4, -5, -6, -7, -8, -10 };
+		private static readonly int[] invasions = { -1, -2, -3, -4, -5, -6, -7, -8, -10, -19 };
 		private static readonly int[] pets = { -12, -13, -14, -15 };
 		private static readonly int[] upgrades = { -11, -17, -18 };
 		private static bool HandleSpawnBoss(GetDataHandlerArgs args)
@@ -3848,6 +3848,9 @@ namespace TShockAPI
 			string thing;
 			switch (thingType)
 			{
+				case -19:
+					thing = GetString("{0} summoned a Slime Rain!", args.Player.Name);
+					break;
 				case -18:
 					thing = GetString("{0} applied traveling merchant's satchel!", args.Player.Name);
 					break;
