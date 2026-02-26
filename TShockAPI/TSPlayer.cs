@@ -1533,6 +1533,7 @@ namespace TShockAPI
 			Group = Group.DefaultGroup;
 			IceTiles = new List<Point>();
 			AwaitingResponse = new Dictionary<string, Action<object>>();
+			LastStackDetectionCheck = DateTime.UtcNow.AddSeconds(-(index % 5));
 		}
 
 		/// <summary>
@@ -1547,6 +1548,7 @@ namespace TShockAPI
 			FakePlayer = new Player { name = playerName, whoAmI = -1 };
 			Group = Group.DefaultGroup;
 			AwaitingResponse = new Dictionary<string, Action<object>>();
+			LastStackDetectionCheck = DateTime.UtcNow;
 
 			if (playerName == "All" || playerName == "Server")
 				FinishedHandshake = true; //Hot fix for the all player object not getting packets like TimeSet, etc because they have no state and finished handshake will always be false.
