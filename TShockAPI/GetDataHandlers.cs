@@ -4784,7 +4784,7 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (args.Player.IsBeingDisabled())
+			if (args.Player.IsBeingDisabled() && args.Player.State == (int)ConnectionState.Complete)
 			{
 				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleSyncLoadout rejected loadout index sync {0}", args.Player.Name));
 				NetMessage.SendData((int)PacketTypes.SyncLoadout, number: args.Player.Index, number2: args.TPlayer.CurrentLoadoutIndex);
