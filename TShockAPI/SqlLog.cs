@@ -21,7 +21,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
 using MySql.Data.MySqlClient;
 using TShockAPI.DB;
 using TShockAPI.DB.Queries;
@@ -274,15 +273,7 @@ namespace TShockAPI
 			if (!MayWriteType(level))
 				return;
 
-			var caller = "TShock";
-
-				var frame = new StackFrame(2, false);
-				if (frame != null)
-				{
-					var meth = frame.GetMethod();
-				if (meth != null && meth.DeclaringType != null)
-					caller = meth.DeclaringType.Name;
-			}
+			var caller = ResolveCaller(level);
 
 			try
 			{
@@ -298,7 +289,7 @@ namespace TShockAPI
 				var success = true;
 				while (_failures.Count > 0 && success)
 				{
-					var info = _failures.First();
+					var info = _failures[0];
 
 					try
 					{
@@ -346,6 +337,19 @@ namespace TShockAPI
 				}
 				_failures.Clear();
 			}
+		}
+
+		private static string ResolveCaller(TraceLevel level)
+		{
+			if (level >= TraceLevel.Info)
+				return "TShock";
+
+			var caller = "TShock";
+			var frame = new StackFrame(3, false);
+			var meth = frame.GetMethod();
+			if (meth != null && meth.DeclaringType != null)
+				caller = meth.DeclaringType.Name;
+			return caller;
 		}
 
 		public void Dispose()
