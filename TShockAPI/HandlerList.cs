@@ -37,6 +37,7 @@ namespace TShockAPI
 
 		protected object HandlerLock = new object();
 		protected List<HandlerItem> Handlers { get; set; }
+		private HandlerItem[] HandlerSnapshot { get; set; } = Array.Empty<HandlerItem>();
 		public HandlerList()
 		{
 			Handlers = new List<HandlerItem>();
@@ -59,6 +60,7 @@ namespace TShockAPI
 			{
 				Handlers.Add(obj);
 				Handlers = Handlers.OrderBy(h => (int)h.Priority).ToList();
+				HandlerSnapshot = Handlers.ToArray();
 			}
 		}
 
@@ -66,21 +68,21 @@ namespace TShockAPI
 		{
 			lock (HandlerLock)
 			{
-				Handlers.RemoveAll(h => h.Handler.Equals(handler));
+				if (Handlers.RemoveAll(h => h.Handler.Equals(handler)) > 0)
+				{
+					HandlerSnapshot = Handlers.ToArray();
+				}
 			}
 		}
 
 		public void Invoke(object sender, T e)
 		{
-			List<HandlerItem> handlers;
-			lock (HandlerLock)
-			{
-				//Copy the list for invoking as to not keep it locked during the invokes
-				handlers = new List<HandlerItem>(Handlers);
-			}
+			var handlers = HandlerSnapshot;
+			if (handlers.Length == 0)
+				return;
 
 			var hargs = e as HandledEventArgs;
-			for (int i = 0; i < handlers.Count; i++)
+			for (int i = 0; i < handlers.Length; i++)
 			{
 				if (hargs == null || !hargs.Handled || (hargs.Handled && handlers[i].GetHandled))
 				{
