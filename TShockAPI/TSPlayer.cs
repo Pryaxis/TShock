@@ -274,6 +274,11 @@ namespace TShockAPI
 		public DateTime LastPvPTeamChange;
 
 		/// <summary>
+		/// The last time stack-hack detection was run for this player.
+		/// </summary>
+		public DateTime LastStackDetectionCheck;
+
+		/// <summary>
 		/// Temp points for use in regions and other plugins.
 		/// </summary>
 		public Point[] TempPoints = new Point[2];
