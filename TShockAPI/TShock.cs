@@ -1221,10 +1221,16 @@ namespace TShockAPI
 
 					if (!Main.ServerSideCharacter || (Main.ServerSideCharacter && player.IsLoggedIn))
 					{
-						if (!player.HasPermission(Permissions.ignorestackhackdetection))
+						var stackCheckDue = (DateTime.UtcNow - player.LastStackDetectionCheck).TotalSeconds >= 5;
+						if (stackCheckDue)
 						{
-							player.IsDisabledForStackDetection = player.HasHackedItemStacks(shouldWarnPlayer: true);
+							player.LastStackDetectionCheck = DateTime.UtcNow;
+							if (!player.HasPermission(Permissions.ignorestackhackdetection))
+							{
+								player.IsDisabledForStackDetection = player.HasHackedItemStacks(shouldWarnPlayer: true);
+							}
 						}
+					}
 
 						if (player.IsBeingDisabled())
 						{
