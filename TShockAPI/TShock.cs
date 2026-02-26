@@ -1147,6 +1147,8 @@ namespace TShockAPI
 					if (player.TilePlaceThreshold > 0)
 					{
 						player.TilePlaceThreshold = 0;
+						lock (player.TilesCreated)
+							player.TilesCreated.Clear();
 					}
 
 					if (player.RecentFuse > 0)
