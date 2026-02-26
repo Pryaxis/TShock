@@ -988,7 +988,7 @@ namespace TShockAPI
 						return;
 					}
 
-					if (action == EditAction.KillTile || action == EditAction.KillWall && ItemID.Sets.Explosives[selectedItem.type] && args.Player.RecentFuse == 0)
+					if ((action == EditAction.KillTile || action == EditAction.KillWall) && ItemID.Sets.Explosives[selectedItem.type] && args.Player.RecentFuse == 0)
 					{
 						args.Handled = false;
 						return;
