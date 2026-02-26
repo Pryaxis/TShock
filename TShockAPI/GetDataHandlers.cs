@@ -4770,7 +4770,7 @@ namespace TShockAPI
 			// and the server will replicate the changes the client did. This means that PlayerData.StoreSlot is never called, so we need to
 			// swap around the PlayerData items ourself.
 
-			(int, int) GetArmorSlotsForLoadoutIndex(int index)
+			Tuple<int, int> GetArmorSlotsForLoadoutIndex(int index)
 			{
 				return index switch
 				{
@@ -4781,7 +4781,7 @@ namespace TShockAPI
 				};
 			}
 
-			(int, int) GetDyeSlotsForLoadoutIndex(int index)
+			Tuple<int, int> GetDyeSlotsForLoadoutIndex(int index)
 			{
 				return index switch
 				{
@@ -4792,11 +4792,11 @@ namespace TShockAPI
 				};
 			}
 
-			var (currentLoadoutArmorSlotStartIndex, _) = GetArmorSlotsForLoadoutIndex(args.TPlayer.CurrentLoadoutIndex);
-			var (currentLoadoutDyeSlotStartIndex, _) = GetDyeSlotsForLoadoutIndex(args.TPlayer.CurrentLoadoutIndex);
+			var currentLoadoutArmorSlotStartIndex = GetArmorSlotsForLoadoutIndex(args.TPlayer.CurrentLoadoutIndex).Item1;
+			var currentLoadoutDyeSlotStartIndex = GetDyeSlotsForLoadoutIndex(args.TPlayer.CurrentLoadoutIndex).Item1;
 
-			var (switchedLoadoutArmorSlotStartIndex, _) = GetArmorSlotsForLoadoutIndex(loadoutIndex);
-			var (switchedLoadoutDyeSlotStartIndex, _) = GetDyeSlotsForLoadoutIndex(loadoutIndex);
+			var switchedLoadoutArmorSlotStartIndex = GetArmorSlotsForLoadoutIndex(loadoutIndex).Item1;
+			var switchedLoadoutDyeSlotStartIndex = GetDyeSlotsForLoadoutIndex(loadoutIndex).Item1;
 
 			// Emulate what is seen in Player.TrySwitchingLoadout:
 			// - Swap the current loadout items with the player's equipment
