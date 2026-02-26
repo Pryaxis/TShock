@@ -255,10 +255,10 @@ namespace TShockAPI
 
 			var caller = "TShock";
 
-			var frame = new StackTrace().GetFrame(2);
-			if (frame != null)
-			{
-				var meth = frame.GetMethod();
+				var frame = new StackFrame(2, false);
+				if (frame != null)
+				{
+					var meth = frame.GetMethod();
 				if (meth != null && meth.DeclaringType != null)
 					caller = meth.DeclaringType.Name;
 			}
