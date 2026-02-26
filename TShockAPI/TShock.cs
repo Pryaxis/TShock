@@ -1221,17 +1221,18 @@ namespace TShockAPI
 						player.Spawn(PlayerSpawnContext.ReviveFromDeath);
 					}
 
-						if (!Main.ServerSideCharacter || (Main.ServerSideCharacter && player.IsLoggedIn))
+					if (!Main.ServerSideCharacter || (Main.ServerSideCharacter && player.IsLoggedIn))
+					{
+						var stackCheckDue = (DateTime.UtcNow - player.LastStackDetectionCheck).TotalSeconds >= 5;
+						if (stackCheckDue)
 						{
-							var stackCheckDue = (DateTime.UtcNow - player.LastStackDetectionCheck).TotalSeconds >= 5;
-							if (stackCheckDue)
+							player.LastStackDetectionCheck = DateTime.UtcNow;
+							if (!player.HasPermission(Permissions.ignorestackhackdetection))
 							{
-								player.LastStackDetectionCheck = DateTime.UtcNow;
-								if (!player.HasPermission(Permissions.ignorestackhackdetection))
-								{
-									player.IsDisabledForStackDetection = player.HasHackedItemStacks(shouldWarnPlayer: true);
-								}
+								player.IsDisabledForStackDetection = player.HasHackedItemStacks(shouldWarnPlayer: true);
 							}
+						}
+					}
 
 						if (player.IsBeingDisabled())
 						{
