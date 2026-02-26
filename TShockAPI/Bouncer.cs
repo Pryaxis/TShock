@@ -3057,7 +3057,7 @@ namespace TShockAPI
 
 		internal void OnSecondUpdate()
 		{
-			var threshold = DateTime.Now.AddSeconds(-5);
+			var threshold = DateTime.UtcNow.AddSeconds(-5);
 			foreach (var player in TShock.Players)
 			{
 				if (player != null && player.TPlayer.whoAmI >= 0)

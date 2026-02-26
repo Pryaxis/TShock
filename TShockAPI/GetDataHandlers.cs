@@ -3197,13 +3197,23 @@ namespace TShockAPI
 
 			lock (args.Player.RecentlyCreatedProjectiles)
 			{
-				if (!args.Player.RecentlyCreatedProjectiles.Any(p => p.Index == index))
+				bool alreadyTracked = false;
+				for (int i = 0; i < args.Player.RecentlyCreatedProjectiles.Count; i++)
+				{
+					if (args.Player.RecentlyCreatedProjectiles[i].Index == index)
+					{
+						alreadyTracked = true;
+						break;
+					}
+				}
+
+				if (!alreadyTracked)
 				{
 					args.Player.RecentlyCreatedProjectiles.Add(new GetDataHandlers.ProjectileStruct()
 					{
 						Index = index,
 						Type = type,
-						CreatedAt = DateTime.Now
+						CreatedAt = DateTime.UtcNow
 					});
 				}
 			}
@@ -3314,7 +3324,15 @@ namespace TShockAPI
 			args.Player.LastKilledProjectile = type;
 			lock (args.Player.RecentlyCreatedProjectiles)
 			{
-				args.Player.RecentlyCreatedProjectiles.ForEach(s => { if (s.Index == index) { s.Killed = true; } });
+				for (int i = 0; i < args.Player.RecentlyCreatedProjectiles.Count; i++)
+				{
+					if (args.Player.RecentlyCreatedProjectiles[i].Index != index)
+						continue;
+
+					var trackedProjectile = args.Player.RecentlyCreatedProjectiles[i];
+					trackedProjectile.Killed = true;
+					args.Player.RecentlyCreatedProjectiles[i] = trackedProjectile;
+				}
 			}
 
 			return false;
