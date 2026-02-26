@@ -1224,7 +1224,11 @@ namespace TShockAPI
 					{
 						if (!player.HasPermission(Permissions.ignorestackhackdetection))
 						{
-							player.IsDisabledForStackDetection = player.HasHackedItemStacks(shouldWarnPlayer: true);
+							if ((DateTime.UtcNow - player.LastStackDetectionCheck).TotalSeconds >= 5)
+							{
+								player.IsDisabledForStackDetection = player.HasHackedItemStacks(shouldWarnPlayer: true);
+								player.LastStackDetectionCheck = DateTime.UtcNow;
+							}
 						}
 
 						if (player.IsBeingDisabled())
