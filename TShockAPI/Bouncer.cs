@@ -3062,11 +3062,11 @@ namespace TShockAPI
 		{
 			Task.Run(() =>
 			{
+				var threshold = DateTime.UtcNow.AddSeconds(-5);
 				foreach (var player in TShock.Players)
 				{
 					if (player != null && player.TPlayer.whoAmI >= 0)
 					{
-						var threshold = DateTime.Now.AddSeconds(-5);
 						lock (player.RecentlyCreatedProjectiles)
 						{
 							player.RecentlyCreatedProjectiles = player.RecentlyCreatedProjectiles.Where(s => s.CreatedAt > threshold).ToList();

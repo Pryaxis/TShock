@@ -1837,19 +1837,33 @@ namespace TShockAPI
 						var player = Players[projectile.owner];
 						if (player != null)
 						{
-							if (player.RecentlyCreatedProjectiles.Any(p => p.Index == e.number && p.Killed))
+							lock (player.RecentlyCreatedProjectiles)
 							{
-								player.RecentlyCreatedProjectiles.RemoveAll(p => p.Index == e.number && p.Killed);
-							}
-
-							if (!player.RecentlyCreatedProjectiles.Any(p => p.Index == e.number))
-							{
-								player.RecentlyCreatedProjectiles.Add(new GetDataHandlers.ProjectileStruct()
+								bool foundActiveEntry = false;
+								for (int i = player.RecentlyCreatedProjectiles.Count - 1; i >= 0; i--)
 								{
-									Index = e.number,
-									Type = (short)projectile.type,
-									CreatedAt = DateTime.Now
-								});
+									var tracked = player.RecentlyCreatedProjectiles[i];
+									if (tracked.Index != e.number)
+										continue;
+
+									if (tracked.Killed)
+									{
+										player.RecentlyCreatedProjectiles.RemoveAt(i);
+										continue;
+									}
+
+									foundActiveEntry = true;
+								}
+
+								if (!foundActiveEntry)
+								{
+									player.RecentlyCreatedProjectiles.Add(new GetDataHandlers.ProjectileStruct()
+									{
+										Index = e.number,
+										Type = (short)projectile.type,
+										CreatedAt = DateTime.UtcNow
+									});
+								}
 							}
 						}
 					}
