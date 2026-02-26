@@ -497,7 +497,7 @@ namespace TShockAPI
 			{
 				HelpText = GetString("Toggles the world's hardmode status.")
 			});
-			add(new Command(Permissions.switchevil, SwitchEvil, "worldevil")
+			add(new Command(Permissions.switchevil, SwitchEvil, "evil")
 			{
 				HelpText = GetString("Switches the world's evil.")
 			});
