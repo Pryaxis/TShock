@@ -2696,7 +2696,7 @@ namespace TShockAPI
 		{
 			WorldGen.crimson = !WorldGen.crimson;
 			TSPlayer.All.SendData(PacketTypes.WorldInfo);
-			args.Player.SendSuccessMessage(GetString("World evil switched to {0}", _crimsonOrCorruption));
+			args.Player.SendSuccessMessage(GetString("World evil switched to {0}.", _crimsonOrCorruption));
 		}
 
 		private static void SpawnBoss(CommandArgs args)
