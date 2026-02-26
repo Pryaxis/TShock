@@ -98,8 +98,7 @@ namespace TShockAPI
 					{ PacketTypes.NpcTalk, HandleNpcTalk },
 					{ PacketTypes.PlayerAnimation, HandlePlayerAnimation },
 					{ PacketTypes.PlayerMana, HandlePlayerMana },
-					{ PacketTypes.PlayerTeam, HandlePlayerTeam },
-					{ PacketTypes.TeamChangeFromUI, HandlePlayerTeam },
+					{ PacketTypes.PlayerTeam, HandlePlayerTeam }, // Client only sends when receiving FinishedConnectingToServer (packet 129)
 					{ PacketTypes.SignRead, HandleSignRead },
 					{ PacketTypes.SignNew, HandleSign },
 					{ PacketTypes.LiquidSet, HandleLiquidSet },
@@ -141,11 +140,12 @@ namespace TShockAPI
 					{ PacketTypes.LandGolfBallInCup, HandleLandGolfBallInCup },
 					{ PacketTypes.FishOutNPC, HandleFishOutNPC },
 					{ PacketTypes.FoodPlatterTryPlacing, HandleFoodPlatterTryPlacing },
+					{ PacketTypes.SyncItemsWithShimmer, HandleItemDrop },
 					{ PacketTypes.SyncCavernMonsterType, HandleSyncCavernMonsterType },
 					{ PacketTypes.SyncLoadout, HandleSyncLoadout },
 					{ PacketTypes.SyncItemCannotBeTakenByEnemies, HandleItemDrop },
-					{ PacketTypes.SyncItemsWithShimmer, HandleItemDrop },
-					{ PacketTypes.SpectatePlayer, HandleSyncPlayerSpectating }
+					{ PacketTypes.SpectatePlayer, HandleSyncPlayerSpectating },
+					{ PacketTypes.TeamChangeFromUI, HandlePlayerTeam } // Packet sent when changing team via UI.
 				};
 		}
 
@@ -3613,6 +3613,16 @@ namespace TShockAPI
 			if (id != args.Player.Index)
 				return true;
 
+			if (team == args.Player.Team) // No need to handle, interferes with SSC if we do.
+				return true;
+
+			if (args.Player.IgnoreSSCPackets)
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandlePlayerTeam rejected ignore ssc packets"));
+				args.Player.SendData(PacketTypes.PlayerTeam, "", args.Player.Index);
+				return true;
+			}
+
 			string pvpMode = TShock.Config.Settings.PvPMode.ToLowerInvariant();
 			if (pvpMode == "pvpwithnoteam" || (DateTime.UtcNow - args.Player.LastPvPTeamChange).TotalSeconds < 5)
 			{
@@ -3842,7 +3852,7 @@ namespace TShockAPI
 			return false;
 		}
 
-		private static readonly int[] invasions = { -1, -2, -3, -4, -5, -6, -7, -8, -10 };
+		private static readonly int[] invasions = { -1, -2, -3, -4, -5, -6, -7, -8, -10, -19 };
 		private static readonly int[] pets = { -12, -13, -14, -15 };
 		private static readonly int[] upgrades = { -11, -17, -18 };
 		private static bool HandleSpawnBoss(GetDataHandlerArgs args)
@@ -3891,6 +3901,9 @@ namespace TShockAPI
 			string thing;
 			switch (thingType)
 			{
+				case -19:
+					thing = GetString("{0} summoned a Slime Rain!", args.Player.Name);
+					break;
 				case -18:
 					thing = GetString("{0} applied traveling merchant's satchel!", args.Player.Name);
 					break;
