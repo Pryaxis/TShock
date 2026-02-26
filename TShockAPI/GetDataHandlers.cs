@@ -4770,23 +4770,25 @@ namespace TShockAPI
 			// and the server will replicate the changes the client did. This means that PlayerData.StoreSlot is never called, so we need to
 			// swap around the PlayerData items ourself.
 
-			Tuple<int, int> GetArmorSlotsForLoadoutIndex(int index)
+			(int, int) GetArmorSlotsForLoadoutIndex(int index)
 			{
 				return index switch
 				{
 					0 => NetItem.Loadout1Armor,
 					1 => NetItem.Loadout2Armor,
-					2 => NetItem.Loadout3Armor
+					2 => NetItem.Loadout3Armor,
+					_ => throw new NotImplementedException($"invalid loadout index {index}")
 				};
 			}
 
-			Tuple<int, int> GetDyeSlotsForLoadoutIndex(int index)
+			(int, int) GetDyeSlotsForLoadoutIndex(int index)
 			{
 				return index switch
 				{
 					0 => NetItem.Loadout1Dye,
 					1 => NetItem.Loadout2Dye,
-					2 => NetItem.Loadout3Dye
+					2 => NetItem.Loadout3Dye,
+					_ => throw new NotImplementedException($"invalid loadout index {index}")
 				};
 			}
 
