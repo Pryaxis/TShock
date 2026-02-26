@@ -548,9 +548,9 @@ namespace TShockAPI
 
 			if (args.Player.LastNetPosition == Vector2.Zero)
 			{
-				TShock.Log.ConsoleInfo(GetString("Bouncer / OnPlayerUpdate *would have rejected* from (last network position zero) {0}", args.Player.Name));
-				// args.Handled = true;
-				// return;
+				// Initialize movement baseline on the first valid update packet.
+				args.Player.LastNetPosition = pos;
+				return;
 			}
 
 			if (!pos.Equals(args.Player.LastNetPosition))
