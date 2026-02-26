@@ -3218,6 +3218,13 @@ namespace TShockAPI
 			var direction = (byte)(args.Data.ReadInt8() - 1);
 			var crit = args.Data.ReadInt8();
 
+			if (id < 0 || id >= Main.npc.Length)
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleNpcStrike rejected out of bounds NPC index {0} for {1}",
+					id, args.Player.Name));
+				return true;
+			}
+
 			if (OnNPCStrike(args.Player, args.Data, id, direction, dmg, knockback, crit))
 				return true;
 
@@ -4306,7 +4313,13 @@ namespace TShockAPI
 			var itemID = args.Data.ReadInt16();
 			var prefix = args.Data.ReadInt8();
 			var stack = args.Data.ReadInt16();
-			var itemFrame = (TEItemFrame)TileEntity.ByID[TEItemFrame.Find(x, y)];
+			var tileEntityId = TEItemFrame.Find(x, y);
+			if (tileEntityId < 0 || !TileEntity.ByID.TryGetValue(tileEntityId, out var tileEntity) || tileEntity is not TEItemFrame itemFrame)
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandlePlaceItemFrame rejected missing item frame at ({0}, {1}) from {2}",
+					x, y, args.Player.Name));
+				return true;
+			}
 
 			if (OnPlaceItemFrame(args.Player, args.Data, x, y, itemID, prefix, stack, itemFrame))
 			{
