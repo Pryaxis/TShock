@@ -1237,10 +1237,32 @@ namespace TShockAPI
 
 			if (type == 0)
 			{
-				if (!args.Player.IsInRange((int)(Main.item[id].position.X / 16f), (int)(Main.item[id].position.Y / 16f)))
+				if (id < 0 || id >= Main.item.Length)
 				{
-					// Causes item duplications. Will be re added if necessary
-					//args.Player.SendData(PacketTypes.ItemDrop, "", id);
+					TShock.Log.ConsoleDebug(GetString("Bouncer / OnItemDrop rejected from invalid item slot check from {0}", args.Player.Name));
+					args.Handled = true;
+					return;
+				}
+
+				bool IsWithinPickupRange(Vector2 worldPosition, int range)
+				{
+					if (!TShock.Config.Settings.RangeChecks)
+						return true;
+
+					var itemTileX = (int)(worldPosition.X / 16f);
+					var itemTileY = (int)(worldPosition.Y / 16f);
+
+					return Math.Abs(args.Player.TileX - itemTileX) <= range &&
+					       Math.Abs(args.Player.TileY - itemTileY) <= range;
+				}
+
+				// Vanilla uses Player.defaultItemGrabRange (currently 42 tiles) when attracting/picking up drops.
+				// Use both packet and server item positions to avoid false rejections from minor desync.
+				var pickupRange = Math.Max(Player.defaultItemGrabRange + 8, 50);
+				var inRangeByPacketPosition = IsWithinPickupRange(pos, pickupRange);
+				var inRangeByServerPosition = IsWithinPickupRange(Main.item[id].position, pickupRange);
+				if (!inRangeByPacketPosition && !inRangeByServerPosition)
+				{
 					TShock.Log.ConsoleDebug(GetString("Bouncer / OnItemDrop rejected from dupe range check from {0}", args.Player.Name));
 					args.Handled = true;
 					return;
