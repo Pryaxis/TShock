@@ -303,11 +303,6 @@ namespace TShockAPI
 		public DateTime LastThreat { get; set; }
 
 		/// <summary>
-		/// The last time stack hack detection was executed for this player.
-		/// </summary>
-		public DateTime LastStackDetectionCheck { get; set; }
-
-		/// <summary>
 		/// Whether the player should see logs.
 		/// </summary>
 		public bool DisplayLogs = true;
