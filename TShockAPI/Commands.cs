@@ -821,8 +821,8 @@ namespace TShockAPI
 			// loadout index to the player, causing catastrophic desync.
 			// The player must not be dead, using an item, or CC'd to switch loadouts.
 
-			// Note that we only check for CC'd players when SSC is enabled, as that is only where it can cause issues,
-			// and the RequireLogin config option (without SSC) will disable player's until they login, creating a vicious cycle.
+			// Note that we only check for CC'd players when SSC is enabled, as that is only where it can cause loadout sync issues.
+			// If CC is caused by the SSC auth gate itself, we must still allow login to avoid a lock-out loop.
 
 			// FIXME: There is always the chance that in-between the time we check these requirements on the server, and the loadout sync
 			//		  packet reaches the client, that the client state has changed, causing the loadout sync to be rejected, even though
@@ -842,7 +842,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (args.TPlayer.CCed && Main.ServerSideCharacter)
+			if (args.TPlayer.CCed && Main.ServerSideCharacter && !args.Player.IsDisabledForSSC)
 			{
 				args.Player.SendErrorMessage(GetString("You cannot login whilst crowd controlled."));
 				return;
