@@ -572,11 +572,7 @@ namespace TShockAPI
 						{
 							args.Player.SendErrorMessage(GetString("Disabled. You went too far with banned armor."));
 						}
-						else if (args.Player.IsDisabledForSSC)
-						{
-							args.Player.SendErrorMessage(GetString("Disabled. You need to {0}login to load your saved data.", TShock.Config.Settings.CommandSpecifier));
-						}
-						else if (TShock.Config.Settings.RequireLogin && !args.Player.IsLoggedIn)
+						else if (args.Player.IsDisabledForSSC || (TShock.Config.Settings.RequireLogin && !args.Player.IsLoggedIn))
 						{
 							args.Player.SendErrorMessage(GetString("Account needed! Please {0}register or {0}login to play!", TShock.Config.Settings.CommandSpecifier));
 						}
@@ -1299,6 +1295,30 @@ namespace TShockAPI
 				return;
 			}
 
+			if (args.Player.IsBeingDisabled())
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile rejected from disabled from {0}", args.Player.Name));
+
+				// Client will fight the server if we remove pets, silently reject instead
+				if (!Main.projPet[type] && !ProjectileID.Sets.LightPet[type])
+					args.Player.RemoveProjectile(ident, owner);
+
+				args.Handled = true;
+				return;
+			}
+
+			if (args.Player.IsBouncerThrottled())
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile rejected from bouncer throttle from {0}", args.Player.Name));
+
+				// Client will fight the server if we remove pets, silently reject instead
+				if (!Main.projPet[type] && !ProjectileID.Sets.LightPet[type])
+					args.Player.RemoveProjectile(ident, owner);
+
+				args.Handled = true;
+				return;
+			}
+
 			if (TShock.ProjectileBans.ProjectileIsBanned(type, args.Player))
 			{
 				args.Player.Disable(GetString("Player does not have permission to create projectile {0}.", type), DisableFlags.WriteToLogAndConsole);
@@ -1313,14 +1333,6 @@ namespace TShockAPI
 			{
 				args.Player.Disable(GetString("Projectile damage is higher than {0}.", TShock.Config.Settings.MaxProjDamage), DisableFlags.WriteToLogAndConsole);
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile rejected from projectile damage limit from {0} {1}/{2}", args.Player.Name, damage, TShock.Config.Settings.MaxProjDamage));
-				args.Player.RemoveProjectile(ident, owner);
-				args.Handled = true;
-				return;
-			}
-
-			if (args.Player.IsBeingDisabled())
-			{
-				TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile rejected from disabled from {0}", args.Player.Name));
 				args.Player.RemoveProjectile(ident, owner);
 				args.Handled = true;
 				return;
@@ -1444,14 +1456,6 @@ namespace TShockAPI
 
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile rejected from projectile create threshold from {0} {1}/{2}", args.Player.Name, args.Player.ProjectileThreshold, TShock.Config.Settings.ProjectileThreshold));
 				TShock.Log.ConsoleDebug(GetString("If this player wasn't hacking, please report the projectile create threshold they were disabled for to TShock so we can improve this!"));
-				args.Handled = true;
-				return;
-			}
-
-			if (args.Player.IsBouncerThrottled())
-			{
-				TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile rejected from bouncer throttle from {0}", args.Player.Name));
-				args.Player.RemoveProjectile(ident, owner);
 				args.Handled = true;
 				return;
 			}
