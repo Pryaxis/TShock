@@ -1312,7 +1312,7 @@ namespace TShockAPI
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile rejected from bouncer throttle from {0}", args.Player.Name));
 
 				// Client will fight the server if we remove pets, silently reject instead
-				if (!Main.projPet[type] || !ProjectileID.Sets.LightPet[type])
+				if (!Main.projPet[type] && !ProjectileID.Sets.LightPet[type])
 					args.Player.RemoveProjectile(ident, owner);
 
 				args.Handled = true;
