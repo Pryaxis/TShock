@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 
 namespace TShockAPI
 {
@@ -37,7 +38,7 @@ namespace TShockAPI
 
 		protected object HandlerLock = new object();
 		protected List<HandlerItem> Handlers { get; set; }
-		private HandlerItem[] HandlerSnapshot { get; set; } = Array.Empty<HandlerItem>();
+		private HandlerItem[] _handlerSnapshot = Array.Empty<HandlerItem>();
 		public HandlerList()
 		{
 			Handlers = new List<HandlerItem>();
@@ -60,7 +61,7 @@ namespace TShockAPI
 			{
 				Handlers.Add(obj);
 				Handlers = Handlers.OrderBy(h => (int)h.Priority).ToList();
-				HandlerSnapshot = Handlers.ToArray();
+				Volatile.Write(ref _handlerSnapshot, Handlers.ToArray());
 			}
 		}
 
@@ -70,14 +71,14 @@ namespace TShockAPI
 			{
 				if (Handlers.RemoveAll(h => h.Handler.Equals(handler)) > 0)
 				{
-					HandlerSnapshot = Handlers.ToArray();
+					Volatile.Write(ref _handlerSnapshot, Handlers.ToArray());
 				}
 			}
 		}
 
 		public void Invoke(object sender, T e)
 		{
-			var handlers = HandlerSnapshot;
+			var handlers = Volatile.Read(ref _handlerSnapshot);
 			if (handlers.Length == 0)
 				return;
 
