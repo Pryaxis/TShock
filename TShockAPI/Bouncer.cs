@@ -138,6 +138,7 @@ namespace TShockAPI
 			GetDataHandlers.FishOutNPC += OnFishOutNPC;
 			GetDataHandlers.FoodPlatterTryPlacing += OnFoodPlatterTryPlacing;
 			OTAPI.Hooks.Chest.QuickStack += OnQuickStack;
+			HookEvents.Terraria.Projectile.Kill_DirtAndFluidProjectiles_RunDelegateMethodPushUpForHalfBricks += OnProjectileDirtFluidKill;
 
 
 			// The following section is based off Player.PlaceThing_Tiles_PlaceIt and Player.PlaceThing_Tiles_PlaceIt_GetLegacyTileStyle.
@@ -3032,6 +3033,20 @@ namespace TShockAPI
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="args"></param>
+		internal void OnProjectileDirtFluidKill(Terraria.Projectile sender, HookEvents.Terraria.Projectile.Kill_DirtAndFluidProjectiles_RunDelegateMethodPushUpForHalfBricksEventArgs args)
+		{
+			if (sender.owner < 0 || sender.owner >= Main.maxPlayers)
+				return;
+
+			var player = TShock.Players[sender.owner];
+			if (player == null || !player.Active)
+				return;
+
+
+			var originalPlot = args.plot;
+			args.plot = (x, y) => player.HasBuildPermission(x, y) && originalPlot(x, y);
+		}
+
 		internal void OnQuickStack(object sender, OTAPI.Hooks.Chest.QuickStackEventArgs args)
 		{
 			var id = args.ChestIndex;
