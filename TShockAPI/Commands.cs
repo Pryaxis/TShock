@@ -846,7 +846,9 @@ namespace TShockAPI
 				return;
 			}
 
-			if (args.TPlayer.CCed && Main.ServerSideCharacter)
+			// SSC pre-login flow keeps players disabled (webbed) until authentication.
+			// Do not block login for that temporary disabled state, or players can get stuck.
+			if (args.TPlayer.CCed && Main.ServerSideCharacter && !args.Player.IsDisabledForSSC)
 			{
 				args.Player.SendErrorMessage(GetString("You cannot login whilst crowd controlled."));
 				return;
