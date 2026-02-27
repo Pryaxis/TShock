@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2026-02-27 12:27:32+0000\n"
-"PO-Revision-Date: 2026-02-27 13:48\n"
+"PO-Revision-Date: 2026-02-27 16:11\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -393,7 +393,7 @@ msgstr[1] "{0} mató a {1} PNJ."
 #: ../../TShockAPI/Commands.cs:2537
 #, csharp-format
 msgid "{0} caused it to coin rain."
-msgstr ""
+msgstr "{0} hizo que llovieran monedas."
 
 #: ../../TShockAPI/Commands.cs:2521
 #, csharp-format
@@ -438,7 +438,7 @@ msgstr "{0} cambió la tasa de aparición de enemigos a 600."
 #: ../../TShockAPI/Commands.cs:4748
 #, csharp-format
 msgid "{0} changed the wind speed to {1}mph."
-msgstr ""
+msgstr "{0} cambió la velocidad del viento a {1}mph."
 
 #: ../../TShockAPI/Commands.cs:6026
 #, csharp-format
@@ -489,7 +489,7 @@ msgstr "{0} ha activado el modo navidad."
 #: ../../TShockAPI/Commands.cs:2531
 #, csharp-format
 msgid "{0} ended the coin rain."
-msgstr ""
+msgstr "{0} terminó con la lluvia de monedas."
 
 #: ../../TShockAPI/Commands.cs:2547
 #, csharp-format
@@ -863,7 +863,7 @@ msgstr "{0} inició una noche de faroles."
 #: ../../TShockAPI/Commands.cs:2601
 #, csharp-format
 msgid "{0} started a meteor shower."
-msgstr ""
+msgstr "{0} inició una lluvia de meteoros."
 
 #: ../../TShockAPI/Commands.cs:2494
 #, csharp-format
@@ -914,7 +914,7 @@ msgstr "{0} detuvo la noche de faroles."
 #: ../../TShockAPI/Commands.cs:2596
 #, csharp-format
 msgid "{0} stopped the meteor shower."
-msgstr ""
+msgstr "{0} detuvo la lluvia de meteoros."
 
 #: ../../TShockAPI/Commands.cs:1169
 #, csharp-format
@@ -959,7 +959,7 @@ msgstr "¡{0} invocó una Luna Calabaza!"
 #: ../../TShockAPI/GetDataHandlers.cs:3863
 #, csharp-format
 msgid "{0} summoned a Slime Rain!"
-msgstr ""
+msgstr "¡{0} invocó una lluvia de slimes!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3899
 #, csharp-format
@@ -1817,7 +1817,7 @@ msgstr ""
 #: ../../TShockAPI/Bouncer.cs:1171
 #, csharp-format
 msgid "Bouncer / OnItemDrop force kicked (attempted to set velocity to infinity or NaN) from {0}"
-msgstr "Bouncer / OnItemDrop forzó la expulsión (se intentó establecer velocidad al infinito o NaN) desde {0}"
+msgstr "Bouncer / OnItemDrop forzó la expulsión (se intentó establecer velocidad a infinito o NaN) desde {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1180
 #, csharp-format
@@ -4537,7 +4537,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:1778
 msgid "IPv6 addresses are not supported as of yet by TShock. This rule will have no effect for now. Adding anyways."
-msgstr "Las direcciones IPv6 aún no están soportadas por TShock. Esta regla no tendrá ningún efecto por ahora. Añadiendo de todos modos."
+msgstr "TShock aún no es compatible con direcciones IPv6. Esta regla no tendrá efecto por ahora. Se añadió igualmente."
 
 #: ../../TShockAPI/Commands.cs:4089
 msgid "Item Ban Sub-Commands ({{0}}/{{1}}):"
@@ -6436,7 +6436,7 @@ msgstr ""
 #: ../../TShockAPI/TShock.cs:1658
 #, csharp-format
 msgid "TShock / TruncateChatMessageIfNecessary truncating excessive chat message length of {0}/{1} from {2}"
-msgstr "TShock / TruncateChatMessageIfNecessary inutilizando el largo excesivo del mensaje de chat de {0}/{1} de {2}"
+msgstr "TShock / TruncateChatMessageIfNecessary: recortando longitud excesiva del mensaje de {0}/{1} de {2}"
 
 #: ../../TShockAPI/Commands.cs:1408
 msgid "TShock Ban Help"
@@ -7580,7 +7580,7 @@ msgstr ""
 
 #: ../../TShockAPI/TShock.cs:1472
 msgid "Your client didn't send the right connection information."
-msgstr "Su cliente no envió la información de conexión correcta."
+msgstr "Tu cliente no envió la información de conexión correcta."
 
 #: ../../TShockAPI/Bouncer.cs:480
 msgid "Your client sent a blank character name."
