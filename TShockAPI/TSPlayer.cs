@@ -486,71 +486,81 @@ namespace TShockAPI
 			Item[] loadout3Dye = TPlayer.Loadouts[2].Dye;
 			Item trash = TPlayer.trashItem;
 
-			bool CheckSlotStack(Item item, string warningMessage, bool checkNegative = true)
+			var itemWarning = GetString("Stack cheat detected. Remove item {0} ({1}) and then rejoin.");
+			var armorWarning = GetString("Stack cheat detected. Remove armor {0} ({1}) and then rejoin.");
+			var dyeWarning = GetString("Stack cheat detected. Remove dye {0} ({1}) and then rejoin.");
+			var itemDyeWarning = GetString("Stack cheat detected. Remove item dye {0} ({1}) and then rejoin.");
+			var piggyWarning = GetString("Stack cheat detected. Remove piggy-bank item {0} ({1}) and then rejoin.");
+			var safeWarning = GetString("Stack cheat detected. Remove safe item {0} ({1}) and then rejoin.");
+			var trashWarning = GetString("Stack cheat detected. Remove trash item {0} ({1}) and then rejoin.");
+			var forgeWarning = GetString("Stack cheat detected. Remove Defender's Forge item {0} ({1}) and then rejoin.");
+			var voidWarning = GetString("Stack cheat detected. Remove Void Vault item {0} ({1}) and then rejoin.");
+			var loadout1Warning = GetString("Stack cheat detected. Remove Loadout 1 item {0} ({1}) and then rejoin.");
+			var loadout2Warning = GetString("Stack cheat detected. Remove Loadout 2 item {0} ({1}) and then rejoin.");
+			var loadout3Warning = GetString("Stack cheat detected. Remove Loadout 3 item {0} ({1}) and then rejoin.");
+
+			void CheckSlotStack(Item item, string warningMessage, bool checkNegative = true)
 			{
 				if (item == null || item.type == 0)
-					return false;
+					return;
 
 				if (item.stack > item.maxStack || (checkNegative && item.stack < 0))
 				{
 					check = true;
 					if (shouldWarnPlayer)
 					{
-						SendErrorMessage(GetString(warningMessage, item.Name, item.stack));
+						SendErrorMessage(warningMessage, item.Name, item.stack);
 					}
-
-					return true;
 				}
-
-				return false;
 			}
 
 			for (int i = 0; i < inventory.Length; i++)
-				CheckSlotStack(inventory[i], "Stack cheat detected. Remove item {0} ({1}) and then rejoin.");
+				CheckSlotStack(inventory[i], itemWarning);
 
 			for (int i = 0; i < armor.Length; i++)
-				CheckSlotStack(armor[i], "Stack cheat detected. Remove armor {0} ({1}) and then rejoin.");
+				CheckSlotStack(armor[i], armorWarning);
 
 			for (int i = 0; i < dye.Length; i++)
-				CheckSlotStack(dye[i], "Stack cheat detected. Remove dye {0} ({1}) and then rejoin.");
+				CheckSlotStack(dye[i], dyeWarning);
 
 			for (int i = 0; i < miscEquips.Length; i++)
-				CheckSlotStack(miscEquips[i], "Stack cheat detected. Remove item {0} ({1}) and then rejoin.");
+				CheckSlotStack(miscEquips[i], itemWarning);
 
 			for (int i = 0; i < miscDyes.Length; i++)
-				CheckSlotStack(miscDyes[i], "Stack cheat detected. Remove item dye {0} ({1}) and then rejoin.");
+				CheckSlotStack(miscDyes[i], itemDyeWarning);
 
 			for (int i = 0; i < piggy.Length; i++)
-				CheckSlotStack(piggy[i], "Stack cheat detected. Remove piggy-bank item {0} ({1}) and then rejoin.");
+				CheckSlotStack(piggy[i], piggyWarning);
 
 			for (int i = 0; i < safe.Length; i++)
-				CheckSlotStack(safe[i], "Stack cheat detected. Remove safe item {0} ({1}) and then rejoin.");
+				CheckSlotStack(safe[i], safeWarning);
 
-			CheckSlotStack(trash, "Stack cheat detected. Remove trash item {0} ({1}) and then rejoin.", checkNegative: false);
+			// Preserve legacy behavior for trash slot checks: only overflow stack was validated previously.
+			CheckSlotStack(trash, trashWarning, checkNegative: false);
 
 			for (int i = 0; i < forge.Length; i++)
-				CheckSlotStack(forge[i], "Stack cheat detected. Remove Defender's Forge item {0} ({1}) and then rejoin.");
+				CheckSlotStack(forge[i], forgeWarning);
 
 			for (int i = 0; i < voidVault.Length; i++)
-				CheckSlotStack(voidVault[i], "Stack cheat detected. Remove Void Vault item {0} ({1}) and then rejoin.");
+				CheckSlotStack(voidVault[i], voidWarning);
 
 			for (int i = 0; i < loadout1Armor.Length; i++)
-				CheckSlotStack(loadout1Armor[i], "Stack cheat detected. Remove Loadout 1 item {0} ({1}) and then rejoin.");
+				CheckSlotStack(loadout1Armor[i], loadout1Warning);
 
 			for (int i = 0; i < loadout1Dye.Length; i++)
-				CheckSlotStack(loadout1Dye[i], "Stack cheat detected. Remove Loadout 1 item {0} ({1}) and then rejoin.");
+				CheckSlotStack(loadout1Dye[i], loadout1Warning);
 
 			for (int i = 0; i < loadout2Armor.Length; i++)
-				CheckSlotStack(loadout2Armor[i], "Stack cheat detected. Remove Loadout 2 item {0} ({1}) and then rejoin.");
+				CheckSlotStack(loadout2Armor[i], loadout2Warning);
 
 			for (int i = 0; i < loadout2Dye.Length; i++)
-				CheckSlotStack(loadout2Dye[i], "Stack cheat detected. Remove Loadout 2 item {0} ({1}) and then rejoin.");
+				CheckSlotStack(loadout2Dye[i], loadout2Warning);
 
 			for (int i = 0; i < loadout3Armor.Length; i++)
-				CheckSlotStack(loadout3Armor[i], "Stack cheat detected. Remove Loadout 3 item {0} ({1}) and then rejoin.");
+				CheckSlotStack(loadout3Armor[i], loadout3Warning);
 
 			for (int i = 0; i < loadout3Dye.Length; i++)
-				CheckSlotStack(loadout3Dye[i], "Stack cheat detected. Remove Loadout 3 item {0} ({1}) and then rejoin.");
+				CheckSlotStack(loadout3Dye[i], loadout3Warning);
 
 			return check;
 		}
