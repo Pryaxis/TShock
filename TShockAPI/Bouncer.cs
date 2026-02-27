@@ -3212,13 +3212,13 @@ namespace TShockAPI
 			{ 611, -1 },
 
 			{ 950, 0 },
-			{ 502, 0 }
+			{ 502, 0 } // Used as bounce count, can never be less than 0 as it always starts as such.
 		};
 		private Dictionary<short, float> Projectile_MaxValuesAI = new Dictionary<short, float> {
 			{ 611, 1 },
 
 			{ 950, 0 },
-			{ 502, 5 }
+			{ 502, 5 } // Used as bounce count, is alwys killed once reaching this treshold, so it can never exceed this.
 		};
 
 		private Dictionary<short, float> Projectile_MinValuesAI2 = new Dictionary<short, float> {
@@ -3234,7 +3234,7 @@ namespace TShockAPI
 
 			{ 756, 0.5f },
 			{ 522, 0 },
-			{ 459, 0.7f }
+			{ 459, 0.7f } // Is used for scale, can only ever be 0.7f, 1.0f, and 1.3f (unused).
 		};
 		private Dictionary<short, float> Projectile_MaxValuesAI2 = new Dictionary<short, float> {
 			{ 405, 1.2f },
@@ -3249,7 +3249,7 @@ namespace TShockAPI
 
 			{ 756, 1 },
 			{ 522, 40f },
-			{ 459, 1.3f }
+			{ 459, 1.3f } // Is used for scale, can only ever be 0.7f, 1.0f, and 1.3f (unused).
 		};
 	}
 }
