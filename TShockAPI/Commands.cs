@@ -846,9 +846,11 @@ namespace TShockAPI
 				return;
 			}
 
-			// SSC pre-login flow keeps players disabled (webbed) until authentication.
-			// Do not block login for that temporary disabled state, or players can get stuck.
-			if (args.TPlayer.CCed && Main.ServerSideCharacter && !args.Player.IsDisabledForSSC)
+			// Pre-login auth gates can disable movement (SSC/RequireLogin), which may mark the player as CCed.
+			// Allow login in that temporary state to avoid an auth deadlock.
+			var disabledForAuthGate = args.Player.IsDisabledForSSC
+				|| (!args.Player.IsLoggedIn && TShock.Config.Settings.RequireLogin);
+			if (args.TPlayer.CCed && Main.ServerSideCharacter && !disabledForAuthGate)
 			{
 				args.Player.SendErrorMessage(GetString("You cannot login whilst crowd controlled."));
 				return;
