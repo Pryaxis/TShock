@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2026-02-26 20:53:02+0000\n"
-"PO-Revision-Date: 2026-02-26 22:13\n"
+"PO-Revision-Date: 2026-02-27 07:43\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -1817,7 +1817,7 @@ msgstr ""
 #: ../../TShockAPI/Bouncer.cs:1175
 #, csharp-format
 msgid "Bouncer / OnItemDrop force kicked (attempted to set velocity to infinity or NaN) from {0}"
-msgstr ""
+msgstr "Bouncer / OnItemDrop forzó la expulsión (se intentó establecer velocidad al infinito o NaN) desde {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1184
 #, csharp-format
@@ -3471,7 +3471,7 @@ msgstr ""
 #: ../../TShockAPI/GetDataHandlers.cs:3742
 #, csharp-format
 msgid "GetDataHandlers / HandleSpecial rejected enchanted moondial permission {0}"
-msgstr ""
+msgstr "GetDataHandlers / HandleSpecial rechazó el permiso de Reloj de sol/lunar encantado {0}"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3718
 #, csharp-format
@@ -4542,7 +4542,7 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:1778
 msgid "IPv6 addresses are not supported as of yet by TShock. This rule will have no effect for now. Adding anyways."
-msgstr ""
+msgstr "Las direcciones IPv6 aún no están soportadas por TShock. Esta regla no tendrá ningún efecto por ahora. Añadiendo de todos modos."
 
 #: ../../TShockAPI/Commands.cs:4089
 msgid "Item Ban Sub-Commands ({{0}}/{{1}}):"
@@ -5683,7 +5683,7 @@ msgstr "Muestra información sobre el mundo actual."
 
 #: ../../TShockAPI/Commands.cs:657
 msgid "Shows recent boss kill contribution."
-msgstr ""
+msgstr "Muestra la contribución reciente a la muerte del jefe."
 
 #: ../../TShockAPI/Commands.cs:631
 msgid "Shows the currently connected players."
@@ -6441,7 +6441,7 @@ msgstr ""
 #: ../../TShockAPI/TShock.cs:1658
 #, csharp-format
 msgid "TShock / TruncateChatMessageIfNecessary truncating excessive chat message length of {0}/{1} from {2}"
-msgstr ""
+msgstr "TShock / TruncateChatMessageIfNecessary inutilizando el largo excesivo del mensaje de chat de {0}/{1} de {2}"
 
 #: ../../TShockAPI/Commands.cs:1408
 msgid "TShock Ban Help"
@@ -7585,7 +7585,7 @@ msgstr ""
 
 #: ../../TShockAPI/TShock.cs:1472
 msgid "Your client didn't send the right connection information."
-msgstr ""
+msgstr "Su cliente no envió la información de conexión correcta."
 
 #: ../../TShockAPI/Bouncer.cs:480
 msgid "Your client sent a blank character name."
