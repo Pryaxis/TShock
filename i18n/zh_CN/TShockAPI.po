@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2026-02-26 20:53:02+0000\n"
-"PO-Revision-Date: 2026-02-26 22:13\n"
+"PO-Revision-Date: 2026-02-27 03:07\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -3093,7 +3093,7 @@ msgstr "检测到恶意攻击"
 #: ../../TShockAPI/Commands.cs:1788
 #, csharp-format
 msgid "Failed to add {0} to the whitelist. Perhaps it is already whitelisted?"
-msgstr ""
+msgstr "无法将 {0} 添加到白名单。可能它已在白名单中？"
 
 #: ../../TShockAPI/Commands.cs:1535
 #, csharp-format
@@ -5939,7 +5939,7 @@ msgstr "组\"{0}\"的聊天后缀已被设为\"{1}\"。"
 
 #: ../../TShockAPI/Commands.cs:502
 msgid "Switches the world's evil."
-msgstr ""
+msgstr "切换世界邪恶类型。"
 
 #: ../../TShockAPI/Commands.cs:5907
 msgid "Sync'd!"
@@ -6516,7 +6516,7 @@ msgstr "输入 {0}login {1} 登录"
 #: ../../TShockAPI/Commands.cs:1087
 #, csharp-format
 msgid "Type {0}login to log-in to your account using your UUID."
-msgstr "输入{0}login 以你的UUID作为凭证登录."
+msgstr "输入 {0}login 以你的UUID作为凭证登录."
 
 #: ../../TShockAPI/Commands.cs:4268
 #, csharp-format
@@ -6908,7 +6908,7 @@ msgstr "世界已备份。"
 #: ../../TShockAPI/Commands.cs:2699
 #, csharp-format
 msgid "World evil switched to {0}."
-msgstr ""
+msgstr "世界邪恶类型已切换到 {0}"
 
 #: ../../TShockAPI/Commands.cs:2670
 #, csharp-format
