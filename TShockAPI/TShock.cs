@@ -1232,10 +1232,9 @@ namespace TShockAPI
 						}
 					}
 
-						if (player.IsBeingDisabled())
-						{
-							player.Disable(flags: flags);
-						}
+					if (player.IsBeingDisabled())
+					{
+						player.Disable(flags: flags);
 					}
 				}
 			}
