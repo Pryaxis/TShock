@@ -1096,11 +1096,12 @@ namespace TShockAPI
 		/// <summary>OnSecondUpdate - Called effectively every second for all time based checks.</summary>
 		private void OnSecondUpdate()
 		{
-			DisableFlags flags = Config.Settings.DisableSecondUpdateLogs ? DisableFlags.WriteToConsole : DisableFlags.WriteToLogAndConsole;
+			var settings = Config.Settings;
+			DisableFlags flags = settings.DisableSecondUpdateLogs ? DisableFlags.WriteToConsole : DisableFlags.WriteToLogAndConsole;
 
-			if (Config.Settings.ForceTime != "normal")
+			if (settings.ForceTime != "normal")
 			{
-				switch (Config.Settings.ForceTime)
+				switch (settings.ForceTime)
 				{
 					case "day":
 						TSPlayer.Server.SetTime(true, 27000.0);
@@ -1117,7 +1118,7 @@ namespace TShockAPI
 				{
 					if (player.TilesDestroyed != null)
 					{
-						if (player.TileKillThreshold >= Config.Settings.TileKillThreshold)
+						if (player.TileKillThreshold >= settings.TileKillThreshold)
 						{
 							player.Disable(GetString("Reached TileKill threshold."), flags);
 							TSPlayer.Server.RevertTiles(player.TilesDestroyed);
@@ -1134,7 +1135,7 @@ namespace TShockAPI
 
 					if (player.TilesCreated != null)
 					{
-						if (player.TilePlaceThreshold >= Config.Settings.TilePlaceThreshold)
+						if (player.TilePlaceThreshold >= settings.TilePlaceThreshold)
 						{
 							player.Disable(GetString("Reached TilePlace threshold"), flags);
 							lock (player.TilesCreated)
@@ -1178,7 +1179,7 @@ namespace TShockAPI
 						}
 					}
 
-					if (player.TileLiquidThreshold >= Config.Settings.TileLiquidThreshold)
+					if (player.TileLiquidThreshold >= settings.TileLiquidThreshold)
 					{
 						player.Disable(GetString("Reached TileLiquid threshold"), flags);
 					}
@@ -1187,7 +1188,7 @@ namespace TShockAPI
 						player.TileLiquidThreshold = 0;
 					}
 
-					if (player.ProjectileThreshold >= Config.Settings.ProjectileThreshold)
+					if (player.ProjectileThreshold >= settings.ProjectileThreshold)
 					{
 						player.Disable(GetString("Reached projectile threshold"), flags);
 					}
@@ -1196,7 +1197,7 @@ namespace TShockAPI
 						player.ProjectileThreshold = 0;
 					}
 
-					if (player.PaintThreshold >= Config.Settings.TilePaintThreshold)
+					if (player.PaintThreshold >= settings.TilePaintThreshold)
 					{
 						player.Disable(GetString("Reached paint threshold"), flags);
 					}
@@ -1205,7 +1206,7 @@ namespace TShockAPI
 						player.PaintThreshold = 0;
 					}
 
-					if (player.HealOtherThreshold >= TShock.Config.Settings.HealOtherThreshold)
+					if (player.HealOtherThreshold >= settings.HealOtherThreshold)
 					{
 						player.Disable(GetString("Reached HealOtherPlayer threshold"), flags);
 					}
