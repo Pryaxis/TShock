@@ -87,18 +87,18 @@ namespace TShockAPI
 				// Untaint now, re-taint if they fail the check.
 				UnTaint(player);
 
-				// No matter the player type, we do a check when a player is holding an item that's banned.
-				if (DataModel.ItemIsBanned(EnglishLanguage.GetItemNameById(player.TPlayer.inventory[player.TPlayer.selectedItem].type), player))
+				// If player isn't disabled for not being logged in, check for any banned items in use.
+				if ((TShock.Config.Settings.RequireLogin || Main.ServerSideCharacter) && player.IsLoggedIn ||
+					(!TShock.Config.Settings.RequireLogin && !Main.ServerSideCharacter))
 				{
-					string itemName = player.TPlayer.inventory[player.TPlayer.selectedItem].Name;
-					player.Disable(GetString($"holding banned item: {itemName}"), disableFlags);
-					SendCorrectiveMessage(player, itemName);
-				}
-
-				// If SSC isn't enabled OR if SSC is enabled and the player is logged in
-				// In a case like this, we do the full check too.
-				if (!Main.ServerSideCharacter || (Main.ServerSideCharacter && player.IsLoggedIn))
-				{
+					// No matter the player type, we do a check when a player is holding an item that's banned.
+					if (DataModel.ItemIsBanned(EnglishLanguage.GetItemNameById(player.TPlayer.inventory[player.TPlayer.selectedItem].type), player))
+					{
+						string itemName = player.TPlayer.inventory[player.TPlayer.selectedItem].Name;
+						player.Disable(GetString($"holding banned item: {itemName}"), disableFlags);
+						SendCorrectiveMessage(player, itemName);
+					}
+					
 					// The Terraria inventory is composed of a multicultural set of arrays
 					// with various different contents and beliefs
 
