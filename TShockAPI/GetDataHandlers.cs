@@ -3755,6 +3755,11 @@ namespace TShockAPI
 					return true;
 				}
 			}
+			else if (type == 10)
+			{
+				// Player get free cake from Party Girl.It is not handled in 1.4.5.5
+				return false;
+			}
 			else if (!args.Player.HasPermission($"tshock.specialeffects.{type}"))
 			{
 				args.Player.SendErrorMessage(GetString("You do not have permission to use this effect."));
