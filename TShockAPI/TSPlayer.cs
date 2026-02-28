@@ -2211,7 +2211,7 @@ namespace TShockAPI
 		public virtual void SetTeam(int team)
 		{
 			if (team < 0 || team >= Main.teamColor.Length)
-				throw new ArgumentException("The player's team is not in the range of available.");
+				throw new ArgumentException(GetString("The player's team is not in the range of available."));
 			Main.player[Index].team = team;
 			NetMessage.SendData((int)PacketTypes.PlayerTeam, -1, -1, NetworkText.Empty, Index);
 		}

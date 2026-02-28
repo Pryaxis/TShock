@@ -333,7 +333,7 @@ namespace TShockAPI
 			var reason = string.IsNullOrWhiteSpace(args.Parameters["message"]) ? "Server is shutting down" : args.Parameters["message"];
 			TShock.Utils.StopServer(!GetBool(args.Parameters["nosave"], false), reason);
 
-			return RestResponse("The server is shutting down");
+			return RestResponse(GetString("The server is shutting down"));
 		}
 
 		[Description("Reload config files for the server.")]
@@ -345,7 +345,7 @@ namespace TShockAPI
 			TShock.Utils.Reload();
 			Hooks.GeneralHooks.OnReloadEvent(new TSRestPlayer(args.TokenData.Username, TShock.Groups.GetGroupByName(args.TokenData.UserGroupName)));
 
-			return RestResponse("Configuration, permissions, and regions reload complete. Some changes may require a server restart.");
+			return RestResponse(GetString("Configuration, permissions, and regions reload complete. Some changes may require a server restart."));
 		}
 
 		[Description("Broadcast a server wide message.")]
@@ -358,7 +358,7 @@ namespace TShockAPI
 			if (string.IsNullOrWhiteSpace(msg))
 				return RestMissingParam("msg");
 			TSPlayer.All.SendInfoMessage(msg);
-			return RestResponse("The message was broadcasted successfully");
+			return RestResponse(GetString("The message was broadcasted successfully"));
 		}
 
 		[Description("Returns the motd, if it exists.")]
@@ -368,7 +368,7 @@ namespace TShockAPI
 		{
 			string motdFilePath = FileTools.MotdPath;
 			if (!File.Exists(motdFilePath))
-				return this.RestError("The motd.txt was not found.", "500");
+				return this.RestError(GetString("The motd.txt was not found."), "500");
 
 			return new RestObject()
 			{
@@ -383,7 +383,7 @@ namespace TShockAPI
 		{
 			string rulesFilePath = Path.Combine(TShock.SavePath, "rules.txt");
 			if (!File.Exists(rulesFilePath))
-				return this.RestError("The rules.txt was not found.", "500");
+				return this.RestError(GetString("The rules.txt was not found."), "500");
 
 			return new RestObject()
 			{
@@ -514,7 +514,7 @@ namespace TShockAPI
 				return RestError(e.Message);
 			}
 
-			return RestResponse("User was successfully created");
+			return RestResponse(GetString("User was successfully created"));
 		}
 
 		[Description("Update a users information.")]
@@ -543,11 +543,11 @@ namespace TShockAPI
 				try
 				{
 					TShock.UserAccounts.SetUserAccountPassword(account, password);
-					response.Add("password-response", "Password updated successfully");
+					response.Add("password-response", GetString("Password updated successfully"));
 				}
 				catch (Exception e)
 				{
-					return RestError("Failed to update user password (" + e.Message + ")");
+					return RestError(GetString($"Failed to update user password ({e.Message})"));
 				}
 			}
 
@@ -561,7 +561,7 @@ namespace TShockAPI
 				}
 				catch (Exception e)
 				{
-					return RestError("Failed to update user group (" + e.Message + ")");
+					return RestError(GetString($"Failed to update user group ({e.Message})"));
 				}
 			}
 
@@ -589,7 +589,7 @@ namespace TShockAPI
 				return RestError(e.Message);
 			}
 
-			return RestResponse("User deleted successfully");
+			return RestResponse(GetString("User deleted successfully"));
 		}
 
 		[Description("List detailed information for a user account.")]

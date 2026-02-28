@@ -4168,7 +4168,7 @@ namespace TShockAPI
 
 					if (!args.Player.HasPermission(Permissions.tppotion))
 					{
-						Fail("Teleportation Potions");
+						Fail(GetString("Teleportation Potions"));
 						return true;
 					}
 					break;
@@ -4186,11 +4186,11 @@ namespace TShockAPI
 					{
 						if (args.Player.ItemInHand.type == ItemID.ShellphoneOcean || args.Player.SelectedItem.type == ItemID.ShellphoneOcean)
 						{
-							Fail("the Shellphone (Ocean)");
+							Fail(GetString("the Shellphone (Ocean)"));
 						}
 						else
 						{
-							Fail("the Magic Conch");
+							Fail(GetString("the Magic Conch"));
 						}
 						return true;
 					}
@@ -4209,11 +4209,11 @@ namespace TShockAPI
 					{
 						if (args.Player.ItemInHand.type == ItemID.ShellphoneHell || args.Player.SelectedItem.type == ItemID.ShellphoneHell)
 						{
-							Fail("the Shellphone (Underworld)");
+							Fail(GetString("the Shellphone (Underworld)"));
 						}
 						else
 						{
-							Fail("the Demon Conch");
+							Fail(GetString("the Demon Conch"));
 						}
 						return true;
 					}
