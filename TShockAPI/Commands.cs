@@ -909,6 +909,11 @@ namespace TShockAPI
 					}
 
 					args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, account.ID);
+					if (Main.ServerSideCharacter && TShock.CharacterDB.IsSeededAppearanceMissing(args.Player.PlayerData))
+					{
+						TShock.CharacterDB.SyncSeededAppearance(account, args.Player);
+						args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, account.ID);
+					}
 
 					args.Player.Group = group;
 					args.Player.tempGroup = null;
@@ -1088,14 +1093,6 @@ namespace TShockAPI
 						args.Player.SendMessage(GetString($"Type {Specifier}login {echoPassword.Color(Utils.BoldHighlight)} to log-in to your account."), Color.White);
 
 					TShock.UserAccounts.AddUserAccount(account);
-					if (Main.ServerSideCharacter)
-					{
-						var createdAccount = TShock.UserAccounts.GetUserAccountByName(account.Name);
-						if (createdAccount != null)
-						{
-							TShock.CharacterDB.SyncSeededAppearance(createdAccount, args.Player);
-						}
-					}
 					TShock.Log.ConsoleInfo(GetString("{0} registered an account: \"{1}\".", args.Player.Name, account.Name));
 				}
 				else

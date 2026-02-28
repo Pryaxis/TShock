@@ -185,8 +185,31 @@ namespace TShockAPI.DB
 		}
 
 		/// <summary>
-		/// Updates appearance-related SSC fields for a newly registered account.
-		/// This prevents first-login appearance resets when legacy schemas default missing columns.
+		/// Checks whether an SSC row appears to be seeded without appearance fields.
+		/// </summary>
+		/// <param name="playerData">Loaded SSC data for an account.</param>
+		/// <returns>true when appearance fields are still missing.</returns>
+		public bool IsSeededAppearanceMissing(PlayerData playerData)
+		{
+			if (playerData == null || !playerData.exists)
+				return false;
+
+			return playerData.skinVariant == null
+				&& playerData.hair == null
+				&& playerData.hairColor == null
+				&& playerData.pantsColor == null
+				&& playerData.shirtColor == null
+				&& playerData.underShirtColor == null
+				&& playerData.shoeColor == null
+				&& playerData.skinColor == null
+				&& playerData.eyeColor == null
+				&& playerData.hideVisuals == null
+				&& playerData.voiceVariant == null
+				&& playerData.voicePitchOffset == null;
+		}
+
+		/// <summary>
+		/// Updates appearance-related SSC fields for accounts with seeded rows missing appearance data.
 		/// </summary>
 		/// <param name="account">The account owning the SSC row.</param>
 		/// <param name="player">The currently connected player source.</param>

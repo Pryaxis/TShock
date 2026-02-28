@@ -2810,6 +2810,11 @@ namespace TShockAPI
 						return true;
 
 					args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, account.ID);
+					if (Main.ServerSideCharacter && TShock.CharacterDB.IsSeededAppearanceMissing(args.Player.PlayerData))
+					{
+						TShock.CharacterDB.SyncSeededAppearance(account, args.Player);
+						args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, account.ID);
+					}
 
 					args.Player.Group = group;
 					args.Player.tempGroup = null;
@@ -3474,6 +3479,11 @@ namespace TShockAPI
 				{
 					args.Player.RequiresPassword = false;
 					args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, account.ID);
+					if (Main.ServerSideCharacter && TShock.CharacterDB.IsSeededAppearanceMissing(args.Player.PlayerData))
+					{
+						TShock.CharacterDB.SyncSeededAppearance(account, args.Player);
+						args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, account.ID);
+					}
 
 					if (args.Player.State == (int)ConnectionState.AssigningPlayerSlot)
 						args.Player.State = (int)ConnectionState.AwaitingPlayerInfo;
