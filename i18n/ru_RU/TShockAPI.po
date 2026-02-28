@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
-"POT-Creation-Date: 2026-02-27 12:27:32+0000\n"
-"PO-Revision-Date: 2026-02-27 13:48\n"
+"POT-Creation-Date: 2026-02-28 11:51:41+0000\n"
+"PO-Revision-Date: 2026-02-28 11:58\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -36,19 +36,19 @@ msgctxt "{0} is ban number, {1} is ban reason"
 msgid "#{0} - You are banned: {1}"
 msgstr "#{0} - Вы забанены: {1}"
 
-#: ../../TShockAPI/Commands.cs:6672
+#: ../../TShockAPI/Commands.cs:6674
 msgid "     'basic', 'sakura', 'willow', 'boreal', 'mahogany', 'ebonwood', 'shadewood', 'pearlwood'."
 msgstr "     'basic', 'sakura', 'willow', 'boreal', 'mahogany', 'ebonwood', 'shadewood', 'pearlwood'."
 
-#: ../../TShockAPI/Commands.cs:6678
+#: ../../TShockAPI/Commands.cs:6680
 msgid "     'cactus', 'herb', 'mushroom'."
 msgstr "     'cactus', 'herb', 'mushroom'."
 
-#: ../../TShockAPI/Commands.cs:6674
+#: ../../TShockAPI/Commands.cs:6676
 msgid "     'palm', 'corruptpalm', 'crimsonpalm', 'hallowpalm'."
 msgstr "     'palm', 'corruptpalm', 'crimsonpalm', 'hallowpalm'."
 
-#: ../../TShockAPI/Commands.cs:6676
+#: ../../TShockAPI/Commands.cs:6678
 msgid "     'topaz', 'amethyst', 'sapphire', 'emerald', 'ruby', 'diamond', 'amber'."
 msgstr "     'topaz', 'amethyst', 'sapphire', 'emerald', 'ruby', 'diamond', 'amber'."
 
@@ -133,11 +133,11 @@ msgstr "- Забанить оффлайн игрока по IP-адресу"
 msgid "- Ban an online player by index (Useful for hard to type names)"
 msgstr "- Забанить онлайн игрока по индексу (Полезно для сложно вводимых ников)"
 
-#: ../../TShockAPI/Commands.cs:6671
+#: ../../TShockAPI/Commands.cs:6673
 msgid "- Default trees :"
 msgstr "- Деревья по умолчанию:"
 
-#: ../../TShockAPI/Commands.cs:6675
+#: ../../TShockAPI/Commands.cs:6677
 msgid "- Gem trees :"
 msgstr "- Самоцветные деревья:"
 
@@ -145,11 +145,11 @@ msgstr "- Самоцветные деревья:"
 msgid "- Lists active bans. Color trends towards green as the ban approaches expiration"
 msgstr "- Список активных банов. Цветные тренды в направлении зелёного по мере истечения срока действия запрета"
 
-#: ../../TShockAPI/Commands.cs:6677
+#: ../../TShockAPI/Commands.cs:6679
 msgid "- Misc :"
 msgstr "- Прочее"
 
-#: ../../TShockAPI/Commands.cs:6673
+#: ../../TShockAPI/Commands.cs:6675
 msgid "- Palm trees :"
 msgstr "- Пальмовые деревья:"
 
@@ -173,7 +173,7 @@ msgstr "!!! Пароль сервера в config.json был переопред
 msgid "!!! UUID login is enabled. If a user's UUID matches an account, the server password will be bypassed."
 msgstr "!!! UUID логин включен. Если UUID пользователя совпадает с учетной записью, пароль сервера будет отключен."
 
-#: ../../TShockAPI/Commands.cs:6582
+#: ../../TShockAPI/Commands.cs:6584
 #, csharp-format
 msgid "\"{0}\" is not a valid buff ID!"
 msgstr "\"{0}\" не является допустимым ID эффекта!"
@@ -297,7 +297,7 @@ msgstr "{0} {1} {2}"
 msgid "{0} {1} on {2} ({3} ago)"
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:6541
+#: ../../TShockAPI/Commands.cs:6543
 #, csharp-format
 msgid "{0} <\"{1}|{2}\"> [{3}]"
 msgstr ""
@@ -311,7 +311,7 @@ msgid "{0} <{1}>"
 msgstr ""
 
 #: ../../TShockAPI/Commands.cs:5571
-#: ../../TShockAPI/Commands.cs:6481
+#: ../../TShockAPI/Commands.cs:6483
 #, csharp-format
 msgid "{0} <{1}> [{2}]"
 msgstr ""
@@ -332,7 +332,7 @@ msgstr ""
 msgid "{0} <{1}> <{2}>"
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:6591
+#: ../../TShockAPI/Commands.cs:6593
 #, csharp-format
 msgid "{0} <{1}> <{2}|{3}> [{4}]"
 msgstr ""
@@ -366,6 +366,16 @@ msgstr ""
 #, csharp-format
 msgid "{0} attempted to register for the account {1} but it was already taken."
 msgstr "{0} пытался зарегистрировать уже существующий аккаунт {1}."
+
+#: ../../TShockAPI/Commands.cs:5513
+#, csharp-format
+msgid "{0} attempted to use an incorrect setup code."
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:5487
+#, csharp-format
+msgid "{0} attempted to use the initial setup system even though it's disabled."
+msgstr ""
 
 #: ../../TShockAPI/GetDataHandlers.cs:2841
 #: ../../TShockAPI/GetDataHandlers.cs:3471
@@ -524,7 +534,7 @@ msgstr "{0} выполнил: {1}{2}."
 msgid "{0} failed to authenticate as user: {1}."
 msgstr "{0} не удалось авторизоваться как пользователь: {1}"
 
-#: ../../TShockAPI/Commands.cs:6452
+#: ../../TShockAPI/Commands.cs:6454
 #, csharp-format
 msgid "{0} gave you {1} {2}."
 msgid_plural "{0} gave you {1} {2}s."
@@ -563,7 +573,7 @@ msgstr "Теперь {0} запрещено использовать снаря�
 msgid "{0} has been disallowed to use {1}."
 msgstr "{0} было запрещено использовать {1}."
 
-#: ../../TShockAPI/Commands.cs:6640
+#: ../../TShockAPI/Commands.cs:6642
 #, csharp-format
 msgid "{0} has buffed you with {1} ({2}) for {3} seconds!"
 msgstr ""
@@ -694,17 +704,17 @@ msgstr "{0} запустил Морозный легион"
 msgid "{0} has unmuted {1}."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:6529
+#: ../../TShockAPI/Commands.cs:6531
 #, csharp-format
 msgid "{0} healed {1} for {2} HP."
 msgstr "{0} выдал(а) {1} {2} единицы здоровья"
 
-#: ../../TShockAPI/Commands.cs:6527
+#: ../../TShockAPI/Commands.cs:6529
 #, csharp-format
 msgid "{0} healed herself for {1} HP."
 msgstr "{0} выдала {1} единицы здоровья себе."
 
-#: ../../TShockAPI/Commands.cs:6525
+#: ../../TShockAPI/Commands.cs:6527
 #, csharp-format
 msgid "{0} healed himself for {1} HP."
 msgstr "{0} выдал {1} единицы здоровья себе."
@@ -749,7 +759,7 @@ msgstr "{0} уже запрещено использовать снаряд {1}.
 msgid "{0} is banned! Remove it!"
 msgstr "{0} заблокирован! Удалите его!"
 
-#: ../../TShockAPI/Commands.cs:6920
+#: ../../TShockAPI/Commands.cs:6922
 #, csharp-format
 msgid "{0} is no longer in god mode."
 msgstr "{0} больше не в режиме бога."
@@ -771,7 +781,7 @@ msgstr "{0} не забанен."
 msgid "{0} is not dead!"
 msgstr "{0} не мертв!"
 
-#: ../../TShockAPI/Commands.cs:6919
+#: ../../TShockAPI/Commands.cs:6921
 #, csharp-format
 msgid "{0} is now in god mode."
 msgstr "{0} перешел в режим бога."
@@ -1241,6 +1251,10 @@ msgstr[1] ""
 msgstr[2] ""
 msgstr[3] ""
 
+#: ../../TShockAPI/Utils.cs:1061
+msgid "|Permission|"
+msgstr ""
+
 #: ../../TShockAPI/Commands.cs:2923
 msgid "a Deerclops"
 msgstr "циклоп-олень"
@@ -1421,11 +1435,11 @@ msgstr ""
 msgid "allowg <group> <region> - Allows a user group to a region."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:6843
+#: ../../TShockAPI/Commands.cs:6845
 msgid "Amber Gemtree"
 msgstr "Янтарное дерево"
 
-#: ../../TShockAPI/Commands.cs:6823
+#: ../../TShockAPI/Commands.cs:6825
 msgid "Amethyst Gemtree"
 msgstr "Аметистовое дерево"
 
@@ -1664,7 +1678,7 @@ msgstr "Забанен."
 msgid "Bans ({{0}}/{{1}}):"
 msgstr "Баны ({{0}}/{{1}}):"
 
-#: ../../TShockAPI/Commands.cs:6765
+#: ../../TShockAPI/Commands.cs:6767
 msgid "Basic Tree"
 msgstr "Обычное дерево"
 
@@ -1682,7 +1696,7 @@ msgstr "Кровавая Луна была установлена на {0}"
 msgid "Bloodmoon state: {0}"
 msgstr "Состояние Кровавой Луны: {0}"
 
-#: ../../TShockAPI/Commands.cs:6769
+#: ../../TShockAPI/Commands.cs:6771
 msgid "Boreal Tree"
 msgstr "Заснеженное дерево"
 
@@ -2657,6 +2671,7 @@ msgstr ""
 msgid "Bouncer / SendTileRect rejected from throttle from {0}"
 msgstr ""
 
+#: ../../TShockAPI/TShock.cs:1601
 #: ../../TShockAPI/Utils.cs:136
 #, csharp-format
 msgid "Broadcast: {0}"
@@ -2671,7 +2686,7 @@ msgstr ""
 msgid "Broadcasts a message to everyone on the server."
 msgstr "Объявляет сообщение на весь сервер."
 
-#: ../../TShockAPI/Commands.cs:6540
+#: ../../TShockAPI/Commands.cs:6542
 msgid "Buff Syntax and Example"
 msgstr "Синтаксис и пример Buff"
 
@@ -2683,7 +2698,7 @@ msgstr "Синтаксис и пример Butcher"
 msgid "Bypass SSC is enabled for your account. SSC data will not be loaded or saved."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:6849
+#: ../../TShockAPI/Commands.cs:6851
 msgid "Cactus"
 msgstr "Кактус"
 
@@ -2695,6 +2710,10 @@ msgstr "Не удалось установить значение SqlColumn.Defa
 #, csharp-format
 msgid "Cannot load module {0} as it does not derive from {1}"
 msgstr "Не удалось загрузить модуль {0}, так как он не унаследован от {1}."
+
+#: ../../TShockAPI/GeoIPCountry.cs:293
+msgid "Cannot seek GeoIP database"
+msgstr ""
 
 #: ../../TShockAPI/Bouncer.cs:1433
 msgid "Certain projectiles have been ignored for cheat detection."
@@ -2791,6 +2810,7 @@ msgid "Config path has been set to {0}"
 msgstr ""
 
 #: ../../TShockAPI/Commands.cs:4503
+#: ../../TShockAPI/Rest/RestManager.cs:348
 msgid "Configuration, permissions, and regions reload complete. Some changes may require a server restart."
 msgstr "Конфигурация, права доступа и регионы полностью перезагружены. Некоторые изменения могут потребовать перезапуска сервера."
 
@@ -2807,7 +2827,7 @@ msgstr ""
 msgid "Correct usage: {0}overridessc|{0}ossc <player name>"
 msgstr "Правильное использование: {0}overridessc|{0}ossc <player name>"
 
-#: ../../TShockAPI/Commands.cs:6814
+#: ../../TShockAPI/Commands.cs:6816
 msgid "Corruption Palm"
 msgstr "Искаженная пальма"
 
@@ -2897,7 +2917,7 @@ msgstr ""
 msgid "CreativePowerHandler received permission check request for unknown creative power"
 msgstr "CreativePowerHandler получил запрос на проверку разрешения для неизвестной творческой способности."
 
-#: ../../TShockAPI/Commands.cs:6809
+#: ../../TShockAPI/Commands.cs:6811
 msgid "Crimson Palm"
 msgstr "Багровая пальма"
 
@@ -2910,6 +2930,10 @@ msgstr "Текущее максимальное количество спавн�
 #, csharp-format
 msgid "Current spawn rate: {0}."
 msgstr "Текущая частота появления мобов: {0}."
+
+#: ../../TShockAPI/Extensions/DbExt.cs:164
+msgid "Database type not supported."
+msgstr ""
 
 #: ../../TShockAPI/Bouncer.cs:2897
 #, csharp-format
@@ -2958,7 +2982,7 @@ msgstr "Регион \"{0}\" удален."
 msgid "delperm <group> <permissions...> - Removes permissions from a group."
 msgstr "delperm <group> <permissions...> - Снимает разрешение у группы."
 
-#: ../../TShockAPI/Commands.cs:6800
+#: ../../TShockAPI/Commands.cs:6802
 msgid "Desert Palm"
 msgstr ""
 
@@ -2975,7 +2999,7 @@ msgstr "destroytokens - Удаляет все токены REST."
 msgid "Detected DOOM set to ON position."
 msgstr "Обнаружено, что DOOM был включен."
 
-#: ../../TShockAPI/Commands.cs:6839
+#: ../../TShockAPI/Commands.cs:6841
 msgid "Diamond Gemtree"
 msgstr "Алмазное дерево"
 
@@ -3016,11 +3040,11 @@ msgstr ""
 msgid "Duke Fishron"
 msgstr "Герцог Рыброн"
 
-#: ../../TShockAPI/Commands.cs:6790
+#: ../../TShockAPI/Commands.cs:6792
 msgid "Ebonwood Tree"
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:6831
+#: ../../TShockAPI/Commands.cs:6833
 msgid "Emerald Gemtree"
 msgstr "Изумрудное дерево"
 
@@ -3059,7 +3083,7 @@ msgstr ""
 msgid "Example usage: {0} \"{1}\" \"{2}\""
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:6542
+#: ../../TShockAPI/Commands.cs:6544
 #, csharp-format
 msgid "Example usage: {0} \"{1}\" {2}"
 msgstr ""
@@ -3077,12 +3101,12 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:5629
 #: ../../TShockAPI/Commands.cs:5794
 #: ../../TShockAPI/Commands.cs:5989
-#: ../../TShockAPI/Commands.cs:6482
+#: ../../TShockAPI/Commands.cs:6484
 #, csharp-format
 msgid "Example usage: {0} {1} {2}"
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:6592
+#: ../../TShockAPI/Commands.cs:6594
 #, csharp-format
 msgid "Example usage: {0} {1} {2} {3}"
 msgstr ""
@@ -3167,6 +3191,16 @@ msgstr ""
 msgid "Failed to update group \"{0}\"."
 msgstr "Ошибка при обновлении группы \"{0}\"."
 
+#: ../../TShockAPI/Rest/RestManager.cs:564
+#, csharp-format
+msgid "Failed to update user group ({0})"
+msgstr ""
+
+#: ../../TShockAPI/Rest/RestManager.cs:550
+#, csharp-format
+msgid "Failed to update user password ({0})"
+msgstr ""
+
 #: ../../TShockAPI/Commands.cs:1920
 msgid "Failed to upload your character data to the server. Are you logged-in to an account?"
 msgstr "Не удалось загрузить данные вашего персонажа на сервер. Убедитесь, что вы вошли в аккаунт."
@@ -3178,6 +3212,10 @@ msgstr "Фатальная ошибка при запуске"
 #: ../../TShockAPI/Extensions/DbExt.cs:84
 msgid "Fatal TShock initialization exception: failed to connect to MySQL database. See inner exception for details."
 msgstr "Фатальная ошибка при загрузке TShock: Не удалось подключиться к базе данных MySQL. Просмотрите внутренние исключения для деталей."
+
+#: ../../TShockAPI/TShock.cs:318
+msgid "Fatal TShock initialization exception. See inner exception for details."
+msgstr ""
 
 #: ../../TShockAPI/DB/UserManager.cs:252
 #, csharp-format
@@ -3201,7 +3239,7 @@ msgstr ""
 msgid "Forces all liquids to update immediately."
 msgstr "Принудительно обновляет все жидкости."
 
-#: ../../TShockAPI/Commands.cs:6451
+#: ../../TShockAPI/Commands.cs:6453
 #, csharp-format
 msgid "Gave {0} {1} {2}."
 msgid_plural "Gave {0} {1} {2}s."
@@ -3603,7 +3641,7 @@ msgstr ""
 msgid "GetUser SQL returned an error {0}"
 msgstr "GetUser SQL выдал ошибку {0}"
 
-#: ../../TShockAPI/Commands.cs:6590
+#: ../../TShockAPI/Commands.cs:6592
 msgid "Give Buff Syntax and Example"
 msgstr "Синтаксис и пример Gbuff"
 
@@ -3623,7 +3661,7 @@ msgstr "Дает вам бафф или дебафф на протяжении �
 msgid "Gives yourself an item."
 msgstr "Дает вам предмет."
 
-#: ../../TShockAPI/Commands.cs:6863
+#: ../../TShockAPI/Commands.cs:6865
 msgid "Glowing Mushroom Tree"
 msgstr ""
 
@@ -3748,7 +3786,7 @@ msgstr "Группы ({{0}}/{{1}}):"
 msgid "Grows plants at your location."
 msgstr "Выращивает растения под вами."
 
-#: ../../TShockAPI/Commands.cs:6804
+#: ../../TShockAPI/Commands.cs:6806
 msgid "Hallow Palm"
 msgstr ""
 
@@ -3769,7 +3807,7 @@ msgstr "Режим Hardmode выключен."
 msgid "Hardmode is now on."
 msgstr "Режим Hardmode включен."
 
-#: ../../TShockAPI/Commands.cs:6480
+#: ../../TShockAPI/Commands.cs:6482
 msgid "Heal Syntax and Example"
 msgstr "Синтаксис и пример Heal"
 
@@ -3786,7 +3824,7 @@ msgstr "Порог HealOtherPlayer превышает {0}."
 msgid "Heals a player in HP and MP."
 msgstr "Восполняет здоровье и ману игрока."
 
-#: ../../TShockAPI/Commands.cs:6857
+#: ../../TShockAPI/Commands.cs:6859
 msgid "Herb"
 msgstr ""
 
@@ -3818,7 +3856,7 @@ msgstr ""
 msgid "ID: {0}"
 msgstr "ID: {0}"
 
-#: ../../TShockAPI/Commands.cs:6483
+#: ../../TShockAPI/Commands.cs:6485
 msgid "If no amount is specified, it will default to healing the target player by their max HP."
 msgstr ""
 
@@ -3859,7 +3897,7 @@ msgstr ""
 msgid "If you do not specify a radius, it will use a default radius of {0} around your character."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:6543
+#: ../../TShockAPI/Commands.cs:6545
 #, csharp-format
 msgid "If you don't specify the duration, it will default to {0} seconds."
 msgstr ""
@@ -3868,7 +3906,7 @@ msgstr ""
 msgid "If you forgot your password, contact the administrator for help."
 msgstr "Если вы забыли свой пароль, обратитесь к администратору за помощью."
 
-#: ../../TShockAPI/Commands.cs:6544
+#: ../../TShockAPI/Commands.cs:6546
 #, csharp-format
 msgid "If you put {0} as the duration, it will use the max possible time of 415 days."
 msgstr ""
@@ -3982,7 +4020,7 @@ msgstr "Недопустимое количество боссов."
 msgid "Invalid boss type!"
 msgstr "Недопустимый тип босса!"
 
-#: ../../TShockAPI/Commands.cs:6643
+#: ../../TShockAPI/Commands.cs:6645
 msgid "Invalid buff ID!"
 msgstr "Неверный ID эффекта!"
 
@@ -4031,8 +4069,8 @@ msgid "Invalid invasion type. Valid invasion types: {0}."
 msgstr "Недопустимый тип нашествия. Допустимые типы событий: {0}."
 
 #: ../../TShockAPI/Commands.cs:6256
-#: ../../TShockAPI/Commands.cs:6405
-#: ../../TShockAPI/Commands.cs:6468
+#: ../../TShockAPI/Commands.cs:6407
+#: ../../TShockAPI/Commands.cs:6470
 msgid "Invalid item type!"
 msgstr "Неверный тип предмета!"
 
@@ -4081,8 +4119,8 @@ msgstr "Неправильная родительская группа {0} дл�
 msgid "Invalid password."
 msgstr "Неверный пароль."
 
-#: ../../TShockAPI/Commands.cs:6436
-#: ../../TShockAPI/Commands.cs:6891
+#: ../../TShockAPI/Commands.cs:6438
+#: ../../TShockAPI/Commands.cs:6893
 msgid "Invalid player!"
 msgstr "Неверный игрок!"
 
@@ -4122,6 +4160,10 @@ msgstr "Неправильная конфигурация REST:\n"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3492
 msgid "Invalid server password."
+msgstr ""
+
+#: ../../TShockAPI/DB/DbBuilder.cs:51
+msgid "Invalid storage type"
 msgstr ""
 
 #: ../../TShockAPI/Commands.cs:3890
@@ -4166,6 +4208,11 @@ msgstr "Неверный синтаксис. Правильный синтакс
 #: ../../TShockAPI/Commands.cs:5863
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}aliases <command or alias>"
+msgstr ""
+
+#: ../../TShockAPI/Commands.cs:6383
+#, csharp-format
+msgid "Invalid syntax. Proper syntax: {0}give <item type/id> <player> [item amount] [prefix id/name]"
 msgstr ""
 
 #: ../../TShockAPI/Commands.cs:3477
@@ -4526,6 +4573,14 @@ msgstr "Неизвестный тип: '{0}'"
 msgid "Invalid user syntax. Try {0}user help."
 msgstr "Неверный синтаксис пользователя. Попробуйте {0}user help."
 
+#: ../../TShockAPI/TShock.cs:847
+msgid "Invalid value given for command line argument \"-ip\"."
+msgstr ""
+
+#: ../../TShockAPI/TShock.cs:875
+msgid "Invalid value given for command line argument \"-worldevil\"."
+msgstr ""
+
 #: ../../TShockAPI/Commands.cs:3347
 msgid "Invalid warp name. The names 'list', 'hide', 'del' and 'add' are reserved for commands."
 msgstr "Недопустимое значение варпа. Для команд зарезервированы значения 'list', 'hide', 'del' и 'add'."
@@ -4548,6 +4603,10 @@ msgstr ""
 #, csharp-format
 msgid "Invalid world mode. Valid world modes: {0}"
 msgstr "Некорректный режим мира. Действительные режимы: {0}"
+
+#: ../../TShockAPI/GeoIPCountry.cs:271
+msgid "IP address is not IPv4"
+msgstr ""
 
 #: ../../TShockAPI/Commands.cs:1301
 #, csharp-format
@@ -4808,7 +4867,7 @@ msgstr "Метеор был создан"
 msgid "Misbehaviour."
 msgstr "Неадекватное поведение."
 
-#: ../../TShockAPI/Commands.cs:6387
+#: ../../TShockAPI/Commands.cs:6389
 msgid "Missing item name/id."
 msgstr "Отсутствует имя/id предмета."
 
@@ -4822,7 +4881,7 @@ msgstr "Параметр {0} пуст или отсутствует"
 msgid "Missing or invalid {0} parameter"
 msgstr "Параметр {0} недопустим или отсутствует"
 
-#: ../../TShockAPI/Commands.cs:6392
+#: ../../TShockAPI/Commands.cs:6394
 msgid "Missing player name."
 msgstr "Отсутствует имя игрока."
 
@@ -5058,6 +5117,10 @@ msgstr "Пароль должен содержать не менее {0} сим�
 msgid "Password must be greater than or equal to {0} characters."
 msgstr "Пароль должен содержать {0} или более символов."
 
+#: ../../TShockAPI/Rest/RestManager.cs:546
+msgid "Password updated successfully"
+msgstr ""
+
 #: ../../TShockAPI/Commands.cs:1034
 #, csharp-format
 msgid "PasswordUser returned an error: {0}."
@@ -5068,7 +5131,7 @@ msgstr "PasswordUser выдал ошибку: {0}."
 msgid "Path: {0}"
 msgstr "Путь: {0}"
 
-#: ../../TShockAPI/Commands.cs:6795
+#: ../../TShockAPI/Commands.cs:6797
 msgid "Pearlwood Tree"
 msgstr ""
 
@@ -5148,7 +5211,7 @@ msgstr "Игрок {0} не найден"
 msgid "Player damage exceeded {0}."
 msgstr "Урон игрока превысил {0}."
 
-#: ../../TShockAPI/Commands.cs:6462
+#: ../../TShockAPI/Commands.cs:6464
 msgid "Player does not have free slots!"
 msgstr ""
 
@@ -5494,7 +5557,7 @@ msgstr ""
 msgid "Returns the user's or specified user's current position."
 msgstr "Возвращает текущую или указанную пользователем позицию."
 
-#: ../../TShockAPI/Commands.cs:6773
+#: ../../TShockAPI/Commands.cs:6775
 msgid "Rich Mahogany"
 msgstr ""
 
@@ -5506,11 +5569,11 @@ msgstr "Синтаксис Rocket"
 msgid "Rockets a player upwards. Requires SSC."
 msgstr "Запускает игрока вверх (SSC должен быть включен)."
 
-#: ../../TShockAPI/Commands.cs:6835
+#: ../../TShockAPI/Commands.cs:6837
 msgid "Ruby Gemtree"
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:6777
+#: ../../TShockAPI/Commands.cs:6779
 msgid "Sakura Tree"
 msgstr "Сакура"
 
@@ -5518,7 +5581,7 @@ msgstr "Сакура"
 msgid "Santa-NK1"
 msgstr "Санта-НК1"
 
-#: ../../TShockAPI/Commands.cs:6827
+#: ../../TShockAPI/Commands.cs:6829
 msgid "Sapphire Gemtree"
 msgstr "Сапфировое дерево"
 
@@ -5670,7 +5733,7 @@ msgstr "SetUserPassword SQL выдал исключение"
 msgid "SetUserUUID SQL returned an error"
 msgstr "SetUserUUID SQL выдал исключение"
 
-#: ../../TShockAPI/Commands.cs:6785
+#: ../../TShockAPI/Commands.cs:6787
 msgid "Shadewood Tree"
 msgstr ""
 
@@ -5842,6 +5905,10 @@ msgstr ""
 msgid "SQL Log insert query failed: {0}"
 msgstr ""
 
+#: ../../TShockAPI/SqlLog.cs:340
+msgid "SQL Logging disabled due to errors. Reverting to text logging."
+msgstr ""
+
 #: ../../TShockAPI/Commands.cs:5776
 msgid "SSC must be enabled to use this command."
 msgstr ""
@@ -5955,6 +6022,10 @@ msgstr "Затмение остановлено."
 msgid "Stopped the current blood moon event."
 msgstr "Кровавая луна остановлена."
 
+#: ../../TShockAPI/NetItem.cs:228
+msgid "String should contain at least three sections."
+msgstr ""
+
 #: ../../TShockAPI/Rest/SecureRest.cs:167
 msgid "Successful login"
 msgstr "Успешный вход в аккаунт"
@@ -5985,6 +6056,10 @@ msgstr ""
 #, csharp-format
 msgid "SyncTilePickingHandler: X and Y position is out of world bounds! - From {0}"
 msgstr "SyncTilePickingHandler: позиции X и Y находятся за границами мира! - От {0}"
+
+#: ../../TShockAPI/GetDataHandlers.cs:4171
+msgid "Teleportation Potions"
+msgstr ""
 
 #: ../../TShockAPI/Commands.cs:3134
 #, csharp-format
@@ -6097,6 +6172,10 @@ msgstr "Группа пользователя по умолчанию не на�
 msgid "The default usergroup could not be found. This may indicate a typo in the configuration file, or that the group was renamed or deleted."
 msgstr "Группа пользователя по умолчанию не найдена. Возможно, есть опечатка в файле конфигурации, или группа была переименована или удалена."
 
+#: ../../TShockAPI/GetDataHandlers.cs:4216
+msgid "the Demon Conch"
+msgstr ""
+
 #: ../../TShockAPI/Commands.cs:3279
 msgid "The destination coordinates provided don't look like valid numbers."
 msgstr "Указанные координаты не являются допустимыми числами."
@@ -6169,6 +6248,14 @@ msgstr "Король слизней"
 msgid "the Lunatic Cultist"
 msgstr "Лунатик-культист"
 
+#: ../../TShockAPI/GetDataHandlers.cs:4193
+msgid "the Magic Conch"
+msgstr ""
+
+#: ../../TShockAPI/Rest/RestManager.cs:361
+msgid "The message was broadcasted successfully"
+msgstr ""
+
 #: ../../TShockAPI/PaginationTools.cs:185
 msgid "The method referenced by LineFormatter has thrown an exception. See inner exception for details."
 msgstr ""
@@ -6181,6 +6268,10 @@ msgstr ""
 msgid "the Moon Lord"
 msgstr "Лунный Лорд"
 
+#: ../../TShockAPI/Rest/RestManager.cs:371
+msgid "The motd.txt was not found."
+msgstr ""
+
 #: ../../TShockAPI/Commands.cs:3518
 msgid "The permissions have been added to all of the groups in the system."
 msgstr "Права доступа были добавлены во все группы в системе."
@@ -6192,6 +6283,10 @@ msgstr "Права доступа были удалены во всех груп
 #: ../../TShockAPI/Commands.cs:1916
 msgid "The player's character data was successfully uploaded from their initial connection."
 msgstr "Данные персонажа игрока были успешно загружены из исходного соединения."
+
+#: ../../TShockAPI/TSPlayer.cs:2214
+msgid "The player's team is not in the range of available."
+msgstr ""
 
 #: ../../TShockAPI/Commands.cs:2877
 msgid "the Pumpking"
@@ -6209,8 +6304,24 @@ msgstr "Королева слизней"
 msgid "The REST authentication token."
 msgstr "Токен аутентификации REST."
 
+#: ../../TShockAPI/Rest/RestManager.cs:386
+msgid "The rules.txt was not found."
+msgstr ""
+
 #: ../../TShockAPI/UpdateManager.cs:150
 msgid "The server is out of date. Latest version: "
+msgstr ""
+
+#: ../../TShockAPI/Rest/RestManager.cs:336
+msgid "The server is shutting down"
+msgstr ""
+
+#: ../../TShockAPI/GetDataHandlers.cs:4189
+msgid "the Shellphone (Ocean)"
+msgstr ""
+
+#: ../../TShockAPI/GetDataHandlers.cs:4212
+msgid "the Shellphone (Underworld)"
 msgstr ""
 
 #: ../../TShockAPI/Commands.cs:4603
@@ -6364,13 +6475,13 @@ msgstr "Превышен порог обнуления блоков {0}."
 msgid "Tile place threshold exceeded {0}."
 msgstr "Порог установки блоков превысил {0}."
 
-#: ../../TShockAPI/Commands.cs:6593
+#: ../../TShockAPI/Commands.cs:6595
 #, csharp-format
 msgid "To buff a player without them knowing, use {0} instead of {1}"
 msgstr ""
 
 #: ../../TShockAPI/Commands.cs:6188
-#: ../../TShockAPI/Commands.cs:6484
+#: ../../TShockAPI/Commands.cs:6486
 #, csharp-format
 msgid "To execute this command silently, use {0} instead of {1}"
 msgstr ""
@@ -6431,7 +6542,7 @@ msgstr "Включает или отключает отображение лог
 msgid "Too many invalid login attempts."
 msgstr "Слишком много неудачных попыток входа в аккаунт."
 
-#: ../../TShockAPI/Commands.cs:6819
+#: ../../TShockAPI/Commands.cs:6821
 msgid "Topaz Gemtree"
 msgstr "Топазовое дерево"
 
@@ -6444,11 +6555,11 @@ msgstr "Общее время работы процессора: {0}"
 msgid "tp <region> - Teleports you to the given region's center."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:6684
+#: ../../TShockAPI/Commands.cs:6686
 msgid "Trees types & misc available to use. ({{0}}/{{1}}):"
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:6873
+#: ../../TShockAPI/Commands.cs:6875
 #, csharp-format
 msgid "Tried to grow a {0}."
 msgstr ""
@@ -6522,7 +6633,7 @@ msgstr ""
 msgid "Type {0}group listperm {1} {{0}} for more."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:6685
+#: ../../TShockAPI/Commands.cs:6687
 #, csharp-format
 msgid "Type {0}grow help {{0}} for more sub-commands."
 msgstr ""
@@ -6611,22 +6722,22 @@ msgstr ""
 msgid "Type /<command> {{0}} for more."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:6617
+#: ../../TShockAPI/Commands.cs:6619
 #, csharp-format
 msgid "Unable to find any buff named \"{0}\""
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:6558
+#: ../../TShockAPI/Commands.cs:6560
 #, csharp-format
 msgid "Unable to find any buffs named \"{0}\""
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:6602
+#: ../../TShockAPI/Commands.cs:6604
 #, csharp-format
 msgid "Unable to find any player named \"{0}\""
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:6496
+#: ../../TShockAPI/Commands.cs:6498
 #, csharp-format
 msgid "Unable to find any players named \"{0}\""
 msgstr ""
@@ -6663,6 +6774,10 @@ msgstr ""
 msgid "Unable to verify the password hash for user {0} ({1})"
 msgstr "Не удалось проверить хэш пароля для пользователя {0} ({1})"
 
+#: ../../TShockAPI/TextLog.cs:277
+msgid "Unable to write to log as log has been disposed."
+msgstr ""
+
 #: ../../TShockAPI/Commands.cs:4020
 #, csharp-format
 msgid "Unbanned {0}."
@@ -6683,7 +6798,7 @@ msgstr "Снят бан с блока {0}."
 msgid "Unknown ban command. Try {0} {1}, {2}, {3}, {4}, {5}, or {6}."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:6867
+#: ../../TShockAPI/Commands.cs:6869
 msgid "Unknown plant!"
 msgstr "Неизвестное растение!"
 
@@ -6794,9 +6909,17 @@ msgstr "Аккаунт {0} уже зарегистрирован"
 msgid "User account {0} does not exist"
 msgstr "Аккаунт {0} ещё не зарегистрирован"
 
+#: ../../TShockAPI/Rest/RestManager.cs:592
+msgid "User deleted successfully"
+msgstr ""
+
 #: ../../TShockAPI/Commands.cs:1245
 msgid "User management command help:"
 msgstr "Помощь по управлению пользователем:"
+
+#: ../../TShockAPI/Rest/RestManager.cs:517
+msgid "User was successfully created"
+msgstr ""
 
 #: ../../TShockAPI/Rest/SecureRest.cs:138
 #: ../../TShockAPI/Rest/SecureRest.cs:144
@@ -6927,7 +7050,7 @@ msgstr ""
 msgid "Whisper Syntax"
 msgstr "Синтаксис Whisper"
 
-#: ../../TShockAPI/Commands.cs:6781
+#: ../../TShockAPI/Commands.cs:6783
 msgid "Willow Tree"
 msgstr ""
 
@@ -6969,6 +7092,14 @@ msgstr ""
 msgid "World saved at ({0})"
 msgstr "Мир сохранен в ({0})"
 
+#: ../../TShockAPI/SaveManager.cs:141
+msgid "World saved failed"
+msgstr ""
+
+#: ../../TShockAPI/SaveManager.cs:62
+msgid "World saved notification failed"
+msgstr ""
+
 #: ../../TShockAPI/SaveManager.cs:135
 msgid "World saved."
 msgstr "Мир сохранен."
@@ -7001,7 +7132,7 @@ msgstr ""
 msgid "You are muted."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:6927
+#: ../../TShockAPI/Commands.cs:6929
 #, csharp-format
 msgid "You are no longer in god mode."
 msgstr ""
@@ -7026,13 +7157,13 @@ msgstr ""
 msgid "You are now being annoyed."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:6926
+#: ../../TShockAPI/Commands.cs:6928
 #, csharp-format
 msgid "You are now in god mode."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:6579
-#: ../../TShockAPI/Commands.cs:6636
+#: ../../TShockAPI/Commands.cs:6581
+#: ../../TShockAPI/Commands.cs:6638
 #, csharp-format
 msgid "You buffed yourself with {0} ({1}) for {2} seconds."
 msgstr ""
@@ -7086,11 +7217,11 @@ msgstr ""
 msgid "You can use {0}{1} to whisper to other players."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:6906
+#: ../../TShockAPI/Commands.cs:6908
 msgid "You can't god mode a non player!"
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:6506
+#: ../../TShockAPI/Commands.cs:6508
 msgid "You can't heal a dead player!"
 msgstr ""
 
@@ -7120,7 +7251,7 @@ msgid "You cannot login whilst using an item."
 msgstr "Вы не можете войти в аккаунт во время использования предмета."
 
 #: ../../TShockAPI/Commands.cs:6317
-#: ../../TShockAPI/Commands.cs:6456
+#: ../../TShockAPI/Commands.cs:6458
 msgid "You cannot spawn banned items."
 msgstr ""
 
@@ -7163,7 +7294,7 @@ msgstr[1] ""
 msgstr[2] ""
 msgstr[3] ""
 
-#: ../../TShockAPI/Commands.cs:6489
+#: ../../TShockAPI/Commands.cs:6491
 msgid "You didn't put a player name."
 msgstr ""
 
@@ -7212,11 +7343,11 @@ msgstr "У вас недостаточно прав для заморозки в
 msgid "You do not have permission to freeze the wind strength of the server."
 msgstr "У вас недостаточно прав для заморозки силы ветра на сервере."
 
-#: ../../TShockAPI/Commands.cs:6884
+#: ../../TShockAPI/Commands.cs:6886
 msgid "You do not have permission to god mode another player."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:6695
+#: ../../TShockAPI/Commands.cs:6697
 msgid "You do not have permission to grow this tree type"
 msgstr ""
 
@@ -7422,7 +7553,7 @@ msgstr "С вас сняли мут"
 msgid "You have been successfully logged out of your account."
 msgstr "Вы успешно вышли из учётной записи."
 
-#: ../../TShockAPI/Commands.cs:6638
+#: ../../TShockAPI/Commands.cs:6640
 #, csharp-format
 msgid "You have buffed {0} with {1} ({2}) for {3} seconds!"
 msgstr ""
@@ -7477,12 +7608,12 @@ msgstr ""
 msgid "You haven't previously received any whispers."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:6520
+#: ../../TShockAPI/Commands.cs:6522
 #, csharp-format
 msgid "You healed {0} for {1} HP."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:6518
+#: ../../TShockAPI/Commands.cs:6520
 #, csharp-format
 msgid "You healed yourself for {0} HP."
 msgstr ""
@@ -7591,7 +7722,7 @@ msgstr ""
 msgid "You will no longer receive whispers from other players."
 msgstr ""
 
-#: ../../TShockAPI/Commands.cs:6658
+#: ../../TShockAPI/Commands.cs:6660
 msgid "You're not allowed to change tiles here!"
 msgstr ""
 
