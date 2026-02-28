@@ -102,7 +102,7 @@ namespace TShockAPI.Handlers
 				return;
 			}
 
-			if (!Main.tile[args.TileX, args.TileY].active() && Main.tile[args.TileX, args.TileY].type != TileID.GolfHole)
+			if (!Main.tile[args.TileX, args.TileY].active() || Main.tile[args.TileX, args.TileY].type != TileID.GolfHole)
 			{
 				TShock.Log.ConsoleDebug(GetString($"LandGolfBallInCupHandler: Tile at packet position X:{args.TileX} Y:{args.TileY} is not a golf hole! - From {args.Player.Name}"));
 				args.Handled = true;
@@ -116,8 +116,22 @@ namespace TShockAPI.Handlers
 				return;
 			}
 
-			var usedGolfBall = args.Player.RecentlyCreatedProjectiles.Any(e => GolfBallProjectileIDs.Contains(e.Type));
-			var usedGolfClub = args.Player.RecentlyCreatedProjectiles.Any(e => e.Type == ProjectileID.GolfClubHelper);
+			var usedGolfBall = false;
+			var usedGolfClub = false;
+			lock (args.Player.RecentlyCreatedProjectiles)
+			{
+				for (int i = 0; i < args.Player.RecentlyCreatedProjectiles.Count; i++)
+				{
+					var tracked = args.Player.RecentlyCreatedProjectiles[i];
+					if (!usedGolfBall && GolfBallProjectileIDs.Contains(tracked.Type))
+						usedGolfBall = true;
+					if (!usedGolfClub && tracked.Type == ProjectileID.GolfClubHelper)
+						usedGolfClub = true;
+					if (usedGolfBall && usedGolfClub)
+						break;
+				}
+			}
+
 			if (!usedGolfClub && !usedGolfBall)
 			{
 				TShock.Log.ConsoleDebug(GetString($"GolfPacketHandler: Player did not have create a golf club projectile the last 5 seconds! - From {args.Player.Name}"));
