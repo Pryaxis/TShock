@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2026-02-28 11:51:41+0000\n"
-"PO-Revision-Date: 2026-02-28 11:58\n"
+"PO-Revision-Date: 2026-02-28 13:02\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -370,12 +370,12 @@ msgstr "{0}试图注册账号“{1}” ，但它已被占用。"
 #: ../../TShockAPI/Commands.cs:5513
 #, csharp-format
 msgid "{0} attempted to use an incorrect setup code."
-msgstr ""
+msgstr "{0} 尝试使用错误的认证代码"
 
 #: ../../TShockAPI/Commands.cs:5487
 #, csharp-format
 msgid "{0} attempted to use the initial setup system even though it's disabled."
-msgstr ""
+msgstr "{0} 尝试使用已禁用的认证系统。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:2841
 #: ../../TShockAPI/GetDataHandlers.cs:3471
@@ -1223,7 +1223,7 @@ msgstr[0] "=== 要安装的插件 ==="
 
 #: ../../TShockAPI/Utils.cs:1061
 msgid "|Permission|"
-msgstr ""
+msgstr "|权限|"
 
 #: ../../TShockAPI/Commands.cs:2923
 msgid "a Deerclops"
@@ -2683,7 +2683,7 @@ msgstr "无法加载模块{0}，因为它没有继承{1}"
 
 #: ../../TShockAPI/GeoIPCountry.cs:293
 msgid "Cannot seek GeoIP database"
-msgstr ""
+msgstr "无法查询 GeoIP 数据库"
 
 #: ../../TShockAPI/Bouncer.cs:1433
 msgid "Certain projectiles have been ignored for cheat detection."
@@ -2904,7 +2904,7 @@ msgstr "当前生成率： {0}。"
 
 #: ../../TShockAPI/Extensions/DbExt.cs:164
 msgid "Database type not supported."
-msgstr ""
+msgstr "不支持该数据库类型。"
 
 #: ../../TShockAPI/Bouncer.cs:2897
 #, csharp-format
@@ -3165,12 +3165,12 @@ msgstr "更新用户组{0}失败。"
 #: ../../TShockAPI/Rest/RestManager.cs:564
 #, csharp-format
 msgid "Failed to update user group ({0})"
-msgstr ""
+msgstr "无法更新 {0} 所在的用户组。"
 
 #: ../../TShockAPI/Rest/RestManager.cs:550
 #, csharp-format
 msgid "Failed to update user password ({0})"
-msgstr ""
+msgstr "无法更新用户 {0} 的密码。"
 
 #: ../../TShockAPI/Commands.cs:1920
 msgid "Failed to upload your character data to the server. Are you logged-in to an account?"
@@ -3186,7 +3186,7 @@ msgstr "致命的TShock初始化错误：连接MySQL失败。查看内部异常�
 
 #: ../../TShockAPI/TShock.cs:318
 msgid "Fatal TShock initialization exception. See inner exception for details."
-msgstr ""
+msgstr "TShock初始化发生致命异常。请查看内部异常以获取详细信息。"
 
 #: ../../TShockAPI/DB/UserManager.cs:252
 #, csharp-format
@@ -4129,7 +4129,7 @@ msgstr "密码错误。"
 
 #: ../../TShockAPI/DB/DbBuilder.cs:51
 msgid "Invalid storage type"
-msgstr ""
+msgstr "无效的数据库类型"
 
 #: ../../TShockAPI/Commands.cs:3890
 #, csharp-format
@@ -4178,7 +4178,7 @@ msgstr "用法错误。正确的格式是:{0}aliases <command or alias>"
 #: ../../TShockAPI/Commands.cs:6383
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}give <item type/id> <player> [item amount] [prefix id/name]"
-msgstr ""
+msgstr "格式错误。正确格式：{0}give <物品类型/ID> <玩家名> [物品数量] [前缀ID/名称]"
 
 #: ../../TShockAPI/Commands.cs:3477
 #, csharp-format
@@ -4540,11 +4540,11 @@ msgstr "指令user的用法错误，使用{0}user help查看帮助。"
 
 #: ../../TShockAPI/TShock.cs:847
 msgid "Invalid value given for command line argument \"-ip\"."
-msgstr ""
+msgstr "为命令行参数 \"-ip\" 指定的值无效。"
 
 #: ../../TShockAPI/TShock.cs:875
 msgid "Invalid value given for command line argument \"-worldevil\"."
-msgstr ""
+msgstr "为命令行参数 \"-worldevil\" 指定的值无效。"
 
 #: ../../TShockAPI/Commands.cs:3347
 msgid "Invalid warp name. The names 'list', 'hide', 'del' and 'add' are reserved for commands."
@@ -4571,7 +4571,7 @@ msgstr "无效的世界模式。有效世界模式: {0}"
 
 #: ../../TShockAPI/GeoIPCountry.cs:271
 msgid "IP address is not IPv4"
-msgstr ""
+msgstr "IP地址不是IPv4"
 
 #: ../../TShockAPI/Commands.cs:1301
 #, csharp-format
@@ -5084,7 +5084,7 @@ msgstr "密码长度必须大于或等于 {0} 个字符。"
 
 #: ../../TShockAPI/Rest/RestManager.cs:546
 msgid "Password updated successfully"
-msgstr ""
+msgstr "密码更新成功"
 
 #: ../../TShockAPI/Commands.cs:1034
 #, csharp-format
@@ -5866,7 +5866,7 @@ msgstr "SQL 日志插入查询失败: {0}"
 
 #: ../../TShockAPI/SqlLog.cs:340
 msgid "SQL Logging disabled due to errors. Reverting to text logging."
-msgstr ""
+msgstr "由于发生错误，SQL 日志记录已禁用。正在切换回文本日志记录。"
 
 #: ../../TShockAPI/Commands.cs:5776
 msgid "SSC must be enabled to use this command."
@@ -5983,7 +5983,7 @@ msgstr "关闭了血月。"
 
 #: ../../TShockAPI/NetItem.cs:228
 msgid "String should contain at least three sections."
-msgstr ""
+msgstr "物品字符串需要包含至少3个部分。"
 
 #: ../../TShockAPI/Rest/SecureRest.cs:167
 msgid "Successful login"
@@ -6018,7 +6018,7 @@ msgstr "SyncTilePickingHander: X 和 Y 位置超越了世界边界! - 来自 {0}
 
 #: ../../TShockAPI/GetDataHandlers.cs:4171
 msgid "Teleportation Potions"
-msgstr ""
+msgstr "传送药水"
 
 #: ../../TShockAPI/Commands.cs:3134
 #, csharp-format
@@ -6133,7 +6133,7 @@ msgstr "未找到默认用户组（默认为default）。这可能是配置文�
 
 #: ../../TShockAPI/GetDataHandlers.cs:4216
 msgid "the Demon Conch"
-msgstr ""
+msgstr "恶魔海螺"
 
 #: ../../TShockAPI/Commands.cs:3279
 msgid "The destination coordinates provided don't look like valid numbers."
@@ -6209,11 +6209,11 @@ msgstr "拜月教邪教徒"
 
 #: ../../TShockAPI/GetDataHandlers.cs:4193
 msgid "the Magic Conch"
-msgstr ""
+msgstr "魔法海螺"
 
 #: ../../TShockAPI/Rest/RestManager.cs:361
 msgid "The message was broadcasted successfully"
-msgstr ""
+msgstr "消息已成功广播"
 
 #: ../../TShockAPI/PaginationTools.cs:185
 msgid "The method referenced by LineFormatter has thrown an exception. See inner exception for details."
@@ -6229,7 +6229,7 @@ msgstr "月亮领主"
 
 #: ../../TShockAPI/Rest/RestManager.cs:371
 msgid "The motd.txt was not found."
-msgstr ""
+msgstr "未找到 motd.txt"
 
 #: ../../TShockAPI/Commands.cs:3518
 msgid "The permissions have been added to all of the groups in the system."
@@ -6245,7 +6245,7 @@ msgstr "玩家来自最初连接的角色数据上传成功。"
 
 #: ../../TShockAPI/TSPlayer.cs:2214
 msgid "The player's team is not in the range of available."
-msgstr ""
+msgstr "玩家所属队伍不在可用范围之内。"
 
 #: ../../TShockAPI/Commands.cs:2877
 msgid "the Pumpking"
@@ -6265,7 +6265,7 @@ msgstr "REST 授权令牌"
 
 #: ../../TShockAPI/Rest/RestManager.cs:386
 msgid "The rules.txt was not found."
-msgstr ""
+msgstr "未找到 rules.txt"
 
 #: ../../TShockAPI/UpdateManager.cs:150
 msgid "The server is out of date. Latest version: "
@@ -6273,15 +6273,15 @@ msgstr "服务器版本更新，最新版为 "
 
 #: ../../TShockAPI/Rest/RestManager.cs:336
 msgid "The server is shutting down"
-msgstr ""
+msgstr "服务器正在关闭"
 
 #: ../../TShockAPI/GetDataHandlers.cs:4189
 msgid "the Shellphone (Ocean)"
-msgstr ""
+msgstr "贝壳电话（海洋）"
 
 #: ../../TShockAPI/GetDataHandlers.cs:4212
 msgid "the Shellphone (Underworld)"
-msgstr ""
+msgstr "贝壳电话（地狱）"
 
 #: ../../TShockAPI/Commands.cs:4603
 msgid "The spawn rate you provided is out-of-range or not a number."
@@ -6732,7 +6732,7 @@ msgstr "无法验证用户{0}（{1}）的密码哈希值"
 
 #: ../../TShockAPI/TextLog.cs:277
 msgid "Unable to write to log as log has been disposed."
-msgstr ""
+msgstr "无法写入日志，因为日志对象已被释放。"
 
 #: ../../TShockAPI/Commands.cs:4020
 #, csharp-format
@@ -6867,7 +6867,7 @@ msgstr "用户“{0}”不存在"
 
 #: ../../TShockAPI/Rest/RestManager.cs:592
 msgid "User deleted successfully"
-msgstr ""
+msgstr "用户已成功删除"
 
 #: ../../TShockAPI/Commands.cs:1245
 msgid "User management command help:"
@@ -6875,7 +6875,7 @@ msgstr "用户管理指令帮助信息："
 
 #: ../../TShockAPI/Rest/RestManager.cs:517
 msgid "User was successfully created"
-msgstr ""
+msgstr "用户创建成功"
 
 #: ../../TShockAPI/Rest/SecureRest.cs:138
 #: ../../TShockAPI/Rest/SecureRest.cs:144
@@ -7050,15 +7050,15 @@ msgstr "世界已经保存到({0})"
 
 #: ../../TShockAPI/SaveManager.cs:141
 msgid "World saved failed"
-msgstr ""
+msgstr "世界保存失败"
 
 #: ../../TShockAPI/SaveManager.cs:62
 msgid "World saved notification failed"
-msgstr ""
+msgstr "世界保存通知失败"
 
 #: ../../TShockAPI/SaveManager.cs:135
 msgid "World saved."
-msgstr "世界保存完毕."
+msgstr "世界保存完毕。"
 
 #: ../../TShockAPI/Commands.cs:5057
 #, csharp-format
