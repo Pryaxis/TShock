@@ -3029,7 +3029,7 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Called when a player is trying to put an item into chest through Quick Stack.
+		/// Called when dirt/fluid projectiles (dirt bombs, liquid bombs, liquid rockets) are killed and attempt to place tiles or liquids.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="args"></param>
@@ -3042,11 +3042,15 @@ namespace TShockAPI
 			if (player == null || !player.Active)
 				return;
 
-
 			var originalPlot = args.plot;
 			args.plot = (x, y) => player.HasBuildPermission(x, y) && originalPlot(x, y);
 		}
 
+		/// <summary>
+		/// Called when a player is trying to put an item into chest through Quick Stack.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		internal void OnQuickStack(object sender, OTAPI.Hooks.Chest.QuickStackEventArgs args)
 		{
 			var id = args.ChestIndex;
