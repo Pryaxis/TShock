@@ -497,6 +497,10 @@ namespace TShockAPI
 			{
 				HelpText = GetString("Toggles the world's hardmode status.")
 			});
+			add(new Command(Permissions.switchevil, SwitchEvil, "evil")
+			{
+				HelpText = GetString("Switches the world's evil.")
+			});
 			add(new Command(Permissions.editspawn, ProtectSpawn, "protectspawn")
 			{
 				HelpText = GetString("Toggles spawn protection.")
@@ -2684,6 +2688,15 @@ namespace TShockAPI
 			{
 				args.Player.SendErrorMessage(GetString("Hardmode is disabled in the server configuration file."));
 			}
+		}
+
+		static string _crimsonOrCorruption => WorldGen.crimson ? "crimson" : "corruption";
+
+		private static void SwitchEvil(CommandArgs args)
+		{
+			WorldGen.crimson = !WorldGen.crimson;
+			TSPlayer.All.SendData(PacketTypes.WorldInfo);
+			args.Player.SendSuccessMessage(GetString("World evil switched to {0}.", _crimsonOrCorruption));
 		}
 
 		private static void SpawnBoss(CommandArgs args)
