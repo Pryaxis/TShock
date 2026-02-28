@@ -185,6 +185,46 @@ namespace TShockAPI.DB
 		}
 
 		/// <summary>
+		/// Updates appearance-related SSC fields for a newly registered account.
+		/// This prevents first-login appearance resets when legacy schemas default missing columns.
+		/// </summary>
+		/// <param name="account">The account owning the SSC row.</param>
+		/// <param name="player">The currently connected player source.</param>
+		/// <returns>true if update succeeded.</returns>
+		public bool SyncSeededAppearance(UserAccount account, TSPlayer player)
+		{
+			if (account == null || player == null)
+				return false;
+
+			try
+			{
+				return database.Query(
+					"UPDATE tsCharacter SET skinVariant = @0, hair = @1, hairDye = @2, hairColor = @3, pantsColor = @4, shirtColor = @5, underShirtColor = @6, shoeColor = @7, hideVisuals = @8, skinColor = @9, eyeColor = @10, voiceVariant = @11, voicePitchOffset = @12, team = @13 WHERE Account = @14;",
+					player.TPlayer.skinVariant,
+					player.TPlayer.hair,
+					player.TPlayer.hairDye,
+					TShock.Utils.EncodeColor(player.TPlayer.hairColor),
+					TShock.Utils.EncodeColor(player.TPlayer.pantsColor),
+					TShock.Utils.EncodeColor(player.TPlayer.shirtColor),
+					TShock.Utils.EncodeColor(player.TPlayer.underShirtColor),
+					TShock.Utils.EncodeColor(player.TPlayer.shoeColor),
+					TShock.Utils.EncodeBoolArray(player.TPlayer.hideVisibleAccessory),
+					TShock.Utils.EncodeColor(player.TPlayer.skinColor),
+					TShock.Utils.EncodeColor(player.TPlayer.eyeColor),
+					player.TPlayer.voiceVariant,
+					player.TPlayer.voicePitchOffset,
+					player.TPlayer.team,
+					account.ID) > 0;
+			}
+			catch (Exception ex)
+			{
+				TShock.Log.Error(ex.ToString());
+			}
+
+			return false;
+		}
+
+		/// <summary>
 		/// Inserts player data to the tsCharacter database table
 		/// </summary>
 		/// <param name="player">player to take data from</param>
