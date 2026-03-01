@@ -3,6 +3,9 @@
 
 FROM --platform=${BUILDPLATFORM} mcr.microsoft.com/dotnet/sdk:9.0 AS builder
 
+# Install msgfmt for i18n
+RUN apt-get update && apt-get install -y gettext
+
 # Copy build context
 WORKDIR /TShock
 COPY . ./
