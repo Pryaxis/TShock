@@ -315,7 +315,7 @@ namespace TShockAPI
 			catch (Exception ex)
 			{
 				// Will be handled by the server api and written to its crashlog.txt.
-				throw new Exception("Fatal TShock initialization exception. See inner exception for details.", ex);
+				throw new Exception(GetString("Fatal TShock initialization exception. See inner exception for details."), ex);
 			}
 
 			// Further exceptions are written to TShock's log from now on.
@@ -844,7 +844,7 @@ namespace TShockAPI
 						else
 						{
 							// The server should not start up if this argument is invalid.
-							throw new InvalidOperationException("Invalid value given for command line argument \"-ip\".");
+							throw new InvalidOperationException(GetString("Invalid value given for command line argument \"-ip\"."));
 						}
 					})
 
@@ -872,7 +872,7 @@ namespace TShockAPI
 							worldEvil = 1;
 							break;
 						default:
-							throw new InvalidOperationException("Invalid value given for command line argument \"-worldevil\".");
+							throw new InvalidOperationException(GetString("Invalid value given for command line argument \"-worldevil\"."));
 					}
 
 					ServerApi.LogWriter.PluginWriteLine(this, GetString("New worlds will be generated with the {0} world evil type!", value), TraceLevel.Verbose);
@@ -1598,7 +1598,7 @@ namespace TShockAPI
 					//Send the original sender their nicely formatted message, and do all the loggy things
 					tsplr.SendMessage(msg, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
 					TSPlayer.Server.SendMessage(msg, tsplr.Group.R, tsplr.Group.G, tsplr.Group.B);
-					Log.Info("Broadcast: {0}", msg);
+					Log.Info(GetString("Broadcast: {0}", msg));
 					args.Handled = true;
 				}
 			}

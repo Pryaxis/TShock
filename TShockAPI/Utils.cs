@@ -1058,7 +1058,7 @@ namespace TShockAPI
 		internal void DumpPermissionMatrix(string path)
 		{
 			StringBuilder output = new StringBuilder();
-			output.Append("|Permission|");
+			output.Append(GetString("|Permission|"));
 
 			// Traverse to build group name list
 			foreach (Group g in TShock.Groups.groups)
