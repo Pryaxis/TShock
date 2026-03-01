@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2026-02-28 11:51:41+0000\n"
-"PO-Revision-Date: 2026-03-01 03:35\n"
+"PO-Revision-Date: 2026-03-01 04:32\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "MIME-Version: 1.0\n"
@@ -5774,11 +5774,11 @@ msgstr "Mostra a versão do TShock."
 
 #: ../../TShockAPI/Commands.cs:639
 msgid "Shows your number of deaths."
-msgstr ""
+msgstr "Mostra seu número de mortes."
 
 #: ../../TShockAPI/Commands.cs:644
 msgid "Shows your number of PVP deaths."
-msgstr ""
+msgstr "Mostra seu número de mortes no PVP."
 
 #: ../../TShockAPI/Commands.cs:362
 msgid "Shuts down the server while saving."
@@ -5880,7 +5880,7 @@ msgstr "Falha ao inserir consulta do Log SQL: {0}"
 
 #: ../../TShockAPI/SqlLog.cs:340
 msgid "SQL Logging disabled due to errors. Reverting to text logging."
-msgstr ""
+msgstr "Log SQL desativado devido a erros. Revertendo para o log de texto."
 
 #: ../../TShockAPI/Commands.cs:5776
 msgid "SSC must be enabled to use this command."
@@ -5889,11 +5889,11 @@ msgstr "SSC deve estar habilitado para usar este comando."
 #: ../../TShockAPI/PlayerData.cs:737
 #, csharp-format
 msgid "SSC restore failed for {0}: {1}"
-msgstr ""
+msgstr "Falha na restauração do SSC para {0}: {1}"
 
 #: ../../TShockAPI/PlayerData.cs:738
 msgid "SSC restore failed. Please rejoin."
-msgstr ""
+msgstr "Restauração de SSC falhou. Por favor, entre novamente."
 
 #: ../../TShockAPI/TSPlayer.cs:528
 #, csharp-format
@@ -5997,7 +5997,7 @@ msgstr "Parou o evento da lua sangue atual."
 
 #: ../../TShockAPI/NetItem.cs:228
 msgid "String should contain at least three sections."
-msgstr ""
+msgstr "A frase deve conter pelo menos três secções."
 
 #: ../../TShockAPI/Rest/SecureRest.cs:167
 msgid "Successful login"
@@ -6019,7 +6019,7 @@ msgstr "Sufixo do grupo \"{0}\" definido como \"{1}\"."
 
 #: ../../TShockAPI/Commands.cs:502
 msgid "Switches the world's evil."
-msgstr ""
+msgstr "Troca o mal do mundo."
 
 #: ../../TShockAPI/Commands.cs:5907
 msgid "Sync'd!"
@@ -6032,7 +6032,7 @@ msgstr "SyncTilePickingHandler: Posição X e Y estão fora dos limites do mundo
 
 #: ../../TShockAPI/GetDataHandlers.cs:4171
 msgid "Teleportation Potions"
-msgstr ""
+msgstr "Poções de Teleporte"
 
 #: ../../TShockAPI/Commands.cs:3134
 #, csharp-format
@@ -6147,7 +6147,7 @@ msgstr "O grupo de usuários padrão não pôde ser encontrado. Isso pode indica
 
 #: ../../TShockAPI/GetDataHandlers.cs:4216
 msgid "the Demon Conch"
-msgstr ""
+msgstr "O Concha do Demônio"
 
 #: ../../TShockAPI/Commands.cs:3279
 msgid "The destination coordinates provided don't look like valid numbers."
@@ -6223,11 +6223,11 @@ msgstr "O Cultista Lunático"
 
 #: ../../TShockAPI/GetDataHandlers.cs:4193
 msgid "the Magic Conch"
-msgstr ""
+msgstr "O Concha Mágica"
 
 #: ../../TShockAPI/Rest/RestManager.cs:361
 msgid "The message was broadcasted successfully"
-msgstr ""
+msgstr "A mensagem foi transmitida com sucesso"
 
 #: ../../TShockAPI/PaginationTools.cs:185
 msgid "The method referenced by LineFormatter has thrown an exception. See inner exception for details."
@@ -6243,7 +6243,7 @@ msgstr "O Senhor da Lua"
 
 #: ../../TShockAPI/Rest/RestManager.cs:371
 msgid "The motd.txt was not found."
-msgstr ""
+msgstr "O motd.txt não foi encontrado."
 
 #: ../../TShockAPI/Commands.cs:3518
 msgid "The permissions have been added to all of the groups in the system."
@@ -6259,7 +6259,7 @@ msgstr "Dados do personagem do jogador foram carregados com sucesso a partir da 
 
 #: ../../TShockAPI/TSPlayer.cs:2214
 msgid "The player's team is not in the range of available."
-msgstr ""
+msgstr "A equipe do jogador não está entre as distâncias disponíveis."
 
 #: ../../TShockAPI/Commands.cs:2877
 msgid "the Pumpking"
@@ -6279,7 +6279,7 @@ msgstr "O token de autenticação REST."
 
 #: ../../TShockAPI/Rest/RestManager.cs:386
 msgid "The rules.txt was not found."
-msgstr ""
+msgstr "O rules.txt não foi encontrado."
 
 #: ../../TShockAPI/UpdateManager.cs:150
 msgid "The server is out of date. Latest version: "
@@ -6287,15 +6287,15 @@ msgstr "O servidor está desatualizado. Última versão: "
 
 #: ../../TShockAPI/Rest/RestManager.cs:336
 msgid "The server is shutting down"
-msgstr ""
+msgstr "O servidor está desligando"
 
 #: ../../TShockAPI/GetDataHandlers.cs:4189
 msgid "the Shellphone (Ocean)"
-msgstr ""
+msgstr "O Celular de Concha (Oceano)"
 
 #: ../../TShockAPI/GetDataHandlers.cs:4212
 msgid "the Shellphone (Underworld)"
-msgstr ""
+msgstr "O Celular de Concha (Submundo)"
 
 #: ../../TShockAPI/Commands.cs:4603
 msgid "The spawn rate you provided is out-of-range or not a number."
@@ -6543,12 +6543,12 @@ msgstr "TShock {0} ({1}) em execução."
 #: ../../TShockAPI/TShock.cs:1480
 #, csharp-format
 msgid "TShock / OnChat rejected due to length of {0}/{1} from {2}"
-msgstr ""
+msgstr "TShock / OnChat rejeitado devido ao comprimento de {0}/{1} de {2}"
 
 #: ../../TShockAPI/TShock.cs:1658
 #, csharp-format
 msgid "TShock / TruncateChatMessageIfNecessary truncating excessive chat message length of {0}/{1} from {2}"
-msgstr ""
+msgstr "TShock / TruncateChatMessageIfNecessary truncando comprimento excessivo de mensagem de chat de {0}/{1} de {2}"
 
 #: ../../TShockAPI/Commands.cs:1408
 msgid "TShock Ban Help"
@@ -6738,7 +6738,7 @@ msgstr "Não foi possível gerar uma Parede de Carne baseado no seu estado atual
 #: ../../TShockAPI/DB/UserManager.cs:667
 #, csharp-format
 msgid "Unable to update group of user {0}."
-msgstr ""
+msgstr "Não é possível atualizar o grupo do usuário {0}."
 
 #: ../../TShockAPI/DB/UserManager.cs:479
 #, csharp-format
@@ -6747,7 +6747,7 @@ msgstr "Não foi possível verificar a senha hash para o usuário {0} ({1})"
 
 #: ../../TShockAPI/TextLog.cs:277
 msgid "Unable to write to log as log has been disposed."
-msgstr ""
+msgstr "Não foi possível gravar no log, como log foi disponível."
 
 #: ../../TShockAPI/Commands.cs:4020
 #, csharp-format
@@ -6779,11 +6779,11 @@ msgstr "Direção do jogador não reconhecida"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3761
 msgid "Unrecognized special effect (Packet 51). Please report this to the TShock developers."
-msgstr ""
+msgstr "Efeito especial não reconhecido (Packet 51). Por favor, reporte isso aos desenvolvedores do TShock"
 
 #: ../../TShockAPI/DB/GroupManager.cs:354
 msgid "Unsupported database type."
-msgstr ""
+msgstr "Tipo de banco de dados não suportado."
 
 #: ../../TShockAPI/TShock.cs:473
 msgid "Until the problem is resolved, TShock will not be able to start (and will crash on startup)."
@@ -6825,7 +6825,7 @@ msgstr "Uso: /uploadssc [nome de jogador]."
 #: ../../TShockAPI/Commands.cs:2558
 #, csharp-format
 msgid "Use \"{0}worldevent rain coin\" to start coin rain!"
-msgstr ""
+msgstr "Use \"{0}worldevent rain coin\" para começar a chuva de moedas!"
 
 #: ../../TShockAPI/Commands.cs:2556
 #, csharp-format
@@ -6882,7 +6882,7 @@ msgstr "A conta de usuário {0} não existe"
 
 #: ../../TShockAPI/Rest/RestManager.cs:592
 msgid "User deleted successfully"
-msgstr ""
+msgstr "Usuário deletado com sucesso."
 
 #: ../../TShockAPI/Commands.cs:1245
 msgid "User management command help:"
@@ -6890,7 +6890,7 @@ msgstr "Ajuda com comando de gerenciamento de usuário:"
 
 #: ../../TShockAPI/Rest/RestManager.cs:517
 msgid "User was successfully created"
-msgstr ""
+msgstr "O usuário foi criado com sucesso."
 
 #: ../../TShockAPI/Rest/SecureRest.cs:138
 #: ../../TShockAPI/Rest/SecureRest.cs:144
@@ -7041,7 +7041,7 @@ msgstr "Mundo salvo."
 #: ../../TShockAPI/Commands.cs:2699
 #, csharp-format
 msgid "World evil switched to {0}."
-msgstr ""
+msgstr "O mal do mundo mudou para {0}."
 
 #: ../../TShockAPI/Commands.cs:2670
 #, csharp-format
@@ -7065,11 +7065,11 @@ msgstr "Mundo salvo em ({0})"
 
 #: ../../TShockAPI/SaveManager.cs:141
 msgid "World saved failed"
-msgstr ""
+msgstr "Falha ao salvar o mundo."
 
 #: ../../TShockAPI/SaveManager.cs:62
 msgid "World saved notification failed"
-msgstr ""
+msgstr "Notificação de salvamento do mundo falhou"
 
 #: ../../TShockAPI/SaveManager.cs:135
 msgid "World saved."
@@ -7226,7 +7226,7 @@ msgstr "Você não pode gerar itens banidos."
 
 #: ../../TShockAPI/GetDataHandlers.cs:3751
 msgid "You cannot use the Enchanted Moondial because time is stopped."
-msgstr ""
+msgstr "Você não pode usar o Relógio Lunar Encantado porquê o tempo foi parado."
 
 #: ../../TShockAPI/GetDataHandlers.cs:3721
 msgid "You cannot use the Enchanted Sundial because time is stopped."
@@ -7432,7 +7432,7 @@ msgstr "Você não tem permissão para invocar o Cultista Lunático!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3696
 msgid "You do not have permission to summon the Skeletron."
-msgstr ""
+msgstr "Você não tem permissão para invocar o Skeletron."
 
 #: ../../TShockAPI/Commands.cs:3175
 msgid "You do not have permission to teleport all other players."
