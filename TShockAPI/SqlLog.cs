@@ -337,7 +337,7 @@ namespace TShockAPI
 			if (_failures.Count >= TShock.Config.Settings.RevertToTextLogsOnSqlFailures)
 			{
 				_useTextLog = true;
-				_backupLog.ConsoleError("SQL Logging disabled due to errors. Reverting to text logging.");
+				_backupLog.ConsoleError(GetString("SQL Logging disabled due to errors. Reverting to text logging."));
 
 				foreach (var logInfo in _failures)
 				{

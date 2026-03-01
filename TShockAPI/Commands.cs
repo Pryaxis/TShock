@@ -5484,7 +5484,7 @@ namespace TShockAPI
 			{
 				args.Player.SendWarningMessage(GetString("The initial setup system is disabled. This incident has been logged."));
 				args.Player.SendWarningMessage(GetString("If you are locked out of all admin accounts, ask for help on https://tshock.co/"));
-				TShock.Log.Warn("{0} attempted to use the initial setup system even though it's disabled.", args.Player.IP);
+				TShock.Log.Warn(GetString("{0} attempted to use the initial setup system even though it's disabled.", args.Player.IP));
 				return;
 			}
 
@@ -5510,7 +5510,7 @@ namespace TShockAPI
 			if (!Int32.TryParse(args.Parameters[0], out givenCode) || givenCode != TShock.SetupToken)
 			{
 				args.Player.SendErrorMessage(GetString("Incorrect setup code. This incident has been logged."));
-				TShock.Log.Warn(args.Player.IP + " attempted to use an incorrect setup code.");
+				TShock.Log.Warn(GetString($"{args.Player.IP} attempted to use an incorrect setup code."));
 				return;
 			}
 
@@ -6379,7 +6379,9 @@ namespace TShockAPI
 			if (args.Parameters.Count < 2)
 			{
 				args.Player.SendErrorMessage(
-					"Invalid syntax. Proper syntax: {0}give <item type/id> <player> [item amount] [prefix id/name]", Specifier);
+					GetString(
+						"Invalid syntax. Proper syntax: {0}give <item type/id> <player> [item amount] [prefix id/name]",
+						Specifier));
 				return;
 			}
 			if (args.Parameters[0].Length == 0)
