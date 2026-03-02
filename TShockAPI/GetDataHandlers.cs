@@ -142,7 +142,8 @@ namespace TShockAPI
 					{ PacketTypes.FoodPlatterTryPlacing, HandleFoodPlatterTryPlacing },
 					{ PacketTypes.SyncCavernMonsterType, HandleSyncCavernMonsterType },
 					{ PacketTypes.SyncLoadout, HandleSyncLoadout },
-					{ PacketTypes.TeamChangeFromUI, HandlePlayerTeam } // Same packet as PlayerTeam
+					{ PacketTypes.TeamChangeFromUI, HandlePlayerTeam }, // Same packet as PlayerTeam
+					{ PacketTypes.TEDeadCellsDisplayJar, HandleDisplayJar }
 				};
 		}
 
@@ -2498,6 +2499,52 @@ namespace TShockAPI
 			return args.Handled;
 		}
 
+		public class DisplayJarTryPlacingEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// The X tile position of the placement action.
+			/// </summary>
+			public ushort TileX { get; set; }
+			/// <summary>
+			/// The Y tile position of the placement action.
+			/// </summary>
+			public ushort TileY { get; set; }
+			/// <summary>
+			/// The Item ID that is being placed in the display jar.
+			/// </summary>
+			public short ItemID { get; set; }
+			/// <summary>
+			/// The prefix of the item that is being placed in the display jar.
+			/// </summary>
+			public byte Prefix { get; set; }
+			/// <summary>
+			/// The stack of the item that is being placed in the display jar.
+			/// </summary>
+			public short Stack { get; set; }
+		}
+		/// <summary>
+		/// Called when a player is placing an item in a display jar.
+		/// </summary>
+		public static HandlerList<DisplayJarTryPlacingEventArgs> DisplayJarTryPlacing = new HandlerList<DisplayJarTryPlacingEventArgs>();
+		private static bool OnDisplayJarTryPlacing(TSPlayer player, MemoryStream data, ushort tileX, ushort tileY, short itemID, byte prefix, short stack)
+		{
+			if (DisplayJarTryPlacing == null)
+				return false;
+
+			var args = new DisplayJarTryPlacingEventArgs
+			{
+				Player = player,
+				Data = data,
+				TileX = tileX,
+				TileY = tileY,
+				ItemID = itemID,
+				Prefix = prefix,
+				Stack = stack,
+			};
+			DisplayJarTryPlacing.Invoke(null, args);
+			return args.Handled;
+		}
+
 		/// <summary>
 		/// Used when a net module is loaded
 		/// </summary>
@@ -4804,6 +4851,21 @@ namespace TShockAPI
 
 			return false;
 		}
+
+		private static bool HandleDisplayJar(GetDataHandlerArgs args)
+		{
+			ushort tileX = args.Data.ReadUInt16();
+			ushort tileY = args.Data.ReadUInt16();
+			short itemID = args.Data.ReadInt16();
+			byte prefix = args.Data.ReadInt8();
+			short stack = args.Data.ReadInt16();
+
+			if (OnDisplayJarTryPlacing(args.Player, args.Data, tileX, tileY, itemID, prefix, stack))
+				return true;
+
+			return false;
+		}
+
 
 		public enum DoorAction
 		{
