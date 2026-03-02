@@ -1164,6 +1164,10 @@ namespace TShockAPI
 						TShock.Log.ConsoleDebug(GetString("OnSecondUpdate / initial ssc spawn for {0} at ({1}, {2})", player.Name, player.TPlayer.SpawnX, player.TPlayer.SpawnY));
 					}
 
+					// If a client didn't set a team change within 5 seconds, they're likely hacking, so clear this flag to remove their one-time free team change
+					if (player.InitialTeamChangePending && (DateTime.UtcNow - player.LastPvPTeamChange).TotalSeconds >= 5)
+						player.InitialTeamChangePending = false;
+
 					if (player.RPPending > 0)
 					{
 						if (player.RPPending == 1)

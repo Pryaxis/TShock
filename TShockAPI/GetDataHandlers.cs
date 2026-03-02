@@ -2901,8 +2901,27 @@ namespace TShockAPI
 			byte team = args.Data.ReadInt8();
 			PlayerSpawnContext context = (PlayerSpawnContext)args.Data.ReadByte();
 
+			bool teamCorrectNeeded = false; // Only used if malicious client attempts to change team this way
+			string pvpMode = TShock.Config.Settings.PvPMode.ToLowerInvariant();
+			// To prevent clients from bypassing this pvp mode, we must correct their team
+			if (pvpMode == "pvpwithnoteam" && team != 0)
+			{
+				team = 0;
+				teamCorrectNeeded = true;
+			}
+			// MMalicious client likely trying to fast switch
+			if (team != args.Player.Team && args.Player.FinishedHandshake && (DateTime.UtcNow - args.Player.LastPvPTeamChange).TotalSeconds < 5)
+				teamCorrectNeeded = true;
+
 			if (args.Player.State >= (int)ConnectionState.RequestingWorldData && !args.Player.FinishedHandshake)
+			{
 				args.Player.FinishedHandshake = true; //If the player has requested world data before sending spawn player, they should be at the obvious ClientRequestedWorldData state. Also only set this once to remove redundant updates.
+				if (!Main.ServerSideCharacter && team != 0 && !teamCorrectNeeded) // Player will be requesting a team change later
+				{
+					args.Player.InitialTeamChangePending = true;
+					args.Player.LastPvPTeamChange = DateTime.UtcNow; // To prevent malicious clients from being able to get a free team change, we reset InitialTeamChangePending after 5 seconds
+				}
+			}
 
 			if (OnPlayerSpawn(args.Player, args.Data, player, spawnX, spawnY, respawnTimer, numberOfDeathsPVE, numberOfDeathsPVP, team, context))
 				return true;
@@ -2953,7 +2972,13 @@ namespace TShockAPI
 					return false;
 				}
 
+				if (teamCorrectNeeded)
+				{
+					team = (byte)args.Player.Team;
+				}
+
 				args.TPlayer.team = team;
+
 				args.TPlayer.Spawn(context);
 				// spawn the player before teleporting
 				NetMessage.SendData((int)PacketTypes.PlayerSpawn, -1, args.Player.Index, null, args.Player.Index, (int)PlayerSpawnContext.ReviveFromDeath);
@@ -2966,9 +2991,55 @@ namespace TShockAPI
 				args.TPlayer.respawnTimer = respawnTimer;
 				args.TPlayer.numberOfDeathsPVE = numberOfDeathsPVE;
 				args.TPlayer.numberOfDeathsPVP = numberOfDeathsPVP;
+
+				// Correct their team after
+				if (teamCorrectNeeded)
+					args.Player.SendData(PacketTypes.PlayerTeam, "", args.Player.Index);
+
 				return true;
 			}
-			return false;
+
+			// Note: Because clients can change their team through this packet now, we have to always handle it ourselves.
+			if (teamCorrectNeeded) // correction of malicious client's team change necessary
+				team = (byte)args.Player.Team;
+
+			if (!args.Player.InitialTeamChangePending && args.Player.Team != team) // client changed team through this packet, track time since last team change
+				args.Player.LastPvPTeamChange = DateTime.UtcNow;
+
+			args.Player.TPlayer.team = team;
+			if (respawnTimer > 0)
+				args.Player.TPlayer.dead = true;
+
+			args.Player.TPlayer.Spawn(context);
+
+			// Handling of data from MessageBuffer...
+			if (args.Player.State == (int)ConnectionState.RequestingWorldData)
+			{
+				args.Player.State = 10;
+				NetMessage.buffer[args.Player.Index].broadcast = true;
+				NetMessage.SyncConnectedPlayer(args.Player.Index);
+				bool flag11 = NetMessage.DoesPlayerSlotCountAsAHost(args.Player.Index);
+				Main.countsAsHostForGameplay[args.Player.Index] = flag11;
+				if (NetMessage.DoesPlayerSlotCountAsAHost(args.Player.Index))
+					NetMessage.TrySendData(139, args.Player.Index, -1, null, args.Player.Index, flag11.ToInt());
+
+				NetMessage.TrySendData(129, args.Player.Index);
+				NetMessage.greetPlayer(args.Player.Index);
+				if (args.Player.TPlayer.unlockedBiomeTorches)
+				{
+					NPC nPC = new NPC();
+					nPC.SetDefaults(664);
+					Main.BestiaryTracker.Kills.RegisterKill(nPC);
+				}
+			}
+
+			NetMessage.SendData((int)PacketTypes.PlayerSpawn, -1, args.Player.Index, null, args.Player.Index, (int)context);
+
+			if (teamCorrectNeeded)
+				args.Player.SendData(PacketTypes.PlayerTeam, "", args.Player.Index);
+
+			// We've handled it ourselves
+			return true;
 		}
 
 		private static bool HandlePlayerUpdate(GetDataHandlerArgs args)
@@ -3571,7 +3642,7 @@ namespace TShockAPI
 			if (id != args.Player.Index)
 				return true;
 
-			if (team == args.Player.Team) // No need to handle, interferes with SSC if we do.
+			if (!args.Player.InitialTeamChangePending && team == args.Player.Team) // No need to handle if initial change isn't pending, interferes with SSC if we do.
 				return true;
 
 			if (args.Player.IgnoreSSCPackets)
@@ -3582,7 +3653,23 @@ namespace TShockAPI
 			}
 
 			string pvpMode = TShock.Config.Settings.PvPMode.ToLowerInvariant();
-			if (pvpMode == "pvpwithnoteam" || (DateTime.UtcNow - args.Player.LastPvPTeamChange).TotalSeconds < 5)
+			if (pvpMode == "pvpwithnoteam")
+			{
+				args.Player.SendData(PacketTypes.PlayerTeam, "", id);
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandlePlayerTeam rejected from (pvp mode disallows teams) {0}", args.Player.Name));
+				return true;
+			}
+
+			// Player has pending team change
+			if (args.Player.InitialTeamChangePending)
+			{
+				args.Player.InitialTeamChangePending = false;
+				args.Player.LastPvPTeamChange = DateTime.MinValue; // Players can change teams or toggle pvp immediately after joining, so we have to allow such
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandlePlayerTeam super accepted from (initial team change) {0}", args.Player.Name));
+				return false;
+			}
+
+			if ((DateTime.UtcNow - args.Player.LastPvPTeamChange).TotalSeconds < 5)
 			{
 				args.Player.SendData(PacketTypes.PlayerTeam, "", id);
 				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandlePlayerTeam rejected team fastswitch {0}", args.Player.Name));
