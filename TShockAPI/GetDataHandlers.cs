@@ -2901,7 +2901,7 @@ namespace TShockAPI
 			byte team = args.Data.ReadInt8();
 			PlayerSpawnContext context = (PlayerSpawnContext)args.Data.ReadByte();
 
-			bool teamCorrectNeeded = false; // Only used if malicious client attempts to change team this way
+			bool teamCorrectNeeded = false; // If we need to correct their team after handling
 			string pvpMode = TShock.Config.Settings.PvPMode.ToLowerInvariant();
 			// To prevent clients from bypassing this pvp mode, we must correct their team
 			if (pvpMode == "pvpwithnoteam" && team != 0)
