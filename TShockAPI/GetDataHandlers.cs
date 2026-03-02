@@ -2907,6 +2907,7 @@ namespace TShockAPI
 			if (pvpMode == "pvpwithnoteam" && team != 0)
 			{
 				team = 0;
+				args.TPlayer.team = 0; // make sure to set it to 0 (no team)
 				teamCorrectNeeded = true;
 			}
 			// Malicious client likely trying to fast switch
@@ -2972,12 +2973,13 @@ namespace TShockAPI
 					return false;
 				}
 
-				if (teamCorrectNeeded)
+				if (team != args.TPlayer.team)
 				{
-					team = (byte)args.Player.Team;
-				}
+					if (teamCorrectNeeded)
+						team = (byte)args.TPlayer.team;
 
-				args.TPlayer.team = team;
+					args.TPlayer.team = team;
+				}
 
 				args.TPlayer.Spawn(context);
 				// spawn the player before teleporting
@@ -3001,9 +3003,9 @@ namespace TShockAPI
 
 			// Note: Because clients can change their team through this packet now, we have to always handle it ourselves.
 			if (teamCorrectNeeded) // correction of malicious client's team change necessary
-				team = (byte)args.Player.Team;
+				team = (byte)args.TPlayer.team;
 
-			if (!args.Player.InitialTeamChangePending && args.Player.Team != team) // client changed team through this packet, track time since last team change
+			if (!args.Player.InitialTeamChangePending && args.TPlayer.team != team) // client changed team through this packet, track time since last team change
 				args.Player.LastPvPTeamChange = DateTime.UtcNow;
 
 			args.Player.TPlayer.team = team;
