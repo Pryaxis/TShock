@@ -2329,21 +2329,7 @@ namespace TShockAPI
 				// Explosive Bunny projectile.
 				if (type == NPCID.ExplosiveBunny)
 				{
-					bool areAnyBunnyProjectilesInRange;
-
-					lock (args.Player.RecentlyCreatedProjectiles)
-					{
-						areAnyBunnyProjectilesInRange = args.Player.RecentlyCreatedProjectiles.Any(projectile =>
-						{
-							if (projectile.Type != ProjectileID.ExplosiveBunny)
-								return false;
-
-							var projectileInstance = Main.projectile[projectile.Index];
-							return projectileInstance.active && projectileInstance.WithinRange(new Vector2(args.X, args.Y), 32.0f);
-						});
-					}
-
-					if (!areAnyBunnyProjectilesInRange)
+					if (args.Player.TPlayer.ownedProjectileCounts[ProjectileID.ExplosiveBunny] == 0)
 					{
 						rejectForCritterNotReleasedFromItem();
 						return;

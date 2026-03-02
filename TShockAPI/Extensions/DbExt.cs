@@ -161,7 +161,7 @@ namespace TShockAPI.DB
 			SqlType.Sqlite => new SqliteQueryBuilder(),
 			SqlType.Mysql => new MysqlQueryBuilder(),
 			SqlType.Postgres => new PostgresQueryBuilder(),
-			_ => throw new NotSupportedException("Database type not supported.")
+			_ => throw new NotSupportedException(GetString("Database type not supported."))
 		};
 
 		private static readonly Dictionary<Type, Func<IDataReader, int, object>> ReadFuncs = new Dictionary
