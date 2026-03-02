@@ -3385,7 +3385,14 @@ namespace TShockAPI
 			}
 
 			string pvpMode = TShock.Config.Settings.PvPMode.ToLowerInvariant();
-			if (pvpMode == "disabled" || pvpMode == "always" || pvpMode == "pvpwithnoteam" || (DateTime.UtcNow - args.Player.LastPvPTeamChange).TotalSeconds < 5)
+			if (pvpMode == "disabled" || pvpMode == "always" || pvpMode == "pvpwithnoteam")
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleTogglePvp rejected from (pvp mode disallows toggling) {0}", args.Player.Name));
+				args.Player.SendData(PacketTypes.TogglePvp, "", id);
+				return true;
+			}
+
+			if ((DateTime.UtcNow - args.Player.LastPvPTeamChange).TotalSeconds < 5)
 			{
 				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleTogglePvp rejected fastswitch {0}", args.Player.Name));
 				args.Player.SendData(PacketTypes.TogglePvp, "", id);

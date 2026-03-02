@@ -1168,6 +1168,29 @@ namespace TShockAPI
 					if (player.InitialTeamChangePending && (DateTime.UtcNow - player.LastPvPTeamChange).TotalSeconds >= 5)
 						player.InitialTeamChangePending = false;
 
+					// Enforce the pvp mode.
+					string pvpMode = Config.Settings.PvPMode.ToLowerInvariant();
+					if (pvpMode != "normal")
+					{
+						if (pvpMode == "disabled" && player.TPlayer.hostile)
+						{
+							player.TPlayer.hostile = false;
+							NetMessage.SendData((int)PacketTypes.TogglePvp, -1, -1, null, player.Index);
+						}
+
+						if ((pvpMode == "always" || pvpMode == "pvpwithnoteam") && !player.TPlayer.hostile)
+						{
+							player.TPlayer.hostile = true;
+							NetMessage.SendData((int)PacketTypes.TogglePvp, -1, -1, null, player.Index);
+						}
+
+						if (pvpMode == "pvpwithnoteam" && player.Team != 0)
+						{
+							player.TPlayer.team = 0;
+							NetMessage.SendData((int)PacketTypes.PlayerTeam, -1, -1, NetworkText.Empty, player.Index);
+						}
+					}
+
 					if (player.RPPending > 0)
 					{
 						if (player.RPPending == 1)
