@@ -2977,6 +2977,8 @@ namespace TShockAPI
 				{
 					if (teamCorrectNeeded)
 						team = (byte)args.TPlayer.team;
+					else
+						args.Player.LastPvPTeamChange = DateTime.UtcNow;
 
 					args.TPlayer.team = team;
 				}
