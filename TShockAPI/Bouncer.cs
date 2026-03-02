@@ -137,6 +137,7 @@ namespace TShockAPI
 			GetDataHandlers.KillMe += OnKillMe;
 			GetDataHandlers.FishOutNPC += OnFishOutNPC;
 			GetDataHandlers.FoodPlatterTryPlacing += OnFoodPlatterTryPlacing;
+			GetDataHandlers.DisplayJarTryPlacing += OnDisplayJarTryPlacing;
 			OTAPI.Hooks.Chest.QuickStack += OnQuickStack;
 
 
@@ -3018,6 +3019,58 @@ namespace TShockAPI
 			if (!args.Player.IsInRange(args.TileX, args.TileY, range: 13)) // To my knowledge, max legit tile reach with accessories.
 			{
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnFoodPlatterTryPlacing rejected range checks from {0}", args.Player.Name));
+				args.Player.SendTileSquareCentered(args.TileX, args.TileY, 1);
+				args.Handled = true;
+				return;
+			}
+		}
+
+		/// <summary>
+		/// Called when a player is trying to place an item into a display jar.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		internal void OnDisplayJarTryPlacing(object sender, GetDataHandlers.DisplayJarTryPlacingEventArgs args)
+		{
+			if (!TShock.Utils.TilePlacementValid(args.TileX, args.TileY))
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnDisplayJarTryPlacing rejected tile placement valid from {0}", args.Player.Name));
+				args.Handled = true;
+				return;
+			}
+
+			if ((args.Player.SelectedItem.type != args.ItemID && args.Player.ItemInHand.type != args.ItemID))
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnDisplayJarTryPlacing rejected item not placed by hand from {0}", args.Player.Name));
+				args.Player.SendTileSquareCentered(args.TileX, args.TileY, 1);
+				args.Handled = true;
+				return;
+			}
+			if (args.Player.IsBeingDisabled())
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnDisplayJarTryPlacing rejected disabled from {0}", args.Player.Name));
+				Item item = new Item();
+				item.netDefaults(args.ItemID);
+				args.Player.GiveItemCheck(args.ItemID, item.Name, args.Stack, args.Prefix);
+				args.Player.SendTileSquareCentered(args.TileX, args.TileY, 1);
+				args.Handled = true;
+				return;
+			}
+
+			if (!args.Player.HasBuildPermission(args.TileX, args.TileY))
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnDisplayJarTryPlacing rejected permissions from {0}", args.Player.Name));
+				Item item = new Item();
+				item.netDefaults(args.ItemID);
+				args.Player.GiveItemCheck(args.ItemID, item.Name, args.Stack, args.Prefix);
+				args.Player.SendTileSquareCentered(args.TileX, args.TileY, 1);
+				args.Handled = true;
+				return;
+			}
+
+			if (!args.Player.IsInRange(args.TileX, args.TileY, range: 13)) // To my knowledge, max legit tile reach with accessories.
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnDisplayJarTryPlacing rejected range checks from {0}", args.Player.Name));
 				args.Player.SendTileSquareCentered(args.TileX, args.TileY, 1);
 				args.Handled = true;
 				return;
