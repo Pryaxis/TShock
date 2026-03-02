@@ -2909,7 +2909,7 @@ namespace TShockAPI
 				team = 0;
 				teamCorrectNeeded = true;
 			}
-			// MMalicious client likely trying to fast switch
+			// Malicious client likely trying to fast switch
 			if (team != args.Player.Team && args.Player.FinishedHandshake && (DateTime.UtcNow - args.Player.LastPvPTeamChange).TotalSeconds < 5)
 				teamCorrectNeeded = true;
 
