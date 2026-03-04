@@ -42,6 +42,7 @@ namespace TShockAPI
 		private Object _saveLock = new Object();
 		private Queue<SaveTask> _saveQueue = new Queue<SaveTask>();
 		private Thread _saveThread;
+		private volatile bool _isSaving = false;
 		private int saveQueueCount { get { lock (_saveLock) return _saveQueue.Count; } }
 
 		/// <summary>
@@ -78,11 +79,9 @@ namespace TShockAPI
 				return;
 
 			// Wait for all outstanding saves to complete
-			int count = saveQueueCount;
-			while (0 != count)
+			while (saveQueueCount > 0 || _isSaving)
 			{
 				Thread.Sleep(50);
-				count = saveQueueCount;
 			}
 		}
 
@@ -109,42 +108,48 @@ namespace TShockAPI
 		{
 			while (true)
 			{
-				lock (_saveLock)
+				_wh.WaitOne();
+
+				while (true)
 				{
-					// NOTE: lock for the entire process so wait works in SaveWorld
-					if (_saveQueue.Count > 0)
+					SaveTask task;
+					lock (_saveLock)
 					{
-						SaveTask task = _saveQueue.Dequeue();
-						if (null == task)
+						if (_saveQueue.Count == 0)
+							break;
+						task = _saveQueue.Dequeue();
+						if (task == null)
 							return;
-						else
+					}
+
+					// Ensure that save handler errors don't bubble up and cause a recursive call
+					// These can be caused by an unexpected error such as a bad or out of date plugin
+					_isSaving = true;
+					try
+					{
+						if (task.direct)
 						{
-							// Ensure that save handler errors don't bubble up and cause a recursive call
-							// These can be caused by an unexpected error such as a bad or out of date plugin
-							try
-							{
-								if (task.direct)
-								{
-									OnSaveWorld(new WorldSaveEventArgs());
-									WorldFile.SaveWorld(task.resetTime);
-								}
-								else
-									WorldFile.SaveWorld(task.resetTime);
-
-								if (TShock.Config.Settings.AnnounceSave)
-									TShock.Utils.Broadcast(GetString("World saved."), Color.Yellow);
-
-								TShock.Log.Info(GetString("World saved at ({0})", Main.worldPathName));
-							}
-							catch (Exception e)
-							{
-								TShock.Log.Error(GetString("World saved failed"));
-								TShock.Log.Error(e.ToString());
-							}
+							OnSaveWorld(new WorldSaveEventArgs());
+							WorldFile.SaveWorld(task.resetTime);
 						}
+						else
+							WorldFile.SaveWorld(task.resetTime);
+
+						if (TShock.Config.Settings.AnnounceSave)
+							TShock.Utils.Broadcast(GetString("World saved."), Color.Yellow);
+
+						TShock.Log.Info(GetString("World saved at ({0})", Main.worldPathName));
+					}
+					catch (Exception e)
+					{
+						TShock.Log.Error(GetString("World save failed"));
+						TShock.Log.Error(e.ToString());
+					}
+					finally
+					{
+						_isSaving = false;
 					}
 				}
-				_wh.WaitOne();
 			}
 		}
 
