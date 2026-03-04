@@ -120,11 +120,11 @@ namespace TShockAPI
 						task = _saveQueue.Dequeue();
 						if (task == null)
 							return;
+						_isSaving = true;
 					}
 
 					// Ensure that save handler errors don't bubble up and cause a recursive call
 					// These can be caused by an unexpected error such as a bad or out of date plugin
-					_isSaving = true;
 					try
 					{
 						if (task.direct)
