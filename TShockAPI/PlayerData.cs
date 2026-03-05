@@ -316,28 +316,31 @@ namespace TShockAPI
 
 			player.TPlayer.extraAccessory = extraSlot.HasValue && extraSlot.Value == 1 ? true : false;
 
-			if (this.voiceVariant != null)
-				player.TPlayer.voiceVariant = this.voiceVariant.Value;
-			if (this.voicePitchOffset != null)
-				player.TPlayer.voicePitchOffset = this.voicePitchOffset.Value;
-			if (this.skinVariant != null)
-				player.TPlayer.skinVariant = this.skinVariant.Value;
-			if (this.hair != null)
-				player.TPlayer.hair = this.hair.Value;
-			if (this.hairColor != null)
-				player.TPlayer.hairColor = this.hairColor.Value;
-			if (this.pantsColor != null)
-				player.TPlayer.pantsColor = this.pantsColor.Value;
-			if (this.shirtColor != null)
-				player.TPlayer.shirtColor = this.shirtColor.Value;
-			if (this.underShirtColor != null)
-				player.TPlayer.underShirtColor = this.underShirtColor.Value;
-			if (this.shoeColor != null)
-				player.TPlayer.shoeColor = this.shoeColor.Value;
-			if (this.skinColor != null)
-				player.TPlayer.skinColor = this.skinColor.Value;
-			if (this.eyeColor != null)
-				player.TPlayer.eyeColor = this.eyeColor.Value;
+			if (!TShock.ServerSideCharacterConfig.Settings.KeepPlayerAppearance)
+			{
+				if (this.voiceVariant != null)
+					player.TPlayer.voiceVariant = this.voiceVariant.Value;
+				if (this.voicePitchOffset != null)
+					player.TPlayer.voicePitchOffset = this.voicePitchOffset.Value;
+				if (this.skinVariant != null)
+					player.TPlayer.skinVariant = this.skinVariant.Value;
+				if (this.hair != null)
+					player.TPlayer.hair = this.hair.Value;
+				if (this.hairColor != null)
+					player.TPlayer.hairColor = this.hairColor.Value;
+				if (this.pantsColor != null)
+					player.TPlayer.pantsColor = this.pantsColor.Value;
+				if (this.shirtColor != null)
+					player.TPlayer.shirtColor = this.shirtColor.Value;
+				if (this.underShirtColor != null)
+					player.TPlayer.underShirtColor = this.underShirtColor.Value;
+				if (this.shoeColor != null)
+					player.TPlayer.shoeColor = this.shoeColor.Value;
+				if (this.skinColor != null)
+					player.TPlayer.skinColor = this.skinColor.Value;
+				if (this.eyeColor != null)
+					player.TPlayer.eyeColor = this.eyeColor.Value;
+			}
 
 			if (this.hideVisuals != null)
 				player.TPlayer.hideVisibleAccessory = this.hideVisuals;
