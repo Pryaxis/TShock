@@ -3065,7 +3065,11 @@ namespace TShockAPI
 				args.Player.LastPvPTeamChange = DateTime.UtcNow;
 
 			args.Player.TPlayer.team = team;
-			if (respawnTimer > 0)
+			args.TPlayer.respawnTimer = respawnTimer;
+			args.TPlayer.numberOfDeathsPVE = numberOfDeathsPVE;
+			args.TPlayer.numberOfDeathsPVP = numberOfDeathsPVP;
+
+			if (args.TPlayer.respawnTimer > 0)
 				args.Player.TPlayer.dead = true;
 
 			args.Player.TPlayer.Spawn(context);
@@ -3079,9 +3083,9 @@ namespace TShockAPI
 				bool flag11 = NetMessage.DoesPlayerSlotCountAsAHost(args.Player.Index);
 				Main.countsAsHostForGameplay[args.Player.Index] = flag11;
 				if (NetMessage.DoesPlayerSlotCountAsAHost(args.Player.Index))
-					NetMessage.TrySendData(139, args.Player.Index, -1, null, args.Player.Index, flag11.ToInt());
+					NetMessage.TrySendData((int)PacketTypes.SetCountsAsHostForGameplay, args.Player.Index, -1, null, args.Player.Index, flag11.ToInt());
 
-				NetMessage.TrySendData(129, args.Player.Index);
+				NetMessage.TrySendData((int)PacketTypes.FinishedConnectingToServer, args.Player.Index);
 				NetMessage.greetPlayer(args.Player.Index);
 				if (args.Player.TPlayer.unlockedBiomeTorches)
 				{
