@@ -913,6 +913,11 @@ namespace TShockAPI
 					}
 
 					args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, account.ID);
+					if (Main.ServerSideCharacter && TShock.CharacterDB.IsSeededAppearanceMissing(args.Player.PlayerData))
+					{
+						TShock.CharacterDB.SyncSeededAppearance(account, args.Player);
+						args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, account.ID);
+					}
 
 					args.Player.Group = group;
 					args.Player.tempGroup = null;
