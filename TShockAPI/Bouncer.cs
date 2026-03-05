@@ -28,6 +28,7 @@ using Terraria.DataStructures;
 using Terraria.Localization;
 using TShockAPI.Models.PlayerUpdate;
 using System.Threading.Tasks;
+using On.Terraria.GameContent;
 using OTAPI;
 using Terraria.GameContent.Tile_Entities;
 
@@ -139,6 +140,7 @@ namespace TShockAPI
 			GetDataHandlers.FoodPlatterTryPlacing += OnFoodPlatterTryPlacing;
 			GetDataHandlers.DisplayJarTryPlacing += OnDisplayJarTryPlacing;
 			OTAPI.Hooks.Chest.QuickStack += OnQuickStack;
+			CraftingRequests.CanCraftFromChest += OnChestCraftRequest;
 
 
 			// The following section is based off Player.PlaceThing_Tiles_PlaceIt and Player.PlaceThing_Tiles_PlaceIt_GetLegacyTileStyle.
@@ -3106,6 +3108,36 @@ namespace TShockAPI
 				args.Result = HookResult.Cancel;
 				return;
 			}
+		}
+
+		/// <summary>
+		/// Called when a player is trying to use items of a chest to craft something.
+		/// </summary>
+		/// <param name="orig"></param>
+		/// <param name="chest"></param>
+		/// <param name="whoAmI"></param>
+		private static bool OnChestCraftRequest(CraftingRequests.orig_CanCraftFromChest orig, Chest chest, int whoAmI)
+		{
+			var plr = TShock.Players[whoAmI];
+
+			if (plr is not { Active: true })
+			{
+				return false;
+			}
+
+			if (plr.IsBeingDisabled())
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnChestCraftRequest rejected from disable from {0}", plr.Name));
+				return false;
+			}
+
+			if (!plr.HasBuildPermission(chest.x, chest.y) && TShock.Config.Settings.RegionProtectChests)
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnChestCraftRequest rejected from region protection? from {0}", plr.Name));
+				return false;
+			}
+
+			return orig(chest, whoAmI);
 		}
 
 		internal void OnSecondUpdate()
