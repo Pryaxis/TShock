@@ -1166,6 +1166,34 @@ namespace TShockAPI
 						TShock.Log.ConsoleDebug(GetString("OnSecondUpdate / initial ssc spawn for {0} at ({1}, {2})", player.Name, player.TPlayer.SpawnX, player.TPlayer.SpawnY));
 					}
 
+					// If a client didn't send a team change within 5 seconds of a pending team change from spawning, they're likely hacking.
+					// So we clear this flag to remove their one-time free team change.
+					if (player.InitialTeamChangePending && (DateTime.UtcNow - player.LastPvPTeamChange).TotalSeconds >= 5)
+						player.InitialTeamChangePending = false;
+
+					// We need to make sure the pvp mode is enforced properly. Maybe this should be moved elsewhere?
+					string pvpMode = Config.Settings.PvPMode.ToLowerInvariant();
+					if (pvpMode != "normal")
+					{
+						if (pvpMode == "disabled" && player.TPlayer.hostile) // player shouldn't be in pvp
+						{
+							player.TPlayer.hostile = false;
+							NetMessage.SendData((int)PacketTypes.TogglePvp, -1, -1, null, player.Index);
+						}
+
+						if ((pvpMode == "always" || pvpMode == "pvpwithnoteam") && !player.TPlayer.hostile) // player isn't in pvp when they should be
+						{
+							player.TPlayer.hostile = true;
+							NetMessage.SendData((int)PacketTypes.TogglePvp, -1, -1, null, player.Index);
+						}
+
+						if (pvpMode == "pvpwithnoteam" && player.Team != 0) // player is on a team when they shouldn't be
+						{
+							player.TPlayer.team = 0;
+							NetMessage.SendData((int)PacketTypes.PlayerTeam, -1, -1, NetworkText.Empty, player.Index);
+						}
+					}
+
 					if (player.RPPending > 0)
 					{
 						if (player.RPPending == 1)

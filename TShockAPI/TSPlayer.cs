@@ -402,6 +402,9 @@ namespace TShockAPI
 		/// <summary>Determines if the player has finished the handshake (Sent all necessary packets for connection, such as Request World Data, Spawn Player, etc). A normal client would do all of this no problem.</summary>
 		public bool FinishedHandshake = false;
 
+		/// <summary>Determines if the player will be sending a team change packet right after the initial spawn.</summary>
+		public bool InitialTeamChangePending = false;
+
 		/// <summary>Server-side character's recorded death count.</summary>
 		public int sscDeathsPVE = 0;
 
@@ -1670,7 +1673,7 @@ namespace TShockAPI
 		/// <summary>
 		/// Teleports the player to the world spawn point, or the respective team-bsed spawnpoint if the world uses them.
 		/// </summary>
-		/// /// <param name="ignoreTeamBasedSpawns">If team-based spawnpoints should be ignored.</param>
+		/// <param name="ignoreTeamBasedSpawns">If team-based spawnpoints should be ignored.</param>
 		/// <returns>True or false.</returns>
 		public bool TeleportToWorldSpawn(bool ignoreTeamBasedSpawns = false)
 		{
