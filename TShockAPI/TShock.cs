@@ -1499,19 +1499,19 @@ namespace TShockAPI
 			// Terraria now has chat commands on the client side.
 			// These commands remove the commands prefix (e.g. /me /playing) and send the command id instead
 			// In order for us to keep legacy code we must reverse this and get the prefix using the command id
-			foreach (var item in Terraria.UI.Chat.ChatManager.Commands._localizedCommands)
+			if (!string.IsNullOrEmpty(args.CommandId._name))
 			{
-				if (item.Value._name == args.CommandId._name)
+				var commandPrefix = EnglishLanguage.GetCommandPrefixByName(args.CommandId._name);
+				if (!string.IsNullOrEmpty(commandPrefix))
 				{
 					if (!String.IsNullOrEmpty(text))
 					{
-						text = EnglishLanguage.GetCommandPrefixByName(item.Value._name) + ' ' + text;
+						text = commandPrefix + ' ' + text;
 					}
 					else
 					{
-						text = EnglishLanguage.GetCommandPrefixByName(item.Value._name);
+						text = commandPrefix;
 					}
-					break;
 				}
 			}
 
