@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2026-02-28 11:51:41+0000\n"
-"PO-Revision-Date: 2026-02-28 11:58\n"
+"PO-Revision-Date: 2026-02-28 22:39\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -370,12 +370,12 @@ msgstr "{0} intentó registrar la cuenta {1} pero ya está en uso."
 #: ../../TShockAPI/Commands.cs:5513
 #, csharp-format
 msgid "{0} attempted to use an incorrect setup code."
-msgstr ""
+msgstr "{0} intentó utilizar un código de configuración incorrecto."
 
 #: ../../TShockAPI/Commands.cs:5487
 #, csharp-format
 msgid "{0} attempted to use the initial setup system even though it's disabled."
-msgstr ""
+msgstr "{0} intentó usar el sistema de configuración inicial estando deshabilitado."
 
 #: ../../TShockAPI/GetDataHandlers.cs:2841
 #: ../../TShockAPI/GetDataHandlers.cs:3471
@@ -1233,7 +1233,7 @@ msgstr[1] "=== Plugins Solicitados ==="
 
 #: ../../TShockAPI/Utils.cs:1061
 msgid "|Permission|"
-msgstr ""
+msgstr "|Permiso|"
 
 #: ../../TShockAPI/Commands.cs:2923
 msgid "a Deerclops"
@@ -1826,12 +1826,12 @@ msgstr "Bouncer / OnHealOtherPlayer rechazado, comprobaciones nulas"
 #: ../../TShockAPI/Bouncer.cs:1163
 #, csharp-format
 msgid "Bouncer / OnItemDrop force kicked (attempted to set position to infinity or NaN) from {0}"
-msgstr "Bouncer / OnItemDrop forzó la expulsión (se intentó establecer velocidad en infinito o NaN) de {0}"
+msgstr "Bouncer / OnItemDrop forzó la expulsión (se intentó establecer la posición en infinito o NaN) de {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1171
 #, csharp-format
 msgid "Bouncer / OnItemDrop force kicked (attempted to set velocity to infinity or NaN) from {0}"
-msgstr "Bouncer / OnItemDrop forzó expulsión (se intentó establecer velocidad al infinito o NaN) desde {0}"
+msgstr "Bouncer / OnItemDrop forzó la expulsión (se intentó establecer la velocidad en infinito o NaN) desde {0}"
 
 #: ../../TShockAPI/Bouncer.cs:1180
 #, csharp-format
@@ -2693,7 +2693,7 @@ msgstr "No se puede cargar el módulo {0} ya que no se deriva de {1}"
 
 #: ../../TShockAPI/GeoIPCountry.cs:293
 msgid "Cannot seek GeoIP database"
-msgstr ""
+msgstr "No se puede buscar en la base de datos de GeoIP"
 
 #: ../../TShockAPI/Bouncer.cs:1433
 msgid "Certain projectiles have been ignored for cheat detection."
@@ -2913,7 +2913,7 @@ msgstr "Tasa actual de generación de enemigos: {0}."
 
 #: ../../TShockAPI/Extensions/DbExt.cs:164
 msgid "Database type not supported."
-msgstr ""
+msgstr "Tipo de base de datos no compatible."
 
 #: ../../TShockAPI/Bouncer.cs:2897
 #, csharp-format
@@ -3174,12 +3174,12 @@ msgstr "No se pudo actualizar el grupo \"{0}\"."
 #: ../../TShockAPI/Rest/RestManager.cs:564
 #, csharp-format
 msgid "Failed to update user group ({0})"
-msgstr ""
+msgstr "No se pudo actualizar el grupo de usuario ({0})"
 
 #: ../../TShockAPI/Rest/RestManager.cs:550
 #, csharp-format
 msgid "Failed to update user password ({0})"
-msgstr ""
+msgstr "No se pudo actualizar la contraseña del usuario ({0})"
 
 #: ../../TShockAPI/Commands.cs:1920
 msgid "Failed to upload your character data to the server. Are you logged-in to an account?"
@@ -3195,7 +3195,7 @@ msgstr "Excepción fatal en la inicialización de TShock: no se pudo conectar a 
 
 #: ../../TShockAPI/TShock.cs:318
 msgid "Fatal TShock initialization exception. See inner exception for details."
-msgstr ""
+msgstr "Excepción fatal de inicialización de TShock. Consulte la excepción interna para obtener más detalles."
 
 #: ../../TShockAPI/DB/UserManager.cs:252
 #, csharp-format
@@ -4140,7 +4140,7 @@ msgstr "Contraseña de servidor inválida."
 
 #: ../../TShockAPI/DB/DbBuilder.cs:51
 msgid "Invalid storage type"
-msgstr ""
+msgstr "Tipo de almacenamiento inválido."
 
 #: ../../TShockAPI/Commands.cs:3890
 #, csharp-format
@@ -4189,7 +4189,7 @@ msgstr "Sintaxis inválida. Sintaxis correcta: {0}aliases <comando o alias>"
 #: ../../TShockAPI/Commands.cs:6383
 #, csharp-format
 msgid "Invalid syntax. Proper syntax: {0}give <item type/id> <player> [item amount] [prefix id/name]"
-msgstr ""
+msgstr "Sintaxis inválida. Sintaxis correcta: {0}give <item type/id> <player> [cantidad] [prefijo id/nombre]"
 
 #: ../../TShockAPI/Commands.cs:3477
 #, csharp-format
@@ -4551,11 +4551,11 @@ msgstr "Sintaxis de user inválida. Prueba {0}user help."
 
 #: ../../TShockAPI/TShock.cs:847
 msgid "Invalid value given for command line argument \"-ip\"."
-msgstr ""
+msgstr "Valor inválido para el argumento de la línea de comando \"-ip\"."
 
 #: ../../TShockAPI/TShock.cs:875
 msgid "Invalid value given for command line argument \"-worldevil\"."
-msgstr ""
+msgstr "Valor inválido para el argumento de la línea de comando \"-worldevil\"."
 
 #: ../../TShockAPI/Commands.cs:3347
 msgid "Invalid warp name. The names 'list', 'hide', 'del' and 'add' are reserved for commands."
@@ -4582,7 +4582,7 @@ msgstr "Modo de mundo inválido. Modos válidos: {0}"
 
 #: ../../TShockAPI/GeoIPCountry.cs:271
 msgid "IP address is not IPv4"
-msgstr ""
+msgstr "La dirección IP no es IPv4."
 
 #: ../../TShockAPI/Commands.cs:1301
 #, csharp-format
@@ -5095,7 +5095,7 @@ msgstr "La contraseña debe contener {0} o más caracteres."
 
 #: ../../TShockAPI/Rest/RestManager.cs:546
 msgid "Password updated successfully"
-msgstr ""
+msgstr "Contraseña actualizada correctamente."
 
 #: ../../TShockAPI/Commands.cs:1034
 #, csharp-format
@@ -5879,7 +5879,7 @@ msgstr "Consulta de inserción de registro SQL fallida: {0}"
 
 #: ../../TShockAPI/SqlLog.cs:340
 msgid "SQL Logging disabled due to errors. Reverting to text logging."
-msgstr ""
+msgstr "Registros de SQL deshabilitados debido a errores. Regresando a los registros de texto."
 
 #: ../../TShockAPI/Commands.cs:5776
 msgid "SSC must be enabled to use this command."
@@ -5996,7 +5996,7 @@ msgstr "Se detuvo la luna sangrienta en curso."
 
 #: ../../TShockAPI/NetItem.cs:228
 msgid "String should contain at least three sections."
-msgstr ""
+msgstr "La cadena de texto debe de tener al menos tres secciones."
 
 #: ../../TShockAPI/Rest/SecureRest.cs:167
 msgid "Successful login"
@@ -6031,7 +6031,7 @@ msgstr "SyncTilePickingHandler: ¡Las posiciones X e Y están fuera de los lími
 
 #: ../../TShockAPI/GetDataHandlers.cs:4171
 msgid "Teleportation Potions"
-msgstr ""
+msgstr "Pociones de teletransportación"
 
 #: ../../TShockAPI/Commands.cs:3134
 #, csharp-format
@@ -6146,7 +6146,7 @@ msgstr "No se pudo encontrar el grupo de usuarios predeterminado. Esto puede ind
 
 #: ../../TShockAPI/GetDataHandlers.cs:4216
 msgid "the Demon Conch"
-msgstr ""
+msgstr "Caracola demoníaca"
 
 #: ../../TShockAPI/Commands.cs:3279
 msgid "The destination coordinates provided don't look like valid numbers."
@@ -6222,11 +6222,11 @@ msgstr "el Sectario Lunático"
 
 #: ../../TShockAPI/GetDataHandlers.cs:4193
 msgid "the Magic Conch"
-msgstr ""
+msgstr "Concha mágica"
 
 #: ../../TShockAPI/Rest/RestManager.cs:361
 msgid "The message was broadcasted successfully"
-msgstr ""
+msgstr "El mensaje se transmitió correctamente"
 
 #: ../../TShockAPI/PaginationTools.cs:185
 msgid "The method referenced by LineFormatter has thrown an exception. See inner exception for details."
@@ -6242,7 +6242,7 @@ msgstr "el Señor de la Luna"
 
 #: ../../TShockAPI/Rest/RestManager.cs:371
 msgid "The motd.txt was not found."
-msgstr ""
+msgstr "No se encontró el motd.txt"
 
 #: ../../TShockAPI/Commands.cs:3518
 msgid "The permissions have been added to all of the groups in the system."
@@ -6258,7 +6258,7 @@ msgstr "Los datos de personaje del jugador fueron subidos exitosamente desde su 
 
 #: ../../TShockAPI/TSPlayer.cs:2214
 msgid "The player's team is not in the range of available."
-msgstr ""
+msgstr "El equipo del jugador no está en el rango disponible."
 
 #: ../../TShockAPI/Commands.cs:2877
 msgid "the Pumpking"
@@ -6278,7 +6278,7 @@ msgstr "El tóken de autenticación REST."
 
 #: ../../TShockAPI/Rest/RestManager.cs:386
 msgid "The rules.txt was not found."
-msgstr ""
+msgstr "No se encontró el rules.txt"
 
 #: ../../TShockAPI/UpdateManager.cs:150
 msgid "The server is out of date. Latest version: "
@@ -6286,15 +6286,15 @@ msgstr "Servidor desactualizado. Última versión: "
 
 #: ../../TShockAPI/Rest/RestManager.cs:336
 msgid "The server is shutting down"
-msgstr ""
+msgstr "El servidor se está apagando"
 
 #: ../../TShockAPI/GetDataHandlers.cs:4189
 msgid "the Shellphone (Ocean)"
-msgstr ""
+msgstr "Teleconcha (Océano)"
 
 #: ../../TShockAPI/GetDataHandlers.cs:4212
 msgid "the Shellphone (Underworld)"
-msgstr ""
+msgstr "Teleconcha (Inframundo)"
 
 #: ../../TShockAPI/Commands.cs:4603
 msgid "The spawn rate you provided is out-of-range or not a number."
@@ -6746,7 +6746,7 @@ msgstr "No se puede verificar el hash de contraseña para el usuario {0} ({1})"
 
 #: ../../TShockAPI/TextLog.cs:277
 msgid "Unable to write to log as log has been disposed."
-msgstr ""
+msgstr "No se puede escribir en el registro debido a que el registro está eliminado."
 
 #: ../../TShockAPI/Commands.cs:4020
 #, csharp-format
@@ -6881,7 +6881,7 @@ msgstr "La cuenta de usuario {0} no existe"
 
 #: ../../TShockAPI/Rest/RestManager.cs:592
 msgid "User deleted successfully"
-msgstr ""
+msgstr "Usuario eliminado correctamente"
 
 #: ../../TShockAPI/Commands.cs:1245
 msgid "User management command help:"
@@ -6889,7 +6889,7 @@ msgstr "Ayuda del comando de gestión de usuario:"
 
 #: ../../TShockAPI/Rest/RestManager.cs:517
 msgid "User was successfully created"
-msgstr ""
+msgstr "Usuario creado correctamente"
 
 #: ../../TShockAPI/Rest/SecureRest.cs:138
 #: ../../TShockAPI/Rest/SecureRest.cs:144
@@ -7064,11 +7064,11 @@ msgstr "Mundo guardado en ({0})"
 
 #: ../../TShockAPI/SaveManager.cs:141
 msgid "World saved failed"
-msgstr ""
+msgstr "Error al guardar el mundo"
 
 #: ../../TShockAPI/SaveManager.cs:62
 msgid "World saved notification failed"
-msgstr ""
+msgstr "Error en la notificación de guardado del mundo"
 
 #: ../../TShockAPI/SaveManager.cs:135
 msgid "World saved."

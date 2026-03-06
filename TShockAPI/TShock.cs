@@ -64,7 +64,7 @@ namespace TShockAPI
 		/// <summary>VersionNum - The version number the TerrariaAPI will return back to the API. We just use the Assembly info.</summary>
 		public static readonly Version VersionNum = Assembly.GetExecutingAssembly().GetName().Version;
 		/// <summary>VersionCodename - The version codename is displayed when the server starts. Inspired by software codenames conventions.</summary>
-		public static readonly string VersionCodename = "Hopefully SSC works somewhat correctly now edition";
+		public static readonly string VersionCodename = "Pre-release version for 1455.A -- Please be careful";
 
 		/// <summary>SavePath - This is the path TShock saves its data in. This path is relative to the TerrariaServer.exe (not in ServerPlugins).</summary>
 		public static string SavePath = "tshock";
@@ -1147,6 +1147,8 @@ namespace TShockAPI
 					if (player.TilePlaceThreshold > 0)
 					{
 						player.TilePlaceThreshold = 0;
+						lock (player.TilesCreated)
+							player.TilesCreated.Clear();
 					}
 
 					if (player.RecentFuse > 0)
@@ -1499,19 +1501,19 @@ namespace TShockAPI
 			// Terraria now has chat commands on the client side.
 			// These commands remove the commands prefix (e.g. /me /playing) and send the command id instead
 			// In order for us to keep legacy code we must reverse this and get the prefix using the command id
-			foreach (var item in Terraria.UI.Chat.ChatManager.Commands._localizedCommands)
+			if (!string.IsNullOrEmpty(args.CommandId._name))
 			{
-				if (item.Value._name == args.CommandId._name)
+				var commandPrefix = EnglishLanguage.GetCommandPrefixByName(args.CommandId._name);
+				if (!string.IsNullOrEmpty(commandPrefix))
 				{
 					if (!String.IsNullOrEmpty(text))
 					{
-						text = EnglishLanguage.GetCommandPrefixByName(item.Value._name) + ' ' + text;
+						text = commandPrefix + ' ' + text;
 					}
 					else
 					{
-						text = EnglishLanguage.GetCommandPrefixByName(item.Value._name);
+						text = commandPrefix;
 					}
-					break;
 				}
 			}
 
