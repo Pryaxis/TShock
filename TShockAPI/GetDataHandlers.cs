@@ -3825,7 +3825,7 @@ namespace TShockAPI
 			var plr = args.Data.ReadInt16();
 			var thingType = args.Data.ReadInt16();
 
-			var isKnownBoss = (thingType > 0 && thingType < Terraria.ID.NPCID.Count && NPCID.Sets.MPAllowedEnemies[thingType]) || thingType == -16 || thingType == 113;
+			var isKnownBoss = (thingType > 0 && thingType < Terraria.ID.NPCID.Count && NPCID.Sets.MPAllowedEnemies[thingType]) || thingType == -16;
 			if (isKnownBoss && !args.Player.HasPermission(Permissions.summonboss))
 			{
 				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleSpawnBoss rejected boss {0} {1}", args.Player.Name, thingType));

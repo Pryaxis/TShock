@@ -1266,6 +1266,15 @@ namespace TShockAPI
 				args.Handled = true;
 				return;
 			}
+
+			if (type == ItemID.GuideVoodooDoll && !args.Player.HasPermission(Permissions.summonboss))
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnItemDrop rejected Guide Voodoo Doll drop from {0}", args.Player.Name));
+				args.Player.SendErrorMessage(GetString("You do not have permission to summon the Wall of Flesh."));
+				args.Player.SendData(PacketTypes.SyncItemDespawn, "", id);
+				args.Handled = true;
+				return;
+			}
 		}
 
 		/// <summary>Bouncer's projectile trigger hook stops world damaging projectiles from destroying the world.</summary>
