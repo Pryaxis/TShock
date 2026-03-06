@@ -672,6 +672,18 @@ namespace TShockAPI
 					return;
 				}
 
+				if (action == EditAction.KillTile && Main.tile[tileX, tileY].type == TileID.PlanteraBulb)
+				{
+					if (!args.Player.HasPermission(Permissions.summonboss))
+					{
+						TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected Plantera bulb destroy from {0}", args.Player.Name));
+						args.Player.SendErrorMessage(GetString("You do not have permission to summon Plantera."));
+						args.Player.SendTileSquareCentered(tileX, tileY, 4);
+						args.Handled = true;
+						return;
+					}
+				}
+
 				if (args.Player.Dead && TShock.Config.Settings.PreventDeadModification)
 				{
 					TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected from (pdm) {0} {1} {2}", args.Player.Name, action, editData));
