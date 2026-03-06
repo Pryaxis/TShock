@@ -1267,7 +1267,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (type == ItemID.GuideVoodooDoll && !args.Player.HasPermission(Permissions.summonboss))
+			if (type == ItemID.GuideVoodooDoll && pos.Y / 16f >= Main.maxTilesY - 205 && !args.Player.HasPermission(Permissions.summonboss))
 			{
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnItemDrop rejected Guide Voodoo Doll drop from {0}", args.Player.Name));
 				args.Player.SendErrorMessage(GetString("You do not have permission to summon the Wall of Flesh."));
