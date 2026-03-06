@@ -672,15 +672,22 @@ namespace TShockAPI
 					return;
 				}
 
-				if (action == EditAction.KillTile && Main.tile[tileX, tileY].type == TileID.PlanteraBulb)
 				{
-					if (!args.Player.HasPermission(Permissions.summonboss))
+					// Check if this tile is a Plantera Bulb or a support tile beneath one
+					bool isPlanteraBulb = Main.tile[tileX, tileY].active() && Main.tile[tileX, tileY].type == TileID.PlanteraBulb;
+					bool isSupportTile = tileY - 1 >= 0
+						&& Main.tile[tileX, tileY - 1].active() && Main.tile[tileX, tileY - 1].type == TileID.PlanteraBulb;
+
+					if (isPlanteraBulb || isSupportTile)
 					{
-						TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected Plantera bulb destroy from {0}", args.Player.Name));
-						args.Player.SendErrorMessage(GetString("You do not have permission to summon Plantera."));
-						args.Player.SendTileSquareCentered(tileX, tileY, 4);
-						args.Handled = true;
-						return;
+						if (!args.Player.HasPermission(Permissions.summonboss))
+						{
+							TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected Plantera bulb destroy from {0}", args.Player.Name));
+							args.Player.SendErrorMessage(GetString("You do not have permission to summon Plantera."));
+							args.Player.SendTileSquareCentered(tileX, tileY, 4);
+							args.Handled = true;
+							return;
+						}
 					}
 				}
 
