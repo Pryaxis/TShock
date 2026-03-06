@@ -3694,6 +3694,7 @@ namespace TShockAPI
 				if (!args.Player.HasPermission(Permissions.summonboss))
 				{
 					args.Player.SendErrorMessage(GetString("You do not have permission to summon the Skeletron."));
+					args.Player.SendData(PacketTypes.NpcUpdate, "", id);
 					TShock.Log.ConsoleDebug(GetString($"GetDataHandlers / HandleNpcStrike rejected Skeletron summon from {args.Player.Name}"));
 					return true;
 				}
@@ -3824,7 +3825,7 @@ namespace TShockAPI
 			var plr = args.Data.ReadInt16();
 			var thingType = args.Data.ReadInt16();
 
-			var isKnownBoss = (thingType > 0 && thingType < Terraria.ID.NPCID.Count && NPCID.Sets.MPAllowedEnemies[thingType]) || thingType == -16;
+			var isKnownBoss = (thingType > 0 && thingType < Terraria.ID.NPCID.Count && NPCID.Sets.MPAllowedEnemies[thingType]) || thingType == -16 || thingType == 113;
 			if (isKnownBoss && !args.Player.HasPermission(Permissions.summonboss))
 			{
 				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleSpawnBoss rejected boss {0} {1}", args.Player.Name, thingType));
