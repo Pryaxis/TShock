@@ -291,7 +291,10 @@ namespace TShockAPI
 			player.TPlayer.statManaMax = this.maxMana;
 			player.TPlayer.SpawnX = this.spawnX;
 			player.TPlayer.SpawnY = this.spawnY;
-			player.TPlayer.hairDye = this.hairDye;
+
+			if (!TShock.ServerSideCharacterConfig.Settings.KeepPlayerAppearance)
+				player.TPlayer.hairDye = this.hairDye;
+
 			player.TPlayer.anglerQuestsFinished = this.questsCompleted;
 			player.TPlayer.UsingBiomeTorches = this.usingBiomeTorches == 1;
 			player.TPlayer.happyFunTorchTime = this.happyFunTorchTime == 1;
