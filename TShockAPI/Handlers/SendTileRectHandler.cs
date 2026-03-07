@@ -1231,9 +1231,9 @@ namespace TShockAPI.Handlers
 					}
 					break;
 				case 7:
-					if ((WallID.Sets.Conversion.Stone[wall] || WallID.Sets.Conversion.Ice[wall] || WallID.Sets.Conversion.Sandstone[wall]) && wall != 349)
+					if ((WallID.Sets.Conversion.Stone[wall] || WallID.Sets.Conversion.Ice[wall] || WallID.Sets.Conversion.Sandstone[wall]) && wall != WallID.StoneUnsafe)
 					{
-						tile.wall = 349; // wall 349 (StoneUnsafe) found in WorldGen.Convert when looking for WallID.Sets.Conversion.Stone, replaces use of wall 1 (Stone)
+						tile.wall = WallID.StoneUnsafe;
 					}
 					else if ((WallID.Sets.Conversion.HardenedSand[wall] || WallID.Sets.Conversion.Snow[wall] || WallID.Sets.Conversion.Dirt[wall]) && wall != 2)
 					{
@@ -1290,9 +1290,9 @@ namespace TShockAPI.Handlers
 					tile.wall = 64;
 				}
 			}
-			else if (WallID.Sets.Conversion.Stone[wall] && wall != 349 && wall != 262 && wall != 274 && wall != 61 && wall != 185)
+			else if (WallID.Sets.Conversion.Stone[wall] && wall != WallID.StoneUnsafe && wall != 262 && wall != 274 && wall != 61 && wall != 185)
 			{
-				tile.wall = 349; // wall 349 (StoneUnsafe) found in WorldGen.Convert when looking for WallID.Sets.Conversion.Stone, replaces use of wall 1 (Stone)
+				tile.wall = WallID.StoneUnsafe;
 			}
 			else if (WallID.Sets.Conversion.Stone[wall] && wall == 262)
 			{
