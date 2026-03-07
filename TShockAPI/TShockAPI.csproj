@@ -16,7 +16,9 @@
           location, which previously held the date and time.
 
       Also, be sure to release on github with the exact assembly version tag as below
-      so that the update manager works correctly (via the Github releases api and mimic)
+      so that the update manager works correctly (via the Github releases api and mimic).
+      Otherwise the Nuget package will have a version mismatch with the version here.
+      Prerelease upgrades should not update this version—only do so for the full release.
     -->
     <Version>5.9.9</Version>
     <AssemblyTitle>TShock for Terraria</AssemblyTitle>
