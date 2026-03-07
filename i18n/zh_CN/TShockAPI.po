@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2026-03-05 17:28:49+0000\n"
-"PO-Revision-Date: 2026-03-05 18:40\n"
+"PO-Revision-Date: 2026-03-07 07:46\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -7075,7 +7075,7 @@ msgstr "地图路径已设置为{0}。"
 
 #: ../../TShockAPI/SaveManager.cs:145
 msgid "World save failed"
-msgstr ""
+msgstr "世界保存失败"
 
 #: ../../TShockAPI/SaveManager.cs:141
 #, csharp-format
