@@ -3849,6 +3849,7 @@ namespace TShockAPI
 				if (!args.Player.HasPermission(Permissions.summonboss))
 				{
 					args.Player.SendErrorMessage(GetString("You do not have permission to summon the Skeletron."));
+					args.Player.SendData(PacketTypes.NpcUpdate, "", id);
 					TShock.Log.ConsoleDebug(GetString($"GetDataHandlers / HandleNpcStrike rejected Skeletron summon from {args.Player.Name}"));
 					return true;
 				}

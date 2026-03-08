@@ -684,6 +684,25 @@ namespace TShockAPI
 					return;
 				}
 
+				{
+					// Check if this tile is a Plantera Bulb or a support tile beneath one
+					bool isPlanteraBulb = Main.tile[tileX, tileY].active() && Main.tile[tileX, tileY].type == TileID.PlanteraBulb;
+					bool isSupportTile = tileY - 1 >= 0
+						&& Main.tile[tileX, tileY - 1].active() && Main.tile[tileX, tileY - 1].type == TileID.PlanteraBulb;
+
+					if (isPlanteraBulb || isSupportTile)
+					{
+						if (!args.Player.HasPermission(Permissions.summonboss))
+						{
+							TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected Plantera bulb destroy from {0}", args.Player.Name));
+							args.Player.SendErrorMessage(GetString("You do not have permission to summon Plantera."));
+							args.Player.SendTileSquareCentered(tileX, tileY, 4);
+							args.Handled = true;
+							return;
+						}
+					}
+				}
+
 				if (args.Player.Dead && TShock.Config.Settings.PreventDeadModification)
 				{
 					TShock.Log.ConsoleDebug(GetString("Bouncer / OnTileEdit rejected from (pdm) {0} {1} {2}", args.Player.Name, action, editData));
@@ -1264,6 +1283,15 @@ namespace TShockAPI
 			if (args.Player.IsBeingDisabled())
 			{
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnItemDrop rejected from disabled from {0}", args.Player.Name));
+				args.Player.SendData(PacketTypes.SyncItemDespawn, "", id);
+				args.Handled = true;
+				return;
+			}
+
+			if (type == ItemID.GuideVoodooDoll && args.Player.TPlayer.ZoneUnderworldHeight && !args.Player.HasPermission(Permissions.summonboss))
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnItemDrop rejected Guide Voodoo Doll drop from {0}", args.Player.Name));
+				args.Player.SendErrorMessage(GetString("You do not have permission to summon the Wall of Flesh."));
 				args.Player.SendData(PacketTypes.SyncItemDespawn, "", id);
 				args.Handled = true;
 				return;
