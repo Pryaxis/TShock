@@ -29,6 +29,7 @@ using Terraria.GameContent.Tile_Entities;
 using Terraria.ID;
 using Terraria.Localization;
 using TShockAPI.Models.PlayerUpdate;
+using TShockAPI.Configuration;
 
 namespace TShockAPI
 {
@@ -2957,10 +2958,10 @@ namespace TShockAPI
 			string pvpMode = TShock.Config.Settings.PvPMode.ToLowerInvariant();
 
 			// To prevent clients from bypassing this pvp mode, we must correct their team
-			if (pvpMode == "pvpwithnoteam" && team != 0)
+			if (pvpMode == PvPModes.PvPWithNoTeam && team != PlayerTeamID.None)
 			{
-				team = 0;
-				args.TPlayer.team = 0; // Make sure to set it to 0 (no team). This ensures it gets corrected.
+				team = (byte)PlayerTeamID.None;
+				args.TPlayer.team = PlayerTeamID.None; // Make sure to set it to 0 (no team). This ensures it gets corrected.
 				teamCorrectNeeded = true;
 			}
 
@@ -3080,18 +3081,18 @@ namespace TShockAPI
 				args.Player.State = (int)ConnectionState.Complete;
 				NetMessage.buffer[args.Player.Index].broadcast = true;
 				NetMessage.SyncConnectedPlayer(args.Player.Index);
-				bool flag11 = NetMessage.DoesPlayerSlotCountAsAHost(args.Player.Index);
-				Main.countsAsHostForGameplay[args.Player.Index] = flag11;
-				if (NetMessage.DoesPlayerSlotCountAsAHost(args.Player.Index))
-					NetMessage.TrySendData((int)PacketTypes.SetCountsAsHostForGameplay, args.Player.Index, -1, null, args.Player.Index, flag11.ToInt());
+				var isHost = NetMessage.DoesPlayerSlotCountAsAHost(args.Player.Index);
+				Main.countsAsHostForGameplay[args.Player.Index] = isHost;
+				if (isHost)
+					NetMessage.TrySendData((int)PacketTypes.SetCountsAsHostForGameplay, args.Player.Index, -1, null, args.Player.Index, true.ToInt());
 
 				NetMessage.TrySendData((int)PacketTypes.FinishedConnectingToServer, args.Player.Index);
 				NetMessage.greetPlayer(args.Player.Index);
 				if (args.Player.TPlayer.unlockedBiomeTorches)
 				{
-					NPC nPC = new NPC();
-					nPC.SetDefaults(664);
-					Main.BestiaryTracker.Kills.RegisterKill(nPC);
+					var npc = new NPC();
+					npc.SetDefaults(NPCID.TorchGod);
+					Main.BestiaryTracker.Kills.RegisterKill(npc);
 				}
 			}
 
@@ -3443,7 +3444,7 @@ namespace TShockAPI
 			}
 
 			string pvpMode = TShock.Config.Settings.PvPMode.ToLowerInvariant();
-			if (pvpMode == "disabled" || pvpMode == "always" || pvpMode == "pvpwithnoteam" || (DateTime.UtcNow - args.Player.LastPvPTeamChange).TotalSeconds < 5)
+			if (pvpMode == PvPModes.Disabled || pvpMode == PvPModes.Always || pvpMode == PvPModes.PvPWithNoTeam || (DateTime.UtcNow - args.Player.LastPvPTeamChange).TotalSeconds < 5)
 			{
 				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleTogglePvp rejected fastswitch {0}", args.Player.Name));
 				args.Player.SendData(PacketTypes.TogglePvp, "", id);
@@ -3720,7 +3721,7 @@ namespace TShockAPI
 			}
 
 			string pvpMode = TShock.Config.Settings.PvPMode.ToLowerInvariant();
-			if (pvpMode == "pvpwithnoteam")
+			if (pvpMode == PvPModes.PvPWithNoTeam)
 			{
 				args.Player.SendData(PacketTypes.PlayerTeam, "", id);
 				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandlePlayerTeam rejected from (pvp mode disallows teams) {0}", args.Player.Name));

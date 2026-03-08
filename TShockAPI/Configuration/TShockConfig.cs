@@ -113,9 +113,9 @@ namespace TShockAPI.Configuration
 		[Description("Enables never ending invasion events. You still need to start the event, such as with the /invade command.")]
 		public bool InfiniteInvasion;
 
-		/// <summary>Sets the PvP mode. Valid types are: "normal", "always", "pvpwithnoteam", "disabled".</summary>
-		[Description("Sets the PvP mode. Valid types are: \"normal\", \"always\", \"pvpwithnoteam\" and \"disabled\".")]
-		public string PvPMode = "normal";
+		/// <summary>Sets the PvP mode. Valid types are <see cref="TShockSettings.PvPMode"/>.</summary>
+		[Description($"Sets the PvP mode. Valid types are: \"{PvPModes.Normal}\", \"{PvPModes.Always}\", \"{PvPModes.PvPWithNoTeam}\" and \"{PvPModes.Disabled}\".")]
+		public string PvPMode = PvPModes.Normal;
 
 		/// <summary>Prevents tiles from being placed within SpawnProtectionRadius of the default spawn.</summary>
 		[Description("Prevents tiles from being placed within SpawnProtectionRadius of the default spawn.")]
@@ -716,5 +716,23 @@ namespace TShockAPI.Configuration
 
 			File.WriteAllText("docs/config-file-descriptions.md", sb.ToString());
 		}
+	}
+
+	/// <summary>
+	/// Constants for valid PvP mode strings used with <see cref="TShockSettings.PvPMode"/>.
+	/// </summary>
+	public static class PvPModes
+	{
+		/// <summary>Default mode – players choose whether to enable PvP.</summary>
+		public const string Normal = "normal";
+
+		/// <summary>PvP is permanently forced on for all players.</summary>
+		public const string Always = "always";
+
+		/// <summary>PvP is forced on, but only for players who are not on a team.</summary>
+		public const string PvPWithNoTeam = "pvpwithnoteam";
+
+		/// <summary>PvP is permanently disabled for all players.</summary>
+		public const string Disabled = "disabled";
 	}
 }

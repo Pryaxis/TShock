@@ -1173,23 +1173,23 @@ namespace TShockAPI
 
 					// We need to make sure the pvp mode is enforced properly. Maybe this should be moved elsewhere?
 					string pvpMode = Config.Settings.PvPMode.ToLowerInvariant();
-					if (pvpMode != "normal")
+					if (pvpMode != PvPModes.Normal)
 					{
-						if (pvpMode == "disabled" && player.TPlayer.hostile) // player shouldn't be in pvp
+						if (pvpMode == PvPModes.Disabled && player.TPlayer.hostile) // player shouldn't be in pvp
 						{
 							player.TPlayer.hostile = false;
 							NetMessage.SendData((int)PacketTypes.TogglePvp, -1, -1, null, player.Index);
 						}
 
-						if ((pvpMode == "always" || pvpMode == "pvpwithnoteam") && !player.TPlayer.hostile) // player isn't in pvp when they should be
+						if ((pvpMode == PvPModes.Always || pvpMode == PvPModes.PvPWithNoTeam) && !player.TPlayer.hostile) // player isn't in pvp when they should be
 						{
 							player.TPlayer.hostile = true;
 							NetMessage.SendData((int)PacketTypes.TogglePvp, -1, -1, null, player.Index);
 						}
 
-						if (pvpMode == "pvpwithnoteam" && player.Team != 0) // player is on a team when they shouldn't be
+						if (pvpMode == PvPModes.PvPWithNoTeam && player.Team != PlayerTeamID.None) // player is on a team when they shouldn't be
 						{
-							player.TPlayer.team = 0;
+							player.TPlayer.team = PlayerTeamID.None;
 							NetMessage.SendData((int)PacketTypes.PlayerTeam, -1, -1, NetworkText.Empty, player.Index);
 						}
 					}
@@ -1690,7 +1690,7 @@ namespace TShockAPI
 			}
 			return chatMsg;
 		}
-    
+
 		private static readonly HashSet<PacketTypes> AllowedEarlyPackets =
 		[
 			PacketTypes.ConnectRequest,
@@ -1779,7 +1779,7 @@ namespace TShockAPI
 			player.SendFileTextAsMessage(FileTools.MotdPath);
 
 			string pvpMode = Config.Settings.PvPMode.ToLowerInvariant();
-			if (pvpMode == "always" || pvpMode == "pvpwithnoteam")
+			if (pvpMode is PvPModes.Always or PvPModes.PvPWithNoTeam)
 			{
 				player.TPlayer.hostile = true;
 				player.SendData(PacketTypes.TogglePvp, "", player.Index);

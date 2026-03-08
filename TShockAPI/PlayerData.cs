@@ -24,6 +24,7 @@ using Terraria.GameContent.NetModules;
 using Terraria.Net;
 using Terraria.ID;
 using System;
+using TShockAPI.Configuration;
 
 namespace TShockAPI
 {
@@ -311,8 +312,8 @@ namespace TShockAPI
 			player.TPlayer.team = this.team;
 
 			string pvpMode = TShock.Config.Settings.PvPMode.ToLowerInvariant();
-			if (pvpMode == "pvpwithnoteam")
-				player.TPlayer.team = 0;
+			if (pvpMode == PvPModes.PvPWithNoTeam)
+				player.TPlayer.team = PlayerTeamID.None;
 
 			player.TPlayer.extraAccessory = extraSlot.HasValue && extraSlot.Value == 1 ? true : false;
 
