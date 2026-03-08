@@ -28,7 +28,6 @@ using Terraria.DataStructures;
 using Terraria.Localization;
 using TShockAPI.Models.PlayerUpdate;
 using System.Threading.Tasks;
-using On.Terraria.GameContent;
 using OTAPI;
 using Terraria.GameContent.Tile_Entities;
 
@@ -141,7 +140,7 @@ namespace TShockAPI
 			GetDataHandlers.DisplayJarTryPlacing += OnDisplayJarTryPlacing;
 			OTAPI.Hooks.Chest.QuickStack += OnQuickStack;
 			HookEvents.Terraria.Projectile.Kill_DirtAndFluidProjectiles_RunDelegateMethodPushUpForHalfBricks += OnProjectileDirtFluidKill;
-			CraftingRequests.CanCraftFromChest += OnChestCraftRequest;
+			HookEvents.Terraria.GameContent.CraftingRequests.CanCraftFromChest += OnChestCraftRequest;
 
 
 			// The following section is based off Player.PlaceThing_Tiles_PlaceIt and Player.PlaceThing_Tiles_PlaceIt_GetLegacyTileStyle.
@@ -3160,31 +3159,31 @@ namespace TShockAPI
 		/// <summary>
 		/// Called when a player is trying to use items of a chest to craft something.
 		/// </summary>
-		/// <param name="orig"></param>
-		/// <param name="chest"></param>
-		/// <param name="whoAmI"></param>
-		private static bool OnChestCraftRequest(CraftingRequests.orig_CanCraftFromChest orig, Chest chest, int whoAmI)
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		private static void OnChestCraftRequest(object sender, HookEvents.Terraria.GameContent.CraftingRequests.CanCraftFromChestEventArgs args)
 		{
-			var plr = TShock.Players[whoAmI];
+			var plr = TShock.Players[args.whoAmI];
 
 			if (plr is not { Active: true })
 			{
-				return false;
+				args.ContinueExecution = false;
+				return;
 			}
 
 			if (plr.IsBeingDisabled())
 			{
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnChestCraftRequest rejected from disable from {0}", plr.Name));
-				return false;
+				args.ContinueExecution = false;
+				return;
 			}
 
-			if (!plr.HasBuildPermission(chest.x, chest.y) && TShock.Config.Settings.RegionProtectChests)
+			if (!plr.HasBuildPermission(args.chest.x, args.chest.y) && TShock.Config.Settings.RegionProtectChests)
 			{
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnChestCraftRequest rejected from region protection? from {0}", plr.Name));
-				return false;
+				args.ContinueExecution = false;
+				return;
 			}
-
-			return orig(chest, whoAmI);
 		}
 
 		internal void OnSecondUpdate()

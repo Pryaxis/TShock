@@ -44,7 +44,9 @@ Required:
 - When using static methods on primitives, use the CLR type. E.g. ```String.Format``` instead of ```string.Format```.
 - Always use properties, not public fields.
 - Document deprecations and fail compilation if they're included with ```[Obsolete("Use blah instead of blahx...", true)]```.
-- Update the `CHANGELOG.md` file.
+- Update the `CHANGELOG` on the wiki.
+- Do not use conventional commits.
+- When modifying or adding any Terraria game ID references, tether those references to enums, either in game data or in TShock. Do not use magic numbers. Do not add comments explaining magic numbers except when magic numbers cannot be derived reasonably anywhere else.
 
 ### Dev Team Guidelines
 
