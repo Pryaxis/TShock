@@ -66,8 +66,6 @@ namespace TShockAPI
 					// LanguageManager.SetLanguage will change this so we need to reset it back to null
 					var currentThreadUICultureField = typeof(CultureInfo).GetField("s_currentThreadUICulture", bf);
 					currentThreadUICultureField?.SetValue(null, null);
-
-					var legacyCulture = GameCulture._legacyCultures
 					var legacyCulture = GameCulture._legacyCultures
 						.FirstOrDefault(c =>
 							c.Value.CultureInfo.Name == CultureInfo.CurrentUICulture.Name ||
