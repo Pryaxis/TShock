@@ -71,7 +71,7 @@ namespace TShockAPI
 					var legacyCulture = GameCulture._legacyCultures
 						.FirstOrDefault(c =>
 							c.Value.CultureInfo.Name == CultureInfo.CurrentUICulture.Name ||
-							c.Value.CultureInfo.Name == "zh-Hans" && CultureInfo.CurrentUICulture.Name == "zh-CN");
+							(c.Value.CultureInfo.Name == "zh-Hans" && CultureInfo.CurrentUICulture.Name == "zh-CN"));
 
 					if (legacyCulture.Value != null)
 					{
