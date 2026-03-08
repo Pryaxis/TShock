@@ -22,8 +22,8 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using GetText;
-using Terraria.Initializers;
 using Terraria.Localization;
 
 namespace TShockAPI
@@ -62,9 +62,20 @@ namespace TShockAPI
 
 				if (LanguageManager.Instance.ActiveCulture == GameCulture.DefaultCulture)
 				{
-					var bf = System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static;
+					const BindingFlags bf = BindingFlags.NonPublic | BindingFlags.Static;
 					// LanguageManager.SetLanguage will change this so we need to reset it back to null
-					typeof(CultureInfo).GetField("s_currentThreadUICulture", bf)?.SetValue(null, null);
+					var currentThreadUICultureField = typeof(CultureInfo).GetField("s_currentThreadUICulture", bf);
+					currentThreadUICultureField?.SetValue(null, null);
+					var legacyCulture = GameCulture._legacyCultures
+						.FirstOrDefault(c =>
+							c.Value.CultureInfo.Name == CultureInfo.CurrentUICulture.Name ||
+							(c.Value.CultureInfo.Name == "zh-Hans" && CultureInfo.CurrentUICulture.Name == "zh-CN"));
+
+					if (legacyCulture.Value != null)
+					{
+						LanguageManager.Instance.SetLanguage(legacyCulture.Key);
+						currentThreadUICultureField?.SetValue(null, null);
+					}
 				}
 				return CultureInfo.CurrentUICulture;
 			}
