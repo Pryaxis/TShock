@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2026-03-08 07:12:45+0000\n"
-"PO-Revision-Date: 2026-03-08 09:11\n"
+"PO-Revision-Date: 2026-03-08 10:07\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "MIME-Version: 1.0\n"
@@ -603,17 +603,17 @@ msgstr ""
 #: ../../TShockAPI/TShock.cs:1773
 #, csharp-format
 msgid "{0} has joined."
-msgstr ""
+msgstr "{0} dołączył."
 
 #: ../../TShockAPI/TShock.cs:1777
 #, csharp-format
 msgid "{0} has joined. IP: {1}"
-msgstr ""
+msgstr "{0} dołączył. IP: {1}"
 
 #: ../../TShockAPI/Commands.cs:5769
 #, csharp-format
 msgid "{0} has launched {1} into space."
-msgstr ""
+msgstr "{0} wystrzelił {1} w kosmos."
 
 #: ../../TShockAPI/Commands.cs:5767
 #, csharp-format
@@ -623,7 +623,7 @@ msgstr "{0} wystrzelił się w kosmos."
 #: ../../TShockAPI/Commands.cs:5765
 #, csharp-format
 msgid "{0} has launched himself into space."
-msgstr ""
+msgstr "{0} wystrzelił się w kosmos."
 
 #: ../../TShockAPI/TShock.cs:1449
 #, csharp-format
@@ -638,7 +638,7 @@ msgstr "{0} wyciszył {1} na {2}."
 #: ../../TShockAPI/Commands.cs:6177
 #, csharp-format
 msgid "{0} has respawned you."
-msgstr ""
+msgstr "{0} cię odrodził."
 
 #: ../../TShockAPI/GetDataHandlers.cs:4039
 #, csharp-format
@@ -707,7 +707,7 @@ msgstr "{0} cofnął wyciszenie {1}."
 #: ../../TShockAPI/Commands.cs:6536
 #, csharp-format
 msgid "{0} healed {1} for {2} HP."
-msgstr ""
+msgstr "{0} uleczył {1} za {2} HP."
 
 #: ../../TShockAPI/Commands.cs:6534
 #, csharp-format
@@ -737,7 +737,7 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:6118
 #, csharp-format
 msgid "{0} is already dead!"
-msgstr ""
+msgstr "{0} już nie żyje!"
 
 #: ../../TShockAPI/Commands.cs:4069
 #, csharp-format
@@ -874,37 +874,37 @@ msgstr[3] ""
 #: ../../TShockAPI/Commands.cs:2362
 #, csharp-format
 msgid "{0} started a blood moon event."
-msgstr ""
+msgstr "{0} rozpoczął krwawe wydarzenie księżyca."
 
 #: ../../TShockAPI/Commands.cs:2340
 #, csharp-format
 msgid "{0} started a full moon event."
-msgstr ""
+msgstr "{0} rozpoczął wydarzenie pełni księżyca."
 
 #: ../../TShockAPI/Commands.cs:2587
 #, csharp-format
 msgid "{0} started a lantern night."
-msgstr ""
+msgstr "{0} rozpoczął latarniową noc."
 
 #: ../../TShockAPI/Commands.cs:2606
 #, csharp-format
 msgid "{0} started a meteor shower."
-msgstr ""
+msgstr "{0} rozpoczął deszcz meteorytów."
 
 #: ../../TShockAPI/Commands.cs:2499
 #, csharp-format
 msgid "{0} started a sandstorm event."
-msgstr ""
+msgstr "{0} rozpoczął wydarzenie zamieci piasku."
 
 #: ../../TShockAPI/Commands.cs:2389
 #, csharp-format
 msgid "{0} started an eclipse."
-msgstr ""
+msgstr "{0} rozpoczął zaćmienie księżyca."
 
 #: ../../TShockAPI/Commands.cs:2463
 #, csharp-format
 msgid "{0} started the frost moon at wave {1}!"
-msgstr ""
+msgstr "{0} rozpoczął mroźny księżyc na fali {1}!"
 
 #: ../../TShockAPI/GetDataHandlers.cs:4635
 #: ../../TShockAPI/GetDataHandlers.cs:4637
@@ -920,7 +920,7 @@ msgstr ""
 #: ../../TShockAPI/Commands.cs:2393
 #, csharp-format
 msgid "{0} stopped an eclipse."
-msgstr ""
+msgstr "{0} zakończył zaćmienie księżyca."
 
 #: ../../TShockAPI/Commands.cs:2366
 #, csharp-format
