@@ -16,7 +16,7 @@ TShock是为泰拉瑞亚服务器和社区开发的一个工具箱。这个工�
 
 如果你想通过PR给TShock贡献代码或者想按照你美妙的想法定制它，这里是最好的出发点。看完之后你就能独立从源码编译出TShock。不止这样，你还能知道如何成为一名出色的TShock开发者。
 
-本指南假设你已经安装了[.NET 6 SDK](https://dotnet.microsoft.com/zh-cn/download/dotnet/6.0)并了解命令行。如果你不满足这些条件，你应该能通过Visual Studio 2022或者Visual Studio Code做到同样的事情。
+本指南假设你已经安装了[.NET 9 SDK](https://dotnet.microsoft.com/zh-cn/download/dotnet/9.0)并了解命令行。如果你不满足这些条件，你应该能通过Visual Studio 2022或者Visual Studio Code做到同样的事情。
 
 1. 克隆仓库：`git clone https://github.com/Pryaxis/TShock.git --recurse-submodules`
 1. 运行`cd TShock`来进入仓库文件夹
