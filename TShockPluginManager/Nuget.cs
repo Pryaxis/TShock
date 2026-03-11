@@ -108,7 +108,7 @@ namespace TShockPluginManager
 
 			var knownBundles = new[] {
 				new PackageIdentity("GetText.NET", NuGetVersion.Parse("1.6.6")),
-				new PackageIdentity("OTAPI.Upcoming", NuGetVersion.Parse("3.3.10")),
+				new PackageIdentity("OTAPI.Upcoming", NuGetVersion.Parse("3.3.11")),
 				new PackageIdentity("TSAPI", NuGetVersion.Parse("5.0.0-beta")),
 				new PackageIdentity("TShock", NuGetVersion.Parse("5.0.0-beta")),
 			};
