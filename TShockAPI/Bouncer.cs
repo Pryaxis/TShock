@@ -130,6 +130,7 @@ namespace TShockAPI
 			GetDataHandlers.PlaceObject += OnPlaceObject;
 			GetDataHandlers.PlaceTileEntity += OnPlaceTileEntity;
 			GetDataHandlers.PlaceItemFrame += OnPlaceItemFrame;
+			GetDataHandlers.WeaponsRackTryPlacing += OnWeaponsRackTryPlacing;
 			GetDataHandlers.PortalTeleport += OnPlayerPortalTeleport;
 			GetDataHandlers.GemLockToggle += OnGemLockToggle;
 			GetDataHandlers.MassWireOperation += OnMassWireOperation;
@@ -2691,6 +2692,48 @@ namespace TShockAPI
 			{
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlaceItemFrame rejected range checks from {0}", args.Player.Name));
 				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, NetworkText.Empty, args.ItemFrame.ID, 0, 1);
+				args.Handled = true;
+				return;
+			}
+		}
+
+		/// <summary>Fired when an weapon rack is placed for anti-cheat detection.</summary>
+		/// <param name="sender">The object that triggered the event.</param>
+		/// <param name="args">The packet arguments that the event has.</param>
+		internal void OnWeaponsRackTryPlacing(object sender, GetDataHandlers.WeaponsRackTryPlacingEventArgs args)
+		{
+			if (!TShock.Utils.TilePlacementValid(args.X, args.Y))
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnWeaponsRackTryPlacing rejected tile placement valid from {0}", args.Player.Name));
+				args.Handled = true;
+				return;
+			}
+
+			if (args.Player.IsBeingDisabled())
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnWeaponsRackTryPlacing rejected disabled from {0}", args.Player.Name));
+				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, NetworkText.Empty, args.WeaponRack.ID, 0, 1);
+				args.Handled = true;
+				return;
+			}
+
+			if (!args.Player.HasBuildPermission(args.X, args.Y))
+			{
+				int num = Item.NewItem(null, (args.X * 16) + 8, (args.Y * 16) + 8, args.Player.TPlayer.width, args.Player.TPlayer.height, args.ItemID, args.Stack, noBroadcast: true, args.Prefix, noGrabDelay: true);
+				Main.item[num].playerIndexTheItemIsReservedFor = args.Player.Index;
+				NetMessage.SendData((int)PacketTypes.ItemDrop, args.Player.Index, -1, NetworkText.Empty, num, 1f);
+				NetMessage.SendData((int)PacketTypes.ItemOwner, args.Player.Index, -1, NetworkText.Empty, num);
+
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnWeaponsRackTryPlacing rejected permissions from {0}", args.Player.Name));
+				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, NetworkText.Empty, args.WeaponRack.ID, 0, 1);
+				args.Handled = true;
+				return;
+			}
+
+			if (!args.Player.IsInRange(args.X, args.Y))
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnWeaponsRackTryPlacing rejected range checks from {0}", args.Player.Name));
+				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, NetworkText.Empty, args.WeaponRack.ID, 0, 1);
 				args.Handled = true;
 				return;
 			}
