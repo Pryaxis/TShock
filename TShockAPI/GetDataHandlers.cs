@@ -1,4 +1,4 @@
-﻿/*
+/*
 TShock, a server mod for Terraria
 Copyright (C) 2011-2019 Pryaxis & TShock Contributors
 
@@ -16,20 +16,21 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Microsoft.Xna.Framework;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.IO.Streams;
 using System.Linq;
-using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent.Tile_Entities;
 using Terraria.ID;
 using Terraria.Localization;
-using TShockAPI.Models.PlayerUpdate;
 using TShockAPI.Configuration;
+using TShockAPI.Models.PlayerUpdate;
 
 namespace TShockAPI
 {
@@ -136,6 +137,7 @@ namespace TShockAPI
 					{ PacketTypes.Emoji, HandleEmoji },
 					{ PacketTypes.TileEntityDisplayDollItemSync, HandleTileEntityDisplayDollItemSync },
 					{ PacketTypes.RequestTileEntityInteraction, HandleRequestTileEntityInteraction },
+					{ PacketTypes.WeaponsRackTryPlacing, HandleWeaponsRackTryPlacing },
 					{ PacketTypes.SyncTilePicking, HandleSyncTilePicking },
 					{ PacketTypes.SyncRevengeMarker, HandleSyncRevengeMarker },
 					{ PacketTypes.LandGolfBallInCup, HandleLandGolfBallInCup },
@@ -2319,6 +2321,52 @@ namespace TShockAPI
 				TileEntity = tileEntity
 			};
 			RequestTileEntityInteraction.Invoke(null, args);
+			return args.Handled;
+		}
+		/// <summary>
+		/// For use in an OnWeaponsRackTryPlacing event.
+		/// </summary>
+		public class WeaponsRackTryPlacingEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>The X coordinate of the weapon rack.</summary>
+			public short X { get; set; }
+
+			/// <summary>The Y coordinate of the weapon rack.</summary>
+			public short Y { get; set; }
+
+			/// <summary>The ItemID of the weapon rack.</summary>
+			public short ItemID { get; set; }
+
+			/// <summary>The prefix.</summary>
+			public byte Prefix { get; set; }
+
+			/// <summary>The stack.</summary>
+			public short Stack { get; set; }
+
+			/// <summary>The ItemFrame object associated with this event.</summary>
+			public TEWeaponsRack WeaponRack { get; set; }
+		}
+		/// <summary>
+		/// Called when a player requests interaction with a TileEntity.
+		/// </summary>
+		public static HandlerList<WeaponsRackTryPlacingEventArgs> WeaponsRackTryPlacing = new HandlerList<WeaponsRackTryPlacingEventArgs>();
+		private static bool OnWeaponsRackTryPlacing(TSPlayer player, MemoryStream data, short x, short y, short itemID, byte prefix, short stack, TEWeaponsRack weaponRack)
+		{
+			if (WeaponsRackTryPlacing == null)
+				return false;
+
+			var args = new WeaponsRackTryPlacingEventArgs
+			{
+				Player = player,
+				Data = data,
+				X = x,
+				Y = y,
+				ItemID = itemID,
+				Prefix = prefix,
+				Stack = stack,
+				WeaponRack = weaponRack
+			};
+			WeaponsRackTryPlacing.Invoke(null, args);
 			return args.Handled;
 		}
 
@@ -4799,6 +4847,23 @@ namespace TShockAPI
 
 			if (OnRequestTileEntityInteraction(args.Player, args.Data, tileEntity, playerIndex))
 				return true;
+
+			return false;
+		}
+
+		private static bool HandleWeaponsRackTryPlacing(GetDataHandlerArgs args)
+		{
+			short x = args.Data.ReadInt16();
+			short y = args.Data.ReadInt16();
+			short itemID = args.Data.ReadInt16();
+			byte prefix = args.Data.ReadInt8();
+			short stack = args.Data.ReadInt16();
+			TEWeaponsRack WeaponRack = (TEWeaponsRack)TileEntity.ByID[TEWeaponsRack.Find(x, y)];
+
+			if (OnWeaponsRackTryPlacing(args.Player, args.Data, x, y, itemID, prefix, stack, WeaponRack))
+			{
+				return true;
+			}
 
 			return false;
 		}
