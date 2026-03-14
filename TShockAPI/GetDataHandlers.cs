@@ -2346,9 +2346,7 @@ namespace TShockAPI
 			/// <summary>The ItemFrame object associated with this event.</summary>
 			public TEWeaponsRack WeaponRack { get; set; }
 		}
-		/// <summary>
-		/// Called when a player requests interaction with a TileEntity.
-		/// </summary>
+		/// <summary>Fired when an WeaponRack is placed.</summary>
 		public static HandlerList<WeaponsRackTryPlacingEventArgs> WeaponsRackTryPlacing = new HandlerList<WeaponsRackTryPlacingEventArgs>();
 		private static bool OnWeaponsRackTryPlacing(TSPlayer player, MemoryStream data, short x, short y, short itemID, byte prefix, short stack, TEWeaponsRack weaponRack)
 		{
