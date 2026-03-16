@@ -144,7 +144,8 @@ namespace TShockAPI
 					{ PacketTypes.SyncCavernMonsterType, HandleSyncCavernMonsterType },
 					{ PacketTypes.SyncLoadout, HandleSyncLoadout },
 					{ PacketTypes.TeamChangeFromUI, HandlePlayerTeam }, // Same packet as PlayerTeam
-					{ PacketTypes.TEDeadCellsDisplayJar, HandleDisplayJar }
+					{ PacketTypes.TEDeadCellsDisplayJar, HandleDisplayJar },
+					{ PacketTypes.SyncChestSize, HandleChestSizeSync }
 				};
 		}
 
@@ -4976,6 +4977,46 @@ namespace TShockAPI
 
 			if (OnDisplayJarTryPlacing(args.Player, args.Data, tileX, tileY, itemID, prefix, stack))
 				return true;
+
+			return false;
+		}
+
+		private static bool HandleChestSizeSync(GetDataHandlerArgs args)
+		{
+			short id = args.Data.ReadInt16();
+			short newSize = args.Data.ReadInt16();
+
+			if (id < 0 || id > 8000) // chest is invalid
+				return true;
+
+			Chest chest = Main.chest[id];
+
+			if (chest == null)
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleChestSizeSync rejected from null chest {0}", args.Player.Name));
+				return true;
+			}
+
+			if (!args.Player.HasPermission(Permissions.resizechests))
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleChestSizeSync rejected from no permission {0}", args.Player.Name));
+				args.Player.SendData(PacketTypes.SyncChestSize, "", id, chest.item.Length);
+				return true;
+			}
+
+			if (!args.Player.HasBuildPermission(chest.x, chest.y))
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleChestSizeSync rejected from build {0}", args.Player.Name));
+				args.Player.SendData(PacketTypes.SyncChestSize, "", id, chest.item.Length);
+				return true;
+			}
+
+			if (newSize < 0) // size is invalid
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleChestSizeSync rejected from invalid size {0}", args.Player.Name));
+				args.Player.SendData(PacketTypes.SyncChestSize, "", id, chest.item.Length);
+				return true;
+			}
 
 			return false;
 		}
