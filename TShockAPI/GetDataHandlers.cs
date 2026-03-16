@@ -4986,7 +4986,7 @@ namespace TShockAPI
 			short id = args.Data.ReadInt16();
 			short newSize = args.Data.ReadInt16();
 
-			if (id < 0 || id > 8000) // chest is invalid
+			if (id < 0 || id >= 8000) // chest is invalid
 				return true;
 
 			Chest chest = Main.chest[id];
@@ -4994,6 +4994,20 @@ namespace TShockAPI
 			if (chest == null)
 			{
 				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleChestSizeSync rejected from null chest {0}", args.Player.Name));
+				return true;
+			}
+
+			if (args.Player.IsBeingDisabled())
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleChestSizeSync rejected from disabled {0}", args.Player.Name));
+				args.Player.SendData(PacketTypes.SyncChestSize, "", id, chest.item.Length);
+				return true;
+			}
+
+			if (args.Player.IsBouncerThrottled())
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleChestSizeSync rejected from throttled {0}", args.Player.Name));
+				args.Player.SendData(PacketTypes.SyncChestSize, "", id, chest.item.Length);
 				return true;
 			}
 
