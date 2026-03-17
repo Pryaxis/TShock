@@ -4986,7 +4986,7 @@ namespace TShockAPI
 			short id = args.Data.ReadInt16();
 			short newSize = args.Data.ReadInt16();
 
-			if (id < 0 || id >= 8000) // chest is invalid
+			if (id is < 0 or >= Main.maxChests) // chest is invalid
 				return true;
 
 			Chest chest = Main.chest[id];
