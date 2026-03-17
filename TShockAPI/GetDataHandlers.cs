@@ -5014,7 +5014,7 @@ namespace TShockAPI
 			if (!args.Player.HasPermission(Permissions.resizechests))
 			{
 				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleChestSizeSync rejected from no permission {0}", args.Player.Name));
-				args.Player.SendData(PacketTypes.SyncChestSize, "", id, chest.item.Length);
+				args.Player.Kick(GetString("Exploit attempt detected!"), true);
 				return true;
 			}
 
