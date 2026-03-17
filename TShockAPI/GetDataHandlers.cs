@@ -5000,14 +5000,14 @@ namespace TShockAPI
 			if (args.Player.IsBeingDisabled())
 			{
 				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleChestSizeSync rejected from disabled {0}", args.Player.Name));
-				args.Player.SendData(PacketTypes.SyncChestSize, "", id, chest.item.Length);
+				args.Player.SendData(PacketTypes.SyncChestSize, "", id, chest.maxItems);
 				return true;
 			}
 
 			if (args.Player.IsBouncerThrottled())
 			{
 				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleChestSizeSync rejected from throttled {0}", args.Player.Name));
-				args.Player.SendData(PacketTypes.SyncChestSize, "", id, chest.item.Length);
+				args.Player.SendData(PacketTypes.SyncChestSize, "", id, chest.maxItems);
 				return true;
 			}
 
@@ -5021,14 +5021,14 @@ namespace TShockAPI
 			if (!args.Player.HasBuildPermission(chest.x, chest.y))
 			{
 				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleChestSizeSync rejected from build {0}", args.Player.Name));
-				args.Player.SendData(PacketTypes.SyncChestSize, "", id, chest.item.Length);
+				args.Player.SendData(PacketTypes.SyncChestSize, "", id, chest.maxItems);
 				return true;
 			}
 
 			if (newSize < 0) // size is invalid
 			{
 				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleChestSizeSync rejected from invalid size {0}", args.Player.Name));
-				args.Player.SendData(PacketTypes.SyncChestSize, "", id, chest.item.Length);
+				args.Player.SendData(PacketTypes.SyncChestSize, "", id, chest.maxItems);
 				return true;
 			}
 
