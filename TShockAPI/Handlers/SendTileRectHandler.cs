@@ -591,6 +591,12 @@ namespace TShockAPI.Handlers
 		/// <returns><see langword="true"/>, if the rect at a valid distance, otherwise <see langword="false"/>.</returns>
 		private static bool IsRectDistanceValid(TSPlayer player, TileRect rect)
 		{
+			int range = 32;
+
+			// Torches can be modified from faw way through a water gun, or if the player is experiencing the torch god event.
+			if (IsRectATorch(player, rect))
+				range = 104; // Base value of 100 comes from Player.TorchAttack, bumped by 4 blocks to be safe.
+
 			for (int x = 0; x < rect.Width; x++)
 			{
 				for (int y = 0; y < rect.Height; y++)
@@ -598,7 +604,7 @@ namespace TShockAPI.Handlers
 					int realX = rect.X + x;
 					int realY = rect.Y + y;
 
-					if (!player.IsInRange(realX, realY))
+					if (!player.IsInRange(realX, realY, range))
 					{
 						return false;
 					}
@@ -608,6 +614,21 @@ namespace TShockAPI.Handlers
 			return true;
 		}
 
+		/// <summary>
+		/// Checks whether the tile rect is modifying a torch.
+		/// </summary>
+		/// <param name="player">The player the operation originates from.</param>
+		/// <param name="rect">The tile rectangle of the operation.</param>
+		/// <returns><see langword="true"/>, if the rect is modifying a torch, otherwise <see langword="false"/>.</returns>
+		private static bool IsRectATorch(TSPlayer player, TileRect rect)
+		{
+			// Rect is definitely not a torch...
+			if (rect.Width != 1 || rect.Height != 1)
+				return false;
+
+			// Is the rect actually a torch?
+			return rect[0, 0].Type == TileID.Torches;
+		}
 
 		/// <summary>
 		/// Checks whether the tile rect is a valid conversion spread (Clentaminator, Powders, etc.).

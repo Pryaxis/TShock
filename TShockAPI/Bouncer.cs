@@ -1380,6 +1380,17 @@ namespace TShockAPI
 				return;
 			}
 
+
+			// Torch God attack is created only when player is experiencing the torch god event.
+			// However, checking for happyFunTorchTime doesn't work since due to a bug, clients don't sync it right away, so we check unlockedBiomeTorches instead.
+			// The server assumes ownership of this projectile usually, despite it being hostile
+			if (type == ProjectileID.TorchGod && !args.Player.TPlayer.unlockedBiomeTorches)
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile super accepted from (torch god) {0}", args.Player.Name));
+				args.Handled = false;
+				return;
+			}
+
 			/// If the projectile is a directional projectile, check if the player is holding their respected item to validate the projectile creation.
 			if (directionalProjectiles.ContainsKey(type))
 			{
