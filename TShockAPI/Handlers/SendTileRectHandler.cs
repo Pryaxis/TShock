@@ -626,8 +626,8 @@ namespace TShockAPI.Handlers
 			if (rect.Width != 1 || rect.Height != 1)
 				return false;
 
-			// Is the rect actually a torch?
-			return rect[0, 0].Type == TileID.Torches;
+			// Is the rect actually modifying a torch?
+			return rect[0, 0].Type == TileID.Torches && Main.tile[rect.X, rect.Y].type == TileID.Torches;
 		}
 
 		/// <summary>
