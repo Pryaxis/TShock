@@ -594,7 +594,7 @@ namespace TShockAPI.Handlers
 			int range = 32;
 
 			// Torches can be modified from far away through a water gun, or if the player is experiencing the torch god event.
-			if (IsRectATorch(player, rect))
+			if (IsRectATorch(rect))
 				range = 104; // Base value of 100 comes from Player.TorchAttack, bumped by 4 blocks to be safe.
 
 			for (int x = 0; x < rect.Width; x++)
@@ -617,10 +617,9 @@ namespace TShockAPI.Handlers
 		/// <summary>
 		/// Checks whether the tile rect is modifying a torch.
 		/// </summary>
-		/// <param name="player">The player the operation originates from.</param>
 		/// <param name="rect">The tile rectangle of the operation.</param>
 		/// <returns><see langword="true"/>, if the rect is modifying a torch, otherwise <see langword="false"/>.</returns>
-		private static bool IsRectATorch(TSPlayer player, TileRect rect)
+		private static bool IsRectATorch(TileRect rect)
 		{
 			// Rect is definitely not a torch...
 			if (rect.Width != 1 || rect.Height != 1)
