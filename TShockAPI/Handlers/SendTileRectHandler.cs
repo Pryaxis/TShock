@@ -593,7 +593,7 @@ namespace TShockAPI.Handlers
 		{
 			int range = 32;
 
-			// Torches can be modified from faw way through a water gun, or if the player is experiencing the torch god event.
+			// Torches can be modified from far away through a water gun, or if the player is experiencing the torch god event.
 			if (IsRectATorch(player, rect))
 				range = 104; // Base value of 100 comes from Player.TorchAttack, bumped by 4 blocks to be safe.
 
