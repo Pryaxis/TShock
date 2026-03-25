@@ -1386,6 +1386,10 @@ namespace TShockAPI
 			// The server will assume ownership of this projectile, despite it being hostile, so it is the only hostile projectile clients are allowed to create.
 			if (type == ProjectileID.TorchGod && !args.Player.TPlayer.unlockedBiomeTorches)
 			{
+				if (CheckProjectileThreshold())
+					return;
+
+				ProjectileThresholdIncrement();
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile super accepted from (torch god) {0}", args.Player.Name));
 				args.Handled = false;
 				return;
@@ -1495,23 +1499,8 @@ namespace TShockAPI
 				// return;
 			}
 
-			if (args.Player.ProjectileThreshold >= TShock.Config.Settings.ProjectileThreshold)
-			{
-				if (TShock.Config.Settings.KickOnProjectileThresholdBroken)
-				{
-					args.Player.Kick(GetString("Projectile create threshold exceeded {0}.", TShock.Config.Settings.ProjectileThreshold));
-				}
-				else
-				{
-					args.Player.Disable(GetString("Reached projectile create threshold."), DisableFlags.WriteToLogAndConsole);
-					args.Player.RemoveProjectile(ident, owner);
-				}
-
-				TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile rejected from projectile create threshold from {0} {1}/{2}", args.Player.Name, args.Player.ProjectileThreshold, TShock.Config.Settings.ProjectileThreshold));
-				TShock.Log.ConsoleDebug(GetString("If this player wasn't hacking, please report the projectile create threshold they were disabled for to TShock so we can improve this!"));
-				args.Handled = true;
+			if (CheckProjectileThreshold())
 				return;
-			}
 
 			if (
 				(Projectile_MaxValuesAI.ContainsKey(type) &&
@@ -1542,17 +1531,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (!args.Player.HasPermission(Permissions.ignoreprojectiledetection))
-			{
-				if (type == ProjectileID.CrystalShard && TShock.Config.Settings.ProjIgnoreShrapnel) // Ignore crystal shards
-				{
-					TShock.Log.Debug(GetString("Ignoring shrapnel per config.."));
-				}
-				else if (!Main.projectile[index].active)
-				{
-					args.Player.ProjectileThreshold++; // Creating new projectile
-				}
-			}
+			ProjectileThresholdIncrement();
 
 			if ((type == ProjectileID.Bomb
 				|| type == ProjectileID.Dynamite
@@ -1564,6 +1543,45 @@ namespace TShockAPI
 			{
 				//  Denotes that the player has recently set a fuse - used for cheat detection.
 				args.Player.RecentFuse = 10;
+			}
+
+			// Checks if the player has exceeded the projectile creation threshold.
+			bool CheckProjectileThreshold()
+			{
+				if (args.Player.ProjectileThreshold >= TShock.Config.Settings.ProjectileThreshold)
+				{
+					if (TShock.Config.Settings.KickOnProjectileThresholdBroken)
+					{
+						args.Player.Kick(GetString("Projectile create threshold exceeded {0}.", TShock.Config.Settings.ProjectileThreshold));
+					}
+					else
+					{
+						args.Player.Disable(GetString("Reached projectile create threshold."), DisableFlags.WriteToLogAndConsole);
+						args.Player.RemoveProjectile(ident, owner);
+					}
+
+					TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile rejected from projectile create threshold from {0} {1}/{2}", args.Player.Name, args.Player.ProjectileThreshold, TShock.Config.Settings.ProjectileThreshold));
+					TShock.Log.ConsoleDebug(GetString("If this player wasn't hacking, please report the projectile create threshold they were disabled for to TShock so we can improve this!"));
+					args.Handled = true;
+					return true;
+				}
+				return false;
+			}
+
+			// Incremenets the player's projectile creation threshold, if necessary.
+			void ProjectileThresholdIncrement()
+			{
+				if (!args.Player.HasPermission(Permissions.ignoreprojectiledetection))
+				{
+					if (type == ProjectileID.CrystalShard && TShock.Config.Settings.ProjIgnoreShrapnel) // Ignore crystal shards
+					{
+						TShock.Log.Debug(GetString("Ignoring shrapnel per config.."));
+					}
+					else if (!Main.projectile[index].active)
+					{
+						args.Player.ProjectileThreshold++; // Creating new projectile
+					}
+				}
 			}
 		}
 
