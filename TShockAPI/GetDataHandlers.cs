@@ -3316,6 +3316,14 @@ namespace TShockAPI
 
 			var index = TShock.Utils.SearchProjectile(ident, owner);
 
+			// Cattiva's dig ability can bypass build permissions via vanilla exploit in Terraria v1.4.5
+			// Block ai[0] == 3 (dig state)
+			if (type == ProjectileID.PalworldMinionCattiva && ai[0] == 3f)
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleProjectileNew rejected Palworld Minion Cattiva dig sync {0}", args.Player.Name));
+				return true;
+			}
+
 			if (OnNewProjectile(args.Data, ident, pos, vel, knockback, dmg, owner, type, index, args.Player, ai))
 				return true;
 
