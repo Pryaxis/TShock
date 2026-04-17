@@ -6309,8 +6309,10 @@ namespace TShockAPI
 
 			if (args.Player.InventorySlotAvailable || (item.type > 70 && item.type < 75) || item.ammo > 0 || item.type == 58 || item.type == 184)
 			{
-				if (itemAmount == 0 || itemAmount > item.maxStack)
+				if (itemAmount > item.maxStack)
 					itemAmount = item.maxStack;
+				else if (itemAmount == 0)
+					itemAmount = item.OnlyNeedOneInInventory() ? 1 : item.maxStack;
 
 				if (args.Player.GiveItemCheck(item.type, EnglishLanguage.GetItemNameById(item.type), itemAmount, prefixId))
 				{
@@ -6451,8 +6453,11 @@ namespace TShockAPI
 						var plr = players[0];
 						if (plr.InventorySlotAvailable || (item.type > 70 && item.type < 75) || item.ammo > 0 || item.type == 58 || item.type == 184)
 						{
-							if (itemAmount == 0 || itemAmount > item.maxStack)
+							if (itemAmount > item.maxStack)
 								itemAmount = item.maxStack;
+							else if (itemAmount == 0)
+								itemAmount = item.OnlyNeedOneInInventory() ? 1 : item.maxStack;
+
 							if (plr.GiveItemCheck(item.type, EnglishLanguage.GetItemNameById(item.type), itemAmount, prefix))
 							{
 								args.Player.SendSuccessMessage(GetPluralString("Gave {0} {1} {2}.", "Gave {0} {1} {2}s.", itemAmount, plr.Name, itemAmount, item.Name));
