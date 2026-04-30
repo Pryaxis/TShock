@@ -2609,6 +2609,66 @@ namespace TShockAPI
 			SyncItemsWithShimmer.Invoke(null, args);
 			return args.Handled;
 		}
+		
+		/// <summary>
+		/// For use in an SyncItemCannotBeTakenByEnemies event
+		/// </summary>
+		public class SyncItemCannotBeTakenByEnemiesEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// ID of the item.
+			/// If below 400 and NetID(Type) is 0 Then Set Null. If ItemID is 400 Then New Item
+			/// </summary>
+			public short ID { get; set; }
+			/// <summary>
+			/// Position of the item
+			/// </summary>
+			public Vector2 Position { get; set; }
+			/// <summary>
+			/// Velocity at which the item is deployed
+			/// </summary>
+			public Vector2 Velocity { get; set; }
+			/// <summary>
+			/// Stacks
+			/// </summary>
+			public short Stacks { get; set; }
+			/// <summary>
+			/// Prefix of the item
+			/// </summary>
+			public byte Prefix { get; set; }
+			/// <summary>
+			/// No Delay on pickup
+			/// </summary>
+			public bool NoDelay { get; set; }
+			/// <summary>
+			/// Item type
+			/// </summary>
+			public short Type { get; set; }
+		}
+		/// <summary>
+		/// SyncItemCannotBeTakenByEnemies - Called when an item is dropped
+		/// </summary>
+		public static HandlerList<SyncItemCannotBeTakenByEnemiesEventArgs> SyncItemCannotBeTakenByEnemies = new HandlerList<SyncItemCannotBeTakenByEnemiesEventArgs>();
+		private static bool OnSyncItemCannotBeTakenByEnemies(TSPlayer player, MemoryStream data, short id, Vector2 pos, Vector2 vel, short stacks, byte prefix, bool noDelay, short type)
+		{
+			if (SyncItemCannotBeTakenByEnemies == null)
+				return false;
+
+			var args = new SyncItemCannotBeTakenByEnemiesEventArgs
+			{
+				Player = player,
+				Data = data,
+				ID = id,
+				Position = pos,
+				Velocity = vel,
+				Stacks = stacks,
+				Prefix = prefix,
+				NoDelay = noDelay,
+				Type = type,
+			};
+			SyncItemCannotBeTakenByEnemies.Invoke(null, args);
+			return args.Handled;
+		}
 
 		public class DisplayJarTryPlacingEventArgs : GetDataHandledEventArgs
 		{
@@ -5155,9 +5215,18 @@ namespace TShockAPI
 
 		private static bool HandleSyncItemCannotBeTakenByEnemies(GetDataHandlerArgs args)
 		{
-			args.Player.Kick(GetString("Exploit attempt detected!"));
-			TShock.Log.ConsoleDebug(GetString($"HandleSyncItemCannotBeTakenByEnemies: Player is trying to sync item that cannot be taken by hostile mobs; this is a crafted packet! - From {args.Player.Name}"));
-			return true;
+			var id = args.Data.ReadInt16();
+			var pos = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
+			var vel = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
+			var stacks = args.Data.ReadInt16();
+			var prefix = args.Data.ReadInt8();
+			var noDelay = args.Data.ReadInt8() == 1;
+			var type = args.Data.ReadInt16();
+		
+			if (OnSyncItemCannotBeTakenByEnemies(args.Player, args.Data, id, pos, vel, stacks, prefix, noDelay, type))
+				return true;
+		
+			return false;
 		}
 
 		private static bool HandleDisplayJar(GetDataHandlerArgs args)
