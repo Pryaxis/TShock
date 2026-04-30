@@ -139,6 +139,7 @@ namespace TShockAPI
 			GetDataHandlers.FishOutNPC += OnFishOutNPC;
 			GetDataHandlers.FoodPlatterTryPlacing += OnFoodPlatterTryPlacing;
 			GetDataHandlers.SyncItemsWithShimmer += OnSyncItemsWithShimmer;
+			GetDataHandlers.SyncItemCannotBeTakenByEnemies += OnSyncItemCannotBeTakenByEnemies;
 			GetDataHandlers.DisplayJarTryPlacing += OnDisplayJarTryPlacing;
 			GetDataHandlers.LeashedEntityAnchorPlaceItem += OnLeashedEntityAnchorPlaceItem;
 			OTAPI.Hooks.Chest.QuickStack += OnQuickStack;
@@ -3223,6 +3224,126 @@ namespace TShockAPI
 			if (type == ItemID.GuideVoodooDoll && args.Player.TPlayer.ZoneUnderworldHeight && !args.Player.HasPermission(Permissions.summonboss))
 			{
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnSyncItemsWithShimmer rejected Guide Voodoo Doll drop from {0}", args.Player.Name));
+				args.Player.SendErrorMessage(GetString("You do not have permission to summon the Wall of Flesh."));
+				args.Player.SendData(PacketTypes.SyncItemDespawn, "", id);
+				args.Handled = true;
+				return;
+			}
+		}
+		
+		/// <summary>Registered when item items fall from enemy strike to the ground to prevent cheating.</summary>
+		/// <param name="sender">The object that triggered the event.</param>
+		/// <param name="args">The packet arguments that the event has.</param>
+		internal void OnSyncItemCannotBeTakenByEnemies(object sender, GetDataHandlers.SyncItemCannotBeTakenByEnemiesEventArgs args)
+		{
+			short id = args.ID;
+			Vector2 pos = args.Position;
+			Vector2 vel = args.Velocity;
+			short stacks = args.Stacks;
+			short prefix = args.Prefix;
+			bool noDelay = args.NoDelay;
+			short type = args.Type;
+		
+			if (!float.IsFinite(pos.X) || !float.IsFinite(pos.Y))
+			{
+				TShock.Log.ConsoleInfo(GetString("Bouncer / OnSyncItemCannotBeTakenByEnemies force kicked (attempted to set position to infinity or NaN) from {0}", args.Player.Name));
+				args.Player.Kick(GetString("Detected DOOM set to ON position."), true, true);
+				args.Handled = true;
+				return;
+			}
+		
+			if (!float.IsFinite(vel.X) || !float.IsFinite(vel.Y))
+			{
+				TShock.Log.ConsoleInfo(GetString("Bouncer / OnSyncItemCannotBeTakenByEnemies force kicked (attempted to set velocity to infinity or NaN) from {0}", args.Player.Name));
+				args.Player.Kick(GetString("Detected DOOM set to ON position."), true, true);
+				args.Handled = true;
+				return;
+			}
+		
+			// player is attempting to crash clients
+			if (type < -48 || type >= Terraria.ID.ItemID.Count)
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnSyncItemCannotBeTakenByEnemies rejected from attempt crash from {0}", args.Player.Name));
+				args.Handled = true;
+				return;
+			}
+		
+			// make sure the prefix is a legit value
+			if (prefix > PrefixID.Count)
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnSyncItemCannotBeTakenByEnemies rejected from prefix check from {0}", args.Player.Name));
+		
+				args.Player.SendData(PacketTypes.SyncItemDespawn, "", id);
+				args.Handled = true;
+				return;
+			}
+		
+			if (type == 0)
+			{
+				if (!args.Player.IsInRange((int)(Main.item[id].position.X / 16f), (int)(Main.item[id].position.Y / 16f)))
+				{
+					// Causes item duplications. Will be re added if necessary
+					//args.Player.SendData(PacketTypes.ItemDrop, "", id);
+					TShock.Log.ConsoleDebug(GetString("Bouncer / OnSyncItemCannotBeTakenByEnemies rejected from dupe range check from {0}", args.Player.Name));
+					args.Handled = true;
+					return;
+				}
+		
+				args.Handled = false;
+				return;
+			}
+		
+			if (!args.Player.IsInRange((int)(pos.X / 16f), (int)(pos.Y / 16f), 128))
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnSyncItemCannotBeTakenByEnemies rejected from range check from {0}", args.Player.Name));
+				args.Player.SendData(PacketTypes.SyncItemDespawn, "", id);
+				args.Handled = true;
+				return;
+			}
+		
+			// stop the client from changing the item type of a drop
+			if (Main.item[id].active && Main.item[id].type != type &&
+				!(Main.item[id].type == ItemID.EmptyBucket && type == ItemID.WaterBucket)) // Empty bucket turns into Water Bucket on rainy days
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnSyncItemCannotBeTakenByEnemies rejected from item drop check from {0}", args.Player.Name));
+				args.Player.SendData(PacketTypes.ItemDrop, "", id);
+				args.Handled = true;
+				return;
+			}
+		
+			Item item = new Item();
+			item.netDefaults(type);
+			if ((stacks > item.maxStack || stacks <= 0) || (TShock.ItemBans.DataModel.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), args.Player) && !args.Player.HasPermission(Permissions.allowdroppingbanneditems)))
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnSyncItemCannotBeTakenByEnemies rejected from drop item ban check / max stack check / min stack check from {0}", args.Player.Name));
+				args.Player.SendData(PacketTypes.SyncItemDespawn, "", id);
+				args.Handled = true;
+				return;
+			}
+		
+			// TODO: Remove item ban part of this check
+			if ((Main.ServerSideCharacter) && (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond - args.Player.LoginMS < TShock.ServerSideCharacterConfig.Settings.LogonDiscardThreshold))
+			{
+				//Player is probably trying to sneak items onto the server in their hands!!!
+				TShock.Log.ConsoleInfo(GetString("Player {0} tried to sneak {1} onto the server!", args.Player.Name, item.Name));
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnSyncItemCannotBeTakenByEnemies rejected from sneaky from {0}", args.Player.Name));
+				args.Player.SendData(PacketTypes.SyncItemDespawn, "", id);
+				args.Handled = true;
+				return;
+		
+			}
+		
+			if (args.Player.IsBeingDisabled())
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnSyncItemCannotBeTakenByEnemies rejected from disabled from {0}", args.Player.Name));
+				args.Player.SendData(PacketTypes.SyncItemDespawn, "", id);
+				args.Handled = true;
+				return;
+			}
+		
+			if (type == ItemID.GuideVoodooDoll && args.Player.TPlayer.ZoneUnderworldHeight && !args.Player.HasPermission(Permissions.summonboss))
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnSyncItemCannotBeTakenByEnemies rejected Guide Voodoo Doll drop from {0}", args.Player.Name));
 				args.Player.SendErrorMessage(GetString("You do not have permission to summon the Wall of Flesh."));
 				args.Player.SendData(PacketTypes.SyncItemDespawn, "", id);
 				args.Handled = true;
