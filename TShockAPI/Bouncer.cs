@@ -3478,7 +3478,7 @@ namespace TShockAPI
 			}
 
 			//valid item
-			if (ItemID.Sets.PlaceTileOnAltUse[args.EntityID])
+			if (!ItemID.Sets.PlaceTileOnAltUse[args.EntityID])
 			{
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnLeashedEntityAnchorPlaceItem rejected from invalid item alt use from {0}", args.Player.Name));
 				args.Player.SendTileSquareCentered(tileX, tileY, 1);
