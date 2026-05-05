@@ -298,7 +298,7 @@ namespace TShockAPI.DB
 			{
 			   SqlType.Mysql => /*lang=mysql*/"; SELECT LAST_INSERT_ID();",
 			   SqlType.Sqlite => /*lang=sqlite*/"; SELECT last_insert_rowid();",
-			   SqlType.Postgres => /*lang=postgresql*/" RETURNING TicketNumber;",
+			   SqlType.Postgres => /*lang=postgresql*/" RETURNING \"ticketnumber\";",
 			   _ => null
 			};
 

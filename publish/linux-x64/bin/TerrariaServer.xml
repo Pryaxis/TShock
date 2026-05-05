@@ -1,0 +1,531 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>TerrariaServer</name>
+    </assembly>
+    <members>
+        <member name="M:TerrariaApi.Server.Program.InitialiseInternals">
+            <summary>
+            Initialises any internal values before any server initialisation begins
+            </summary>
+        </member>
+        <member name="M:TerrariaApi.Server.Program.PrepareSavePath(System.String[])">
+            <summary>
+            1.4.4.2 introduced another static variable, which needs to be setup before any Main calls
+            </summary>
+        </member>
+        <member name="M:TerrariaApi.Server.Program.UnhandledException(System.Object,System.UnhandledExceptionEventArgs)">
+            <summary>
+            TShock sets up its own unhandled exception handler; this one is just to catch possible
+            startup exceptions
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="T:TerrariaApi.Server.ConstileationProvider">
+            <summary>
+            Cons"tile"ation provider is a tile adapter that will function similar to heaptile to reduce memory, but instead of using math to determine offsets, a TileData structure is used instead which already knows the layout.
+            </summary>
+        </member>
+        <member name="P:TerrariaApi.Server.ConstileationProvider.Width">
+            <summary>
+            Returns the max tile x value
+            </summary>
+        </member>
+        <member name="P:TerrariaApi.Server.ConstileationProvider.Height">
+            <summary>
+            Returns the max tile y value
+            </summary>
+        </member>
+        <member name="P:TerrariaApi.Server.ConstileationProvider.Item(System.Int32,System.Int32)">
+            <summary>
+            Returns a tile given the coordinates
+            </summary>
+            <param name="x">Tile X</param>
+            <param name="y">Tile Y</param>
+            <returns>Tile data via the <see cref="T:Terraria.ITile"/> interface</returns>
+        </member>
+        <member name="T:TerrariaApi.Server.TileData">
+            <summary>
+            Maps tile data to memory in an organised format
+            </summary>
+            <remarks>When updating this, refer to <see cref="T:Terraria.ITile"/> properties, and adjust the Size accordingly. Size is likely not required, but it make it clear how many bytes we expect to consume</remarks>
+        </member>
+        <member name="T:TerrariaApi.Server.TileReference">
+            <summary>
+            This class is intended to be issued back and forth between Terraria, while referring to a preallocated memory mapping of the tile data which avoids duplicating data and storing offsets.
+            </summary>
+        </member>
+        <member name="F:TerrariaApi.Server.TileReference.TileSize">
+            <summary>
+            Size of the tile data in bytes
+            </summary>
+        </member>
+        <member name="M:TerrariaApi.Server.TileReference.#ctor(TerrariaApi.Server.TileData@)">
+            <summary>
+            Creates a new reference to the packed memory data
+            </summary>
+            <param name="tile"></param>
+        </member>
+        <member name="M:TerrariaApi.Server.TileReference.ClearEverything">
+            <summary>
+            Clears the tile data, using a faster method than resetting each variable (which creates more instructions than required with this setup)
+            </summary>
+        </member>
+        <member name="T:TerrariaApi.Server.DangerousPluginDetector">
+            <summary>
+            Determines if a plugin is on a fixed list of malicious plugins based on the SHA512 of
+            its Assembly's AssemblyName's Name and a given version.
+            (The version check includes all assemblies at or below that version).
+            (The version is the version reported by the AssemblyVersion information, not the plugin version)
+            </summary>
+        </member>
+        <member name="F:TerrariaApi.Server.DangerousPluginDetector.dangerousPlugins">
+            <summary>
+            Pairs of sha512(AssemblyName.Name, Version) where
+            Version and all prior are dangerous. (The goal is to obfcuscate
+            the Assembly's name in the codebase so that security advisories
+            can be released without tipping off people which plugin it is
+            until after the TSAPI binary is distributed.
+            </summary>
+        </member>
+        <member name="M:TerrariaApi.Server.DangerousPluginDetector.#ctor">
+            <summary>
+            Returns an initialized dangerous plugin detector with a readonly rule set.
+            </summary>
+        </member>
+        <member name="M:TerrariaApi.Server.DangerousPluginDetector.MaliciousAssembly(System.Reflection.Assembly)">
+            <summary>
+            Determines if the assembly has been previously identified to be malicious.
+            It does this by reading the Assembly's name and the version, then checking the SHA512 hash
+            of the assembly against a known malicious list. It's obfuscated to allow releasing without
+            announcing which assembly is being marked as malicious, to give time for server operators
+            to respond without simply disclosing that an assembly they run is malicious.
+            (This is a thin layer of protection and not at all bulletproof).
+            Will not flag assemblies that are "newer" than the given version in the list.
+            </summary>
+            <param name="assembly">The Assembly to check against the malicious list.</param>
+            <returns>True if the assembly is known to be malicious.</returns>
+        </member>
+        <member name="M:TerrariaApi.Server.DangerousPluginDetector.SHA512(System.String)">
+            <summary>
+            Returns the associated SHA512 hash of a given input.
+            As described in Nazar's stackoverflow post, mostly because the underlying C# API is not intuitive.
+            (A lot of boilerplate is required for something that is require 'digest'; Digest::SHA512.hexdigest(str) in ruby).
+            https://stackoverflow.com/a/39131803
+            </summary>
+            <param name="input">The input string to hash</param>
+            <returns>The SHA512 hash of the given string as a string</returns>
+        </member>
+        <member name="F:TerrariaApi.Server.ForceItemIntoChestEventArgs.Player">
+            <summary>
+            The player who caused this event.
+            </summary>
+        </member>
+        <member name="F:TerrariaApi.Server.ForceItemIntoChestEventArgs.Chest">
+            <summary>
+            The chest the item is being forced into.
+            </summary>
+        </member>
+        <member name="F:TerrariaApi.Server.ForceItemIntoChestEventArgs.Item">
+            <summary>
+            The item being forced into the chest.
+            </summary>
+        </member>
+        <member name="P:TerrariaApi.Server.ForceItemIntoChestEventArgs.WorldPosition">
+            <summary>
+            The chest's center position in world coordinates.
+            This is a shortcut for Vector2(Chest.x*16 + 16, Chest.y*16 + 16).
+            This is identical to the previous hook version's Position argument.
+            </summary>
+        </member>
+        <member name="P:TerrariaApi.Server.ForceItemIntoChestEventArgs.TilePosition">
+            <summary>
+            The chest's position in tile coordinates.
+            This is a shortcut for Vector2(Chest.x, Chest.y).
+            </summary>
+        </member>
+        <member name="M:TerrariaApi.Server.Hooking.GameHooks.AttachTo(TerrariaApi.Server.HookManager)">
+            <summary>
+            Attaches any of the OTAPI Game hooks to the existing <see cref="T:TerrariaApi.Server.HookManager"/> implementation
+            </summary>
+            <param name="hookManager">HookManager instance which will receive the events</param>
+        </member>
+        <member name="M:TerrariaApi.Server.Hooking.ItemHooks.AttachTo(TerrariaApi.Server.HookManager)">
+            <summary>
+            Attaches any of the OTAPI Item hooks to the existing <see cref="T:TerrariaApi.Server.HookManager"/> implementation
+            </summary>
+            <param name="hookManager">HookManager instance which will receive the events</param>
+        </member>
+        <member name="M:TerrariaApi.Server.Hooking.NetHooks.AttachTo(TerrariaApi.Server.HookManager)">
+            <summary>
+            Attaches any of the OTAPI Net hooks to the existing <see cref="T:TerrariaApi.Server.HookManager"/> implementation
+            </summary>
+            <param name="hookManager">HookManager instance which will receive the events</param>
+        </member>
+        <member name="M:TerrariaApi.Server.Hooking.NpcHooks.AttachTo(TerrariaApi.Server.HookManager)">
+            <summary>
+            Attaches any of the OTAPI Npc hooks to the existing <see cref="T:TerrariaApi.Server.HookManager"/> implementation
+            </summary>
+            <param name="hookManager">HookManager instance which will receive the events</param>
+        </member>
+        <member name="M:TerrariaApi.Server.Hooking.ProjectileHooks.AttachTo(TerrariaApi.Server.HookManager)">
+            <summary>
+            Attaches any of the OTAPI Projectile hooks to the existing <see cref="T:TerrariaApi.Server.HookManager"/> implementation
+            </summary>
+            <param name="hookManager">HookManager instance which will receive the events</param>
+        </member>
+        <member name="M:TerrariaApi.Server.Hooking.ServerHooks.AttachTo(TerrariaApi.Server.HookManager)">
+            <summary>
+            Attaches any of the OTAPI Server hooks to the existing <see cref="T:TerrariaApi.Server.HookManager"/> implementation
+            </summary>
+            <param name="hookManager">HookManager instance which will receive the events</param>
+        </member>
+        <member name="M:TerrariaApi.Server.Hooking.ServerHooks.Main_ReadLineInput(System.Object,HookEvents.Terraria.Main.ReadLineInputEventArgs)">
+            <summary>
+            Hooks the default ReadLineInput method to add a small delay when Console.ReadLine() returns null.
+            For example, some docker instances may experience a 100% CPU usage due to this vanilla thread implementation.
+            </summary>
+        </member>
+        <member name="M:TerrariaApi.Server.Hooking.WiringHooks.AttachTo(TerrariaApi.Server.HookManager)">
+            <summary>
+            Attaches any of the OTAPI Wiring hooks to the existing <see cref="T:TerrariaApi.Server.HookManager"/> implementation
+            </summary>
+            <param name="hookManager">HookManager instance which will receive the events</param>
+        </member>
+        <member name="M:TerrariaApi.Server.Hooking.WorldHooks.AttachTo(TerrariaApi.Server.HookManager)">
+            <summary>
+            Attaches any of the OTAPI World hooks to the existing <see cref="T:TerrariaApi.Server.HookManager"/> implementation
+            </summary>
+            <param name="hookManager">HookManager instance which will receive the events</param>
+        </member>
+        <member name="T:TerrariaApi.Server.ILogWriter">
+            <summary>
+              Implements a server log writer. Methods of this implementation are generally expected to be thread safe. Note that
+              the plugin which has registered the log writer should never dispose it during deinitialization or disposing, let the
+              Server API call the detach method instead.
+            </summary>
+        </member>
+        <member name="P:TerrariaApi.Server.ILogWriter.Name">
+            <summary>
+              Gets the name of the log writer implementation.
+            </summary>
+        </member>
+        <member name="M:TerrariaApi.Server.ILogWriter.Detach">
+            <summary>
+              Called before this log writer is detached, that is when the server is shutting down or the log writer is replaced by 
+              another log writer. This method should never be called by a plugin.
+            </summary>
+        </member>
+        <member name="M:TerrariaApi.Server.ILogWriter.ServerWriteLine(System.String,System.Diagnostics.TraceLevel)">
+            <summary>
+              Expects the log writer to write a line produced by the server itself. This method should never be called by a plugin.
+            </summary>
+            <param name="message">
+              The message to write.
+            </param>
+            <param name="kind">
+              The kind of message.
+            </param>
+        </member>
+        <member name="M:TerrariaApi.Server.ILogWriter.PluginWriteLine(TerrariaApi.Server.TerrariaPlugin,System.String,System.Diagnostics.TraceLevel)">
+            <summary>
+              Expects the log writer to write a line produced by a plugin.
+            </summary>
+            <param name="plugin">
+              The plugin writing the line.
+            </param>
+            <param name="message">
+              The message to write.
+            </param>
+            <param name="kind">
+              The kind of message.
+            </param>
+        </member>
+        <member name="T:TerrariaApi.Server.IProfiler">
+            <summary>
+              Implements a server profiler. Methods of this implementation are generally expected to be thread safe. Note that
+              the plugin which has registered the profiler should never dispose it during deinitialization or disposing, let the
+              Server API call the detach method instead.
+            </summary>
+        </member>
+        <member name="P:TerrariaApi.Server.IProfiler.Name">
+            <summary>
+              Gets the name of the profiler implementation.
+            </summary>
+        </member>
+        <member name="M:TerrariaApi.Server.IProfiler.Detach">
+            <summary>
+              Called before this profiler is detached, that is when the server is shutting down or the profiler is replaced by 
+              another profiler.
+            </summary>
+        </member>
+        <member name="M:TerrariaApi.Server.IProfiler.InputServerInitTime(System.TimeSpan)">
+            <summary>
+              Provides the profiler with the processing time consumed by the whole server startup procedure (includes all plugin
+              initializations).
+            </summary>
+            <param name="processingTime">
+              The consumed processing time.
+            </param>
+        </member>
+        <member name="M:TerrariaApi.Server.IProfiler.InputServerWorldLoadTime(System.TimeSpan)">
+            <summary>
+              Provides the profiler with the processing time consumed by the world load procedure.
+            </summary>
+            <param name="processingTime">
+              The consumed processing time.
+            </param>
+        </member>
+        <member name="M:TerrariaApi.Server.IProfiler.InputServerWorldSaveTime(System.TimeSpan)">
+            <summary>
+              Provides the profiler with the processing time consumed by the world save procedure.
+            </summary>
+            <param name="processingTime">
+              The consumed processing time.
+            </param>
+        </member>
+        <member name="M:TerrariaApi.Server.IProfiler.InputServerGameUpdateTime(System.TimeSpan)">
+            <summary>
+              Provides the profiler with the processing time consumed by the game update procedure.
+            </summary>
+            <param name="processingTime">
+              The consumed processing time.
+            </param>
+        </member>
+        <member name="M:TerrariaApi.Server.IProfiler.InputServerGameUpdateTimeWithoutHooks(System.TimeSpan)">
+            <summary>
+              Provides the profiler with the processing time consumed by the internal game update procedure (without the invokes
+              of the GameUpdate, GamePostUpdate hooks).
+            </summary>
+            <param name="processingTime">
+              The consumed processing time.
+            </param>
+        </member>
+        <member name="M:TerrariaApi.Server.IProfiler.InputPluginInitTime(TerrariaApi.Server.TerrariaPlugin,System.TimeSpan)">
+            <summary>
+              Provides the profiler with the processing time consumed by a plugin's constructor and initialization.
+              This method is called for each plugin after all plugins have been fully initialized to give the profiler a chance
+              to gather all data no matter when it got attached.
+            </summary>
+            <param name="plugin">
+              The initialized plugin.
+            </param>
+            <param name="processingTime">
+              The consumed processing time.
+            </param>
+        </member>
+        <member name="M:TerrariaApi.Server.IProfiler.InputPluginHandlerTime(TerrariaApi.Server.TerrariaPlugin,System.String,System.TimeSpan)">
+            <summary>
+              Provides the profiler with the processing time consumed by one of a plugin's registered handlers.
+            </summary>
+            <param name="plugin">
+              The plugin which registered the handler.
+            </param>
+            <param name="hookName">
+              The name of the hook the handler is registered for.
+            </param>
+            <param name="processingTime">
+              The consumed processing time.
+            </param>
+        </member>
+        <member name="M:TerrariaApi.Server.IProfiler.InputPluginCustomProcessingTime(TerrariaApi.Server.TerrariaPlugin,System.String,System.TimeSpan)">
+            <summary>
+              Provides the profiler with the processing time of a named custom operation performed by a plugin. This allows 
+              plugins to pass performance measurements of any long time operations to the profiler.
+            </summary>
+            <param name="plugin">
+              The plugin which performed the operation.
+            </param>
+            <param name="operation">
+              The name of the operation. It's wise to use the same name for any recurring operation, allowing the profiler
+              to produce better reports.
+            </param>
+            <param name="processingTime">
+              The consumed processing time.
+            </param>
+        </member>
+        <member name="M:TerrariaApi.Server.IProfiler.InputPluginHandlerExceptionThrown(TerrariaApi.Server.TerrariaPlugin,System.String,System.Exception)">
+            <summary>
+              Provides the profiler with the exception thrown by one of a plugin's registered handlers. This allows to easily
+              identify problematic plugins, which may not handle their exceptions properly and thus cause performance drawbacks
+              or other problems, by profiling.
+            </summary>
+            <param name="plugin">
+              The plugin which registered the handler.
+            </param>
+            <param name="hookName">
+              The name of the hook the handler is registered for.
+            </param>
+            <param name="exception">
+              The exception thrown by the plugin.
+            </param>
+        </member>
+        <member name="M:TerrariaApi.Server.IProfiler.InputPluginUnloadTime(TerrariaApi.Server.TerrariaPlugin,System.TimeSpan)">
+            <summary>
+              Provides the profiler with the processing time consumed by a plugin's DeInitialize and Dispose method.
+            </summary>
+            <param name="plugin">
+              The plugin which registered the handler.
+            </param>
+            <param name="processingTime">
+              The consumed processing time.
+            </param>
+        </member>
+        <member name="M:TerrariaApi.Server.LogWriterManager.#ctor(System.Boolean)">
+            <param name="enabled">
+            If set to false, no default log writer will be set at first, but a new one can be added with
+            <see cref="M:TerrariaApi.Server.LogWriterManager.Attach(TerrariaApi.Server.ILogWriter)"/> later.
+            </param>
+        </member>
+        <member name="P:TerrariaApi.Server.ServerApi.AdditionalPluginsPath">
+            <summary>
+            Returns the first value from <see cref="P:TerrariaApi.Server.ServerApi.AdditionalPluginsPaths"/> if it exists, otherwise null.
+            </summary>
+        </member>
+        <member name="P:TerrariaApi.Server.ServerApi.AdditionalPluginsPaths">
+            <summary> A list of all plugin paths specified by the -additionalplugins flag. </summary>
+        </member>
+        <member name="M:TerrariaApi.Server.ServerApi.TryCheckArchitecture(System.IO.FileInfo,System.Byte[])">
+            <summary>
+            Tests to see if a plugin is using an incompatible architecture
+            </summary>
+            <param name="file">File info of the plugin</param>
+            <param name="data">File contents</param>
+        </member>
+        <member name="P:TerrariaApi.Server.TerrariaPlugin.Name">
+            <summary>
+             The plugin's name. This is used for display purposes and secondary ordering when loading. 
+             See <see cref="P:TerrariaApi.Server.TerrariaPlugin.Order"/> for more information.
+            </summary>
+        </member>
+        <member name="P:TerrariaApi.Server.TerrariaPlugin.Version">
+            <summary>
+             The plugin's version. This is used for display purposes.
+            </summary>
+        </member>
+        <member name="P:TerrariaApi.Server.TerrariaPlugin.Author">
+            <summary>
+             The plugin's author. This is used for display purposes.
+            </summary>
+        </member>
+        <member name="P:TerrariaApi.Server.TerrariaPlugin.Description">
+            <summary>
+             The plugin's description. This is used for display purposes.
+            </summary>
+        </member>
+        <member name="P:TerrariaApi.Server.TerrariaPlugin.Enabled">
+            <summary>
+             Whether or not the plugin is enabled.
+            </summary>
+        </member>
+        <member name="P:TerrariaApi.Server.TerrariaPlugin.Order">
+            <summary>
+             The plugin's order. This represents load priority.
+             Plugins are sorted first based on order, then on name where conflicts occur.
+             A lower order represents a higher load priority - I.E., order 1 is loaded before order 5.
+             This value may be negative.
+             The default plugin constructor will set order to 1.
+            </summary>
+        </member>
+        <member name="P:TerrariaApi.Server.TerrariaPlugin.UpdateURL">
+            <summary>
+             Deprecated - this value is never used
+            </summary>
+        </member>
+        <member name="P:TerrariaApi.Server.TerrariaPlugin.Game">
+            <summary>
+             Reference to Terraria's <see cref="T:Terraria.Main"/> class containing server state.
+            </summary>
+        </member>
+        <member name="M:TerrariaApi.Server.TerrariaPlugin.#ctor(Terraria.Main)">
+            <summary>
+             Instantiates a new instance of the plugin with the given server state.
+             Sets <see cref="P:TerrariaApi.Server.TerrariaPlugin.Order"/> to 1.
+            </summary>
+        </member>
+        <member name="M:TerrariaApi.Server.TerrariaPlugin.Finalize">
+            <summary>
+             Deconstructor. Implements the Dispose pattern.
+            </summary>
+        </member>
+        <member name="M:TerrariaApi.Server.TerrariaPlugin.Dispose">
+            <summary>
+             Implements the Dispose pattern. Disposes the plugin
+            </summary>
+        </member>
+        <member name="M:TerrariaApi.Server.TerrariaPlugin.Dispose(System.Boolean)">
+            <summary>
+             Implements the Dispose pattern. Release managed resources here.
+            </summary>
+        </member>
+        <member name="M:TerrariaApi.Server.TerrariaPlugin.Initialize">
+            <summary>
+             Invoked after the plugin is constructed. Initialization logic should occur here.
+            </summary>
+        </member>
+        <member name="M:TerrariaApi.Server.TerrariaPlugin.Call(System.Object[])">
+            <summary>
+            Implements weak inter-plugin communication. Allows interaction with other plugins without referencing their types or namespaces.
+            </summary>
+        </member>
+        <member name="T:TerrariaApi.Server.TileProvider">
+            <summary>
+            Provides an abstraction layer between Terraria's tile mechanism and the various mechanisms that
+            provide the data to TSAPI.
+            </summary>
+        </member>
+        <member name="F:TerrariaApi.Server.TileProvider.tileHeap">
+            <summary>
+            Holds the tile heap.
+            </summary>
+            <remarks>
+            The tile heap is a flat list of tiles, 13-bytes each full of tile header data.
+            </remarks>
+        </member>
+        <member name="P:TerrariaApi.Server.TileProvider.Item(System.Int32,System.Int32)">
+            <summary>
+            Retrieves the Terraria.Tile instance at X and Y position.  Used for ABI compatibility with all of
+            TSAPI's tile accessor mechansims.
+            </summary>
+            <param name="x">X coordinate of the tile to retrieve</param>
+            <param name="y">Y coordinate of the tile to retrieve</param>
+            <returns>
+            A Terraria.Tile instance of the tile at the X and Y coordinate
+            </returns>
+        </member>
+        <member name="M:TerrariaApi.Server.TileProvider.GetTile(System.Int32,System.Int32)">
+            <summary>
+            Retrieves a tile at position X and Y.
+            </summary>
+            <param name="x">The X coordinate of the tile to retrieve</param>
+            <param name="y">The Y coordinate of the tile to retrieve</param>
+            <returns>
+            A Terraria.Tile instance of the tile at position X and Y.
+            </returns>
+            <remarks>
+            Virtual function that derivatives must override if they want to implement getting of a tile from
+            its backing store.        /// </remarks>
+        </member>
+        <member name="M:TerrariaApi.Server.TileProvider.SetTile(Terraria.ITile,System.Int32,System.Int32)">
+            <summary>
+            Sets a tile at position X and Y to the tile instance specified.
+            </summary>
+            <param name="tile">
+            A tile instance in which to store
+            </param>
+            <param name="x">X coordinate of the tile to store</param>
+            <param name="y">Y coordinate of the tile to store</param>
+            <remarks>
+            Virtual function that derivatives must override if they want to implement getting of a tile from
+            its backing store.
+            </remarks>
+        </member>
+        <member name="E:TerrariaApi.Reporting.CrashReporter.HeapshotRequesting">
+            <summary>
+            Occurs when the crash reporter is going to take a heap snapshot.  Attach
+            this handler to clean up memory you don't want included in the heap.
+            </summary>
+        </member>
+    </members>
+</doc>

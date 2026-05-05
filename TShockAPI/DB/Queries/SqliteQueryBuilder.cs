@@ -95,7 +95,7 @@ public class SqliteQueryBuilder : GenericQueryBuilder, IQueryBuilder
 	}
 
 	/// <inheritdoc />
-	protected override string EscapeColumnName(string column) => $"\'{column}\'";
+	protected override string EscapeColumnName(string column) => $"\"{column.Replace("\"", "\"\"")}\"";
 
 	/// <summary>
 	/// Escapes the table name
