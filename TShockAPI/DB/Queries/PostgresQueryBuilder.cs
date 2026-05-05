@@ -1,4 +1,4 @@
-﻿/*
+/*
 TShock, a server mod for Terraria
 Copyright (C) 2011-2025 Pryaxis & TShock Contributors
 
@@ -47,6 +47,9 @@ public class PostgresQueryBuilder : GenericQueryBuilder
 	};
 
 	/// <inheritdoc />
+	protected override string EscapeColumnName(string column) => $"\"{column.ToLowerInvariant().Replace("\"", "\"\"")}\"";
+
+	/// <inheritdoc />
 	protected override string EscapeTableName(string table) => table.SFormat("\"{0}\"", table);
 
 	/// <inheritdoc />
@@ -68,7 +71,7 @@ public class PostgresQueryBuilder : GenericQueryBuilder
 				dataType = DbTypeToString(c.Type, c.Length);
 			}
 
-			return "{0} {1} {2} {3} {4}".SFormat(c.Name,
+			return "{0} {1} {2} {3} {4}".SFormat(EscapeColumnName(c.Name),
 				dataType,
 				c.Primary ? "PRIMARY KEY" : "",
 				c.NotNull && !c.AutoIncrement ? "NOT NULL" : "", // SERIAL implies NOT NULL
@@ -76,7 +79,7 @@ public class PostgresQueryBuilder : GenericQueryBuilder
 		});
 
 		string[] uniques = table.Columns
-			.Where(c => c.Unique).Select(c => c.Name)
+			.Where(c => c.Unique).Select(c => EscapeColumnName(c.Name))
 			.ToArray(); // No re-enumeration
 
 		return $"CREATE TABLE {EscapeTableName(table.Name)} ({string.Join(", ", columns)} {(uniques.Any() ? ", UNIQUE({0})".SFormat(string.Join(", ", uniques)) : "")})";
