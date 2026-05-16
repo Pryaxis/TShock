@@ -2361,12 +2361,8 @@ namespace TShockAPI
 
 			// if released npc not from its item (from crafted packet)
 			// e.g. using bunny item to release golden bunny
-			if (args.Player.TPlayer.lastVisualizedSelectedItem.makeNPC != type || args.Player.TPlayer.lastVisualizedSelectedItem.placeStyle != style)
+			if (args.Player.SelectedItem.makeNPC != type || args.Player.SelectedItem.placeStyle != style)
 			{
-				// If the critter is an Explosive Bunny, check if we've recently created an Explosive Bunny projectile.
-				// If we have, check if the critter we are trying to create is within range of the projectile
-				// If we have at least one of those, then this wasn't a crafted packet, but simply a delayed critter release from an
-				// Explosive Bunny projectile.
 				if (type == NPCID.ExplosiveBunny)
 				{
 					if (args.Player.TPlayer.ownedProjectileCounts[ProjectileID.ExplosiveBunny] == 0)
