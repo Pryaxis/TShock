@@ -3392,10 +3392,12 @@ namespace TShockAPI
 			}
 			if (args.Player.IsBeingDisabled())
 			{
+				int num = Item.NewItem(null, (args.TileX * 16) + 8, (args.TileY * 16) + 8, args.Player.TPlayer.width, args.Player.TPlayer.height, args.ItemID, args.Stack, noBroadcast: true, args.Prefix, noGrabDelay: true);
+				Main.item[num].playerIndexTheItemIsReservedFor = args.Player.Index;
+				NetMessage.SendData((int)PacketTypes.ItemDrop, args.Player.Index, -1, NetworkText.Empty, num, 1f);
+				NetMessage.SendData((int)PacketTypes.ItemOwner, args.Player.Index, -1, NetworkText.Empty, num);
+				
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnDisplayJarTryPlacing rejected disabled from {0}", args.Player.Name));
-				Item item = new Item();
-				item.netDefaults(args.ItemID);
-				args.Player.GiveItemCheck(args.ItemID, item.Name, args.Stack, args.Prefix);
 				args.Player.SendTileSquareCentered(args.TileX, args.TileY, 1);
 				args.Handled = true;
 				return;
@@ -3403,10 +3405,12 @@ namespace TShockAPI
 
 			if (!args.Player.HasBuildPermission(args.TileX, args.TileY))
 			{
+				int num = Item.NewItem(null, (args.X * 16) + 8, (args.Y * 16) + 8, args.Player.TPlayer.width, args.Player.TPlayer.height, args.ItemID, args.Stack, noBroadcast: true, args.Prefix, noGrabDelay: true);
+				Main.item[num].playerIndexTheItemIsReservedFor = args.Player.Index;
+				NetMessage.SendData((int)PacketTypes.ItemDrop, args.Player.Index, -1, NetworkText.Empty, num, 1f);
+				NetMessage.SendData((int)PacketTypes.ItemOwner, args.Player.Index, -1, NetworkText.Empty, num);
+				
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnDisplayJarTryPlacing rejected permissions from {0}", args.Player.Name));
-				Item item = new Item();
-				item.netDefaults(args.ItemID);
-				args.Player.GiveItemCheck(args.ItemID, item.Name, args.Stack, args.Prefix);
 				args.Player.SendTileSquareCentered(args.TileX, args.TileY, 1);
 				args.Handled = true;
 				return;
