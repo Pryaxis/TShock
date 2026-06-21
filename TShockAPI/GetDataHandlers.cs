@@ -2854,46 +2854,56 @@ namespace TShockAPI
 					if (!TShock.Groups.AssertGroupValid(args.Player, group, true))
 						return true;
 
-					args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, account.ID);
-					if (Main.ServerSideCharacter && TShock.CharacterDB.IsSeededAppearanceMissing(args.Player.PlayerData))
+					// Require manual /login for superadmin accounts (fixes #3278)
+					if (TShock.Config.Settings.DisableSuperAdminUUIDLogin && group.Name == "superadmin")
 					{
-						TShock.CharacterDB.SyncSeededAppearance(account, args.Player);
+						args.Player.SendInfoMessage(GetString("Automatic login disabled for superadmin accounts. Please use /login."));
+						return true;
+					}
+					else
+					{
+
 						args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, account.ID);
-					}
-
-					args.Player.Group = group;
-					args.Player.tempGroup = null;
-					args.Player.Account = account;
-					args.Player.IsLoggedIn = true;
-					args.Player.IsDisabledForSSC = false;
-
-					if (Main.ServerSideCharacter)
-					{
-						if (args.Player.HasPermission(Permissions.bypassssc))
+						if (Main.ServerSideCharacter && TShock.CharacterDB.IsSeededAppearanceMissing(args.Player.PlayerData))
 						{
-							if (args.Player.PlayerData.exists && TShock.ServerSideCharacterConfig.Settings.WarnPlayersAboutBypassPermission)
-							{
-								args.Player.SendWarningMessage(GetString("Bypass SSC is enabled for your account. SSC data will not be loaded or saved."));
-								TShock.Log.ConsoleInfo(GetString($"{args.Player.Name} has SSC data in the database, but has the tshock.ignore.ssc permission. This means their SSC data is being ignored."));
-								TShock.Log.ConsoleInfo(GetString("You may wish to consider removing the tshock.ignore.ssc permission or negating it for this player."));
-							}
-							args.Player.PlayerData.CopyCharacter(args.Player);
-							TShock.CharacterDB.InsertPlayerData(args.Player);
+							TShock.CharacterDB.SyncSeededAppearance(account, args.Player);
+							args.Player.PlayerData = TShock.CharacterDB.GetPlayerData(args.Player, account.ID);
 						}
-						args.Player.PlayerData.RestoreCharacter(args.Player);
+
+						args.Player.Group = group;
+						args.Player.tempGroup = null;
+						args.Player.Account = account;
+						args.Player.IsLoggedIn = true;
+						args.Player.IsDisabledForSSC = false;
+
+						if (Main.ServerSideCharacter)
+						{
+							if (args.Player.HasPermission(Permissions.bypassssc))
+							{
+								if (args.Player.PlayerData.exists && TShock.ServerSideCharacterConfig.Settings.WarnPlayersAboutBypassPermission)
+								{
+									args.Player.SendWarningMessage(GetString("Bypass SSC is enabled for your account. SSC data will not be loaded or saved."));
+									TShock.Log.ConsoleInfo(GetString($"{args.Player.Name} has SSC data in the database, but has the tshock.ignore.ssc permission. This means their SSC data is being ignored."));
+									TShock.Log.ConsoleInfo(GetString("You may wish to consider removing the tshock.ignore.ssc permission or negating it for this player."));
+								}
+								args.Player.PlayerData.CopyCharacter(args.Player);
+								TShock.CharacterDB.InsertPlayerData(args.Player);
+							}
+							args.Player.PlayerData.RestoreCharacter(args.Player);
+						}
+						args.Player.LoginFailsBySsi = false;
+
+						if (args.Player.HasPermission(Permissions.ignorestackhackdetection))
+							args.Player.IsDisabledForStackDetection = false;
+
+						if (args.Player.HasPermission(Permissions.usebanneditem))
+							args.Player.IsDisabledForBannedWearable = false;
+
+						args.Player.SendSuccessMessage(GetString($"Authenticated as {account.Name} successfully."));
+						TShock.Log.ConsoleInfo(GetString($"{args.Player.Name} authenticated successfully as user {args.Player.Name}."));
+						Hooks.PlayerHooks.OnPlayerPostLogin(args.Player);
+						return true;
 					}
-					args.Player.LoginFailsBySsi = false;
-
-					if (args.Player.HasPermission(Permissions.ignorestackhackdetection))
-						args.Player.IsDisabledForStackDetection = false;
-
-					if (args.Player.HasPermission(Permissions.usebanneditem))
-						args.Player.IsDisabledForBannedWearable = false;
-
-					args.Player.SendSuccessMessage(GetString($"Authenticated as {account.Name} successfully."));
-					TShock.Log.ConsoleInfo(GetString($"{args.Player.Name} authenticated successfully as user {args.Player.Name}."));
-					Hooks.PlayerHooks.OnPlayerPostLogin(args.Player);
-					return true;
 				}
 			}
 			else if (account != null && !TShock.Config.Settings.DisableLoginBeforeJoin)
