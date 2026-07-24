@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2026-04-03 11:18:41+0000\n"
-"PO-Revision-Date: 2026-04-03 12:01\n"
+"PO-Revision-Date: 2026-07-24 20:48\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "MIME-Version: 1.0\n"
@@ -7115,7 +7115,7 @@ msgstr "O caminho do mundo foi definido para {0}"
 
 #: ../../TShockAPI/SaveManager.cs:145
 msgid "World save failed"
-msgstr ""
+msgstr "Erro ao salvar o mundo"
 
 #: ../../TShockAPI/SaveManager.cs:141
 #, csharp-format
@@ -7479,7 +7479,7 @@ msgstr "Você não tem permissão para invocar Chefões."
 
 #: ../../TShockAPI/Bouncer.cs:698
 msgid "You do not have permission to summon Plantera."
-msgstr ""
+msgstr "Você não tem permissão para invocar Plantera."
 
 #: ../../TShockAPI/GetDataHandlers.cs:3368
 msgid "You do not have permission to summon the Empress of Light."
@@ -7495,7 +7495,7 @@ msgstr "Você não tem permissão para invocar o Skeletron."
 
 #: ../../TShockAPI/Bouncer.cs:1294
 msgid "You do not have permission to summon the Wall of Flesh."
-msgstr ""
+msgstr "Você não tem permissão para invocar a Parede de Carne."
 
 #: ../../TShockAPI/Commands.cs:3180
 msgid "You do not have permission to teleport all other players."
