@@ -2537,7 +2537,7 @@ namespace TShockAPI
 					}
 					else
 					{
-						Main.StartRain(garenteeCoinRain: true);
+						Main.StartRain(guaranteeCoinRain: true);
 						TSPlayer.All.SendData(PacketTypes.WorldInfo);
 						TSPlayer.All.SendInfoMessage(GetString("{0} caused it to coin rain.", args.Player.Name));
 					}

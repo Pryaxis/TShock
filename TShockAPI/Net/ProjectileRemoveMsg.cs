@@ -30,20 +30,21 @@ namespace TShockAPI.Net
 
 		public short Index { get; set; }
 		public byte Owner { get; set; }
+		/// <summary>Slot-reuse counter of the projectile being removed. A stale generation makes
+		/// clients treat the key as a fresh (type 0) projectile, which still clears the slot.</summary>
+		public int Generation { get; set; }
 
 		public override void Pack(Stream stream)
 		{
-			stream.WriteInt16(Index);
+			// ProjectileKey: spawner:8 | index:10 | generation:14
+			int key = (Owner & 255) | (Index & 1023) << 8 | (Generation & 16383) << 18;
+			stream.WriteInt32(key);
 			stream.WriteSingle(-1);
 			stream.WriteSingle(-1);
 			stream.WriteSingle(0);
 			stream.WriteSingle(0);
-			stream.WriteSingle(0);
 			stream.WriteInt16(0);
-			stream.WriteByte(Owner);
-			stream.WriteInt16(0);
-			stream.WriteSingle(0);
-			stream.WriteSingle(0);
+			stream.WriteByte(0);
 		}
 	}
 }

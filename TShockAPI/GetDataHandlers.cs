@@ -3260,8 +3260,21 @@ namespace TShockAPI
 			var vel = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
 			var stacks = args.Data.ReadInt16();
 			var prefix = args.Data.ReadInt8();
-			var noDelay = args.Data.ReadInt8() == 1;
+			BitsByte flags = args.Data.ReadInt8();
+			// Bits 0-1: Terraria.NewItemOwnership (0 None, 1 ReserveForLocalPlayer,
+			// 2 GrabDelayForLocalPlayer, 3 GrabDelayForAllPlayers)
+			var ownership = (byte)((flags[0] ? 1 : 0) | (flags[1] ? 2 : 0));
+			var noDelay = ownership <= 1;
 			var type = args.Data.ReadInt16();
+			if (flags[2])
+			{
+				args.Data.ReadBoolean(); // shimmered
+				args.Data.ReadSingle(); // shimmerTime
+			}
+			if (flags[3])
+			{
+				args.Data.ReadInt8(); // enemyGrabDelayTime
+			}
 
 			if (OnItemDrop(args.Player, args.Data, id, pos, vel, stacks, prefix, noDelay, type))
 				return true;
@@ -3271,6 +3284,8 @@ namespace TShockAPI
 
 		private static bool HandleItemOwner(GetDataHandlerArgs args)
 		{
+			// As of 1.4.5.7 this packet is server->client only and vanilla ignores it inbound;
+			// clients no longer send it (including the old slot-400 SSC echo).
 			var id = args.Data.ReadInt16();
 			var owner = args.Data.ReadInt8();
 
@@ -3295,10 +3310,14 @@ namespace TShockAPI
 
 		private static bool HandleProjectileNew(GetDataHandlerArgs args)
 		{
-			short ident = args.Data.ReadInt16();
+			// 1.4.5.7: a packed ProjectileKey (spawner:8 | index:10 | generation:14) replaces
+			// the old identity short + owner byte; the trailing bit7 UUID short is gone.
+			uint key = (uint)args.Data.ReadInt32();
+			byte owner = (byte)(key & 255u);
+			short ident = (short)(key >> 8 & 1023u);
+			int generation = (int)(key >> 18 & 16383u);
 			Vector2 pos = args.Data.ReadVector2();
 			Vector2 vel = args.Data.ReadVector2();
-			byte owner = args.Data.ReadInt8();
 			short type = args.Data.ReadInt16();
 			BitsByte bitsByte = (BitsByte)args.Data.ReadByte();
 			BitsByte bitsByte2 = (BitsByte)(bitsByte[2] ? args.Data.ReadByte() : 0);
@@ -3310,11 +3329,17 @@ namespace TShockAPI
 			short dmg = (short)(bitsByte[4] ? args.Data.ReadInt16() : 0);
 			float knockback = bitsByte[5] ? args.Data.ReadSingle() : 0f;
 			short origDmg = (short)(bitsByte[6] ? args.Data.ReadInt16() : 0);
-			short projUUID = (short)(bitsByte[7] ? args.Data.ReadInt16() : -1);
-			if (projUUID >= 1000) projUUID = -1;
 			ai[2] = (bitsByte2[0] ? args.Data.ReadSingle() : 0f);
 
-			var index = TShock.Utils.SearchProjectile(ident, owner);
+			// Vanilla rejects keys whose spawner isn't the sending client; mirror that here.
+			if (owner != args.Player.Index)
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleProjectileNew rejected key spawner mismatch {0}", args.Player.Name));
+				return true;
+			}
+
+			// The key's index is the projectile slot; the old identity scan no longer applies.
+			var index = (int)ident;
 
 			// Cattiva's dig ability can bypass build permissions via vanilla exploit in Terraria v1.4.5
 			// Block ai[0] == 3 (dig state)
@@ -3344,11 +3369,18 @@ namespace TShockAPI
 
 		private static bool HandleNpcStrike(GetDataHandlerArgs args)
 		{
-			var id = args.Data.ReadInt16();
+			// 1.4.5.7: slot shrank to a byte and gained a generation byte (slot-reuse guard).
+			// Vanilla drops strikes whose generation doesn't match and acks each one with
+			// packet 162 (DamageNPCAck).
+			short id = args.Data.ReadInt8();
+			var generation = args.Data.ReadInt8();
 			var dmg = args.Data.ReadInt16();
 			var knockback = args.Data.ReadSingle();
 			var direction = (byte)(args.Data.ReadInt8() - 1);
 			var crit = args.Data.ReadInt8();
+
+			if (id >= Main.npc.Length)
+				return true;
 
 			if (OnNPCStrike(args.Player, args.Data, id, direction, dmg, knockback, crit))
 				return true;
@@ -3393,10 +3425,15 @@ namespace TShockAPI
 
 		private static bool HandleProjectileKill(GetDataHandlerArgs args)
 		{
-			var ident = args.Data.ReadInt16();
-			var owner = args.Data.ReadInt8();
-			owner = (byte)args.Player.Index;
-			var index = TShock.Utils.SearchProjectile(ident, owner);
+			// 1.4.5.7: i32 ProjectileKey + kill-effect position replace the old identity/owner pair.
+			uint key = (uint)args.Data.ReadInt32();
+			var killPos = args.Data.ReadVector2();
+			var ident = (short)(key >> 8 & 1023u);
+			var owner = (byte)args.Player.Index;
+			var index = (int)ident;
+
+			if (index >= Main.projectile.Length)
+				return true;
 
 			if (OnProjectileKill(args.Player, args.Data, ident, owner, index))
 			{
@@ -4280,8 +4317,8 @@ namespace TShockAPI
 
 		private static bool HandleCatchNpc(GetDataHandlerArgs args)
 		{
+			// 1.4.5.7 removed the trailing "who" byte; the server uses the sender's index.
 			var npcID = args.Data.ReadInt16();
-			var who = args.Data.ReadByte();
 
 			if (Main.npc[npcID]?.catchItem == 0)
 			{
@@ -5193,6 +5230,7 @@ namespace TShockAPI
 			Ping,
 			Ambience,
 			Bestiary,
+			CreativeUnlocks,
 			CreativePowers,
 			CreativeUnlocksPlayerReport,
 			TeleportPylon,
@@ -5200,11 +5238,8 @@ namespace TShockAPI
 			CreativePowerPermissions,
 			Banners,
 			CraftingRequests,
-			TagEffectState,
 			LeashedEntity,
-			UnbreakableWallScan,
-			[Obsolete("Removed in 1.4.5")]
-			CreativeUnlocks
+			UnbreakableWallScan
 		}
 
 		public enum CreativePowerTypes
