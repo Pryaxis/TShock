@@ -1749,6 +1749,19 @@ namespace TShockAPI
 			if (slot >= 0 && slot < Main.maxProjectiles)
 				generation = Main.projectile[slot].key.Generation;
 
+			RemoveProjectile(index, owner, generation);
+		}
+
+		/// <summary>
+		/// Removes a projectile whose generation is already known - typically straight from the
+		/// packet that asked for it. Prefer this when rejecting a projectile the server has not
+		/// created yet, because the server-side lookup cannot resolve one that doesn't exist.
+		/// </summary>
+		/// <param name="index">The projectile's identity.</param>
+		/// <param name="owner">The player index of the projectile's owner.</param>
+		/// <param name="generation">Slot-reuse counter from the sender's ProjectileKey.</param>
+		public void RemoveProjectile(int index, int owner, int generation)
+		{
 			using (var ms = new MemoryStream())
 			{
 				var msg = new ProjectileRemoveMsg

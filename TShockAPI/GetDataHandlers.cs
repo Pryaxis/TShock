@@ -701,6 +701,12 @@ namespace TShockAPI
 			public int Index { get; set; }
 
 			/// <summary>
+			/// Slot-reuse counter from the sender's ProjectileKey. The server has not created
+			/// the projectile yet at this point, so this is the only way to address it back.
+			/// </summary>
+			public int Generation { get; set; }
+
+			/// <summary>
 			/// The special meaning of the projectile.
 			/// </summary>
 			public float[] Ai { get; set; }
@@ -709,7 +715,7 @@ namespace TShockAPI
 		/// NewProjectile - Called when a client creates a new projectile
 		/// </summary>
 		public static HandlerList<NewProjectileEventArgs> NewProjectile = new HandlerList<NewProjectileEventArgs>();
-		private static bool OnNewProjectile(MemoryStream data, short ident, Vector2 pos, Vector2 vel, float knockback, short dmg, byte owner, short type, int index, TSPlayer player, float[] ai)
+		private static bool OnNewProjectile(MemoryStream data, short ident, Vector2 pos, Vector2 vel, float knockback, short dmg, byte owner, short type, int index, TSPlayer player, float[] ai, int generation)
 		{
 			if (NewProjectile == null)
 				return false;
@@ -726,7 +732,8 @@ namespace TShockAPI
 				Type = type,
 				Index = index,
 				Player = player,
-				Ai = ai
+				Ai = ai,
+				Generation = generation
 			};
 			NewProjectile.Invoke(null, args);
 			return args.Handled;
@@ -790,6 +797,8 @@ namespace TShockAPI
 			public byte ProjectileOwner;
 			/// <summary>The index of the projectile in Main.projectile.</summary>
 			public int ProjectileIndex;
+			/// <summary>Slot-reuse counter from the sender's ProjectileKey.</summary>
+			public int ProjectileGeneration;
 		}
 		/// <summary>The event fired when a projectile kill packet is received.</summary>
 		public static HandlerList<ProjectileKillEventArgs> ProjectileKill = new HandlerList<ProjectileKillEventArgs>();
@@ -800,7 +809,7 @@ namespace TShockAPI
 		/// <param name="owner">The projectile's owner (from the packet).</param>
 		/// <param name="index">The projectile's index (from Main.projectiles).</param>
 		/// <returns>bool</returns>
-		private static bool OnProjectileKill(TSPlayer player, MemoryStream data, int identity, byte owner, int index)
+		private static bool OnProjectileKill(TSPlayer player, MemoryStream data, int identity, byte owner, int index, int generation)
 		{
 			if (ProjectileKill == null)
 				return false;
@@ -812,6 +821,7 @@ namespace TShockAPI
 				ProjectileIdentity = identity,
 				ProjectileOwner = owner,
 				ProjectileIndex = index,
+				ProjectileGeneration = generation,
 			};
 
 			ProjectileKill.Invoke(null, args);
@@ -3356,7 +3366,7 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (OnNewProjectile(args.Data, ident, pos, vel, knockback, dmg, owner, type, index, args.Player, ai))
+			if (OnNewProjectile(args.Data, ident, pos, vel, knockback, dmg, owner, type, index, args.Player, ai, key.Generation))
 				return true;
 
 			lock (args.Player.RecentlyCreatedProjectiles)
@@ -3463,7 +3473,7 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (OnProjectileKill(args.Player, args.Data, ident, owner, index))
+			if (OnProjectileKill(args.Player, args.Data, ident, owner, index, key.Generation))
 			{
 				return true;
 			}
