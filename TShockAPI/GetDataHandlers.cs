@@ -3310,12 +3310,11 @@ namespace TShockAPI
 
 		private static bool HandleProjectileNew(GetDataHandlerArgs args)
 		{
-			// 1.4.5.7: a packed ProjectileKey (spawner:8 | index:10 | generation:14) replaces
-			// the old identity short + owner byte; the trailing bit7 UUID short is gone.
-			uint key = (uint)args.Data.ReadInt32();
-			byte owner = (byte)(key & 255u);
-			short ident = (short)(key >> 8 & 1023u);
-			int generation = (int)(key >> 18 & 16383u);
+			// 1.4.5.7: a packed ProjectileKey replaces the old identity short + owner byte;
+			// the trailing bit7 UUID short is gone.
+			var key = (ProjectileKey)args.Data.ReadInt32();
+			byte owner = (byte)key.Spawner;
+			short ident = (short)key.Index;
 			Vector2 pos = args.Data.ReadVector2();
 			Vector2 vel = args.Data.ReadVector2();
 			short type = args.Data.ReadInt16();
@@ -3331,15 +3330,23 @@ namespace TShockAPI
 			short origDmg = (short)(bitsByte[6] ? args.Data.ReadInt16() : 0);
 			ai[2] = (bitsByte2[0] ? args.Data.ReadSingle() : 0f);
 
-			// Vanilla rejects keys whose spawner isn't the sending client; mirror that here.
+			// Vanilla drops hostile projectile types and keys whose spawner isn't the sending
+			// client before touching any state; mirror both here.
+			if (type < 0 || type >= Main.projHostile.Length || Main.projHostile[type])
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleProjectileNew rejected hostile projectile type {0}", args.Player.Name));
+				return true;
+			}
+
 			if (owner != args.Player.Index)
 			{
 				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleProjectileNew rejected key spawner mismatch {0}", args.Player.Name));
 				return true;
 			}
 
-			// The key's index is the projectile slot; the old identity scan no longer applies.
-			var index = (int)ident;
+			// Resolves to 1000 for a projectile the server has not created yet, matching what
+			// the pre-1.4.5.7 identity scan returned in the same situation.
+			var index = TShock.Utils.SearchProjectile(ident, owner);
 
 			// Cattiva's dig ability can bypass build permissions via vanilla exploit in Terraria v1.4.5
 			// Block ai[0] == 3 (dig state)
@@ -3381,6 +3388,14 @@ namespace TShockAPI
 
 			if (id >= Main.npc.Length)
 				return true;
+
+			// Vanilla drops the strike outright when the generation counter doesn't match the
+			// NPC currently in that slot, which is what stops a recycled slot from being hit.
+			if (Main.npc[id].generation != generation)
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleNpcStrike rejected npc generation mismatch {0}", args.Player.Name));
+				return true;
+			}
 
 			if (OnNPCStrike(args.Player, args.Data, id, direction, dmg, knockback, crit))
 				return true;
@@ -3426,14 +3441,27 @@ namespace TShockAPI
 		private static bool HandleProjectileKill(GetDataHandlerArgs args)
 		{
 			// 1.4.5.7: i32 ProjectileKey + kill-effect position replace the old identity/owner pair.
-			uint key = (uint)args.Data.ReadInt32();
+			var key = (ProjectileKey)args.Data.ReadInt32();
 			var killPos = args.Data.ReadVector2();
-			var ident = (short)(key >> 8 & 1023u);
+			var ident = (short)key.Index;
 			var owner = (byte)args.Player.Index;
-			var index = (int)ident;
 
-			if (index >= Main.projectile.Length)
+			// Vanilla resolves the key through Projectile.TryLookup, which compares the whole
+			// key including its generation counter, so a stale key kills nothing. Drop those
+			// rather than acting on whatever currently occupies the slot.
+			if (!key.TryGet(out var killed) || !killed.active)
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleProjectileKill rejected stale projectile key {0}", args.Player.Name));
 				return true;
+			}
+
+			var index = killed.whoAmI;
+
+			if (killed.owner != args.Player.Index)
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleProjectileKill rejected owner mismatch {0}", args.Player.Name));
+				return true;
+			}
 
 			if (OnProjectileKill(args.Player, args.Data, ident, owner, index))
 			{

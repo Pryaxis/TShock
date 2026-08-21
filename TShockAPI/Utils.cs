@@ -1,4 +1,4 @@
-/*
+﻿/*
 TShock, a server mod for Terraria
 Copyright (C) 2011-2019 Pryaxis & TShock Contributors
 
@@ -779,10 +779,21 @@ namespace TShockAPI
 		/// <returns>projectile ID</returns>
 		public int SearchProjectile(short identity, int owner)
 		{
-			// 1.4.5.7 replaced Projectile.identity with ProjectileKey, whose index component
-			// is the slot in Main.projectile, so the lookup is direct.
-			if (identity >= 0 && identity < Main.maxProjectiles && Main.projectile[identity].owner == owner)
-				return identity;
+			// 1.4.5.7 replaced the Projectile.identity field with ProjectileKey. The key's Index
+			// component is a client-local identity, NOT the server slot; Projectile.keyToIndex
+			// maps (spawner, identity) onto the real index in Main.projectile.
+			if (identity < 0 || identity > 1000 || owner < 0 || owner > 255)
+				return 1000;
+
+			int index = Projectile.keyToIndex[owner, identity];
+			if (index < 0 || index >= Main.maxProjectiles)
+				return 1000;
+
+			// keyToIndex entries are never cleared, so confirm the slot still holds this key.
+			var key = Main.projectile[index].key;
+			if (key.Spawner == owner && key.Index == identity)
+				return index;
+
 			return 1000;
 		}
 

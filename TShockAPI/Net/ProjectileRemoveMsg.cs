@@ -30,8 +30,9 @@ namespace TShockAPI.Net
 
 		public short Index { get; set; }
 		public byte Owner { get; set; }
-		/// <summary>Slot-reuse counter of the projectile being removed. A stale generation makes
-		/// clients treat the key as a fresh (type 0) projectile, which still clears the slot.</summary>
+		/// <summary>Slot-reuse counter of the projectile being removed. This MUST match the live
+		/// projectile's generation: the client resolves the key through Projectile.TryLookup, and
+		/// on a mismatch it allocates a brand new slot instead of clearing the offending one.</summary>
 		public int Generation { get; set; }
 
 		public override void Pack(Stream stream)

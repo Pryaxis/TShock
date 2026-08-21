@@ -1740,12 +1740,22 @@ namespace TShockAPI
 		/// <param name="owner">The projectile's owner.</param>
 		public void RemoveProjectile(int index, int owner)
 		{
+			// `index` is the projectile's identity, not its slot. Since 1.4.5.7 the client keys
+			// projectiles on (spawner, identity, generation), so resolve the live projectile and
+			// reuse its generation - a stale one makes the client spawn a new blank projectile
+			// and leave the one we're trying to remove untouched.
+			int generation = 0;
+			int slot = TShock.Utils.SearchProjectile((short)index, owner);
+			if (slot >= 0 && slot < Main.maxProjectiles)
+				generation = Main.projectile[slot].key.Generation;
+
 			using (var ms = new MemoryStream())
 			{
 				var msg = new ProjectileRemoveMsg
 				{
 					Index = (short)index,
-					Owner = (byte)owner
+					Owner = (byte)owner,
+					Generation = generation
 				};
 				msg.PackFull(ms);
 				SendRawData(ms.ToArray());
