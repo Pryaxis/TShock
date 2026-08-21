@@ -3294,8 +3294,11 @@ namespace TShockAPI
 
 		private static bool HandleItemOwner(GetDataHandlerArgs args)
 		{
-			// As of 1.4.5.7 this packet is server->client only and vanilla ignores it inbound;
-			// clients no longer send it (including the old slot-400 SSC echo).
+			// As of 1.4.5.7 vanilla's case 22 is guarded by `Main.netMode != 2`, so a server
+			// ignores this packet entirely and its payload changed shape (7-bit encoded ints,
+			// trailing position). The slot-400 branch below is therefore dead - SSC no longer
+			// depends on it, since RestoreCharacter clears IgnoreSSCPackets in a finally block.
+			// Kept only so an old client echoing the packet still behaves.
 			var id = args.Data.ReadInt16();
 			var owner = args.Data.ReadInt8();
 
@@ -4357,6 +4360,14 @@ namespace TShockAPI
 		{
 			// 1.4.5.7 removed the trailing "who" byte; the server uses the sender's index.
 			var npcID = args.Data.ReadInt16();
+
+			// Vanilla range-checks this before touching Main.npc. Without it a crafted id
+			// indexes out of bounds.
+			if (npcID < 0 || npcID >= Main.maxNPCs)
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleCatchNpc rejected out of range npc {0}", args.Player.Name));
+				return true;
+			}
 
 			if (Main.npc[npcID]?.catchItem == 0)
 			{
