@@ -3459,6 +3459,15 @@ namespace TShockAPI
 			var ident = (short)key.Index;
 			var owner = (byte)args.Player.Index;
 
+			// ProjectileKey.Index is a 10 bit field (0-1023) but Projectile.keyToIndex only has
+			// Main.maxProjectiles + 1 columns, and TryGet does not bounds check the lookup, so an
+			// out of range index throws rather than simply missing.
+			if (key.Index > Main.maxProjectiles)
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleProjectileKill rejected out of range projectile index {0}", args.Player.Name));
+				return true;
+			}
+
 			// Vanilla resolves the key through Projectile.TryLookup, which compares the whole
 			// key including its generation counter, so a stale key kills nothing. Drop those
 			// rather than acting on whatever currently occupies the slot.
