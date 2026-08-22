@@ -701,8 +701,7 @@ namespace TShockAPI
 			public int Index { get; set; }
 
 			/// <summary>
-			/// Slot-reuse counter from the sender's ProjectileKey. The server has not created
-			/// the projectile yet at this point, so this is the only way to address it back.
+			/// Slot-reuse counter from the sender's ProjectileKey.
 			/// </summary>
 			public int Generation { get; set; }
 
@@ -3271,8 +3270,7 @@ namespace TShockAPI
 			var stacks = args.Data.ReadInt16();
 			var prefix = args.Data.ReadInt8();
 			BitsByte flags = args.Data.ReadInt8();
-			// Bits 0-1: Terraria.NewItemOwnership (0 None, 1 ReserveForLocalPlayer,
-			// 2 GrabDelayForLocalPlayer, 3 GrabDelayForAllPlayers)
+			// bits 0-1: NewItemOwnership (0 none, 1 reserveLocal, 2 grabDelayLocal, 3 grabDelayAll)
 			var ownership = (byte)((flags[0] ? 1 : 0) | (flags[1] ? 2 : 0));
 			var noDelay = ownership <= 1;
 			var type = args.Data.ReadInt16();
@@ -3294,11 +3292,7 @@ namespace TShockAPI
 
 		private static bool HandleItemOwner(GetDataHandlerArgs args)
 		{
-			// As of 1.4.5.7 vanilla's case 22 is guarded by `Main.netMode != 2`, so a server
-			// ignores this packet entirely and its payload changed shape (7-bit encoded ints,
-			// trailing position). The slot-400 branch below is therefore dead - SSC no longer
-			// depends on it, since RestoreCharacter clears IgnoreSSCPackets in a finally block.
-			// Kept only so an old client echoing the packet still behaves.
+			// dead since 1.4.5.7 (vanilla guards case 22 with netMode != 2); kept for old clients
 			var id = args.Data.ReadInt16();
 			var owner = args.Data.ReadInt8();
 
@@ -3323,8 +3317,7 @@ namespace TShockAPI
 
 		private static bool HandleProjectileNew(GetDataHandlerArgs args)
 		{
-			// 1.4.5.7: a packed ProjectileKey replaces the old identity short + owner byte;
-			// the trailing bit7 UUID short is gone.
+			// 1.4.5.7: packed ProjectileKey replaces identity+owner, no trailing UUID short
 			var key = (ProjectileKey)args.Data.ReadInt32();
 			byte owner = (byte)key.Spawner;
 			short ident = (short)key.Index;
@@ -3343,8 +3336,6 @@ namespace TShockAPI
 			short origDmg = (short)(bitsByte[6] ? args.Data.ReadInt16() : 0);
 			ai[2] = (bitsByte2[0] ? args.Data.ReadSingle() : 0f);
 
-			// Vanilla drops hostile projectile types and keys whose spawner isn't the sending
-			// client before touching any state; mirror both here.
 			if (type < 0 || type >= Main.projHostile.Length || Main.projHostile[type])
 			{
 				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleProjectileNew rejected hostile projectile type {0}", args.Player.Name));
@@ -3357,9 +3348,6 @@ namespace TShockAPI
 				return true;
 			}
 
-			// Resolves to 1000 for a projectile the server has not created yet, matching what
-			// the pre-1.4.5.7 identity scan returned in the same situation. The generation keeps a
-			// reused identity from resolving onto the projectile that previously held it.
 			var index = TShock.Utils.SearchProjectile(ident, owner, key.Generation);
 
 			// Cattiva's dig ability can bypass build permissions via vanilla exploit in Terraria v1.4.5
@@ -3390,9 +3378,7 @@ namespace TShockAPI
 
 		private static bool HandleNpcStrike(GetDataHandlerArgs args)
 		{
-			// 1.4.5.7: slot shrank to a byte and gained a generation byte (slot-reuse guard).
-			// Vanilla drops strikes whose generation doesn't match and acks each one with
-			// packet 162 (DamageNPCAck).
+			// 1.4.5.7: byte slot + generation byte; ack is packet 162 (DamageNPCAck)
 			short id = args.Data.ReadInt8();
 			var generation = args.Data.ReadInt8();
 			var dmg = args.Data.ReadInt16();
@@ -3403,8 +3389,6 @@ namespace TShockAPI
 			if (id >= Main.npc.Length)
 				return true;
 
-			// Vanilla drops the strike outright when the generation counter doesn't match the
-			// NPC currently in that slot, which is what stops a recycled slot from being hit.
 			if (Main.npc[id].generation != generation)
 			{
 				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleNpcStrike rejected npc generation mismatch {0}", args.Player.Name));
@@ -3454,24 +3438,20 @@ namespace TShockAPI
 
 		private static bool HandleProjectileKill(GetDataHandlerArgs args)
 		{
-			// 1.4.5.7: i32 ProjectileKey + kill-effect position replace the old identity/owner pair.
+			// 1.4.5.7: i32 ProjectileKey + kill position replace identity/owner
 			var key = (ProjectileKey)args.Data.ReadInt32();
 			var killPos = args.Data.ReadVector2();
 			var ident = (short)key.Index;
 			var owner = (byte)args.Player.Index;
 
-			// ProjectileKey.Index is a 10 bit field (0-1023) but Projectile.keyToIndex only has
-			// Main.maxProjectiles + 1 columns, and TryGet does not bounds check the lookup, so an
-			// out of range index throws rather than simply missing.
+			// Index is 10 bits (0-1023), keyToIndex only maxProjectiles+1 wide, TryGet does not bounds check
 			if (key.Index > Main.maxProjectiles)
 			{
 				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleProjectileKill rejected out of range projectile index {0}", args.Player.Name));
 				return true;
 			}
 
-			// Vanilla resolves the key through Projectile.TryLookup, which compares the whole
-			// key including its generation counter, so a stale key kills nothing. Drop those
-			// rather than acting on whatever currently occupies the slot.
+			// vanilla compares the generation too, so a stale key kills nothing
 			if (!key.TryGet(out var killed) || !killed.active)
 			{
 				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleProjectileKill rejected stale projectile key {0}", args.Player.Name));
@@ -4368,11 +4348,10 @@ namespace TShockAPI
 
 		private static bool HandleCatchNpc(GetDataHandlerArgs args)
 		{
-			// 1.4.5.7 removed the trailing "who" byte; the server uses the sender's index.
+			// 1.4.5.7: no trailing "who" byte, server uses the sender's index
 			var npcID = args.Data.ReadInt16();
 
-			// Vanilla range-checks this before touching Main.npc. Without it a crafted id
-			// indexes out of bounds.
+			// a crafted id would index out of bounds
 			if (npcID < 0 || npcID >= Main.maxNPCs)
 			{
 				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleCatchNpc rejected out of range npc {0}", args.Player.Name));

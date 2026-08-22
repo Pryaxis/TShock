@@ -1740,10 +1740,7 @@ namespace TShockAPI
 		/// <param name="owner">The projectile's owner.</param>
 		public void RemoveProjectile(int index, int owner)
 		{
-			// `index` is the projectile's identity, not its slot. Since 1.4.5.7 the client keys
-			// projectiles on (spawner, identity, generation), so resolve the live projectile and
-			// reuse its generation - a stale one makes the client spawn a new blank projectile
-			// and leave the one we're trying to remove untouched.
+			// index is the identity, not the slot; a stale generation makes the client spawn a blank one
 			int generation = 0;
 			int slot = TShock.Utils.SearchProjectile((short)index, owner);
 			if (slot >= 0 && slot < Main.maxProjectiles)
@@ -1753,9 +1750,7 @@ namespace TShockAPI
 		}
 
 		/// <summary>
-		/// Removes a projectile whose generation is already known - typically straight from the
-		/// packet that asked for it. Prefer this when rejecting a projectile the server has not
-		/// created yet, because the server-side lookup cannot resolve one that doesn't exist.
+		/// Removes a projectile whose generation is already known, e.g. straight from the packet.
 		/// </summary>
 		/// <param name="index">The projectile's identity.</param>
 		/// <param name="owner">The player index of the projectile's owner.</param>

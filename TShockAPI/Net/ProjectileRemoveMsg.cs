@@ -30,9 +30,7 @@ namespace TShockAPI.Net
 
 		public short Index { get; set; }
 		public byte Owner { get; set; }
-		/// <summary>Slot-reuse counter of the projectile being removed. This MUST match the live
-		/// projectile's generation: the client resolves the key through Projectile.TryLookup, and
-		/// on a mismatch it allocates a brand new slot instead of clearing the offending one.</summary>
+		/// <summary>Slot-reuse counter. Must match the live projectile, or the client clears the wrong slot.</summary>
 		public int Generation { get; set; }
 
 		public override void Pack(Stream stream)

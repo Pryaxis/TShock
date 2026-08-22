@@ -779,9 +779,7 @@ namespace TShockAPI
 		/// <returns>projectile ID</returns>
 		public int SearchProjectile(short identity, int owner)
 		{
-			// 1.4.5.7 replaced the Projectile.identity field with ProjectileKey. The key's Index
-			// component is a client-local identity, NOT the server slot; Projectile.keyToIndex
-			// maps (spawner, identity) onto the real index in Main.projectile.
+			// key.Index is a client-local identity; keyToIndex maps (spawner, identity) -> real index
 			if (identity < 0 || identity > 1000 || owner < 0 || owner > 255)
 				return 1000;
 
@@ -789,7 +787,7 @@ namespace TShockAPI
 			if (index < 0 || index >= Main.maxProjectiles)
 				return 1000;
 
-			// keyToIndex entries are never cleared, so confirm the slot still holds this key.
+			// keyToIndex is never cleared, so verify the slot still holds this key
 			var key = Main.projectile[index].key;
 			if (key.Spawner == owner && key.Index == identity)
 				return index;
@@ -806,9 +804,7 @@ namespace TShockAPI
 		/// <returns>projectile ID</returns>
 		public int SearchProjectile(short identity, int owner, int generation)
 		{
-			// An identity is reused as soon as the client retires it, so matching only spawner and
-			// identity resolves a new projectile onto the slot its predecessor still occupies.
-			// Vanilla compares the whole key; the generation is what separates the two.
+			// generation separates a reused identity from its predecessor
 			int index = SearchProjectile(identity, owner);
 			if (index < 0 || index >= Main.maxProjectiles)
 				return 1000;

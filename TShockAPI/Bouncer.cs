@@ -1312,8 +1312,6 @@ namespace TShockAPI
 			short type = args.Type;
 			int index = args.Index;
 			float[] ai = args.Ai;
-			// The projectile is rejected before vanilla creates it, so the server can't look its
-			// generation up afterwards - it has to come from the packet.
 			int generation = args.Generation;
 
 			// Clients do send NaN values so we can't just kick them
