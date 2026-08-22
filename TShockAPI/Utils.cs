@@ -798,6 +798,28 @@ namespace TShockAPI
 		}
 
 		/// <summary>
+		/// Searches for a projectile by identity, owner and generation.
+		/// </summary>
+		/// <param name="identity">identity</param>
+		/// <param name="owner">owner</param>
+		/// <param name="generation">slot-reuse counter from the sender's ProjectileKey</param>
+		/// <returns>projectile ID</returns>
+		public int SearchProjectile(short identity, int owner, int generation)
+		{
+			// An identity is reused as soon as the client retires it, so matching only spawner and
+			// identity resolves a new projectile onto the slot its predecessor still occupies.
+			// Vanilla compares the whole key; the generation is what separates the two.
+			int index = SearchProjectile(identity, owner);
+			if (index < 0 || index >= Main.maxProjectiles)
+				return 1000;
+
+			if (Main.projectile[index].key.Generation != generation)
+				return 1000;
+
+			return index;
+		}
+
+		/// <summary>
 		/// Enumerates boundary points of the given region's rectangle.
 		/// </summary>
 		/// <param name="regionArea">The region's area to enumerate through.</param>

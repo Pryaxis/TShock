@@ -3358,8 +3358,9 @@ namespace TShockAPI
 			}
 
 			// Resolves to 1000 for a projectile the server has not created yet, matching what
-			// the pre-1.4.5.7 identity scan returned in the same situation.
-			var index = TShock.Utils.SearchProjectile(ident, owner);
+			// the pre-1.4.5.7 identity scan returned in the same situation. The generation keeps a
+			// reused identity from resolving onto the projectile that previously held it.
+			var index = TShock.Utils.SearchProjectile(ident, owner, key.Generation);
 
 			// Cattiva's dig ability can bypass build permissions via vanilla exploit in Terraria v1.4.5
 			// Block ai[0] == 3 (dig state)
