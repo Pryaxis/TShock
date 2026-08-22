@@ -779,7 +779,6 @@ namespace TShockAPI
 		/// <returns>projectile ID</returns>
 		public int SearchProjectile(short identity, int owner)
 		{
-			// key.Index is a client-local identity; keyToIndex maps (spawner, identity) -> real index
 			if (identity < 0 || identity > 1000 || owner < 0 || owner > 255)
 				return 1000;
 
@@ -804,7 +803,6 @@ namespace TShockAPI
 		/// <returns>projectile ID</returns>
 		public int SearchProjectile(short identity, int owner, int generation)
 		{
-			// generation separates a reused identity from its predecessor
 			int index = SearchProjectile(identity, owner);
 			if (index < 0 || index >= Main.maxProjectiles)
 				return 1000;

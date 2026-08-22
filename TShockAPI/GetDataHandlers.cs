@@ -3270,7 +3270,6 @@ namespace TShockAPI
 			var stacks = args.Data.ReadInt16();
 			var prefix = args.Data.ReadInt8();
 			BitsByte flags = args.Data.ReadInt8();
-			// bits 0-1: NewItemOwnership (0 none, 1 reserveLocal, 2 grabDelayLocal, 3 grabDelayAll)
 			var ownership = (byte)((flags[0] ? 1 : 0) | (flags[1] ? 2 : 0));
 			var noDelay = ownership <= 1;
 			var type = args.Data.ReadInt16();
@@ -3292,7 +3291,7 @@ namespace TShockAPI
 
 		private static bool HandleItemOwner(GetDataHandlerArgs args)
 		{
-			// dead since 1.4.5.7 (vanilla guards case 22 with netMode != 2); kept for old clients
+			// vanilla never runs case 22 on a server; kept for old clients
 			var id = args.Data.ReadInt16();
 			var owner = args.Data.ReadInt8();
 
@@ -3317,7 +3316,6 @@ namespace TShockAPI
 
 		private static bool HandleProjectileNew(GetDataHandlerArgs args)
 		{
-			// 1.4.5.7: packed ProjectileKey replaces identity+owner, no trailing UUID short
 			var key = (ProjectileKey)args.Data.ReadInt32();
 			byte owner = (byte)key.Spawner;
 			short ident = (short)key.Index;
@@ -3378,7 +3376,6 @@ namespace TShockAPI
 
 		private static bool HandleNpcStrike(GetDataHandlerArgs args)
 		{
-			// 1.4.5.7: byte slot + generation byte; ack is packet 162 (DamageNPCAck)
 			short id = args.Data.ReadInt8();
 			var generation = args.Data.ReadInt8();
 			var dmg = args.Data.ReadInt16();
@@ -3438,20 +3435,18 @@ namespace TShockAPI
 
 		private static bool HandleProjectileKill(GetDataHandlerArgs args)
 		{
-			// 1.4.5.7: i32 ProjectileKey + kill position replace identity/owner
 			var key = (ProjectileKey)args.Data.ReadInt32();
 			var killPos = args.Data.ReadVector2();
 			var ident = (short)key.Index;
 			var owner = (byte)args.Player.Index;
 
-			// Index is 10 bits (0-1023), keyToIndex only maxProjectiles+1 wide, TryGet does not bounds check
+			// TryGet does not bounds check, and Index is wider than keyToIndex
 			if (key.Index > Main.maxProjectiles)
 			{
 				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleProjectileKill rejected out of range projectile index {0}", args.Player.Name));
 				return true;
 			}
 
-			// vanilla compares the generation too, so a stale key kills nothing
 			if (!key.TryGet(out var killed) || !killed.active)
 			{
 				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleProjectileKill rejected stale projectile key {0}", args.Player.Name));
@@ -4348,10 +4343,8 @@ namespace TShockAPI
 
 		private static bool HandleCatchNpc(GetDataHandlerArgs args)
 		{
-			// 1.4.5.7: no trailing "who" byte, server uses the sender's index
 			var npcID = args.Data.ReadInt16();
 
-			// a crafted id would index out of bounds
 			if (npcID < 0 || npcID >= Main.maxNPCs)
 			{
 				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleCatchNpc rejected out of range npc {0}", args.Player.Name));
