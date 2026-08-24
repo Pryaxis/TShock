@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2026-04-03 11:18:41+0000\n"
-"PO-Revision-Date: 2026-04-03 12:01\n"
+"PO-Revision-Date: 2026-08-24 08:02\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -7460,7 +7460,7 @@ msgstr "你没有权限召唤Boss。"
 
 #: ../../TShockAPI/Bouncer.cs:698
 msgid "You do not have permission to summon Plantera."
-msgstr ""
+msgstr "你没有权限召唤世纪之花。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:3368
 msgid "You do not have permission to summon the Empress of Light."
@@ -7476,7 +7476,7 @@ msgstr "你没有权限召唤骷髅王。"
 
 #: ../../TShockAPI/Bouncer.cs:1294
 msgid "You do not have permission to summon the Wall of Flesh."
-msgstr ""
+msgstr "你没有权限召唤血肉墙。"
 
 #: ../../TShockAPI/Commands.cs:3180
 msgid "You do not have permission to teleport all other players."
