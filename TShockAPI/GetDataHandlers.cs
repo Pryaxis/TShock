@@ -3291,7 +3291,6 @@ namespace TShockAPI
 
 		private static bool HandleItemOwner(GetDataHandlerArgs args)
 		{
-			// vanilla never runs case 22 on a server; kept for old clients
 			var id = args.Data.ReadInt16();
 			var owner = args.Data.ReadInt8();
 

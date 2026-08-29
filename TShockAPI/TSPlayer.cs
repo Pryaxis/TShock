@@ -1740,7 +1740,6 @@ namespace TShockAPI
 		/// <param name="owner">The projectile's owner.</param>
 		public void RemoveProjectile(int index, int owner)
 		{
-			// index is the identity, not the slot
 			int generation = 0;
 			int slot = TShock.Utils.SearchProjectile((short)index, owner);
 			if (slot >= 0 && slot < Main.maxProjectiles)
