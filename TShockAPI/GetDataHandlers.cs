@@ -1,4 +1,4 @@
-﻿/*
+/*
 TShock, a server mod for Terraria
 Copyright (C) 2011-2019 Pryaxis & TShock Contributors
 
@@ -16,20 +16,21 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using Microsoft.Xna.Framework;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.IO.Streams;
 using System.Linq;
-using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent.Tile_Entities;
 using Terraria.ID;
 using Terraria.Localization;
-using TShockAPI.Models.PlayerUpdate;
 using TShockAPI.Configuration;
+using TShockAPI.Models.PlayerUpdate;
 
 namespace TShockAPI
 {
@@ -136,15 +137,19 @@ namespace TShockAPI
 					{ PacketTypes.Emoji, HandleEmoji },
 					{ PacketTypes.TileEntityDisplayDollItemSync, HandleTileEntityDisplayDollItemSync },
 					{ PacketTypes.RequestTileEntityInteraction, HandleRequestTileEntityInteraction },
+					{ PacketTypes.WeaponsRackTryPlacing, HandleWeaponsRackTryPlacing },
 					{ PacketTypes.SyncTilePicking, HandleSyncTilePicking },
 					{ PacketTypes.SyncRevengeMarker, HandleSyncRevengeMarker },
 					{ PacketTypes.LandGolfBallInCup, HandleLandGolfBallInCup },
 					{ PacketTypes.FishOutNPC, HandleFishOutNPC },
 					{ PacketTypes.FoodPlatterTryPlacing, HandleFoodPlatterTryPlacing },
 					{ PacketTypes.SyncCavernMonsterType, HandleSyncCavernMonsterType },
+					{ PacketTypes.SyncItemsWithShimmer, HandleSyncItemsWithShimmer },
 					{ PacketTypes.SyncLoadout, HandleSyncLoadout },
 					{ PacketTypes.TeamChangeFromUI, HandlePlayerTeam }, // Same packet as PlayerTeam
-					{ PacketTypes.TEDeadCellsDisplayJar, HandleDisplayJar }
+					{ PacketTypes.SyncItemCannotBeTakenByEnemies, HandleSyncItemCannotBeTakenByEnemies },
+					{ PacketTypes.TEDeadCellsDisplayJar, HandleDisplayJar },
+					{ PacketTypes.TELeashedEntityAnchorPlaceItem, HandleLeashedEntityAnchorPlaceItem }
 				};
 		}
 
@@ -2330,6 +2335,50 @@ namespace TShockAPI
 			RequestTileEntityInteraction.Invoke(null, args);
 			return args.Handled;
 		}
+		/// <summary>
+		/// For use in an OnWeaponsRackTryPlacing event.
+		/// </summary>
+		public class WeaponsRackTryPlacingEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>The X coordinate of the weapon rack.</summary>
+			public short X { get; set; }
+
+			/// <summary>The Y coordinate of the weapon rack.</summary>
+			public short Y { get; set; }
+
+			/// <summary>The ItemID of the weapon rack.</summary>
+			public short ItemID { get; set; }
+
+			/// <summary>The prefix.</summary>
+			public byte Prefix { get; set; }
+
+			/// <summary>The stack.</summary>
+			public short Stack { get; set; }
+
+			/// <summary>The ItemFrame object associated with this event.</summary>
+			public TEWeaponsRack WeaponRack { get; set; }
+		}
+		/// <summary>Fired when an WeaponRack is placed.</summary>
+		public static HandlerList<WeaponsRackTryPlacingEventArgs> WeaponsRackTryPlacing = new HandlerList<WeaponsRackTryPlacingEventArgs>();
+		private static bool OnWeaponsRackTryPlacing(TSPlayer player, MemoryStream data, short x, short y, short itemID, byte prefix, short stack, TEWeaponsRack weaponRack)
+		{
+			if (WeaponsRackTryPlacing == null)
+				return false;
+
+			var args = new WeaponsRackTryPlacingEventArgs
+			{
+				Player = player,
+				Data = data,
+				X = x,
+				Y = y,
+				ItemID = itemID,
+				Prefix = prefix,
+				Stack = stack,
+				WeaponRack = weaponRack
+			};
+			WeaponsRackTryPlacing.Invoke(null, args);
+			return args.Handled;
+		}
 
 		/// <summary>
 		/// For use in a SyncTilePicking event.
@@ -2508,6 +2557,127 @@ namespace TShockAPI
 			FoodPlatterTryPlacing.Invoke(null, args);
 			return args.Handled;
 		}
+		
+		/// <summary>
+		/// For use in an SyncItemsWithShimmer event
+		/// </summary>
+		public class SyncItemsWithShimmerEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// ID of the item.
+			/// If below 400 and NetID(Type) is 0 Then Set Null. If ItemID is 400 Then New Item
+			/// </summary>
+			public short ID { get; set; }
+			/// <summary>
+			/// Position of the item
+			/// </summary>
+			public Vector2 Position { get; set; }
+			/// <summary>
+			/// Velocity at which the item is deployed
+			/// </summary>
+			public Vector2 Velocity { get; set; }
+			/// <summary>
+			/// Stacks
+			/// </summary>
+			public short Stacks { get; set; }
+			/// <summary>
+			/// Prefix of the item
+			/// </summary>
+			public byte Prefix { get; set; }
+			/// <summary>
+			/// No Delay on pickup
+			/// </summary>
+			public bool NoDelay { get; set; }
+			/// <summary>
+			/// Item type
+			/// </summary>
+			public short Type { get; set; }
+		}
+		
+		/// <summary>
+		/// SyncItemsWithShimmer - Called when an item is sync on shimmer
+		/// </summary>
+		public static HandlerList<SyncItemsWithShimmerEventArgs> SyncItemsWithShimmer = new HandlerList<SyncItemsWithShimmerEventArgs>();
+		private static bool OnSyncItemsWithShimmer(TSPlayer player, MemoryStream data, short id, Vector2 pos, Vector2 vel, short stacks, byte prefix, bool noDelay, short type)
+		{
+			if (SyncItemsWithShimmer == null)
+				return false;
+
+			var args = new SyncItemsWithShimmerEventArgs
+			{
+				Player = player,
+				Data = data,
+				ID = id,
+				Position = pos,
+				Velocity = vel,
+				Stacks = stacks,
+				Prefix = prefix,
+				NoDelay = noDelay,
+				Type = type,
+			};
+			SyncItemsWithShimmer.Invoke(null, args);
+			return args.Handled;
+		}
+		
+		/// <summary>
+		/// For use in an SyncItemCannotBeTakenByEnemies event
+		/// </summary>
+		public class SyncItemCannotBeTakenByEnemiesEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// ID of the item.
+			/// If below 400 and NetID(Type) is 0 Then Set Null. If ItemID is 400 Then New Item
+			/// </summary>
+			public short ID { get; set; }
+			/// <summary>
+			/// Position of the item
+			/// </summary>
+			public Vector2 Position { get; set; }
+			/// <summary>
+			/// Velocity at which the item is deployed
+			/// </summary>
+			public Vector2 Velocity { get; set; }
+			/// <summary>
+			/// Stacks
+			/// </summary>
+			public short Stacks { get; set; }
+			/// <summary>
+			/// Prefix of the item
+			/// </summary>
+			public byte Prefix { get; set; }
+			/// <summary>
+			/// No Delay on pickup
+			/// </summary>
+			public bool NoDelay { get; set; }
+			/// <summary>
+			/// Item type
+			/// </summary>
+			public short Type { get; set; }
+		}
+		/// <summary>
+		/// SyncItemCannotBeTakenByEnemies - Called when an item is dropped
+		/// </summary>
+		public static HandlerList<SyncItemCannotBeTakenByEnemiesEventArgs> SyncItemCannotBeTakenByEnemies = new HandlerList<SyncItemCannotBeTakenByEnemiesEventArgs>();
+		private static bool OnSyncItemCannotBeTakenByEnemies(TSPlayer player, MemoryStream data, short id, Vector2 pos, Vector2 vel, short stacks, byte prefix, bool noDelay, short type)
+		{
+			if (SyncItemCannotBeTakenByEnemies == null)
+				return false;
+
+			var args = new SyncItemCannotBeTakenByEnemiesEventArgs
+			{
+				Player = player,
+				Data = data,
+				ID = id,
+				Position = pos,
+				Velocity = vel,
+				Stacks = stacks,
+				Prefix = prefix,
+				NoDelay = noDelay,
+				Type = type,
+			};
+			SyncItemCannotBeTakenByEnemies.Invoke(null, args);
+			return args.Handled;
+		}
 
 		public class DisplayJarTryPlacingEventArgs : GetDataHandledEventArgs
 		{
@@ -2588,7 +2758,43 @@ namespace TShockAPI
 			ReadNetModule.Invoke(null, args);
 			return args.Handled;
 		}
+		
+		public class LeashedEntityAnchorPlaceItemEventArgs : GetDataHandledEventArgs
+		{
+			/// <summary>
+			/// The X tile position of the placement action.
+			/// </summary>
+			public ushort TileX { get; set; }
+			/// <summary>
+			/// The Y tile position of the placement action.
+			/// </summary>
+			public ushort TileY { get; set; }
+			/// <summary>
+			/// The Entity ID that is being placed in the display jar.
+			/// </summary>
+			public short EntityID { get; set; }
+		}
+		/// <summary>
+		/// Called when a player is placing an item in a Leashed Entity Anchor.
+		/// </summary>
+		public static HandlerList<LeashedEntityAnchorPlaceItemEventArgs> LeashedEntityAnchorPlaceItem = new HandlerList<LeashedEntityAnchorPlaceItemEventArgs>();
+		private static bool OnLeashedEntityAnchorPlaceItem(TSPlayer player, MemoryStream data, ushort tileX, ushort tileY, short EntityID)
+		{
+			if (LeashedEntityAnchorPlaceItem == null)
+				return false;
 
+			var args = new LeashedEntityAnchorPlaceItemEventArgs
+			{
+				Player = player,
+				Data = data,
+				TileX = tileX,
+				TileY = tileY,
+				EntityID = EntityID,
+			};
+			LeashedEntityAnchorPlaceItem.Invoke(null, args);
+			return args.Handled;
+		}
+		
 		#endregion
 
 		private static bool HandlePlayerInfo(GetDataHandlerArgs args)
@@ -4878,6 +5084,23 @@ namespace TShockAPI
 			return false;
 		}
 
+		private static bool HandleWeaponsRackTryPlacing(GetDataHandlerArgs args)
+		{
+			short x = args.Data.ReadInt16();
+			short y = args.Data.ReadInt16();
+			short itemID = args.Data.ReadInt16();
+			byte prefix = args.Data.ReadInt8();
+			short stack = args.Data.ReadInt16();
+			TEWeaponsRack WeaponRack = (TEWeaponsRack)TileEntity.ByID[TEWeaponsRack.Find(x, y)];
+
+			if (OnWeaponsRackTryPlacing(args.Player, args.Data, x, y, itemID, prefix, stack, WeaponRack))
+			{
+				return true;
+			}
+
+			return false;
+		}
+
 		private static bool HandleSyncTilePicking(GetDataHandlerArgs args)
 		{
 			byte playerIndex = args.Data.ReadInt8();
@@ -4951,6 +5174,22 @@ namespace TShockAPI
 			args.Player.Kick(GetString("Exploit attempt detected!"));
 			TShock.Log.ConsoleDebug(GetString($"HandleSyncCavernMonsterType: Player is trying to modify NPC cavernMonsterType; this is a crafted packet! - From {args.Player.Name}"));
 			return true;
+		}
+
+		private static bool HandleSyncItemsWithShimmer(GetDataHandlerArgs args)
+		{
+			var id = args.Data.ReadInt16();
+			var pos = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
+			var vel = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
+			var stacks = args.Data.ReadInt16();
+			var prefix = args.Data.ReadInt8();
+			var noDelay = args.Data.ReadInt8() == 1;
+			var type = args.Data.ReadInt16();
+
+			if (OnSyncItemsWithShimmer(args.Player, args.Data, id, pos, vel, stacks, prefix, noDelay, type))
+				return true;
+
+			return false;
 		}
 
 		private static bool HandleSyncLoadout(GetDataHandlerArgs args)
@@ -5041,6 +5280,22 @@ namespace TShockAPI
 			return false;
 		}
 
+		private static bool HandleSyncItemCannotBeTakenByEnemies(GetDataHandlerArgs args)
+		{
+			var id = args.Data.ReadInt16();
+			var pos = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
+			var vel = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
+			var stacks = args.Data.ReadInt16();
+			var prefix = args.Data.ReadInt8();
+			var noDelay = args.Data.ReadInt8() == 1;
+			var type = args.Data.ReadInt16();
+		
+			if (OnSyncItemCannotBeTakenByEnemies(args.Player, args.Data, id, pos, vel, stacks, prefix, noDelay, type))
+				return true;
+		
+			return false;
+		}
+
 		private static bool HandleDisplayJar(GetDataHandlerArgs args)
 		{
 			ushort tileX = args.Data.ReadUInt16();
@@ -5055,6 +5310,20 @@ namespace TShockAPI
 			return false;
 		}
 
+		private static bool HandleLeashedEntityAnchorPlaceItem(GetDataHandlerArgs args)
+		{
+			var x = args.Data.ReadUInt16();
+			var y = args.Data.ReadUInt16();
+			var EntityID = args.Data.ReadInt16();
+			//var leashedEntityAnchor = (TELeashedEntityAnchor)TileEntity.ByID[TELeashedEntityAnchor.fi(x, y)];
+
+			if (OnLeashedEntityAnchorPlaceItem(args.Player, args.Data, x, y, EntityID))
+			{
+				return true;
+			}
+
+			return false;
+		}
 
 		public enum DoorAction
 		{

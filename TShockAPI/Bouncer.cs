@@ -130,6 +130,7 @@ namespace TShockAPI
 			GetDataHandlers.PlaceObject += OnPlaceObject;
 			GetDataHandlers.PlaceTileEntity += OnPlaceTileEntity;
 			GetDataHandlers.PlaceItemFrame += OnPlaceItemFrame;
+			GetDataHandlers.WeaponsRackTryPlacing += OnWeaponsRackTryPlacing;
 			GetDataHandlers.PortalTeleport += OnPlayerPortalTeleport;
 			GetDataHandlers.GemLockToggle += OnGemLockToggle;
 			GetDataHandlers.MassWireOperation += OnMassWireOperation;
@@ -137,7 +138,10 @@ namespace TShockAPI
 			GetDataHandlers.KillMe += OnKillMe;
 			GetDataHandlers.FishOutNPC += OnFishOutNPC;
 			GetDataHandlers.FoodPlatterTryPlacing += OnFoodPlatterTryPlacing;
+			GetDataHandlers.SyncItemsWithShimmer += OnSyncItemsWithShimmer;
+			GetDataHandlers.SyncItemCannotBeTakenByEnemies += OnSyncItemCannotBeTakenByEnemies;
 			GetDataHandlers.DisplayJarTryPlacing += OnDisplayJarTryPlacing;
+			GetDataHandlers.LeashedEntityAnchorPlaceItem += OnLeashedEntityAnchorPlaceItem;
 			OTAPI.Hooks.Chest.QuickStack += OnQuickStack;
 			HookEvents.Terraria.Projectile.Kill_DirtAndFluidProjectiles_RunDelegateMethodPushUpForHalfBricks += OnProjectileDirtFluidKill;
 			HookEvents.Terraria.GameContent.CraftingRequests.CanCraftFromChest += OnChestCraftRequest;
@@ -652,6 +656,15 @@ namespace TShockAPI
 						}
 					}
 
+					if (tile.type == TileID.WeaponsRack2)
+					{
+						int weaponRackId = TEWeaponsRack.Find(tileX - tile.frameX % 36 / 18, tileY - tile.frameY % 36 / 18);
+						if (weaponRackId != -1)
+						{
+							NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, NetworkText.Empty, weaponRackId, 0, 1);
+						}
+					}
+
 					if (tile.type == TileID.DeadCellsDisplayJar)
 					{
 						var displayJar = TEDeadCellsDisplayJar.Find(tileX - tile.frameX % 18 / 18, tileY - tile.frameY % 32 / 18);
@@ -783,6 +796,7 @@ namespace TShockAPI
 					// also add an exception for snake coils, they can be removed when the player places a new one or after x amount of time
 					// If the tile is part of the breakable when placing set, it might be getting broken by a placement.
 					else if (tile.type != TileID.ItemFrame &&
+					         tile.type != TileID.WeaponsRack2 &&
 					         tile.type != TileID.DeadCellsDisplayJar &&
 					         tile.type != TileID.MysticSnakeRope &&
 					         !ItemID.Sets.Explosives[selectedItem.type] &&
@@ -2697,6 +2711,48 @@ namespace TShockAPI
 			}
 		}
 
+		/// <summary>Fired when an weapon rack is placed for anti-cheat detection.</summary>
+		/// <param name="sender">The object that triggered the event.</param>
+		/// <param name="args">The packet arguments that the event has.</param>
+		internal void OnWeaponsRackTryPlacing(object sender, GetDataHandlers.WeaponsRackTryPlacingEventArgs args)
+		{
+			if (!TShock.Utils.TilePlacementValid(args.X, args.Y))
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnWeaponsRackTryPlacing rejected tile placement valid from {0}", args.Player.Name));
+				args.Handled = true;
+				return;
+			}
+
+			if (args.Player.IsBeingDisabled())
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnWeaponsRackTryPlacing rejected disabled from {0}", args.Player.Name));
+				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, NetworkText.Empty, args.WeaponRack.ID, 0, 1);
+				args.Handled = true;
+				return;
+			}
+
+			if (!args.Player.HasBuildPermission(args.X, args.Y))
+			{
+				int num = Item.NewItem(null, (args.X * 16) + 8, (args.Y * 16) + 8, args.Player.TPlayer.width, args.Player.TPlayer.height, args.ItemID, args.Stack, noBroadcast: true, args.Prefix, noGrabDelay: true);
+				Main.item[num].playerIndexTheItemIsReservedFor = args.Player.Index;
+				NetMessage.SendData((int)PacketTypes.ItemDrop, args.Player.Index, -1, NetworkText.Empty, num, 1f);
+				NetMessage.SendData((int)PacketTypes.ItemOwner, args.Player.Index, -1, NetworkText.Empty, num);
+
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnWeaponsRackTryPlacing rejected permissions from {0}", args.Player.Name));
+				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, NetworkText.Empty, args.WeaponRack.ID, 0, 1);
+				args.Handled = true;
+				return;
+			}
+
+			if (!args.Player.IsInRange(args.X, args.Y))
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnWeaponsRackTryPlacing rejected range checks from {0}", args.Player.Name));
+				NetMessage.SendData((int)PacketTypes.UpdateTileEntity, -1, -1, NetworkText.Empty, args.WeaponRack.ID, 0, 1);
+				args.Handled = true;
+				return;
+			}
+		}
+
 		internal void OnPlayerPortalTeleport(object sender, GetDataHandlers.TeleportThroughPortalEventArgs args)
 		{
 			//Packet 96 (player teleport through portal) has no validation on whether or not the player id provided
@@ -3056,6 +3112,246 @@ namespace TShockAPI
 			}
 		}
 
+		/// <summary>Registered when shimmer items fall to the ground to prevent cheating.</summary>
+		/// <param name="sender">The object that triggered the event.</param>
+		/// <param name="args">The packet arguments that the event has.</param>
+		internal void OnSyncItemsWithShimmer(object sender, GetDataHandlers.SyncItemsWithShimmerEventArgs args)
+		{
+			short id = args.ID;
+			Vector2 pos = args.Position;
+			Vector2 vel = args.Velocity;
+			short stacks = args.Stacks;
+			short prefix = args.Prefix;
+			bool noDelay = args.NoDelay;
+			short type = args.Type;
+		
+			if (!float.IsFinite(pos.X) || !float.IsFinite(pos.Y))
+			{
+				TShock.Log.ConsoleInfo(GetString("Bouncer / OnSyncItemsWithShimmer force kicked (attempted to set position to infinity or NaN) from {0}", args.Player.Name));
+				args.Player.Kick(GetString("Detected DOOM set to ON position."), true, true);
+				args.Handled = true;
+				return;
+			}
+		
+			if (!float.IsFinite(vel.X) || !float.IsFinite(vel.Y))
+			{
+				TShock.Log.ConsoleInfo(GetString("Bouncer / OnSyncItemsWithShimmer force kicked (attempted to set velocity to infinity or NaN) from {0}", args.Player.Name));
+				args.Player.Kick(GetString("Detected DOOM set to ON position."), true, true);
+				args.Handled = true;
+				return;
+			}
+		
+			// player is attempting to crash clients
+			if (type < -48 || type >= Terraria.ID.ItemID.Count)
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnSyncItemsWithShimmer rejected from attempt crash from {0}", args.Player.Name));
+				args.Handled = true;
+				return;
+			}
+		
+			// make sure the prefix is a legit value
+			if (prefix > PrefixID.Count)
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnSyncItemsWithShimmer rejected from prefix check from {0}", args.Player.Name));
+		
+				args.Player.SendData(PacketTypes.SyncItemDespawn, "", id);
+				args.Handled = true;
+				return;
+			}
+		
+			if (type == 0)
+			{
+				if (!args.Player.IsInRange((int)(Main.item[id].position.X / 16f), (int)(Main.item[id].position.Y / 16f)))
+				{
+					// Causes item duplications. Will be re added if necessary
+					//args.Player.SendData(PacketTypes.ItemDrop, "", id);
+					TShock.Log.ConsoleDebug(GetString("Bouncer / OnSyncItemsWithShimmer rejected from dupe range check from {0}", args.Player.Name));
+					args.Handled = true;
+					return;
+				}
+		
+				args.Handled = false;
+				return;
+			}
+		
+			if (!args.Player.IsInRange((int)(pos.X / 16f), (int)(pos.Y / 16f), 128))
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnSyncItemsWithShimmer rejected from range check from {0}", args.Player.Name));
+				args.Player.SendData(PacketTypes.SyncItemDespawn, "", id);
+				args.Handled = true;
+				return;
+			}
+		
+			// stop the client from changing the item type of a drop
+			if (Main.item[id].active && Main.item[id].type != type &&
+				!(Main.item[id].type == ItemID.EmptyBucket && type == ItemID.WaterBucket)) // Empty bucket turns into Water Bucket on rainy days
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnSyncItemsWithShimmer rejected from item drop check from {0}", args.Player.Name));
+				args.Player.SendData(PacketTypes.ItemDrop, "", id);
+				args.Handled = true;
+				return;
+			}
+		
+			Item item = new Item();
+			item.netDefaults(type);
+			if ((stacks > item.maxStack || stacks <= 0) || (TShock.ItemBans.DataModel.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), args.Player) && !args.Player.HasPermission(Permissions.allowdroppingbanneditems)))
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnSyncItemsWithShimmer rejected from drop item ban check / max stack check / min stack check from {0}", args.Player.Name));
+				args.Player.SendData(PacketTypes.SyncItemDespawn, "", id);
+				args.Handled = true;
+				return;
+			}
+		
+			// TODO: Remove item ban part of this check
+			if ((Main.ServerSideCharacter) && (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond - args.Player.LoginMS < TShock.ServerSideCharacterConfig.Settings.LogonDiscardThreshold))
+			{
+				//Player is probably trying to sneak items onto the server in their hands!!!
+				TShock.Log.ConsoleInfo(GetString("Player {0} tried to sneak {1} onto the server!", args.Player.Name, item.Name));
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnSyncItemsWithShimmer rejected from sneaky from {0}", args.Player.Name));
+				args.Player.SendData(PacketTypes.SyncItemDespawn, "", id);
+				args.Handled = true;
+				return;
+		
+			}
+		
+			if (args.Player.IsBeingDisabled())
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnSyncItemsWithShimmer rejected from disabled from {0}", args.Player.Name));
+				args.Player.SendData(PacketTypes.SyncItemDespawn, "", id);
+				args.Handled = true;
+				return;
+			}
+		
+			if (type == ItemID.GuideVoodooDoll && args.Player.TPlayer.ZoneUnderworldHeight && !args.Player.HasPermission(Permissions.summonboss))
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnSyncItemsWithShimmer rejected Guide Voodoo Doll drop from {0}", args.Player.Name));
+				args.Player.SendErrorMessage(GetString("You do not have permission to summon the Wall of Flesh."));
+				args.Player.SendData(PacketTypes.SyncItemDespawn, "", id);
+				args.Handled = true;
+				return;
+			}
+		}
+		
+		/// <summary>Registered when item items fall from enemy strike to the ground to prevent cheating.</summary>
+		/// <param name="sender">The object that triggered the event.</param>
+		/// <param name="args">The packet arguments that the event has.</param>
+		internal void OnSyncItemCannotBeTakenByEnemies(object sender, GetDataHandlers.SyncItemCannotBeTakenByEnemiesEventArgs args)
+		{
+			short id = args.ID;
+			Vector2 pos = args.Position;
+			Vector2 vel = args.Velocity;
+			short stacks = args.Stacks;
+			short prefix = args.Prefix;
+			bool noDelay = args.NoDelay;
+			short type = args.Type;
+		
+			if (!float.IsFinite(pos.X) || !float.IsFinite(pos.Y))
+			{
+				TShock.Log.ConsoleInfo(GetString("Bouncer / OnSyncItemCannotBeTakenByEnemies force kicked (attempted to set position to infinity or NaN) from {0}", args.Player.Name));
+				args.Player.Kick(GetString("Detected DOOM set to ON position."), true, true);
+				args.Handled = true;
+				return;
+			}
+		
+			if (!float.IsFinite(vel.X) || !float.IsFinite(vel.Y))
+			{
+				TShock.Log.ConsoleInfo(GetString("Bouncer / OnSyncItemCannotBeTakenByEnemies force kicked (attempted to set velocity to infinity or NaN) from {0}", args.Player.Name));
+				args.Player.Kick(GetString("Detected DOOM set to ON position."), true, true);
+				args.Handled = true;
+				return;
+			}
+		
+			// player is attempting to crash clients
+			if (type < -48 || type >= Terraria.ID.ItemID.Count)
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnSyncItemCannotBeTakenByEnemies rejected from attempt crash from {0}", args.Player.Name));
+				args.Handled = true;
+				return;
+			}
+		
+			// make sure the prefix is a legit value
+			if (prefix > PrefixID.Count)
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnSyncItemCannotBeTakenByEnemies rejected from prefix check from {0}", args.Player.Name));
+		
+				args.Player.SendData(PacketTypes.SyncItemDespawn, "", id);
+				args.Handled = true;
+				return;
+			}
+		
+			if (type == 0)
+			{
+				if (!args.Player.IsInRange((int)(Main.item[id].position.X / 16f), (int)(Main.item[id].position.Y / 16f)))
+				{
+					// Causes item duplications. Will be re added if necessary
+					//args.Player.SendData(PacketTypes.ItemDrop, "", id);
+					TShock.Log.ConsoleDebug(GetString("Bouncer / OnSyncItemCannotBeTakenByEnemies rejected from dupe range check from {0}", args.Player.Name));
+					args.Handled = true;
+					return;
+				}
+		
+				args.Handled = false;
+				return;
+			}
+		
+			if (!args.Player.IsInRange((int)(pos.X / 16f), (int)(pos.Y / 16f), 128))
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnSyncItemCannotBeTakenByEnemies rejected from range check from {0}", args.Player.Name));
+				args.Player.SendData(PacketTypes.SyncItemDespawn, "", id);
+				args.Handled = true;
+				return;
+			}
+		
+			// stop the client from changing the item type of a drop
+			if (Main.item[id].active && Main.item[id].type != type &&
+				!(Main.item[id].type == ItemID.EmptyBucket && type == ItemID.WaterBucket)) // Empty bucket turns into Water Bucket on rainy days
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnSyncItemCannotBeTakenByEnemies rejected from item drop check from {0}", args.Player.Name));
+				args.Player.SendData(PacketTypes.ItemDrop, "", id);
+				args.Handled = true;
+				return;
+			}
+		
+			Item item = new Item();
+			item.netDefaults(type);
+			if ((stacks > item.maxStack || stacks <= 0) || (TShock.ItemBans.DataModel.ItemIsBanned(EnglishLanguage.GetItemNameById(item.type), args.Player) && !args.Player.HasPermission(Permissions.allowdroppingbanneditems)))
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnSyncItemCannotBeTakenByEnemies rejected from drop item ban check / max stack check / min stack check from {0}", args.Player.Name));
+				args.Player.SendData(PacketTypes.SyncItemDespawn, "", id);
+				args.Handled = true;
+				return;
+			}
+		
+			// TODO: Remove item ban part of this check
+			if ((Main.ServerSideCharacter) && (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond - args.Player.LoginMS < TShock.ServerSideCharacterConfig.Settings.LogonDiscardThreshold))
+			{
+				//Player is probably trying to sneak items onto the server in their hands!!!
+				TShock.Log.ConsoleInfo(GetString("Player {0} tried to sneak {1} onto the server!", args.Player.Name, item.Name));
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnSyncItemCannotBeTakenByEnemies rejected from sneaky from {0}", args.Player.Name));
+				args.Player.SendData(PacketTypes.SyncItemDespawn, "", id);
+				args.Handled = true;
+				return;
+		
+			}
+		
+			if (args.Player.IsBeingDisabled())
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnSyncItemCannotBeTakenByEnemies rejected from disabled from {0}", args.Player.Name));
+				args.Player.SendData(PacketTypes.SyncItemDespawn, "", id);
+				args.Handled = true;
+				return;
+			}
+		
+			if (type == ItemID.GuideVoodooDoll && args.Player.TPlayer.ZoneUnderworldHeight && !args.Player.HasPermission(Permissions.summonboss))
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnSyncItemCannotBeTakenByEnemies rejected Guide Voodoo Doll drop from {0}", args.Player.Name));
+				args.Player.SendErrorMessage(GetString("You do not have permission to summon the Wall of Flesh."));
+				args.Player.SendData(PacketTypes.SyncItemDespawn, "", id);
+				args.Handled = true;
+				return;
+			}
+		}
+
 		/// <summary>
 		/// Called when dirt/fluid projectiles (dirt bombs, liquid bombs, liquid rockets) are killed and attempt to place tiles or liquids.
 		/// </summary>
@@ -3097,10 +3393,12 @@ namespace TShockAPI
 			}
 			if (args.Player.IsBeingDisabled())
 			{
+				int num = Item.NewItem(null, (args.TileX * 16) + 8, (args.TileY * 16) + 8, args.Player.TPlayer.width, args.Player.TPlayer.height, args.ItemID, args.Stack, noBroadcast: true, args.Prefix, noGrabDelay: true);
+				Main.item[num].playerIndexTheItemIsReservedFor = args.Player.Index;
+				NetMessage.SendData((int)PacketTypes.ItemDrop, args.Player.Index, -1, NetworkText.Empty, num, 1f);
+				NetMessage.SendData((int)PacketTypes.ItemOwner, args.Player.Index, -1, NetworkText.Empty, num);
+				
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnDisplayJarTryPlacing rejected disabled from {0}", args.Player.Name));
-				Item item = new Item();
-				item.netDefaults(args.ItemID);
-				args.Player.GiveItemCheck(args.ItemID, item.Name, args.Stack, args.Prefix);
 				args.Player.SendTileSquareCentered(args.TileX, args.TileY, 1);
 				args.Handled = true;
 				return;
@@ -3108,10 +3406,12 @@ namespace TShockAPI
 
 			if (!args.Player.HasBuildPermission(args.TileX, args.TileY))
 			{
+				int num = Item.NewItem(null, (args.TileX * 16) + 8, (args.TileY * 16) + 8, args.Player.TPlayer.width, args.Player.TPlayer.height, args.ItemID, args.Stack, noBroadcast: true, args.Prefix, noGrabDelay: true);
+				Main.item[num].playerIndexTheItemIsReservedFor = args.Player.Index;
+				NetMessage.SendData((int)PacketTypes.ItemDrop, args.Player.Index, -1, NetworkText.Empty, num, 1f);
+				NetMessage.SendData((int)PacketTypes.ItemOwner, args.Player.Index, -1, NetworkText.Empty, num);
+				
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnDisplayJarTryPlacing rejected permissions from {0}", args.Player.Name));
-				Item item = new Item();
-				item.netDefaults(args.ItemID);
-				args.Player.GiveItemCheck(args.ItemID, item.Name, args.Stack, args.Prefix);
 				args.Player.SendTileSquareCentered(args.TileX, args.TileY, 1);
 				args.Handled = true;
 				return;
@@ -3121,6 +3421,72 @@ namespace TShockAPI
 			{
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnDisplayJarTryPlacing rejected range checks from {0}", args.Player.Name));
 				args.Player.SendTileSquareCentered(args.TileX, args.TileY, 1);
+				args.Handled = true;
+				return;
+			}
+		}
+		
+		/// <summary>
+		/// Called when a player is trying to put an leashed entity
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		internal void OnLeashedEntityAnchorPlaceItem(object sender, GetDataHandlers.LeashedEntityAnchorPlaceItemEventArgs args)
+		{
+			int tileX = args.TileX;
+			int tileY = args.TileY;
+
+			if (!TShock.Utils.TilePlacementValid(tileX, tileY))
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnLeashedEntityAnchorPlaceItem rejected from (tile placement valid) {0}", args.Player.Name));
+				args.Handled = true;
+				return;
+			}
+			if (args.Player.IsBeingDisabled())
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnLeashedEntityAnchorPlaceItem rejected from disabled from {0}", args.Player.Name));
+				args.Handled = true;
+				return;
+			}
+			if (args.Player.Dead && TShock.Config.Settings.PreventDeadModification)
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnLeashedEntityAnchorPlaceItem rejected from deadmod from {0}", args.Player.Name));
+				args.Handled = true;
+				return;
+			}
+			if (!args.Player.HasBuildPermission(tileX, tileY))
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnLeashedEntityAnchorPlaceItem rejected from permissions from {0}", args.Player.Name));
+				args.Handled = true;
+				return;
+			}
+			if (!args.Player.IsInRange(tileX, tileY))
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnLeashedEntityAnchorPlaceItem rejected from range checks from {0}", args.Player.Name));
+				args.Player.SendTileSquareCentered(tileX, tileY, 1);
+				args.Handled = true;
+				return;
+			}
+			if (!args.Player.ItemInHand.IsAir && args.Player.ItemInHand.type != args.EntityID)
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnLeashedEntityAnchorPlaceItem rejected from item not placed by hand from {0}", args.Player.Name));
+				args.Player.SendTileSquareCentered(tileX, tileY, 1);
+				args.Handled = true;
+				return;
+			}
+			if (!args.Player.SelectedItem.IsAir && args.Player.SelectedItem.type != args.EntityID)
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnLeashedEntityAnchorPlaceItem rejected from item not selected from {0}", args.Player.Name));
+				args.Player.SendTileSquareCentered(tileX, tileY, 1);
+				args.Handled = true;
+				return;
+			}
+
+			//valid item
+			if (!ItemID.Sets.PlaceTileOnAltUse[args.EntityID])
+			{
+				TShock.Log.ConsoleDebug(GetString("Bouncer / OnLeashedEntityAnchorPlaceItem rejected from invalid item alt use from {0}", args.Player.Name));
+				args.Player.SendTileSquareCentered(tileX, tileY, 1);
 				args.Handled = true;
 				return;
 			}
@@ -3297,6 +3663,7 @@ namespace TShockAPI
 			TileID.Womannequin,
 			TileID.MinecartTrack,
 			TileID.WeaponsRack,
+			TileID.WeaponsRack2,
 			TileID.ItemFrame,
 			TileID.LunarMonolith,
 			TileID.TargetDummy,
