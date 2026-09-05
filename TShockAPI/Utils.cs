@@ -1,4 +1,4 @@
-/*
+﻿/*
 TShock, a server mod for Terraria
 Copyright (C) 2011-2019 Pryaxis & TShock Contributors
 
@@ -779,12 +779,38 @@ namespace TShockAPI
 		/// <returns>projectile ID</returns>
 		public int SearchProjectile(short identity, int owner)
 		{
-			for (int i = 0; i < Main.maxProjectiles; i++)
-			{
-				if (Main.projectile[i].identity == identity && Main.projectile[i].owner == owner)
-					return i;
-			}
+			if (identity < 0 || identity > 1000 || owner < 0 || owner > 255)
+				return 1000;
+
+			int index = Projectile.keyToIndex[owner, identity];
+			if (index < 0 || index >= Main.maxProjectiles)
+				return 1000;
+
+			// keyToIndex is never cleared, so verify the slot still holds this key
+			var key = Main.projectile[index].key;
+			if (key.Spawner == owner && key.Index == identity)
+				return index;
+
 			return 1000;
+		}
+
+		/// <summary>
+		/// Searches for a projectile by identity, owner and generation.
+		/// </summary>
+		/// <param name="identity">identity</param>
+		/// <param name="owner">owner</param>
+		/// <param name="generation">slot-reuse counter from the sender's ProjectileKey</param>
+		/// <returns>projectile ID</returns>
+		public int SearchProjectile(short identity, int owner, int generation)
+		{
+			int index = SearchProjectile(identity, owner);
+			if (index < 0 || index >= Main.maxProjectiles)
+				return 1000;
+
+			if (Main.projectile[index].key.Generation != generation)
+				return 1000;
+
+			return index;
 		}
 
 		/// <summary>
