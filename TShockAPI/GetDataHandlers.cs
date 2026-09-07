@@ -2950,8 +2950,16 @@ namespace TShockAPI
 		{
 			if (args.Player.Dead && args.Player.RespawnTimer > 0)
 			{
-				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleSpawn rejected dead player spawn request {0}", args.Player.Name));
-				return true;
+				// The player is allowed skip their respawn timer
+				if (args.Player.CanSkipRespawnTimer())
+				{
+					args.Player.RespawnTimer = 0;
+				}
+				else
+				{
+					TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleSpawn rejected dead player spawn request {0}", args.Player.Name));
+					return true;
+				}
 			}
 
 			byte player = args.Data.ReadInt8();

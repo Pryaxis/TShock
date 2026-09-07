@@ -36,6 +36,7 @@ using Timer = System.Timers.Timer;
 using System.Linq;
 using Terraria.GameContent;
 using Terraria.GameContent.Creative;
+using Terraria.GameContent.Events;
 namespace TShockAPI
 {
 	/// <summary>
@@ -1731,6 +1732,32 @@ namespace TShockAPI
 				msg.PackFull(ms);
 				SendRawData(ms.ToArray());
 			}
+		}
+
+		/// <summary>
+		/// If the player is allowed to skip the respawn timer. Does not account for time spent being dead in case of network lag.
+		/// </summary>
+		public bool CanSkipRespawnTimer()
+		{
+			if (TPlayer.ghost)
+				return false;
+
+			if (TPlayer.pvpDeath)
+				return false;
+			/*
+			if (deadTime < DeadSkipLockoutTime)
+				return false;
+			*/
+			if (TPlayer.NearAnyNPCsThatBlockRespawn())
+				return false;
+
+			if (TPlayer.AnyBossHindersRespawnTime())
+				return false;
+
+			if (Main.snowMoon || Main.pumpkinMoon || DD2Event.Ongoing)
+				return false;
+
+			return true;
 		}
 
 		/// <summary>
