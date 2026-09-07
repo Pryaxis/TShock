@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TShock\n"
-"POT-Creation-Date: 2026-09-07 11:06:30+0000\n"
-"PO-Revision-Date: 2026-09-07 11:06:31+0000\n"
+"POT-Creation-Date: 2026-09-07 11:59:35+0000\n"
+"PO-Revision-Date: 2026-09-07 11:59:36+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -367,17 +367,17 @@ msgstr ""
 msgid "{0} added account {1} to group {2}."
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4099
+#: ../../TShockAPI/GetDataHandlers.cs:4100
 #, csharp-format
 msgid "{0} applied advanced combat techniques volume 2!"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4117
+#: ../../TShockAPI/GetDataHandlers.cs:4118
 #, csharp-format
 msgid "{0} applied advanced combat techniques!"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4096
+#: ../../TShockAPI/GetDataHandlers.cs:4097
 #, csharp-format
 msgid "{0} applied traveling merchant's satchel!"
 msgstr ""
@@ -398,8 +398,8 @@ msgid ""
 "{0} attempted to use the initial setup system even though it's disabled."
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:2902
-#: ../../TShockAPI/GetDataHandlers.cs:3679
+#: ../../TShockAPI/GetDataHandlers.cs:2903
+#: ../../TShockAPI/GetDataHandlers.cs:3680
 #, csharp-format
 msgid "{0} authenticated successfully as user {1}."
 msgstr ""
@@ -651,22 +651,22 @@ msgstr ""
 msgid "{0} has respawned you."
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4108
+#: ../../TShockAPI/GetDataHandlers.cs:4109
 #, csharp-format
 msgid "{0} has sent a request to the bunny delivery service!"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4114
+#: ../../TShockAPI/GetDataHandlers.cs:4115
 #, csharp-format
 msgid "{0} has sent a request to the cat delivery service!"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4111
+#: ../../TShockAPI/GetDataHandlers.cs:4112
 #, csharp-format
 msgid "{0} has sent a request to the dog delivery service!"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4105
+#: ../../TShockAPI/GetDataHandlers.cs:4106
 #, csharp-format
 msgid "{0} has sent a request to the slime delivery service!"
 msgstr ""
@@ -683,7 +683,7 @@ msgstr[1] ""
 msgid "{0} has spawned a Wall of Flesh."
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:2885
+#: ../../TShockAPI/GetDataHandlers.cs:2886
 #, csharp-format
 msgid ""
 "{0} has SSC data in the database, but has the tshock.ignore.ssc permission. "
@@ -913,8 +913,8 @@ msgstr ""
 msgid "{0} started the frost moon at wave {1}!"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4709
-#: ../../TShockAPI/GetDataHandlers.cs:4711
+#: ../../TShockAPI/GetDataHandlers.cs:4710
+#: ../../TShockAPI/GetDataHandlers.cs:4712
 #, csharp-format
 msgid "{0} started the Old One's Army event!"
 msgstr ""
@@ -954,68 +954,68 @@ msgstr ""
 msgid "{0} successfully deleted account: {1}."
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4120
+#: ../../TShockAPI/GetDataHandlers.cs:4121
 #, csharp-format
 msgid "{0} summoned a Blood Moon!"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4132
+#: ../../TShockAPI/GetDataHandlers.cs:4133
 #, csharp-format
 msgid "{0} summoned a frost moon!"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4144
+#: ../../TShockAPI/GetDataHandlers.cs:4145
 #, csharp-format
 msgid "{0} summoned a Goblin Invasion!"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4126
+#: ../../TShockAPI/GetDataHandlers.cs:4127
 #, csharp-format
 msgid "{0} summoned a Martian invasion!"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4102
+#: ../../TShockAPI/GetDataHandlers.cs:4103
 #, csharp-format
 msgid "{0} summoned a Mechdusa!"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4123
+#: ../../TShockAPI/GetDataHandlers.cs:4124
 #, csharp-format
 msgid "{0} summoned a Moon Lord!"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4135
+#: ../../TShockAPI/GetDataHandlers.cs:4136
 #, csharp-format
 msgid "{0} summoned a pumpkin moon!"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4093
+#: ../../TShockAPI/GetDataHandlers.cs:4094
 #, csharp-format
 msgid "{0} summoned a Slime Rain!"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4129
+#: ../../TShockAPI/GetDataHandlers.cs:4130
 #, csharp-format
 msgid "{0} summoned an eclipse!"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4151
+#: ../../TShockAPI/GetDataHandlers.cs:4152
 #, csharp-format
 msgid "{0} summoned the {1}!"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3415
-#: ../../TShockAPI/GetDataHandlers.cs:3418
+#: ../../TShockAPI/GetDataHandlers.cs:3416
+#: ../../TShockAPI/GetDataHandlers.cs:3419
 #, csharp-format
 msgid "{0} summoned the Empress of Light!"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4138
+#: ../../TShockAPI/GetDataHandlers.cs:4139
 #, csharp-format
 msgid "{0} summoned the Pirates!"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4141
+#: ../../TShockAPI/GetDataHandlers.cs:4142
 #, csharp-format
 msgid "{0} summoned the Snow Legion!"
 msgstr ""
@@ -1152,7 +1152,7 @@ msgstr ""
 msgid "{0}user password username newpassword -- Changes a user's password"
 msgstr ""
 
-#: ../../TShockAPI/Permissions.cs:551
+#: ../../TShockAPI/Permissions.cs:555
 #, csharp-format
 msgid "* **Commands**: `{0}`"
 msgstr ""
@@ -1302,7 +1302,7 @@ msgstr ""
 msgid "A player name must be provided to kick a player. Please provide one."
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:2648
+#: ../../TShockAPI/GetDataHandlers.cs:2649
 msgid "A plugin on this server stopped your login."
 msgstr ""
 
@@ -1537,8 +1537,8 @@ msgid ""
 msgstr ""
 
 #: ../../TShockAPI/Commands.cs:945
-#: ../../TShockAPI/GetDataHandlers.cs:2901
-#: ../../TShockAPI/GetDataHandlers.cs:3678
+#: ../../TShockAPI/GetDataHandlers.cs:2902
+#: ../../TShockAPI/GetDataHandlers.cs:3679
 #, csharp-format
 msgid "Authenticated as {0} successfully."
 msgstr ""
@@ -1720,12 +1720,12 @@ msgstr ""
 msgid "Boreal Tree"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3733
+#: ../../TShockAPI/GetDataHandlers.cs:3734
 #, csharp-format
 msgid "Bouncer / HandleNpcTalk rejected from bouncer out of bounds from {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3726
+#: ../../TShockAPI/GetDataHandlers.cs:3727
 #, csharp-format
 msgid "Bouncer / HandleNpcTalk rejected from bouncer throttle from {0}"
 msgstr ""
@@ -2846,7 +2846,7 @@ msgstr ""
 msgid "Butcher Syntax and Example"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:2884
+#: ../../TShockAPI/GetDataHandlers.cs:2885
 msgid ""
 "Bypass SSC is enabled for your account. SSC data will not be loaded or saved."
 msgstr ""
@@ -3301,6 +3301,10 @@ msgstr ""
 msgid "Executes a command as the super admin."
 msgstr ""
 
+#: ../../TShockAPI/GetDataHandlers.cs:5084
+msgid "Exploit attempt detected!"
+msgstr ""
+
 #: ../../TShockAPI/Commands.cs:1793
 #, csharp-format
 msgid "Failed to add {0} to the whitelist. Perhaps it is already whitelisted?"
@@ -3421,476 +3425,506 @@ msgid_plural "Gave {0} {1}s."
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4354
+#: ../../TShockAPI/GetDataHandlers.cs:4355
 #, csharp-format
 msgid "GetDataHandlers / HandleCatchNpc catch zero {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4362
+#: ../../TShockAPI/GetDataHandlers.cs:4363
 #, csharp-format
 msgid "GetDataHandlers / HandleCatchNpc rejected catch npc {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4348
+#: ../../TShockAPI/GetDataHandlers.cs:4349
 #, csharp-format
 msgid "GetDataHandlers / HandleCatchNpc rejected out of range npc {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3578
+#: ../../TShockAPI/GetDataHandlers.cs:3579
 #, csharp-format
 msgid ""
 "GetDataHandlers / HandleChestActive rejected build permission and region "
 "check {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3553
+#: ../../TShockAPI/GetDataHandlers.cs:3554
 #, csharp-format
 msgid "GetDataHandlers / HandleChestItem rejected max stacks {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3233
+#: ../../TShockAPI/GetDataHandlers.cs:5090
+#, csharp-format
+msgid "GetDataHandlers / HandleChestSizeSync rejected from build {0}"
+msgstr ""
+
+#: ../../TShockAPI/GetDataHandlers.cs:5069
+#, csharp-format
+msgid "GetDataHandlers / HandleChestSizeSync rejected from disabled {0}"
+msgstr ""
+
+#: ../../TShockAPI/GetDataHandlers.cs:5097
+#, csharp-format
+msgid "GetDataHandlers / HandleChestSizeSync rejected from invalid size {0}"
+msgstr ""
+
+#: ../../TShockAPI/GetDataHandlers.cs:5083
+#, csharp-format
+msgid "GetDataHandlers / HandleChestSizeSync rejected from no permission {0}"
+msgstr ""
+
+#: ../../TShockAPI/GetDataHandlers.cs:5063
+#, csharp-format
+msgid "GetDataHandlers / HandleChestSizeSync rejected from null chest {0}"
+msgstr ""
+
+#: ../../TShockAPI/GetDataHandlers.cs:5076
+#, csharp-format
+msgid "GetDataHandlers / HandleChestSizeSync rejected from throttled {0}"
+msgstr ""
+
+#: ../../TShockAPI/GetDataHandlers.cs:3234
 #, csharp-format
 msgid "GetDataHandlers / HandleDoorUse rejected door gap check {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3218
+#: ../../TShockAPI/GetDataHandlers.cs:3219
 #, csharp-format
 msgid "GetDataHandlers / HandleDoorUse rejected out of range door {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3224
+#: ../../TShockAPI/GetDataHandlers.cs:3225
 #, csharp-format
 msgid "GetDataHandlers / HandleDoorUse rejected type 0 5 check {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:2939
+#: ../../TShockAPI/GetDataHandlers.cs:2940
 msgid "GetDataHandlers / HandleGetSection rejected reserve slot"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4601
+#: ../../TShockAPI/GetDataHandlers.cs:4602
 #, csharp-format
 msgid "GetDataHandlers / HandleKillPortal rejected owner mismatch check {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3311
+#: ../../TShockAPI/GetDataHandlers.cs:3312
 #, csharp-format
 msgid ""
 "GetDataHandlers / HandleNpcItemStrike surprise packet! Someone tell the "
 "TShock team! {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3427
+#: ../../TShockAPI/GetDataHandlers.cs:3428
 #, csharp-format
 msgid "GetDataHandlers / HandleNpcStrike rejected Cultist summon from {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3410
+#: ../../TShockAPI/GetDataHandlers.cs:3411
 #, csharp-format
 msgid "GetDataHandlers / HandleNpcStrike rejected EoL summon from {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3389
+#: ../../TShockAPI/GetDataHandlers.cs:3390
 #, csharp-format
 msgid "GetDataHandlers / HandleNpcStrike rejected npc generation mismatch {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3400
+#: ../../TShockAPI/GetDataHandlers.cs:3401
 #, csharp-format
 msgid "GetDataHandlers / HandleNpcStrike rejected npc strike {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3922
+#: ../../TShockAPI/GetDataHandlers.cs:3923
 #, csharp-format
 msgid "GetDataHandlers / HandleNpcStrike rejected Skeletron summon from {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3719
+#: ../../TShockAPI/GetDataHandlers.cs:3720
 #, csharp-format
 msgid "GetDataHandlers / HandleNpcTalk rejected npc talk {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4645
+#: ../../TShockAPI/GetDataHandlers.cs:4646
 #, csharp-format
 msgid ""
 "GetDataHandlers / HandleNpcTeleportPortal rejected not thinking with portals "
 "{0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4638
+#: ../../TShockAPI/GetDataHandlers.cs:4639
 #, csharp-format
 msgid "GetDataHandlers / HandleNpcTeleportPortal rejected null check {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4478
+#: ../../TShockAPI/GetDataHandlers.cs:4479
 #, csharp-format
 msgid ""
 "GetDataHandlers / HandleNumberOfAnglerQuestsCompleted surprise packet! "
 "Someone tell the TShock team! {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4703
+#: ../../TShockAPI/GetDataHandlers.cs:4704
 #, csharp-format
 msgid "GetDataHandlers / HandleOldOnesArmy rejected permissions {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4697
+#: ../../TShockAPI/GetDataHandlers.cs:4698
 #, csharp-format
 msgid "GetDataHandlers / HandleOldOnesArmy rejected throttled {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4181
+#: ../../TShockAPI/GetDataHandlers.cs:4182
 #, csharp-format
 msgid "GetDataHandlers / HandlePaintTile rejected range check {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4200
+#: ../../TShockAPI/GetDataHandlers.cs:4201
 #, csharp-format
 msgid "GetDataHandlers / HandlePaintTile rejected select consistency {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4209
+#: ../../TShockAPI/GetDataHandlers.cs:4210
 #, csharp-format
 msgid ""
 "GetDataHandlers / HandlePaintTile rejected throttle/permission/range check "
 "{0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4230
+#: ../../TShockAPI/GetDataHandlers.cs:4231
 #, csharp-format
 msgid "GetDataHandlers / HandlePaintWall rejected range check {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4249
+#: ../../TShockAPI/GetDataHandlers.cs:4250
 #, csharp-format
 msgid "GetDataHandlers / HandlePaintWall rejected selector consistency {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4258
+#: ../../TShockAPI/GetDataHandlers.cs:4259
 #, csharp-format
 msgid ""
 "GetDataHandlers / HandlePaintWall rejected throttle/permission/range {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3892
+#: ../../TShockAPI/GetDataHandlers.cs:3893
 #, csharp-format
 msgid ""
 "GetDataHandlers / HandlePlayerBuffList zeroed player buff due to below state "
 "awaiting player information {0} {1}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3166
+#: ../../TShockAPI/GetDataHandlers.cs:3167
 #, csharp-format
 msgid "GetDataHandlers / HandlePlayerHp rejected over max hp {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:2715
+#: ../../TShockAPI/GetDataHandlers.cs:2716
 msgid "GetDataHandlers / HandlePlayerInfo rejected hardcore required"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:2709
+#: ../../TShockAPI/GetDataHandlers.cs:2710
 msgid "GetDataHandlers / HandlePlayerInfo rejected mediumcore required"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:2654
+#: ../../TShockAPI/GetDataHandlers.cs:2655
 msgid "GetDataHandlers / HandlePlayerInfo rejected name length 0"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:2647
+#: ../../TShockAPI/GetDataHandlers.cs:2648
 #, csharp-format
 msgid "GetDataHandlers / HandlePlayerInfo rejected plugin phase {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:2703
+#: ../../TShockAPI/GetDataHandlers.cs:2704
 msgid "GetDataHandlers / HandlePlayerInfo rejected softcore required"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4779
-#: ../../TShockAPI/GetDataHandlers.cs:4785
+#: ../../TShockAPI/GetDataHandlers.cs:4780
+#: ../../TShockAPI/GetDataHandlers.cs:4786
 #, csharp-format
 msgid "GetDataHandlers / HandlePlayerKillMeV2 kicked with difficulty {0} {1}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4794
+#: ../../TShockAPI/GetDataHandlers.cs:4795
 #, csharp-format
 msgid "GetDataHandlers / HandlePlayerKillMeV2 ssc delete {0} {1}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3758
+#: ../../TShockAPI/GetDataHandlers.cs:3759
 #, csharp-format
 msgid "GetDataHandlers / HandlePlayerMana rejected max mana {0} {1}/{2}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:2751
+#: ../../TShockAPI/GetDataHandlers.cs:2752
 msgid "GetDataHandlers / HandlePlayerSlot rejected ignore ssc packets"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3796
+#: ../../TShockAPI/GetDataHandlers.cs:3797
 #, csharp-format
 msgid ""
 "GetDataHandlers / HandlePlayerTeam rejected from (pvp mode disallows teams) "
 "{0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3787
+#: ../../TShockAPI/GetDataHandlers.cs:3788
 msgid "GetDataHandlers / HandlePlayerTeam rejected ignore ssc packets"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3812
+#: ../../TShockAPI/GetDataHandlers.cs:3813
 #, csharp-format
 msgid "GetDataHandlers / HandlePlayerTeam rejected team fastswitch {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3805
+#: ../../TShockAPI/GetDataHandlers.cs:3806
 #, csharp-format
 msgid ""
 "GetDataHandlers / HandlePlayerTeam super accepted from (initial team change) "
 "{0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3146
+#: ../../TShockAPI/GetDataHandlers.cs:3147
 #, csharp-format
 msgid "GetDataHandlers / HandlePlayerUpdate home position delta {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3603
+#: ../../TShockAPI/GetDataHandlers.cs:3604
 msgid "GetDataHandlers / HandlePlayerZone rejected null check"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3484
+#: ../../TShockAPI/GetDataHandlers.cs:3485
 #, csharp-format
 msgid ""
 "GetDataHandlers / HandleProjectileKill permitted skeletron prime exemption "
 "{0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3488
+#: ../../TShockAPI/GetDataHandlers.cs:3489
 #, csharp-format
 msgid "GetDataHandlers / HandleProjectileKill rejected banned projectile {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3444
+#: ../../TShockAPI/GetDataHandlers.cs:3445
 #, csharp-format
 msgid ""
 "GetDataHandlers / HandleProjectileKill rejected out of range projectile index "
 "{0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3458
+#: ../../TShockAPI/GetDataHandlers.cs:3459
 #, csharp-format
 msgid "GetDataHandlers / HandleProjectileKill rejected owner mismatch {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3450
+#: ../../TShockAPI/GetDataHandlers.cs:3451
 #, csharp-format
 msgid ""
 "GetDataHandlers / HandleProjectileKill rejected stale projectile key {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3473
+#: ../../TShockAPI/GetDataHandlers.cs:3474
 #, csharp-format
 msgid "GetDataHandlers / HandleProjectileKill rejected tombstone {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3337
+#: ../../TShockAPI/GetDataHandlers.cs:3338
 #, csharp-format
 msgid ""
 "GetDataHandlers / HandleProjectileNew rejected hostile projectile type {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3343
+#: ../../TShockAPI/GetDataHandlers.cs:3344
 #, csharp-format
 msgid "GetDataHandlers / HandleProjectileNew rejected key spawner mismatch {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3353
+#: ../../TShockAPI/GetDataHandlers.cs:3354
 #, csharp-format
 msgid ""
 "GetDataHandlers / HandleProjectileNew rejected Palworld Minion Cattiva dig "
 "sync {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3850
+#: ../../TShockAPI/GetDataHandlers.cs:3851
 #, csharp-format
 msgid "GetDataHandlers / HandleSign rejected sign on build permission {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3857
+#: ../../TShockAPI/GetDataHandlers.cs:3858
 #, csharp-format
 msgid "GetDataHandlers / HandleSign rejected sign range check {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3830
+#: ../../TShockAPI/GetDataHandlers.cs:3831
 #, csharp-format
 msgid "GetDataHandlers / HandleSignRead rejected out of bounds {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3055
+#: ../../TShockAPI/GetDataHandlers.cs:3056
 #, csharp-format
 msgid "GetDataHandlers / HandleSpawn force ssc teleport for {0} at ({1},{2})"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:2952
+#: ../../TShockAPI/GetDataHandlers.cs:2953
 #, csharp-format
 msgid "GetDataHandlers / HandleSpawn rejected dead player spawn request {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4060
+#: ../../TShockAPI/GetDataHandlers.cs:4061
 #, csharp-format
 msgid "GetDataHandlers / HandleSpawnBoss rejected boss {0} {1}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4050
+#: ../../TShockAPI/GetDataHandlers.cs:4051
 #, csharp-format
 msgid "GetDataHandlers / HandleSpawnBoss rejected bouner throttled {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4067
+#: ../../TShockAPI/GetDataHandlers.cs:4068
 #, csharp-format
 msgid "GetDataHandlers / HandleSpawnBoss rejected invasion {0} {1}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4074
+#: ../../TShockAPI/GetDataHandlers.cs:4075
 #, csharp-format
 msgid "GetDataHandlers / HandleSpawnBoss rejected pet {0} {1}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4081
+#: ../../TShockAPI/GetDataHandlers.cs:4082
 #, csharp-format
 msgid "GetDataHandlers / HandleSpawnBoss rejected upgrade {0} {1}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3973
+#: ../../TShockAPI/GetDataHandlers.cs:3974
 #, csharp-format
 msgid ""
 "GetDataHandlers / HandleSpecial rejected enchanted moondial permission "
 "(ForceTime) {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3967
+#: ../../TShockAPI/GetDataHandlers.cs:3968
 #, csharp-format
 msgid ""
 "GetDataHandlers / HandleSpecial rejected enchanted moondial permission {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3943
+#: ../../TShockAPI/GetDataHandlers.cs:3944
 #, csharp-format
 msgid ""
 "GetDataHandlers / HandleSpecial rejected enchanted sundial permission "
 "(ForceTime) {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3937
+#: ../../TShockAPI/GetDataHandlers.cs:3938
 #, csharp-format
 msgid ""
 "GetDataHandlers / HandleSpecial rejected enchanted sundial permission {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4564
+#: ../../TShockAPI/GetDataHandlers.cs:4565
 #, csharp-format
 msgid ""
 "GetDataHandlers / HandleSyncExtraValue rejected expert/master mode check {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4558
+#: ../../TShockAPI/GetDataHandlers.cs:4559
 #, csharp-format
 msgid "GetDataHandlers / HandleSyncExtraValue rejected extents check {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4570
+#: ../../TShockAPI/GetDataHandlers.cs:4571
 #, csharp-format
 msgid ""
 "GetDataHandlers / HandleSyncExtraValue rejected npc id out of bounds check - "
 "NPC ID: {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4577
+#: ../../TShockAPI/GetDataHandlers.cs:4578
 #, csharp-format
 msgid ""
 "GetDataHandlers / HandleSyncExtraValue rejected npc is null - NPC ID: {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4584
+#: ../../TShockAPI/GetDataHandlers.cs:4585
 #, csharp-format
 msgid ""
 "GetDataHandlers / HandleSyncExtraValue rejected range check {0},{1} vs "
 "{2},{3} which is {4}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4969
+#: ../../TShockAPI/GetDataHandlers.cs:4970
 #, csharp-format
 msgid "GetDataHandlers / HandleSyncLoadout rejected loadout index sync {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4960
+#: ../../TShockAPI/GetDataHandlers.cs:4961
 #, csharp-format
 msgid ""
 "GetDataHandlers / HandleSyncLoadout rejected loadout index sync out of bounds "
 "{0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4307
+#: ../../TShockAPI/GetDataHandlers.cs:4308
 #, csharp-format
 msgid "GetDataHandlers / HandleTeleport rejected npc teleport {0} {1}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4316
+#: ../../TShockAPI/GetDataHandlers.cs:4317
 #, csharp-format
 msgid "GetDataHandlers / HandleTeleport rejected p2p extents {0} {1}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4322
+#: ../../TShockAPI/GetDataHandlers.cs:4323
 #, csharp-format
 msgid ""
 "GetDataHandlers / HandleTeleport rejected p2p wormhole permission {0} {1}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4298
+#: ../../TShockAPI/GetDataHandlers.cs:4299
 #, csharp-format
 msgid "GetDataHandlers / HandleTeleport rejected rod type {0} {1}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4400
-#: ../../TShockAPI/GetDataHandlers.cs:4416
-#: ../../TShockAPI/GetDataHandlers.cs:4439
-#: ../../TShockAPI/GetDataHandlers.cs:4459
+#: ../../TShockAPI/GetDataHandlers.cs:4401
+#: ../../TShockAPI/GetDataHandlers.cs:4417
+#: ../../TShockAPI/GetDataHandlers.cs:4440
+#: ../../TShockAPI/GetDataHandlers.cs:4460
 #, csharp-format
 msgid ""
 "GetDataHandlers / HandleTeleportationPotion rejected not holding the correct "
 "item {0} {1}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4390
+#: ../../TShockAPI/GetDataHandlers.cs:4391
 #, csharp-format
 msgid ""
 "GetDataHandlers / HandleTeleportationPotion rejected permissions {0} {1}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4685
+#: ../../TShockAPI/GetDataHandlers.cs:4686
 #, csharp-format
 msgid "GetDataHandlers / HandleToggleParty rejected no party {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3518
+#: ../../TShockAPI/GetDataHandlers.cs:3519
 #, csharp-format
 msgid "GetDataHandlers / HandleTogglePvp rejected fastswitch {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3511
+#: ../../TShockAPI/GetDataHandlers.cs:3512
 #, csharp-format
 msgid "GetDataHandlers / HandleTogglePvp rejected index mismatch {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3120
+#: ../../TShockAPI/GetDataHandlers.cs:3121
 msgid "GetDataHandlers / OnPlayerUpdate rejected from null player."
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:2661
+#: ../../TShockAPI/GetDataHandlers.cs:2662
 msgid ""
 "GetDataHandlers / rejecting player for name prefix starting with tsi: or "
 "tsn:."
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4034
+#: ../../TShockAPI/GetDataHandlers.cs:4035
 #, csharp-format
 msgid "GetDataHandlers / UpdateNPCHome rejected no permission {0}"
 msgstr ""
@@ -4166,7 +4200,7 @@ msgid ""
 "were disabled for to TShock so we can improve this!"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3485
+#: ../../TShockAPI/GetDataHandlers.cs:3486
 msgid ""
 "If this was not skeletron prime related, please report to TShock what "
 "happened."
@@ -4233,7 +4267,7 @@ msgstr ""
 msgid "Ignoring shrapnel per config.."
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:2662
+#: ../../TShockAPI/GetDataHandlers.cs:2663
 msgid "Illegal name: prefixes tsi: and tsn: are forbidden."
 msgstr ""
 
@@ -4466,7 +4500,7 @@ msgid ""
 "Press any key to exit."
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3700
+#: ../../TShockAPI/GetDataHandlers.cs:3701
 msgid "Invalid server password."
 msgstr ""
 
@@ -5295,7 +5329,7 @@ msgstr ""
 msgid "New worlds will be generated with the {0} world evil type!"
 msgstr ""
 
-#: ../../TShockAPI/Permissions.cs:551
+#: ../../TShockAPI/Permissions.cs:555
 msgid "No associated commands."
 msgstr ""
 
@@ -5308,7 +5342,7 @@ msgstr ""
 msgid "No command or command alias matching \"{0}\" found."
 msgstr ""
 
-#: ../../TShockAPI/Permissions.cs:543
+#: ../../TShockAPI/Permissions.cs:547
 msgid "No description available."
 msgstr ""
 
@@ -6436,7 +6470,7 @@ msgid ""
 "SyncTilePickingHandler: X and Y position is out of world bounds! - From {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4406
+#: ../../TShockAPI/GetDataHandlers.cs:4407
 msgid "Teleportation Potions"
 msgstr ""
 
@@ -6555,7 +6589,7 @@ msgid ""
 "configuration file, or that the group was renamed or deleted."
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4451
+#: ../../TShockAPI/GetDataHandlers.cs:4452
 msgid "the Demon Conch"
 msgstr ""
 
@@ -6633,7 +6667,7 @@ msgstr ""
 msgid "the Lunatic Cultist"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4428
+#: ../../TShockAPI/GetDataHandlers.cs:4429
 msgid "the Magic Conch"
 msgstr ""
 
@@ -6707,11 +6741,11 @@ msgstr ""
 msgid "The server is shutting down"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4424
+#: ../../TShockAPI/GetDataHandlers.cs:4425
 msgid "the Shellphone (Ocean)"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4447
+#: ../../TShockAPI/GetDataHandlers.cs:4448
 msgid "the Shellphone (Underworld)"
 msgstr ""
 
@@ -7215,7 +7249,7 @@ msgstr ""
 msgid "Unrecognized player direction"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3991
+#: ../../TShockAPI/GetDataHandlers.cs:3992
 msgid ""
 "Unrecognized special effect (Packet 51). Please report this to the TShock "
 "developers."
@@ -7673,11 +7707,11 @@ msgstr ""
 msgid "You cannot spawn banned items."
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3976
+#: ../../TShockAPI/GetDataHandlers.cs:3977
 msgid "You cannot use the Enchanted Moondial because time is stopped."
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3946
+#: ../../TShockAPI/GetDataHandlers.cs:3947
 msgid "You cannot use the Enchanted Sundial because time is stopped."
 msgstr ""
 
@@ -7710,7 +7744,7 @@ msgstr[1] ""
 msgid "You didn't put a player name."
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4780
+#: ../../TShockAPI/GetDataHandlers.cs:4781
 msgid "You died! Normally, you'd be banned."
 msgstr ""
 
@@ -7763,7 +7797,7 @@ msgstr ""
 msgid "You do not have permission to grow this tree type"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3398
+#: ../../TShockAPI/GetDataHandlers.cs:3399
 msgid "You do not have permission to hurt Town NPCs."
 msgstr ""
 
@@ -7824,7 +7858,7 @@ msgstr ""
 msgid "You do not have permission to place actuators."
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4526
+#: ../../TShockAPI/GetDataHandlers.cs:4527
 msgid "You do not have permission to place Logic Sensors."
 msgstr ""
 
@@ -7833,7 +7867,7 @@ msgstr ""
 msgid "You do not have permission to place this tile."
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4035
+#: ../../TShockAPI/GetDataHandlers.cs:4036
 msgid "You do not have permission to relocate Town NPCs."
 msgstr ""
 
@@ -7849,15 +7883,15 @@ msgstr ""
 msgid "You do not have permission to send emotes!"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4075
+#: ../../TShockAPI/GetDataHandlers.cs:4076
 msgid "You do not have permission to spawn pets."
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4686
+#: ../../TShockAPI/GetDataHandlers.cs:4687
 msgid "You do not have permission to start a party."
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4068
+#: ../../TShockAPI/GetDataHandlers.cs:4069
 msgid "You do not have permission to start invasions."
 msgstr ""
 
@@ -7866,11 +7900,11 @@ msgstr ""
 msgid "You do not have permission to start the {0} event."
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4704
+#: ../../TShockAPI/GetDataHandlers.cs:4705
 msgid "You do not have permission to start the Old One's Army."
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4061
+#: ../../TShockAPI/GetDataHandlers.cs:4062
 msgid "You do not have permission to summon bosses."
 msgstr ""
 
@@ -7878,15 +7912,15 @@ msgstr ""
 msgid "You do not have permission to summon Plantera."
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3408
+#: ../../TShockAPI/GetDataHandlers.cs:3409
 msgid "You do not have permission to summon the Empress of Light."
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3425
+#: ../../TShockAPI/GetDataHandlers.cs:3426
 msgid "You do not have permission to summon the Lunatic Cultist!"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3920
+#: ../../TShockAPI/GetDataHandlers.cs:3921
 msgid "You do not have permission to summon the Skeletron."
 msgstr ""
 
@@ -7906,12 +7940,12 @@ msgstr ""
 msgid "You do not have permission to teleport other players."
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4391
+#: ../../TShockAPI/GetDataHandlers.cs:4392
 #, csharp-format
 msgid "You do not have permission to teleport using {0}."
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4299
+#: ../../TShockAPI/GetDataHandlers.cs:4300
 msgid "You do not have permission to teleport using items."
 msgstr ""
 
@@ -7919,7 +7953,7 @@ msgstr ""
 msgid "You do not have permission to teleport using pylons."
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4323
+#: ../../TShockAPI/GetDataHandlers.cs:4324
 msgid "You do not have permission to teleport using Wormhole Potions."
 msgstr ""
 
@@ -7937,19 +7971,19 @@ msgid ""
 "server-side-character data."
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4082
+#: ../../TShockAPI/GetDataHandlers.cs:4083
 msgid "You do not have permission to use permanent boosters."
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3968
+#: ../../TShockAPI/GetDataHandlers.cs:3969
 msgid "You do not have permission to use the Enchanted Moondial."
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3938
+#: ../../TShockAPI/GetDataHandlers.cs:3939
 msgid "You do not have permission to use the Enchanted Sundial."
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3990
+#: ../../TShockAPI/GetDataHandlers.cs:3991
 msgid "You do not have permission to use this effect."
 msgstr ""
 
@@ -7964,7 +7998,7 @@ msgstr ""
 msgid "You failed to change your password."
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:2655
+#: ../../TShockAPI/GetDataHandlers.cs:2656
 msgid "You have been Bounced."
 msgstr ""
 
@@ -7995,7 +8029,7 @@ msgstr ""
 msgid "You have changed {0}'s group to {1} for {2}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4795
+#: ../../TShockAPI/GetDataHandlers.cs:4796
 msgid ""
 "You have fallen in hardcore mode, and your items have been lost forever."
 msgstr ""
@@ -8076,7 +8110,7 @@ msgstr ""
 msgid "You may now receive whispers from other players."
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:2886
+#: ../../TShockAPI/GetDataHandlers.cs:2887
 msgid ""
 "You may wish to consider removing the tshock.ignore.ssc permission or "
 "negating it for this player."
@@ -8090,12 +8124,12 @@ msgstr ""
 msgid "You must provide a setup code!"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3979
+#: ../../TShockAPI/GetDataHandlers.cs:3980
 msgid ""
 "You must set ForceTime to normal via config to use the Enchanted Moondial."
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3949
+#: ../../TShockAPI/GetDataHandlers.cs:3950
 msgid ""
 "You must set ForceTime to normal via config to use the Enchanted Sundial."
 msgstr ""
@@ -8108,15 +8142,15 @@ msgstr ""
 msgid "You must use this command in-game."
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:2716
+#: ../../TShockAPI/GetDataHandlers.cs:2717
 msgid "You need to join with a hardcore player."
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:2710
+#: ../../TShockAPI/GetDataHandlers.cs:2711
 msgid "You need to join with a mediumcore player or higher."
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:2704
+#: ../../TShockAPI/GetDataHandlers.cs:2705
 msgid "You need to join with a softcore player."
 msgstr ""
 
@@ -8227,7 +8261,7 @@ msgid ""
 "off."
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3684
+#: ../../TShockAPI/GetDataHandlers.cs:3685
 msgid "Your password did not match this character's password."
 msgstr ""
 
@@ -8256,7 +8290,7 @@ msgstr ""
 msgid "z <name> <#> - Sets the z-order of the region."
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:3704
+#: ../../TShockAPI/GetDataHandlers.cs:3705
 msgctxt "Likely non-vanilla client send zero-length password"
 msgid "You have been Bounced for invalid password."
 msgstr ""
