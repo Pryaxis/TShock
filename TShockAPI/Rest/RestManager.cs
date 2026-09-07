@@ -976,9 +976,9 @@ namespace TShockAPI
 				return ret;
 
 			TSPlayer player = (TSPlayer)ret;
-			var inventory = player.TPlayer.inventory.Where(p => p.active).ToList();
-			var equipment = player.TPlayer.armor.Where(p => p.active).ToList();
-			var dyes = player.TPlayer.dye.Where(p => p.active).ToList();
+			var inventory = player.TPlayer.inventory.Where(p => !p.IsAir).ToList();
+			var equipment = player.TPlayer.armor.Where(p => !p.IsAir).ToList();
+			var dyes = player.TPlayer.dye.Where(p => !p.IsAir).ToList();
 			return new RestObject()
 			{
 				{"nickname", player.Name},
@@ -1012,12 +1012,12 @@ namespace TShockAPI
 
 			object items = new
 			{
-				inventory = player.TPlayer.inventory.Where(i => i.active).Select(item => (NetItem)item),
-				equipment = player.TPlayer.armor.Where(i => i.active).Select(item => (NetItem)item),
-				dyes = player.TPlayer.dye.Where(i => i.active).Select(item => (NetItem)item),
-				piggy = player.TPlayer.bank.item.Where(i => i.active).Select(item => (NetItem)item),
-				safe = player.TPlayer.bank2.item.Where(i => i.active).Select(item => (NetItem)item),
-				forge = player.TPlayer.bank3.item.Where(i => i.active).Select(item => (NetItem)item)
+				inventory = player.TPlayer.inventory.Where(i => !i.IsAir).Select(item => (NetItem)item),
+				equipment = player.TPlayer.armor.Where(i => !i.IsAir).Select(item => (NetItem)item),
+				dyes = player.TPlayer.dye.Where(i => !i.IsAir).Select(item => (NetItem)item),
+				piggy = player.TPlayer.bank.item.Where(i => !i.IsAir).Select(item => (NetItem)item),
+				safe = player.TPlayer.bank2.item.Where(i => !i.IsAir).Select(item => (NetItem)item),
+				forge = player.TPlayer.bank3.item.Where(i => !i.IsAir).Select(item => (NetItem)item)
 			};
 
 			return new RestObject
