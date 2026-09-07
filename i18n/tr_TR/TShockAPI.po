@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
-"POT-Creation-Date: 2026-09-05 06:57:48+0000\n"
-"PO-Revision-Date: 2026-09-05 07:12\n"
+"POT-Creation-Date: 2026-09-07 11:59:35+0000\n"
+"PO-Revision-Date: 2026-09-07 12:27\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "MIME-Version: 1.0\n"
@@ -1125,7 +1125,7 @@ msgstr ""
 msgid "{0}user password username newpassword -- Changes a user's password"
 msgstr ""
 
-#: ../../TShockAPI/Permissions.cs:551
+#: ../../TShockAPI/Permissions.cs:555
 #, csharp-format
 msgid "* **Commands**: `{0}`"
 msgstr "* **Komutlar**: `{0}`"
@@ -3154,7 +3154,7 @@ msgstr ""
 msgid "Executes a command as the super admin."
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4951
+#: ../../TShockAPI/GetDataHandlers.cs:5084
 msgid "Exploit attempt detected!"
 msgstr ""
 
@@ -3296,6 +3296,36 @@ msgstr ""
 #: ../../TShockAPI/GetDataHandlers.cs:3554
 #, csharp-format
 msgid "GetDataHandlers / HandleChestItem rejected max stacks {0}"
+msgstr ""
+
+#: ../../TShockAPI/GetDataHandlers.cs:5090
+#, csharp-format
+msgid "GetDataHandlers / HandleChestSizeSync rejected from build {0}"
+msgstr ""
+
+#: ../../TShockAPI/GetDataHandlers.cs:5069
+#, csharp-format
+msgid "GetDataHandlers / HandleChestSizeSync rejected from disabled {0}"
+msgstr ""
+
+#: ../../TShockAPI/GetDataHandlers.cs:5097
+#, csharp-format
+msgid "GetDataHandlers / HandleChestSizeSync rejected from invalid size {0}"
+msgstr ""
+
+#: ../../TShockAPI/GetDataHandlers.cs:5083
+#, csharp-format
+msgid "GetDataHandlers / HandleChestSizeSync rejected from no permission {0}"
+msgstr ""
+
+#: ../../TShockAPI/GetDataHandlers.cs:5063
+#, csharp-format
+msgid "GetDataHandlers / HandleChestSizeSync rejected from null chest {0}"
+msgstr ""
+
+#: ../../TShockAPI/GetDataHandlers.cs:5076
+#, csharp-format
+msgid "GetDataHandlers / HandleChestSizeSync rejected from throttled {0}"
 msgstr ""
 
 #: ../../TShockAPI/GetDataHandlers.cs:3234
@@ -3631,12 +3661,12 @@ msgstr ""
 msgid "GetDataHandlers / HandleSyncExtraValue rejected range check {0},{1} vs {2},{3} which is {4}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4977
+#: ../../TShockAPI/GetDataHandlers.cs:4970
 #, csharp-format
 msgid "GetDataHandlers / HandleSyncLoadout rejected loadout index sync {0}"
 msgstr ""
 
-#: ../../TShockAPI/GetDataHandlers.cs:4968
+#: ../../TShockAPI/GetDataHandlers.cs:4961
 #, csharp-format
 msgid "GetDataHandlers / HandleSyncLoadout rejected loadout index sync out of bounds {0}"
 msgstr ""
@@ -3854,11 +3884,6 @@ msgstr ""
 
 #: ../../TShockAPI/Commands.cs:6816
 msgid "Hallow Palm"
-msgstr ""
-
-#: ../../TShockAPI/GetDataHandlers.cs:4952
-#, csharp-format
-msgid "HandleSyncCavernMonsterType: Player is trying to modify NPC cavernMonsterType; this is a crafted packet! - From {0}"
 msgstr ""
 
 #: ../../TShockAPI/Commands.cs:2694
@@ -5005,7 +5030,7 @@ msgstr "Yeni isim çok büyük!"
 msgid "New worlds will be generated with the {0} world evil type!"
 msgstr ""
 
-#: ../../TShockAPI/Permissions.cs:551
+#: ../../TShockAPI/Permissions.cs:555
 msgid "No associated commands."
 msgstr ""
 
@@ -5018,7 +5043,7 @@ msgstr ""
 msgid "No command or command alias matching \"{0}\" found."
 msgstr ""
 
-#: ../../TShockAPI/Permissions.cs:543
+#: ../../TShockAPI/Permissions.cs:547
 msgid "No description available."
 msgstr ""
 
