@@ -1,4 +1,4 @@
-/*
+﻿/*
 TShock, a server mod for Terraria
 Copyright (C) 2011-2019 Pryaxis & TShock Contributors
 
@@ -1065,7 +1065,7 @@ namespace TShockAPI
 			// even if there are no clients connected
 			if (ServerApi.ForceUpdate)
 			{
-				Netplay.HasClients = true;
+				Netplay.HasFullyConnectedClients = true;
 			}
 
 			if (Backups.IsBackupTime)
