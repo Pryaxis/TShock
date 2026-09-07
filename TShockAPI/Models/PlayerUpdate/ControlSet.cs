@@ -77,6 +77,15 @@ namespace TShockAPI.Models.PlayerUpdate
 		}
 
 		/// <summary>
+		/// Gets or Sets the controlDash flag
+		/// </summary>
+		public bool ControlDash
+		{
+			get => bitsbyte[7];
+			set => bitsbyte[7] = value;
+		}
+
+		/// <summary>
 		/// Constructs a new instance of ControlsModel with the given backing bitsbyte
 		/// </summary>
 		/// <param name="bitsbyte"></param>
