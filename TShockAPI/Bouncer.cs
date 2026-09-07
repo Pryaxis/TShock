@@ -1249,7 +1249,8 @@ namespace TShockAPI
 			}
 
 			// stop the client from changing the item type of a drop
-			if (Main.item[id].active && Main.item[id].type != type &&
+			// as long as it's not the last item
+			if (id < Main.maxItems && Main.item[id].active && Main.item[id].type != type &&
 			    !(Main.item[id].type == ItemID.EmptyBucket && type == ItemID.WaterBucket)) // Empty bucket turns into Water Bucket on rainy days
 			{
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnItemDrop rejected from item drop check from {0}", args.Player.Name));
