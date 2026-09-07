@@ -141,7 +141,6 @@ namespace TShockAPI
 					{ PacketTypes.LandGolfBallInCup, HandleLandGolfBallInCup },
 					{ PacketTypes.FishOutNPC, HandleFishOutNPC },
 					{ PacketTypes.FoodPlatterTryPlacing, HandleFoodPlatterTryPlacing },
-					{ PacketTypes.SyncCavernMonsterType, HandleSyncCavernMonsterType },
 					{ PacketTypes.SyncLoadout, HandleSyncLoadout },
 					{ PacketTypes.TeamChangeFromUI, HandlePlayerTeam }, // Same packet as PlayerTeam
 					{ PacketTypes.TEDeadCellsDisplayJar, HandleDisplayJar }
@@ -4944,13 +4943,6 @@ namespace TShockAPI
 				return true;
 
 			return false;
-		}
-
-		private static bool HandleSyncCavernMonsterType(GetDataHandlerArgs args)
-		{
-			args.Player.Kick(GetString("Exploit attempt detected!"));
-			TShock.Log.ConsoleDebug(GetString($"HandleSyncCavernMonsterType: Player is trying to modify NPC cavernMonsterType; this is a crafted packet! - From {args.Player.Name}"));
-			return true;
 		}
 
 		private static bool HandleSyncLoadout(GetDataHandlerArgs args)
