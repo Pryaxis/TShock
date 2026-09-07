@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
-"POT-Creation-Date: 2026-09-05 06:57:48+0000\n"
-"PO-Revision-Date: 2026-09-05 07:12\n"
+"POT-Creation-Date: 2026-09-07 11:59:35+0000\n"
+"PO-Revision-Date: 2026-09-07 12:26\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -1117,7 +1117,7 @@ msgstr "{0}user group 用户名 新组 -- 更改用户所属的组"
 msgid "{0}user password username newpassword -- Changes a user's password"
 msgstr "{0}user password 用户名 新密码 -- 更改用户密码"
 
-#: ../../TShockAPI/Permissions.cs:551
+#: ../../TShockAPI/Permissions.cs:555
 #, csharp-format
 msgid "* **Commands**: `{0}`"
 msgstr "* **指令**: `{0}`"
@@ -3145,9 +3145,9 @@ msgstr "举个例子: {0}warp add 鱼鱼真可爱, {0}warp hide 鱼鱼真可爱 
 msgid "Executes a command as the super admin."
 msgstr "以超级管理员的身份执行指令。"
 
-#: ../../TShockAPI/GetDataHandlers.cs:4951
+#: ../../TShockAPI/GetDataHandlers.cs:5084
 msgid "Exploit attempt detected!"
-msgstr "检测到恶意攻击"
+msgstr ""
 
 #: ../../TShockAPI/Commands.cs:1793
 #, csharp-format
@@ -3286,6 +3286,36 @@ msgstr "GetDataHandlers / HandleChestActive 拒绝了建筑权限和区域检查
 #, csharp-format
 msgid "GetDataHandlers / HandleChestItem rejected max stacks {0}"
 msgstr "GetDataHandlers / HandleChestitems 拒绝了最大堆栈 {0}"
+
+#: ../../TShockAPI/GetDataHandlers.cs:5090
+#, csharp-format
+msgid "GetDataHandlers / HandleChestSizeSync rejected from build {0}"
+msgstr ""
+
+#: ../../TShockAPI/GetDataHandlers.cs:5069
+#, csharp-format
+msgid "GetDataHandlers / HandleChestSizeSync rejected from disabled {0}"
+msgstr ""
+
+#: ../../TShockAPI/GetDataHandlers.cs:5097
+#, csharp-format
+msgid "GetDataHandlers / HandleChestSizeSync rejected from invalid size {0}"
+msgstr ""
+
+#: ../../TShockAPI/GetDataHandlers.cs:5083
+#, csharp-format
+msgid "GetDataHandlers / HandleChestSizeSync rejected from no permission {0}"
+msgstr ""
+
+#: ../../TShockAPI/GetDataHandlers.cs:5063
+#, csharp-format
+msgid "GetDataHandlers / HandleChestSizeSync rejected from null chest {0}"
+msgstr ""
+
+#: ../../TShockAPI/GetDataHandlers.cs:5076
+#, csharp-format
+msgid "GetDataHandlers / HandleChestSizeSync rejected from throttled {0}"
+msgstr ""
 
 #: ../../TShockAPI/GetDataHandlers.cs:3234
 #, csharp-format
@@ -3620,12 +3650,12 @@ msgstr "GetDataHandlers / HandleSyncExtraValue（NPC附加信息检测）因目�
 msgid "GetDataHandlers / HandleSyncExtraValue rejected range check {0},{1} vs {2},{3} which is {4}"
 msgstr "GetDataHandlers / HandleSyncExtraValue（NPC附加信息检测）因{0},{1}到{2},{3}的距离{4}过远而阻止了数据同步。"
 
-#: ../../TShockAPI/GetDataHandlers.cs:4977
+#: ../../TShockAPI/GetDataHandlers.cs:4970
 #, csharp-format
 msgid "GetDataHandlers / HandleSyncLoadout rejected loadout index sync {0}"
 msgstr "GetDataHandlers / HandleSyncLoadout 阻止了{0}切换装备栏"
 
-#: ../../TShockAPI/GetDataHandlers.cs:4968
+#: ../../TShockAPI/GetDataHandlers.cs:4961
 #, csharp-format
 msgid "GetDataHandlers / HandleSyncLoadout rejected loadout index sync out of bounds {0}"
 msgstr "GetDataHandlers / HandleSyncLoadout 阻止了{0}切换越界的装备栏"
@@ -3844,11 +3874,6 @@ msgstr "在你的位置种下植物。"
 #: ../../TShockAPI/Commands.cs:6816
 msgid "Hallow Palm"
 msgstr "神圣棕榈木"
-
-#: ../../TShockAPI/GetDataHandlers.cs:4952
-#, csharp-format
-msgid "HandleSyncCavernMonsterType: Player is trying to modify NPC cavernMonsterType; this is a crafted packet! - From {0}"
-msgstr "GetDataHandlers / HandleSyncCavernMonsterType（怪物生成列表防护）因检测到伪造怪物刷新列表而阻止了{0}发送数据。"
 
 #: ../../TShockAPI/Commands.cs:2694
 msgid "Hardmode is disabled in the server configuration file."
@@ -4997,7 +5022,7 @@ msgstr "新名称太长了！"
 msgid "New worlds will be generated with the {0} world evil type!"
 msgstr "地图生成时的邪恶类型已设为{0}！"
 
-#: ../../TShockAPI/Permissions.cs:551
+#: ../../TShockAPI/Permissions.cs:555
 msgid "No associated commands."
 msgstr "没有相关的指令。"
 
@@ -5010,7 +5035,7 @@ msgstr "没有找到对应回执号码的封禁。"
 msgid "No command or command alias matching \"{0}\" found."
 msgstr "没有找到{0}所对应的指令或别名 。"
 
-#: ../../TShockAPI/Permissions.cs:543
+#: ../../TShockAPI/Permissions.cs:547
 msgid "No description available."
 msgstr "没有描述。"
 
