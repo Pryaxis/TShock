@@ -143,7 +143,8 @@ namespace TShockAPI
 					{ PacketTypes.FoodPlatterTryPlacing, HandleFoodPlatterTryPlacing },
 					{ PacketTypes.SyncLoadout, HandleSyncLoadout },
 					{ PacketTypes.TeamChangeFromUI, HandlePlayerTeam }, // Same packet as PlayerTeam
-					{ PacketTypes.TEDeadCellsDisplayJar, HandleDisplayJar }
+					{ PacketTypes.TEDeadCellsDisplayJar, HandleDisplayJar },
+					{ PacketTypes.SyncChestSize, HandleChestSizeSync }
 				};
 		}
 
@@ -5041,6 +5042,60 @@ namespace TShockAPI
 
 			if (OnDisplayJarTryPlacing(args.Player, args.Data, tileX, tileY, itemID, prefix, stack))
 				return true;
+
+			return false;
+		}
+
+		private static bool HandleChestSizeSync(GetDataHandlerArgs args)
+		{
+			short id = args.Data.ReadInt16();
+			short newSize = args.Data.ReadInt16();
+
+			if (id is < 0 or >= Main.maxChests) // chest is invalid
+				return true;
+
+			Chest chest = Main.chest[id];
+
+			if (chest == null)
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleChestSizeSync rejected from null chest {0}", args.Player.Name));
+				return true;
+			}
+
+			if (args.Player.IsBeingDisabled())
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleChestSizeSync rejected from disabled {0}", args.Player.Name));
+				args.Player.SendData(PacketTypes.SyncChestSize, "", id, chest.maxItems);
+				return true;
+			}
+
+			if (args.Player.IsBouncerThrottled())
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleChestSizeSync rejected from throttled {0}", args.Player.Name));
+				args.Player.SendData(PacketTypes.SyncChestSize, "", id, chest.maxItems);
+				return true;
+			}
+
+			if (!args.Player.HasPermission(Permissions.resizechests))
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleChestSizeSync rejected from no permission {0}", args.Player.Name));
+				args.Player.Kick(GetString("Exploit attempt detected!"), true);
+				return true;
+			}
+
+			if (!args.Player.HasBuildPermission(chest.x, chest.y))
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleChestSizeSync rejected from build {0}", args.Player.Name));
+				args.Player.SendData(PacketTypes.SyncChestSize, "", id, chest.maxItems);
+				return true;
+			}
+
+			if (newSize < 0) // size is invalid
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleChestSizeSync rejected from invalid size {0}", args.Player.Name));
+				args.Player.SendData(PacketTypes.SyncChestSize, "", id, chest.maxItems);
+				return true;
+			}
 
 			return false;
 		}
