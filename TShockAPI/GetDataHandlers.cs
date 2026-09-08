@@ -3360,7 +3360,9 @@ namespace TShockAPI
 
 			lock (args.Player.RecentlyCreatedProjectiles)
 			{
-				if (!args.Player.RecentlyCreatedProjectiles.Any(p => p.Index == index))
+				// Portal Gun bolts resolve to the sentinel index here, so never deduplicate them: each fired
+				// bolt needs its own record, or a second portal gate would find no unconsumed bolt to match.
+				if (type == ProjectileID.PortalGunBolt || !args.Player.RecentlyCreatedProjectiles.Any(p => p.Index == index))
 				{
 					args.Player.RecentlyCreatedProjectiles.Add(new GetDataHandlers.ProjectileStruct()
 					{
