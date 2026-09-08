@@ -792,11 +792,12 @@ namespace TShockAPI
 					         args.Player.TPlayer.mount.Type != MountID.Drill &&
 					         args.Player.TPlayer.mount.Type != MountID.DiggingMoleMinecart)
 					{
-						if (args.Player.TPlayer.ownedProjectileCounts[ProjectileID.PalworldDigtoise] > 0)
+						if (args.Player.TPlayer.ownedProjectileCounts[ProjectileID.PalworldDigtoise] > 0
+							|| args.Player.TPlayer.ownedProjectileCounts[ProjectileID.PalworldTrustyDigtoise] > 0)
 						{
 							var digtoiseProjectile = Main.projectile
 								.FirstOrDefault(p =>
-									p is { active: true, type: ProjectileID.PalworldDigtoise } && p.owner == args.Player.Index);
+									p is { active: true, type: ProjectileID.PalworldDigtoise or ProjectileID.PalworldTrustyDigtoise } && p.owner == args.Player.Index );
 
 							// Digtoise starts digging
 							if (digtoiseProjectile?.ai[0] is 1f or 2f or 3f
