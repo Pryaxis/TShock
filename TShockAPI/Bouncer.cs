@@ -3265,6 +3265,11 @@ namespace TShockAPI
 			{ BuffID.Tipsy, 3659 },
 			{ BuffID.Lovestruck, 1800 },
 			{ BuffID.GelBalloonBuff, 1800 },
+			{ BuffID.PotentAcid, 120 },
+			{ BuffID.ChlorophyteSpore, 300 },
+			{ BuffID.AcceleratePoisons, 300 },
+			{ BuffID.BlueLightning, 420 },
+			{ BuffID.RedLightning, 420 },
 		};
 
 		/// <summary>
