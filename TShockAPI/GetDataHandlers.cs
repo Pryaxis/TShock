@@ -3345,8 +3345,6 @@ namespace TShockAPI
 				return true;
 			}
 
-			var index = TShock.Utils.SearchProjectile(ident, owner, key.Generation);
-
 			// Cattiva's dig ability can bypass build permissions via vanilla exploit in Terraria v1.4.5
 			if ((type == ProjectileID.PalworldMinionCattiva || type == ProjectileID.PalworldMinionTrustyCattiva) && ai[0] == 3f)
 			{
@@ -3354,16 +3352,16 @@ namespace TShockAPI
 				return true;
 			}
 
-			if (OnNewProjectile(args.Data, ident, pos, vel, knockback, dmg, owner, type, index, args.Player, ai, key.Generation))
+			if (OnNewProjectile(args.Data, ident, pos, vel, knockback, dmg, owner, type, ident, args.Player, ai, key.Generation))
 				return true;
 
 			lock (args.Player.RecentlyCreatedProjectiles)
 			{
-				if (!args.Player.RecentlyCreatedProjectiles.Any(p => p.Index == index))
+				if (!args.Player.RecentlyCreatedProjectiles.Any(p => p.Index == ident))
 				{
 					args.Player.RecentlyCreatedProjectiles.Add(new GetDataHandlers.ProjectileStruct()
 					{
-						Index = index,
+						Index = ident,
 						Type = type,
 						CreatedAt = DateTime.Now
 					});
