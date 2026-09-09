@@ -1420,7 +1420,7 @@ namespace TShockAPI
 				{
 					for (int i = 0; i < 50; i++) //51 is trash can, 52-55 is coins, 56-59 is ammo
 					{
-						if (TPlayer.inventory[i] == null || !TPlayer.inventory[i].active || TPlayer.inventory[i].Name == "")
+						if (TPlayer.inventory[i] == null || TPlayer.inventory[i].IsAir || TPlayer.inventory[i].Name == "")
 						{
 							flag = true;
 							break;
@@ -1740,12 +1740,29 @@ namespace TShockAPI
 		/// <param name="owner">The projectile's owner.</param>
 		public void RemoveProjectile(int index, int owner)
 		{
+			int generation = 0;
+			int slot = TShock.Utils.SearchProjectile((short)index, owner);
+			if (slot >= 0 && slot < Main.maxProjectiles)
+				generation = Main.projectile[slot].key.Generation;
+
+			RemoveProjectile(index, owner, generation);
+		}
+
+		/// <summary>
+		/// Removes a projectile whose generation is already known, typically taken from the packet.
+		/// </summary>
+		/// <param name="index">The projectile's identity.</param>
+		/// <param name="owner">The player index of the projectile's owner.</param>
+		/// <param name="generation">Slot-reuse counter from the sender's ProjectileKey.</param>
+		public void RemoveProjectile(int index, int owner, int generation)
+		{
 			using (var ms = new MemoryStream())
 			{
 				var msg = new ProjectileRemoveMsg
 				{
 					Index = (short)index,
-					Owner = (byte)owner
+					Owner = (byte)owner,
+					Generation = generation
 				};
 				msg.PackFull(ms);
 				SendRawData(ms.ToArray());
@@ -1984,7 +2001,7 @@ namespace TShockAPI
 
 		private void GiveItemByDrop(int type, int stack, int prefix)
 		{
-			int itemIndex = Item.NewItem(new EntitySource_DebugCommand(), (int)X, (int)Y, TPlayer.width, TPlayer.height, type, stack, true, prefix, true);
+			int itemIndex = Item.NewItem(new EntitySource_DebugCommand(), (int)X, (int)Y, TPlayer.width, TPlayer.height, type, stack, true, prefix, Terraria.NewItemOwnership.None);
 			Main.item[itemIndex].playerIndexTheItemIsReservedFor = this.Index;
 			SendData(PacketTypes.ItemDrop, "", itemIndex, 1);
 			SendData(PacketTypes.ItemOwner, null, itemIndex);
