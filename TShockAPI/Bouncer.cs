@@ -1,4 +1,4 @@
-/*
+﻿/*
 TShock, a server mod for Terraria
 Copyright (C) 2011-2019 Pryaxis & TShock Contributors
 
@@ -796,11 +796,12 @@ namespace TShockAPI
 					         args.Player.TPlayer.mount.Type != MountID.Drill &&
 					         args.Player.TPlayer.mount.Type != MountID.DiggingMoleMinecart)
 					{
-						if (args.Player.TPlayer.ownedProjectileCounts[ProjectileID.PalworldDigtoise] > 0)
+						if (args.Player.TPlayer.ownedProjectileCounts[ProjectileID.PalworldDigtoise] > 0
+							|| args.Player.TPlayer.ownedProjectileCounts[ProjectileID.PalworldTrustyDigtoise] > 0)
 						{
 							var digtoiseProjectile = Main.projectile
 								.FirstOrDefault(p =>
-									p is { active: true, type: ProjectileID.PalworldDigtoise } && p.owner == args.Player.Index);
+									p is { active: true, type: ProjectileID.PalworldDigtoise or ProjectileID.PalworldTrustyDigtoise } && p.owner == args.Player.Index );
 
 							// Digtoise starts digging
 							if (digtoiseProjectile?.ai[0] is 1f or 2f or 3f
@@ -1253,7 +1254,8 @@ namespace TShockAPI
 			}
 
 			// stop the client from changing the item type of a drop
-			if (Main.item[id].active && Main.item[id].type != type &&
+			// as long as it's not the last item
+			if (id < Main.maxItems && Main.item[id].active && Main.item[id].type != type &&
 			    !(Main.item[id].type == ItemID.EmptyBucket && type == ItemID.WaterBucket)) // Empty bucket turns into Water Bucket on rainy days
 			{
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnItemDrop rejected from item drop check from {0}", args.Player.Name));
@@ -1316,6 +1318,7 @@ namespace TShockAPI
 			short type = args.Type;
 			int index = args.Index;
 			float[] ai = args.Ai;
+			int generation = args.Generation;
 
 			// Clients do send NaN values so we can't just kick them
 			// See https://github.com/Pryaxis/TShock/issues/3076
@@ -1336,7 +1339,7 @@ namespace TShockAPI
 			if (index > Main.maxProjectiles)
 			{
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile rejected from above projectile limit from {0}", args.Player.Name));
-				args.Player.RemoveProjectile(ident, owner);
+				args.Player.RemoveProjectile(ident, owner, generation);
 				args.Handled = true;
 				return;
 			}
@@ -1347,7 +1350,7 @@ namespace TShockAPI
 
 				// Client will fight the server if we remove pets, silently reject instead
 				if (!Main.projPet[type] && !ProjectileID.Sets.LightPet[type])
-					args.Player.RemoveProjectile(ident, owner);
+					args.Player.RemoveProjectile(ident, owner, generation);
 
 				args.Handled = true;
 				return;
@@ -1359,7 +1362,7 @@ namespace TShockAPI
 
 				// Client will fight the server if we remove pets, silently reject instead
 				if (!Main.projPet[type] && !ProjectileID.Sets.LightPet[type])
-					args.Player.RemoveProjectile(ident, owner);
+					args.Player.RemoveProjectile(ident, owner, generation);
 
 				args.Handled = true;
 				return;
@@ -1370,7 +1373,7 @@ namespace TShockAPI
 				args.Player.Disable(GetString("Player does not have permission to create projectile {0}.", type), DisableFlags.WriteToLogAndConsole);
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile rejected from permission check from {0} {1}", args.Player.Name, type));
 				args.Player.SendErrorMessage(GetString("You do not have permission to create that projectile."));
-				args.Player.RemoveProjectile(ident, owner);
+				args.Player.RemoveProjectile(ident, owner, generation);
 				args.Handled = true;
 				return;
 			}
@@ -1379,7 +1382,7 @@ namespace TShockAPI
 			{
 				args.Player.Disable(GetString("Projectile damage is higher than {0}.", TShock.Config.Settings.MaxProjDamage), DisableFlags.WriteToLogAndConsole);
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile rejected from projectile damage limit from {0} {1}/{2}", args.Player.Name, damage, TShock.Config.Settings.MaxProjDamage));
-				args.Player.RemoveProjectile(ident, owner);
+				args.Player.RemoveProjectile(ident, owner, generation);
 				args.Handled = true;
 				return;
 			}
@@ -1416,7 +1419,7 @@ namespace TShockAPI
 			if (Main.projHostile[type])
 			{
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile rejected from hostile projectile from {0}", args.Player.Name));
-				args.Player.RemoveProjectile(ident, owner);
+				args.Player.RemoveProjectile(ident, owner, generation);
 				args.Handled = true;
 				return;
 			}
@@ -1427,7 +1430,7 @@ namespace TShockAPI
 			if (type == ProjectileID.Tombstone)
 			{
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile rejected from tombstones from {0}", args.Player.Name));
-				args.Player.RemoveProjectile(ident, owner);
+				args.Player.RemoveProjectile(ident, owner, generation);
 				args.Handled = true;
 				return;
 			}
@@ -1443,7 +1446,7 @@ namespace TShockAPI
 			    if (discreteDirection is < -3 or > 4)
 			    {
 				    TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile rejected from portal gate from {0} (invalid angle: {1})", args.Player.Name, discreteDirection));
-			        args.Player.RemoveProjectile(ident, owner);
+			        args.Player.RemoveProjectile(ident, owner, generation);
 			        args.Handled = true;
 			        return;
 			    }
@@ -1453,7 +1456,7 @@ namespace TShockAPI
 			    if (boltProjectileData.Type == 0 || boltProjectileData.Killed)
 			    {
 				    TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile rejected from portal gate from {0} (missing active Portal Gun bolt)", args.Player.Name, discreteDirection));
-			        args.Player.RemoveProjectile(ident, owner);
+			        args.Player.RemoveProjectile(ident, owner, generation);
 			        args.Handled = true;
 			        return;
 			    }
@@ -1482,7 +1485,7 @@ namespace TShockAPI
 				{
 					TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile please report to tshock about this! normally this is a reject from {0} {1}", args.Player.Name, type));
 					// args.Player.Disable(String.Format("Does not have projectile permission to update projectile. ({0})", type), DisableFlags.WriteToLogAndConsole);
-					// args.Player.RemoveProjectile(ident, owner);
+					// args.Player.RemoveProjectile(ident, owner, generation);
 				}
 				// args.Handled = false;
 				// return;
@@ -1497,7 +1500,7 @@ namespace TShockAPI
 				else
 				{
 					args.Player.Disable(GetString("Reached projectile create threshold."), DisableFlags.WriteToLogAndConsole);
-					args.Player.RemoveProjectile(ident, owner);
+					args.Player.RemoveProjectile(ident, owner, generation);
 				}
 
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile rejected from projectile create threshold from {0} {1}/{2}", args.Player.Name, args.Player.ProjectileThreshold, TShock.Config.Settings.ProjectileThreshold));
@@ -1514,7 +1517,7 @@ namespace TShockAPI
 			)
 			{
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile rejected from bouncer modified AI from {0}.", args.Player.Name));
-				args.Player.RemoveProjectile(ident, owner);
+				args.Player.RemoveProjectile(ident, owner, generation);
 				args.Handled = true;
 				return;
 			}
@@ -1530,7 +1533,7 @@ namespace TShockAPI
 			if (TShock.Config.Settings.DisableModifiedZenith && type == ProjectileID.FinalFractal && (ai[0] < -100 || ai[0] > 101) && !Terraria.Graphics.FinalFractalHelper._fractalProfiles.ContainsKey((int)ai[1]))
 			{
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile rejected from bouncer modified Zenith projectile from {0}.", args.Player.Name));
-				args.Player.RemoveProjectile(ident, owner);
+				args.Player.RemoveProjectile(ident, owner, generation);
 				args.Handled = true;
 				return;
 			}
@@ -1553,7 +1556,9 @@ namespace TShockAPI
 				|| type == ProjectileID.StickyDynamite
 				|| type == ProjectileID.BombFish
 				|| type == ProjectileID.ScarabBomb
-				|| type == ProjectileID.DirtBomb))
+				|| type == ProjectileID.DirtBomb
+				|| type == ProjectileID.SuperBomb
+				|| type == ProjectileID.SuperStickyBomb))
 			{
 				//  Denotes that the player has recently set a fuse - used for cheat detection.
 				args.Player.RecentFuse = 10;
@@ -1636,7 +1641,7 @@ namespace TShockAPI
 			if (args.Player.IsBeingDisabled())
 			{
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnProjectileKill rejected from disabled from {0}", args.Player.Name));
-				args.Player.RemoveProjectile(args.ProjectileIdentity, args.ProjectileOwner);
+				args.Player.RemoveProjectile(args.ProjectileIdentity, args.ProjectileOwner, args.ProjectileGeneration);
 				args.Handled = true;
 				return;
 			}
@@ -1644,7 +1649,7 @@ namespace TShockAPI
 			if (args.Player.IsBouncerThrottled())
 			{
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnProjectileKill rejected from bouncer throttle from {0}", args.Player.Name));
-				args.Player.RemoveProjectile(args.ProjectileIdentity, args.ProjectileOwner);
+				args.Player.RemoveProjectile(args.ProjectileIdentity, args.ProjectileOwner, args.ProjectileGeneration);
 				args.Handled = true;
 				return;
 			}
@@ -2365,12 +2370,8 @@ namespace TShockAPI
 
 			// if released npc not from its item (from crafted packet)
 			// e.g. using bunny item to release golden bunny
-			if (args.Player.TPlayer.lastVisualizedSelectedItem.makeNPC != type || args.Player.TPlayer.lastVisualizedSelectedItem.placeStyle != style)
+			if (args.Player.SelectedItem.makeNPC != type || args.Player.SelectedItem.placeStyle != style)
 			{
-				// If the critter is an Explosive Bunny, check if we've recently created an Explosive Bunny projectile.
-				// If we have, check if the critter we are trying to create is within range of the projectile
-				// If we have at least one of those, then this wasn't a crafted packet, but simply a delayed critter release from an
-				// Explosive Bunny projectile.
 				if (type == NPCID.ExplosiveBunny)
 				{
 					if (args.Player.TPlayer.ownedProjectileCounts[ProjectileID.ExplosiveBunny] == 0)
@@ -2680,7 +2681,7 @@ namespace TShockAPI
 
 			if (!args.Player.HasBuildPermission(args.X, args.Y))
 			{
-				int num = Item.NewItem(null, (args.X * 16) + 8, (args.Y * 16) + 8, args.Player.TPlayer.width, args.Player.TPlayer.height, args.ItemID, args.Stack, noBroadcast: true, args.Prefix, noGrabDelay: true);
+				int num = Item.NewItem(null, (args.X * 16) + 8, (args.Y * 16) + 8, args.Player.TPlayer.width, args.Player.TPlayer.height, args.ItemID, args.Stack, noBroadcast: true, args.Prefix, Terraria.NewItemOwnership.None);
 				Main.item[num].playerIndexTheItemIsReservedFor = args.Player.Index;
 				NetMessage.SendData((int)PacketTypes.ItemDrop, args.Player.Index, -1, NetworkText.Empty, num, 1f);
 				NetMessage.SendData((int)PacketTypes.ItemOwner, args.Player.Index, -1, NetworkText.Empty, num);

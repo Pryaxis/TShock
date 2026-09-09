@@ -141,10 +141,10 @@ namespace TShockAPI
 					{ PacketTypes.LandGolfBallInCup, HandleLandGolfBallInCup },
 					{ PacketTypes.FishOutNPC, HandleFishOutNPC },
 					{ PacketTypes.FoodPlatterTryPlacing, HandleFoodPlatterTryPlacing },
-					{ PacketTypes.SyncCavernMonsterType, HandleSyncCavernMonsterType },
 					{ PacketTypes.SyncLoadout, HandleSyncLoadout },
 					{ PacketTypes.TeamChangeFromUI, HandlePlayerTeam }, // Same packet as PlayerTeam
-					{ PacketTypes.TEDeadCellsDisplayJar, HandleDisplayJar }
+					{ PacketTypes.TEDeadCellsDisplayJar, HandleDisplayJar },
+					{ PacketTypes.SyncChestSize, HandleChestSizeSync }
 				};
 		}
 
@@ -701,6 +701,11 @@ namespace TShockAPI
 			public int Index { get; set; }
 
 			/// <summary>
+			/// Slot-reuse counter from the sender's ProjectileKey.
+			/// </summary>
+			public int Generation { get; set; }
+
+			/// <summary>
 			/// The special meaning of the projectile.
 			/// </summary>
 			public float[] Ai { get; set; }
@@ -709,7 +714,7 @@ namespace TShockAPI
 		/// NewProjectile - Called when a client creates a new projectile
 		/// </summary>
 		public static HandlerList<NewProjectileEventArgs> NewProjectile = new HandlerList<NewProjectileEventArgs>();
-		private static bool OnNewProjectile(MemoryStream data, short ident, Vector2 pos, Vector2 vel, float knockback, short dmg, byte owner, short type, int index, TSPlayer player, float[] ai)
+		private static bool OnNewProjectile(MemoryStream data, short ident, Vector2 pos, Vector2 vel, float knockback, short dmg, byte owner, short type, int index, TSPlayer player, float[] ai, int generation)
 		{
 			if (NewProjectile == null)
 				return false;
@@ -726,7 +731,8 @@ namespace TShockAPI
 				Type = type,
 				Index = index,
 				Player = player,
-				Ai = ai
+				Ai = ai,
+				Generation = generation
 			};
 			NewProjectile.Invoke(null, args);
 			return args.Handled;
@@ -790,6 +796,8 @@ namespace TShockAPI
 			public byte ProjectileOwner;
 			/// <summary>The index of the projectile in Main.projectile.</summary>
 			public int ProjectileIndex;
+			/// <summary>Slot-reuse counter from the sender's ProjectileKey.</summary>
+			public int ProjectileGeneration;
 		}
 		/// <summary>The event fired when a projectile kill packet is received.</summary>
 		public static HandlerList<ProjectileKillEventArgs> ProjectileKill = new HandlerList<ProjectileKillEventArgs>();
@@ -800,7 +808,7 @@ namespace TShockAPI
 		/// <param name="owner">The projectile's owner (from the packet).</param>
 		/// <param name="index">The projectile's index (from Main.projectiles).</param>
 		/// <returns>bool</returns>
-		private static bool OnProjectileKill(TSPlayer player, MemoryStream data, int identity, byte owner, int index)
+		private static bool OnProjectileKill(TSPlayer player, MemoryStream data, int identity, byte owner, int index, int generation)
 		{
 			if (ProjectileKill == null)
 				return false;
@@ -812,6 +820,7 @@ namespace TShockAPI
 				ProjectileIdentity = identity,
 				ProjectileOwner = owner,
 				ProjectileIndex = index,
+				ProjectileGeneration = generation,
 			};
 
 			ProjectileKill.Invoke(null, args);
@@ -3265,8 +3274,19 @@ namespace TShockAPI
 			var vel = new Vector2(args.Data.ReadSingle(), args.Data.ReadSingle());
 			var stacks = args.Data.ReadInt16();
 			var prefix = args.Data.ReadInt8();
-			var noDelay = args.Data.ReadInt8() == 1;
+			BitsByte flags = args.Data.ReadInt8();
+			var ownership = (byte)((flags[0] ? 1 : 0) | (flags[1] ? 2 : 0));
+			var noDelay = ownership <= 1;
 			var type = args.Data.ReadInt16();
+			if (flags[2])
+			{
+				args.Data.ReadBoolean(); // shimmered
+				args.Data.ReadSingle(); // shimmerTime
+			}
+			if (flags[3])
+			{
+				args.Data.ReadInt8(); // enemyGrabDelayTime
+			}
 
 			if (OnItemDrop(args.Player, args.Data, id, pos, vel, stacks, prefix, noDelay, type))
 				return true;
@@ -3300,10 +3320,11 @@ namespace TShockAPI
 
 		private static bool HandleProjectileNew(GetDataHandlerArgs args)
 		{
-			short ident = args.Data.ReadInt16();
+			var key = (ProjectileKey)args.Data.ReadInt32();
+			byte owner = (byte)key.Spawner;
+			short ident = (short)key.Index;
 			Vector2 pos = args.Data.ReadVector2();
 			Vector2 vel = args.Data.ReadVector2();
-			byte owner = args.Data.ReadInt8();
 			short type = args.Data.ReadInt16();
 			BitsByte bitsByte = (BitsByte)args.Data.ReadByte();
 			BitsByte bitsByte2 = (BitsByte)(bitsByte[2] ? args.Data.ReadByte() : 0);
@@ -3315,13 +3336,30 @@ namespace TShockAPI
 			short dmg = (short)(bitsByte[4] ? args.Data.ReadInt16() : 0);
 			float knockback = bitsByte[5] ? args.Data.ReadSingle() : 0f;
 			short origDmg = (short)(bitsByte[6] ? args.Data.ReadInt16() : 0);
-			short projUUID = (short)(bitsByte[7] ? args.Data.ReadInt16() : -1);
-			if (projUUID >= 1000) projUUID = -1;
 			ai[2] = (bitsByte2[0] ? args.Data.ReadSingle() : 0f);
 
-			var index = TShock.Utils.SearchProjectile(ident, owner);
+			if (type < 0 || type >= Main.projHostile.Length || Main.projHostile[type])
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleProjectileNew rejected hostile projectile type {0}", args.Player.Name));
+				return true;
+			}
 
-			if (OnNewProjectile(args.Data, ident, pos, vel, knockback, dmg, owner, type, index, args.Player, ai))
+			if (owner != args.Player.Index)
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleProjectileNew rejected key spawner mismatch {0}", args.Player.Name));
+				return true;
+			}
+
+			var index = TShock.Utils.SearchProjectile(ident, owner, key.Generation);
+
+			// Cattiva's dig ability can bypass build permissions via vanilla exploit in Terraria v1.4.5
+			if ((type == ProjectileID.PalworldMinionCattiva || type == ProjectileID.PalworldMinionTrustyCattiva) && ai[0] == 3f)
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleProjectileNew rejected Palworld Minion Cattiva dig sync {0}", args.Player.Name));
+				return true;
+			}
+
+			if (OnNewProjectile(args.Data, ident, pos, vel, knockback, dmg, owner, type, index, args.Player, ai, key.Generation))
 				return true;
 
 			lock (args.Player.RecentlyCreatedProjectiles)
@@ -3341,11 +3379,21 @@ namespace TShockAPI
 
 		private static bool HandleNpcStrike(GetDataHandlerArgs args)
 		{
-			var id = args.Data.ReadInt16();
+			short id = args.Data.ReadInt8();
+			var generation = args.Data.ReadInt8();
 			var dmg = args.Data.ReadInt16();
 			var knockback = args.Data.ReadSingle();
 			var direction = (byte)(args.Data.ReadInt8() - 1);
 			var crit = args.Data.ReadInt8();
+
+			if (id >= Main.npc.Length)
+				return true;
+
+			if (Main.npc[id].generation != generation)
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleNpcStrike rejected npc generation mismatch {0}", args.Player.Name));
+				return true;
+			}
 
 			if (OnNPCStrike(args.Player, args.Data, id, direction, dmg, knockback, crit))
 				return true;
@@ -3390,12 +3438,33 @@ namespace TShockAPI
 
 		private static bool HandleProjectileKill(GetDataHandlerArgs args)
 		{
-			var ident = args.Data.ReadInt16();
-			var owner = args.Data.ReadInt8();
-			owner = (byte)args.Player.Index;
-			var index = TShock.Utils.SearchProjectile(ident, owner);
+			var key = (ProjectileKey)args.Data.ReadInt32();
+			var killPos = args.Data.ReadVector2();
+			var ident = (short)key.Index;
+			var owner = (byte)args.Player.Index;
 
-			if (OnProjectileKill(args.Player, args.Data, ident, owner, index))
+			// TryGet does not bounds check, and Index is wider than keyToIndex
+			if (key.Index > Main.maxProjectiles)
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleProjectileKill rejected out of range projectile index {0}", args.Player.Name));
+				return true;
+			}
+
+			if (!key.TryGet(out var killed) || !killed.active)
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleProjectileKill rejected stale projectile key {0}", args.Player.Name));
+				return true;
+			}
+
+			var index = killed.whoAmI;
+
+			if (killed.owner != args.Player.Index)
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleProjectileKill rejected owner mismatch {0}", args.Player.Name));
+				return true;
+			}
+
+			if (OnProjectileKill(args.Player, args.Data, ident, owner, index, key.Generation))
 			{
 				return true;
 			}
@@ -4278,7 +4347,12 @@ namespace TShockAPI
 		private static bool HandleCatchNpc(GetDataHandlerArgs args)
 		{
 			var npcID = args.Data.ReadInt16();
-			var who = args.Data.ReadByte();
+
+			if (npcID < 0 || npcID >= Main.maxNPCs)
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleCatchNpc rejected out of range npc {0}", args.Player.Name));
+				return true;
+			}
 
 			if (Main.npc[npcID]?.catchItem == 0)
 			{
@@ -4876,13 +4950,6 @@ namespace TShockAPI
 			return false;
 		}
 
-		private static bool HandleSyncCavernMonsterType(GetDataHandlerArgs args)
-		{
-			args.Player.Kick(GetString("Exploit attempt detected!"));
-			TShock.Log.ConsoleDebug(GetString($"HandleSyncCavernMonsterType: Player is trying to modify NPC cavernMonsterType; this is a crafted packet! - From {args.Player.Name}"));
-			return true;
-		}
-
 		private static bool HandleSyncLoadout(GetDataHandlerArgs args)
 		{
 			var playerIndex = args.Data.ReadInt8();
@@ -4981,6 +5048,60 @@ namespace TShockAPI
 
 			if (OnDisplayJarTryPlacing(args.Player, args.Data, tileX, tileY, itemID, prefix, stack))
 				return true;
+
+			return false;
+		}
+
+		private static bool HandleChestSizeSync(GetDataHandlerArgs args)
+		{
+			short id = args.Data.ReadInt16();
+			short newSize = args.Data.ReadInt16();
+
+			if (id is < 0 or >= Main.maxChests) // chest is invalid
+				return true;
+
+			Chest chest = Main.chest[id];
+
+			if (chest == null)
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleChestSizeSync rejected from null chest {0}", args.Player.Name));
+				return true;
+			}
+
+			if (args.Player.IsBeingDisabled())
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleChestSizeSync rejected from disabled {0}", args.Player.Name));
+				args.Player.SendData(PacketTypes.SyncChestSize, "", id, chest.maxItems);
+				return true;
+			}
+
+			if (args.Player.IsBouncerThrottled())
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleChestSizeSync rejected from throttled {0}", args.Player.Name));
+				args.Player.SendData(PacketTypes.SyncChestSize, "", id, chest.maxItems);
+				return true;
+			}
+
+			if (!args.Player.HasPermission(Permissions.resizechests))
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleChestSizeSync rejected from no permission {0}", args.Player.Name));
+				args.Player.Kick(GetString("Exploit attempt detected!"), true);
+				return true;
+			}
+
+			if (!args.Player.HasBuildPermission(chest.x, chest.y))
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleChestSizeSync rejected from build {0}", args.Player.Name));
+				args.Player.SendData(PacketTypes.SyncChestSize, "", id, chest.maxItems);
+				return true;
+			}
+
+			if (newSize < 0) // size is invalid
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleChestSizeSync rejected from invalid size {0}", args.Player.Name));
+				args.Player.SendData(PacketTypes.SyncChestSize, "", id, chest.maxItems);
+				return true;
+			}
 
 			return false;
 		}
@@ -5190,6 +5311,7 @@ namespace TShockAPI
 			Ping,
 			Ambience,
 			Bestiary,
+			CreativeUnlocks,
 			CreativePowers,
 			CreativeUnlocksPlayerReport,
 			TeleportPylon,
@@ -5197,11 +5319,8 @@ namespace TShockAPI
 			CreativePowerPermissions,
 			Banners,
 			CraftingRequests,
-			TagEffectState,
 			LeashedEntity,
-			UnbreakableWallScan,
-			[Obsolete("Removed in 1.4.5")]
-			CreativeUnlocks
+			UnbreakableWallScan
 		}
 
 		public enum CreativePowerTypes
