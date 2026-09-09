@@ -141,10 +141,10 @@ namespace TShockAPI
 					{ PacketTypes.LandGolfBallInCup, HandleLandGolfBallInCup },
 					{ PacketTypes.FishOutNPC, HandleFishOutNPC },
 					{ PacketTypes.FoodPlatterTryPlacing, HandleFoodPlatterTryPlacing },
-					{ PacketTypes.SyncCavernMonsterType, HandleSyncCavernMonsterType },
 					{ PacketTypes.SyncLoadout, HandleSyncLoadout },
 					{ PacketTypes.TeamChangeFromUI, HandlePlayerTeam }, // Same packet as PlayerTeam
-					{ PacketTypes.TEDeadCellsDisplayJar, HandleDisplayJar }
+					{ PacketTypes.TEDeadCellsDisplayJar, HandleDisplayJar },
+					{ PacketTypes.SyncChestSize, HandleChestSizeSync }
 				};
 		}
 
@@ -2178,9 +2178,14 @@ namespace TShockAPI
 			Dyes = 1,
 
 			/// <summary>
+			/// The ID of the pose. Not actually an item inventory.
+			/// </summary>
+			Pose = 2,
+
+			/// <summary>
 			/// The ID of the inventory holding the miscellaneous items (mounts, pets, etc.).
 			/// </summary>
-			Misc = 2,
+			Misc = 3
 		}
 		/// <summary>
 		/// For use in a TileEntityDisplayDollItemSync event.
@@ -3348,8 +3353,7 @@ namespace TShockAPI
 			var index = TShock.Utils.SearchProjectile(ident, owner, key.Generation);
 
 			// Cattiva's dig ability can bypass build permissions via vanilla exploit in Terraria v1.4.5
-			// Block ai[0] == 3 (dig state)
-			if (type == ProjectileID.PalworldMinionCattiva && ai[0] == 3f)
+			if ((type == ProjectileID.PalworldMinionCattiva || type == ProjectileID.PalworldMinionTrustyCattiva) && ai[0] == 3f)
 			{
 				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleProjectileNew rejected Palworld Minion Cattiva dig sync {0}", args.Player.Name));
 				return true;
@@ -4946,13 +4950,6 @@ namespace TShockAPI
 			return false;
 		}
 
-		private static bool HandleSyncCavernMonsterType(GetDataHandlerArgs args)
-		{
-			args.Player.Kick(GetString("Exploit attempt detected!"));
-			TShock.Log.ConsoleDebug(GetString($"HandleSyncCavernMonsterType: Player is trying to modify NPC cavernMonsterType; this is a crafted packet! - From {args.Player.Name}"));
-			return true;
-		}
-
 		private static bool HandleSyncLoadout(GetDataHandlerArgs args)
 		{
 			var playerIndex = args.Data.ReadInt8();
@@ -5051,6 +5048,60 @@ namespace TShockAPI
 
 			if (OnDisplayJarTryPlacing(args.Player, args.Data, tileX, tileY, itemID, prefix, stack))
 				return true;
+
+			return false;
+		}
+
+		private static bool HandleChestSizeSync(GetDataHandlerArgs args)
+		{
+			short id = args.Data.ReadInt16();
+			short newSize = args.Data.ReadInt16();
+
+			if (id is < 0 or >= Main.maxChests) // chest is invalid
+				return true;
+
+			Chest chest = Main.chest[id];
+
+			if (chest == null)
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleChestSizeSync rejected from null chest {0}", args.Player.Name));
+				return true;
+			}
+
+			if (args.Player.IsBeingDisabled())
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleChestSizeSync rejected from disabled {0}", args.Player.Name));
+				args.Player.SendData(PacketTypes.SyncChestSize, "", id, chest.maxItems);
+				return true;
+			}
+
+			if (args.Player.IsBouncerThrottled())
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleChestSizeSync rejected from throttled {0}", args.Player.Name));
+				args.Player.SendData(PacketTypes.SyncChestSize, "", id, chest.maxItems);
+				return true;
+			}
+
+			if (!args.Player.HasPermission(Permissions.resizechests))
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleChestSizeSync rejected from no permission {0}", args.Player.Name));
+				args.Player.Kick(GetString("Exploit attempt detected!"), true);
+				return true;
+			}
+
+			if (!args.Player.HasBuildPermission(chest.x, chest.y))
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleChestSizeSync rejected from build {0}", args.Player.Name));
+				args.Player.SendData(PacketTypes.SyncChestSize, "", id, chest.maxItems);
+				return true;
+			}
+
+			if (newSize < 0) // size is invalid
+			{
+				TShock.Log.ConsoleDebug(GetString("GetDataHandlers / HandleChestSizeSync rejected from invalid size {0}", args.Player.Name));
+				args.Player.SendData(PacketTypes.SyncChestSize, "", id, chest.maxItems);
+				return true;
+			}
 
 			return false;
 		}

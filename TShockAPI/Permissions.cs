@@ -172,6 +172,10 @@ namespace TShockAPI
 
 		[Description("Prevents you from being disabled by abnormal MP.")]
 		public static readonly string ignoremp = "tshock.ignore.mp";
+
+
+		[Description("Player can resize chests. Warning: Dangerous permission to grant, very easy to abuse.")]
+		public static readonly string resizechests = "tshock.ignore.resizechests";
 		#endregion
 
 		#region tshock.item nodes

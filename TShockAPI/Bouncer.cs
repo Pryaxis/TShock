@@ -41,6 +41,7 @@ namespace TShockAPI
 		internal Handlers.EmojiHandler EmojiHandler { get; private set; }
 		internal Handlers.IllegalPerSe.EmojiPlayerMismatch EmojiPlayerMismatch { get; private set; }
 		internal Handlers.DisplayDollItemSyncHandler DisplayDollItemSyncHandler { get; private set; }
+		internal Handlers.DisplayDollPoseSyncHandler DisplayDollPoseSyncHandler { get; private set; }
 		internal Handlers.RequestTileEntityInteractionHandler RequestTileEntityInteractionHandler { get; private set; }
 		internal Handlers.LandGolfBallInCupHandler LandGolfBallInCupHandler { get; private set; }
 		internal Handlers.SyncTilePickingHandler SyncTilePickingHandler { get; private set; }
@@ -98,6 +99,9 @@ namespace TShockAPI
 
 			DisplayDollItemSyncHandler = new Handlers.DisplayDollItemSyncHandler();
 			GetDataHandlers.DisplayDollItemSync += DisplayDollItemSyncHandler.OnReceive;
+
+			DisplayDollPoseSyncHandler = new Handlers.DisplayDollPoseSyncHandler();
+			GetDataHandlers.DisplayDollPoseSync += DisplayDollPoseSyncHandler.OnReceive;
 
 			RequestTileEntityInteractionHandler = new Handlers.RequestTileEntityInteractionHandler();
 			GetDataHandlers.RequestTileEntityInteraction += RequestTileEntityInteractionHandler.OnReceive;
@@ -792,11 +796,12 @@ namespace TShockAPI
 					         args.Player.TPlayer.mount.Type != MountID.Drill &&
 					         args.Player.TPlayer.mount.Type != MountID.DiggingMoleMinecart)
 					{
-						if (args.Player.TPlayer.ownedProjectileCounts[ProjectileID.PalworldDigtoise] > 0)
+						if (args.Player.TPlayer.ownedProjectileCounts[ProjectileID.PalworldDigtoise] > 0
+							|| args.Player.TPlayer.ownedProjectileCounts[ProjectileID.PalworldTrustyDigtoise] > 0)
 						{
 							var digtoiseProjectile = Main.projectile
 								.FirstOrDefault(p =>
-									p is { active: true, type: ProjectileID.PalworldDigtoise } && p.owner == args.Player.Index);
+									p is { active: true, type: ProjectileID.PalworldDigtoise or ProjectileID.PalworldTrustyDigtoise } && p.owner == args.Player.Index );
 
 							// Digtoise starts digging
 							if (digtoiseProjectile?.ai[0] is 1f or 2f or 3f
@@ -1249,7 +1254,8 @@ namespace TShockAPI
 			}
 
 			// stop the client from changing the item type of a drop
-			if (Main.item[id].active && Main.item[id].type != type &&
+			// as long as it's not the last item
+			if (id < Main.maxItems && Main.item[id].active && Main.item[id].type != type &&
 			    !(Main.item[id].type == ItemID.EmptyBucket && type == ItemID.WaterBucket)) // Empty bucket turns into Water Bucket on rainy days
 			{
 				TShock.Log.ConsoleDebug(GetString("Bouncer / OnItemDrop rejected from item drop check from {0}", args.Player.Name));
@@ -1550,7 +1556,9 @@ namespace TShockAPI
 				|| type == ProjectileID.StickyDynamite
 				|| type == ProjectileID.BombFish
 				|| type == ProjectileID.ScarabBomb
-				|| type == ProjectileID.DirtBomb))
+				|| type == ProjectileID.DirtBomb
+				|| type == ProjectileID.SuperBomb
+				|| type == ProjectileID.SuperStickyBomb))
 			{
 				//  Denotes that the player has recently set a fuse - used for cheat detection.
 				args.Player.RecentFuse = 10;
@@ -2362,12 +2370,8 @@ namespace TShockAPI
 
 			// if released npc not from its item (from crafted packet)
 			// e.g. using bunny item to release golden bunny
-			if (args.Player.TPlayer.lastVisualizedSelectedItem.makeNPC != type || args.Player.TPlayer.lastVisualizedSelectedItem.placeStyle != style)
+			if (args.Player.SelectedItem.makeNPC != type || args.Player.SelectedItem.placeStyle != style)
 			{
-				// If the critter is an Explosive Bunny, check if we've recently created an Explosive Bunny projectile.
-				// If we have, check if the critter we are trying to create is within range of the projectile
-				// If we have at least one of those, then this wasn't a crafted packet, but simply a delayed critter release from an
-				// Explosive Bunny projectile.
 				if (type == NPCID.ExplosiveBunny)
 				{
 					if (args.Player.TPlayer.ownedProjectileCounts[ProjectileID.ExplosiveBunny] == 0)
