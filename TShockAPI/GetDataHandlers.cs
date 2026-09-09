@@ -2178,9 +2178,14 @@ namespace TShockAPI
 			Dyes = 1,
 
 			/// <summary>
+			/// The ID of the pose. Not actually an item inventory.
+			/// </summary>
+			Pose = 2,
+
+			/// <summary>
 			/// The ID of the inventory holding the miscellaneous items (mounts, pets, etc.).
 			/// </summary>
-			Misc = 2,
+			Misc = 3
 		}
 		/// <summary>
 		/// For use in a TileEntityDisplayDollItemSync event.

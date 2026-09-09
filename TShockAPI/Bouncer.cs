@@ -41,6 +41,7 @@ namespace TShockAPI
 		internal Handlers.EmojiHandler EmojiHandler { get; private set; }
 		internal Handlers.IllegalPerSe.EmojiPlayerMismatch EmojiPlayerMismatch { get; private set; }
 		internal Handlers.DisplayDollItemSyncHandler DisplayDollItemSyncHandler { get; private set; }
+		internal Handlers.DisplayDollPoseSyncHandler DisplayDollPoseSyncHandler { get; private set; }
 		internal Handlers.RequestTileEntityInteractionHandler RequestTileEntityInteractionHandler { get; private set; }
 		internal Handlers.LandGolfBallInCupHandler LandGolfBallInCupHandler { get; private set; }
 		internal Handlers.SyncTilePickingHandler SyncTilePickingHandler { get; private set; }
@@ -98,6 +99,9 @@ namespace TShockAPI
 
 			DisplayDollItemSyncHandler = new Handlers.DisplayDollItemSyncHandler();
 			GetDataHandlers.DisplayDollItemSync += DisplayDollItemSyncHandler.OnReceive;
+
+			DisplayDollPoseSyncHandler = new Handlers.DisplayDollPoseSyncHandler();
+			GetDataHandlers.DisplayDollPoseSync += DisplayDollPoseSyncHandler.OnReceive;
 
 			RequestTileEntityInteractionHandler = new Handlers.RequestTileEntityInteractionHandler();
 			GetDataHandlers.RequestTileEntityInteraction += RequestTileEntityInteractionHandler.OnReceive;
