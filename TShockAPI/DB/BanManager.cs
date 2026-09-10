@@ -1,4 +1,4 @@
-﻿/*
+/*
 TShock, a server mod for Terraria
 Copyright (C) 2011-2019 Pryaxis & TShock Contributors
 
@@ -106,7 +106,7 @@ namespace TShockAPI.DB
 			{
 				SqlType.Mysql => database.QueryScalar<int>("SELECT COUNT(table_name) FROM information_schema.tables WHERE table_schema = @0 and table_name = 'Bans'", TShock.Config.Settings.MySqlDbName),
 				SqlType.Sqlite => database.QueryScalar<int>("SELECT COUNT(name) FROM sqlite_master WHERE type='table' AND name = 'Bans'"),
-				SqlType.Postgres => database.QueryScalar<int>("SELECT COUNT(table_name) FROM information_schema.tables WHERE table_name = 'Bans'"),
+				SqlType.Postgres => database.QueryScalar<int>("SELECT COUNT(table_name) FROM information_schema.tables WHERE table_schema=current_schema() AND table_name ILIKE 'Bans'"),
 			};
 
 			if (res != 0)
@@ -298,7 +298,7 @@ namespace TShockAPI.DB
 			{
 			   SqlType.Mysql => /*lang=mysql*/"; SELECT LAST_INSERT_ID();",
 			   SqlType.Sqlite => /*lang=sqlite*/"; SELECT last_insert_rowid();",
-			   SqlType.Postgres => /*lang=postgresql*/"RETURNING \"Identifier\";",
+			   SqlType.Postgres => /*lang=postgresql*/" RETURNING \"ticketnumber\";",
 			   _ => null
 			};
 
