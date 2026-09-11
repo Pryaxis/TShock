@@ -1744,11 +1744,7 @@ namespace TShockAPI
 
 			if (TPlayer.pvpDeath)
 				return false;
-			// Not accounted for in case of network lag.
-			/*
-			if (TPlayer.deadTime < Player.DeadSkipLockoutTime)
-				return false;
-			*/
+
 			if (TPlayer.NearAnyNPCsThatBlockRespawn())
 				return false;
 
