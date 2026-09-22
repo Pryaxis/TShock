@@ -45,7 +45,6 @@ using TShockAPI.Localization;
 using TShockAPI.Configuration;
 using Terraria.GameContent.Creative;
 using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
 using MonoMod.Cil;
 using Terraria.Achievements;
 using Terraria.Initializers;
@@ -1516,14 +1515,6 @@ namespace TShockAPI
 			string text = TruncateChatMessageIfNecessary(args);
 			// We should now use the truncated message instead of the original, we don't want anything to fire off on text that has been "removed"...
 			// Yes, double assignment like this looks bad...
-
-
-			// Filter out [ct:xxx] tags because they may crash the PE client
-			if (!Config.Settings.AllowCtTag)
-			{
-				text = Regex.Replace(text, @"\[ct:[^\]]*\]", "");
-			}
-
 			var chatText = text;
 
 			// Terraria now has chat commands on the client side.
