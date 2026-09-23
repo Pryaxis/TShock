@@ -1,4 +1,4 @@
-﻿/*
+/*
 TShock, a server mod for Terraria
 Copyright (C) 2011-2025 Pryaxis & TShock Contributors
 
@@ -82,6 +82,9 @@ public class MysqlQueryBuilder : GenericQueryBuilder, IQueryBuilder
 
 		throw new NotImplementedException(Enum.GetName(typeof(MySqlDbType), type));
 	}
+
+	/// <inheritdoc />
+	protected override string EscapeColumnName(string column) => $"`{column}`";
 
 	/// <inheritdoc />
 	protected override string EscapeTableName(string table) => table.SFormat("`{0}`", table);
