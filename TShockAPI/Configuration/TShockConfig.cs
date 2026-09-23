@@ -385,6 +385,10 @@ namespace TShockAPI.Configuration
 		[Description("Prevents users from being able to login with their client UUID.")]
 		public bool DisableUUIDLogin;
 
+            /// <summary>Prevents users in the superadmin group from being automatically logged in via UUID.</summary>
+            [Description("Prevents users in the superadmin group from being automatically logged in via UUID.")]
+            public bool DisableSuperAdminUUIDLogin = true;
+
 		/// <summary>Kick clients that don't send their UUID to the server.</summary>
 		[Description("Kick clients that don't send their UUID to the server.")]
 		public bool KickEmptyUUID = true;
