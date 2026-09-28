@@ -1,4 +1,4 @@
-﻿/*
+/*
 TShock, a server mod for Terraria
 Copyright (C) 2011-2025 Pryaxis & TShock Contributors
 
@@ -39,6 +39,13 @@ public abstract class GenericQueryBuilder : IQueryBuilder
 	/// <returns></returns>
 	protected abstract string EscapeTableName(string table);
 
+	/// <summary>
+	/// Escapes a column identifier for the current SQL dialect.
+	/// </summary>
+	/// <param name="column">The column name to escape.</param>
+	/// <returns>The escaped column identifier.</returns>
+	protected virtual string EscapeColumnName(string column) => column;
+
 	/// <inheritdoc />
 	public abstract string CreateTable(SqlTable table);
 
@@ -55,7 +62,7 @@ public abstract class GenericQueryBuilder : IQueryBuilder
 		var create = CreateTable(to);
 		// combine all columns in the 'from' variable excluding ones that aren't in the 'to' variable.
 		// exclude the ones that aren't in 'to' variable because if the column is deleted, why try to import the data?
-		var columns = string.Join(", ", from.Columns.Where(c => to.Columns.Any(c2 => c2.Name == c.Name)).Select(c => $"`{c.Name}`"));
+		var columns = string.Join(", ", from.Columns.Where(c => to.Columns.Any(c2 => c2.Name.Equals(c.Name, StringComparison.OrdinalIgnoreCase))).Select(c => EscapeColumnName(c.Name)));
 		var insert = "INSERT INTO {0} ({1}) SELECT {1} FROM {2}".SFormat(escapedTable, columns, tmpTable);
 		var drop = "DROP TABLE {0}".SFormat(tmpTable);
 		return "{0}; {1}; {2}; {3};".SFormat(alter, create, insert, drop);
@@ -131,6 +138,6 @@ public abstract class GenericQueryBuilder : IQueryBuilder
 	/// <param name="wheres"></param>
 	/// <returns></returns>
 	protected static string BuildWhere(List<SqlValue> wheres) => wheres.Count > 0
-		? string.Empty
-		: "WHERE {0}".SFormat(string.Join(", ", wheres.Select(v => $"{v.Name} = {v.Value}")));
+		? "WHERE {0}".SFormat(string.Join(" AND ", wheres.Select(v => $"{v.Name} = {v.Value}")))
+		: string.Empty;
 }
