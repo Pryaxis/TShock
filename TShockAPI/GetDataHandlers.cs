@@ -3387,6 +3387,16 @@ namespace TShockAPI
 
 		private static bool HandleNpcStrike(GetDataHandlerArgs args)
 		{
+			if (!HandleNpcStrikeInner(args))
+				return false;
+
+			// If we don't ack the damage on a rejected packet, the NPC will appear to deplete its health only for that client.
+			args.Player.SendData(PacketTypes.DamageNPCAck);
+			return true;
+		}
+
+		private static bool HandleNpcStrikeInner(GetDataHandlerArgs args)
+		{
 			short id = args.Data.ReadInt8();
 			var generation = args.Data.ReadInt8();
 			var dmg = args.Data.ReadInt16();
