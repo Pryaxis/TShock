@@ -410,7 +410,12 @@ namespace TShockAPI.Handlers
 			TileRectMatch.StateChangeY(2, 3, TileID.VoidMonolith, 90, 18),
 			TileRectMatch.StateChangeY(2, 3, TileID.EchoMonolith, 90, 18),
 			TileRectMatch.StateChangeY(2, 3, TileID.ShimmerMonolith, 144, 18),
+			TileRectMatch.StateChangeY(2, 3, TileID.CRTMonolith, 90, 18),
+			TileRectMatch.StateChangeY(2, 3, TileID.RetroMonolith, 90, 18),
+			TileRectMatch.StateChangeY(2, 3, TileID.NoirMonolith, 90, 18),
 			TileRectMatch.StateChangeY(2, 4, TileID.WaterFountain, 126, 18),
+
+			TileRectMatch.StateChangeY(3, 3, TileID.RadioThingMonolith, 90, 18),
 
 			TileRectMatch.StateChangeX(1, 1, TileID.Candles, 18, 18),
 			TileRectMatch.StateChangeX(1, 1, TileID.PeaceCandle, 18, 18),
