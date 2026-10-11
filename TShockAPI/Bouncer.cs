@@ -1451,17 +1451,27 @@ namespace TShockAPI
 			        return;
 			    }
 
-			    // Validate we found an active bolt projectile
-			    var boltProjectileData = args.Player.RecentlyCreatedProjectiles.FirstOrDefault(p => p.Type == ProjectileID.PortalGunBolt);
-			    if (boltProjectileData.Type == 0 || boltProjectileData.Killed)
+			    // A gate the server already has was validated when it was created, so this is its owner resyncing it
+			    var isExistingGate = index < Main.maxProjectiles && Main.projectile[index].active && Main.projectile[index].type == ProjectileID.PortalGunGate;
+			    if (!isExistingGate)
 			    {
-				    TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile rejected from portal gate from {0} (missing active Portal Gun bolt)", args.Player.Name, discreteDirection));
-			        args.Player.RemoveProjectile(ident, owner, generation);
-			        args.Handled = true;
-			        return;
-			    }
+			        lock (args.Player.RecentlyCreatedProjectiles)
+			        {
+			            // Validate we found an active bolt projectile, and use it up so that each bolt creates at most one gate
+			            var boltIndex = args.Player.RecentlyCreatedProjectiles.FindIndex(p => p.Type == ProjectileID.PortalGunBolt && !p.Killed);
+			            if (boltIndex == -1)
+			            {
+			                TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile rejected from portal gate from {0} (missing active Portal Gun bolt)", args.Player.Name, discreteDirection));
+			                args.Player.RemoveProjectile(ident, owner, generation);
+			                args.Handled = true;
+			                return;
+			            }
 
-			    boltProjectileData.Killed = true;
+			            var boltProjectileData = args.Player.RecentlyCreatedProjectiles[boltIndex];
+			            boltProjectileData.Killed = true;
+			            args.Player.RecentlyCreatedProjectiles[boltIndex] = boltProjectileData;
+			        }
+			    }
 			}
 
 			if (!TShock.Config.Settings.IgnoreProjUpdate && !args.Player.HasPermission(Permissions.ignoreprojectiledetection))
