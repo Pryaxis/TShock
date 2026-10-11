@@ -3372,7 +3372,8 @@ namespace TShockAPI
 
 			lock (args.Player.RecentlyCreatedProjectiles)
 			{
-				if (!args.Player.RecentlyCreatedProjectiles.Any(p => p.Index == index))
+				// The index is at Main.maxProjectiles when a projectile's index hasn't been sent yet 
+				if (index == Main.maxProjectiles || !args.Player.RecentlyCreatedProjectiles.Any(p => p.Index == index))
 				{
 					args.Player.RecentlyCreatedProjectiles.Add(new GetDataHandlers.ProjectileStruct()
 					{

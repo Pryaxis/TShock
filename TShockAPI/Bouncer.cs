@@ -1452,7 +1452,7 @@ namespace TShockAPI
 			    }
 
 			    // Validate we found an active bolt projectile
-			    var boltProjectileData = args.Player.RecentlyCreatedProjectiles.FirstOrDefault(p => Main.projectile[p.Index].type == ProjectileID.PortalGunBolt);
+			    var boltProjectileData = args.Player.RecentlyCreatedProjectiles.FirstOrDefault(p => p.Type == ProjectileID.PortalGunBolt);
 			    if (boltProjectileData.Type == 0 || boltProjectileData.Killed)
 			    {
 				    TShock.Log.ConsoleDebug(GetString("Bouncer / OnNewProjectile rejected from portal gate from {0} (missing active Portal Gun bolt)", args.Player.Name, discreteDirection));
