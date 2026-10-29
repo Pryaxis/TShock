@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -66,6 +67,10 @@ namespace TShockAPI.Sockets
 		{
 			this._connection = tcpClient;
 			this._connection.NoDelay = true;
+			this._connection.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+			this._connection.Client.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveTime, 30);
+			this._connection.Client.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveInterval, 10);
+			this._connection.Client.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveRetryCount, 3);
 			IPEndPoint iPEndPoint = (IPEndPoint)tcpClient.Client.RemoteEndPoint;
 			this._remoteAddress = new TcpAddress(iPEndPoint.Address, iPEndPoint.Port);
 		}
@@ -96,7 +101,7 @@ namespace TShockAPI.Sockets
 			{
 				tuple.Item1(tuple.Item2, this._connection.GetStream().EndRead(result));
 			}
-			catch (InvalidOperationException)
+			catch (Exception ex) when (ex is InvalidOperationException || ex is IOException)
 			{
 				// This is common behaviour during client disconnects
 				((ISocket)this).Close();
@@ -140,7 +145,7 @@ namespace TShockAPI.Sockets
 
 		bool ISocket.IsDataAvailable()
 		{
-			return this._connection.GetStream().DataAvailable;
+			return this._connection.Client.Poll(0, SelectMode.SelectRead);
 		}
 
 		RemoteAddress ISocket.GetRemoteAddress()
