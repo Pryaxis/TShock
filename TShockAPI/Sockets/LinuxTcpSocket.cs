@@ -67,10 +67,17 @@ namespace TShockAPI.Sockets
 		{
 			this._connection = tcpClient;
 			this._connection.NoDelay = true;
-			this._connection.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
-			this._connection.Client.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveTime, 30);
-			this._connection.Client.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveInterval, 10);
-			this._connection.Client.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveRetryCount, 3);
+			try
+			{
+				this._connection.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+				this._connection.Client.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveTime, 30);
+				this._connection.Client.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveInterval, 10);
+				this._connection.Client.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveRetryCount, 3);
+			}
+			catch (SocketException ex)
+			{
+				TShock.Log.Warn("Failed to enable TCP keepalive: {0}", ex.Message);
+			}
 			IPEndPoint iPEndPoint = (IPEndPoint)tcpClient.Client.RemoteEndPoint;
 			this._remoteAddress = new TcpAddress(iPEndPoint.Address, iPEndPoint.Port);
 		}
