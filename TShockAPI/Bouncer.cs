@@ -2469,19 +2469,7 @@ namespace TShockAPI
 				return;
 			}
 
-			if (args.Player.SelectedItem.type is ItemID.RubblemakerSmall or ItemID.RubblemakerMedium or ItemID.RubblemakerLarge)
-			{
-				if (type != TileID.LargePilesEcho && type != TileID.LargePiles2Echo && type != TileID.SmallPiles2x1Echo &&
-					type != TileID.SmallPiles1x1Echo && type != TileID.PlantDetritus3x2Echo && type != TileID.PlantDetritus2x2Echo)
-				{
-					TShock.Log.ConsoleDebug(GetString("Bouncer / OnPlaceObject rejected rubblemaker I can't believe it's not rubble! from {0}",
-						args.Player.Name));
-					args.Player.SendTileSquareCentered(x, y, 4);
-					args.Handled = true;
-					return;
-				}
-			}
-			else if (args.Player.SelectedItem.type == ItemID.AcornAxe)
+			if (args.Player.SelectedItem.type == ItemID.AcornAxe)
 			{
 				if (type != TileID.Saplings)
 				{
