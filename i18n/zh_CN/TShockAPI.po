@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2026-09-07 11:59:35+0000\n"
-"PO-Revision-Date: 2026-09-07 12:26\n"
+"PO-Revision-Date: 2026-11-10 16:34\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -1688,7 +1688,7 @@ msgstr ""
 #: ../../TShockAPI/Bouncer.cs:3184
 #, csharp-format
 msgid "Bouncer / OnChestCraftRequest rejected from region protection? from {0}"
-msgstr ""
+msgstr "Bouncer / OnChestItemChange（箱子物品防护）因区域保护阻止了{0}"
 
 #: ../../TShockAPI/Bouncer.cs:1663
 #, csharp-format
@@ -3147,7 +3147,7 @@ msgstr "以超级管理员的身份执行指令。"
 
 #: ../../TShockAPI/GetDataHandlers.cs:5084
 msgid "Exploit attempt detected!"
-msgstr ""
+msgstr "检测到恶意攻击"
 
 #: ../../TShockAPI/Commands.cs:1793
 #, csharp-format
