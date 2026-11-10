@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tshock\n"
 "POT-Creation-Date: 2026-09-07 11:59:35+0000\n"
-"PO-Revision-Date: 2026-09-07 12:27\n"
+"PO-Revision-Date: 2026-09-09 12:02\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "MIME-Version: 1.0\n"
@@ -3146,7 +3146,7 @@ msgstr "Perintah dieksekusi sebagai admin super."
 
 #: ../../TShockAPI/GetDataHandlers.cs:5084
 msgid "Exploit attempt detected!"
-msgstr ""
+msgstr "Percobaan Exploit terdeteksi!"
 
 #: ../../TShockAPI/Commands.cs:1793
 #, csharp-format
