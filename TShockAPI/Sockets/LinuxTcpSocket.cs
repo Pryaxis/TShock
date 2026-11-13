@@ -142,7 +142,9 @@ namespace TShockAPI.Sockets
 
 		bool ISocket.IsDataAvailable()
 		{
-			return this._connection.GetStream().DataAvailable;
+			// Poll reports readable for both incoming data and a closed connection.
+// This lets RemoteClient receive EOF and release disconnected slots.
+return this._connection.Client.Poll(0, SelectMode.SelectRead);
 		}
 
 		RemoteAddress ISocket.GetRemoteAddress()
