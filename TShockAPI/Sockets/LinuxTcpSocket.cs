@@ -237,6 +237,10 @@ return this._connection.Client.Poll(0, SelectMode.SelectRead);
                                         {
                                                 break;
                                         }
+                                        catch (InvalidOperationException)
+                                        {
+                                                break;
+                                        }
 
                                         lock (_listenerLock)
                                         {
