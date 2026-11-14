@@ -48,6 +48,8 @@ namespace TShockAPI.Sockets
 
 		public bool _isListening;
 
+                private readonly object _listenerLock = new object();
+
 		public int MessagesInQueue
 		{
 			get
@@ -140,7 +142,9 @@ namespace TShockAPI.Sockets
 
 		bool ISocket.IsDataAvailable()
 		{
-			return this._connection.GetStream().DataAvailable;
+			// Poll reports readable for both incoming data and a closed connection.
+// This lets RemoteClient receive EOF and release disconnected slots.
+return this._connection.Client.Poll(0, SelectMode.SelectRead);
 		}
 
 		RemoteAddress ISocket.GetRemoteAddress()
@@ -149,57 +153,137 @@ namespace TShockAPI.Sockets
 		}
 
 		bool ISocket.StartListening(SocketConnectionAccepted callback)
-		{
-			IPAddress any = IPAddress.Any;
-			string ipString;
-			if (Program.LaunchParameters.TryGetValue("-ip", out ipString) && !IPAddress.TryParse(ipString, out any))
-			{
-				any = IPAddress.Any;
-			}
-			this._isListening = true;
-			this._listenerCallback = callback;
-			if (this._listener == null)
-			{
-				this._listener = new TcpListener(any, Netplay.ListenPort);
-			}
-			try
-			{
-				this._listener.Start();
-			}
-			catch (Exception)
-			{
-				return false;
-			}
-			ThreadPool.QueueUserWorkItem(new WaitCallback(this.ListenLoop));
-			return true;
-		}
+                {
+                        IPAddress address = IPAddress.Any;
+                        string ipString;
 
-		void ISocket.StopListening()
-		{
-			this._isListening = false;
-		}
+                        if (Program.LaunchParameters.TryGetValue("-ip", out ipString)
+                            && !IPAddress.TryParse(ipString, out address))
+                        {
+                                address = IPAddress.Any;
+                        }
 
-		private void ListenLoop(object unused)
-		{
-			while (this._isListening && !Netplay.Disconnect)
-			{
-				try
-				{
-					ISocket socket = new LinuxTcpSocket(this._listener.AcceptTcpClient());
-					Console.WriteLine(Language.GetTextValue("Net.ClientConnecting", socket.GetRemoteAddress()));
-					this._listenerCallback(socket);
-				}
-				catch (Exception)
-				{
-				}
-			}
-			this._listener.Stop();
+                        lock (_listenerLock)
+                        {
+                                if (_isListening)
+                                {
+                                        return true;
+                                }
 
-			// currently vanilla will stop listening when the slots are full, however it appears that this Netplay.IsListening
-			// flag is still set, making the server loop believe it's still listening when it's actually not.
-			// clearing this flag when we actually have stopped will allow the ServerLoop to start listening again when
-			// there are enough slots available.
-			Netplay.IsListening = false;
-		}
-	}
+                                var listener = new TcpListener(address, Netplay.ListenPort);
+
+                                try
+                                {
+                                        listener.Start();
+                                }
+                                catch (SocketException)
+                                {
+                                        return false;
+                                }
+
+                                _listener = listener;
+                                _listenerCallback = callback;
+                                _isListening = true;
+
+                                ThreadPool.QueueUserWorkItem(
+                                    _ => ListenLoop(listener, callback));
+
+                                return true;
+                        }
+                }
+
+                void ISocket.StopListening()
+                {
+                        lock (_listenerLock)
+                        {
+                                _isListening = false;
+
+                                var listener = _listener;
+                                _listener = null;
+
+                                listener?.Stop();
+                                Netplay.IsListening = false;
+                        }
+                }
+
+                private void ListenLoop(
+                    TcpListener listener,
+                    SocketConnectionAccepted callback)
+                {
+                        try
+                        {
+                                while (!Netplay.Disconnect)
+                                {
+                                        lock (_listenerLock)
+                                        {
+                                                if (!_isListening ||
+                                                    !ReferenceEquals(_listener, listener))
+                                                {
+                                                        break;
+                                                }
+                                        }
+
+                                        TcpClient client;
+
+                                        try
+                                        {
+                                                client = listener.AcceptTcpClient();
+                                        }
+                                        catch (ObjectDisposedException)
+                                        {
+                                                break;
+                                        }
+                                        catch (SocketException)
+                                        {
+                                                break;
+                                        }
+                                        catch (InvalidOperationException)
+                                        {
+                                                break;
+                                        }
+
+                                        lock (_listenerLock)
+                                        {
+                                                if (!_isListening ||
+                                                    !ReferenceEquals(_listener, listener))
+                                                {
+                                                        client.Close();
+                                                        break;
+                                                }
+                                        }
+
+                                        try
+                                        {
+                                                ISocket socket = new LinuxTcpSocket(client);
+
+                                                Console.WriteLine(
+                                                    Language.GetTextValue(
+                                                        "Net.ClientConnecting",
+                                                        socket.GetRemoteAddress()));
+
+                                                callback(socket);
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                                client.Close();
+                                                TShock.Log.Error(ex.ToString());
+                                        }
+                                }
+                        }
+                        finally
+                        {
+                                lock (_listenerLock)
+                                {
+                                        if (ReferenceEquals(_listener, listener))
+                                        {
+                                                _listener = null;
+                                                _isListening = false;
+                                                Netplay.IsListening = false;
+                                        }
+                                }
+
+                                listener.Stop();
+                        }
+                }
+        }
 }
