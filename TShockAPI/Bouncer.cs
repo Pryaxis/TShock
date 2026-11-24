@@ -3389,7 +3389,7 @@ namespace TShockAPI
 			{ 612, 0.7f },
 			{ 953, 2 },
 
-			{ 756, 1 },
+			{ 756, 1.3f },
 			{ 522, 40f },
 			{ 459, 1.3f } // Is used for scale, can only ever be 0.7f, 1.0f, and 1.3f (unused).
 		};
