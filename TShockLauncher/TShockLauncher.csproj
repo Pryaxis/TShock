@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
@@ -26,6 +26,21 @@
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		  <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 		</None>
+		<None Include="..\prebuilts\OpenNAT.dll">
+		  <Link>OpenNAT.dll</Link>
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		  <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+		</None>
+		<None Include="..\prebuilts\native\win-x64\*">
+		  <Link>runtimes\win-x64\native\%(Filename)%(Extension)</Link>
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		  <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+		</None>
+		<None Include="..\prebuilts\native\linux-x64\*">
+		  <Link>runtimes\linux-x64\native\%(Filename)%(Extension)</Link>
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		  <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+		</None>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -38,7 +53,7 @@
 		<PackageReference Include="GetText.NET" Version="8.0.5" /> <!-- only used to extract out to ./bin. -->
 
 		<!-- the launcher doesnt need the direct OTAPI reference, but since PackageReference[ExcludeFromSingleFile] doesnt work, exclude the assets and copy manually -->
-		<PackageReference Include="OTAPI.Upcoming" Version="3.3.14" ExcludeAssets="all" GeneratePathProperty="true" />
+		<PackageReference Include="OTAPI.Upcoming" Version="3.3.15" ExcludeAssets="all" GeneratePathProperty="true" />
 		<None Include="$(PkgOTAPI_Upcoming)\lib\net9.0\OTAPI.dll">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>

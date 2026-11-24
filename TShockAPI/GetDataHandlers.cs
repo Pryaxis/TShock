@@ -1,4 +1,4 @@
-﻿/*
+/*
 TShock, a server mod for Terraria
 Copyright (C) 2011-2019 Pryaxis & TShock Contributors
 
@@ -3103,7 +3103,7 @@ namespace TShockAPI
 				args.Player.State = (int)ConnectionState.Complete;
 				NetMessage.buffer[args.Player.Index].broadcast = true;
 				NetMessage.SyncConnectedPlayer(args.Player.Index);
-				var isHost = NetMessage.DoesPlayerSlotCountAsAHost(args.Player.Index);
+				var isHost = Netplay.DoesPlayerSlotCountAsAHost(args.Player.Index);
 				Main.countsAsHostForGameplay[args.Player.Index] = isHost;
 				if (isHost)
 					NetMessage.TrySendData((int)PacketTypes.SetCountsAsHostForGameplay, args.Player.Index, -1, null, args.Player.Index, true.ToInt());

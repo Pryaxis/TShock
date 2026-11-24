@@ -1,4 +1,4 @@
-﻿/*
+/*
 TShock, a server mod for Terraria
 Copyright (C) 2021-2022 Pryaxis & TShock Contributors
 
@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 using System.Reflection;
+using System.Runtime.InteropServices;
 using TShockPluginManager;
 
 // On occasion, users have been seen extracting TShock into their client installation directory -- this is of course incorrect, and is known
@@ -50,8 +51,43 @@ if (File.Exists("TerrariaServer.exe"))
 Dictionary<string, Assembly> _cache = new Dictionary<string, Assembly>();
 
 System.Runtime.Loader.AssemblyLoadContext.Default.Resolving += Default_Resolving;
+System.Runtime.Loader.AssemblyLoadContext.Default.ResolvingUnmanagedDll += Default_ResolvingUnmanagedDll;
 
 return await StartAsync();
+
+/// <summary>
+/// Resolves native libraries (such as GNS_Wrapper) from ./runtimes/&lt;rid&gt;/native/
+/// </summary>
+IntPtr Default_ResolvingUnmanagedDll(Assembly assembly, string unmanagedDllName)
+{
+	if (!unmanagedDllName.Equals("GNS_Wrapper", StringComparison.OrdinalIgnoreCase)
+		&& !unmanagedDllName.Equals("GNS_Wrapper.dll", StringComparison.OrdinalIgnoreCase)
+		&& !unmanagedDllName.Equals("libGNS_Wrapper.so", StringComparison.OrdinalIgnoreCase))
+	{
+		return IntPtr.Zero;
+	}
+
+	if (OperatingSystem.IsWindows())
+	{
+		var nativeDir = Path.Combine(AppContext.BaseDirectory, "runtimes", "win-x64", "native");
+		var dllPath = Path.Combine(nativeDir, "GNS_Wrapper.dll");
+		if (File.Exists(dllPath))
+			return NativeLibrary.Load(dllPath);
+	}
+	else if (OperatingSystem.IsLinux())
+	{
+		var nativeDir = Path.Combine(AppContext.BaseDirectory, "runtimes", "linux-x64", "native");
+		var protobufPath = Path.Combine(nativeDir, "libprotobuf.so.3.15.3.0");
+		if (File.Exists(protobufPath))
+			NativeLibrary.TryLoad(protobufPath, out _);
+
+		var soPath = Path.Combine(nativeDir, "libGNS_Wrapper.so");
+		if (File.Exists(soPath))
+			return NativeLibrary.Load(soPath);
+	}
+
+	return IntPtr.Zero;
+}
 
 /// <summary>
 /// Resolves a module from the ./bin folder, either with a .dll by preference or .exe

@@ -1,4 +1,4 @@
-﻿/*
+/*
 TShock, a server mod for Terraria
 Copyright (C) 2011-2022 Pryaxis & TShock Contributors
 
@@ -1085,7 +1085,7 @@ namespace TShockAPI
 			get
 			{
 				return RealPlayer
-					   && (Client != null && Client.IsActive && !Client.PendingTermination);
+					   && (Client != null && Client.IsActive && Client.Status != RemoteClient.ConnStatus.PendingTermination);
 			}
 		}
 
@@ -2228,7 +2228,7 @@ namespace TShockAPI
 		/// <param name="reason">The reason for causing damage to player.</param>
 		public virtual void DamagePlayer(int damage, PlayerDeathReason reason)
 		{
-			NetMessage.SendPlayerHurt(Index, reason, damage, (new Random()).Next(-1, 1), false, false, 0, -1, -1);
+			NetMessage.SendPlayerHurt(Index, reason, damage, (new Random()).Next(-1, 1), false, false, 0, true, -1, -1);
 		}
 
 		/// <summary>
